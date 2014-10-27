@@ -33,7 +33,7 @@ from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
-from jb_common.utils import check_markdown, get_really_full_name, append_error, HttpResponseSeeOther
+from jb_common.utils import check_markdown, get_really_full_name, HttpResponseSeeOther
 from jb_common.search import DateTimeField
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models, PermissionError
@@ -99,14 +99,15 @@ class StatusForm(forms.ModelForm):
         else:
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
         if cleaned_data["begin"] > cleaned_data["end"]:
-            append_error(self, _("The begin must be before the end."), "begin")
+            self.add_error("begin", _("The begin must be before the end."))
             del cleaned_data["begin"]
         if cleaned_data["status_level"] in ["red", "yellow"] and not cleaned_data.get("message"):
-            append_error(self, _("A message must be given when the status level is red or yellow."), "message")
+            self.add_error("message", _("A message must be given when the status level is red or yellow."))
         return cleaned_data
 
     class Meta:
         model = models.StatusMessage
+        fields = "__all__"
 
 
 @login_required

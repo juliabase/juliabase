@@ -33,8 +33,6 @@ class Department(models.Model):
     able to see the processes of their department.
     """
     name = models.CharField(_("name"), max_length=30, unique=True)
-    processes = models.ManyToManyField(ContentType, blank=True, verbose_name="processes",
-                                       related_name="department")
 
     class Meta:
         verbose_name = _("department")

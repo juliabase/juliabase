@@ -33,7 +33,7 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from jb_common.utils import append_error, get_really_full_name
+from jb_common.utils import get_really_full_name
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from jb_institute import models as institute_models
@@ -116,10 +116,10 @@ class AddSamplesForm(forms.Form):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data["substrate"] == "custom" and not cleaned_data.get("substrate_comments"):
-            append_error(self, _("For a custom substrate, you must give substrate comments."), "substrate_comments")
+            self.add_error("substrate_comments", _("For a custom substrate, you must give substrate comments."))
         if cleaned_data.get("rename") == "cleaning" and not cleaned_data.get("cleaning_number"):
-            append_error(self, _("You must provide a cleaning number if you want to use it for the names."),
-                         "cleaning_number")
+            self.add_error("cleaning_number",
+                           _("You must provide a cleaning number if you want to use it for the names."))
         return cleaned_data
 
 

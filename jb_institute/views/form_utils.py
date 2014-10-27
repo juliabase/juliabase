@@ -172,11 +172,11 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
         number = number and unicode(number)
         if number is not None and (measurement_number is None or number != measurement_number) and \
                 institute_model.objects.filter(number=number).exists():
-            append_error(measurement_form, _("This number is already in use."), "number")
+            measurement_form.add_error("number", _("This number is already in use."))
             referentially_valid = False
         if sample_form.is_valid() and dead_samples([sample_form.cleaned_data["sample"]],
                                                     measurement_form.cleaned_data["timestamp"]):
-            append_error(measurement_form, _("Sample is already dead at this time."), "timestamp")
+            measurement_form.add_error("timestamp", _("Sample is already dead at this time."))
             referentially_valid = False
     else:
         referentially_valid = False

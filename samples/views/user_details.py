@@ -56,7 +56,7 @@ class UserDetailsForm(forms.ModelForm):
                     and process_class not in [models.Process, models.Deposition]]
         for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
             process_from_department = set(process for process in processes
-                                          if ContentType.objects.get_for_model(process) in department.processes.all())
+                                          if process._meta.app_label in settings.MAP_DEPARTMENTS_TO_APP_LABELS.get(department.name))
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
         if not choices:
             choices = (("", 9 * "-"),)

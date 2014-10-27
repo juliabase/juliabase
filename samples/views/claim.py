@@ -29,7 +29,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.conf import settings
-from jb_common.utils import append_error, send_email, get_really_full_name
+from jb_common.utils import send_email, get_really_full_name
 from samples.views import utils, form_utils
 from samples import permissions, models
 
@@ -181,11 +181,11 @@ def is_referentially_valid(withdraw_form, approve_form):
     referencially_valid = True
     if (approve_form and approve_form.cleaned_data["close"]) and \
             (withdraw_form and withdraw_form.cleaned_data["close"]):
-        append_error(withdraw_form, _("You can't withdraw and approve at the same time."))
+        withdraw_form.add_error(None, _("You can't withdraw and approve at the same time."))
         referencially_valid = False
     if (not approve_form or not approve_form.cleaned_data["close"]) and \
             (not withdraw_form or not withdraw_form.cleaned_data["close"]):
-        append_error(withdraw_form, _("You must select exactly one option, or leave this page."))
+        withdraw_form.add_error(None, _("You must select exactly one option, or leave this page."))
         referencially_valid = False
     return referencially_valid
 

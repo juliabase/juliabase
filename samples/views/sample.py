@@ -24,7 +24,7 @@ from cStringIO import StringIO
 import PIL
 import PIL.ImageOps
 from jb_common.signals import storage_changed
-from jb_common.utils import append_error, HttpResponseSeeOther, \
+from jb_common.utils import HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
     mkdirs, cache_key_locked, get_from_cache, unlazy_object
 from django.conf import settings
@@ -101,8 +101,8 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
              sample_form.cleaned_data["currently_responsible_person"] != sample.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
-        append_error(edit_description_form,
-                     _("Changing the topic or the responsible person must be marked as important."), "important")
+        edit_description_form.add_error("important",
+                     _("Changing the topic or the responsible person must be marked as important."))
     return referentially_valid
 
 
@@ -1042,7 +1042,7 @@ class SampleRenameForm(forms.Form):
         old_name = cleaned_data.get("old_name", "").strip()
         new_name = cleaned_data.get("new_name", "").strip()
         if new_name and new_name == old_name:
-            append_error(self, _("The new name must be different from the old name."), "new_name")
+            self.add_error("new_name", _("The new name must be different from the old name."))
             del cleaned_data["new_name"]
         return cleaned_data
 

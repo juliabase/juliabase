@@ -23,7 +23,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.forms.util import ValidationError
-from jb_common.utils import append_error
 from samples import models
 from samples.views import utils
 from samples.views import form_utils
@@ -63,17 +62,17 @@ class MergeSamplesForm(forms.Form):
         from_sample = cleaned_data.get("from_sample")
         to_sample = cleaned_data.get("to_sample")
         if from_sample and not to_sample:
-            append_error(self, _("You must select a target sample."))
+            self.add_error(None, _("You must select a target sample."))
         elif not from_sample and to_sample:
-            append_error(self, _("You must select a source sample."))
+            self.add_error(None, _("You must select a source sample."))
         elif from_sample and to_sample:
             if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user) \
                     and not self.user.is_staff:
-                append_error(self, _("You must be the currently responsible person of both samples."))
+                self.add_error(None, _("You must be the currently responsible person of both samples."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             if from_sample == to_sample:
-                append_error(self, _("You can't merge a sample into itself."))
+                self.add_error(None, _("You can't merge a sample into itself."))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             sample_death = get_first_process(to_sample, models.SampleDeath)
@@ -85,11 +84,11 @@ class MergeSamplesForm(forms.Form):
                     pass
                 else:
                     if sample_death and sample_death.timestamp <= latest_process.timestamp:
-                        append_error(self, _("One or more processes would be after sample death of {to_sample}.").format(
+                        self.add_error(None, _("One or more processes would be after sample death of {to_sample}.").format(
                                 to_sample=to_sample.name))
                         cleaned_data.pop(from_sample, None)
                     if sample_split and sample_split.timestamp <= latest_process.timestamp:
-                        append_error(self, _("One or more processes would be after sample split of {to_sample}.").format(
+                        self.add_error(None, _("One or more processes would be after sample split of {to_sample}.").format(
                                 to_sample=to_sample.name))
                         cleaned_data.pop(from_sample, None)
         return cleaned_data
@@ -145,10 +144,10 @@ def is_referentially_valid(merge_samples_forms):
             from_sample = merge_samples_form.cleaned_data["from_sample"]
             to_sample = merge_samples_form.cleaned_data["to_sample"]
             if from_sample in from_samples or to_sample in from_samples:
-                append_error(merge_samples_form, _("You can merge a sample only once."))
+                merge_samples_form.add_error(None, _("You can merge a sample only once."))
                 referentially_valid = False
             if from_sample in to_samples:
-                append_error(merge_samples_form,
+                merge_samples_form.add_error(None,
                              _("You can't merge a sample which was merged shortly before.  Do this in a separate call."))
                 referentially_valid = False
             if from_sample:
@@ -157,7 +156,7 @@ def is_referentially_valid(merge_samples_forms):
                 to_samples.add(to_sample)
     if referentially_valid and all(merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms) \
             and not from_samples:
-        append_error(merge_samples_forms[0], _("No samples selected."))
+        merge_samples_forms[0].add_error(None, _("No samples selected."))
         referentially_valid = False
     return referentially_valid
 

@@ -102,6 +102,7 @@ class EditExternalOperatorForm(forms.ModelForm):
 
     class Meta:
         model = models.ExternalOperator
+        fields = "__all__"
 
 
 @login_required

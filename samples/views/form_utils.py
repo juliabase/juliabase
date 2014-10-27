@@ -27,7 +27,7 @@ from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
-from jb_common.utils import get_really_full_name, check_markdown, append_error
+from jb_common.utils import get_really_full_name, check_markdown
 from jb_common.models import Topic, Department
 from samples import models, permissions
 from samples.views import utils
@@ -711,7 +711,7 @@ class SamplePositionForm(forms.Form):
         sample = cleaned_data.get("sample")
         place = cleaned_data.get("position")
         if sample and not place:
-            append_error(self, _("This field is required."), "position")
+            self.add_error("position", _("This field is required."))
             del cleaned_data["sample"]
         return cleaned_data
 

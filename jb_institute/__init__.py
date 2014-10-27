@@ -39,7 +39,6 @@ from samples.models import Process, Result, PhysicalProcess, Sample, SampleAlias
 from samples.views import shared_utils, sample
 from jb_institute import models as jb_institute_app
 from django.contrib.auth.management import create_permissions
-from south.signals import post_migrate
 
 
 @receiver(signals.pre_save)
@@ -216,18 +215,3 @@ def extend_alias_names(sender, instance, action, reverse, **kwargs):
                 sample_alias = SampleAlias.objects.create(name="".join([sample.name, extend_alias]), sample=sample)
             instance.comments = re.sub(r"append-tag:\s*\w+", "*{0}*".format(sample_alias.name), comments)
             instance.save()
-
-
-# register a signal do update permissions every migration.
-# This is based on app django_extensions update_permissions command
-@receiver(post_migrate)
-def update_permissions_after_migration(app, **kwargs):
-    """
-    Update app permission just after every migration.
-    This is based on app django_extensions update_permissions management command.
-
-    This is a workaround for the known problem, that south does not update
-    permissions on a schemamigration <http://south.aeracode.org/ticket/211>.
-    The workaround is taken from <http://devwithpassion.com/felipe/south-django-permissions/>
-    """
-    create_permissions(get_app(app), get_models(), 2 if settings.DEBUG else 0)

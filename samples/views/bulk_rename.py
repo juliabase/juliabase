@@ -30,7 +30,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from django.contrib import messages
-from jb_common.utils import append_error
 from samples import models, permissions
 from samples.views import utils
 
@@ -108,10 +107,10 @@ def is_referentially_valid(samples, prefixes_form, new_name_forms):
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["name"]
             if new_name in new_names:
-                append_error(new_name_form, _("This sample name has been used already on this page."), "name")
+                new_name_form.add_error("name", _("This sample name has been used already on this page."))
                 referentially_valid = False
             elif utils.sample_name_format(sample.name) != "provisional" and prefix_is_external:
-                append_error(new_name_form, _("Only provisional names can be changed to an external name."), "name")
+                new_name_form.add_error("name", _("Only provisional names can be changed to an external name."))
                 referentially_valid = False
             else:
                 new_names.add(new_name)

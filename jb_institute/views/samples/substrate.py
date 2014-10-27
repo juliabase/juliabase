@@ -22,7 +22,6 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
-from jb_common.utils import append_error
 from jb_institute import models as institute_models
 from samples import permissions
 from samples.views import utils, feed_utils, form_utils
@@ -67,7 +66,7 @@ class SubstrateForm(form_utils.ProcessForm):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
-            append_error(self, _("For a custom substrate, you must give substrate comments."), "comments")
+            self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
         # FixMe: The following could be done in ProcessForm.clean().
         final_operator = self.cleaned_data.get("operator")
         final_external_operator = self.cleaned_data.get("external_operator")
@@ -75,13 +74,13 @@ class SubstrateForm(form_utils.ProcessForm):
             operator, external_operator = self.cleaned_data["combined_operator"]
             if operator:
                 if final_operator and final_operator != operator:
-                    append_error(self, "Your operator and combined operator didn't match.", "combined_operator")
+                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
                 else:
                     final_operator = operator
             if external_operator:
                 if final_external_operator and final_external_operator != external_operator:
-                    append_error(self, "Your external operator and combined external operator didn't match.",
-                                 "combined_external_operator")
+                    self.add_error("combined_external_operator",
+                                   "Your external operator and combined external operator didn't match.")
                 else:
                     final_external_operator = external_operator
         if not final_operator:
@@ -118,11 +117,12 @@ def is_referentially_valid(substrate_form, samples_form, edit_description_form):
             if processes:
                 earliest_timestamp = min(process.timestamp for process in processes)
                 if earliest_timestamp < substrate_form.cleaned_data["timestamp"]:
-                    append_error(samples_form, _("Sample {0} has already processes before the timestamp of this substrate, "
-                                                 "namely from {1}.").format(sample, earliest_timestamp), "sample_list")
+                    samples_form.add_error("sample_list",
+                                           _("Sample {0} has already processes before the timestamp of this substrate, "
+                                           "namely from {1}.").format(sample, earliest_timestamp))
                 for process in processes:
                     if process.content_type.model_class() == institute_models.Substrate:
-                        append_error(samples_form, _("Sample {0} has already a substrate.").format(sample), "sample_list")
+                        samples_form.add_error("sample_list", _("Sample {0} has already a substrate.").format(sample))
                         referentially_valid = False
                         break
     return referentially_valid

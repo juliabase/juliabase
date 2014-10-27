@@ -25,7 +25,7 @@ from samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
-from jb_common.utils import append_error, is_json_requested
+from jb_common.utils import is_json_requested
 from samples.views import utils, feed_utils
 from jb_institute.views import form_utils
 import jb_institute.models as institute_models
@@ -67,8 +67,7 @@ class DepositionForm(form_utils.ProcessForm):
         _ = ugettext
         if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
             if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
-                append_error(self, _("The first two digits must match the year of the deposition."), "number")
-                del self.cleaned_data["number"]
+                self.add_error("number", _("The first two digits must match the year of the deposition."))
         return self.cleaned_data
 
     class Meta:
@@ -401,7 +400,7 @@ class FormSet(object):
         """
         referentially_valid = True
         if not self.layer_forms:
-            append_error(self.deposition_form, _("No layers given."))
+            self.deposition_form.add_error(None, _("No layers given."))
             referentially_valid = False
         if self.deposition_form.is_valid():
             if self.samples_form.is_valid():
@@ -412,7 +411,7 @@ class FormSet(object):
                         "The sample {samples} is already dead at this time.",
                         "The samples {samples} are already dead at this time.", len(dead_samples)).format(
                         samples=utils.format_enumeration([sample.name for sample in dead_samples]))
-                    append_error(self.deposition_form, error_message, "timestamp")
+                    self.deposition_form.add_error("timestamp", error_message)
                     referentially_valid = False
         return referentially_valid
 

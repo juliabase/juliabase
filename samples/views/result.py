@@ -24,7 +24,7 @@ modification purposes.
 from __future__ import absolute_import, unicode_literals
 
 from jb_common.signals import storage_changed
-from jb_common.utils import append_error, static_file_response, \
+from jb_common.utils import static_file_response, \
     is_update_necessary, mkdirs
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -76,8 +76,7 @@ def save_image_file(image_data, result, related_data_form):
             elif chunk.startswith(b"%PDF"):
                 new_image_type = "pdf"
             else:
-                append_error(related_data_form, _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."),
-                             "image_file")
+                related_data_form.add_error("image_file", _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."))
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
                 os.remove(result.get_image_locations()["image_file"])
@@ -118,7 +117,7 @@ class ResultForm(form_utils.ProcessForm):
         _ = ugettext
         cleaned_data = self.cleaned_data
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
-            append_error(self, _("For a custom substrate, you must give substrate comments."), "comments")
+            self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
         # FixMe: The following could be done in ProcessForm.clean().
         final_operator = self.cleaned_data.get("operator")
         final_external_operator = self.cleaned_data.get("external_operator")
@@ -126,13 +125,13 @@ class ResultForm(form_utils.ProcessForm):
             operator, external_operator = self.cleaned_data["combined_operator"]
             if operator:
                 if final_operator and final_operator != operator:
-                    append_error(self, "Your operator and combined operator didn't match.", "combined_operator")
+                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
                 else:
                     final_operator = operator
             if external_operator:
                 if final_external_operator and final_external_operator != external_operator:
-                    append_error(self, "Your external operator and combined external operator didn't match.",
-                                 "combined_external_operator")
+                    self.add_error("combined_external_operator",
+                                   "Your external operator and combined external operator didn't match.")
                 else:
                     final_external_operator = external_operator
         if not final_operator:
@@ -207,9 +206,9 @@ class RelatedDataForm(forms.Form):
         if samples is not None and sample_series is not None:
             for sample_or_series in set(samples + list(sample_series)) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
-                    append_error(self, _("You don't have the permission to add the result to all selected samples/series."))
+                    self.add_error(None, _("You don't have the permission to add the result to all selected samples/series."))
             if not samples and not sample_series:
-                append_error(self, _("You must select at least one samples/series."))
+                self.add_error(None, _("You must select at least one samples/series."))
         return self.cleaned_data
 
 
@@ -438,7 +437,7 @@ class FormSet(object):
             new_related_objects = set(self.related_data_form.cleaned_data["samples"]) | \
                 set(self.related_data_form.cleaned_data["sample_series"])
             if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
-                append_error(self.edit_description_form, _("Adding samples or sample series must be marked as important."),
+                self.edit_description_form.add_error(None, _("Adding samples or sample series must be marked as important."),
                              "important")
                 referentially_valid = False
         quantities = set()
@@ -446,7 +445,7 @@ class FormSet(object):
             if quantity_form.is_valid():
                 quantity = quantity_form.cleaned_data["quantity"]
                 if quantity in quantities:
-                    append_error(quantity_form, _("This quantity is already used in this table."), "quantity")
+                    quantity_form.add_error("quantity", _("This quantity is already used in this table."))
                 else:
                     quantities.add(quantity)
         return referentially_valid

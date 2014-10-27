@@ -30,7 +30,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from jb_common.utils import append_error, HttpResponseSeeOther, is_json_requested
+from jb_common.utils import HttpResponseSeeOther, is_json_requested
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from django.contrib import messages
@@ -98,12 +98,10 @@ class OriginalDataForm(Form):
                 old_sample_name_format = utils.sample_name_format(sample.name)
                 if old_sample_name_format == "new":
                     if not new_name.startswith(sample.name):
-                        append_error(self, _("The new name must begin with the old name."), "new_name")
-                        del self.cleaned_data["new_name"]
+                        self.add_error("new_name", _("The new name must begin with the old name."))
                 elif sample and sample.name != new_name:
                     if not new_name.startswith(self.new_name):
-                        append_error(self, _("The new name must begin with the deposition number."), "new_name")
-                        del self.cleaned_data["new_name"]
+                        self.add_error("new_name", _("The new name must begin with the deposition number."))
         return self.cleaned_data
 
 
@@ -293,14 +291,13 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
         if original_data_form.is_valid():
             original_sample = original_data_form.cleaned_data["sample"]
             if original_sample in original_samples:
-                append_error(original_data_form, _("Sample {sample} occurs multiple times.").format(sample=original_sample),
-                             "sample")
+                original_data_form.add_error("sample",
+                                             _("Sample {sample} occurs multiple times.").format(sample=original_sample))
                 referentially_valid = False
             original_samples.add(original_sample)
             if original_sample not in samples:
-                append_error(original_data_form,
-                             _("Sample {sample} doesn't belong to this deposition.").format(sample=original_sample),
-                             "sample")
+                original_data_form.add_error("sample",
+                             _("Sample {sample} doesn't belong to this deposition.").format(sample=original_sample))
                 referentially_valid = False
             new_name = original_data_form.cleaned_data["new_name"]
             if utils.sample_name_format(new_name) == "old":
@@ -308,25 +305,25 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                 # to check for duplicates in the form only for deposition-style
                 # names.
                 if new_name in new_names:
-                    append_error(original_data_form, _("This sample name has been used already on this page."), "new_name")
+                    original_data_form.add_error("new_name", _("This sample name has been used already on this page."))
                     referentially_valid = False
                 new_names.add(new_name)
             if more_than_one_piece and new_name == deposition.number:
-                append_error(original_data_form, _("Since there is more than one piece, the new name "
-                                                   "must not be exactly the deposition's name."), "new_name")
+                original_data_form.add_error("new_name", _("Since there is more than one piece, the new name "
+                                                   "must not be exactly the deposition's name."))
                 referentially_valid = False
     if all(original_data_form.is_valid() for original_data_form in original_data_forms):
         assert len(original_samples) <= len(samples)
         if len(original_samples) < len(samples):
-            append_error(original_data_form, _("At least one sample of the original deposition is missing."))
+            original_data_form.add_error(None, _("At least one sample of the original deposition is missing."))
             referentially_valid = False
     for new_name_forms, original_data_form in zip(new_name_form_lists, original_data_forms):
         if original_data_form.is_valid():
             original_sample = original_data_form.cleaned_data["sample"]
             if deposition != original_sample.processes.exclude(content_type=ContentType.objects.get_for_model(models.Result)) \
                 .order_by("-timestamp")[0].actual_instance and original_data_form.cleaned_data["number_of_pieces"] > 1:
-                append_error(original_data_form,
-                     _("The sample can't be split, because the deposition is not the latest process."), "sample")
+                original_data_form.add_error("sample",
+                     _("The sample can't be split, because the deposition is not the latest process."))
                 referentially_valid = False
             else:
                 for new_name_form in new_name_forms:
@@ -334,22 +331,22 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                         new_name = new_name_form.cleaned_data["new_name"]
                         if original_data_form.cleaned_data["number_of_pieces"] == 1:
                             if new_name != original_data_form.cleaned_data["new_name"]:
-                                append_error(
-                                    new_name_form, _("If you don't split, you can't rename the single piece."), "new_name")
+                                new_name_form.add_error("new_name",
+                                                        _("If you don't split, you can't rename the single piece."))
                                 referentially_valid = False
                         else:
                             if new_name in new_names:
-                                append_error(
-                                    new_name_form, _("This sample name has been used already on this page."), "new_name")
+                                new_name_form.add_error("new_name",
+                                                        _("This sample name has been used already on this page."))
                                 referentially_valid = False
                             new_names.add(new_name)
                             if utils.sample_name_format(new_name) != "new" and \
                                     not new_name.startswith(original_data_form.cleaned_data["new_name"]):
-                                append_error(new_name_form, _("If you choose a deposition-style name, it must begin "
-                                                              "with the parent's new name."), "new_name")
+                                new_name_form.add_error("new_name", _("If you choose a deposition-style name, it must begin "
+                                                              "with the parent's new name."))
                                 referentially_valid = False
                             if utils.does_sample_exist(new_name):
-                                append_error(new_name_form, _("This sample name exists already."), "new_name")
+                                new_name_form.add_error("new_name", _("This sample name exists already."))
                                 referentially_valid = False
     return referentially_valid
 
