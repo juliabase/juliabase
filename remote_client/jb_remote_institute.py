@@ -26,7 +26,10 @@ Unix-like systems, it is in /tmp.
 from __future__ import absolute_import, unicode_literals
 
 import re, logging, datetime, urllib
-from jb_remote import connection, primary_keys, TemporaryMySamples, format_timestamp, Sample
+from jb_remote import *
+
+
+settings.root_url = settings.testserver_root_url = "http://127.0.0.1:8000/"
 
 
 class ClusterToolDeposition(object):
