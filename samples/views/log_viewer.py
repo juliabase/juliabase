@@ -66,7 +66,7 @@ def view(request, process_class_name):
 
     :rtype: ``HttpResponse``
     """
-    for process_class in permissions.get_all_addable_physical_process_models().iterkeys():
+    for process_class in permissions.get_all_addable_physical_process_models().keys():
         if camel_case_to_underscores(process_class.__name__) == process_class_name:
             break
     else:
@@ -107,7 +107,7 @@ def list(request):
     except AttributeError:
         logs_whitelist = set()
     crawlers = []
-    for process_class in permissions.get_all_addable_physical_process_models().iterkeys():
+    for process_class in permissions.get_all_addable_physical_process_models().keys():
         if process_class.__name__ in logs_whitelist or \
                 permissions.has_permission_to_add_physical_process(request.user, process_class):
             process_class_name = camel_case_to_underscores(process_class.__name__)

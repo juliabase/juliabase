@@ -27,7 +27,7 @@ from django.forms.util import ValidationError
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 import django.core.urlresolvers
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
@@ -42,7 +42,7 @@ import django.forms as forms
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
     def render(self):
         return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
-                    "<li>{0}</li>".format(force_unicode(w)) for w in self)))
+                    "<li>{0}</li>".format(force_text(w)) for w in self)))
 
 
 class StatusForm(forms.ModelForm):

@@ -49,7 +49,7 @@ class UserDetailsForm(forms.ModelForm):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
         choices = []
-        processes = [process_class for process_class in jb_common_utils.get_all_models().itervalues()
+        processes = [process_class for process_class in jb_common_utils.get_all_models().values()
                     if issubclass(process_class, models.Process) and not process_class._meta.abstract
                     and process_class not in [models.Process, models.Deposition]]
         for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
@@ -109,7 +109,7 @@ def edit_preferences(request, login_name):
         new_default_classes = set(map(int, default_folded_process_classes))
         differences = old_default_classes ^ new_default_classes
         exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
-        for process_id_list in exceptional_processes_dict.itervalues():
+        for process_id_list in exceptional_processes_dict.values():
             for process_id in copy.copy(process_id_list):
                 try:
                     if models.Process.objects.get(pk=process_id).content_type.id in differences:

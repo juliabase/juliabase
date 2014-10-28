@@ -30,8 +30,8 @@ All dimension variables here are in big points (bp) because this is the native
 unit of measurement in ReportLab.
 """
 
-
 from __future__ import division, unicode_literals
+import django.utils.six as six
 
 import random, math, decimal
 from reportlab.pdfgen import canvas
@@ -416,7 +416,7 @@ class Layer(object):
         else:
             value = nm
             unit = "nm"
-        value = unicode(value)
+        value = six.text_type(value)
         if "." in value:
             value = value.rstrip("0")
             if value.endswith("."):
@@ -544,7 +544,7 @@ class Scale(object):
         canvas.line(0, 0, 0, self.scale_height)
         canvas.line(-protusion, 0, protusion, 0)
         canvas.line(-protusion, self.scale_height, protusion, self.scale_height)
-        scale_label = unicode(self.factor) + \
+        scale_label = six.text_type(self.factor) + \
             [None, "0 nm", "00 nm", " µm", "0 µm", "00 µm", " mm", "0 mm", "00 mm"][self.magnitude]
         canvas.drawString(dimensions["scale_label_skip"], self.scale_height / 2 - line_height / 2, scale_label)
 

@@ -18,9 +18,10 @@
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
+from django.utils.six.moves import cStringIO
 
 import hashlib, os.path, time, urllib, json
-from cStringIO import StringIO
 import PIL
 import PIL.ImageOps
 from jb_common.signals import storage_changed
@@ -630,8 +631,8 @@ def sample_etag(request, sample_name):
     embed_timestamp(request, sample_name)
     if request._sample_timestamp:
         hash_ = hashlib.sha1()
-        hash_.update(str(request._sample_timestamp))
-        hash_.update(str(request.user.pk))
+        hash_.update(str(request._sample_timestamp).encode("utf-8"))
+        hash_.update(str(request.user.pk).encode("utf-8"))
         return hash_.hexdigest()
 
 
@@ -995,7 +996,7 @@ def data_matrix_code(request):
     url = os.path.join(settings.STATIC_URL, "data_matrix", filename)
     if not os.path.exists(filepath):
         mkdirs(filepath)
-        image = PIL.Image.open(StringIO(urllib.urlopen(
+        image = PIL.Image.open(cStringIO.StringIO(urllib.urlopen(
                     "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"
                     "MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
         image = image.crop((38, 3, 118, 83))

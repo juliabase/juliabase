@@ -105,12 +105,13 @@ strightforward).
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
+from django.utils.six.moves import cStringIO
 
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 import jb_common.utils
 import csv
-import cStringIO
 import codecs
 import django.core.urlresolvers
 import django.forms as forms
@@ -159,7 +160,7 @@ class UnicodeWriter(object):
             if s is None:
                 output_row.append("")
             else:
-                output_row.append(unicode(s).encode("utf-8"))
+                output_row.append(six.text_type(s).encode("utf-8"))
         self.writer.writerow(output_row)
         data = self.queue.getvalue()
         data = data.decode("utf-8")
@@ -503,7 +504,7 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
     """
     generate_label_column = any(label_column)
     head_row = [label_column_heading] if generate_label_column else []
-    head_row.extend([unicode(columns[key_index].heading) for key_index in selected_key_indices])
+    head_row.extend([six.text_type(columns[key_index].heading) for key_index in selected_key_indices])
     table_rows = [head_row]
     for i, row in enumerate(flattened_tree):
         table_row = [label_column[i]] if generate_label_column else []

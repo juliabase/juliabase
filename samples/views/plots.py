@@ -17,6 +17,7 @@
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import os.path
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -25,7 +26,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from django.utils.encoding import smart_str
+from django.utils.encoding import smart_bytes
 from samples import models, permissions
 from samples.views import utils
 import jb_common.utils
@@ -69,7 +70,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
         # in daemon mode.  Then, Trac (or whatever) seems to set the LANG
         # environ variable to an invalid value, causing os.stat (which is
         # called by isdir) to fail.
-        datafile_names = map(smart_str, datafile_names)
+        datafile_names = map(smart_bytes, datafile_names)
         if not all(os.path.exists(filename) for filename in datafile_names):
             raise Http404("One of the raw datafiles was not found.")
         update_necessary = jb_common.utils.is_update_necessary(plot_filepath, datafile_names, timestamps)
@@ -91,7 +92,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 canvas = FigureCanvasAgg(figure)
                 axes = figure.add_subplot(111)
                 axes.grid(True)
-                axes.set_title(unicode(process))
+                axes.set_title(six.text_type(process))
                 process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=False)
                 # FixMe: Activate this line with Matplotlib 1.1.0.
 #                figure.tight_layout()
@@ -99,6 +100,6 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
         except utils.PlotError as e:
-            raise Http404(unicode(e) or "Plot could not be generated.")
+            raise Http404(six.text_type(e) or "Plot could not be generated.")
     return jb_common.utils.static_file_response(plot_filepath,
                                                      None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf")

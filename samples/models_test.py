@@ -18,6 +18,7 @@ JuliaBase world.  In particular, nothing is translatable here.
 """
 
 from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 import os.path
 from django.db import models
@@ -35,6 +36,7 @@ apparatus_choices = (
     ("setup2", "Setup #2")
 )
 
+@python_2_unicode_compatible
 class TestPhysicalProcess(PhysicalProcess):
     """Test model for physical measurements.
     """
@@ -53,7 +55,7 @@ class TestPhysicalProcess(PhysicalProcess):
         verbose_name_plural = "test measurements"
         ordering = ["number"]
 
-    def __unicode__(self):
+    def __str__(self):
         return "Test measurement #{number}".format(number=self.number)
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
@@ -90,13 +92,14 @@ class TestPhysicalProcess(PhysicalProcess):
         return data_node
 
 
+@python_2_unicode_compatible
 class AbstractMeasurement(PhysicalProcess):
     number = models.PositiveIntegerField("number", unique=True, db_index=True)
 
     class Meta(PhysicalProcess.Meta):
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         return "Appararus {apparatus_number} measurement of {sample}".format(apparatus_number=self.get_apparatus_number(),
                                                                               sample=self.samples.get())
 

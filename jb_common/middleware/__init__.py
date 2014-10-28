@@ -14,6 +14,7 @@
 
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import locale, re, json, hashlib, random, time
 from django.contrib.messages.storage import default_storage
@@ -158,10 +159,10 @@ class JSONClientMiddleware(object):
                 # Login view was returned
                 return HttpResponseUnauthorised()
             hash_ = hashlib.sha1()
-            hash_.update(str(random.random()))
+            hash_.update(six.binary_type(random.random()))
             # For some very obscure reason, a random number was not enough --
             # it led to collisions time after time.
-            hash_.update(str(time.time()))
+            hash_.update(six.binary_type(time.time()))
             hash_value = hash_.hexdigest()
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
                                      html=response.content)

@@ -21,11 +21,11 @@ All dimension variables here are in big points (bp) because this is the native
 unit of measurement in ReportLab.
 """
 
-
 from __future__ import division, unicode_literals, absolute_import
+import django.utils.six as six
+from django.utils.six.moves import cStringIO
 
 import re
-from cStringIO import StringIO
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.utils import ImageReader
@@ -130,7 +130,7 @@ def printer_label(sample):
 
     :rtype: str
     """
-    output = StringIO()
+    output = cStringIO.StringIO()
     text = sample.name
     c = canvas.Canvas(output, pagesize=(width, height))
     c.setAuthor("JuliaBase samples database")

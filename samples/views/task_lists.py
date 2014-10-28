@@ -187,8 +187,9 @@ class ChooseTaskListsForm(forms.Form):
         super(ChooseTaskListsForm, self).__init__(data, **kwargs)
         choices = []
         for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
-            process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().iterkeys()
-                                          if process._meta.app_label in settings.MAP_DEPARTMENTS_TO_APP_LABELS.get(department.name))
+            process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().keys()
+                                          if process._meta.app_label in
+                                          settings.MAP_DEPARTMENTS_TO_APP_LABELS.get(department.name))
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
         if len(choices) == 1:
             choices = choices[0][1]
@@ -343,7 +344,7 @@ def show(request):
             exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists[process_class] = [TaskForTemplate(task, request.user) for task in active_tasks]
     task_list_for_department = {}
-    for key, values in task_lists.iteritems():
+    for key, values in task_lists.items():
         # FixMe: it is possible that some processes are in more then one department available
         # maybe we need a better way to determine the department
         if not key.department.all()[0].name in task_list_for_department:

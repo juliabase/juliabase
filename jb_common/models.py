@@ -17,6 +17,9 @@
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
+from django.utils.encoding import python_2_unicode_compatible
+
 import hashlib, datetime
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
@@ -26,6 +29,7 @@ from django.utils.translation import ugettext_lazy as _
 import jb_common.search
 
 
+@python_2_unicode_compatible
 class Department(models.Model):
     """Model to determine which process belongs to which department.
     Each department has its own processes, so users should only be
@@ -37,7 +41,7 @@ class Department(models.Model):
         verbose_name = _("department")
         verbose_name_plural = _("departments")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -48,6 +52,7 @@ languages = (
 """Contains all possible choices for `UserDetails.language`.
 """
 
+@python_2_unicode_compatible
 class UserDetails(models.Model):
     """Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
@@ -77,8 +82,8 @@ class UserDetails(models.Model):
         super(UserDetails, self).__init__(*args, **kwargs)
         self._old = self.get_data_hash()
 
-    def __unicode__(self):
-        return unicode(self.user)
+    def __str__(self):
+        return six.text_type(self.user)
 
     def save(self, *args, **kwargs):
         if self._old != self.get_data_hash():
@@ -97,12 +102,13 @@ class UserDetails(models.Model):
         :rtype: str
         """
         hash_ = hashlib.sha1()
-        hash_.update(self.language)
-        hash_.update("\x03")
-        hash_.update(self.browser_system)
+        hash_.update(self.language.encode("utf-8"))
+        hash_.update(b"\x03")
+        hash_.update(self.browser_system.encode("utf-8"))
         return hash_.hexdigest()
 
 
+@python_2_unicode_compatible
 class Topic(models.Model):
     """Model for topics of the institution (institute/company).  Every sample
     belongs to at most one topic.  Every user can be in an arbitrary number of
@@ -132,8 +138,8 @@ class Topic(models.Model):
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
                        ("can_edit_their_topics", _("Can edit topics that he/she is a manager of")))
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return six.text_type(self.name)
 
     @classmethod
     def get_search_tree_node(cls):

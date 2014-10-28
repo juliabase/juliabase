@@ -21,7 +21,7 @@ copyright holder, you must destroy it immediately and completely.
 // <![CDATA[
 function showCellData{{ process.id }}(process_id, position) {
     var image_urls = {
-    {% for position, urls in image_urls.iteritems %}
+    {% for position, urls in image_urls.items %}
         "{{ position }}": {thumbnail_url: '{{ urls.0 }}',
                            figure_url: '{{ urls.1 }}'}{% if not forloop.last %},{% endif %}
     {% endfor %}
@@ -40,7 +40,7 @@ function showCellData{{ process.id }}(process_id, position) {
 
 {% if shapes %}
   <map id="map-{{ process.id }}" name="map-{{ process.id }}">
-    {% for position, shape in shapes.iteritems %}
+    {% for position, shape in shapes.items %}
       <area title="{{ position }}"
             shape="{{ shape.type }}"
             coords="{{ shape.coords }}"

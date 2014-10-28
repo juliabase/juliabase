@@ -199,7 +199,7 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
             for user in instance.watchers.all():
                 touch_my_samples(user)
         elif action in ["post_add", "post_remove"]:
-            for user in User.objects.in_bulk(pk_set).itervalues():
+            for user in User.objects.in_bulk(pk_set).values():
                 touch_my_samples(user)
 
 
@@ -219,10 +219,10 @@ def get_identifying_data_hash(user):
     :rtype: str
     """
     hash_ = hashlib.sha1()
-    hash_.update(user.username)
-    hash_.update("\x03")
+    hash_.update(user.username.encode("utf-8"))
+    hash_.update(b"\x03")
     hash_.update(user.first_name.encode("utf-8"))
-    hash_.update("\x03")
+    hash_.update(b"\x03")
     hash_.update(user.last_name.encode("utf-8"))
     return hash_.hexdigest()
 
@@ -300,7 +300,7 @@ def touch_process_samples(sender, instance, action, reverse, model, pk_set, **kw
             for sample in instance.samples.all():
                 sample.save()
         elif action in ["post_add", "post_remove"]:
-            for sample in samples_app.Sample.objects.in_bulk(pk_set).itervalues():
+            for sample in samples_app.Sample.objects.in_bulk(pk_set).values():
                 sample.save()
     else:
         # `instance` is a sample; shouldn't actually occur in JuliaBase's code
@@ -309,7 +309,7 @@ def touch_process_samples(sender, instance, action, reverse, model, pk_set, **kw
             for process in instance.processes.all():
                 process.save(with_relations=False)
         elif action in ["post_add", "post_remove"]:
-            for process in samples_app.Process.objects.in_bulk(pk_set).itervalues():
+            for process in samples_app.Process.objects.in_bulk(pk_set).values():
                 process.save(with_relations=False)
 
 
@@ -326,7 +326,7 @@ def touch_sample_series_samples(sender, instance, action, reverse, model, pk_set
             for sample_series in instance.series.all():
                 sample_series.save()
         elif action in ["post_add", "post_remove"]:
-            for sample_series in samples_app.SampleSeries.objects.in_bulk(pk_set).itervalues():
+            for sample_series in samples_app.SampleSeries.objects.in_bulk(pk_set).values():
                 sample_series.save()
     else:
         # `instance` is a sample series
@@ -335,7 +335,7 @@ def touch_sample_series_samples(sender, instance, action, reverse, model, pk_set
             for sample in instance.samples.all():
                 sample.save()
         elif action in ["post_add", "post_remove"]:
-            for sample in samples_app.Sample.objects.in_bulk(pk_set).itervalues():
+            for sample in samples_app.Sample.objects.in_bulk(pk_set).values():
                 sample.save()
 
 
@@ -351,7 +351,7 @@ def touch_sample_series_results(sender, instance, action, reverse, model, pk_set
             for sample_series in instance.sample_series.all():
                 sample_series.save(touch_samples=True)
         elif action in ["post_add", "post_remove"]:
-            for sample_series in samples_app.SampleSeries.objects.in_bulk(pk_set).itervalues():
+            for sample_series in samples_app.SampleSeries.objects.in_bulk(pk_set).values():
                 sample_series.save(touch_samples=True)
     else:
         # `instance` is a sample series
@@ -373,7 +373,7 @@ def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk
             for user in instance.members.all():
                 user.samples_user_details.touch_display_settings()
         elif action in ["post_add", "post_remove"]:
-            for user in User.objects.in_bulk(pk_set).itervalues():
+            for user in User.objects.in_bulk(pk_set).values():
                 user.samples_user_details.touch_display_settings()
 
 
@@ -390,7 +390,7 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
             for user in instance.user_set.all():
                 user.samples_user_details.touch_display_settings()
         elif action in ["post_add", "post_remove"]:
-            for user in User.objects.in_bulk(pk_set).itervalues():
+            for user in User.objects.in_bulk(pk_set).values():
                 user.samples_user_details.touch_display_settings()
     else:
         # `instance` is a user

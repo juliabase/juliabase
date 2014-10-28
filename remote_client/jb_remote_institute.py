@@ -47,7 +47,7 @@ class ClusterToolDeposition(object):
             self.number = data["number"]
             self.carrier = data["carrier"]
             self.layers = []
-            layers = [(int(key[6:]), value) for key, value in data.iteritems() if key.startswith("layer ")]
+            layers = [(int(key[6:]), value) for key, value in data.items() if key.startswith("layer ")]
             for __, layer_data in sorted(layers):
                 if layer_data["layer type"] == "PECVD":
                     ClusterToolPECVDLayer(self, layer_data)
@@ -117,7 +117,7 @@ class ClusterToolHotWireLayer(object):
             self.time = self.comments = self.wire_material = self.base_pressure = self.h2 = self.sih4 = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "layer_type": "hot-wire",
                 prefix + "time": self.time,
                 prefix + "comments": self.comments,
@@ -147,7 +147,7 @@ class ClusterToolPECVDLayer(object):
                 self.deposition_power = self.h2 = self.sih4 = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "layer_type": "PECVD",
                 prefix + "chamber": self.chamber,
                 prefix + "time": self.time,
@@ -313,7 +313,7 @@ def normalize_sample_name(sample_name):
     sample_name = " ".join(sample_name.split())
     translations = {"ä": "ae", "ö": "oe", "ü": "ue", "Ä": "Ae", "Ö": "Oe", "Ü": "Ue", "ß": "ss",
                     " ": "_", "°": "o"}
-    for from_, to in translations.iteritems():
+    for from_, to in translations.items():
         sample_name = sample_name.replace(from_, to)
     allowed_sample_name_characters = []
     for character in sample_name:
@@ -534,7 +534,7 @@ class SolarsimulatorPhotoMeasurement(object):
             self.timestamp_inaccuracy = data["timestamp inaccuracy"]
             self.comments = data["comments"]
             self.cells = {}
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 if key.startswith("cell position "):
                     cell = PhotoCellMeasurement(value)
                     self.cells[cell.position] = cell
@@ -560,7 +560,7 @@ class SolarsimulatorPhotoMeasurement(object):
                 "remove_from_my_samples": False,
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
-        for index, cell in enumerate(self.cells.itervalues()):
+        for index, cell in enumerate(self.cells.values()):
             data.update(cell.get_data(index))
         with TemporaryMySamples(self.sample_id):
             if self.existing:
@@ -587,7 +587,7 @@ class PhotoCellMeasurement(object):
                 self.isc = self.data_file = None
 
     def get_data(self, index):
-        prefix = unicode(index) + "-"
+        prefix = six.text_type(index) + "-"
         return {prefix + "position": self.position,
                 prefix + "cell_index": self.cell_index,
                 prefix + "area": self.area,
@@ -656,7 +656,7 @@ class FiveChamberDeposition(object):
             self.comments = data["comments"]
             self.number = data["number"]
             self.layers = []
-            layers = [(int(key[6:]), value) for key, value in data.iteritems() if key.startswith("layer ")]
+            layers = [(int(key[6:]), value) for key, value in data.items() if key.startswith("layer ")]
             for __, layer_data in sorted(layers):
                 FiveChamberLayer(self, layer_data)
             self.existing = True
@@ -734,7 +734,7 @@ class FiveChamberLayer(object):
                 self.sih4 = self.h2 = self.silane_concentration = self.date = None
 
     def get_data(self, layer_index):
-        prefix = unicode(layer_index) + "-"
+        prefix = six.text_type(layer_index) + "-"
         data = {prefix + "number": layer_index + 1,
                 prefix + "chamber": self.chamber,
                 prefix + "temperature_1": self.temperature_1,

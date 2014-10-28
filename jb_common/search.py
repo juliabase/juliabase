@@ -23,10 +23,13 @@ though.
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
+from django.utils.encoding import python_2_unicode_compatible
+
 import re, datetime, calendar, copy
 from django import forms
 from django.utils.safestring import mark_safe
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models
@@ -76,6 +79,7 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
     return search_fields
 
 
+@python_2_unicode_compatible
 class SearchField(object):
     """Class representing one field in the advanced search.  This is an
     abstract base class for such fields.  It is instantiated in the
@@ -119,7 +123,7 @@ class SearchField(object):
         :type field_or_field_name: ``models.Field`` or str
         :type additional_query_path: str
         """
-        self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, basestring) \
+        self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, six.string_types) \
             else field_or_field_name
         if additional_query_path:
             self.query_path = self.field.name + "__" + additional_query_path
@@ -197,12 +201,12 @@ class SearchField(object):
         """
         return self.form.is_valid()
 
-    def __unicode__(self):
+    def __str__(self):
         """Returns a unicode representation of this search field.  It is only
         useful for debugging purposes.  Note that if a derived class doesn't
         store a model field in ``self.field``, this must be overridden.
         """
-        return '"{0}"'.format(unicode(self.field.verbose_name))
+        return '"{0}"'.format(self.field.verbose_name)
 
 
 class RangeSearchField(SearchField):
@@ -232,7 +236,7 @@ class TextSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.CharField(label=unicode(self.field.verbose_name), required=False,
+        self.form.fields[self.field.name] = forms.CharField(label=six.text_type(self.field.verbose_name), required=False,
                                                             help_text=self.field.help_text)
 
     def get_values(self, query_paths={}):
@@ -248,16 +252,16 @@ class TextNullSearchField(SearchField):
 
     class TextNullForm(forms.Form):
         def clean(self):
-            text = [value for key, value in self.cleaned_data.iteritems() if key.endswith("_main")][0]
-            explicitly_empty = [value for key, value in self.cleaned_data.iteritems() if key.endswith("_null")][0]
+            text = [value for key, value in self.cleaned_data.items() if key.endswith("_main")][0]
+            explicitly_empty = [value for key, value in self.cleaned_data.items() if key.endswith("_null")][0]
             if explicitly_empty and text:
                 raise forms.ValidationError(_("You can't search for empty values while giving a non-empty value."))
             return self.cleaned_data
 
     def parse_data(self, data, prefix):
         self.form = self.TextNullForm(data, prefix=prefix)
-        self.form.fields[self.field.name + "_main"] = forms.CharField(label=unicode(self.field.verbose_name), required=False,
-                                                                      help_text=self.field.help_text)
+        self.form.fields[self.field.name + "_main"] = forms.CharField(label=six.text_type(self.field.verbose_name),
+                                                                      required=False, help_text=self.field.help_text)
         self.form.fields[self.field.name + "_null"] = forms.BooleanField(label=_("explicitly empty"), required=False)
 
     def get_values(self, query_paths={}):
@@ -278,7 +282,7 @@ class IntegerSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.IntegerField(label=unicode(self.field.verbose_name), required=False,
+        self.form.fields[self.field.name] = forms.IntegerField(label=six.text_type(self.field.verbose_name), required=False,
                                                                help_text=self.field.help_text)
 
 
@@ -291,9 +295,9 @@ class IntervalSearchField(RangeSearchField):
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name + "_min"] = forms.DecimalField(
-            label=unicode(self.field.verbose_name), required=False, help_text=self.field.help_text)
+            label=six.text_type(self.field.verbose_name), required=False, help_text=self.field.help_text)
         self.form.fields[self.field.name + "_max"] = forms.DecimalField(
-            label=unicode(self.field.verbose_name), required=False, help_text=self.field.help_text)
+            label=six.text_type(self.field.verbose_name), required=False, help_text=self.field.help_text)
 
 
 class ChoiceSearchField(SearchField):
@@ -304,7 +308,8 @@ class ChoiceSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        field = forms.ChoiceField(label=unicode(self.field.verbose_name), required=False, help_text=self.field.help_text)
+        field = forms.ChoiceField(label=six.text_type(self.field.verbose_name), required=False,
+                                  help_text=self.field.help_text)
         field.choices = [("", "---------")] + list(self.field.choices)
         self.form.fields[self.field.name] = field
 
@@ -378,10 +383,12 @@ class DateTimeSearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = DateTimeField(label=unicode(self.field.verbose_name), required=False,
-                                                                   help_text=self.field.help_text, start=True)
-        self.form.fields[self.field.name + "_max"] = DateTimeField(label=unicode(self.field.verbose_name), required=False,
-                                                                   help_text=self.field.help_text, start=False)
+        self.form.fields[self.field.name + "_min"] = DateTimeField(label=six.text_type(self.field.verbose_name),
+                                                                   required=False, help_text=self.field.help_text,
+                                                                   start=True)
+        self.form.fields[self.field.name + "_max"] = DateTimeField(label=six.text_type(self.field.verbose_name),
+                                                                   required=False, help_text=self.field.help_text,
+                                                                   start=False)
 
 
 class BooleanSearchField(SearchField):
@@ -393,12 +400,12 @@ class BooleanSearchField(SearchField):
     class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
         def render(self):
             return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
-                        "<li>{0}</li>".format(force_unicode(w)) for w in self)))
+                        "<li>{0}</li>".format(force_text(w)) for w in self)))
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name] = forms.ChoiceField(
-            label=unicode(self.field.verbose_name), required=False,
+            label=six.text_type(self.field.verbose_name), required=False,
             choices=(("", _("doesn't matter")), ("yes", _("yes")), ("no", _("no"))),
             widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer), help_text=self.field.help_text)
 
@@ -428,7 +435,7 @@ class SearchModelForm(forms.Form):
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
         choices = [(model.__name__, model._meta.verbose_name) for model in models]
-        choices.sort(key=lambda choice: unicode(choice[1]).lower())
+        choices.sort(key=lambda choice: six.text_type(choice[1]).lower())
         self.fields["_model"].choices = [("", "---------")] + choices
 
 
@@ -459,7 +466,7 @@ def get_all_searchable_models():
         if isinstance(all_searchable_models, set):
             raise SetLockedException
         all_searchable_models = set()
-        for model in utils.get_all_models("samples" if settings.TESTING else None).itervalues():
+        for model in utils.get_all_models("samples" if settings.TESTING else None).values():
             if hasattr(model, "get_search_tree_node"):
                 try:
                     model.get_search_tree_node()
@@ -511,6 +518,7 @@ def get_search_results(search_tree, max_results, base_query=None):
     return results, too_many_results
 
 
+@python_2_unicode_compatible
 class SearchTreeNode(object):
     """Class which represents one node in the seach tree.  It is associated
     with a model class.
@@ -658,7 +666,7 @@ class SearchTreeNode(object):
                     is_all_valid = node.is_valid() and is_all_valid
         return is_all_valid
 
-    def __unicode__(self):
+    def __str__(self):
         """Returns a unicode representation of this node and its subtree.  It
         is only useful for debugging purposes.
         """
@@ -666,8 +674,8 @@ class SearchTreeNode(object):
         return "({0}[{1}]: {2};{3})".format(
             self.model_class.__name__,
             ",".join(choice[0] for choice in choices_last_child if choice[0]),
-            ",".join(unicode(search_field) for search_field in self.search_fields),
-            ",".join(unicode(child[1]) for child in self.children if child[1]))
+            ",".join(six.text_type(search_field) for search_field in self.search_fields),
+            ",".join(six.text_type(child[1]) for child in self.children if child[1]))
 
 
 class AbstractSearchTreeNode(SearchTreeNode):

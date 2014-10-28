@@ -14,6 +14,7 @@
 
 
 from __future__ import absolute_import, division, unicode_literals
+import django.utils.six as six
 
 import codecs, re, os, os.path, time, json, datetime, copy, mimetypes
 from contextlib import contextmanager
@@ -25,7 +26,7 @@ import django.contrib.auth.models
 from django.core.cache import cache
 from django.apps.registry import apps
 from django.conf import settings
-from django.utils.encoding import iri_to_uri, smart_str
+from django.utils.encoding import iri_to_uri, smart_bytes
 from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -137,7 +138,7 @@ def get_really_full_name(user):
 
     :rtype: unicode
     """
-    return user.get_full_name() or unicode(user)
+    return user.get_full_name() or six.text_type(user)
 
 
 dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r](-+|=+)\s*$")
@@ -197,7 +198,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         # in daemon mode.  Then, Trac (or whatever) seems to set the LANG
         # environ variable to an invalid value, causing os.stat (which is
         # called by isdir) to fail.
-        absolute_filepath = smart_str(absolute_filepath)
+        absolute_filepath = smart_bytes(absolute_filepath)
         if os.path.isdir(absolute_filepath):
             if not may_be_directory:
                 raise_inaccessible_exception()
@@ -485,7 +486,7 @@ def respond_in_json(value):
             try:
                 return list(x)
             except (ValueError, TypeError):
-                return unicode(x)
+                return six.text_type(x)
 
     return django.http.HttpResponse(json.dumps(value, default=default), content_type="application/json; charset=ascii")
 
@@ -582,7 +583,7 @@ def format_lazy(string, *args, **kwargs):
     return string.format(*args, **kwargs)
 # Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
 # whatever reason.
-format_lazy = allow_lazy(format_lazy, unicode)
+format_lazy = allow_lazy(format_lazy, six.text_type)
 
 
 def static_file_response(filepath, served_filename=None):
@@ -729,9 +730,9 @@ def unlazy_object(lazy_object):
     return lazy_object._wrapped
 
 
-def convert_bytes_to_unicode(byte_array):
-    """Converts an array of bytes representing the unicode litterals
-    as decimal integers to unicode letters.
+def convert_bytes_to_str(byte_array):
+    """Converts an array of bytes representing the string literals as decimal
+    integers to unicode letters.
 
     :Parameters:
      - `byte_array`: list of integers representing unicode codes.

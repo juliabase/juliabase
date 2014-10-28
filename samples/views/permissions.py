@@ -170,7 +170,7 @@ def get_physical_processes(user):
 
     :rtype: list of `PhysicalProcess`
     """
-    all_physical_processes = [process for process in get_all_models().itervalues()
+    all_physical_processes = [process for process in get_all_models().values()
                               if issubclass(process, models.PhysicalProcess) and not process._meta.abstract
                               # FixMe: This will break someday:
                               and process != models.Deposition]

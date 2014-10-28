@@ -19,6 +19,7 @@ models like the one to 6-chamber deposition channels.
 """
 
 from __future__ import absolute_import, unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
@@ -145,6 +146,7 @@ samples.models_depositions.default_location_of_deposited_samples[ClusterToolDepo
     _("cluster tool deposition lab")
 
 
+@python_2_unicode_compatible
 class ClusterToolLayer(samples.models_depositions.Layer, jb_common_models.PolymorphicModel):
     """Model for a layer of the “cluster tool”.  Note that this is the common
     base class for the actual layer models `ClusterToolHotWireLayer` and
@@ -160,7 +162,7 @@ class ClusterToolLayer(samples.models_depositions.Layer, jb_common_models.Polymo
         verbose_name = _("cluster tool layer")
         verbose_name_plural = _("cluster tool layers")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 
@@ -320,6 +322,7 @@ five_chamber_layer_type_choices = (
     ("n", "n"),
 )
 
+@python_2_unicode_compatible
 class FiveChamberLayer(samples.models_depositions.Layer):
     """One layer in a 5-chamber deposition.
     """
@@ -338,7 +341,7 @@ class FiveChamberLayer(samples.models_depositions.Layer):
         verbose_name = _("5-chamber layer")
         verbose_name_plural = _("5-chamber layers")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 

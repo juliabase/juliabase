@@ -115,7 +115,7 @@ for line in open(database_path):
 
 already_available_pds_numbers = connection.open("available_items/PDSMeasurement")
 
-for legacy_pds_measurement in pds_measurements.itervalues():
+for legacy_pds_measurement in pds_measurements.values():
     if len(legacy_pds_measurement.sample_name) > 2 and legacy_pds_measurement.sample_name[2].upper() not in ["L", "B"]:
         continue
     if legacy_pds_measurement.numer not in already_available_pds_numbers:

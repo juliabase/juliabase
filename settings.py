@@ -17,6 +17,9 @@
 """
 
 from __future__ import absolute_import, unicode_literals
+# Python3 note: Below, there are some str() calls that should be removed with
+# Python3.
+
 import sys, os.path
 from django.utils.translation import ugettext_lazy as _
 
@@ -62,9 +65,9 @@ DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
 
 
-STATIC_ROOT = b"/var/www/juliabase/media/"
-MEDIA_ROOT = b"/var/www/juliabase/uploads"
-CACHE_ROOT = b"/var/cache/juliabase"
+STATIC_ROOT = str("/var/www/juliabase/media/")
+MEDIA_ROOT = str("/var/www/juliabase/uploads")
+CACHE_ROOT = str("/var/cache/juliabase")
 
 USE_X_SENDFILE = True
 
@@ -72,9 +75,9 @@ USE_X_SENDFILE = True
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-STATIC_URL = b"/media/"
+STATIC_URL = str("/media/")
 
-ADMIN_MEDIA_PREFIX = STATIC_URL + b"admin/"
+ADMIN_MEDIA_PREFIX = STATIC_URL + str("admin/")
 
 SECRET_KEY = "vew7ooes7bt7aetrb77wuhwe95zislisdfo8z"
 
@@ -98,7 +101,7 @@ MIDDLEWARE_CLASSES = (
 )
 APPEND_SLASH = False
 
-ROOT_URLCONF = b"urls"
+ROOT_URLCONF = str("urls")
 
 INSTALLED_APPS = (
     "django.contrib.auth",
@@ -156,13 +159,13 @@ MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
 
 ADD_SAMPLE_VIEW = "jb_institute.views.samples.sample.add"
 
-MEASUREMENT_DATA_ROOT_DIR = b""
-PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, b"pds")
+MEASUREMENT_DATA_ROOT_DIR = str("")
+PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds"))
 
 PHYSICAL_PROCESS_BLACKLIST = [("jb_institute", "substrate"),
                               ("jb_institute", "layerthicknessmeasurement")]
-SOLARSIMULATOR_1_ROOT_DIR = b""
+SOLARSIMULATOR_1_ROOT_DIR = str("")
 MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
 
-CRAWLER_LOGS_ROOT = b""
+CRAWLER_LOGS_ROOT = str("")
 CRAWLER_LOGS_WHITELIST = set([])

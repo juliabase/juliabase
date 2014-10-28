@@ -222,7 +222,7 @@ def save_to_database(user, my_samples_form, action_form):
     edit_description = {"important": True, "description": action_data["comment"]}
     if samples_with_new_responsible_person:
         feed_reporter.report_new_responsible_person_samples(samples_with_new_responsible_person, edit_description)
-    for old_topic, samples in samples_with_new_topic.iteritems():
+    for old_topic, samples in samples_with_new_topic.items():
         feed_reporter.report_changed_sample_topic(samples, old_topic, edit_description)
     if action_data["new_currently_responsible_person"] or action_data["new_current_location"] or action_data["new_topic"]\
         or action_data["new_tags"]:

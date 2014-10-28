@@ -19,6 +19,7 @@ functions.
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import urllib
 from django.shortcuts import render_to_response, get_object_or_404
@@ -88,7 +89,7 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
                     next_view = "samples.views.split_after_deposition.split_and_rename_after_deposition"
                     next_view_kwargs = {"deposition_number": deposition.number}
                     query_string = urllib.urlencode([("new-name-{0}".format(id_), new_name)
-                                                     for id_, new_name in new_names.iteritems()])
+                                                     for id_, new_name in new_names.items()])
             elif not deposition.finished:
                 next_view, __, next_view_kwargs = django.core.urlresolvers.resolve(request.path)
                 next_view_kwargs["deposition_number"] = deposition.number
@@ -169,7 +170,7 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
     referentially_valid = True
     if measurement_form.is_valid():
         number = measurement_form.cleaned_data.get("number")
-        number = number and unicode(number)
+        number = number and six.text_type(number)
         if number is not None and (measurement_number is None or number != measurement_number) and \
                 institute_model.objects.filter(number=number).exists():
             measurement_form.add_error("number", _("This number is already in use."))

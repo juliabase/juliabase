@@ -22,6 +22,8 @@ irresolvable cyclic imports.  For the same reason, it is sometimes (e.g. for
 """
 
 from __future__ import absolute_import, division, unicode_literals
+import django.utils.six as six
+from django.utils.encoding import python_2_unicode_compatible
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
@@ -42,6 +44,7 @@ from django.contrib.contenttypes.models import ContentType
 import collections
 
 
+@python_2_unicode_compatible
 class ExternalOperator(models.Model):
     """Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
@@ -69,7 +72,7 @@ class ExternalOperator(models.Model):
         for process in self.processes.all():
             process.actual_instance.save()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @models.permalink
@@ -88,6 +91,7 @@ timestamp_inaccuracy_choices = (
     (6, _("not even accurate to the year")),
     )
 
+@python_2_unicode_compatible
 class Process(PolymorphicModel):
     """This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
@@ -147,12 +151,12 @@ class Process(PolymorphicModel):
             for sample in self.samples.all():
                 sample.save(with_relations=False)
 
-    def __unicode__(self):
+    def __str__(self):
         actual_instance = self.actual_instance
         if actual_instance == self:
             return _("process #{0}").format(self.pk)
         else:
-            return unicode(actual_instance)
+            return six.text_type(actual_instance)
 
     @models.permalink
     def get_absolute_url(self):
@@ -431,7 +435,7 @@ class Process(PolymorphicModel):
         if "process" not in context:
             context["process"] = self
         if "name" not in context:
-            name = unicode(self._meta.verbose_name) if not isinstance(self, Result) else self.title
+            name = six.text_type(self._meta.verbose_name) if not isinstance(self, Result) else self.title
             context["name"] = name[:1].upper() + name[1:]
         if "html_body" not in context:
             context["html_body"] = render_to_string(
@@ -561,6 +565,7 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
+@python_2_unicode_compatible
 class Sample(models.Model):
     """The model for samples.
     """
@@ -636,7 +641,7 @@ class Sample(models.Model):
             self.split_origin.save(with_relations=False)
             self.split_origin.parent.save(with_relations=False)
 
-    def __unicode__(self):
+    def __str__(self):
         """Here, I realise the peculiar naming scheme of provisional sample
         names.  Provisional samples names always start with ``"*"``, followed
         by a number.  The problem is ordering:  This way, ``"*2"`` and
@@ -645,7 +650,7 @@ class Sample(models.Model):
         leading zeroes in this routine.
 
         Thus be careful how to access the sample name.  If you want to get a
-        human-readable name, use ``unicode(sample)`` or simply ``{{ sample }}``
+        human-readable name, use ``six.text_type(sample)`` or simply ``{{ sample }}``
         in templates.  If you need the *real* sample name in the database
         (e.g. for creating a hyperlink), access it by ``sample.name``.
         """
@@ -680,8 +685,7 @@ class Sample(models.Model):
 
     def name_with_tags(self, user):
         """Returns the sample's name with possible tags attached.  This is a
-        convenience method which simply combines `__unicode__` and
-        `tags_suffix`.
+        convenience method which simply combines `__str__` and `tags_suffix`.
 
         :Parameters:
           - `user`: The user for which the tags should be displayed.  If the
@@ -695,7 +699,7 @@ class Sample(models.Model):
 
         :rtype: unicode
         """
-        return unicode(self) + self.tags_suffix(user)
+        return six.text_type(self) + self.tags_suffix(user)
 
     @models.permalink
     def get_absolute_url(self):
@@ -829,7 +833,7 @@ class Sample(models.Model):
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        data_node = DataNode(self, unicode(self))
+        data_node = DataNode(self, six.text_type(self))
         data_node.items = [DataItem("name", self.name),
                            DataItem("currently responsible person", self.currently_responsible_person),
                            DataItem("current location", self.current_location),
@@ -875,6 +879,7 @@ class Sample(models.Model):
             return search.SearchTreeNode(cls, related_models, search_fields)
 
 
+@python_2_unicode_compatible
 class SampleAlias(models.Model):
     """Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
@@ -899,10 +904,11 @@ class SampleAlias(models.Model):
         super(SampleAlias, self).save(*args, **kwargs)
         self.sample.save(with_relations=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
+@python_2_unicode_compatible
 class SampleSplit(Process):
     """A process where a sample is split into many child samples.  The sample
     split itself is a process of the *parent*, whereas the children point to it
@@ -919,7 +925,7 @@ class SampleSplit(Process):
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("split of {parent_name}").format(parent_name=self.parent.name)
 
@@ -934,10 +940,10 @@ class SampleSplit(Process):
         very same sample split on the data sheet of a child sample.
         """
         hash_ = hashlib.sha1()
-        hash_.update(user_settings_hash)
+        hash_.update(user_settings_hash.encode("utf-8"))
         hash_.update("\x04{0}\x04{1}\x04{2}".format(local_context.get("original_sample", ""),
                                                     local_context.get("latest_descendant", ""),
-                                                    local_context.get("sample", "")))
+                                                    local_context.get("sample", "")).encode("utf-8"))
         return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
 
     def get_context_for_user(self, user, old_context):
@@ -959,6 +965,7 @@ class SampleSplit(Process):
         raise NotImplementedError
 
 
+@python_2_unicode_compatible
 class Clearance(models.Model):
     """Model for clearances for specific samples to specific users.  Apart
     from unblocking the sample itself (at least, some fields), particular
@@ -977,11 +984,12 @@ class Clearance(models.Model):
         verbose_name = _("clearance")
         verbose_name_plural = _("clearances")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
 
 
+@python_2_unicode_compatible
 class SampleClaim(models.Model):
         # Translators: someone who assert a claim to samples
     requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("requester"), related_name="claims")
@@ -995,7 +1003,7 @@ class SampleClaim(models.Model):
         verbose_name = _("sample claim")
         verbose_name_plural = _("sample claims")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("sample claim #{number}").format(number=self.pk)
 
@@ -1012,6 +1020,7 @@ sample_death_reasons = (
 """Contains all possible choices for `SampleDeath.reason`.
 """
 
+@python_2_unicode_compatible
 class SampleDeath(Process):
     """This special process marks the end of the sample.  It can have various
     reasons accoring to `sample_death_reasons`.  It is impossible to add
@@ -1027,7 +1036,7 @@ class SampleDeath(Process):
             # Translators: Of a sample
         verbose_name_plural = _("ceases of existence")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         try:
             # Translators: Of a sample
@@ -1047,6 +1056,7 @@ image_type_choices = (("none", _("none")),
                     ("jpeg", "JPEG"),
                     )
 
+@python_2_unicode_compatible
 class Result(Process):
     """Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
@@ -1081,7 +1091,7 @@ class Result(Process):
             for sample_series in self.sample_series.all():
                 sample_series.save(touch_samples=True)
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         try:
             # Translators: experimental result
@@ -1230,6 +1240,7 @@ class Result(Process):
         return data_node
 
 
+@python_2_unicode_compatible
 class SampleSeries(models.Model):
     """A sample series groups together zero or more `Sample`.  It must belong
     to a topic, and it may contain processes, however, only *result processes*.
@@ -1269,7 +1280,7 @@ class SampleSeries(models.Model):
             for sample in self.samples.all():
                 sample.save(with_relations=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @models.permalink
@@ -1316,7 +1327,7 @@ class SampleSeries(models.Model):
         :rtype: `samples.data_tree.DataNode`
         """
         _ = ugettext
-        data_node = DataNode(self, unicode(self))
+        data_node = DataNode(self, six.text_type(self))
         data_node.children.extend(sample.get_data_for_table_export() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for
         # table export; people only want to see the *sample* data.  Thus, I
@@ -1360,6 +1371,7 @@ class SampleSeries(models.Model):
         return hashlib.sha1(self.name.encode("utf-8")).hexdigest()
 
 
+@python_2_unicode_compatible
 class Initials(models.Model):
     """Model for initials of people or external operators.  They are used to
     build namespaces for sample names and sample series names.  They must match
@@ -1383,10 +1395,11 @@ class Initials(models.Model):
         verbose_name = _("initials")
         verbose_name_plural = pgettext_lazy("plural", "initialses")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.initials
 
 
+@python_2_unicode_compatible
 class UserDetails(models.Model):
     """Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
@@ -1447,8 +1460,8 @@ class UserDetails(models.Model):
         permissions = (("edit_permissions_for_all_physical_processes",
                         _("Can edit permissions for all physical processes")),)
 
-    def __unicode__(self):
-        return unicode(self.user)
+    def __str__(self):
+        return six.text_type(self.user)
 
     def touch_display_settings(self):
         """Set the last modifications of sample settings to the current time.
@@ -1469,6 +1482,7 @@ status_level_choices = (
     ("green", _("green"))
 )
 
+@python_2_unicode_compatible
 class StatusMessage(models.Model):
     """This class is for the current status of the processes.  The class
     discusses whether the process is available, or is currently out of service.
@@ -1492,7 +1506,7 @@ class StatusMessage(models.Model):
         verbose_name = _("status message")
         verbose_name_plural = _("status messages")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("status message #{number}").format(number=self.pk)
 
@@ -1510,6 +1524,7 @@ priority_choices = (
     ("3 low", _("low"))
 )
 
+@python_2_unicode_compatible
 class Task(models.Model):
     """
     """
@@ -1532,7 +1547,7 @@ class Task(models.Model):
         verbose_name = _("task")
         verbose_name_plural = _("tasks")
 
-    def __unicode__(self):
+    def __str__(self):
         _ = ugettext
         return _("task of {process_class} from {datetime}". format(
                 process_class=self.process_class.name, datetime=self.creating_timestamp))
@@ -1568,7 +1583,7 @@ class ProcessWithSamplePositions(models.Model):
                                                     samples.permissions.has_permission_to_add_edit_physical_process(user, self,
                                                                                     self.content_type.model_class())
                                                     else _("confidential sample"),
-                                                    sample_positions_dict[unicode(sample.id)])
+                                                    sample_positions_dict[six.text_type(sample.id)])
         if "sample_positions" not in context:
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict:
@@ -1577,7 +1592,7 @@ class ProcessWithSamplePositions(models.Model):
                                                     samples.permissions.has_permission_to_add_edit_physical_process(user, self,
                                                                                     self.content_type.model_class())
                                                     else _("confidential sample"),
-                                                    sample_positions_dict[unicode(sample.id)])
+                                                    sample_positions_dict[six.text_type(sample.id)])
                                                    for sample in self.samples.order_by("name").iterator())
         return context
 
@@ -1593,6 +1608,6 @@ class ProcessWithSamplePositions(models.Model):
             ``samples.models_common.Process.get_cache_key()``
         """
         hash_ = hashlib.sha1()
-        hash_.update(user_settings_hash)
-        hash_.update("\x04{0}".format(local_context.get("sample", "")))
+        hash_.update(user_settings_hash.encode("utf-8"))
+        hash_.update("\x04{0}".format(local_context.get("sample", "")).encode("utf-8"))
         return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
