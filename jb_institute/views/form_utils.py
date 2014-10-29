@@ -27,8 +27,9 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 import django.core.urlresolvers
 from django.contrib import messages
-from samples.views.form_utils import *
 from jb_common.utils import is_json_requested, respond_in_json
+from samples.views.form_utils import *
+from samples import permissions
 
 
 def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):
