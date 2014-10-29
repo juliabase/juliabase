@@ -15,15 +15,16 @@ copyright holder, you must destroy it immediately and completely.
 
 {% load i18n %}
 {% load juliabase %}
+{% load staticfiles %}
 
 {% block extrahead %}
   {% block css_inclusions %}
-    <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}juliabase/css/main.css"/>
-    <link rel="stylesheet" type="text/css" media="print" href="{{ STATIC_URL }}juliabase/css/print.css"/>
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static "juliabase/css/main.css" %}"/>
+    <link rel="stylesheet" type="text/css" media="print" href="{% static "juliabase/css/print.css" %}"/>
   {% endblock %}
   <!-- FixMe: We have no favicon yet. -->
-  <link rel="shortcut icon" href="{{ STATIC_URL }}juliabase/favicon.ico" type="image/x-icon"/>
-  <script type="text/javascript" src="{{ STATIC_URL }}juliabase/js/jquery-1.5.min.js"></script>
+  <link rel="shortcut icon" href="{% static "juliabase/favicon.ico" %}" type="image/x-icon"/>
+  <script type="text/javascript" src="{% static "juliabase/js/jquery-1.5.min.js" %}"></script>
   <script type="text/javascript">
   // <![CDATA[
     $(function() { $("input:text:visible:first").focus() })
@@ -38,7 +39,7 @@ copyright holder, you must destroy it immediately and completely.
       <td class="info">
         {% for language_code, language in translation_flags %}
           <a href="{% url 'jb_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
-             ><img src="{{ STATIC_URL }}juliabase/flags/{{ language_code }}.png"
+             ><img src="{% static "juliabase/flags/"|add:language_code|add:".png" %}"
                    alt="{% blocktrans with language as language %}switch to {{ language }}{% endblocktrans %}"
                    width="16" height="11"/></a>
         {% endfor %}
@@ -49,21 +50,21 @@ copyright holder, you must destroy it immediately and completely.
           {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
           {# FixMe: Must be redirected to real main menu page of jb_common, once it exists. #}
           <a href="/"
-             ><img src="{{ STATIC_URL }}juliabase/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"
+             ><img src="{% static "juliabase/icons/house.png" %}" alt="home icon" title="{% trans 'Main menu' %}"
                    width="16" height="16"/></a>
           <a href="/trac/newticket?reporter={{ user.email|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/bug_add.png" alt="add-bug icon"
+               ><img src="{% static "juliabase/icons/bug_add.png" %}" alt="add-bug icon"
                      title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
           {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
-             src="{{ STATIC_URL }}juliabase/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
+             src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
           <a href="{% url 'django.contrib.auth.views.logout' %}"
-             ><img src="{{ STATIC_URL }}juliabase/icons/door_open.png" alt="log-out icon" title="{% trans 'Log out' %}"
+             ><img src="{% static "juliabase/icons/door_open.png" %}" alt="log-out icon" title="{% trans 'Log out' %}"
                    width="16" height="16"/></a>
         {% else %}
           {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
-            src="{{ STATIC_URL }}juliabase/icons/help.png" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
+            src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
           {# FixMe: Must be redirected to real main menu page of jb_common, once it exists. #}
-          <a href="/"><img src="{{ STATIC_URL }}juliabase/icons/house.png" width="16" height="16"
+          <a href="/"><img src="{% static "juliabase/icons/house.png" %}" width="16" height="16"
                            alt="log-in icon" title="{% trans 'Log in' %}"/></a>
         {% endif %}
       </td>

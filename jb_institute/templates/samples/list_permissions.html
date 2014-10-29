@@ -14,8 +14,9 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
+{% load staticfiles %}
 
 {% block float_image %}
-<img class="vintage-image" src="{{ STATIC_URL }}samples/lab_woman.jpg"
+<img class="vintage-image" src="{% static "samples/lab_woman.jpg" %}"
      alt="{% trans 'woman in laboratory' %}" width="277" height="459"/>
 {% endblock %}

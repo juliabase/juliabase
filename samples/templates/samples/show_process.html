@@ -16,6 +16,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 {% load juliabase %}
 {% load samples_extras %}
+{% load staticfiles %}
 
 {% block content_title %}{% endblock %}
 
@@ -24,18 +25,18 @@ copyright holder, you must destroy it immediately and completely.
           <h1>
             {{ title }}{% if edit_url %}<a class="edit-icon"
                                              href="{{ edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
+               ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if duplicate_url %}<a class="edit-icon" href="{{ duplicate_url }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
+               ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% trans 'duplicate' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if export_url %}<a class="edit-icon"
                     href="{{ export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
+               ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" title="{% trans 'export as table' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if resplit_url %}<a class="edit-icon"
                      href="{{ resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
+               ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}
             {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"

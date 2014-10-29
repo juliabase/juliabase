@@ -14,10 +14,11 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
+{% load staticfiles %}
 
 {% block css_inclusions %}
-  <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}samples/css/main.css"/>
-  <link rel="stylesheet" type="text/css" media="print" href="{{ STATIC_URL }}samples/css/print.css"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static "samples/css/main.css" %}"/>
+  <link rel="stylesheet" type="text/css" media="print" href="{% static "samples/css/print.css" %}"/>
 {% endblock %}
 
 {% block app_title %}<a style="color: inherit; text-decoration: inherit"

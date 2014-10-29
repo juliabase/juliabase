@@ -15,17 +15,18 @@ copyright holder, you must destroy it immediately and completely.
 
 {% load i18n %}
 {% load samples_extras %}
+{% load staticfiles %}
 
 {% block frame_content %}
-  <ul style='list-style-image: url("{{ STATIC_URL }}juliabase/icons/add.png")'>
+  <ul style='list-style-image: url("{% static "juliabase/icons/add.png" %}")'>
     {% for process in processes %}
       <li
          {% if process.type == "split" %}
-           style='list-style-image: url("{{ STATIC_URL }}juliabase/icons/arrow_branch.png")'
+           style='list-style-image: url("{% static "juliabase/icons/arrow_branch.png" %}")'
          {% elif process.type == "death" %}
-           style='list-style-image: url("{{ STATIC_URL }}juliabase/icons/bomb.png")'
+           style='list-style-image: url("{% static "juliabase/icons/bomb.png" %}")'
          {% elif process.type == "result" %}
-           style='list-style-image: url("{{ STATIC_URL }}juliabase/icons/lightbulb_add.png")'
+           style='list-style-image: url("{% static "juliabase/icons/lightbulb_add.png" %}")'
          {% endif %}
          ><a href="{{ process.url }}">{{ process.label|capfirst }}</a></li>
     {% endfor %}

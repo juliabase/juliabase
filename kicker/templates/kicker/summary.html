@@ -16,13 +16,14 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 {% load juliabase %}
 {% load kicker %}
+{% load staticfiles %}
 
 {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
 
 {% block frame_content %}
 <div style="float:right">
-  <a href="{{ STATIC_URL }}kicker/kicker.pdf"
-     ><img src="{{ STATIC_URL }}kicker/kicker.png" alt='{% trans "kicker numbers" %}'/></a>
+  <a href="{% static "kicker/kicker.pdf" %}"
+     ><img src="{% static "kicker/kicker.png" %}" alt='{% trans "kicker numbers" %}'/></a>
 </div>
 <table style="border: 2px solid gray" cellspacing="10">
   <tbody>

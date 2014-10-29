@@ -14,10 +14,11 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
+{% load staticfiles %}
 
 {% block css_inclusions %}
-  <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}samples/css/main.css"/>
-  <link rel="stylesheet" type="text/css" media="print" href="{{ STATIC_URL }}samples/css/print.css"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="{% static "samples/css/main.css" %}"/>
+  <link rel="stylesheet" type="text/css" media="print" href="{% static "samples/css/print.css" %}"/>
 {% endblock %}
 
 {% comment %}
@@ -25,7 +26,7 @@ copyright holder, you must destroy it immediately and completely.
   once support for IE7 is dropped.
 {% endcomment %}
 {% block app_title %}<a style="color: #333333; text-decoration: none" href="{% url 'samples.views.main.main_menu' %}"
-                        >JuliaBase</a><img class="logo-ief-5" src="{{ STATIC_URL }}institute/sonne.png"
+                        >JuliaBase</a><img class="logo-ief-5" src="{% static "institute/sonne.png" %}"
                                          alt="{% trans 'IEF-5 logo' %}" width="48" height="48"/>{% endblock %}
 {% block app_subtitle %}{% trans "The samples database" %}{% endblock %}
 

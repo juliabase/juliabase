@@ -16,6 +16,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load i18n %}
 {% load juliabase %}
 {% load samples_extras %}
+{% load staticfiles %}
 
 {% block local_scripts %}
 <script type="text/javascript">
@@ -60,25 +61,25 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
       {% for alias in sample.sample.aliases.all %}
         alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if sample.can_edit %}<a class="edit-icon"
            href="{% url 'samples.views.sample.edit' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                          ><img src="{{ STATIC_URL }}juliabase/icons/pencil.png" alt="edit icon" title="{% trans 'edit' %}"
+                          ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                                 width="16" height="16"/></a>
         {% if sample.id_for_rename %}<a class="edit-icon"
            href="{% url 'samples.views.bulk_rename.bulk_rename' %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-    ><img src="{{ STATIC_URL }}juliabase/icons/tag_blue.png" alt="give-name icon" title="{% trans 'give name' %}"
+    ><img src="{% static "juliabase/icons/tag_blue.png" %}" alt="give-name icon" title="{% trans 'give name' %}"
           width="16" height="16"/></a>
         {% endif %}
       {% endif %}
       {% if sample.can_add_process %}<a class="edit-icon" href="{% url 'samples.views.sample.add_process' sample_name=sample.sample.name %}"
-                                 ><img src="{{ STATIC_URL }}juliabase/icons/cog_add.png" alt="add-process icon"
+                                 ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add-process icon"
                                        title="{% trans 'add process' %}" width="16" height="16"/></a>{% endif %}
       {% if not sample.clearance %}<a class="edit-icon"
          href="{% url 'samples.views.sample.export' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-         ><img src="{{ STATIC_URL }}juliabase/icons/table.png" alt="export icon" width="16" height="16"
+         ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" width="16" height="16"
                title="{% trans 'export as table' %}"/></a>{% endif %}
      {% if sample.can_rename_sample %}
       <a class="edit-icon"
            href="{% url 'samples.views.sample.rename_sample' %}?sample_id={{ sample.id_for_rename }}&amp;next={% url 'samples.views.sample.by_id' sample_id=sample.sample.id path_suffix='' %}"
-    ><img src="{{ STATIC_URL }}juliabase/icons/tag_red.png" alt="rename icon" title="{% trans 'rename sample' %}"
+    ><img src="{% static "juliabase/icons/tag_red.png" %}" alt="rename icon" title="{% trans 'rename sample' %}"
           width="16" height="16"/></a>{% endif %}</h1>{% endspaceless %}
 
       {% block extra_sample_header %}
@@ -86,7 +87,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
         <div class="screen-only" style="float: right"><a
                 href="{% url 'samples.views.sample.qr_code' %}?data={{ sample.sample.id|urlquote_plus }}"
                                                          ><img width="40" height="40" style="display: block"
-                alt="{% trans 'Data Matrix code' %}" src="{{ STATIC_URL }}samples/qrcode.png"/></a></div>
+                alt="{% trans 'Data Matrix code' %}" src="{% static "samples/qrcode.png" %}"/></a></div>
       {% endblock %}
       {% if sample.clearance %}
         <p style="color: red">
@@ -173,23 +174,23 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
             <span id="process-heading-{{ process.process.id }}" class="process-heading"
                   >{{ process.name }}</span>{% if process.edit_url %}<a class="edit-icon"
                        href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/cog_edit.png" alt="edit icon" title="{% trans 'edit' %}"
+               ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/cog_add.png" alt="add icon" title="{% trans 'duplicate' %}"
+               ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% trans 'duplicate' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.export_url %}<a class="edit-icon"
                     href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/table.png" alt="export icon" title="{% trans 'export as table' %}"
+               ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" title="{% trans 'export as table' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.resplit_url %}<a class="edit-icon"
                      href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{{ STATIC_URL }}juliabase/icons/arrow_branch.png" alt="resplit icon" title="{% trans 'resplit' %}"
+               ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}
             <a class="edit-icon"
                 href="{{ process.process.get_absolute_url|urlquote_plus }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-            ><img src="{{ STATIC_URL }}juliabase/icons/zoom.png" alt="show icon" title="{% trans 'show process' %}"
+            ><img src="{% static "juliabase/icons/zoom.png" %}" alt="show icon" title="{% trans 'show process' %}"
                 width="16" height="16"/></a>
             {% if not process.process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% trans "(not finished)" %}</span>{% endif %}

@@ -14,6 +14,7 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
+{% load staticfiles %}
 
 {% block css %}
 <style type="text/css">
@@ -30,7 +31,7 @@ copyright holder, you must destroy it immediately and completely.
     <th>{% trans 'Runtime' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="http://www.python.org"
-            ><img class="helper-program-logo" src="{{ STATIC_URL }}samples/python.png" alt="{% trans 'Python logo' %}"
+            ><img class="helper-program-logo" src="{% static "samples/python.png" %}" alt="{% trans 'Python logo' %}"
                   width="125" height="37"/></a></p>
       <p><a href="http://www.python.org">Python</a>
         <span class="version">{{ language_version }}</span></p></td>
@@ -39,7 +40,7 @@ copyright holder, you must destroy it immediately and completely.
     <th>{% trans 'Web framework' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}"
-            ><img class="helper-program-logo" src="{{ STATIC_URL }}samples/django.png" alt="{% trans 'Django logo' %}"
+            ><img class="helper-program-logo" src="{% static "samples/django.png" %}" alt="{% trans 'Django logo' %}"
                   width="75" height="32"/></a></p>
       <p><a href="{% trans 'http://en.wikipedia.org/wiki/Django_(web_framework)' %}">Django</a>
         <span class="version">{{ framework_version }}</span></p></td>
@@ -49,7 +50,7 @@ copyright holder, you must destroy it immediately and completely.
     <td style="vertical-align: bottom">
       <p><a href="{% trans 'http://matplotlib.sourceforge.net/' %}"
             ><img class="helper-program-logo" style="margin-bottom: 0pt" width="70" height="70"
-                  src="{{ STATIC_URL }}samples/matplotlib.png" alt="{% trans 'Matplotlib logo' %}"/></a></p>
+                  src="{% static "samples/matplotlib.png" %}" alt="{% trans 'Matplotlib logo' %}"/></a></p>
       <p><a href="{% trans 'http://matplotlib.sourceforge.net/' %}">Matplotlib</a>
         <span class="version">{{ matplotlib_version }}</span></p>
     </td>
