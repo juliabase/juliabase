@@ -35,6 +35,7 @@ from samples.permissions import get_all_addable_physical_process_models
 from django.contrib.contenttypes.models import ContentType
 from jb_common import utils as jb_common_utils
 from jb_common.models import Topic, Department
+from django.conf import settings
 
 
 class UserDetailsForm(forms.ModelForm):
