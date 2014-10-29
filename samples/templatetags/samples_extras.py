@@ -25,6 +25,7 @@ from django import template
 from django.template.loader import render_to_string
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
+from django.contrib.staticfiles.storage import staticfiles_storage
 import django.utils.http
 import django.core.urlresolvers
 import samples.models, django.contrib.auth.models
@@ -685,12 +686,12 @@ def get_hash_value(instance):
 
 @register.simple_tag
 def expand_topic(topic, user):
-    static_url = settings.STATIC_URL
     topic_id = topic.topic.id
-    result = """<h3><img src="{static_url}juliabase/icons/group.png" alt="topic icon" style="margin-right: 0.5em" class="topics"
+    result = """<h3><img src="{group_icon_url}" alt="topic icon" style="margin-right: 0.5em" class="topics"
                    width="16" height="16" id="topic-image-{topic_id}"/>{topic_name}</h3>
             <div id="topic-{topic_id}">
-            """.format(static_url=static_url, topic_id=topic_id, topic_name=topic.topic.name)
+            """.format(group_icon_url=staticfiles_storage.url("juliabase/icons/group.png"), topic_id=topic_id,
+                       topic_name=topic.topic.name)
     if topic.samples:
         result += """<ul class="sample-list">
             """
@@ -702,11 +703,12 @@ def expand_topic(topic, user):
     result += """<div class="my-samples-series">
                 """
     for series in topic.sample_series:
-        result += """<h4><img src="{static_url}juliabase/icons/chart_organisation.png" alt="sample series icon" class="sample-series"
+        result += """<h4><img src="{chart_icon_url}" alt="sample series icon" class="sample-series"
                          style="margin-right: 0.5em" width="16" height="16" id="series-image-{sample_series_hash_value}"
                          /><a href="{sample_series_url}">{series_name}</a></h4>""" \
                          """<div id="sample-series-{sample_series_hash_value}">
-                         """.format(static_url=static_url, sample_series_hash_value=get_hash_value(series.sample_series),
+                         """.format(chart_icon_url=staticfiles_storage.url("juliabase/icons/chart_organisation.png"),
+                                    sample_series_hash_value=get_hash_value(series.sample_series),
                                 sample_series_url=series.sample_series.get_absolute_url(), series_name=series.name)
         if not series.is_complete:
             result += """<p>{translate}</p>""".\

@@ -31,6 +31,7 @@ from jb_common.utils import HttpResponseSeeOther, \
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.staticfiles.storage import staticfiles_storage
 import django.core.urlresolvers
 import django.forms as forms
 from django.core.cache import cache
@@ -993,7 +994,7 @@ def data_matrix_code(request):
     hash_.update(data.encode("utf-8"))
     filename = hash_.hexdigest() + ".png"
     filepath = os.path.join(settings.STATIC_ROOT, "data_matrix", filename)
-    url = os.path.join(settings.STATIC_URL, "data_matrix", filename)
+    url = staticfiles_storage.url("data_matrix/" + filename)
     if not os.path.exists(filepath):
         mkdirs(filepath)
         image = PIL.Image.open(cStringIO.StringIO(urllib.urlopen(
