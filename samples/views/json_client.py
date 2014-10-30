@@ -285,10 +285,10 @@ def get_next_quirky_name(sample_name, year_digits):
 @login_required
 @require_http_methods(["POST"])
 def add_sample(request):
-    """Adds a new sample to the database.  It is added without processes.
-    This view can only be used by admin accounts.  If the query string contains
-    ``"legacy=True"``, the sample gets a quirky legacy name (and an appropriate
-    alias).
+    """Adds a new sample to the database.  It is added without processes.  This
+    view can only be used by admin accounts.  The sample is added to the “My
+    Samples” of this account.  If the query string contains ``"legacy=True"``,
+    the sample gets a quirky legacy name (and an appropriate alias).
 
     :Parameters:
       - `request`: the current HTTP Request object; it must contain the sample
