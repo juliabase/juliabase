@@ -14,7 +14,7 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
-import datetime
+import datetime, re
 from samples.views import shared_utils
 from samples import models
 
@@ -72,3 +72,32 @@ def get_next_deposition_or_process_number(letter, process_cls):
                            set(process_cls.objects.filter(number__startswith=prefix).values_list('number', flat=True).iterator())))
     next_number = max(numbers) + 1 if numbers else 1
     return prefix + "{0:03}".format(next_number)
+
+
+quirky_sample_name_pattern = re.compile(r"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
+                                        r"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
+def normalize_legacy_sample_name(sample_name):
+    """Convert an old, probably not totally correct sample name to a valid
+    sample name.  For example, a missing dash after the deposition letter is
+    added, and the deposition letter is converted to uppercase.
+
+    :Parameters:
+      - `sample_name`: the original quirky name of the sample
+
+    :type sample_name: unicode
+
+    :Return:
+      the corrected sample name
+
+    :rtype: unicode
+
+    :Exceptions:
+      - `ValueError`: if the sample name was broken beyond repair.
+    """
+    match = quirky_sample_name_pattern.match(sample_name)
+    if not match:
+        raise ValueError("Sample name is too quirky to normalize")
+    parts = match.groupdict("")
+    parts["number"] = int(parts["number"])
+    parts["letter"] = parts["letter"].upper()
+    return "{year}{letter}-{number:03}{suffix}".format(**parts)
