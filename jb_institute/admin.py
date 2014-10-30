@@ -16,9 +16,9 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
-from jb_institute.models_depositions import ClusterToolDeposition, ClusterToolHotWireLayer, \
+from jb_institute.models.depositions import ClusterToolDeposition, ClusterToolHotWireLayer, \
     ClusterToolPECVDLayer, FiveChamberDeposition, FiveChamberLayer
-from jb_institute.models_physical_processes import PDSMeasurement, Substrate, SolarsimulatorPhotoMeasurement, \
+from jb_institute.models.physical_processes import PDSMeasurement, Substrate, SolarsimulatorPhotoMeasurement, \
     SolarsimulatorPhotoCellMeasurement, Structuring
 from jb_institute.models import SampleDetails, InformalLayer
 

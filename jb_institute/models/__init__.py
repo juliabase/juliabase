@@ -36,9 +36,9 @@ here.
 
 from __future__ import absolute_import, unicode_literals
 
-from jb_institute.models_physical_processes import *
-from jb_institute.models_depositions import *
-from jb_institute.models_sample_details import *
+from .physical_processes import *
+from .depositions import *
+from .sample_details import *
 import samples.models
 
 

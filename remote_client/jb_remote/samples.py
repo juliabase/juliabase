@@ -67,7 +67,7 @@ def new_samples(number_of_samples, current_location, substrate="asahi-u", timest
         be greater than 100.
       - `current_location`: the current location of the samples
       - `substrate`: the substrate of the samples.  You find possible values in
-        `models_physical_processes`.
+        `models.physical_processes`.
       - `timestamp`: the timestamp of the substrate process; defaults to the
         current time
       - `timestamp_inaccuracy`: the timestamp inaccuracy of the substrate
