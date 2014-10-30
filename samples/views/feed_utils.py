@@ -495,7 +495,7 @@ class Reporter(object):
           - `status_message`: the status message for the physical process
 
         :type process_class: ``django.contrib.contenttypes.models.ContentType``
-        :type status_message: ``samples.models_common.StatusMessage``
+        :type status_message: ``samples.models.common.StatusMessage``
         """
         entry = models.FeedStatusMessage.objects.create(originator=self.originator, process_class=process_class,
                                                         status=status_message)
@@ -512,7 +512,7 @@ class Reporter(object):
           - `status_message`: the status message for the physical process
 
         :type process_class: ``django.contrib.contenttypes.models.ContentType``
-        :type status_message: ``samples.models_common.StatusMessage``
+        :type status_message: ``samples.models.common.StatusMessage``
         """
         entry = models.FeedWithdrawnStatusMessage.objects.create(
             originator=self.originator, process_class=process_class, status=status_message)

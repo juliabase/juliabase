@@ -71,7 +71,7 @@ def new_samples(number_of_samples, current_location, substrate="asahi-u", timest
       - `timestamp`: the timestamp of the substrate process; defaults to the
         current time
       - `timestamp_inaccuracy`: the timestamp inaccuracy of the substrate
-        process.  See ``samples.models_common`` for details.
+        process.  See ``samples.models.common`` for details.
       - `purpose`: the purpose of the samples
       - `tags`: the tags of the samples
       - `topic`: the name of the topic of the samples

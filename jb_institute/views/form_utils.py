@@ -54,7 +54,7 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
     :type request: ``QueryDict``
     :type deposition_number: unicode or ``NoneType``
     :type form_set: ``FormSet`` object
-    :type institute_model: ``samples.models_depositions.Deposition``
+    :type institute_model: ``samples.models.depositions.Deposition``
     :type edit_url: unicode
     :type rename_conservatively: bool
 
@@ -128,7 +128,7 @@ def show_depositions(request, deposition_number, institute_model):
 
     :type request: ``HttpRequest``
     :type deposition_number: unicode
-    :type institute_model: ``samples.models_depositions.Deposition``
+    :type institute_model: ``samples.models.depositions.Deposition``
 
     :Returns:
       the HTTP response object
@@ -161,7 +161,7 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
     :type measurement_form: `form_utils.ProcessForm`
     :type sample_form: `SampleForm`
     :type measurement_number: unicode
-    :type institute_model: ``samples.models_physical_processes.Process``
+    :type institute_model: ``samples.models.common.Process``
 
     :Return:
       whether the forms are consistent with each other and the database
@@ -222,7 +222,7 @@ class SampleForm(forms.Form):
             `utils.extract_preset_sample`
 
         :type user: `django.contrib.auth.models.User`
-        :type process_instance: `samples.models_physical_processes.Process`
+        :type process_instance: `samples.models.common.Process`
         :type preset_sample: `models.Sample`
         """
         super(SampleForm, self).__init__(*args, **kwargs)

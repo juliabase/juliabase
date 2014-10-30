@@ -17,9 +17,9 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
 from django.conf import settings
-from samples.models_common import ExternalOperator, Sample, SampleAlias, SampleSplit, SampleDeath, Result, \
+from samples.models.common import ExternalOperator, Sample, SampleAlias, SampleSplit, SampleDeath, Result, \
     SampleSeries, Initials, UserDetails, Process, Clearance, SampleClaim, StatusMessage, Task
-from samples.models_feeds import FeedNewSamples, FeedMovedSamples, FeedNewPhysicalProcess, FeedEditedPhysicalProcess, \
+from samples.models.feeds import FeedNewSamples, FeedMovedSamples, FeedNewPhysicalProcess, FeedEditedPhysicalProcess, \
     FeedResult, FeedCopiedMySamples, FeedEditedSamples, FeedSampleSplit, FeedEditedSampleSeries, FeedNewSampleSeries, \
     FeedMovedSampleSeries, FeedChangedTopic, FeedStatusMessage
 
@@ -67,5 +67,5 @@ admin.site.register(FeedStatusMessage)
 
 
 if settings.TESTING:
-    from samples.models_test import TestPhysicalProcess
+    from samples.models.test import TestPhysicalProcess
     admin.site.register(TestPhysicalProcess)

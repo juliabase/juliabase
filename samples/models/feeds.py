@@ -31,7 +31,7 @@ from jb_common.utils import get_really_full_name
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
-from samples.models_common import Sample, Process, Result, \
+from samples.models.common import Sample, Process, Result, \
     SampleSplit, SampleSeries, StatusMessage, Task
 import django.contrib.auth.models
 import django.core.urlresolvers
@@ -100,7 +100,7 @@ class FeedEntry(PolymorphicModel):
     def get_additional_template_context(self, user):
         """Return a dictionary with additional context that should be
         available in the template.  It is similar to
-        `models_depositions.SixChamberDeposition.get_additional_template_context`.
+        `models.depositions.SixChamberDeposition.get_additional_template_context`.
         However, in contrast to this other method, the feed version is
         implemented in the abstract base class, so it is defined in all feed
         models.  The rationale for this is that it is used in almost every feed

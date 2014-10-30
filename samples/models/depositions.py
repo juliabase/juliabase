@@ -26,7 +26,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.db import models
-from samples.models_common import PhysicalProcess
+from samples.models.common import PhysicalProcess
 from samples.data_tree import DataNode, DataItem
 from jb_common import search
 

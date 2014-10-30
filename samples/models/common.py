@@ -1416,7 +1416,7 @@ class UserDetails(models.Model):
     3-tuples of the the form ``(nickname, deposition, layer)``, where
     “deposition” is the *process id* (``Process.pk``, not the deposition
     number!) of the deposition, and “layer” is the layer number
-    (`models_depositions.Layer.number`).
+    (`models.depositions.Layer.number`).
     """
     display_settings_timestamp = models.DateTimeField(_("display settings last modified"), auto_now_add=True)
     """This timestamp denotes when anything changed which influences the
@@ -1605,7 +1605,7 @@ class ProcessWithSamplePositions(models.Model):
         the ``Process`` class.
 
         For the parameter description see
-            ``samples.models_common.Process.get_cache_key()``
+            ``samples.models.common.Process.get_cache_key()``
         """
         hash_ = hashlib.sha1()
         hash_.update(user_settings_hash.encode("utf-8"))

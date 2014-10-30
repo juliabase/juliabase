@@ -25,7 +25,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote_plus
 from django.db import models
-import samples.models_depositions
+import samples.models.depositions
 from samples import permissions
 from samples.data_tree import DataItem
 from jb_common import models as jb_common_models
@@ -47,12 +47,12 @@ class ClusterToolHotWireAndPECVDGases(models.Model):
                 DataItem("SiH₄/sccm", self.sih4), ]
 
 
-class ClusterToolDeposition(samples.models_depositions.Deposition):
+class ClusterToolDeposition(samples.models.depositions.Deposition):
     """cluster tool depositions..
     """
     carrier = models.CharField(_("carrier"), max_length=10, blank=True)
 
-    class Meta(samples.models_depositions.Deposition.Meta):
+    class Meta(samples.models.depositions.Deposition.Meta):
         verbose_name = _("cluster tool deposition")
         verbose_name_plural = _("cluster tool depositions")
         _ = lambda x: x
@@ -142,12 +142,12 @@ class ClusterToolDeposition(samples.models_depositions.Deposition):
         del model_field.related_models[ClusterToolLayer]
         return model_field
 
-samples.models_depositions.default_location_of_deposited_samples[ClusterToolDeposition] = \
+samples.models.depositions.default_location_of_deposited_samples[ClusterToolDeposition] = \
     _("cluster tool deposition lab")
 
 
 @python_2_unicode_compatible
-class ClusterToolLayer(samples.models_depositions.Layer, jb_common_models.PolymorphicModel):
+class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.PolymorphicModel):
     """Model for a layer of the “cluster tool”.  Note that this is the common
     base class for the actual layer models `ClusterToolHotWireLayer` and
     `ClusterToolPECVDLayer`.  This is *not* an abstract model though because
@@ -157,7 +157,7 @@ class ClusterToolLayer(samples.models_depositions.Layer, jb_common_models.Polymo
     """
     deposition = models.ForeignKey(ClusterToolDeposition, related_name="layers", verbose_name=_("deposition"))
 
-    class Meta(samples.models_depositions.Layer.Meta):
+    class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")
         verbose_name = _("cluster tool layer")
         verbose_name_plural = _("cluster tool layers")
@@ -189,7 +189,7 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
 
     def get_data(self):
         # See `Layer.get_data` for the documentation.
-        data_node = samples.models_depositions.Layer.get_data(self)
+        data_node = samples.models.depositions.Layer.get_data(self)
         data_node.items = [DataItem("layer type", "hot-wire"),
                            DataItem("time", self.time),
                            DataItem("comments", self.comments),
@@ -202,7 +202,7 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     def get_data_for_table_export(self):
         # See `Layer.get_data_for_table_export` for the documentation.
         _ = ugettext
-        data_node = samples.models_depositions.Layer.get_data_for_table_export(self)
+        data_node = samples.models.depositions.Layer.get_data_for_table_export(self)
         data_node.items = [DataItem(_("time"), self.time),
                             DataItem(_("comments"), self.comments),
                             DataItem(_("wire material"), self.get_wire_material_display()),
@@ -234,7 +234,7 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
 
     def get_data(self):
         # See `Layer.get_data` for the documentation.
-        data_node = samples.models_depositions.Layer.get_data(self)
+        data_node = samples.models.depositions.Layer.get_data(self)
         data_node.items = [DataItem("layer type", "PECVD"),
                             DataItem("chamber", self.chamber),
                             DataItem("time", self.time),
@@ -248,7 +248,7 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     def get_data_for_table_export(self):
         _ = ugettext
         # See `Layer.get_data_for_table_export` for the documentation.
-        data_node = samples.models_depositions.Layer.get_data_for_table_export(self)
+        data_node = samples.models.depositions.Layer.get_data_for_table_export(self)
         data_node.items = [DataItem(_("chamber"), self.get_chamber_display()),
                             DataItem(_("time"), self.time),
                             DataItem(_("comments"), self.comments),
@@ -259,10 +259,10 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
 
 
 
-class FiveChamberDeposition(samples.models_depositions.Deposition):
+class FiveChamberDeposition(samples.models.depositions.Deposition):
     """5-chamber depositions.
     """
-    class Meta(samples.models_depositions.Deposition.Meta):
+    class Meta(samples.models.depositions.Deposition.Meta):
         verbose_name = _("5-chamber deposition")
         verbose_name_plural = _("5-chamber depositions")
         _ = lambda x: x
@@ -305,7 +305,7 @@ class FiveChamberDeposition(samples.models_depositions.Deposition):
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
 
 
-samples.models_depositions.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
+samples.models.depositions.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
 
 
 five_chamber_chamber_choices = (
@@ -323,7 +323,7 @@ five_chamber_layer_type_choices = (
 )
 
 @python_2_unicode_compatible
-class FiveChamberLayer(samples.models_depositions.Layer):
+class FiveChamberLayer(samples.models.depositions.Layer):
     """One layer in a 5-chamber deposition.
     """
     deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
@@ -336,7 +336,7 @@ class FiveChamberLayer(samples.models_depositions.Layer):
                                       null=True, blank=True)
     temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=_("in ℃"),
                                       null=True, blank=True)
-    class Meta(samples.models_depositions.Layer.Meta):
+    class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")
         verbose_name = _("5-chamber layer")
         verbose_name_plural = _("5-chamber layers")

@@ -109,7 +109,7 @@ series.  This way, it may be included into sample data sheets indirectly.  You
 see, there's a lot to consider.
 
 
-Cache invalidation helper methods in ``models_common.py``
+Cache invalidation helper methods in ``models/common.py``
 .........................................................
 
 A couple of methods have been added to the core models in order to make cache
