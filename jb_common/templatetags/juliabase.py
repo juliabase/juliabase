@@ -34,7 +34,7 @@ from jb_common import utils
 register = template.Library()
 
 
-@register.filter
+@register.filter(needs_autoescape=True)
 def get_really_full_name(user, anchor_type="http", autoescape=False):
     """Unfortunately, Django's get_full_name method for users returns the
     empty string if the user has no first and surname set. However, it'd be
@@ -68,8 +68,6 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
         return mark_safe('<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
     else:
         return ""
-
-get_really_full_name.needs_autoescape = True
 
 
 math_delimiter_pattern = re.compile(r"(?<!\\)\$", re.UNICODE)
