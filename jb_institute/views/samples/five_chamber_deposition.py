@@ -27,7 +27,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
 from jb_common.utils import is_json_requested
 from samples.views import utils, feed_utils
-from jb_institute.views import form_utils
+from jb_institute.views import form_utils, shared_utils
 import jb_institute.models as institute_models
 
 
@@ -223,7 +223,7 @@ class FormSet(object):
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["timestamp_inaccuracy"] = 0
                 deposition_data["operator"] = self.user.pk
-                deposition_data["number"] = utils.get_next_deposition_number("S")
+                deposition_data["number"] = shared_utils.get_next_deposition_number("S")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 __read_layer_forms(source_deposition_query[0])
         if not self.deposition_form:
@@ -235,7 +235,7 @@ class FormSet(object):
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                        "number": utils.get_next_deposition_number("S")})
+                                        "number": shared_utils.get_next_deposition_number("S")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]

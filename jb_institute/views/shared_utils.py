@@ -44,6 +44,34 @@ def read_solarsimulator_plot_file(filename, columns=(0, 1)):
     return shared_utils._read_plot_file_beginning_after_start_value(filename, columns, start_value=";U/V", separator=",")
 
 
+deposition_index_pattern = re.compile(r"\d{3,4}")
+
+def get_next_deposition_number(letter):
+    """Find a good next deposition number.  For example, if the last run was
+    called “08B-045”, this routine yields “08B-046” (unless the new year has
+    begun).
+
+    :Parameters:
+      - `letter`: the indentifying letter of the deposition apparatus.  For
+        example, it is ``"B"`` for the 6-chamber deposition.
+
+    :type letter: str
+
+    :Return:
+      A so-far unused deposition number for the current calendar year for the
+      given deposition apparatus.
+    """
+    prefix = r"{0}{1}-".format(datetime.date.today().strftime("%y"), letter)
+    prefix_length = len(prefix)
+    pattern_string = r"^{0}[0-9]+".format(re.escape(prefix))
+    deposition_numbers = \
+        models.Deposition.objects.filter(number__regex=pattern_string).values_list("number", flat=True).iterator()
+    numbers = [int(deposition_index_pattern.match(deposition_number[prefix_length:]).group())
+               for deposition_number in deposition_numbers]
+    next_number = max(numbers) + 1 if numbers else 1
+    return prefix + "{0:03}".format(next_number)
+
+
 def get_next_deposition_or_process_number(letter, process_cls):
     """This function works like the `get_next_deposition_number` from `samples.utils`,
     but it also searches throught a given process that is using the same pool of

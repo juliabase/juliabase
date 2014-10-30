@@ -30,6 +30,7 @@ from django.http import Http404
 from samples.views import utils
 from samples import models, permissions
 from jb_institute import models as institute_models, layouts
+from jb_institute.views import shared_utils
 from jb_common.utils import respond_in_json, JSONRequestException
 
 
@@ -97,6 +98,27 @@ def substrate_by_sample(request, sample_id):
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     substrate = get_substrate(sample)
     return respond_in_json(substrate.get_data().to_dict())
+
+
+@never_cache
+@require_http_methods(["GET"])
+def next_deposition_number(request, letter):
+    """Send the next free deposition number to a JSON client.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `letter`: the letter of the deposition system, see
+        `utils.get_next_deposition_number`.
+
+    :type request: ``HttpRequest``
+    :type letter: str
+
+    :Returns:
+      the next free deposition number for the given apparatus.
+
+    :rtype: ``HttpResponse``
+    """
+    return respond_in_json(shared_utils.get_next_deposition_number(letter))
 
 
 def _get_maike_by_filepath(filepath, user):

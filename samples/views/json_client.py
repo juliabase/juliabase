@@ -223,27 +223,6 @@ def logout_remote_client(request):
     return respond_in_json(True)
 
 
-@never_cache
-@require_http_methods(["GET"])
-def next_deposition_number(request, letter):
-    """Send the next free deposition number to a JSON client.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `letter`: the letter of the deposition system, see
-        `utils.get_next_deposition_number`.
-
-    :type request: ``HttpRequest``
-    :type letter: str
-
-    :Returns:
-      the next free deposition number for the given apparatus.
-
-    :rtype: ``HttpResponse``
-    """
-    return respond_in_json(utils.get_next_deposition_number(letter))
-
-
 def get_next_quirky_name(sample_name, year_digits):
     """Returns the next sample name for legacy samples that don't fit into any
     known name scheme.
