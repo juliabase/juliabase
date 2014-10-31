@@ -97,6 +97,11 @@ class Substrate(PhysicalProcess):
         return super(Substrate, self).get_context_for_user(user, context)
 
 
+class PDSMeasurementManager(models.Manager):
+    def get_by_natural_key(self, number):
+        return self.get(number=number)
+
+
 pds_apparatus_choices = (
     ("pds1", _("PDS #1")),
     ("pds2", _("PDS #2"))
@@ -106,6 +111,8 @@ pds_apparatus_choices = (
 class PDSMeasurement(PhysicalProcess):
     """Model for PDS measurements.
     """
+    objects = PDSMeasurementManager()
+
     number = models.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_("raw data file"), max_length=200,
                                     help_text=_("only the relative path below \"pds/\""))
@@ -121,6 +128,9 @@ class PDSMeasurement(PhysicalProcess):
                        ("edit_permissions_for_pds_measurement", _("Can edit perms for PDS measurements")),
                        ("view_every_pds_measurement", _("Can view all PDS measurements")))
         ordering = ["number"]
+
+    def natural_key(self):
+        return (self.number,)
 
     def __str__(self):
         _ = ugettext

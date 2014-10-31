@@ -44,12 +44,19 @@ from django.contrib.contenttypes.models import ContentType
 import collections
 
 
+class ExternalOperatorManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 @python_2_unicode_compatible
 class ExternalOperator(models.Model):
     """Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
     field, which in turn contains `ExternalOperator`.
     """
+    objects = ExternalOperatorManager()
+
     name = models.CharField(_("name"), max_length=30, unique=True)
     institution = models.CharField(_("institution"), max_length=255)
     email = models.EmailField(_("email"))
@@ -71,6 +78,9 @@ class ExternalOperator(models.Model):
         super(ExternalOperator, self).save(*args, **kwargs)
         for process in self.processes.all():
             process.actual_instance.save()
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
@@ -565,10 +575,17 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
+class SampleManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 @python_2_unicode_compatible
 class Sample(models.Model):
     """The model for samples.
     """
+    objects = SampleManager()
+
     name = models.CharField(_("name"), max_length=30, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_("watchers"))
@@ -640,6 +657,9 @@ class Sample(models.Model):
         if not from_split and self.split_origin:
             self.split_origin.save(with_relations=False)
             self.split_origin.parent.save(with_relations=False)
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         """Here, I realise the peculiar naming scheme of provisional sample
@@ -965,6 +985,11 @@ class SampleSplit(Process):
         raise NotImplementedError
 
 
+class ClearanceManager(models.Manager):
+    def get_by_natural_key(self, username, sample_name):
+        return self.get(user__username=username, sample__name=sample_name)
+
+
 @python_2_unicode_compatible
 class Clearance(models.Model):
     """Model for clearances for specific samples to specific users.  Apart
@@ -974,6 +999,8 @@ class Clearance(models.Model):
     Note that the processes needn't be processes connected with the sample.
     They may also belong to one of its ancestors.
     """
+    objects = ClearanceManager()
+
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("user"), related_name="clearances")
     sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
@@ -983,6 +1010,10 @@ class Clearance(models.Model):
         unique_together = ("user", "sample")
         verbose_name = _("clearance")
         verbose_name_plural = _("clearances")
+
+    def natural_key(self):
+        return self.user.natural_key() + self.sample.natural_key()
+    natural_key.dependencies = ["auth.User", "samples.Sample"]
 
     def __str__(self):
         _ = ugettext

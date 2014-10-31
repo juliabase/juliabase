@@ -31,6 +31,11 @@ from samples.views.shared_utils import read_techplot_file
 from samples.data_tree import DataItem
 
 
+class TestPhysicalProcessManager(models.Manager):
+    def get_by_natural_key(self, number):
+        return self.get(number=number)
+
+
 apparatus_choices = (
     ("setup1", "Setup #1"),
     ("setup2", "Setup #2")
@@ -40,6 +45,8 @@ apparatus_choices = (
 class TestPhysicalProcess(PhysicalProcess):
     """Test model for physical measurements.
     """
+    objects = TestPhysicalProcessManager()
+
     number = models.PositiveIntegerField("measurement number", unique=True, db_index=True)
     raw_datafile = models.CharField("raw data file", max_length=200,
                                     help_text="only the relative path below \"data/\"")
@@ -54,6 +61,9 @@ class TestPhysicalProcess(PhysicalProcess):
         verbose_name = "test measurement"
         verbose_name_plural = "test measurements"
         ordering = ["number"]
+
+    def natural_key(self):
+        return (self.number,)
 
     def __str__(self):
         return "Test measurement #{number}".format(number=self.number)
@@ -92,12 +102,22 @@ class TestPhysicalProcess(PhysicalProcess):
         return data_node
 
 
+class AbstractMeasurementManager(models.Manager):
+    def get_by_natural_key(self, number):
+        return self.get(number=number)
+
+
 @python_2_unicode_compatible
 class AbstractMeasurement(PhysicalProcess):
+    objects = AbstractMeasurementManager()
+
     number = models.PositiveIntegerField("number", unique=True, db_index=True)
 
     class Meta(PhysicalProcess.Meta):
         abstract = True
+
+    def natural_key(self):
+        return (self.number,)
 
     def __str__(self):
         return "Appararus {apparatus_number} measurement of {sample}".format(apparatus_number=self.get_apparatus_number(),
