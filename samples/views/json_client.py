@@ -134,11 +134,11 @@ def primary_keys(request):
 @never_cache
 @require_http_methods(["GET"])
 def available_items(request, model_name):
-    """Returns the unique ids of all items that are already in the database
-    for this model.  The point is that it will almost never return primary
-    keys.  Instead, it returns the “official” id of the respective model.  This
-    may be the number of a deposition, or the sample for a measurement process,
-    etc.
+    """Returns the unique ids of all items that are already in the database for
+    this model.  The point is that it will return primary keys only as a
+    fallback.  Instead, it returns the “official” id of the respective model,
+    represented by the result of the `natural_key` method.  This may be the
+    number of a deposition, or the name of the sample, etc.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -164,12 +164,10 @@ def available_items(request, model_name):
         break
     else:
         raise Http404("Model name not found.")
-    # FixMe: Add all interesing models here, and make it accessible from
-    # jb_institute.
-    id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number", "OldClusterToolDeposition": "number",
-                "NewClusterToolDeposition": "number", "PHotWireDeposition": "number",
-                "LargeAreaDeposition": "number", "LargeSputterDeposition": "number"}.get(model_name, "id")
-    return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
+    try:
+        return respond_in_json([instance.natural_key() for instance in model.objects.all()])
+    except AttributeError:
+        return respond_in_json(list(model.objects.values_list("pk", flat=True)))
 
 
 # FixMe: The following two functions must go to jb_common.
