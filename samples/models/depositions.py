@@ -45,6 +45,11 @@ class Deposition(PhysicalProcess):
     class from it.  (By the way, this is the reason why this class needn't
     define a ``get_add_link`` method.)
 
+    It is only sensible to use this class if your institution has
+    institution-wide unique deposition numbers.  Else, make distict model
+    classes for each deposition system which are not derived from `Deposition`,
+    and don't use the `Layer` class below then either.
+
     Every derived class, if it has sub-objects which resemble layers, must
     implement them as a class derived from `Layer`, with a ``ForeignKey`` field
     pointing to the deposition class with ``relative_name="layers"``.  In other
