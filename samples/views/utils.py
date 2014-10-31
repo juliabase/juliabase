@@ -38,14 +38,11 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
 import jb_common.utils
 
 
-old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$")
-new_sample_name_pattern = re.compile(r"""(\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})|  # initials of a user
-                                         [A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4})             # external operator
-                                         -[-A-Za-z_/0-9#()]+$""", re.VERBOSE)
-provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)$")
-def sample_name_format(name):
-    """Determines which sample name format the given name has.  It doesn't
-    test whether the sample name is existing, nor if the initials are valid.
+settings.SAMPLE_NAME_FORMATS["provisional"]["pattern"] = re.compile(r"\*(?P<id>\d{5})$")
+
+def sample_name_format(name, with_match_object=False):
+    """Determines which sample name format the given name has.  It doesn't test
+    whether the sample name is existing, nor if the initials are valid.
 
     :Parameters:
       - `name`: the sample name
@@ -53,19 +50,17 @@ def sample_name_format(name):
     :type name: unicode
 
     :Return:
-      ``"old"`` if the sample name is of the old format, ``"new"`` if it is of
-      the new format (i.e. not derived from a deposition number), and
-      ``"provisional"`` if it is a provisional sample name.  ``None`` if the
-      name had no valid format.
+      The name of the sample name format and the respective match object.  The
+      latter can be used to extract groups, for exampe.  ``None`` if the name
+      had no valid format.
 
-    :rtype: str or ``NoneType``.
+    :rtype: (unicode, re.MatchObject) or ``NoneType``.
     """
-    if old_sample_name_pattern.match(name):
-        return "old"
-    elif new_sample_name_pattern.match(name):
-        return "new"
-    elif provisional_sample_name_pattern.match(name):
-        return "provisional"
+    for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
+        match = properties["pattern"].match(name)
+        if match:
+            return (name_format, match) if with_match_object else name_format
+    return (None, None) if with_match_object else None
 
 
 def get_sample(sample_name):
@@ -175,8 +170,8 @@ def lookup_sample(sample_name, user, with_clearance=False):
       - `permissions.PermissionError`: if the user is not allowed to view the
         sample
     """
-    match = provisional_sample_name_pattern.match(sample_name)
-    if match:
+    name_format, match = sample_name_format(sample_name, with_match_object=True)
+    if name_format == "provisional":
         sample_name = "*{0:05}".format(int(match.group("id")))
     sample = get_sample(sample_name)
     if not sample:
