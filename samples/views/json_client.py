@@ -155,6 +155,7 @@ def available_items(request, model_name):
     """
     if not request.user.is_staff:
         raise permissions.PermissionError(request.user, _("Only the administrator can access this resource."))
+    # FixMe: This must be revisited; it is ugly.
     for app_name in settings.INSTALLED_APPS:
         try:
             model = sys.modules[app_name + ".models"].__dict__[model_name]
