@@ -50,7 +50,7 @@ class ExternalOperator(models.Model):
     institutions.  This is realised by setting the `Process.external_operator`
     field, which in turn contains `ExternalOperator`.
     """
-    name = models.CharField(_("name"), max_length=30)
+    name = models.CharField(_("name"), max_length=30, unique=True)
     institution = models.CharField(_("institution"), max_length=255)
     email = models.EmailField(_("email"))
     alternative_email = models.EmailField(_("alternative email"), blank=True)
