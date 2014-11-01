@@ -476,6 +476,7 @@ def build_structured_sample_list(samples, user):
             topicless_samples.append(sample)
     structured_topics = create_topic_tree(structured_topics)
     for topic_id in sub_topics:
+        # FixMe: This try block hides a bug in the above code.  Remove both.
         try:
             del structured_topics[topic_id]
         except KeyError:
