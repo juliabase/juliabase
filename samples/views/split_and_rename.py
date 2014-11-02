@@ -199,7 +199,7 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["new_name"]
-            if new_name in new_names or utils.does_sample_exist(new_name):
+            if new_name in new_names:
                 new_name_form.add_error(None, _("Name is already given."))
                 referentially_valid = False
             new_names.add(new_name)
