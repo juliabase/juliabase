@@ -61,8 +61,7 @@ class OriginalDataForm(Form):
         if "sample" in self.cleaned_data:
             new_name = self.cleaned_data["new_name"]
             new_name_format = utils.sample_name_format(new_name)
-            if new_name_format == "old" and new_name != self.cleaned_data["sample"].name and \
-                    utils.does_sample_exist(new_name):
+            if new_name != self.cleaned_data["sample"].name and utils.does_sample_exist(new_name):
                 raise ValidationError(_("This sample name exists already."))
             elif new_name_format == "provisional":
                 raise ValidationError(_("You must get rid of the provisional sample name."))
