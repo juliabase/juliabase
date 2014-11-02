@@ -42,15 +42,28 @@ class NewNameForm(forms.Form):
     def __init__(self, parent_name, *args, **kwargs):
         super(NewNameForm, self).__init__(*args, **kwargs)
         self.parent_name = parent_name
+        parent_name_format = utils.sample_name_format(parent_name)
+        if parent_name_format:
+            self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[parent_name_format].get("possible renames", set())
+        else:
+            self.possible_new_name_formats = set()
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
         sample_name_format = utils.sample_name_format(new_name)
         if not sample_name_format:
             raise ValidationError(_("The sample name has an invalid format."))
-        elif sample_name_format == "old":
+        elif sample_name_format not in self.possible_new_name_formats:
             if not new_name.startswith(self.parent_name):
-                raise ValidationError(_("The new sample name must start with the parent sample's name."))
+                error_message = _("The new sample name must start with the parent sample's name.")
+                if self.possible_new_name_formats:
+                    further_error_message = ungettext("  Alternatively, it must be a valid “{sample_formats}” name.",
+                                                      "  Alternatively, it must be a valid name of one of these types: "
+                                                      "{sample_formats}", len(self.possible_new_name_formats))
+                    further_error_message = further_error_message.format(sample_formats=utils.format_enumeration(
+                        utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
+                    error_message += further_error_message
+                raise ValidationError(error_message)
         if utils.does_sample_exist(new_name):
             raise ValidationError(_("Name does already exist in database."))
         return new_name

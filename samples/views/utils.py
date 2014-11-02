@@ -27,7 +27,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters
 from samples import models, permissions
@@ -39,6 +39,11 @@ import jb_common.utils
 
 
 settings.SAMPLE_NAME_FORMATS["provisional"]["pattern"] = re.compile(r"\*(?P<id>\d{5})$")
+settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose name", ugettext_lazy("provisional"))
+for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
+    properties.setdefault("verbose name", name_format)
+renamable_name_formats = {name_format for (name_format, properties) in settings.SAMPLE_NAME_FORMATS.items()
+                          if properties.get("possible renames")}
 
 def sample_name_format(name, with_match_object=False):
     """Determines which sample name format the given name has.  It doesn't test
@@ -61,6 +66,25 @@ def sample_name_format(name, with_match_object=False):
         if match:
             return (name_format, match) if with_match_object else name_format
     return (None, None) if with_match_object else None
+
+
+def verbose_sample_name_format(name_format):
+    """Returns the human-friendly, translatable name of the sample name format.  In
+    English, it is in singular, and usable as an attribute to a noun.  In
+    non-English language, you should choose something equivalent for the
+    translation.
+
+    :Parameters:
+      - `name_format`: The name format
+
+    :type name_format: unicode
+
+    :Return:
+      The verbose human-friendly name of this sample name format.
+
+    :rtype: unicode
+    """
+    return settings.SAMPLE_NAME_FORMATS[name_format]["verbose name"]
 
 
 def get_sample(sample_name):
@@ -502,8 +526,10 @@ def format_enumeration(items):
     """
     items = sorted(six.text_type(item) for item in items)
     if len(items) > 2:
+        # Translators: Intended as a separator in an enumeration of three or more items
         return _(", ").join(items[:-1]) + _(", and ") + items[-1]
     elif len(items) == 2:
+        # Translators: Intended to be used in an enumeration of exactly two items
         return _(" and ").join(items)
     else:
         return "".join(items)

@@ -47,15 +47,11 @@ class OriginalDataForm(Form):
     number_of_pieces = forms.IntegerField(label=_("Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
 
-    def __init__(self, remote_client, new_name, post_data=None, *args, **kwargs):
+    def __init__(self, remote_client, deposition_number, post_data=None, *args, **kwargs):
         if "initial" not in kwargs:
             kwargs["initial"] = {}
-        if post_data is None:
-            old_sample_name = kwargs["initial"]["sample"]
-            kwargs["initial"]["new_name"] = old_sample_name if utils.sample_name_format(old_sample_name) == "new" \
-                else new_name
         super(OriginalDataForm, self).__init__(post_data, *args, **kwargs)
-        self.remote_client, self.new_name = remote_client, new_name
+        self.remote_client, self.deposition_number = remote_client, deposition_number
 
     def clean_new_name(self):
         if "sample" in self.cleaned_data:
@@ -94,11 +90,11 @@ class OriginalDataForm(Form):
             sample = self.cleaned_data.get("sample")
             if sample:
                 old_sample_name_format = utils.sample_name_format(sample.name)
-                if old_sample_name_format == "new":
+                if old_sample_name_format not in utils.renamable_name_formats:
                     if not new_name.startswith(sample.name):
                         self.add_error("new_name", _("The new name must begin with the old name."))
                 elif sample and sample.name != new_name:
-                    if not new_name.startswith(self.new_name):
+                    if not new_name.startswith(self.deposition_number):
                         self.add_error("new_name", _("The new name must begin with the deposition number."))
         return self.cleaned_data
 
@@ -298,14 +294,10 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                              _("Sample {sample} doesn't belong to this deposition.").format(sample=original_sample))
                 referentially_valid = False
             new_name = original_data_form.cleaned_data["new_name"]
-            if utils.sample_name_format(new_name) == "old":
-                # "new" names exist in the database already anyway, so we have
-                # to check for duplicates in the form only for deposition-style
-                # names.
-                if new_name in new_names:
-                    original_data_form.add_error("new_name", _("This sample name has been used already on this page."))
-                    referentially_valid = False
-                new_names.add(new_name)
+            if new_name in new_names:
+                original_data_form.add_error("new_name", _("This sample name has been used already on this page."))
+                referentially_valid = False
+            new_names.add(new_name)
             if more_than_one_piece and new_name == deposition.number:
                 original_data_form.add_error("new_name", _("Since there is more than one piece, the new name "
                                                    "must not be exactly the deposition's name."))
@@ -338,7 +330,7 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                                                         _("This sample name has been used already on this page."))
                                 referentially_valid = False
                             new_names.add(new_name)
-                            if utils.sample_name_format(new_name) != "new" and \
+                            if utils.sample_name_format(new_name) in utils.renamable_name_formats and \
                                     not new_name.startswith(original_data_form.cleaned_data["new_name"]):
                                 new_name_form.add_error("new_name", _("If you choose a deposition-style name, it must begin "
                                                               "with the parent's new name."))
@@ -422,9 +414,7 @@ def forms_from_database(deposition, remote_client, new_names):
         try:
             return new_names[sample.id]
         except KeyError:
-            if utils.sample_name_format(sample.name) == "new":
-                return sample.name
-            else:
+            if utils.sample_name_format(sample.name) in utils.renamable_name_formats:
                 name_postfix = ""
                 try:
                     sample_positions = json.loads(deposition.sample_positions)
@@ -434,8 +424,12 @@ def forms_from_database(deposition, remote_client, new_names):
                     if sample_positions and sample_positions.get(str(sample.id)):
                         name_postfix = "-{0}".format(sample_positions[str(sample.id)])
                 return deposition.number + name_postfix
+            else:
+                return sample.name
     samples = deposition.samples.all()
-    original_data_forms = [OriginalDataForm(remote_client, new_name(sample), initial={"sample": sample.name}, prefix=str(i))
+    original_data_forms = [OriginalDataForm(remote_client, new_name(sample),
+                                            initial={"sample": sample.name, "new_name": new_name(sample)},
+                                            prefix=str(i))
                            for i, sample in enumerate(samples)]
     new_name_form_lists = [[NewNameForm(readonly=True, initial={"new_name": new_name(sample)}, prefix="{0}_0".format(i))]
                            for i, sample in enumerate(samples)]

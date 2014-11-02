@@ -171,7 +171,7 @@ CRAWLER_LOGS_ROOT = str("")
 CRAWLER_LOGS_WHITELIST = set([])
 
 SAMPLE_NAME_FORMATS = {
-    "provisional": {"possible_renames": {"new", "old"}},
+    "provisional": {"possible renames": {"new", "old"}},
     "old":         {"pattern": re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$"),
                     "possible renames": {"new"}},
     "new":         {"pattern": re.compile(r"""(((?P<current_year>\d\d)-
