@@ -96,7 +96,7 @@ class LayerForm(forms.ModelForm):
         self.fields["temperature_2"].widget.attrs["size"] = "5"
 
     def clean_date(self):
-        return form_utils.clean_date_field(self.cleaned_data["date"])
+        return form_utils.clean_timestamp_field(self.cleaned_data["date"])
 
     class Meta:
         model = institute_models.FiveChamberLayer
