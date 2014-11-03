@@ -132,9 +132,6 @@ PROTOCOL = "http"
 LOGIN_URL = "{0}://{1}/login".format(PROTOCOL, DOMAIN_NAME)
 LOGIN_REDIRECT_URL = "/"
 
-# FixMe: LOCALES_DICT should be generated from
-# /var/lib/locales/supported.d/local
-LOCALES_DICT = {"en": ("en_US", "UTF8"), "de": ("de_DE", "UTF8")}
 # This determines which flags are shown
 LANGUAGES = (("en", _("English")), ("de", _("German")))
 
