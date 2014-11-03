@@ -179,3 +179,5 @@ SAMPLE_NAME_FORMATS = {
                                                (?P<external_contact_initials>[A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4}))
                                               -[-A-Za-z_/0-9#()]+$""", re.VERBOSE)}
 }
+
+NAME_PREFIX_TEMPLATES = ("{short_year}-{user_initials}-", "{external_contact_initials}-")

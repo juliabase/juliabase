@@ -32,7 +32,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 from django.contrib import messages
 from samples import models, permissions
-from samples.views import utils
+from samples.views import utils, form_utils
 
 
 class PrefixesForm(forms.Form):
@@ -132,6 +132,44 @@ def is_referentially_valid(samples, prefixes_form, new_name_forms):
     return referentially_valid
 
 
+def find_prefixes(user):
+    """Generates all possible sample name prefixes for the user.  The templates for
+    this are taken from `settings.NAME_PREFIX_TEMPLATES`.  Note that it makes
+    sense to define such prefixes only if you allow sample name formats that
+    also contains these prefixes.
+
+    :Parameters:
+      - `user`: the currently logged-in user
+
+    :type user: django.contrib.auth.models.User
+
+    :Returns:
+      all possible sample name prefixes for this user
+
+    :rtype: list of str
+    """
+    def append_prefix(substitutions):
+        for format_string in settings.NAME_PREFIX_TEMPLATES:
+            try:
+                prefix = format_string.format(**substitutions)
+            except KeyError:
+                pass
+            else:
+                prefixes.append((prefix, prefix))
+    prefixes = []
+    year = str(datetime.datetime.today().year)
+    substitutions = {"year": year, "short_year": year[2:]}
+    try:
+        substitutions["user_initials"] = user.initials.initials
+    except models.Initials.DoesNotExist:
+        pass
+    for initials in models.Initials.objects.filter(external_operator__contact_persons=user):
+        local_substitutions = substitutions.copy()
+        local_substitutions["external_contact_initials"] = initials.initials
+        append_prefix(local_substitutions)
+    return prefixes
+
+
 @login_required
 def bulk_rename(request):
     """View for bulk-renaming samples that have had a provisional name so far.
@@ -148,13 +186,6 @@ def bulk_rename(request):
 
     :rtype: ``HttpResponse``
     """
-    year = datetime.date.today().strftime("%y")
-    try:
-        own_initials = request.user.initials
-        own_prefix = "{0}-{1}-".format(year, own_initials)
-        available_prefixes = [(own_prefix, own_prefix)]
-    except models.Initials.DoesNotExist:
-        available_prefixes = []
     # FixMe: Get rid of the "numbers" parameter.  I think it is only used in
     # the remote client.
     if "numbers" in request.GET:
@@ -171,14 +202,9 @@ def bulk_rename(request):
         raise Http404("No samples given.")
     for sample in samples:
         permissions.assert_can_edit_sample(request.user, sample)
-    for external_operator in request.user.external_contacts.all():
-        try:
-            operator_initials = external_operator.initials
-        except models.Initials.DoesNotExist:
-            continue
-        prefix = "{0}-".format(operator_initials)
-        available_prefixes.append((prefix, prefix))
-    if not available_prefixes:
+
+    available_prefixes = find_prefixes(request.user)
+    if not available_prefixes and any("{user_initials}" in format_ for format_ in settings.NAME_PREFIX_TEMPLATES):
         query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(
             request.path + "?" + request.META["QUERY_STRING"], safe="/")
         messages.info(request, _("You may change the sample names, but you must choose initials first."))
