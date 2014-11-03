@@ -168,4 +168,4 @@ SOLARSIMULATOR_1_ROOT_DIR = str("")
 MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
 
 CRAWLER_LOGS_ROOT = str("")
-CRAWLER_LOGS_WHITELIST = set([])
+CRAWLER_LOGS_WHITELIST = set()
