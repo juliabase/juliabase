@@ -56,15 +56,17 @@ class NewNameForm(forms.Form):
     _ = ugettext_lazy
     name = forms.CharField(label=_("New name"), max_length=22)
 
-    def __init__(self, prefix_, sample, *args, **kwargs):
+    def __init__(self, user, prefix_, sample, *args, **kwargs):
         """Class constructor.
 
         :Parameters:
+          - user: The user that requests the renaming.
           - `prefix_`: The prefix to be used.  If, for some reason, there is no
             prefix available, give an empty string.  Validation will then fail,
             however, it would fail for the whole page anyway without a prefix.
           - `sample`: The sample to be renamed.
 
+        :type user: django.contrib.auth.models.User
         :type prefix_: str
         :type sample: samples.models.Sample
         """
@@ -75,16 +77,19 @@ class NewNameForm(forms.Form):
             self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_name_format].get("possible renames", set())
         else:
             self.possible_new_name_formats = set()
+        self.user = user
 
     def clean_name(self):
         new_name = self.prefix_ + self.cleaned_data["name"]
-        if utils.sample_name_format(new_name) not in self.possible_new_name_formats:
+        name_format, match = utils.sample_name_format(new_name, with_match_object=True)
+        if name_format not in self.possible_new_name_formats:
             error_message = ungettext("New name must be a valid “{sample_formats}” name.",
                                       "New name must be a valid name of one of these types: {sample_formats}",
                                       len(self.possible_new_name_formats))
             error_message = error_message.format(sample_formats=utils.format_enumeration(
                 utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
             raise ValidationError(error_message)
+        form_utils.check_sample_name(match, self.user)
         if utils.does_sample_exist(new_name):
             raise ValidationError(_("This sample name exists already."))
         return new_name
@@ -184,7 +189,8 @@ def bulk_rename(request):
     if request.method == "POST":
         prefixes_form = PrefixesForm(available_prefixes, request.POST)
         prefix = single_prefix or (prefixes_form.cleaned_data["prefix"] if prefixes_form.is_valid() else "")
-        new_name_forms = [NewNameForm(prefix, sample, request.POST, prefix=str(sample.pk)) for sample in samples]
+        new_name_forms = [NewNameForm(request.user, prefix, sample, request.POST, prefix=str(sample.pk))
+                          for sample in samples]
         all_valid = prefixes_form.is_valid() or bool(single_prefix)
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms]) and all_valid
         referentially_valid = is_referentially_valid(samples, prefixes_form, new_name_forms)
@@ -197,7 +203,7 @@ def bulk_rename(request):
             return utils.successful_response(request, _("Successfully renamed the samples."))
     else:
         prefixes_form = PrefixesForm(available_prefixes, initial={"prefix": available_prefixes[0][0]})
-        new_name_forms = [NewNameForm("", sample, prefix=str(sample.pk)) for sample in samples]
+        new_name_forms = [NewNameForm(request.user, "", sample, prefix=str(sample.pk)) for sample in samples]
     return render_to_response("samples/bulk_rename.html",
                               {"title": _("Giving new-style names"),
                                "prefixes": prefixes_form, "single_prefix": single_prefix,

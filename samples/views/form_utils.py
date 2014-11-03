@@ -21,6 +21,7 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 import re, datetime, json
+from django.db.models import Q
 from django.forms.util import ValidationError
 from django.http import QueryDict
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -997,3 +998,52 @@ def choices_of_content_types(classes):
     choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name) for cls in classes]
     choices.sort(key=lambda item: item[1].lower())
     return choices
+
+
+def check_sample_name(match, user, is_new=True):
+    """Check whether the sample name match contains valid data.  This enforces
+    additional constraints to sample names.  With `utils.sample_name_format`,
+    you check whether the sample names matches and pattern, given as a regular
+    explression.  However, if the pattern contains e.g. user initials, it is
+    not checked whether the user initials actually belong to the current user.
+    This is done here.  If anything fails, a `ValidationError` is raised.  This
+    way, it can be called conveniently from ``Form`` methods.
+
+    :Parameters:
+      - `match`: the match object as returned by `utils.sample_name_format`.
+      - `user`: the currently logged-in user
+      - `is_new`: whether the sample name is created right in this moment; if
+        ``False``, we are checking old sample names, which results in _much_
+        lesser checks
+
+    :type match: re.MatchObject
+    :type user: django.contrib.auth.models.User
+    :type is_new: bool
+
+    :Exceptions:
+      - `ValidationError`: if the sample name (represented by the match object)
+        contained invalid fields.
+    """
+    groups = {key: value for key, value in match.groupdict().items() if value is not None}
+    if "current_year" in groups:
+        if len(groups["current_year"]) == 2:
+            current_year = 2000 + int(groups["current_year"])
+        else:
+            current_year = int(groups["current_year"])
+        if current_year != datetime.datetime.now().year:
+            raise ValidationError(_("The year must be the current year."))
+    if "user_initials" in groups:
+        try:
+            error = groups["user_initials"] != user.initials.initials
+        except models.Initials.DoesNotExist:
+            error = True
+        if error:
+            raise ValidationError(_("The initials do not match yours."))
+    if "external_contact_initials" in groups:
+        if not models.Initials.objects.filter(initials=groups["external_contact_initials"],
+                                              external_operator__contact_persons=user).exists():
+            raise ValidationError(_("The initials do not match any of your external contacts."))
+    if "combined_initials" in groups:
+        if not models.Initials.objects.filter(initials=groups["combined_initials"]). \
+           filter(Q(external_operator__contact_persons=user) | Q(user=user)).exists():
+            raise ValidationError(_("The initials do not match yours, nor any of your external contacts."))

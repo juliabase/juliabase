@@ -56,10 +56,9 @@ class OriginalDataForm(Form):
     def clean_new_name(self):
         if "sample" in self.cleaned_data:
             new_name = self.cleaned_data["new_name"]
-            new_name_format = utils.sample_name_format(new_name)
             if new_name != self.cleaned_data["sample"].name and utils.does_sample_exist(new_name):
                 raise ValidationError(_("This sample name exists already."))
-            elif new_name_format == "provisional":
+            elif utils.sample_name_format(new_name) == "provisional":
                 raise ValidationError(_("You must get rid of the provisional sample name."))
             return new_name
 
@@ -105,11 +104,20 @@ class NewNameForm(Form):
     _ = ugettext_lazy
     new_name = forms.CharField(label=_("New sample name"), max_length=30)
 
-    def __init__(self, readonly, data=None, **kwargs):
+    def __init__(self, user, readonly, data=None, **kwargs):
         super(NewNameForm, self).__init__(data, **kwargs)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
         if readonly:
             self.fields["new_name"].widget.attrs["readonly"] = "readonly"
+        self.user = user
+
+    def clean_new_name(self):
+        new_name = self.cleaned_data["new_name"]
+        sample_name_format, match = utils.sample_name_format(new_name, with_match_object=True)
+        if not sample_name_format:
+            raise ValidationError(_("The sample name has an invalid format."))
+        form_utils.check_sample_name(match, self.user)
+        return new_name
 
 
 class GlobalNewDataForm(Form):
@@ -157,16 +165,18 @@ def is_all_valid(original_data_forms, new_name_form_lists, global_new_data_form)
     return valid
 
 
-def change_structure(original_data_forms, new_name_form_lists):
+def change_structure(user, original_data_forms, new_name_form_lists):
     """Add or delete new data form according to the new number of pieces
     entered by the user.  While changes in form fields are performs by the form
     objects themselves, they can't change the *structure* of the view.  This is
     performed here.
 
     :Parameters:
+      - `user`: the current user
       - `original_data_forms`: all old samples and pieces numbers
       - `new_name_form_lists`: new names for all pieces
 
+    :type user: `django.contrib.auth.models.User`
     :type original_data_forms: list of `OriginalDataForm`
     :type new_name_form_lists: list of list of `NewNameForm`
 
@@ -186,7 +196,7 @@ def change_structure(original_data_forms, new_name_form_lists):
                 structure_changed = True
             elif number_of_pieces > len(new_name_forms):
                 for new_name_index in range(len(new_name_forms), number_of_pieces):
-                    new_name_forms.append(NewNameForm(readonly=False,
+                    new_name_forms.append(NewNameForm(user, readonly=False,
                                                       initial={"new_name": original_data_form.cleaned_data["new_name"]},
                                                       prefix="{0}_{1}".format(sample_index, new_name_index)))
                 structure_changed = True
@@ -341,17 +351,19 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
     return referentially_valid
 
 
-def forms_from_post_data(post_data, deposition, remote_client):
+def forms_from_post_data(user, post_data, deposition, remote_client):
     """Intepret the POST data and create bound forms for old and new names and
     the global data.  The top-level new-data list has the same number of
     elements as the original-data list because they correspond to each other.
 
     :Parameters:
+      - `user`: the current user
       - `post_data`: the result from ``request.POST``
       - `deposition`: the deposition after which this split takes place
       - `remote_client`: whether the request was sent from the JuliaBase remote
         client
 
+    :type user: `django.contrib.auth.models.User`
     :type post_data: ``QueryDict``
     :type deposition: `models.Deposition`
     :type remote_client: bool
@@ -373,24 +385,25 @@ def forms_from_post_data(post_data, deposition, remote_client):
         for new_name_index in range(list_of_number_of_new_names[sample_index]):
             prefix = "{0}_{1}".format(sample_index, new_name_index)
             new_name_form = \
-                NewNameForm(readonly=number_of_pieces == 1, data=post_data, prefix=prefix)
+                NewNameForm(user, readonly=number_of_pieces == 1, data=post_data, prefix=prefix)
             if number_of_pieces == 1 and new_name_form.is_valid() and original_data_form.is_valid() \
                     and new_name_form.cleaned_data["new_name"] != original_data_form.cleaned_data["new_name"]:
                 piece_data = {}
                 piece_data["new_name"] = original_data_form.cleaned_data["new_name"]
-                new_name_form = NewNameForm(readonly=True, initial=piece_data, prefix=prefix)
+                new_name_form = NewNameForm(user, readonly=True, initial=piece_data, prefix=prefix)
             new_name_forms.append(new_name_form)
         new_name_form_lists.append(new_name_forms)
     global_new_data_form = GlobalNewDataForm(post_data, deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
 
 
-def forms_from_database(deposition, remote_client, new_names):
+def forms_from_database(user, deposition, remote_client, new_names):
     """Take a deposition instance and construct forms from it for its old and
     new data.  The top-level new data list has the same number of elements as
     the old data list because they correspond to each other.
 
     :Parameters:
+      - `user`: the current user
       - `deposition`: the deposition to be converted to forms.
       - `remote_client`: whether the request was sent from the JuliaBase remote
         client
@@ -399,6 +412,7 @@ def forms_from_database(deposition, remote_client, new_names):
         ``new_names``), the suggested new name is the deposition number, or the
         old name iff it is a new-style name
 
+    :type user: `django.contrib.auth.models.User`
     :type deposition: `models.Deposition`
     :type remote_client: bool
     :type new_names: dict mapping int to unicode
@@ -431,7 +445,8 @@ def forms_from_database(deposition, remote_client, new_names):
                                             initial={"sample": sample.name, "new_name": new_name(sample)},
                                             prefix=str(i))
                            for i, sample in enumerate(samples)]
-    new_name_form_lists = [[NewNameForm(readonly=True, initial={"new_name": new_name(sample)}, prefix="{0}_0".format(i))]
+    new_name_form_lists = [[NewNameForm(user, readonly=True, initial={"new_name": new_name(sample)}, prefix="{0}_0".
+                                        format(i))]
                            for i, sample in enumerate(samples)]
     global_new_data_form = GlobalNewDataForm(deposition_instance=deposition)
     return original_data_forms, new_name_form_lists, global_new_data_form
@@ -468,9 +483,9 @@ def split_and_rename_after_deposition(request, deposition_number):
     remote_client = is_json_requested(request)
     if request.POST:
         original_data_forms, new_name_form_lists, global_new_data_form = \
-            forms_from_post_data(request.POST, deposition, remote_client)
+            forms_from_post_data(request.user, request.POST, deposition, remote_client)
         all_valid = is_all_valid(original_data_forms, new_name_form_lists, global_new_data_form)
-        structure_changed = change_structure(original_data_forms, new_name_form_lists)
+        structure_changed = change_structure(request.user, original_data_forms, new_name_form_lists)
         referentially_valid = is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
         if all_valid and referentially_valid and not structure_changed:
             sample_splits = save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition)
@@ -483,7 +498,7 @@ def split_and_rename_after_deposition(request, deposition_number):
                          for key, new_name in request.GET.items() if key.startswith("new-name-"))
         new_names.pop(0, None)
         original_data_forms, new_name_form_lists, global_new_data_form = \
-            forms_from_database(deposition, remote_client, new_names)
+            forms_from_database(request.user, deposition, remote_client, new_names)
     return render_to_response("samples/split_after_deposition.html",
                               {"title": _("Bulk sample rename for {deposition}").format(deposition=deposition),
                                "samples": zip(original_data_forms, new_name_form_lists),
