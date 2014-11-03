@@ -119,8 +119,8 @@ def is_referentially_valid(samples, prefixes_form, new_name_forms):
 
 @login_required
 def bulk_rename(request):
-    """View for bulk-renaming samples that have had a provisional name so far.
-    If the user don't have initials yet, he is redirected to his preferences
+    """View for bulk-renaming samples that have had a provisional name so far.  If
+    the user doesn't have initials yet, he is redirected to his preferences
     page.
 
     :Parameters:
