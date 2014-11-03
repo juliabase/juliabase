@@ -101,35 +101,6 @@ def camel_case_to_human_text(name):
     return "".join(result)
 
 
-quirky_sample_name_pattern = re.compile(r"(?P<year>\d\d)(?P<letter>[BVHLCSbvhlcs])-?(?P<number>\d{1,4})"
-                                        r"(?P<suffix>[-A-Za-z_/][-A-Za-z_/0-9]*)?$")
-def normalize_legacy_sample_name(sample_name):
-    """Convert an old, probably not totally correct sample name to a valid
-    sample name.  For example, a missing dash after the deposition letter is
-    added, and the deposition letter is converted to uppercase.
-
-    :Parameters:
-      - `sample_name`: the original quirky name of the sample
-
-    :type sample_name: unicode
-
-    :Return:
-      the corrected sample name
-
-    :rtype: unicode
-
-    :Exceptions:
-      - `ValueError`: if the sample name was broken beyond repair.
-    """
-    match = quirky_sample_name_pattern.match(sample_name)
-    if not match:
-        raise ValueError("Sample name is too quirky to normalize")
-    parts = match.groupdict("")
-    parts["number"] = int(parts["number"])
-    parts["letter"] = parts["letter"].upper()
-    return "{year}{letter}-{number:03}{suffix}".format(**parts)
-
-
 class PlotError(Exception):
     """Raised if an error occurs while generating a plot.  Usually, it is
     raised in `Process.pylab_commands` and caught in `Process.generate_plot`.

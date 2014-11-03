@@ -134,11 +134,11 @@ def primary_keys(request):
 @never_cache
 @require_http_methods(["GET"])
 def available_items(request, model_name):
-    """Returns the unique ids of all items that are already in the database
-    for this model.  The point is that it will almost never return primary
-    keys.  Instead, it returns the “official” id of the respective model.  This
-    may be the number of a deposition, or the sample for a measurement process,
-    etc.
+    """Returns the unique ids of all items that are already in the database for
+    this model.  The point is that it will return primary keys only as a
+    fallback.  Instead, it returns the “official” id of the respective model,
+    represented by the result of the `natural_key` method.  This may be the
+    number of a deposition, or the name of the sample, etc.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -155,6 +155,7 @@ def available_items(request, model_name):
     """
     if not request.user.is_staff:
         raise permissions.PermissionError(request.user, _("Only the administrator can access this resource."))
+    # FixMe: This must be revisited; it is ugly.
     for app_name in settings.INSTALLED_APPS:
         try:
             model = sys.modules[app_name + ".models"].__dict__[model_name]
@@ -163,12 +164,10 @@ def available_items(request, model_name):
         break
     else:
         raise Http404("Model name not found.")
-    # FixMe: Add all interesing models here, and make it accessible from
-    # jb_institute.
-    id_field = {"PDSMeasurement": "number", "SixChamberDeposition": "number", "OldClusterToolDeposition": "number",
-                "NewClusterToolDeposition": "number", "PHotWireDeposition": "number",
-                "LargeAreaDeposition": "number", "LargeSputterDeposition": "number"}.get(model_name, "id")
-    return respond_in_json(list(model.objects.values_list(id_field, flat=True)))
+    try:
+        return respond_in_json([instance.natural_key() for instance in model.objects.all()])
+    except AttributeError:
+        return respond_in_json(list(model.objects.values_list("pk", flat=True)))
 
 
 # FixMe: The following two functions must go to jb_common.
@@ -221,129 +220,6 @@ def logout_remote_client(request):
     """
     django.contrib.auth.logout(request)
     return respond_in_json(True)
-
-
-@never_cache
-@require_http_methods(["GET"])
-def next_deposition_number(request, letter):
-    """Send the next free deposition number to a JSON client.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `letter`: the letter of the deposition system, see
-        `utils.get_next_deposition_number`.
-
-    :type request: ``HttpRequest``
-    :type letter: str
-
-    :Returns:
-      the next free deposition number for the given apparatus.
-
-    :rtype: ``HttpResponse``
-    """
-    return respond_in_json(utils.get_next_deposition_number(letter))
-
-
-def get_next_quirky_name(sample_name, year_digits):
-    """Returns the next sample name for legacy samples that don't fit into any
-    known name scheme.
-
-    :Parameters:
-      - `sample_name`: the legacy sample name
-      - `year_digits`: the last two digits of the year of creation of the
-        sample
-
-    :type sample_name: unicode
-    :type year_digits: str
-
-    :Return:
-      the JuliaBase legacy sample name
-
-    :rtype: unicode
-    """
-    prefixes = set()
-    legacy_prefix = year_digits + "-LGCY-"
-    for name in models.Sample.objects.filter(name__startswith=legacy_prefix).values_list("name", flat=True):
-        prefix, __, original_name = name[len(legacy_prefix):].partition("-")
-        if original_name == sample_name:
-            prefixes.add(prefix)
-    free_prefix = ""
-    while free_prefix in prefixes:
-        digits = [ord(digit) for digit in free_prefix]
-        for i in range(len(digits) - 1, -1 , -1):
-            digits[i] += 1
-            if digits[i] > 122:
-                digits[i] = 97
-            else:
-                break
-        else:
-            digits[0:0] = [97]
-        free_prefix = "".join(chr(digit) for digit in digits)
-    return "{0}{1}-{2}".format(legacy_prefix, free_prefix, sample_name)
-
-
-@login_required
-@require_http_methods(["POST"])
-def add_sample(request):
-    """Adds a new sample to the database.  It is added without processes.  This
-    view can only be used by admin accounts.  The sample is added to the “My
-    Samples” of this account.  If the query string contains ``"legacy=True"``,
-    the sample gets a quirky legacy name (and an appropriate alias).
-
-    :Parameters:
-      - `request`: the current HTTP Request object; it must contain the sample
-        data in the POST data.
-
-    :Returns:
-      The primary key of the created sample.  ``False`` if something went
-      wrong.  It may return a 404 if the topic or the currently responsible
-      person wasn't found.
-
-    :rtype: ``HttpResponse``
-    """
-    if not request.user.is_staff:
-        return respond_in_json(False)
-    try:
-        name = request.POST["name"]
-        current_location = request.POST.get("current_location", "")
-        currently_responsible_person = request.POST.get("currently_responsible_person")
-        purpose = request.POST.get("purpose", "")
-        tags = request.POST.get("tags", "")
-        topic = request.POST.get("topic")
-    except KeyError:
-        return respond_in_json(False)
-    if len(name) > 30:
-        return respond_in_json(False)
-    is_legacy_name = request.GET.get("legacy") == "True"
-    if is_legacy_name:
-        year_digits = request.GET.get("timestamp", "")[2:4]
-        try:
-            int(year_digits)
-        except ValueError:
-            return respond_in_json(False)
-        name = get_next_quirky_name(name, year_digits)[:30]
-    if currently_responsible_person:
-        currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
-                                                         pk=utils.convert_id_to_int(currently_responsible_person))
-    if topic:
-        topic = get_object_or_404(Topic, pk=utils.convert_id_to_int(topic))
-    try:
-        sample = models.Sample.objects.create(name=name, current_location=current_location,
-                                              currently_responsible_person=currently_responsible_person, purpose=purpose,
-                                              tags=tags, topic=topic)
-        if is_legacy_name:
-            models.SampleAlias.objects.create(name=request.POST["name"], sample=sample)
-        else:
-            for alias in models.SampleAlias.objects.filter(name=name):
-                # They will be shadowed anyway.  Nevertheless, this action is
-                # an emergency measure.  Probably the samples the aliases point
-                # to should be merged with the sample but this can't be decided
-                # automatically.
-                alias.delete()
-    except IntegrityError:
-        return respond_in_json(False)
-    sample.watchers.add(request.user)
-    return respond_in_json(sample.pk)
 
 
 @login_required

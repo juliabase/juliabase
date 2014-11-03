@@ -241,6 +241,11 @@ class SampleDetails(models.Model):
         return search.SearchTreeNode(cls, related_models, search_fields=search.convert_fields_to_search_fields(cls))
 
 
+class InformalLayerManager(models.Manager):
+    def get_by_natural_key(self, index, sample_name):
+        return self.get(index=index, sample_details__sample__name=sample_name)
+
+
 color_choices = (("black", _("black")), ("blue", _("blue")), ("brown", _("brown")), ("darkgray", _("darkgray")),
                  ("green", _("green")), ("lightblue", _("lightblue")),
                  ("lightgreen", _("lightgreen")), ("magenta", _("magenta")),
@@ -257,6 +262,8 @@ doping_choices = (("p", "p"), ("i", "i"), ("n", "n"))
 class InformalLayer(models.Model):
     """Model for one layer in the informal layer stack diagram.
     """
+    objects = InformalLayerManager()
+
     index = models.PositiveIntegerField(_("index"))
     sample_details = models.ForeignKey(SampleDetails, verbose_name=_("sample details"), related_name="informal_layers")
     doping = models.CharField(_("doping"), max_length=10, null=True, blank=True, choices=doping_choices)
@@ -279,6 +286,10 @@ class InformalLayer(models.Model):
         unique_together = (("index", "sample_details"),)
         verbose_name = _("informal layer")
         verbose_name_plural = _("informal layers")
+
+    def natural_key(self):
+        return (self.index,) + self.sample_details.sample.natural_key()
+    natural_key.dependencies = ["samples.Sample"]
 
     def __str__(self):
         return "{0}-{1} ({2})".format(self.sample_details.sample, self.index, self.classification or self.comments)

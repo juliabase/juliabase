@@ -146,6 +146,11 @@ samples.models.depositions.default_location_of_deposited_samples[ClusterToolDepo
     _("cluster tool deposition lab")
 
 
+class ClusterToolLayerManager(models.Manager):
+    def get_by_natural_key(self, deposition_number, layer_number):
+        return self.get(deposition__number=deposition__number, number=layer_number)
+
+
 @python_2_unicode_compatible
 class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.PolymorphicModel):
     """Model for a layer of the “cluster tool”.  Note that this is the common
@@ -155,7 +160,13 @@ class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.Polymo
     polymorphism here because cluster tools may have layers with very different
     fields.
     """
+    objects = ClusterToolLayerManager()
+
     deposition = models.ForeignKey(ClusterToolDeposition, related_name="layers", verbose_name=_("deposition"))
+
+    def natural_key(self):
+        return self.deposition.natural_key() + (self.number,)
+    natural_key.dependencies = ["samples.Deposition"]
 
     class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")
@@ -165,6 +176,11 @@ class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.Polymo
     def __str__(self):
         _ = ugettext
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
+
+
+class ClusterToolHotWireLayerManager(models.Manager):
+    def get_by_natural_key(self, deposition_number, layer_number):
+        return self.get(deposition__number=deposition__number, number=layer_number)
 
 
 cluster_tool_wire_material_choices = (
@@ -177,6 +193,8 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     """Model for a hot-wire layer in the cluster tool.  We have no
     “chamber” field here because there is only one hot-wire chamber anyway.
     """
+    objects = ClusterToolHotWireLayerManager()
+
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
     wire_material = models.CharField(_("wire material"), max_length=20, choices=cluster_tool_wire_material_choices)
@@ -186,6 +204,10 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         verbose_name = _("cluster tool hot-wire layer")
         verbose_name_plural = _("cluster tool hot-wire layers")
 
+
+    def natural_key(self):
+        return self.deposition.natural_key() + (self.number,)
+    natural_key.dependencies = ["samples.Deposition"]
 
     def get_data(self):
         # See `Layer.get_data` for the documentation.
@@ -211,6 +233,11 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         return data_node
 
 
+class ClusterToolPECVDLayerManager(models.Manager):
+    def get_by_natural_key(self, deposition_number, layer_number):
+        return self.get(deposition__number=deposition__number, number=layer_number)
+
+
 cluster_tool_pecvd_chamber_choices = (
     ("#1", "#1"),
     ("#2", "#2"),
@@ -219,6 +246,8 @@ cluster_tool_pecvd_chamber_choices = (
 class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     """Model for a PECDV layer in the cluster tool.
     """
+    objects = ClusterToolPECVDLayerManager()
+
     chamber = models.CharField(_("chamber"), max_length=5, choices=cluster_tool_pecvd_chamber_choices)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
@@ -231,6 +260,10 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
         verbose_name = _("cluster tool PECVD layer")
         verbose_name_plural = _("cluster tool PECVD layers")
 
+
+    def natural_key(self):
+        return self.deposition.natural_key() + (self.number,)
+    natural_key.dependencies = ["samples.Deposition"]
 
     def get_data(self):
         # See `Layer.get_data` for the documentation.
@@ -305,6 +338,11 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
 
 
+class FiveChamberLayerManager(models.Manager):
+    def get_by_natural_key(self, deposition_number, layer_number):
+        return self.get(deposition__number=deposition__number, number=layer_number)
+
+
 samples.models.depositions.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
 
 
@@ -326,6 +364,8 @@ five_chamber_layer_type_choices = (
 class FiveChamberLayer(samples.models.depositions.Layer):
     """One layer in a 5-chamber deposition.
     """
+    objects = FiveChamberLayerManager()
+
     deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
     date = models.DateField(_("date"))
     layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
@@ -340,6 +380,10 @@ class FiveChamberLayer(samples.models.depositions.Layer):
         unique_together = ("deposition", "number")
         verbose_name = _("5-chamber layer")
         verbose_name_plural = _("5-chamber layers")
+
+    def natural_key(self):
+        return self.deposition.natural_key() + (self.number,)
+    natural_key.dependencies = ["samples.Deposition"]
 
     def __str__(self):
         _ = ugettext

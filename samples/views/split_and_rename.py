@@ -19,6 +19,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+from django.conf import settings
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.http import Http404
@@ -28,7 +29,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from samples import models, permissions
 from jb_common.utils import respond_in_json
-from samples.views import utils, feed_utils
+from samples.views import utils, feed_utils, form_utils
 
 
 class NewNameForm(forms.Form):
@@ -39,18 +40,33 @@ class NewNameForm(forms.Form):
     new_purpose = forms.CharField(label=_("New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_("Delete"), required=False)
 
-    def __init__(self, parent_name, *args, **kwargs):
+    def __init__(self, user, parent_name, *args, **kwargs):
         super(NewNameForm, self).__init__(*args, **kwargs)
         self.parent_name = parent_name
+        parent_name_format = utils.sample_name_format(parent_name)
+        if parent_name_format:
+            self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[parent_name_format].get("possible renames", set())
+        else:
+            self.possible_new_name_formats = set()
+        self.user = user
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        sample_name_format = utils.sample_name_format(new_name)
+        sample_name_format, match = utils.sample_name_format(new_name, with_match_object=True)
         if not sample_name_format:
             raise ValidationError(_("The sample name has an invalid format."))
-        elif sample_name_format == "old":
+        elif sample_name_format not in self.possible_new_name_formats:
             if not new_name.startswith(self.parent_name):
-                raise ValidationError(_("The new sample name must start with the parent sample's name."))
+                error_message = _("The new sample name must start with the parent sample's name.")
+                if self.possible_new_name_formats:
+                    further_error_message = ungettext("  Alternatively, it must be a valid “{sample_formats}” name.",
+                                                      "  Alternatively, it must be a valid name of one of these types: "
+                                                      "{sample_formats}", len(self.possible_new_name_formats))
+                    further_error_message = further_error_message.format(sample_formats=utils.format_enumeration(
+                        utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
+                    error_message += further_error_message
+                raise ValidationError(error_message)
+        form_utils.check_sample_name(match, self.user)
         if utils.does_sample_exist(new_name):
             raise ValidationError(_("Name does already exist in database."))
         return new_name
@@ -72,7 +88,7 @@ class GlobalDataForm(forms.Form):
         self.fields["sample_series"].queryset = permissions.get_editable_sample_series(user_details.user)
 
 
-def forms_from_post_data(post_data, parent, user_details):
+def forms_from_post_data(post_data, parent, user):
     """Interpret the POST data sent by the user through his browser and create
     forms from it.  This function also performs the so-called “structural
     changes”, namely adding and deleting pieces.
@@ -84,11 +100,11 @@ def forms_from_post_data(post_data, parent, user_details):
     :Parameters:
       - `post_data`: the value of ``request.POST``
       - `parent`: the parent sample which is split
-      - `user_details`: the user details of the current user
+      - `user`: the current user
 
     :type post_data: ``QueryDict``
     :type parent: `models.Sample`
-    :type user_details: `models.UserDetails`
+    :type user: `django.contrib.auth.models.User`
 
     :Return:
       The list of the pieces forms, the global data form, and whether the
@@ -111,27 +127,27 @@ def forms_from_post_data(post_data, parent, user_details):
             structure_changed = True
             last_name = None
         else:
-            new_name_forms.append(NewNameForm(parent.name, post_data, prefix=str(index)))
+            new_name_forms.append(NewNameForm(user, parent.name, post_data, prefix=str(index)))
             last_name = post_data["{0}-new_name".format(index)]
     if new_name_forms:
         if last_name == parent.name:
             del new_name_forms[-1]
         else:
             structure_changed = True
-    global_data_form = GlobalDataForm(parent, user_details, post_data)
+    global_data_form = GlobalDataForm(parent, user.samples_user_details, post_data)
     return new_name_forms, global_data_form, structure_changed, next_prefix
 
 
-def forms_from_database(parent, user_details):
+def forms_from_database(parent, user):
     """Generate pristine forms for the given parent.  In particular, this
     returns an empty list of ``new_name_forms``.
 
     :Parameters:
       - `parent`: the sample to be split
-      - `user_details`: the details of the current user
+      - `user`: the current user
 
     :type parent: `models.Sample`
-    :type user_details: `sample.UserDetails`
+    :type user: `django.contrib.auth.models.User`
 
     :Return:
       the initial ``new_name_forms``, the initial ``global_data_form``
@@ -139,7 +155,7 @@ def forms_from_database(parent, user_details):
     :rtype: list of `NewNameForm`, list of `GlobalDataForm`
     """
     new_name_forms = []
-    global_data_form = GlobalDataForm(parent, user_details)
+    global_data_form = GlobalDataForm(parent, user.samples_user_details)
     return new_name_forms, global_data_form
 
 
@@ -296,11 +312,10 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         permissions.assert_can_edit_sample(request.user, parent)
         if parent.last_process_if_split() != old_split:
             raise Http404("This split is not the last one in the sample's process list.")
-    user_details = request.user.samples_user_details
     number_of_old_pieces = old_split.pieces.count() if old_split else 0
     if request.method == "POST":
         new_name_forms, global_data_form, structure_changed, next_prefix = \
-            forms_from_post_data(request.POST, parent, user_details)
+            forms_from_post_data(request.POST, parent, request.user)
         all_valid = is_all_valid(new_name_forms, global_data_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces)
         if all_valid and referentially_valid and not structure_changed:
@@ -311,9 +326,10 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                 request, _("Sample “{sample}” was successfully split.").format(sample=parent),
                 "show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
-        new_name_forms, global_data_form = forms_from_database(parent, user_details)
+        new_name_forms, global_data_form = forms_from_database(parent, request.user)
         next_prefix = "0"
-    new_name_forms.append(NewNameForm(parent.name, initial={"new_name": parent.name, "new_purpose": parent.purpose},
+    new_name_forms.append(NewNameForm(request.user, parent.name,
+                                      initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=next_prefix))
     return render_to_response("samples/split_and_rename.html",
                               {"title": _("Split sample “{sample}”").format(sample=parent),

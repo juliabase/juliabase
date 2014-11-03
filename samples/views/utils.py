@@ -21,13 +21,13 @@ views package.  All symbols from `shared_utils` are also available here.  So
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
-import datetime, copy, re
+import copy, re
 from jb_common import mimeparse
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters
 from samples import models, permissions
@@ -38,14 +38,16 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
 import jb_common.utils
 
 
-old_sample_name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$")
-new_sample_name_pattern = re.compile(r"""(\d\d-([A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4})|  # initials of a user
-                                         [A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4})             # external operator
-                                         -[-A-Za-z_/0-9#()]+$""", re.VERBOSE)
-provisional_sample_name_pattern = re.compile(r"\*(?P<id>\d+)$")
-def sample_name_format(name):
-    """Determines which sample name format the given name has.  It doesn't
-    test whether the sample name is existing, nor if the initials are valid.
+settings.SAMPLE_NAME_FORMATS["provisional"]["pattern"] = re.compile(r"\*(?P<id>\d{5})$")
+settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose name", ugettext_lazy("provisional"))
+for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
+    properties.setdefault("verbose name", name_format)
+renamable_name_formats = {name_format for (name_format, properties) in settings.SAMPLE_NAME_FORMATS.items()
+                          if properties.get("possible renames")}
+
+def sample_name_format(name, with_match_object=False):
+    """Determines which sample name format the given name has.  It doesn't test
+    whether the sample name is existing, nor if the initials are valid.
 
     :Parameters:
       - `name`: the sample name
@@ -53,19 +55,36 @@ def sample_name_format(name):
     :type name: unicode
 
     :Return:
-      ``"old"`` if the sample name is of the old format, ``"new"`` if it is of
-      the new format (i.e. not derived from a deposition number), and
-      ``"provisional"`` if it is a provisional sample name.  ``None`` if the
-      name had no valid format.
+      The name of the sample name format and the respective match object.  The
+      latter can be used to extract groups, for exampe.  ``None`` if the name
+      had no valid format.
 
-    :rtype: str or ``NoneType``.
+    :rtype: (unicode, re.MatchObject) or ``NoneType``.
     """
-    if old_sample_name_pattern.match(name):
-        return "old"
-    elif new_sample_name_pattern.match(name):
-        return "new"
-    elif provisional_sample_name_pattern.match(name):
-        return "provisional"
+    for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
+        match = properties["pattern"].match(name)
+        if match:
+            return (name_format, match) if with_match_object else name_format
+    return (None, None) if with_match_object else None
+
+
+def verbose_sample_name_format(name_format):
+    """Returns the human-friendly, translatable name of the sample name format.  In
+    English, it is in singular, and usable as an attribute to a noun.  In
+    non-English language, you should choose something equivalent for the
+    translation.
+
+    :Parameters:
+      - `name_format`: The name format
+
+    :type name_format: unicode
+
+    :Return:
+      The verbose human-friendly name of this sample name format.
+
+    :rtype: unicode
+    """
+    return settings.SAMPLE_NAME_FORMATS[name_format]["verbose name"]
 
 
 def get_sample(sample_name):
@@ -136,34 +155,6 @@ def normalize_sample_name(sample_name):
         return sample_alias.sample.name
 
 
-deposition_index_pattern = re.compile(r"\d{3,4}")
-
-def get_next_deposition_number(letter):
-    """Find a good next deposition number.  For example, if the last run was
-    called “08B-045”, this routine yields “08B-046” (unless the new year has
-    begun).
-
-    :Parameters:
-      - `letter`: the indentifying letter of the deposition apparatus.  For
-        example, it is ``"B"`` for the 6-chamber deposition.
-
-    :type letter: str
-
-    :Return:
-      A so-far unused deposition number for the current calendar year for the
-      given deposition apparatus.
-    """
-    prefix = r"{0}{1}-".format(datetime.date.today().strftime("%y"), letter)
-    prefix_length = len(prefix)
-    pattern_string = r"^{0}[0-9]+".format(re.escape(prefix))
-    deposition_numbers = \
-        models.Deposition.objects.filter(number__regex=pattern_string).values_list("number", flat=True).iterator()
-    numbers = [int(deposition_index_pattern.match(deposition_number[prefix_length:]).group())
-               for deposition_number in deposition_numbers]
-    next_number = max(numbers) + 1 if numbers else 1
-    return prefix + "{0:03}".format(next_number)
-
-
 class AmbiguityException(Exception):
     """Exception if a sample lookup leads to more than one matching alias
     (remember that alias names needn't be unique).  It is raised in
@@ -203,8 +194,8 @@ def lookup_sample(sample_name, user, with_clearance=False):
       - `permissions.PermissionError`: if the user is not allowed to view the
         sample
     """
-    match = provisional_sample_name_pattern.match(sample_name)
-    if match:
+    name_format, match = sample_name_format(sample_name, with_match_object=True)
+    if name_format == "provisional":
         sample_name = "*{0:05}".format(int(match.group("id")))
     sample = get_sample(sample_name)
     if not sample:
@@ -536,8 +527,10 @@ def format_enumeration(items):
     """
     items = sorted(six.text_type(item) for item in items)
     if len(items) > 2:
+        # Translators: Intended as a separator in an enumeration of three or more items
         return _(", ").join(items[:-1]) + _(", and ") + items[-1]
     elif len(items) == 2:
+        # Translators: Intended to be used in an enumeration of exactly two items
         return _(" and ").join(items)
     else:
         return "".join(items)
