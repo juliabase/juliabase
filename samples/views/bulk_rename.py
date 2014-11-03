@@ -95,18 +95,16 @@ class NewNameForm(forms.Form):
         return new_name
 
 
-def is_referentially_valid(samples, prefixes_form, new_name_forms):
+def is_referentially_valid(samples, new_name_forms):
     """Check whether there are duplicate names on the page.  Note that I don't
     check here wheter samples with these names already exist in the database.
     This is done in the form itself.
 
     :Parameters:
       - `samples`: the samples to be re-named
-      - `prefixes_form`: the form with the selected common prefix
       - `new_name_forms`: all forms with the new names
 
     :type samples: list of `models.Sample`
-    :type prefixes_form: `PrefixesForm`
     :type new_name_forms: list of `NewNameForm`
 
     :Return:
@@ -117,10 +115,6 @@ def is_referentially_valid(samples, prefixes_form, new_name_forms):
     """
     referentially_valid = True
     new_names = set()
-    if prefixes_form.is_valid():
-        prefix_is_external = prefixes_form.cleaned_data.get("prefix").startswith(tuple(string.ascii_uppercase))
-    else:
-        prefix_is_external = False
     for sample, new_name_form in zip(samples, new_name_forms):
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["name"]
@@ -213,13 +207,17 @@ def bulk_rename(request):
                                          query_string=query_string, forced=True)
     single_prefix = available_prefixes[0][1] if len(available_prefixes) == 1 else None
     if request.method == "POST":
-        prefixes_form = PrefixesForm(available_prefixes, request.POST)
-        prefix = single_prefix or (prefixes_form.cleaned_data["prefix"] if prefixes_form.is_valid() else "")
+        if available_prefixes:
+            prefixes_form = PrefixesForm(available_prefixes, request.POST)
+            prefix = single_prefix or (prefixes_form.cleaned_data["prefix"] if prefixes_form.is_valid() else "")
+        else:
+            prefixes_form = None
+            prefix = ""
         new_name_forms = [NewNameForm(request.user, prefix, sample, request.POST, prefix=str(sample.pk))
                           for sample in samples]
-        all_valid = prefixes_form.is_valid() or bool(single_prefix)
+        all_valid = prefixes_form is None or prefixes_form.is_valid()
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms]) and all_valid
-        referentially_valid = is_referentially_valid(samples, prefixes_form, new_name_forms)
+        referentially_valid = is_referentially_valid(samples, new_name_forms)
         if all_valid and referentially_valid:
             for sample, new_name_form in zip(samples, new_name_forms):
                 if not sample.name.startswith("*"):
@@ -228,10 +226,11 @@ def bulk_rename(request):
                 sample.save()
             return utils.successful_response(request, _("Successfully renamed the samples."))
     else:
-        prefixes_form = PrefixesForm(available_prefixes, initial={"prefix": available_prefixes[0][0]})
+        prefixes_form = PrefixesForm(available_prefixes, initial={"prefix": available_prefixes[0][0]}) \
+                            if available_prefixes else None
         new_name_forms = [NewNameForm(request.user, "", sample, prefix=str(sample.pk)) for sample in samples]
     return render_to_response("samples/bulk_rename.html",
                               {"title": _("Giving new-style names"),
                                "prefixes": prefixes_form, "single_prefix": single_prefix,
-                               "samples": zip(samples, new_name_forms), "year": year},
+                               "samples": zip(samples, new_name_forms)},
                               context_instance=RequestContext(request))
