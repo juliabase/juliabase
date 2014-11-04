@@ -7,7 +7,6 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('jb_institute', '0002_initial_data'),
         ('samples', '0002_test_processes'),
     ]
 
