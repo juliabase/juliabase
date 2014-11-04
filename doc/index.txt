@@ -13,7 +13,7 @@
 .. completely.
 
 ============
-JuliaBase
+Welcome!
 ============
 
 .. toctree::
