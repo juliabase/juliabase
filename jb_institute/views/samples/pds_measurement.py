@@ -30,7 +30,7 @@ from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from jb_common.utils import is_json_requested, respond_in_json, check_filepath
 from samples.views import utils, feed_utils
-from jb_institute.views import form_utils
+from jb_institute.views import form_utils, shared_utils
 from samples import models, permissions
 import jb_institute.models as institute_models
 
@@ -94,7 +94,7 @@ def get_data_from_file(number):
                             result["timestamp"] = data_timestamp
                 elif linenumber == 2:
                     try:
-                        sample_name = utils.normalize_legacy_sample_name(line)
+                        sample_name = shared_utils.normalize_legacy_sample_name(line)
                         sample = models.Sample.objects.get(name=sample_name)
                     except (ValueError, models.Sample.DoesNotExist):
                         pass

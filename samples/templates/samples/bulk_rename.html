@@ -30,20 +30,22 @@ copyright holder, you must destroy it immediately and completely.
 <form method="post">
   <table class="padding">
     <tbody>
-    <tr>
-      <td> </td>
-      <td>
-        {% if single_prefix %}
-          {{ single_prefix }}…
-        {% else %}
-          {% error_list prefixes _("Error in prefixes") %}
-          <div>
-            {{ prefixes.prefix }}…
-          </div>
-        {% endif %}
-      </td>
-      <td> </td>
-    </tr>
+    {% if single_prefix or prefixes%}
+      <tr>
+        <td> </td>
+        <td>
+          {% if single_prefix %}
+            {{ single_prefix }}…
+          {% else %}
+            {% error_list prefixes _("Error in prefixes") %}
+            <div>
+              {{ prefixes.prefix }}…
+            </div>
+          {% endif %}
+        </td>
+        <td> </td>
+      </tr>
+    {% endif %}
     {% for sample, new_name in samples %}
       <tr>
         <td class="{% if forloop.last %}last{% else %}row{% endif %}">{{ sample }}</td>

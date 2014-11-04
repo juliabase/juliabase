@@ -22,15 +22,121 @@ client happens in JSON format.
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+from django.db.utils import IntegrityError
 from django.contrib.auth.decorators import login_required
+import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+from jb_common.models import Topic
 from samples.views import utils
 from samples import models, permissions
 from jb_institute import models as institute_models, layouts
+from jb_institute.views import shared_utils
 from jb_common.utils import respond_in_json, JSONRequestException
+
+
+def get_next_quirky_name(sample_name, year_digits):
+    """Returns the next sample name for legacy samples that don't fit into any
+    known name scheme.
+
+    :Parameters:
+      - `sample_name`: the legacy sample name
+      - `year_digits`: the last two digits of the year of creation of the
+        sample
+
+    :type sample_name: unicode
+    :type year_digits: str
+
+    :Return:
+      the JuliaBase legacy sample name
+
+    :rtype: unicode
+    """
+    prefixes = set()
+    legacy_prefix = year_digits + "-LGCY-"
+    for name in models.Sample.objects.filter(name__startswith=legacy_prefix).values_list("name", flat=True):
+        prefix, __, original_name = name[len(legacy_prefix):].partition("-")
+        if original_name == sample_name:
+            prefixes.add(prefix)
+    free_prefix = ""
+    while free_prefix in prefixes:
+        digits = [ord(digit) for digit in free_prefix]
+        for i in range(len(digits) - 1, -1 , -1):
+            digits[i] += 1
+            if digits[i] > 122:
+                digits[i] = 97
+            else:
+                break
+        else:
+            digits[0:0] = [97]
+        free_prefix = "".join(chr(digit) for digit in digits)
+    return "{0}{1}-{2}".format(legacy_prefix, free_prefix, sample_name)
+
+
+@login_required
+@require_http_methods(["POST"])
+def add_sample(request):
+    """Adds a new sample to the database.  It is added without processes.
+    This view can only be used by admin accounts.  If the query string contains
+    ``"legacy=True"``, the sample gets a quirky legacy name (and an appropriate
+    alias).
+
+    :Parameters:
+      - `request`: the current HTTP Request object; it must contain the sample
+        data in the POST data.
+
+    :Returns:
+      The primary key of the created sample.  ``False`` if something went
+      wrong.  It may return a 404 if the topic or the currently responsible
+      person wasn't found.
+
+    :rtype: ``HttpResponse``
+    """
+    if not request.user.is_staff:
+        return respond_in_json(False)
+    try:
+        name = request.POST["name"]
+        current_location = request.POST.get("current_location", "")
+        currently_responsible_person = request.POST.get("currently_responsible_person")
+        purpose = request.POST.get("purpose", "")
+        tags = request.POST.get("tags", "")
+        topic = request.POST.get("topic")
+    except KeyError:
+        return respond_in_json(False)
+    if len(name) > 30:
+        return respond_in_json(False)
+    is_legacy_name = request.GET.get("legacy") == "True"
+    if is_legacy_name:
+        year_digits = request.GET.get("timestamp", "")[2:4]
+        try:
+            int(year_digits)
+        except ValueError:
+            return respond_in_json(False)
+        name = get_next_quirky_name(name, year_digits)[:30]
+    if currently_responsible_person:
+        currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
+                                                         pk=utils.convert_id_to_int(currently_responsible_person))
+    if topic:
+        topic = get_object_or_404(Topic, pk=utils.convert_id_to_int(topic))
+    try:
+        sample = models.Sample.objects.create(name=name, current_location=current_location,
+                                              currently_responsible_person=currently_responsible_person, purpose=purpose,
+                                              tags=tags, topic=topic)
+        if is_legacy_name:
+            models.SampleAlias.objects.create(name=request.POST["name"], sample=sample)
+        else:
+            for alias in models.SampleAlias.objects.filter(name=name):
+                # They will be shadowed anyway.  Nevertheless, this action is
+                # an emergency measure.  Probably the samples the aliases point
+                # to should be merged with the sample but this can't be decided
+                # automatically.
+                alias.delete()
+    except IntegrityError:
+        return respond_in_json(False)
+    sample.watchers.add(request.user)
+    return respond_in_json(sample.pk)
 
 
 def get_substrates(sample):
@@ -97,6 +203,27 @@ def substrate_by_sample(request, sample_id):
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     substrate = get_substrate(sample)
     return respond_in_json(substrate.get_data().to_dict())
+
+
+@never_cache
+@require_http_methods(["GET"])
+def next_deposition_number(request, letter):
+    """Send the next free deposition number to a JSON client.
+
+    :Parameters:
+      - `request`: the current HTTP Request object
+      - `letter`: the letter of the deposition system, see
+        `utils.get_next_deposition_number`.
+
+    :type request: ``HttpRequest``
+    :type letter: str
+
+    :Returns:
+      the next free deposition number for the given apparatus.
+
+    :rtype: ``HttpResponse``
+    """
+    return respond_in_json(shared_utils.get_next_deposition_number(letter))
 
 
 def _get_maike_by_filepath(filepath, user):

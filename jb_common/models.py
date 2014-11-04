@@ -29,17 +29,27 @@ from django.utils.translation import ugettext_lazy as _
 import jb_common.search
 
 
+class DepartmentManager(models.Manager):
+    def get_by_natural_key(self, name):
+        return self.get(name=name)
+
+
 @python_2_unicode_compatible
 class Department(models.Model):
     """Model to determine which process belongs to which department.
     Each department has its own processes, so users should only be
     able to see the processes of their department.
     """
+    objects = DepartmentManager()
+
     name = models.CharField(_("name"), max_length=30, unique=True)
 
     class Meta:
         verbose_name = _("department")
         verbose_name_plural = _("departments")
+
+    def natural_key(self):
+        return (self.name,)
 
     def __str__(self):
         return self.name
@@ -108,6 +118,11 @@ class UserDetails(models.Model):
         return hash_.hexdigest()
 
 
+class TopicManager(models.Manager):
+    def get_by_natural_key(self, name, department):
+        return self.get(name=name, department=department)
+
+
 @python_2_unicode_compatible
 class Topic(models.Model):
     """Model for topics of the institution (institute/company).  Every sample
@@ -120,6 +135,8 @@ class Topic(models.Model):
     topics (in order to make non-disclosure agreements with external partners
     possible).
     """
+    objects = TopicManager()
+
     name = models.CharField(_("name"), max_length=80)
     members = models.ManyToManyField(django.contrib.auth.models.User, blank=True, verbose_name=_("members"),
                                      related_name="topics")
@@ -137,6 +154,9 @@ class Topic(models.Model):
         _ = lambda x: x
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
                        ("can_edit_their_topics", _("Can edit topics that he/she is a manager of")))
+
+    def natural_key(self):
+        return (self.name, self.department)
 
     def __str__(self):
         return six.text_type(self.name)

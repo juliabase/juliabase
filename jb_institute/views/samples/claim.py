@@ -60,7 +60,7 @@ class SamplesForm(forms.Form):
         for name in sample_names:
             name = name.strip()
             if name:
-                if utils.old_sample_name_pattern.match(name):
+                if utils.sample_name_format(name) == "old":
                     if name in valid_names:
                         raise ValidationError(_("The name {name} appears more than once.").format(name=name))
                     valid_names.append(name)

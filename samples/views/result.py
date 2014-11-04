@@ -111,8 +111,6 @@ class ResultForm(form_utils.ProcessForm):
     def clean(self):
         _ = ugettext
         cleaned_data = self.cleaned_data
-        if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
-            self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
         # FixMe: The following could be done in ProcessForm.clean().
         final_operator = self.cleaned_data.get("operator")
         final_external_operator = self.cleaned_data.get("external_operator")

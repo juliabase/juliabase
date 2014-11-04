@@ -235,3 +235,40 @@ class SampleForm(forms.Form):
             samples.append(preset_sample)
             self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples, user)
+
+
+deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")
+def clean_deposition_number_field(value, letter):
+    """Checks wheter a deposition number given by the user in a form is a
+    valid one.  Note that it does not check whether a deposition with this
+    number already exists in the database.  It just checks the syntax of the
+    number.
+
+    :Parameters:
+      - `value`: the deposition number entered by the user
+      - `letter`: the single uppercase letter denoting the deposition system;
+        it may also be a list containing multiple possibily letters
+
+    :type value: unicode
+    :type letter: unicode or list of unicode
+
+    :Return:
+      the original ``value`` (unchanged)
+
+    :rtype: unicode
+
+    :Exceptions:
+      - `ValidationError`: if the deposition number was not a valid deposition
+        number
+    """
+    if not deposition_number_pattern.match(value):
+        # Translators: “YY” is year, “L” is letter, and “NNN” is number
+        raise ValidationError(_("Invalid deposition number.  It must be of the form YYL-NNN."))
+    if isinstance(letter, list):
+        if value[2] not in letter:
+            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(
+                    letter=", ".join(letter)))
+    else:
+        if value[2] != letter:
+            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
+    return value

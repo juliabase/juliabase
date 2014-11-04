@@ -20,7 +20,7 @@ from __future__ import absolute_import, unicode_literals
 # Python3 note: Below, there are some str() calls that should be removed with
 # Python3.
 
-import sys, os.path
+import sys, os.path, re
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -168,4 +168,16 @@ SOLARSIMULATOR_1_ROOT_DIR = str("")
 MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
 
 CRAWLER_LOGS_ROOT = str("")
-CRAWLER_LOGS_WHITELIST = set([])
+CRAWLER_LOGS_WHITELIST = set()
+
+SAMPLE_NAME_FORMATS = {
+    "provisional": {"possible renames": {"new"}},
+    "old":         {"pattern": re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$"),
+                    "possible renames": {"new"}},
+    "new":         {"pattern": re.compile(r"""(((?P<current_year>\d\d)-
+                                                (?P<user_initials>[A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4}))|
+                                               (?P<external_contact_initials>[A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4}))
+                                              -[-A-Za-z_/0-9#()]+$""", re.VERBOSE)}
+}
+
+NAME_PREFIX_TEMPLATES = ("{short_year}-{user_initials}-", "{external_contact_initials}-")
