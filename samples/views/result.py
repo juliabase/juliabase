@@ -432,8 +432,7 @@ class FormSet(object):
             new_related_objects = set(self.related_data_form.cleaned_data["samples"]) | \
                 set(self.related_data_form.cleaned_data["sample_series"])
             if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
-                self.edit_description_form.add_error(None, _("Adding samples or sample series must be marked as important."),
-                             "important")
+                self.edit_description_form.add_error("important", _("Adding samples or sample series must be marked as important."))
                 referentially_valid = False
         quantities = set()
         for quantity_form in self.quantity_forms:
