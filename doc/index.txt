@@ -19,8 +19,8 @@ JuliaBase
 .. toctree::
    :maxdepth: 2
 
-   installation
-   programming
+   programming/installation
+   programming/programming
    
 About this document
 ===================================

@@ -16,6 +16,6 @@ samples/remote_client/6k_import.py
 samples/remote_client/6k_import.py.sicher
 doc/remote_client/.build
 *.pyc
-doc/programming/.build
+doc/.build
 secret_key.txt
 *.mo
