@@ -16,6 +16,36 @@
 Programming
 =============
 
+
+
+This document explains JuliaBase for the programmer.  It is a technical overview
+of the whole architecture.  Moreover, it is a guide for adapting JuliaBase to a
+new institute, research department, or scientific group.
+
+If you want to read this manual, you should be familiar with several
+technologies:
+
+1.  *Python*.  You should have advanced experience in this language.  This
+    includes the standard library; you should at least know what it can do and
+    how to find information about it.
+
+2.  *Django*.  You must have mastered the tutorial of the Django web framework.
+
+3.  *HTML*.  Basic knowledge should be enough.
+
+
+Architecture
+====================
+
+Since JuliaBase is based on the Django Web framework, it consists of several
+Django apps.  The core app is called “jb_common”.  It provides
+functionality which is essential for all JuliaBase components.  On top of that,
+the app “samples” contains all features of a samples database.  However, it
+does not contain institute-specific code in order to remain generic and
+flexible.  This institute-specific code resides in an app of its own and must
+be created by a skilled programmer.
+
+
 Coding guidelines
 ===========================
 
@@ -136,21 +166,17 @@ Schema migration
 
 After you add (or change) database models, you must to a so-called schema
 migration.  This means that the tables in the database PostgreSQL are actually
-changed, so that Django can use this new structure (a.k.a. schema).  If you
-don't do that, your database will not get corrupted, however, JuliaBase won't
-work either.
+changed, so that Django can use this new structure (a.k.a. schema).
 
 It is a good idea to test a schema migration first on a test server.
 
-A schema migration is done using `south`_.  If south is properly installed, it
-has to be called once to make a snapshot of the current models.  After you have
-added new models or fields, you call south again to do the migration in the
-database.  Then, Django and PostgreSQL are in synch again.  Please have a look
-at the south homepage for the details.  Every schema migration is slightly
-thrilling because if it goes wrong, it may be a lot of work to fix it; however,
-in my experience, south just works like a charm.
+The schema migration is created and applied by saying::
 
-.. _`south`: http://south.aeracode.org/
+    ./manage.py makemigrations inm
+    ./manage.py migrate inm
+
+The first line will create a new file in :file:`inm/migrations/`.  It should be
+added to your repository.
 
 Creating the URLs
 ---------------------

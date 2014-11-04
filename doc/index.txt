@@ -12,42 +12,78 @@
 .. permission of the copyright holder, you must destroy it immediately and
 .. completely.
 
-============
-Welcome!
-============
+
+Introduction
+=============
+
+Your scientific institute or working group creates lots of samples, and your
+team needs a tool to keep track of them?  JuliaBase is made for exactly that!
+It offers:
+
+- intuitive browser-based interface, fully working even on mobile devices
+- maximal flexibility for being adapted perfectly to your production and
+  measurement setups, and to your workflows
+- possibility to manage more than one department in a single database
+- fine-grained access control
+- keeps track of samples across sample splits
+- support for pre-evaluating raw data and creating plots
+- automatic notification of changes in your samples
+- sample management by sample series, topics, and tags
+- arbitrarily complex searches made easy, e.g. “find all samples with infrared
+  measurements, deposited together with a sample on glass substrate with a
+  conductivity greater than 10⁻⁶ S/cm; oh yes, and only from this year and made
+  by John”
+- export to spreadsheets
+- automatic lab notebooks
+- database interaction from own programs, e.g. for connecting your measurement
+  setup directly to the database
+- fully translatable; core is available in English and German so far
+- mature codebase
+- fully open source
+
+We believe that the database should adapt to the people and the existing
+workflows rather than the other way round.
+
+However, there is no free lunch … JuliaBase's flexibility comes at a cost.  You
+have to create the Python code to define how it should behave for you.  Mostly,
+this is copy, paste, and modify.  JuliaBase contains code for typical
+processing and measurement setups that you can use as a starting point.
+
+
+Technical overview
+======================
+
+For better evaluation, here is a short list of the technical aspects of
+JuliaBase:
+
+- JuliaBase is built on top of the `Django web framework`_.
+- JuliaBase is written 100% in the Python programming language.
+- Although other setups are possible, the easiest server installation bases on
+  Linux, PostgreSQL, and Apache.
+- Hardware requirements are very low; a 100 people institute could be served by
+  a single ordinary desktop computer.
+
+.. _Django web framework: https://www.djangoproject.com/
+
+
+Getting started
+====================
+
+If you want to give JuliaBase a try, we recomment to :doc:`install it
+</programming/installation>`.  It is pretty straightforward.  Login as
+``juliabase``/``12345`` (login/password) and you will even have administrator
+privileges.  Look around, add samples, add measurements.
+
+If you consider actually using JuliaBase, have a look at the :doc:`programming
+guide <programming/programming>` for how to adapt it to you needs.
+
+
+Contents
+==========
 
 .. toctree::
    :maxdepth: 2
 
    programming/installation
    programming/programming
-   
-About this document
-===================================
 
-This document explains JuliaBase for the programmer.  It is a technical overview
-of the whole architecture.  Moreover, it is a guide for adapting JuliaBase to a
-new institute, research department, or scientific group.
-
-If you want to read this manual, you should be familiar with several
-technologies:
-
-1.  *Python*.  You should have advanced experience in this language.  This
-    includes the standard library; you should at least know what it can do and
-    how to find information about it.
-
-2.  *Django*.  You must have mastered the tutorial of the Django web framework.
-
-3.  *HTML*.  Basic knowledge should be enough.
-
-
-Architecture
-====================
-
-Since JuliaBase is based on the Django Web framework, it consists of several
-Django apps.  The core app is called “jb_common”.  It provides
-functionality which is essential for all JuliaBase components.  On top of that,
-the app “samples” contains all features of a samples database.  However, it
-does not contain institute-specific code in order to remain generic and
-flexible.  This institute-specific code resides in an app of its own and must
-be created by a skilled programmer.
