@@ -99,8 +99,6 @@ class LDAPConnection(object):
     """
 
     def __init__(self):
-        self.connection = ldap.initialize(settings.AD_LDAP_URLS[0])
-        self.connection.set_option(ldap.OPT_REFERRALS, 0)
         self.cached_ad_data = {}
         self.permissions_of_ad_groups = dict(
             (ad_groupname, set(Permission.objects.filter(codename__in=permission_codenames)))
@@ -137,8 +135,6 @@ class LDAPConnection(object):
                 continue
             if not self.is_eligible_ldap_member(username):
                 return False
-            self.connection = ldap.initialize(ad_ldap_url)
-            self.connection.set_option(ldap.OPT_REFERRALS, 0)
             return True
         else:
             mail_admins("JuliaBase LDAP error", message=latest_error.message["desc"])
@@ -163,10 +159,10 @@ class LDAPConnection(object):
         except KeyError:
             found = False
             for ad_ldap_url in settings.AD_LDAP_URLS:
-                self.connection = ldap.initialize(ad_ldap_url)
-                self.connection.set_option(ldap.OPT_REFERRALS, 0)
+                connection = ldap.initialize(ad_ldap_url)
+                connection.set_option(ldap.OPT_REFERRALS, 0)
                 try:
-                    found, attributes = self.connection.search_ext_s(
+                    found, attributes = connection.search_ext_s(
                         settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE,
                         "(&(sAMAccountName={0}){1})".format(username, settings.AD_LDAP_ACCOUNT_FILTER or ""),
                         settings.AD_SEARCH_FIELDS)[0][:2]
