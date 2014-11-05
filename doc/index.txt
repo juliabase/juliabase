@@ -42,7 +42,7 @@ It offers:
 - fully open source
 
 We believe that the database should adapt to the people and the existing
-workflows rather than the other way round.
+workflows rather than the other way round!
 
 However, there is no free lunch … JuliaBase's flexibility comes at a cost.  You
 have to create the Python code to define how it should behave for you.  Mostly,
@@ -86,4 +86,5 @@ Contents
 
    programming/installation
    programming/programming
+   programming/settings
 
