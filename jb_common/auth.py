@@ -259,9 +259,9 @@ class LDAPConnection(object):
             if "department" in attributes:
                 jb_department_name = settings.AD_LDAP_DEPARTMENTS[attributes["department"][0].decode("utf-8")]
                 try:
-                    user.jb_user_details.department = Department.objects.get(name=jb_department_name)
-                except Department.DoesNotExist:
                     user.jb_user_details.department = settings.ADDITIONAL_LDAP_USERS[user.username]
+                except KeyError:
+                    user.jb_user_details.department = Department.objects.get(name=jb_department_name)
             user.email = attributes["mail"][0]
             user.jb_user_details.save()
             user.save()
