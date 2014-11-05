@@ -166,7 +166,8 @@ class LDAPConnection(object):
                     found, attributes = connection.search_ext_s(
                         settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE,
                         "(&(sAMAccountName={0}){1})".format(username, settings.AD_LDAP_ACCOUNT_FILTER),
-                        settings.AD_SEARCH_FIELDS)[0][:2]
+                        list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
+                            settings.LDAP_ADDITIONAL_ATTRIBUTES)))[0][:2]
                 except ldap.LDAPError as e:
                     if settings.AD_LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.AD_LDAP_URLS):
                         mail_admins("JuliaBase LDAP error", message=e.message["desc"])
