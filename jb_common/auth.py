@@ -103,7 +103,8 @@ class LDAPConnection(object):
         self.permissions_of_ad_groups = dict(
             (ad_groupname, set(Permission.objects.filter(codename__in=permission_codenames)))
             for ad_groupname, permission_codenames in settings.PERMISSIONS_OF_AD_GROUPS.items())
-        self.managed_permissions = set(Permission.objects.filter(codename__in=settings.AD_MANAGED_PERMISSIONS))
+        managed_permissions_codenames = set().union(*settings.PERMISSIONS_OF_AD_GROUPS.values())
+        self.managed_permissions = set(Permission.objects.filter(codename__in=managed_permissions_codenames))
 
     def is_valid(self, username, password):
         """Returns whether the username/password combination is known in the AD, and
