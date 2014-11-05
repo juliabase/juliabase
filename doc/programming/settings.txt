@@ -91,7 +91,8 @@ AD_LDAP_ACCOUNT_FILTER
 Default: ``"(!(userAccountControl:1.2.840.113556.1.4.803:=2))"``
 
 LDAP filter for filtering LDAP members that are eligible for JuliaBase access.
-The default filter finds any member which is not inactive.
+The default filter finds any member which is not inactive.  The default value
+works well for Active Directory domain controlers.
 
 
 AD_LDAP_DEPARTMENTS
@@ -126,21 +127,41 @@ Here, 636 is the port number of LDAP-over-TLS.
 AD_SEARCH_DN
 ------------------
 
-AD_SEARCH_FIELDS
------------------------
+Default: ``""`` (Empty string)
+
+The “distinguished name” (DN) which should be used as the base of the search
+for user details in the LDAP directory.  It is typically something like::
+
+    AD_SEARCH_DN = "DC=ad,DC=mycompany,DC=com"
+
 
 AD_USERNAME_TEMPLATE
 -----------------------
 
 Default: ``"{username}"``
 
-This pattern is used to bind to (a.k.a. login into) the LDAP server.
-``{username}`` is replaced by the username of the user that tries to login into
-JuliaBase.  A typical value for this setting is
+This pattern is used to bind to (a.k.a. login into) the LDAP server.  JuliaBase
+uses this binding only to check whether the user's credentials (login,
+password) are valid.  ``{username}`` is replaced by the username of the user
+that tries to login into JuliaBase.  A typical value for this setting is
 
 ::
 
    AD_USERNAME_TEMPLATE = "{username}@mycompany.com"
+
+
+LDAP_ADDITIONAL_ATTRIBUTES
+--------------------------
+
+Default: ``()`` (Empty tuple)
+
+JuliaBase limits the attributes it receives for every user to a certain subset,
+e.g. the user's real name and their department.  If your code needs additional
+LDAP attributes, put their names into this tuple.  Note that its members must
+be byte strings.  An example might be::
+
+    LDAP_ADDITIONAL_ATTRIBUTES = (b"telephoneNumber", b"msExchUserCulture",
+                                  b"physicalDeliveryOfficeName")
 
 
 PERMISSIONS_OF_AD_GROUPS
@@ -163,3 +184,136 @@ Note that you should not change permissions in JuliaBase's admin interface that
 occur in ``PERMISSIONS_OF_AD_GROUPS``.  They will be overwritten during the
 next synchronization with the LDAP directory (in particular, at next user
 login).  Consider these permissions being managed exclusively automatically.
+
+
+Django settings with special meaning in JuliaBase
+=====================================================
+
+Note that JuliaBase does not change the meaning or the default value of Django
+settings.
+
+LANGUAGES
+---------
+
+This settings determines which flags to offer at the top of the screen.  Since
+JuliaBase is available in English and German so far, a sensible value may be::
+
+    LANGUAGES = (("de", _("German")), ("en", _("English")))
+
+Note that the ``_(...)`` makes the language names themselves translatable.  To
+get this working, you must import ``ugettext_lazy`` into :file:`settings.py`::
+
+    from django.utils.translation import ugettext_lazy as _
+
+
+DEBUG
+-----
+
+JuliaBase behaves slightly differently if ``DEBUG=True``.  In particular, all
+outgoing emails are redirected to `DEBUG_EMAIL_REDIRECT_USERNAME`_.
+
+
+DEFAULT_FROM_EMAIL
+------------------
+
+JuliaBase uses this Django setting also for its own outgoing emails.
+
+
+INSTALLED_APPS
+--------------
+
+The minimal set of installed apps for JuliaBase is::
+
+    INSTALLED_APPS = (
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.admin",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+        "jb_institute",
+        "samples",
+        "jb_common"
+    )
+
+Of course, you must replace ``j_institute`` by your own institute's app.
+Furthermore, you may add as many apps as you like, as long as the inner order
+is preserved.
+
+
+LOGIN_URL
+---------
+
+The default URL configuration of JuliaBase puts the login view so that you
+should say::
+
+    LOGIN_URL = "/login"
+
+
+LOGIN_REDIRECT_URL
+------------------
+
+JuliaBase assumes that this setting contains the home page of the database
+application.  It is used in the default templates if you click on the
+“JuliaBase” name on the top.  You may simply set it to ``"/"``.
+
+
+MIDDLEWARE_CLASSES
+------------------
+
+The following is a minimal set of middelware JuliaBase is working with::
+
+    MIDDLEWARE_CLASSES = (
+        "django.middleware.common.CommonMiddleware",
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "jb_common.middleware.MessageMiddleware",
+        "django.middleware.locale.LocaleMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "jb_common.middleware.LocaleMiddleware",
+        "samples.middleware.juliabase.ExceptionsMiddleware",
+    )
+
+Note that while you may add further middleware, you must not change the inner
+ordering of extisting middleware.
+
+
+TEMPLATE_CONTEXT_PROCESSORS
+---------------------------
+
+Make sure that you add ``"jb_common.context_processors.default"`` to the list
+of context processors.
+
+
+TEMPLATE_DIRS
+-------------
+
+So that your can override JuliaBase's templates with own templates, you should
+set::
+
+    TEMPLATE_DIRS = (os.path.dirname(os.path.abspath(__file__)),)
+
+You may add further paths, but this one must be present.  It adds the directory
+in which :file:`settings.py` resides in to the template search path.  You can
+then extend Juliabase templates by beginning your template with e.g.
+
+::
+
+    {% extends "juliabase/samples/templates/samples/list_claims.html" %}
+
+
+TEMPLATE_LOADERS
+----------------
+
+In conjunction with `TEMPLATE_DIRS` you must make sure that Django will look
+for templates first in the app directories, and then in the filesystem.  With
+activated template caching, this looks like::
+
+    TEMPLATE_LOADERS = (
+        ("django.template.loaders.cached.Loader",
+         ("django.template.loaders.app_directories.Loader",
+          "django.template.loaders.filesystem.Loader")),)
+
+and without caching, like::
+
+    TEMPLATE_LOADERS = ("django.template.loaders.app_directories.Loader",
+                        "django.template.loaders.filesystem.Loader")
