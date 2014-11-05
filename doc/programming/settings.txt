@@ -1,0 +1,165 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+==================
+Settings reference
+==================
+
+
+General JuliaBase settings
+============================
+
+DEBUG_EMAIL_REDIRECT_USERNAME
+-------------------------------------------
+
+Default: ``""`` (Empty string)
+
+Username of a user to which all outgoing email should be sent if the Django
+setting ``DEBUG=True``.  If this name is invalid, in particular if it is empty,
+no emails are sent at all in debugging mode.  This prevents embarrassment
+caused by emails sent to other people while merely debugging your code.
+
+
+JAVASCRIPT_I18N_APPS
+---------------------------
+
+Default: ``("django.contrib.auth", "samples", "jb_common")``
+
+Tuple containing all apps which contain translations that should be used in
+JavaScript code.  The apps are named as in the Django setting
+``INSTALLED_APPS``.  See the `Django documentation
+<https://docs.djangoproject.com/en/dev/topics/i18n/translation/#internationalization-in-javascript-code>`_
+for further information.
+
+
+TESTING
+----------
+
+Default: ``True`` if testing, ``False`` otherwise
+
+If this setting is ``True``, we are currently testing JuliaBase, i.e. it was
+started with::
+
+    ./manage.py test {app_name}
+
+This setting is deprecated and will be removed in the future.  Do not use it in
+your own code.
+
+
+USE_X_SENDFILE
+--------------------
+
+Default: ``False``
+
+If ``True``, JuliaBase assumes that the web server is interpreting the
+``X-Sendfile`` header and serves a static file (e.g. an image) itself.
+Otherwise, JuliaBase serves the file, which may be slower and more
+time-consuming.  In most cases, it doesn't matter, though.
+
+
+Settings for LDAP
+===================
+
+ADDITIONAL_LDAP_USERS
+------------------------------
+
+Default: ``{}`` (Empty dict)
+
+Distionary mapping user names to JuliaBase department names.  This contains
+users that are in the LDAP directory but are not in one of the departments
+listed in the setting `AD_LDAP_DEPARTMENTS`_ explained below.  The use case is
+that some people working in the organization but not in the department(s) may
+still be eligible for database access.  By putting them in
+``ADDITIONAL_LDAP_USERS``, they are allowed to login.  They are associated with
+the department they are mapped to.
+
+
+AD_LDAP_ACCOUNT_FILTER
+--------------------------------
+
+Default: ``"(!(userAccountControl:1.2.840.113556.1.4.803:=2))"``
+
+LDAP filter for filtering LDAP members that are eligible for JuliaBase access.
+The default filter finds any member which is not inactive.
+
+
+AD_LDAP_DEPARTMENTS
+-----------------------------
+
+Default: ``{}`` (Empty dict)
+
+Dictionary mapping LDAP department names to JuliaBase department names.  If
+your LDAP directory data sets contain the "department" attribute, this setting
+determines which department get access to chantal.  If this setting is empty,
+all LDAP members get access.
+
+If the LDAP doesn't contain the "department" attribute, this setting should be
+empty.
+
+
+AD_LDAP_URLS
+------------------
+
+Default: ``()`` (Empty tuple)
+
+List of URLs of LDAP directories.  If you want to use LDAP, this must contain
+at least one URL.  It may contain more if there are multiple redundent LDAP
+servers.  In this case, JuliaBase will try each of them until it finds a
+working one.  An example value may be::
+
+    AD_LDAP_URLS = ["ldaps://dc-e01.ad.mycompany.com:636"]
+
+Here, 636 is the port number of LDAP-over-TLS.
+
+
+AD_SEARCH_DN
+------------------
+
+AD_SEARCH_FIELDS
+-----------------------
+
+AD_USERNAME_TEMPLATE
+-----------------------
+
+Default: ``"{username}"``
+
+This pattern is used to bind to (a.k.a. login into) the LDAP server.
+``{username}`` is replaced by the username of the user that tries to login into
+JuliaBase.  A typical value for this setting is
+
+::
+
+   AD_USERNAME_TEMPLATE = "{username}@mycompany.com"
+
+
+PERMISSIONS_OF_AD_GROUPS
+-----------------------------------
+
+Default: ``{}`` (Empty dict)
+
+Dictionary mapping LDAP group names to sets of Django permission names.  Use
+the Django ``codename`` of the permission, without any app label.  An example
+might be::
+
+    PERMISSIONS_OF_AD_GROUPS = {
+            "TG_IEF-5_teamleaders": {"view_all_samples", "adopt_samples",
+                                     "edit_permissions_for_all_physical_processes",
+                                     "add_external_operator",
+                                     "view_all_external_operators", "can_edit_all_topics"}
+        }
+
+Note that you should not change permissions in JuliaBase's admin interface that
+occur in ``PERMISSIONS_OF_AD_GROUPS``.  They will be overwritten during the
+next synchronization with the LDAP directory (in particular, at next user
+login).  Consider these permissions being managed exclusively automatically.
