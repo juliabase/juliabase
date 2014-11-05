@@ -133,15 +133,16 @@ class LDAPConnection(object):
             except ldap.INVALID_CREDENTIALS:
                 return False
             except ldap.LDAPError as e:
-                if settings.AD_LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.AD_LDAP_URLS):
-                    mail_admins("JuliaBase LDAP error", message=e.message["desc"])
-                    return False
+                latest_error = e
                 continue
             if not self.is_eligible_ldap_member(username):
                 return False
             self.connection = ldap.initialize(ad_ldap_url)
             self.connection.set_option(ldap.OPT_REFERRALS, 0)
             return True
+        else:
+            mail_admins("JuliaBase LDAP error", message=latest_error.message["desc"])
+            return False
 
     def get_ad_data(self, username):
         """Returns the dataset of the given user from the Active Directory.
