@@ -18,12 +18,13 @@
 from django.utils.translation import ugettext_lazy as _
 
 
-PDS_ROOT_DIR =
-SOLARSIMULATOR_1_ROOT_DIR =
+PDS_ROOT_DIR
+SOLARSIMULATOR_1_ROOT_DIR
+CACHE_ROOT
+DOMAIN_NAME
+THUMBNAIL_WIDTH
 
 # Django settings which are used in institute
 
-DEBUG =
-INSTALLED_APPS =
-STATIC_ROOT =
-INTERNAL_IPS =
+STATIC_ROOT
+STATIC_URL
