@@ -157,6 +157,7 @@ def find_prefixes(user):
         substitutions["user_initials"] = user.initials.initials
     except models.Initials.DoesNotExist:
         pass
+    append_prefix(substitutions)
     for initials in models.Initials.objects.filter(external_operator__contact_persons=user):
         local_substitutions = substitutions.copy()
         local_substitutions["external_contact_initials"] = initials.initials
