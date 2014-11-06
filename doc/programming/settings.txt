@@ -20,6 +20,54 @@ Settings reference
 General JuliaBase settings
 ============================
 
+
+ADD_SAMPLE_VIEW
+---------------
+
+Default: ``""`` (Empty string)
+
+Name of the view in Python's dot notation which points to the view to add
+samples.  For example::
+
+    ADD_SAMPLE_VIEW = "jb_institute.views.samples.sample.add"
+
+This view function must have exactly one parameter, namely the ``request``
+instance.
+
+
+CACHE_ROOT
+----------
+
+Default: ``"/tmp/juliabase_cache"``
+
+The path where dispensable (in the sense of re-creatable) files are stored.
+JuliaBase mostly uses this directory to store images, e.g. plot files.  If the
+path doesn't exist when the JuliaBase service is started, it is created.  The
+default value should be changed to e.g. ``"/var/cache/juliabase"``.  Note that
+such a path needs to be created by you because Juliabase doesn't have the
+necessary permissions.  ALso note that such a path needs to be writable by the
+webserver process JuliaBase is running on.
+
+
+CRAWLER_LOGS_ROOT
+-----------------
+
+Default: ``""`` (Empty string)
+
+Path to the crawlers' log files.  In this directory, the log file for a
+particular process class is called :file:`{class_name}.log`.  Mind the
+spelling: ``MyProcessClassName`` becomes :file:`my_process_class_name.log`.
+
+
+CRAWLER_LOGS_WHITELIST
+----------------------
+
+Default: ``()`` (Empty tuple)
+
+List of process classes for which the crawler log is public, i.e. not
+restricted to users that are allowed to add new processes of that kind.
+
+
 DEBUG_EMAIL_REDIRECT_USERNAME
 -------------------------------------------
 
@@ -43,6 +91,29 @@ JavaScript code.  The apps are named as in the Django setting
 for further information.
 
 
+MAP_DEPARTMENTS_TO_APP_LABELS
+-----------------------------
+
+Default: ``{}`` (Empty dict)
+
+Dictionary mapping department names to Django app names.  In some places,
+JuliaBase needs to retrieve the app name using this dictionary.  It must
+contain all departments that are in the database.
+
+
+PHYSICAL_PROCESS_BLACKLIST
+--------------------------
+
+Default: ``()`` (Empty tuple)
+
+This lists all physical process classes which should not appear in the status
+messages tables.  Every entry itself is a tuple containing the app name and the
+process class, in all-lowercase::
+
+    PHYSICAL_PROCESS_BLACKLIST = [("jb_institute", "substrate"),
+                                  ("jb_institute", "layerthicknessmeasurement")]
+
+
 TESTING
 ----------
 
@@ -55,6 +126,15 @@ started with::
 
 This setting is deprecated and will be removed in the future.  Do not use it in
 your own code.
+
+
+THUMBNAIL_WIDTH
+---------------
+
+Default: ``400``
+
+This number represents the width in pixels of the thumbnails of plots and
+images that are generated for the sample data sheet.
 
 
 USE_X_SENDFILE
@@ -304,7 +384,7 @@ then extend Juliabase templates by beginning your template with e.g.
 TEMPLATE_LOADERS
 ----------------
 
-In conjunction with `TEMPLATE_DIRS` you must make sure that Django will look
+In conjunction with `TEMPLATE_DIRS`_ you must make sure that Django will look
 for templates first in the app directories, and then in the filesystem.  With
 activated template caching, this looks like::
 

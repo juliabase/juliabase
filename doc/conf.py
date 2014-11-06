@@ -183,8 +183,7 @@ latex_font_size = '11pt'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('programming', 'programming.tex', r'JuliaBase programming guide',
-   r'Torsten Bronger', 'manual'),
+  ('index', 'juliabase.tex', r'JuliaBase', r'Torsten Bronger', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
