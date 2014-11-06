@@ -87,4 +87,5 @@ Contents
    programming/installation
    programming/programming
    programming/settings
+   programming/sample_names
 

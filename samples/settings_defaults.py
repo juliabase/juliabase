@@ -15,6 +15,7 @@
 
 """Default values of settings of the app "samples"."""
 
+import re
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -25,9 +26,10 @@ CRAWLER_LOGS_WHITELIST = ()
 CRAWLER_LOGS_ROOT = ""
 PHYSICAL_PROCESS_BLACKLIST = ()
 ADD_SAMPLE_VIEW = ""
-MERGE_CLEANUP_FUNCTION
-SAMPLE_NAME_FORMATS
-NAME_PREFIX_TEMPLATES
+MERGE_CLEANUP_FUNCTION = ""
+SAMPLE_NAME_FORMATS = {"provisional": {"possible renames": {"default"}},
+                       "default":     {"pattern": re.compile(r"[-A-Za-z_/0-9#()]*$")}}
+NAME_PREFIX_TEMPLATES = ()
 
 # Django settings which are used in samples
 

@@ -101,6 +101,27 @@ JuliaBase needs to retrieve the app name using this dictionary.  It must
 contain all departments that are in the database.
 
 
+MERGE_CLEANUP_FUNCTION
+----------------------
+
+Default: ``""`` (Empty string)
+
+Name of the view in Python's dot notation which points to a function which is
+called after each sample merge.  This function must take exactly two
+parameters, the sample that is merged and the sample that this sample is merged
+into.  It is possible to leave this settings empty; then, nothing special is
+called.
+
+
+NAME_PREFIX_TEMPLATES
+---------------------
+
+Default: ``()`` (Empty tuple)
+
+List of string templates that define possible sample name prefixes.  See
+:doc:`sample_names` for more information.
+
+
 PHYSICAL_PROCESS_BLACKLIST
 --------------------------
 
@@ -112,6 +133,20 @@ process class, in all-lowercase::
 
     PHYSICAL_PROCESS_BLACKLIST = [("jb_institute", "substrate"),
                                   ("jb_institute", "layerthicknessmeasurement")]
+
+
+SAMPLE_NAME_FORMATS
+-------------------
+
+Default::
+
+    SAMPLE_NAME_FORMATS = {"provisional": {"possible renames": {"default"}},
+                           "default":     {"pattern": re.compile(r"[-A-Za-z_/0-9#()]*$")}}
+
+This setting defines which sample names are allowed in your database.  It maps
+the names of the formats to their properties.  Note that you must import the
+``re`` package into your settings file to define name patterns.  See
+:doc:`sample_names` for more information.
 
 
 TESTING
@@ -284,6 +319,21 @@ Note that the ``_(...)`` makes the language names themselves translatable.  To
 get this working, you must import ``ugettext_lazy`` into :file:`settings.py`::
 
     from django.utils.translation import ugettext_lazy as _
+
+
+CACHES
+------
+
+JuliaBase makes heavy use of Django's cache framework.  Thus, we recommend to
+configure an efficient caching backend like memcache::
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+            "LOCATION": ["localhost"],
+            "TIMEOUT": 3600 * 24 * 28
+            }
+        }
 
 
 DEBUG
