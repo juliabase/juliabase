@@ -199,7 +199,8 @@ def bulk_rename(request):
         permissions.assert_can_edit_sample(request.user, sample)
 
     available_prefixes = find_prefixes(request.user)
-    if not available_prefixes and any("{user_initials}" in format_ for format_ in settings.NAME_PREFIX_TEMPLATES):
+    if not available_prefixes and any("{user_initials}" in format_ for format_ in settings.NAME_PREFIX_TEMPLATES) \
+       and not models.Initials.objects.filter(user=request.user).exists():
         query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(
             request.path + "?" + request.META["QUERY_STRING"], safe="/")
         messages.info(request, _("You may change the sample names, but you must choose initials first."))
