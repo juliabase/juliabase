@@ -67,7 +67,7 @@ DATE_FORMAT = "D, j. N Y"
 
 STATIC_ROOT = str("/var/www/juliabase/media/")
 MEDIA_ROOT = str("/var/www/juliabase/uploads")
-CACHE_ROOT = str("/var/cache/juliabase")
+CACHE_ROOT = str("/tmp/juliabase/cache")
 
 USE_X_SENDFILE = True
 
