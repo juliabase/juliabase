@@ -115,11 +115,8 @@ def merge_samples(from_sample, to_sample):
     to_sample.aliases.add(*(alias for alias in from_sample.aliases.all() if alias.name not in to_aliases))
     if not to_sample.aliases.filter(name=from_sample.name).exists():
         to_sample.aliases.create(name=from_sample.name)
-    try:
+    if settings.MERGE_CLEANUP_FUNCTION:
         cleanup_after_merge = get_callable(settings.MERGE_CLEANUP_FUNCTION)
-    except (ImportError, AttributeError):
-        pass
-    else:
         cleanup_after_merge(from_sample, to_sample)
     from_sample.delete()
 
