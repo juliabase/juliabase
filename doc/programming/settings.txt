@@ -1,0 +1,449 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+==================
+Settings reference
+==================
+
+
+General JuliaBase settings
+============================
+
+
+ADD_SAMPLE_VIEW
+---------------
+
+Default: ``""`` (Empty string)
+
+Name of the view in Python's dot notation which points to the view to add
+samples.  For example::
+
+    ADD_SAMPLE_VIEW = "jb_institute.views.samples.sample.add"
+
+This view function must have exactly one parameter, namely the ``request``
+instance.
+
+
+CACHE_ROOT
+----------
+
+Default: ``"/tmp/juliabase_cache"``
+
+The path where dispensable (in the sense of re-creatable) files are stored.
+JuliaBase mostly uses this directory to store images, e.g. plot files.  If the
+path doesn't exist when the JuliaBase service is started, it is created.  The
+default value should be changed to e.g. ``"/var/cache/juliabase"``.  Note that
+such a path needs to be created by you because Juliabase doesn't have the
+necessary permissions.  ALso note that such a path needs to be writable by the
+webserver process JuliaBase is running on.
+
+
+CRAWLER_LOGS_ROOT
+-----------------
+
+Default: ``""`` (Empty string)
+
+Path to the crawlers' log files.  In this directory, the log file for a
+particular process class is called :file:`{class_name}.log`.  Mind the
+spelling: ``MyProcessClassName`` becomes :file:`my_process_class_name.log`.
+
+
+CRAWLER_LOGS_WHITELIST
+----------------------
+
+Default: ``()`` (Empty tuple)
+
+List of process classes for which the crawler log is public, i.e. not
+restricted to users that are allowed to add new processes of that kind.
+
+
+DEBUG_EMAIL_REDIRECT_USERNAME
+-------------------------------------------
+
+Default: ``""`` (Empty string)
+
+Username of a user to which all outgoing email should be sent if the Django
+setting ``DEBUG=True``.  If this name is invalid, in particular if it is empty,
+no emails are sent at all in debugging mode.  This prevents embarrassment
+caused by emails sent to other people while merely debugging your code.
+
+
+JAVASCRIPT_I18N_APPS
+---------------------------
+
+Default: ``("django.contrib.auth", "samples", "jb_common")``
+
+Tuple containing all apps which contain translations that should be used in
+JavaScript code.  The apps are named as in the Django setting
+``INSTALLED_APPS``.  See the `Django documentation
+<https://docs.djangoproject.com/en/dev/topics/i18n/translation/#internationalization-in-javascript-code>`_
+for further information.
+
+
+MAP_DEPARTMENTS_TO_APP_LABELS
+-----------------------------
+
+Default: ``{}`` (Empty dict)
+
+Dictionary mapping department names to Django app names.  In some places,
+JuliaBase needs to retrieve the app name using this dictionary.  It must
+contain all departments that are in the database.
+
+
+MERGE_CLEANUP_FUNCTION
+----------------------
+
+Default: ``""`` (Empty string)
+
+Name of the view in Python's dot notation which points to a function which is
+called after each sample merge.  This function must take exactly two
+parameters, the sample that is merged and the sample that this sample is merged
+into.  It is possible to leave this settings empty; then, nothing special is
+called.
+
+
+NAME_PREFIX_TEMPLATES
+---------------------
+
+Default: ``()`` (Empty tuple)
+
+List of string templates that define possible sample name prefixes.  See
+:doc:`sample_names` for more information.
+
+
+PHYSICAL_PROCESS_BLACKLIST
+--------------------------
+
+Default: ``()`` (Empty tuple)
+
+This lists all physical process classes which should not appear in the status
+messages tables.  Every entry itself is a tuple containing the app name and the
+process class, in all-lowercase::
+
+    PHYSICAL_PROCESS_BLACKLIST = [("jb_institute", "substrate"),
+                                  ("jb_institute", "layerthicknessmeasurement")]
+
+
+SAMPLE_NAME_FORMATS
+-------------------
+
+Default::
+
+    SAMPLE_NAME_FORMATS = {"provisional": {"possible renames": {"default"}},
+                           "default":     {"pattern": re.compile(r"[-A-Za-z_/0-9#()]*$")}}
+
+This setting defines which sample names are allowed in your database.  It maps
+the names of the formats to their properties.  Note that you must import the
+``re`` package into your settings file to define name patterns.  See
+:doc:`sample_names` for more information.
+
+
+TESTING
+----------
+
+Default: ``True`` if testing, ``False`` otherwise
+
+If this setting is ``True``, we are currently testing JuliaBase, i.e. it was
+started with::
+
+    ./manage.py test {app_name}
+
+This setting is deprecated and will be removed in the future.  Do not use it in
+your own code.
+
+
+THUMBNAIL_WIDTH
+---------------
+
+Default: ``400``
+
+This number represents the width in pixels of the thumbnails of plots and
+images that are generated for the sample data sheet.
+
+
+USE_X_SENDFILE
+--------------------
+
+Default: ``False``
+
+If ``True``, JuliaBase assumes that the web server is interpreting the
+``X-Sendfile`` header and serves a static file (e.g. an image) itself.
+Otherwise, JuliaBase serves the file, which may be slower and more
+time-consuming.  In most cases, it doesn't matter, though.
+
+
+Settings for LDAP
+===================
+
+ADDITIONAL_LDAP_USERS
+------------------------------
+
+Default: ``{}`` (Empty dict)
+
+Distionary mapping user names to JuliaBase department names.  This contains
+users that are in the LDAP directory but are not in one of the departments
+listed in the setting `AD_LDAP_DEPARTMENTS`_ explained below.  The use case is
+that some people working in the organization but not in the department(s) may
+still be eligible for database access.  By putting them in
+``ADDITIONAL_LDAP_USERS``, they are allowed to login.  They are associated with
+the department they are mapped to.
+
+
+AD_LDAP_ACCOUNT_FILTER
+--------------------------------
+
+Default: ``"(!(userAccountControl:1.2.840.113556.1.4.803:=2))"``
+
+LDAP filter for filtering LDAP members that are eligible for JuliaBase access.
+The default filter finds any member which is not inactive.  The default value
+works well for Active Directory domain controlers.
+
+
+AD_LDAP_DEPARTMENTS
+-----------------------------
+
+Default: ``{}`` (Empty dict)
+
+Dictionary mapping LDAP department names to JuliaBase department names.  If
+your LDAP directory data sets contain the "department" attribute, this setting
+determines which department get access to chantal.  If this setting is empty,
+all LDAP members get access.
+
+If the LDAP doesn't contain the "department" attribute, this setting should be
+empty.
+
+
+AD_LDAP_URLS
+------------------
+
+Default: ``()`` (Empty tuple)
+
+List of URLs of LDAP directories.  If you want to use LDAP, this must contain
+at least one URL.  It may contain more if there are multiple redundent LDAP
+servers.  In this case, JuliaBase will try each of them until it finds a
+working one.  An example value may be::
+
+    AD_LDAP_URLS = ["ldaps://dc-e01.ad.mycompany.com:636"]
+
+Here, 636 is the port number of LDAP-over-TLS.
+
+
+AD_SEARCH_DN
+------------------
+
+Default: ``""`` (Empty string)
+
+The “distinguished name” (DN) which should be used as the base of the search
+for user details in the LDAP directory.  It is typically something like::
+
+    AD_SEARCH_DN = "DC=ad,DC=mycompany,DC=com"
+
+
+AD_USERNAME_TEMPLATE
+-----------------------
+
+Default: ``"{username}"``
+
+This pattern is used to bind to (a.k.a. login into) the LDAP server.  JuliaBase
+uses this binding only to check whether the user's credentials (login,
+password) are valid.  ``{username}`` is replaced by the username of the user
+that tries to login into JuliaBase.  A typical value for this setting is
+
+::
+
+   AD_USERNAME_TEMPLATE = "{username}@mycompany.com"
+
+
+LDAP_ADDITIONAL_ATTRIBUTES
+--------------------------
+
+Default: ``()`` (Empty tuple)
+
+JuliaBase limits the attributes it receives for every user to a certain subset,
+e.g. the user's real name and their department.  If your code needs additional
+LDAP attributes, put their names into this tuple.  Note that its members must
+be byte strings.  An example might be::
+
+    LDAP_ADDITIONAL_ATTRIBUTES = (b"telephoneNumber", b"msExchUserCulture",
+                                  b"physicalDeliveryOfficeName")
+
+
+PERMISSIONS_OF_AD_GROUPS
+-----------------------------------
+
+Default: ``{}`` (Empty dict)
+
+Dictionary mapping LDAP group names to sets of Django permission names.  Use
+the Django ``codename`` of the permission, without any app label.  An example
+might be::
+
+    PERMISSIONS_OF_AD_GROUPS = {
+            "TG_IEF-5_teamleaders": {"view_all_samples", "adopt_samples",
+                                     "edit_permissions_for_all_physical_processes",
+                                     "add_external_operator",
+                                     "view_all_external_operators", "can_edit_all_topics"}
+        }
+
+Note that you should not change permissions in JuliaBase's admin interface that
+occur in ``PERMISSIONS_OF_AD_GROUPS``.  They will be overwritten during the
+next synchronization with the LDAP directory (in particular, at next user
+login).  Consider these permissions being managed exclusively automatically.
+
+
+Django settings with special meaning in JuliaBase
+=====================================================
+
+Note that JuliaBase does not change the meaning or the default value of Django
+settings.
+
+LANGUAGES
+---------
+
+This settings determines which flags to offer at the top of the screen.  Since
+JuliaBase is available in English and German so far, a sensible value may be::
+
+    LANGUAGES = (("de", _("German")), ("en", _("English")))
+
+Note that the ``_(...)`` makes the language names themselves translatable.  To
+get this working, you must import ``ugettext_lazy`` into :file:`settings.py`::
+
+    from django.utils.translation import ugettext_lazy as _
+
+
+CACHES
+------
+
+JuliaBase makes heavy use of Django's cache framework.  Thus, we recommend to
+configure an efficient caching backend like memcache::
+
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
+            "LOCATION": ["localhost"],
+            "TIMEOUT": 3600 * 24 * 28
+            }
+        }
+
+
+DEBUG
+-----
+
+JuliaBase behaves slightly differently if ``DEBUG=True``.  In particular, all
+outgoing emails are redirected to `DEBUG_EMAIL_REDIRECT_USERNAME`_.
+
+
+DEFAULT_FROM_EMAIL
+------------------
+
+JuliaBase uses this Django setting also for its own outgoing emails.
+
+
+INSTALLED_APPS
+--------------
+
+The minimal set of installed apps for JuliaBase is::
+
+    INSTALLED_APPS = (
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.admin",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+        "jb_institute",
+        "samples",
+        "jb_common"
+    )
+
+Of course, you must replace ``j_institute`` by your own institute's app.
+Furthermore, you may add as many apps as you like, as long as the inner order
+is preserved.
+
+
+LOGIN_URL
+---------
+
+The default URL configuration of JuliaBase puts the login view so that you
+should say::
+
+    LOGIN_URL = "/login"
+
+
+LOGIN_REDIRECT_URL
+------------------
+
+JuliaBase assumes that this setting contains the home page of the database
+application.  It is used in the default templates if you click on the
+“JuliaBase” name on the top.  You may simply set it to ``"/"``.
+
+
+MIDDLEWARE_CLASSES
+------------------
+
+The following is a minimal set of middelware JuliaBase is working with::
+
+    MIDDLEWARE_CLASSES = (
+        "django.middleware.common.CommonMiddleware",
+        "django.contrib.sessions.middleware.SessionMiddleware",
+        "jb_common.middleware.MessageMiddleware",
+        "django.middleware.locale.LocaleMiddleware",
+        "django.contrib.auth.middleware.AuthenticationMiddleware",
+        "jb_common.middleware.LocaleMiddleware",
+        "samples.middleware.juliabase.ExceptionsMiddleware",
+    )
+
+Note that while you may add further middleware, you must not change the inner
+ordering of extisting middleware.
+
+
+TEMPLATE_CONTEXT_PROCESSORS
+---------------------------
+
+Make sure that you add ``"jb_common.context_processors.default"`` to the list
+of context processors.
+
+
+TEMPLATE_DIRS
+-------------
+
+So that your can override JuliaBase's templates with own templates, you should
+set::
+
+    TEMPLATE_DIRS = (os.path.dirname(os.path.abspath(__file__)),)
+
+You may add further paths, but this one must be present.  It adds the directory
+in which :file:`settings.py` resides in to the template search path.  You can
+then extend Juliabase templates by beginning your template with e.g.
+
+::
+
+    {% extends "juliabase/samples/templates/samples/list_claims.html" %}
+
+
+TEMPLATE_LOADERS
+----------------
+
+In conjunction with `TEMPLATE_DIRS`_ you must make sure that Django will look
+for templates first in the app directories, and then in the filesystem.  With
+activated template caching, this looks like::
+
+    TEMPLATE_LOADERS = (
+        ("django.template.loaders.cached.Loader",
+         ("django.template.loaders.app_directories.Loader",
+          "django.template.loaders.filesystem.Loader")),)
+
+and without caching, like::
+
+    TEMPLATE_LOADERS = ("django.template.loaders.app_directories.Loader",
+                        "django.template.loaders.filesystem.Loader")

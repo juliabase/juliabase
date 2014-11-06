@@ -21,7 +21,10 @@ functions for it.
 from __future__ import absolute_import, division, unicode_literals
 
 import sys
-import memcache
+try:
+    import memcache
+except ImportError:
+    memcache = None
 import matplotlib
 from django.utils.translation import ugettext as _
 from django.shortcuts import render_to_response
@@ -41,7 +44,7 @@ def get_cache_connections():
 
     :rtype: int, int
     """
-    if settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.memcached.MemcachedCache":
+    if memcache and settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.memcached.MemcachedCache":
         memcached_client = memcache.Client(settings.CACHES["default"]["LOCATION"])
         servers = memcached_client.get_stats()
         number_of_servers = len(servers)

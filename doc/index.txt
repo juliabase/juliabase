@@ -1,0 +1,91 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+
+Introduction
+=============
+
+Your scientific institute or working group creates lots of samples, and your
+team needs a tool to keep track of them?  JuliaBase is made for exactly that!
+It offers:
+
+- intuitive browser-based interface, fully working even on mobile devices
+- maximal flexibility for being adapted perfectly to your production and
+  measurement setups, and to your workflows
+- possibility to manage more than one department in a single database
+- fine-grained access control
+- keeps track of samples across sample splits
+- support for pre-evaluating raw data and creating plots
+- automatic notification of changes in your samples
+- sample management by sample series, topics, and tags
+- arbitrarily complex searches made easy, e.g. “find all samples with infrared
+  measurements, deposited together with a sample on glass substrate with a
+  conductivity greater than 10⁻⁶ S/cm; oh yes, and only from this year and made
+  by John”
+- export to spreadsheets
+- automatic lab notebooks
+- database interaction from own programs, e.g. for connecting your measurement
+  setup directly to the database
+- fully translatable; core is available in English and German so far
+- mature codebase
+- fully open source
+
+We believe that the database should adapt to the people and the existing
+workflows rather than the other way round!
+
+However, there is no free lunch … JuliaBase's flexibility comes at a cost.  You
+have to create the Python code to define how it should behave for you.  Mostly,
+this is copy, paste, and modify.  JuliaBase contains code for typical
+processing and measurement setups that you can use as a starting point.
+
+
+Technical overview
+======================
+
+For better evaluation, here is a short list of the technical aspects of
+JuliaBase:
+
+- JuliaBase is built on top of the `Django web framework`_.
+- JuliaBase is written 100% in the Python programming language.
+- Although other setups are possible, the easiest server installation bases on
+  Linux, PostgreSQL, and Apache.
+- Hardware requirements are very low; a 100 people institute could be served by
+  a single ordinary desktop computer.
+
+.. _Django web framework: https://www.djangoproject.com/
+
+
+Getting started
+====================
+
+If you want to give JuliaBase a try, we recomment to :doc:`install it
+</programming/installation>`.  It is pretty straightforward.  Login as
+``juliabase``/``12345`` (login/password) and you will even have administrator
+privileges.  Look around, add samples, add measurements.
+
+If you consider actually using JuliaBase, have a look at the :doc:`programming
+guide <programming/programming>` for how to adapt it to you needs.
+
+
+Contents
+==========
+
+.. toctree::
+   :maxdepth: 2
+
+   programming/installation
+   programming/programming
+   programming/settings
+   programming/sample_names
+

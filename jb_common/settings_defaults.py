@@ -15,30 +15,30 @@
 
 """Default values of jb_common settings."""
 
+import sys
 from django.utils.translation import ugettext_lazy as _
 
 
-JB_DEPARTMENTS = ["Institute"]
-DEBUG_EMAIL_REDIRECT_USERNAME = "t.bronger"
-JAVASCRIPT_I18N_APPS =
-LOCALES_DICT =
-TESTING =
-USE_X_SENDFILE =
+DEBUG_EMAIL_REDIRECT_USERNAME = ""
+JAVASCRIPT_I18N_APPS = ("django.contrib.auth", "samples", "jb_common")
+TESTING = len(sys.argv) >= 2 and sys.argv[0].endswith("manage.py") and sys.argv[1] == "test"
+USE_X_SENDFILE = False
 
 # LDAP-related settings
 
-ADDITIONAL_LDAP_USERS =
-AD_LDAP_ACCOUNT_FILTER =
-AD_LDAP_URLS =
-AD_SEARCH_DN =
-AD_SEARCH_FIELDS =
-AD_USERNAME_TEMPLATE =
-PERMISSIONS_OF_AD_GROUPS =
+ADDITIONAL_LDAP_USERS = {}
+AD_LDAP_ACCOUNT_FILTER = "(!(userAccountControl:1.2.840.113556.1.4.803:=2))"
+AD_LDAP_DEPARTMENTS = {}
+AD_LDAP_URLS = ()
+AD_SEARCH_DN = ""
+AD_USERNAME_TEMPLATE = "{username}"
+LDAP_ADDITIONAL_ATTRIBUTES = ()
+PERMISSIONS_OF_AD_GROUPS = {}
 
 # Django settings which are used in jb_common
 
-LANGUAGES = (("en", _("English")), ("de", _("German")))
-DEBUG =
-DEFAULT_FROM_EMAIL =
-LOGIN_REDIRECT_URL =
-TEMPLATE_CONTEXT_PROCESSORS =
+# LANGUAGES
+# DEBUG
+# DEFAULT_FROM_EMAIL
+# LOGIN_REDIRECT_URL
+# TEMPLATE_CONTEXT_PROCESSORS

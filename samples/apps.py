@@ -14,7 +14,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import os
 from django.apps import AppConfig
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -24,3 +26,5 @@ class SamplesConfig(AppConfig):
 
     def ready(self):
         import samples.signals
+        if not os.path.exists(settings.CACHE_ROOT):
+            os.makedirs(settings.CACHE_ROOT)

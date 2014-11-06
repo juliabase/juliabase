@@ -16,7 +16,7 @@
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
-import locale, re, json, hashlib, random, time
+import re, json, hashlib, random, time
 from django.contrib.messages.storage import default_storage
 from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
@@ -63,14 +63,6 @@ class LocaleMiddleware(object):
         language = self.get_language_for_user(request)
         translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
-        # FixMe: Find a better way to map language codes to locales.  In
-        # particular, sublanguages should be taken into account.
-        new_locale = settings.LOCALES_DICT.get(self.get_language_code_only(language)) or (None, None)
-        old_locale = locale.getlocale()
-        # Changing the locale might be an expensive operation, so only if
-        # necessary.
-        if old_locale != new_locale:
-            locale.setlocale(locale.LC_ALL, new_locale)
 
     def process_response(self, request, response):
         patch_vary_headers(response, ("Accept-Language",))

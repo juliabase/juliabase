@@ -15,25 +15,27 @@
 
 """Default values of settings of the app "samples"."""
 
+import re
 from django.utils.translation import ugettext_lazy as _
 
 
-CACHE_ROOT =
-MAP_DEPARTMENTS_TO_APP_LABELS =
-THUMBNAIL_WIDTH =
-CRAWLER_LOGS_WHITELIST =
-CRAWLER_LOGS_ROOT =
-PHYSICAL_PROCESS_BLACKLIST =
-ADD_SAMPLE_VIEW =
-MERGE_CLEANUP_FUNCTION =
-PROTOCOL =
-DOMAIN_NAME =
+CACHE_ROOT = str("/tmp/juliabase_cache")
+MAP_DEPARTMENTS_TO_APP_LABELS = {}
+THUMBNAIL_WIDTH = 400
+CRAWLER_LOGS_WHITELIST = ()
+CRAWLER_LOGS_ROOT = ""
+PHYSICAL_PROCESS_BLACKLIST = ()
+ADD_SAMPLE_VIEW = ""
+MERGE_CLEANUP_FUNCTION = ""
+SAMPLE_NAME_FORMATS = {"provisional": {"possible renames": {"default"}},
+                       "default":     {"pattern": re.compile(r"[-A-Za-z_/0-9#()]*$")}}
+NAME_PREFIX_TEMPLATES = ()
 
 # Django settings which are used in samples
 
-MEDIA_ROOT =
-SECRET_KEY =
-STATIC_ROOT =
-STATIC_URL =
-INSTALLED_APPS =
-CACHES =
+# MEDIA_ROOT
+# SECRET_KEY
+# STATIC_ROOT
+# STATIC_URL
+# INSTALLED_APPS
+# CACHES
