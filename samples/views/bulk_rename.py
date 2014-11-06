@@ -20,7 +20,7 @@ view just to rename *one* sample (but it *must* have a provisional name).
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, string
+import datetime, string, itertools
 from django.shortcuts import render_to_response, get_object_or_404
 from django.conf import settings
 from django.template import RequestContext
@@ -130,7 +130,7 @@ def find_prefixes(user):
     """Generates all possible sample name prefixes for the user.  The templates for
     this are taken from `settings.NAME_PREFIX_TEMPLATES`.  Note that it makes
     sense to define such prefixes only if you allow sample name formats that
-    also contains these prefixes.
+    also contain these prefixes.
 
     :Parameters:
       - `user`: the currently logged-in user
@@ -142,26 +142,26 @@ def find_prefixes(user):
 
     :rtype: list of str
     """
-    def append_prefix(substitutions):
-        for format_string in settings.NAME_PREFIX_TEMPLATES:
+    substitution_axes = []
+    year = datetime.datetime.today().strftime("%Y")
+    substitution_axes.append([("year", year)])
+    substitution_axes.append([("short_year", year[2:])])
+    try:
+        substitution_axes.append([("user_initials", user.initials.initials)])
+    except models.Initials.DoesNotExist:
+        pass
+    external_contact_initials = models.Initials.objects.filter(external_operator__contact_persons=user)
+    if external_contact_initials.exists():
+        substitution_axes.append([("external_contact_initials", initials) for initials in external_contact_initials])
+    prefixes = []
+    for format_string in settings.NAME_PREFIX_TEMPLATES:
+        for substitutions in itertools.product(*substitution_axes):
             try:
-                prefix = format_string.format(**substitutions)
+                prefix = format_string.format(**dict(substitutions))
             except KeyError:
                 pass
             else:
                 prefixes.append((prefix, prefix))
-    prefixes = []
-    year = datetime.datetime.today().strftime("%Y")
-    substitutions = {"year": year, "short_year": year[2:]}
-    try:
-        substitutions["user_initials"] = user.initials.initials
-    except models.Initials.DoesNotExist:
-        pass
-    append_prefix(substitutions)
-    for initials in models.Initials.objects.filter(external_operator__contact_persons=user):
-        local_substitutions = {}
-        local_substitutions["external_contact_initials"] = initials.initials
-        append_prefix(local_substitutions)
     return prefixes
 
 
