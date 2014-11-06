@@ -22,6 +22,8 @@ from __future__ import absolute_import, unicode_literals
 
 import sys, os.path, re
 from django.utils.translation import ugettext_lazy as _
+from jb_common.settings_defaults import *
+from samples.settings_defaults import *
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -32,7 +34,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ALLOWED_HOSTS = ["0.0.0.0"]
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-TESTING = len(sys.argv) >= 2 and sys.argv[0].endswith("manage.py") and sys.argv[1] == "test"
 
 
 DEFAULT_FROM_EMAIL = ""
@@ -41,9 +42,6 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = (
     ("JuliaBase-Admins", "bronger@physik.rwth-aachen.de"),
 )
-# If DEBUG == True, all outgoing email is redirected to this account.  If
-# empty, don't send any email at all.
-DEBUG_EMAIL_REDIRECT_USERNAME = "t.bronger"
 
 DATABASES = {
     "default": {
@@ -67,9 +65,6 @@ DATE_FORMAT = "D, j. N Y"
 
 STATIC_ROOT = str("/var/www/juliabase/media/")
 MEDIA_ROOT = str("/var/www/juliabase/uploads")
-CACHE_ROOT = str("/tmp/juliabase/cache")
-
-USE_X_SENDFILE = True
 
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
@@ -123,8 +118,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "jb_common.context_processors.default",
                                "django.core.context_processors.static")
 
-# FixMe: Maybe too many?
-JAVASCRIPT_I18N_APPS = INSTALLED_APPS
+JAVASCRIPT_I18N_APPS += ("jb_institute",)
 
 DOMAIN_NAME = "0.0.0.0:8000"
 PROTOCOL = "http"
@@ -147,11 +141,6 @@ CACHES = {
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-THUMBNAIL_WIDTH = 400
-
-# Mapping LDAP department names to JuliaBase department names
-AD_LDAP_DEPARTMENTS = {"Institute": "Institute"}
-
 MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
 
 ADD_SAMPLE_VIEW = "jb_institute.views.samples.sample.add"
@@ -163,9 +152,6 @@ PHYSICAL_PROCESS_BLACKLIST = [("jb_institute", "substrate"),
                               ("jb_institute", "layerthicknessmeasurement")]
 SOLARSIMULATOR_1_ROOT_DIR = str("")
 MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
-
-CRAWLER_LOGS_ROOT = str("")
-CRAWLER_LOGS_WHITELIST = set()
 
 SAMPLE_NAME_FORMATS = {
     "provisional": {"possible renames": {"new"}},
