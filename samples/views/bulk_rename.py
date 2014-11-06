@@ -153,7 +153,7 @@ def find_prefixes(user):
     external_contact_initials = models.Initials.objects.filter(external_operator__contact_persons=user)
     if external_contact_initials.exists():
         substitution_axes.append([("external_contact_initials", initials) for initials in external_contact_initials])
-    prefixes = []
+    prefixes = set()
     for format_string in settings.NAME_PREFIX_TEMPLATES:
         for substitutions in itertools.product(*substitution_axes):
             try:
@@ -161,8 +161,14 @@ def find_prefixes(user):
             except KeyError:
                 pass
             else:
-                prefixes.append((prefix, prefix))
-    return prefixes
+                prefixes.add(prefix)
+    result = []
+    for prefix in sorted(prefixes):
+        if prefix == "":
+            result.append(("*", ""))
+        else:
+            result.append((prefix, prefix))
+    return result
 
 
 @login_required
@@ -217,6 +223,8 @@ def bulk_rename(request):
             prefix = prefixes_form.cleaned_data["prefix"] if prefixes_form.is_valid() else ""
         else:
             prefixes_form = None
+            prefix = ""
+        if prefix == "*":
             prefix = ""
         new_name_forms = [NewNameForm(request.user, prefix, sample, request.POST, prefix=str(sample.pk))
                           for sample in samples]
