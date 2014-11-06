@@ -151,14 +151,15 @@ def find_prefixes(user):
             else:
                 prefixes.append((prefix, prefix))
     prefixes = []
-    year = str(datetime.datetime.today().year)
+    year = datetime.datetime.today().strftime("%Y")
     substitutions = {"year": year, "short_year": year[2:]}
     try:
         substitutions["user_initials"] = user.initials.initials
     except models.Initials.DoesNotExist:
         pass
+    append_prefix(substitutions)
     for initials in models.Initials.objects.filter(external_operator__contact_persons=user):
-        local_substitutions = substitutions.copy()
+        local_substitutions = {}
         local_substitutions["external_contact_initials"] = initials.initials
         append_prefix(local_substitutions)
     return prefixes
@@ -207,12 +208,12 @@ def bulk_rename(request):
                                          query_string=query_string, forced=True)
     single_prefix = available_prefixes[0][1] if len(available_prefixes) == 1 else None
     if request.method == "POST":
-        if available_prefixes:
+        if not single_prefix:
             prefixes_form = PrefixesForm(available_prefixes, request.POST)
-            prefix = single_prefix or (prefixes_form.cleaned_data["prefix"] if prefixes_form.is_valid() else "")
+            prefix = prefixes_form.cleaned_data["prefix"] if prefixes_form.is_valid() else ""
         else:
             prefixes_form = None
-            prefix = ""
+            prefix = single_prefix
         new_name_forms = [NewNameForm(request.user, prefix, sample, request.POST, prefix=str(sample.pk))
                           for sample in samples]
         all_valid = prefixes_form is None or prefixes_form.is_valid()
