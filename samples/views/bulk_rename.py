@@ -209,12 +209,15 @@ def bulk_rename(request):
                                          query_string=query_string, forced=True)
     single_prefix = available_prefixes[0][1] if len(available_prefixes) == 1 else None
     if request.method == "POST":
-        if not single_prefix:
+        if single_prefix:
+            prefixes_form = None
+            prefix = single_prefix
+        elif available_prefixes:
             prefixes_form = PrefixesForm(available_prefixes, request.POST)
             prefix = prefixes_form.cleaned_data["prefix"] if prefixes_form.is_valid() else ""
         else:
             prefixes_form = None
-            prefix = single_prefix
+            prefix = ""
         new_name_forms = [NewNameForm(request.user, prefix, sample, request.POST, prefix=str(sample.pk))
                           for sample in samples]
         all_valid = prefixes_form is None or prefixes_form.is_valid()
