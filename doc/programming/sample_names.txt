@@ -24,13 +24,10 @@ They are defined in :file:`settings.py` like this::
 
     SAMPLE_NAME_FORMATS = {
         "provisional": {"possible renames": {"new"}},
-
-        "old": {"pattern": re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?$"),
-                "possible renames": {"new"}},
-        "new": {"pattern": re.compile(r"""(((?P<current_year>\d\d)-
-                                            (?P<user_initials>[A-Z]{2}\d{,2}|[A-Z]{3}\d?|[A-Z]{4}))|
-                                           (?P<external_contact_initials>[A-Z]{2}\d\d|[A-Z]{3}\d|[A-Z]{4}))
-                                          -[-A-Za-z_/0-9#()]+$""", re.VERBOSE)}
+        "old":         {"pattern": r"{short_year}[A-Z]-\d{{3,4}}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?",
+                        "possible renames": {"new"}},
+        "new":         {"pattern": r"({short_year}-{user_initials}|{external_contact_initials})"
+                                   r"-[-A-Za-z_/0-9#()]+"}
     }
 
 In this example, three name formats are defined, namely “provisional”, “old”,
@@ -43,27 +40,35 @@ Name format properties
 ``"pattern"``
 -------------
 
-This is an ``re.RegexObject`` instance containing the pattern for this name
-format.  This pattern is a regular expression and should match sample names of
-this format *and only these*.  In other words, every sample name should be
-identified unambiguously with a name format.  It is highly senseful to end the
-pattern with ``$`` to assure that the whole name is matched.
+This is the `regular extression pattern
+<https://docs.python.org/3.4/library/re.html#regular-expression-syntax>`_ for
+this name format.  It should match sample names of this format *and only
+these*.  In other words, every sample name should be identified unambiguously
+with a name format.  JuliaBase appends an implicit ``\Z`` so that the whole
+sample name must match.
 
-You can use some so-called “named groups” in the regular expression that are
-interpreted by JuliaBase to enforce additional constraints to new sample
-names.  These are:
+You can use some placeholder in the pattern that are interpreted by JuliaBase
+to enforce additional constraints to new sample names.  These are:
 
-``current_year``
-    the current year as a four- or two-digit number
+``{year}``
+    the current year as a four-digit number
 
-``user_initials``
+``{short_year}``
+    the current year as a two-digit number
+
+``{user_initials}``
     the initials of the currently logged-in user
 
-``external_contact_initials``
-    the initials of an external contact (a.k.a. external operator)
+``{external_contact_initials}``
+    the initials of an external contact (a.k.a. external operator) of the
+    currently logged-in user
 
-``combined_initials``
+``{combined_initials}``
     any of the initials above
+
+Because placeholders are embraced with ``{...}``, you have to double any curly
+braces used in the pattern itself, as can be seen at the ``{{3,4}}`` in the
+example above.
 
 
 ``"possible renames"``
@@ -97,17 +102,49 @@ renaming of any format into provisional names.  In other words, one should get
 rid of a provisional name as quickly as possible.
 
 
+.. _Initials:
+
 Initials
-=======
+========
 
 Initials are a way to generate namespaces for samples.  This way, name
 collisions may be prevented.  For example, the probability that the researcher
 John Doe and the researcher Paula Poe both call their sample “sample-1” is
-pretty high.  However, if they use their initials somewhere in the sample name,
+pretty high.  However, if they put their initials somewhere in the sample name,
 the samples may be called “JD-sample-1” and “PP-sample-1”; problem solved.
 
 When it comes to choosing initials, JuliaBase follows the first come first
-served principle.
+served principle.  If John Doe chooses initials after Jane Doe has picked “JD”,
+he must use “JD1” or “JDOE” or whatever.  They cannot be changed anymore by the
+user.
+
+Initials are at most 4 characters long.  Apart from that, JuliaBase is
+configurable with the setting :ref:`INITIALS_FORMATS`.  It is a dictionary
+mapping ``"user"`` and ``"external contact"`` to a properties dictionary.  The
+allowed properties are the following:
+
+``"pattern"``
+-------------
+
+This is a `regular extression pattern
+<https://docs.python.org/3.4/library/re.html#regular-expression-syntax>`_.  The
+whole initials must match it.  In contrast to ``SAMPLE_NAME_FORMATS``, this
+pattern cannot contain placeholders, and therefore, you must not double any
+curly brackets.
+
+For example, if you want to restrict user initials to two or three uppercase
+letters, you simply add to :file:`settings.py`::
+
+    INITIALS_FORMATS["user"] = {
+        "pattern": "[A-Z]{2,3}",
+        "description": _("The initials consist of two or three uppercase letters.")}
+
+
+``"description"``
+-----------------
+
+This is translatable string describing the pattern in a Human-friendly way.  It
+is used for error messages.
 
 
 Name prefix templates
