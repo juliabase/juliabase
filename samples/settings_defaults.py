@@ -37,7 +37,7 @@ INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}"
                                                           "The length is exactly 4 characters.")}
                     }
 SAMPLE_NAME_FORMATS = {"provisional": {"possible renames": {"default"}},
-                       "default":     {"pattern": r"[-A-Za-z_/0-9#()]*$"}}
+                       "default":     {"pattern": r"[-A-Za-z_/0-9#()]*"}}
 NAME_PREFIX_TEMPLATES = ()
 
 # Django settings which are used in samples
