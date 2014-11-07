@@ -22,6 +22,7 @@ import django.utils.six as six
 
 import re, datetime, json
 from django.db.models import Q
+from django.conf import settings
 from django.forms.util import ValidationError
 from django.http import QueryDict
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -178,8 +179,6 @@ class AddLayersForm(forms.Form):
                     return layer_query.values()[0]
 
 
-initials_pattern = re.compile(r"[A-Z]{2,4}[0-9]*$")
-
 class InitialsForm(forms.Form):
     """Form for a person's initials.  A “person” can be a user, an external
     operator, or `None`.  Initials are optional, however, if you choose them, you cannot
@@ -208,12 +207,10 @@ class InitialsForm(forms.Form):
         initials = self.cleaned_data["initials"]
         if not initials or self.readonly:
             return initials
-        # Note that maximal length are already checked.
-        min_length = 2 if self.is_user else 4
-        if not initials_pattern.match(initials) or len(initials) < min_length:
-            raise ValidationError(_("The initials must start with two uppercase letters.  "
-                                    "They must contain uppercase letters and digits only.  Digits must be at the end.  "
-                                    "The minimum length must be {min_length}.").format(min_length=min_length))
+        properties = settings.INITIALS_FORMATS["user" if self.is_user else "external contact"]
+        pattern = properties["regex"]
+        if not pattern.match(initials):
+            raise ValidationError(properties["description"])
         if models.Initials.objects.filter(initials=initials).exists():
             raise ValidationError(_("These initials are already used."))
         return initials
@@ -1025,12 +1022,11 @@ def check_sample_name(match, user, is_new=True):
         contained invalid fields.
     """
     groups = {key: value for key, value in match.groupdict().items() if value is not None}
-    if "current_year" in groups:
-        if len(groups["current_year"]) == 2:
-            current_year = 2000 + int(groups["current_year"])
-        else:
-            current_year = int(groups["current_year"])
-        if current_year != datetime.datetime.now().year:
+    if "year" in groups:
+        if int(groups["year"]) != datetime.datetime.now().year:
+            raise ValidationError(_("The year must be the current year."))
+    if "short_year" in groups:
+        if 2000 + int(groups["short_year"]) != datetime.datetime.now().year:
             raise ValidationError(_("The year must be the current year."))
     if "user_initials" in groups:
         try:

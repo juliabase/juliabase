@@ -89,7 +89,7 @@ class OriginalDataForm(Form):
             sample = self.cleaned_data.get("sample")
             if sample:
                 old_sample_name_format = utils.sample_name_format(sample.name)
-                if old_sample_name_format not in utils.renamable_name_formats:
+                if old_sample_name_format not in utils.get_renamable_name_formats():
                     if not new_name.startswith(sample.name):
                         self.add_error("new_name", _("The new name must begin with the old name."))
                 elif sample and sample.name != new_name:
@@ -340,7 +340,7 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                                                         _("This sample name has been used already on this page."))
                                 referentially_valid = False
                             new_names.add(new_name)
-                            if utils.sample_name_format(new_name) in utils.renamable_name_formats and \
+                            if utils.sample_name_format(new_name) in utils.get_renamable_name_formats() and \
                                     not new_name.startswith(original_data_form.cleaned_data["new_name"]):
                                 new_name_form.add_error("new_name", _("If you choose a deposition-style name, it must begin "
                                                               "with the parent's new name."))
@@ -428,7 +428,7 @@ def forms_from_database(user, deposition, remote_client, new_names):
         try:
             return new_names[sample.id]
         except KeyError:
-            if utils.sample_name_format(sample.name) in utils.renamable_name_formats:
+            if utils.sample_name_format(sample.name) in utils.get_renamable_name_formats():
                 name_postfix = ""
                 try:
                     sample_positions = json.loads(deposition.sample_positions)

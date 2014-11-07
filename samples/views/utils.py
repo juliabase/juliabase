@@ -38,13 +38,6 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
 import jb_common.utils
 
 
-settings.SAMPLE_NAME_FORMATS["provisional"]["pattern"] = re.compile(r"\*(?P<id>\d{5})$")
-settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose name", ugettext_lazy("provisional"))
-for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
-    properties.setdefault("verbose name", name_format)
-renamable_name_formats = {name_format for (name_format, properties) in settings.SAMPLE_NAME_FORMATS.items()
-                          if properties.get("possible renames")}
-
 def sample_name_format(name, with_match_object=False):
     """Determines which sample name format the given name has.  It doesn't test
     whether the sample name is existing, nor if the initials are valid.
@@ -62,10 +55,19 @@ def sample_name_format(name, with_match_object=False):
     :rtype: (unicode, re.MatchObject) or ``NoneType``.
     """
     for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
-        match = properties["pattern"].match(name)
+        match = properties["regex"].match(name)
         if match:
             return (name_format, match) if with_match_object else name_format
     return (None, None) if with_match_object else None
+
+
+renamable_name_formats = None
+def get_renamable_name_formats():
+    global renamable_name_formats
+    if renamable_name_formats is None:
+        renamable_name_formats = {name_format for (name_format, properties) in settings.SAMPLE_NAME_FORMATS.items()
+                                  if properties.get("possible renames")}
+    return renamable_name_formats
 
 
 def verbose_sample_name_format(name_format):

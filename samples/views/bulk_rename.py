@@ -195,7 +195,7 @@ def bulk_rename(request):
     elif "ids" in request.GET:
         ids = request.GET["ids"].split(",")
         samples = [get_object_or_404(models.Sample, pk=utils.convert_id_to_int(id_)) for id_ in ids]
-        if not all(utils.sample_name_format(sample.name) in utils.renamable_name_formats for sample in samples):
+        if not all(utils.sample_name_format(sample.name) in utils.get_renamable_name_formats() for sample in samples):
             raise Http404("Some given samples cannot be renamed.")
     else:
         samples = None

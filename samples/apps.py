@@ -14,7 +14,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import os
+import os, re
 from django.apps import AppConfig
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -26,5 +26,21 @@ class SamplesConfig(AppConfig):
 
     def ready(self):
         import samples.signals
+
         if not os.path.exists(settings.CACHE_ROOT):
             os.makedirs(settings.CACHE_ROOT)
+
+        for name, properties in settings.INITIALS_FORMATS.items():
+            group_name = {"user": "user_initials", "external contact": "external_contact_initials"}[name]
+            properties["pattern"] = "(?P<{group_name}>{pattern})".format(group_name=group_name, pattern=properties["pattern"])
+            properties["regex"] = re.compile(properties["pattern"] + r"\Z")
+        settings.SAMPLE_NAME_FORMATS["provisional"]["pattern"] = r"\*(?P<id>\d{{5}})$"
+        for properties in settings.SAMPLE_NAME_FORMATS.values():
+            properties["pattern"] = properties["pattern"].format(
+                year=r"(?P<year>\d{4})", short_year=r"(?P<short_year>\d{2})",
+                user_initials=settings.INITIALS_FORMATS["user"]["pattern"],
+                external_contact_initials=settings.INITIALS_FORMATS["external contact"]["pattern"])
+            properties["regex"] = re.compile(properties["pattern"] + r"\Z")
+        settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose name", _("provisional"))
+        for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
+            properties.setdefault("verbose name", name_format)
