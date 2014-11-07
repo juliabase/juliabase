@@ -1,0 +1,41 @@
+# German translations for JuliaBase-common.
+#
+# This file is part of JuliaBase, the samples database.
+#
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
+#
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: JuliaBase-settings 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-07 18:11+0100\n"
+"PO-Revision-Date: 2014-11-07 19:45+0100\n"
+"Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: settings.py:130
+msgid "English"
+msgstr "Englisch"
+
+#: settings.py:130
+msgid "German"
+msgstr "Deutsch"
+
+#: settings.py:160
+msgid "old-style"
+msgstr "Altschema"
+
+#: settings.py:162
+msgid "new-style"
+msgstr "Neuschema"

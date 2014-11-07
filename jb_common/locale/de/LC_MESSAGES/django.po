@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-22 20:00+0200\n"
-"PO-Revision-Date: 2014-10-22 20:06+0200\n"
+"POT-Creation-Date: 2014-11-07 18:11+0100\n"
+"PO-Revision-Date: 2014-11-07 18:08+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -24,149 +24,145 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: models.py:35 models.py:120
+#: jb_common/apps.py:23
+msgid "JuliaBase – administration"
+msgstr "JuliaBase – Verwaltung"
+
+#: jb_common/models.py:45 jb_common/models.py:140
 msgid "name"
 msgstr "Name"
 
-#: models.py:40 models.py:61 models.py:124
+#: jb_common/models.py:48 jb_common/models.py:73 jb_common/models.py:144
 msgid "department"
 msgstr "Abteilung"
 
-#: models.py:41
+#: jb_common/models.py:49
 msgid "departments"
 msgstr "Abteilungen"
 
-#: models.py:59 models.py:239
+#: jb_common/models.py:71 jb_common/models.py:262
 msgid "user"
 msgstr "Benutzer"
 
-#: models.py:69
+#: jb_common/models.py:81
 msgid "language"
 msgstr "Sprache"
 
-#: models.py:70
+#: jb_common/models.py:82
 msgid "operating system"
 msgstr "Betriebssystem"
 
-#: models.py:71
+#: jb_common/models.py:83
 msgid "layout last modified"
 msgstr "letzte Änderung des Layouts"
 
-#: models.py:76 models.py:77
+#: jb_common/models.py:88 jb_common/models.py:89
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models.py:121
+#: jb_common/models.py:141
 msgid "members"
 msgstr "Mitglieder"
 
-#: models.py:123
+#: jb_common/models.py:143
 msgid "confidential"
 msgstr "vertraulich"
 
-#: models.py:125
+#: jb_common/models.py:145
 msgid "parent topic"
 msgstr "Überthema"
 
-#: models.py:127
+#: jb_common/models.py:147
 msgid "topic manager"
 msgstr "Themenmanager"
 
-#: models.py:131
+#: jb_common/models.py:151
 msgid "topic"
 msgstr "Thema"
 
-#: models.py:132
+#: jb_common/models.py:152
 msgid "topics"
 msgstr "Themen"
 
-#: models.py:135
+#: jb_common/models.py:155
 msgid "Can edit all topics, and can add new topics"
 msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 
-#: models.py:136
+#: jb_common/models.py:156
 msgid "Can edit topics that he/she is a manager of"
 msgstr "Darf Themen ändern, für die er/sie Manager ist"
 
-#: models.py:168
+#: jb_common/models.py:191
 #, python-brace-format
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: models.py:238
+#: jb_common/models.py:261
 msgid "hash value"
 msgstr "Hashwert"
 
-#: models.py:241
+#: jb_common/models.py:264
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: models.py:243
+#: jb_common/models.py:266
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: models.py:246
+#: jb_common/models.py:269
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: models.py:247
+#: jb_common/models.py:270
 msgid "error pages"
 msgstr "Fehlerseiten"
 
-#: search.py:254
+#: jb_common/search.py:258
 msgid "You can't search for empty values while giving a non-empty value."
 msgstr ""
 "Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen "
 "nicht-leeren Wert angeben."
 
-#: search.py:261
+#: jb_common/search.py:265
 msgid "explicitly empty"
 msgstr "explizit leer"
 
-#: search.py:342
+#: jb_common/search.py:347
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 "Der Zeitstempel passte nicht in das Muster JJJJ-MM-TT HH:MM:SS oder einem "
 "vorderen Teil davon."
 
-#: search.py:370
+#: jb_common/search.py:375
 msgid "Invalid date or time."
 msgstr "Ungültiges Datum oder ungültige Zeit."
 
-#: search.py:402
+#: jb_common/search.py:409
 msgid "doesn't matter"
 msgstr "egal"
 
-#: search.py:402
+#: jb_common/search.py:409
 msgid "yes"
 msgstr "ja"
 
-#: search.py:402
+#: jb_common/search.py:409
 msgid "no"
 msgstr "nein"
 
-#: search.py:424
+#: jb_common/search.py:431
 msgid "containing"
 msgstr "enthaltend"
 
-#: search.py:761
+#: jb_common/search.py:769
 msgid "restrict to"
 msgstr "beschränken auf"
 
-#: settings_defaults.py:41
-msgid "English"
-msgstr "Englisch"
-
-#: settings_defaults.py:41
-msgid "German"
-msgstr "Deutsch"
-
-#: templates/404.html:26 templates/404.html.py:27
+#: jb_common/templates/404.html:26 jb_common/templates/404.html.py:27
 msgid "Resource not found"
 msgstr "Ressource nicht gefunden"
 
-#: templates/404.html:30
+#: jb_common/templates/404.html:30
 #, python-format
 msgid ""
 "\n"
@@ -181,19 +177,19 @@ msgstr ""
 "Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
 "der angegebene Prozess, Zitation etc. schon in der Datenbank existiert.\n"
 
-#: templates/500.html:26
+#: jb_common/templates/500.html:26
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: templates/500.html:35 templates/jb_base.html:67
+#: jb_common/templates/500.html:35 jb_common/templates/jb_base.html:68
 msgid "Log in"
 msgstr "Anmelden"
 
-#: templates/500.html:49
+#: jb_common/templates/500.html:49
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: templates/500.html:50
+#: jb_common/templates/500.html:50
 msgid ""
 "\n"
 "You experienced an internal error in the JuliaBase server software.  The\n"
@@ -208,37 +204,37 @@ msgstr ""
 "den Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, "
 "sobald der Fehler behoben ist.\n"
 
-#: templates/jb_base.html:42
+#: jb_common/templates/jb_base.html:43
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: templates/jb_base.html:48
+#: jb_common/templates/jb_base.html:49
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: templates/jb_base.html:52
+#: jb_common/templates/jb_base.html:53
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: templates/jb_base.html:56
+#: jb_common/templates/jb_base.html:57
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: templates/jb_base.html:58 templates/jb_base.html.py:64
+#: jb_common/templates/jb_base.html:59 jb_common/templates/jb_base.html:65
 msgid "Help"
 msgstr "Hilfe"
 
-#: templates/jb_base.html:60
+#: jb_common/templates/jb_base.html:61
 msgid "Log out"
 msgstr "Abmelden"
 
-#: templates/jb_common/change_password.html:18
-#: templates/jb_common/change_password.html:19
+#: jb_common/templates/jb_common/change_password.html:18
+#: jb_common/templates/jb_common/change_password.html:19
 msgid "Password change"
 msgstr "Passwort ändern"
 
-#: templates/jb_common/change_password.html:23
+#: jb_common/templates/jb_common/change_password.html:23
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
@@ -247,53 +243,55 @@ msgstr ""
 "dann zweimal (um sicherzustellen, dass Sie es korrekt eingegeben haben) das "
 "neue Kennwort ein."
 
-#: templates/jb_common/change_password.html:28
+#: jb_common/templates/jb_common/change_password.html:28
 msgid "Old password:"
 msgstr "Altes Passwort:"
 
-#: templates/jb_common/change_password.html:30
+#: jb_common/templates/jb_common/change_password.html:30
 msgid "New password:"
 msgstr "Neues Passwort:"
 
-#: templates/jb_common/change_password.html:32
+#: jb_common/templates/jb_common/change_password.html:32
 msgid "Confirm password:"
 msgstr "Passwort wiederholen:"
 
-#: templates/jb_common/change_password.html:34
+#: jb_common/templates/jb_common/change_password.html:34
 msgid "Change my password"
 msgstr "Mein Passwort ändern"
 
-#: templates/jb_common/login.html:18 templates/jb_common/login.html.py:19
+#: jb_common/templates/jb_common/login.html:18
+#: jb_common/templates/jb_common/login.html:19
 msgid "JuliaBase login"
 msgstr "JuliaBase-Login"
 
-#: templates/jb_common/login.html:23
+#: jb_common/templates/jb_common/login.html:23
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Ihr Benutzername und Ihr Passwort passen nicht zusammen. Bitte versuchen Sie "
 "es noch einmal."
 
-#: templates/jb_common/login.html:29 templates/jb_common/show_user.html:22
+#: jb_common/templates/jb_common/login.html:29
+#: jb_common/templates/jb_common/show_user.html:22
 msgid "Username"
 msgstr "Benutzername"
 
-#: templates/jb_common/login.html:30
+#: jb_common/templates/jb_common/login.html:30
 msgid "Password"
 msgstr "Passwort"
 
-#: templates/jb_common/login.html:35
+#: jb_common/templates/jb_common/login.html:35
 msgid "login"
 msgstr "Anmelden"
 
-#: templates/jb_common/logout.html:20
+#: jb_common/templates/jb_common/logout.html:20
 msgid "Thanks for spending some quality time with the Web site today."
 msgstr "Vielen Dank, dass Sie hier ein paar nette Minuten verbracht haben."
 
-#: templates/jb_common/logout.html:22
+#: jb_common/templates/jb_common/logout.html:22
 msgid "Log in again"
 msgstr "Erneut anmelden"
 
-#: templates/jb_common/markdown_sandbox.html:29
+#: jb_common/templates/jb_common/markdown_sandbox.html:29
 msgid ""
 "\n"
 "  <p>JuliaBase uses the lightweight markup language “Markdown” for "
@@ -317,79 +315,85 @@ msgstr ""
 "  <p>Hier können Sie die Syntax nach Belieben testen.  Nichts, was Sie hier "
 "eingeben, wird gespeichert.</p>\n"
 
-#: templates/jb_common/markdown_sandbox.html:40
+#: jb_common/templates/jb_common/markdown_sandbox.html:40
 msgid "Error in markup"
 msgstr "Fehler im Markup"
 
 #. Translators: Input for markdown conversion
-#: templates/jb_common/markdown_sandbox.html:45
+#: jb_common/templates/jb_common/markdown_sandbox.html:45
 msgid "input"
 msgstr "Eingabe"
 
 #. Translators: result of conversion
-#: templates/jb_common/markdown_sandbox.html:47
+#: jb_common/templates/jb_common/markdown_sandbox.html:47
 msgid "result"
 msgstr "Ergebnis"
 
 #. Translators: result of markdown conversion
-#: templates/jb_common/markdown_sandbox.html:66
+#: jb_common/templates/jb_common/markdown_sandbox.html:66
 msgid "Generate result"
 msgstr "Ergebnis erzeugen"
 
-#: templates/jb_common/password_changed.html:18
+#: jb_common/templates/jb_common/password_changed.html:18
 msgid "Password change successful"
 msgstr "Das Passwort wurde erfolgreich geändert"
 
-#: templates/jb_common/password_changed.html:24
+#: jb_common/templates/jb_common/password_changed.html:24
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templates/jb_common/show_user.html:26
+#: jb_common/templates/jb_common/show_user.html:26
 msgid "Email address"
 msgstr "Email-Adresse"
 
-#: templates/jb_common/show_user.html:32
+#: jb_common/templates/jb_common/show_user.html:32
 msgid "Department"
 msgstr "Abteilung"
 
-#: templatetags/juliabase.py:149
+#: jb_common/templatetags/juliabase.py:148
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: templatetags/juliabase.py:158
+#: jb_common/templatetags/juliabase.py:157
 msgid "Yes"
 msgstr "Ja"
 
-#: templatetags/juliabase.py:158
+#: jb_common/templatetags/juliabase.py:157
 msgid "No"
 msgstr "Nein"
 
-#: utils.py:184
+#: jb_common/utils.py:157
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: utils.py:215
+#: jb_common/utils.py:188
 #, python-brace-format
 msgid "Couldn't open {filename}."
 msgstr "Konnte {filename} nicht öffnen."
 
-#: utils.py:234
+#: jb_common/utils.py:207
 msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
-#: views.py:62
+#: jb_common/views.py:62
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: views.py:72
+#: jb_common/views.py:72
 msgid "MarkdownMarkup"
 msgstr "MarkdownMarkup"
 
-#: views.py:96
+#: jb_common/views.py:96
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
+
+#~ msgid "English"
+#~ msgstr "Englisch"
+
+#~ msgid "German"
+#~ msgstr "Deutsch"
 
 #~ msgid "Chinese"
 #~ msgstr "Chinesisch"
@@ -405,9 +409,6 @@ msgstr "Markdown-Sandkasten"
 
 #~ msgid "Dutch"
 #~ msgstr "Niederländisch"
-
-#~ msgid "is administrative"
-#~ msgstr "ist administrativ"
 
 #~ msgid "flow rate"
 #~ msgstr "Flussrate"

@@ -156,8 +156,10 @@ MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
 SAMPLE_NAME_FORMATS = {
     "provisional": {"possible renames": {"new"}},
     "old":         {"pattern": r"{short_year}[A-Z]-\d{{3,4}}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?",
-                    "possible renames": {"new"}},
-    "new":         {"pattern": r"({short_year}-{user_initials}|{external_contact_initials})-[-A-Za-z_/0-9#()]+"}
+                    "possible renames": {"new"},
+                    "verbose name": _("old-style")},
+    "new":         {"pattern": r"({short_year}-{user_initials}|{external_contact_initials})-[-A-Za-z_/0-9#()]+",
+                    "verbose name": _("new-style")}
 }
 
 NAME_PREFIX_TEMPLATES = ("{short_year}-{user_initials}-", "{external_contact_initials}-")

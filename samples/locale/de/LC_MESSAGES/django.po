@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-23 14:52+0200\n"
+"POT-Creation-Date: 2014-11-07 18:11+0100\n"
 "PO-Revision-Date: 2014-10-23 09:59+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -24,958 +24,991 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: middleware/juliabase.py:53
+#: samples/apps.py:25
+msgid "Samples database – core"
+msgstr "Probendatenbank – Kern"
+
+#: samples/apps.py:49
+msgid "provisional"
+msgstr "provisorisch"
+
+#: samples/middleware/juliabase.py:47
 msgid "Access denied"
 msgstr "Zugriff verweigert"
 
-#: middleware/juliabase.py:58
+#: samples/middleware/juliabase.py:52
 msgid "Ambiguous sample name"
 msgstr "Mehrdeutiger Probenname"
 
-#: models_common.py:50 models_common.py:567 models_common.py:888
-#: models_common.py:1239
+#: samples/models/common.py:60 samples/models/common.py:589
+#: samples/models/common.py:913 samples/models/common.py:1281
 msgid "name"
 msgstr "Name"
 
-#: models_common.py:51
+#: samples/models/common.py:61
 msgid "institution"
 msgstr "Institution"
 
-#: models_common.py:52
+#: samples/models/common.py:62
 msgid "email"
 msgstr "Email"
 
-#: models_common.py:53
+#: samples/models/common.py:63
 msgid "alternative email"
 msgstr "alternative Email"
 
-#: models_common.py:54
+#: samples/models/common.py:64
 msgid "phone"
 msgstr "Telefon"
 
-#: models_common.py:56
+#: samples/models/common.py:66
 msgid "contact persons in the institute"
 msgstr "Kontaktpersonen im Institut"
 
 #. Translators: Topic which is not open to senior members
-#: models_common.py:58 views/topic.py:46 views/topic.py:174
+#: samples/models/common.py:68 samples/views/topic.py:45
+#: samples/views/topic.py:172
 msgid "confidential"
 msgstr "vertraulich"
 
-#: models_common.py:61 models_common.py:108 models_common.py:1379
+#: samples/models/common.py:71 samples/models/common.py:122
+#: samples/models/common.py:1422
 msgid "external operator"
 msgstr "externer Operateur"
 
-#: models_common.py:62
+#: samples/models/common.py:72
 msgid "external operators"
 msgstr "externe Operateure"
 
-#: models_common.py:64
+#: samples/models/common.py:74
 msgid "Can add an external operator"
 msgstr "Darf externen Operateur anlegen"
 
-#: models_common.py:65
+#: samples/models/common.py:75
 msgid "Can view all external operators"
 msgstr "Darf alle externen Operateure sehen"
 
 #. Translators: It's about timestamps
-#: models_common.py:82
+#: samples/models/common.py:95
 msgid "totally accurate"
 msgstr "vollständig genau"
 
-#: models_common.py:83
+#: samples/models/common.py:96
 msgid "accurate to the minute"
 msgstr "auf die Minute genau"
 
-#: models_common.py:84
+#: samples/models/common.py:97
 msgid "accurate to the hour"
 msgstr "auf die Stunde genau"
 
-#: models_common.py:85
+#: samples/models/common.py:98
 msgid "accurate to the day"
 msgstr "auf den Tag genau"
 
-#: models_common.py:86
+#: samples/models/common.py:99
 msgid "accurate to the month"
 msgstr "auf den Monat genau"
 
-#: models_common.py:87
+#: samples/models/common.py:100
 msgid "accurate to the year"
 msgstr "auf das Jahr genau"
 
-#: models_common.py:88
+#: samples/models/common.py:101
 msgid "not even accurate to the year"
 msgstr "nicht einmal auf das Jahr genau"
 
-#: models_common.py:104 models_common.py:350 models_common.py:1242
-#: models_common.py:1479 models_feeds.py:50
+#: samples/models/common.py:118 samples/models/common.py:364
+#: samples/models/common.py:1284 samples/models/common.py:1524
+#: samples/models/feeds.py:52
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: models_common.py:105
+#: samples/models/common.py:119
 msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
-#: models_common.py:107 models_common.py:351 models_common.py:1523
-#: views/status.py:54 views/task_lists.py:66
+#: samples/models/common.py:121 samples/models/common.py:365
+#: samples/models/common.py:1569 samples/views/status.py:52
+#: samples/views/task_lists.py:67
 msgid "operator"
 msgstr "Operateur"
 
-#: models_common.py:110 models_common.py:352 models_common.py:1528
-#: models_feeds.py:264 views/task_lists.py:297
+#: samples/models/common.py:124 samples/models/common.py:366
+#: samples/models/common.py:1574 samples/models/feeds.py:266
+#: samples/views/task_lists.py:299
 msgid "comments"
 msgstr "Kommentare"
 
-#: models_common.py:111 models_common.py:582 models_common.py:973
-#: models_common.py:1249 models_common.py:1520
+#: samples/models/common.py:125 samples/models/common.py:604
+#: samples/models/common.py:1007 samples/models/common.py:1291
+#: samples/models/common.py:1566
 msgid "last modified"
 msgstr "zuletzt geändert"
 
-#: models_common.py:112 models_common.py:1501
+#: samples/models/common.py:126 samples/models/common.py:1546
 msgid "finished"
 msgstr "abgeschlossen"
 
-#: models_common.py:125 models_feeds.py:179 models_feeds.py:202
-#: views/lab_notebook.py:210 views/sample.py:937
+#: samples/models/common.py:139 samples/models/feeds.py:181
+#: samples/models/feeds.py:204 samples/views/lab_notebook.py:209
+#: samples/views/sample.py:939
 msgid "process"
 msgstr "Prozess"
 
-#: models_common.py:126 models_common.py:580 models_common.py:972
-#: models_common.py:1478 views/status.py:61
+#: samples/models/common.py:140 samples/models/common.py:602
+#: samples/models/common.py:1006 samples/models/common.py:1523
+#: samples/views/status.py:59
 msgid "processes"
 msgstr "Prozesse"
 
-#: models_common.py:153
+#: samples/models/common.py:167
 #, python-brace-format
 msgid "process #{0}"
 msgstr "Prozess #{0}"
 
-#: models_common.py:542 views/lab_notebook.py:175
+#: samples/models/common.py:556 samples/views/lab_notebook.py:174
 #, python-brace-format
 msgid "lab notebook for {process_name}"
 msgstr "Laborbuch für {process_name}"
 
-#: models_common.py:569
+#: samples/models/common.py:591
 msgid "watchers"
 msgstr "Beobachter"
 
 #. Translators: location of a sample
-#: models_common.py:571
+#: samples/models/common.py:593
 msgid "current location"
 msgstr "aktueller Probenort"
 
-#: models_common.py:573 models_common.py:1244
-#: templates/samples/show_claim.html:46
-#: templates/samples/show_sample_series.html:53
+#: samples/models/common.py:595 samples/models/common.py:1286
+#: samples/templates/samples/show_claim.html:46
+#: samples/templates/samples/show_sample_series.html:54
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
-#: models_common.py:574 models_feeds.py:128
-#: templates/samples/show_claim.html:47
+#: samples/models/common.py:596 samples/models/feeds.py:130
+#: samples/templates/samples/show_claim.html:47
 msgid "purpose"
 msgstr "Zweck"
 
 #. Translators: keywords for samples
-#: models_common.py:576
+#: samples/models/common.py:598
 msgid "tags"
 msgstr "Tags"
 
-#: models_common.py:576 views/my_samples.py:56
+#: samples/models/common.py:598 samples/views/my_samples.py:55
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
 #. Translators: ID of mother sample
-#: models_common.py:579
+#: samples/models/common.py:601
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: models_common.py:581 models_common.py:1248 models_feeds.py:127
-#: models_feeds.py:154 models_feeds.py:354 models_feeds.py:379
-#: models_feeds.py:411 templates/samples/show_claim.html:48
+#: samples/models/common.py:603 samples/models/common.py:1290
+#: samples/models/feeds.py:129 samples/models/feeds.py:156
+#: samples/models/feeds.py:356 samples/models/feeds.py:381
+#: samples/models/feeds.py:413 samples/templates/samples/show_claim.html:48
 msgid "topic"
 msgstr "Thema"
 
-#: models_common.py:585 models_common.py:889 models_common.py:971
-#: templates/samples/show_claim.html:44 views/form_utils.py:679
-#: views/sample_series.py:366
+#: samples/models/common.py:607 samples/models/common.py:914
+#: samples/models/common.py:1005 samples/templates/samples/show_claim.html:44
+#: samples/views/form_utils.py:678 samples/views/sample_series.py:365
 msgid "sample"
 msgstr "Probe"
 
-#: models_common.py:586 models_common.py:990 models_common.py:1246
-#: models_common.py:1527 models_feeds.py:126 models_feeds.py:153
-#: models_feeds.py:263 models_feeds.py:286 models_feeds.py:516
-#: views/task_lists.py:295
+#: samples/models/common.py:608 samples/models/common.py:1029
+#: samples/models/common.py:1288 samples/models/common.py:1573
+#: samples/models/feeds.py:128 samples/models/feeds.py:155
+#: samples/models/feeds.py:265 samples/models/feeds.py:288
+#: samples/models/feeds.py:518 samples/views/task_lists.py:297
 msgid "samples"
 msgstr "Proben"
 
-#: models_common.py:589
+#: samples/models/common.py:611
 msgid "Can view all samples from his/her department"
 msgstr "Darf alle Proben seiner/ihrer Abteilung sehen"
 
-#: models_common.py:590
+#: samples/models/common.py:612
 msgid "Can adopt samples from his/her department"
 msgstr "Darf Proben seiner/ihrer Abteilung in Besitz nehmen"
 
-#: models_common.py:591
+#: samples/models/common.py:613
 msgid "Can rename samples from his/her department"
 msgstr "Darf Proben seiner/ihrer Abteilung umbenennen"
 
-#: models_common.py:893
+#: samples/models/common.py:918
 msgid "name alias"
 msgstr "Alternativname"
 
-#: models_common.py:894
+#: samples/models/common.py:919
 msgid "name aliases"
 msgstr "Alternativnamen"
 
 #. Translators: parent of a sample
-#: models_common.py:913
+#: samples/models/common.py:939
 msgid "parent"
 msgstr "Elter"
 
-#: models_common.py:919 models_feeds.py:309
+#: samples/models/common.py:945 samples/models/feeds.py:311
 msgid "sample split"
 msgstr "Probenspaltung"
 
-#: models_common.py:920
+#: samples/models/common.py:946
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: models_common.py:924
+#: samples/models/common.py:950
 #, python-brace-format
 msgid "split of {parent_name}"
 msgstr "Spaltung von {parent_name}"
 
-#: models_common.py:970 models_common.py:1377 models_common.py:1395
+#: samples/models/common.py:1004 samples/models/common.py:1420
+#: samples/models/common.py:1439
 msgid "user"
 msgstr "Benutzer"
 
-#: models_common.py:977
+#: samples/models/common.py:1011
 msgid "clearance"
 msgstr "Freigabe"
 
-#: models_common.py:978
+#: samples/models/common.py:1012
 msgid "clearances"
 msgstr "Freigaben"
 
-#: models_common.py:982
+#: samples/models/common.py:1020
 #, python-brace-format
 msgid "clearance of {sample} for {user}"
 msgstr "Freigabe von {sample} für {user}"
 
 #. Translators: someone who assert a claim to samples
-#: models_common.py:987
+#: samples/models/common.py:1026
 msgid "requester"
 msgstr "Antragssteller"
 
-#: models_common.py:988
+#: samples/models/common.py:1027
 msgid "reviewer"
 msgstr "Reviewer"
 
 #. Translators: "closed" claim to samples
-#: models_common.py:992
+#: samples/models/common.py:1031
 msgid "closed"
 msgstr "geschlossen"
 
-#: models_common.py:995
+#: samples/models/common.py:1034
 msgid "sample claim"
 msgstr "Beanspruchung von Proben"
 
-#: models_common.py:996
+#: samples/models/common.py:1035
 msgid "sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: models_common.py:1000
+#: samples/models/common.py:1039
 #, python-brace-format
 msgid "sample claim #{number}"
 msgstr "Probenanspruch Nr. {number}"
 
-#: models_common.py:1008
+#: samples/models/common.py:1047
 msgid "completely split"
 msgstr "vollständig gespalten"
 
-#: models_common.py:1009
+#: samples/models/common.py:1048
 msgid "lost and unfindable"
 msgstr "unauffindbar verlorengegangen"
 
-#: models_common.py:1010
+#: samples/models/common.py:1049
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
 #. Translators: Of a sample
-#: models_common.py:1022
+#: samples/models/common.py:1062
 msgid "cause of death"
 msgstr "Todesursache"
 
 #. Translators: Of a sample
-#: models_common.py:1026 views/sample.py:201
+#: samples/models/common.py:1066 samples/views/sample.py:203
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
 #. Translators: Of a sample
-#: models_common.py:1028
+#: samples/models/common.py:1068
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
 #. Translators: Of a sample
-#: models_common.py:1034
+#: samples/models/common.py:1074
 #, python-brace-format
 msgid "cease of existence of {sample}"
 msgstr "Beendigung der Existenz von {sample}"
 
 #. Translators: Of a sample
-#: models_common.py:1037
+#: samples/models/common.py:1077
 #, python-brace-format
 msgid "cease of existence #{number}"
 msgstr "Beendigung der Existenz #{number}"
 
-#: models_common.py:1044 templates/samples/topics_and_permissions.html:96
-#: templates/samples/topics_and_permissions.html:109
+#: samples/models/common.py:1084
+#: samples/templates/samples/topics_and_permissions.html:96
+#: samples/templates/samples/topics_and_permissions.html:109
 msgid "none"
 msgstr "keine"
 
 #. Translators: Of a result
-#: models_common.py:1055
+#: samples/models/common.py:1096
 msgid "title"
 msgstr "Überschrift"
 
-#: models_common.py:1056
+#: samples/models/common.py:1097
 msgid "image file type"
 msgstr "Typ der Bilddatei"
 
 #. Translators: Physical quantities are meant
-#: models_common.py:1058
+#: samples/models/common.py:1099
 msgid "quantities and values"
 msgstr "Messgrößen und Werte"
 
-#: models_common.py:1058 models_common.py:1401 models_common.py:1430
-#: models_common.py:1434 models_common.py:1437 models_common.py:1554
+#: samples/models/common.py:1099 samples/models/common.py:1445
+#: samples/models/common.py:1474 samples/models/common.py:1478
+#: samples/models/common.py:1481 samples/models/common.py:1600
 msgid "in JSON format"
 msgstr "im JSON-Format"
 
 #. Translators: experimental result
-#: models_common.py:1070 models_feeds.py:229
+#: samples/models/common.py:1111 samples/models/feeds.py:231
 msgid "result"
 msgstr "Ergebnis"
 
 #. Translators: experimental results
-#: models_common.py:1072 models_common.py:1247
+#: samples/models/common.py:1113 samples/models/common.py:1289
 msgid "results"
 msgstr "Ergebnisse"
 
 #. Translators: experimental result
-#: models_common.py:1088 models_common.py:1092
+#: samples/models/common.py:1129 samples/models/common.py:1133
 #, python-brace-format
 msgid "result for {sample}"
 msgstr "Ergebnis für {sample}"
 
 #. Translators: experimental result
-#: models_common.py:1095
+#: samples/models/common.py:1136
 #, python-brace-format
 msgid "result #{number}"
 msgstr "Ergebnis Nr. {number}"
 
 #. Translators: In a table
-#: models_common.py:1225 views/result.py:693
+#: samples/models/common.py:1266 samples/views/result.py:684
 msgid "row"
 msgstr "Zeile"
 
-#: models_common.py:1225
+#: samples/models/common.py:1266
 #, python-brace-format
 msgid "row #{number}"
 msgstr "Zeile Nr. {number}"
 
 #. Translators: The “Y” stands for “year”
-#: models_common.py:1241
+#: samples/models/common.py:1283
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
 
-#: models_common.py:1245 models_feeds.py:157 models_feeds.py:203
-#: models_feeds.py:230 models_feeds.py:287 models_feeds.py:333
-#: models_feeds.py:382 models_feeds.py:495
+#: samples/models/common.py:1287 samples/models/feeds.py:159
+#: samples/models/feeds.py:205 samples/models/feeds.py:232
+#: samples/models/feeds.py:289 samples/models/feeds.py:335
+#: samples/models/feeds.py:384 samples/models/feeds.py:497
 msgid "description"
 msgstr "Beschreibung"
 
-#: models_common.py:1252 models_feeds.py:332 models_feeds.py:353
-#: models_feeds.py:378
+#: samples/models/common.py:1294 samples/models/feeds.py:334
+#: samples/models/feeds.py:355 samples/models/feeds.py:380
 msgid "sample series"
 msgstr "Probenserie"
 
-#: models_common.py:1253
+#: samples/models/common.py:1295
 msgctxt "plural"
 msgid "sample series"
 msgstr "Probenserien"
 
-#: models_common.py:1376 models_common.py:1383 views/form_utils.py:187
+#: samples/models/common.py:1419 samples/models/common.py:1426
+#: samples/views/form_utils.py:188
 msgid "initials"
 msgstr "Kürzel"
 
-#: models_common.py:1384
+#: samples/models/common.py:1427
 msgctxt "plural"
 msgid "initialses"
 msgstr "Kürzel"
 
-#: models_common.py:1398
+#: samples/models/common.py:1442
 msgid "auto-addition topics"
 msgstr "Themen mit Auto-Hinzufügen"
 
-#: models_common.py:1399
+#: samples/models/common.py:1443
 msgid "new samples in these topics are automatically added to “My Samples”"
 msgstr ""
 "neue Proben in diesen Themen werden automatisch zu „Meine Proben“ hinzugefügt"
 
-#: models_common.py:1400
+#: samples/models/common.py:1444
 msgid "get only important news"
 msgstr "nur wichtige Neuigkeiten"
 
-#: models_common.py:1401
+#: samples/models/common.py:1445
 msgid "my layers"
 msgstr "meine Schichten"
 
-#: models_common.py:1408
+#: samples/models/common.py:1452
 msgid "display settings last modified"
 msgstr "Anzeigeoptionen zuletzt geändert"
 
-#: models_common.py:1413
+#: samples/models/common.py:1457
 msgid "My Samples last modified"
 msgstr "Meine Proben zuletzt geändert"
 
-#: models_common.py:1417
+#: samples/models/common.py:1461
 msgid "identifying data hash"
 msgstr "identifizierender Daten-Hash"
 
-#: models_common.py:1427 views/user_details.py:46
+#: samples/models/common.py:1471 samples/views/user_details.py:45
 msgid "subscribed newsfeeds"
 msgstr "abonnierte Newsfeeds"
 
-#: models_common.py:1429 models_common.py:1430 views/user_details.py:47
+#: samples/models/common.py:1473 samples/models/common.py:1474
+#: samples/views/user_details.py:46
 msgid "folded processes"
 msgstr "eingefaltete Prozesse"
 
-#: models_common.py:1433
+#: samples/models/common.py:1477
 msgid "visible task lists"
 msgstr "sichtbare Auftragslisten"
 
-#: models_common.py:1434
+#: samples/models/common.py:1478
 msgid "folded topics"
 msgstr "eingefaltete Themen"
 
 #. Translators: This is plural.
-#: models_common.py:1437
+#: samples/models/common.py:1481
 msgid "folded sample series"
 msgstr "eingefaltete Probenserien"
 
-#: models_common.py:1440 views/user_details.py:48
+#: samples/models/common.py:1484 samples/views/user_details.py:47
 msgid "show users from department"
 msgstr "zeige Benutzer der Abteilung"
 
-#: models_common.py:1444 models_common.py:1445
+#: samples/models/common.py:1488 samples/models/common.py:1489
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: models_common.py:1448
+#: samples/models/common.py:1492
 msgid "Can edit permissions for all physical processes"
 msgstr "Darf die Berechtigungen für alle physikalischen Prozesse ändern"
 
-#: models_common.py:1466 templates/samples/show_status.html:109
+#: samples/models/common.py:1510
+#: samples/templates/samples/show_status.html:110
 msgid "undefined"
 msgstr "undefiniert"
 
-#: models_common.py:1467 templates/samples/show_status.html:111
+#: samples/models/common.py:1511
+#: samples/templates/samples/show_status.html:112
 msgid "red"
 msgstr "rot"
 
-#: models_common.py:1468 templates/samples/show_status.html:113
+#: samples/models/common.py:1512
+#: samples/templates/samples/show_status.html:114
 msgid "yellow"
 msgstr "gelb"
 
-#: models_common.py:1469 templates/samples/show_status.html:115
+#: samples/models/common.py:1513
+#: samples/templates/samples/show_status.html:116
 msgid "green"
 msgstr "grün"
 
-#: models_common.py:1480 views/status.py:57
+#: samples/models/common.py:1525 samples/views/status.py:55
 msgid "begin"
 msgstr "Anfang"
 
-#: models_common.py:1480 models_common.py:1481 models_common.py:1518
-#: models_common.py:1520 views/status.py:58 views/status.py:60
+#: samples/models/common.py:1525 samples/models/common.py:1526
+#: samples/models/common.py:1564 samples/models/common.py:1566
+#: samples/views/status.py:56 samples/views/status.py:58
 msgid "YYYY-MM-DD HH:MM:SS"
 msgstr "JJJJ-MM-TT HH:MM:SS"
 
-#: models_common.py:1481 views/status.py:59
+#: samples/models/common.py:1526 samples/views/status.py:57
 msgid "end"
 msgstr "Ende"
 
-#: models_common.py:1482
+#: samples/models/common.py:1527
 msgid "begin inaccuracy"
 msgstr "Zeitstempel-Unsicherheit des Anfangs"
 
-#: models_common.py:1484
+#: samples/models/common.py:1529
 msgid "end inaccuracy"
 msgstr "Zeitstempel-Unsicherheit des Endes"
 
-#: models_common.py:1486
+#: samples/models/common.py:1531
 msgid "reporter"
 msgstr "Melder"
 
-#: models_common.py:1487
+#: samples/models/common.py:1532
 msgid "message"
 msgstr "Meldung"
 
-#: models_common.py:1488
+#: samples/models/common.py:1533
 msgid "level"
 msgstr "Level"
 
-#: models_common.py:1489
+#: samples/models/common.py:1534
 msgid "withdrawn"
 msgstr "zurückgezogen"
 
-#: models_common.py:1492 models_feeds.py:435 models_feeds.py:456
+#: samples/models/common.py:1537 samples/models/feeds.py:437
+#: samples/models/feeds.py:458
 msgid "status message"
 msgstr "Statusmeldung"
 
-#: models_common.py:1493
+#: samples/models/common.py:1538
 msgid "status messages"
 msgstr "Statusmeldungen"
 
-#: models_common.py:1497
+#: samples/models/common.py:1542
 #, python-brace-format
 msgid "status message #{number}"
 msgstr "Statusmeldung Nr. {number}"
 
-#: models_common.py:1502
+#: samples/models/common.py:1547
 msgid "new"
 msgstr "neu"
 
-#: models_common.py:1503
+#: samples/models/common.py:1548
 msgid "accepted"
 msgstr "akzeptiert"
 
-#: models_common.py:1504
+#: samples/models/common.py:1549
 msgid "in progress"
 msgstr "in Bearbeitung"
 
-#: models_common.py:1507
+#: samples/models/common.py:1552
 msgid "critical"
 msgstr "kritisch"
 
-#: models_common.py:1508
+#: samples/models/common.py:1553
 msgid "high"
 msgstr "hoch"
 
-#: models_common.py:1509
+#: samples/models/common.py:1554
 msgid "normal"
 msgstr "normal"
 
-#: models_common.py:1510
+#: samples/models/common.py:1555
 msgid "low"
 msgstr "niedrig"
 
-#: models_common.py:1516
+#: samples/models/common.py:1562
 msgid "status"
 msgstr "Status"
 
-#: models_common.py:1517
+#: samples/models/common.py:1563
 msgid "customer"
 msgstr "Kunde"
 
-#: models_common.py:1518
+#: samples/models/common.py:1564
 msgid "created at"
 msgstr "eingestellt"
 
-#: models_common.py:1524 models_feeds.py:434 models_feeds.py:455
-#: models_feeds.py:515 views/task_lists.py:67
+#: samples/models/common.py:1570 samples/models/feeds.py:436
+#: samples/models/feeds.py:457 samples/models/feeds.py:517
+#: samples/views/task_lists.py:68
 msgid "process class"
 msgstr "Prozessart"
 
-#: models_common.py:1526 views/task_lists.py:68
+#: samples/models/common.py:1572 samples/views/task_lists.py:69
 msgid "finished process"
 msgstr "abgeschlossener Prozess"
 
-#: models_common.py:1529
+#: samples/models/common.py:1575
 msgid "priority"
 msgstr "Priorität"
 
-#: models_common.py:1532 models_feeds.py:475 models_feeds.py:494
+#: samples/models/common.py:1578 samples/models/feeds.py:477
+#: samples/models/feeds.py:496
 msgid "task"
 msgstr "Auftrag"
 
-#: models_common.py:1533
+#: samples/models/common.py:1579
 msgid "tasks"
 msgstr "Aufträge"
 
-#: models_common.py:1537
+#: samples/models/common.py:1583
 #, python-brace-format
 msgid "task of {process_class} from {datetime}"
 msgstr "Auftrag für {process_class} von {datetime}"
 
-#: models_common.py:1554
+#: samples/models/common.py:1600
 msgid "sample positions"
 msgstr "Probenpositionen"
 
-#: models_common.py:1570 models_common.py:1579 views/task_lists.py:212
+#: samples/models/common.py:1616 samples/models/common.py:1625
+#: samples/views/task_lists.py:214
 msgid "confidential sample"
 msgstr "vertrauliche Probe"
 
-#: models_depositions.py:53
+#: samples/models/depositions.py:66
 msgid "deposition number"
 msgstr "Depositionsnummer"
 
-#: models_depositions.py:54
+#: samples/models/depositions.py:67
 msgid "split after deposition done"
 msgstr "Spaltung nach der Deposition erledigt"
 
-#: models_depositions.py:57
+#: samples/models/depositions.py:70
 msgid "deposition"
 msgstr "Deposition"
 
-#: models_depositions.py:58
+#: samples/models/depositions.py:71
 msgid "depositions"
 msgstr "Depositionen"
 
-#: models_depositions.py:66
+#: samples/models/depositions.py:82
 #, python-brace-format
 msgid "deposition {number}"
 msgstr "Deposition {number}"
 
-#: models_depositions.py:79 models_depositions.py:145 models_feeds.py:514
-#: templates/samples/task_lists.html:61
+#: samples/models/depositions.py:95 samples/models/depositions.py:161
+#: samples/models/feeds.py:516 samples/templates/samples/task_lists.html:62
 msgid "number"
 msgstr "Nummer"
 
-#: models_depositions.py:127
+#: samples/models/depositions.py:143
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: models_depositions.py:132
+#: samples/models/depositions.py:148
 msgid "layer"
 msgstr "Schicht"
 
-#: models_depositions.py:133
+#: samples/models/depositions.py:149
 msgid "layers"
 msgstr "Schichten"
 
-#: models_depositions.py:144
+#: samples/models/depositions.py:160
 #, python-brace-format
 msgid "layer {number}"
 msgstr "Schicht {number}"
 
-#: models_feeds.py:47
+#: samples/models/feeds.py:49
 msgid "originator"
 msgstr "Ersteller"
 
-#: models_feeds.py:48
+#: samples/models/feeds.py:50
 msgid "users"
 msgstr "Benutzer"
 
-#: models_feeds.py:51
+#: samples/models/feeds.py:53
 msgid "is important"
 msgstr "ist wichtig"
 
-#: models_feeds.py:52
+#: samples/models/feeds.py:54
 msgid "SHA1 hex digest"
 msgstr "SHA1 Hex-Digest"
 
-#: models_feeds.py:57
+#: samples/models/feeds.py:59
 msgid "feed entry"
 msgstr "Feed-Eintrag"
 
-#: models_feeds.py:58
+#: samples/models/feeds.py:60
 msgid "feed entries"
 msgstr "Feed-Einträge"
 
-#: models_feeds.py:63
+#: samples/models/feeds.py:65
 #, python-brace-format
 msgid "feed entry #{number}"
 msgstr "Feed-Eintrag Nr. {number}"
 
-#: models_feeds.py:129 models_feeds.py:156
+#: samples/models/feeds.py:131 samples/models/feeds.py:158
 msgid "auto adders"
 msgstr "Auto-Hinzufüger"
 
-#: models_feeds.py:134
+#: samples/models/feeds.py:136
 msgid "new samples feed entry"
 msgstr "Feed-Eintrag für neue Proben"
 
-#: models_feeds.py:135
+#: samples/models/feeds.py:137
 msgid "new samples feed entries"
 msgstr "Feed-Einträge für neue Proben"
 
-#: models_feeds.py:140
+#: samples/models/feeds.py:142
 #, python-brace-format
 msgid "New sample in “{topic}”"
 msgid_plural "New samples in “{topic}”"
 msgstr[0] "Neue Probe in „{topic}“"
 msgstr[1] "Neue Proben in „{topic}“"
 
-#: models_feeds.py:155 models_feeds.py:380
+#: samples/models/feeds.py:157 samples/models/feeds.py:382
 msgid "old topic"
 msgstr "altes Thema"
 
-#: models_feeds.py:160
+#: samples/models/feeds.py:162
 msgid "moved samples feed entry"
 msgstr "Feed-Eintrag für verschobene Proben"
 
-#: models_feeds.py:161
+#: samples/models/feeds.py:163
 msgid "moved samples feed entries"
 msgstr "Feed-Einträge für verschobene Proben"
 
-#: models_feeds.py:166
+#: samples/models/feeds.py:168
 #, python-brace-format
 msgid "New sample moved to “{topic}”"
 msgid_plural "New samples moved to “{topic}”"
 msgstr[0] "Neue Probe in „{topic}“ verschoben"
 msgstr[1] "Neue Proben in „{topic}“ verschoben"
 
-#: models_feeds.py:182
+#: samples/models/feeds.py:184
 msgid "new physical process feed entry"
 msgstr "Feed-Eintrag für neue physikalische Prozesse"
 
-#: models_feeds.py:183
+#: samples/models/feeds.py:185
 msgid "new physical process feed entries"
 msgstr "Feed-Einträge für neue physikalische Prozesse"
 
-#: models_feeds.py:189
+#: samples/models/feeds.py:191
 #, python-brace-format
 msgid "New {process}"
 msgstr "Neue(r) {process}"
 
-#: models_feeds.py:206
+#: samples/models/feeds.py:208
 msgid "edited physical process feed entry"
 msgstr "Feed-Eintrag für geänderte physikalische Prozesse"
 
-#: models_feeds.py:207
+#: samples/models/feeds.py:209
 msgid "edited physical process feed entries"
 msgstr "Feed-Einträge für geänderte physikalische Prozesse"
 
-#: models_feeds.py:213
+#: samples/models/feeds.py:215
 #, python-brace-format
 msgid "Edited {process}"
 msgstr "Geänderte(r) {process}"
 
-#: models_feeds.py:231
+#: samples/models/feeds.py:233
 msgid "result is new"
 msgstr "Ergebnis ist neu"
 
-#: models_feeds.py:234
+#: samples/models/feeds.py:236
 msgid "result feed entry"
 msgstr "Feed-Eintrag für Ergebnis"
 
-#: models_feeds.py:235
+#: samples/models/feeds.py:237
 msgid "result feed entries"
 msgstr "Feed-Einträge für Ergebnisse"
 
-#: models_feeds.py:241
+#: samples/models/feeds.py:243
 #, python-brace-format
 msgid "New: {result_title}"
 msgstr "Neu: {result_title}"
 
-#: models_feeds.py:245
+#: samples/models/feeds.py:247
 #, python-brace-format
 msgid "Edited: {result_title}"
 msgstr "Geändert: {result_title}"
 
-#: models_feeds.py:267
+#: samples/models/feeds.py:269
 msgid "copied My Samples feed entry"
 msgstr "Feed-Eintrag für kopierte Meine Proben"
 
-#: models_feeds.py:268
+#: samples/models/feeds.py:270
 msgid "copied My Samples feed entries"
 msgstr "Feed-Einträge für kopierte Meine Proben"
 
-#: models_feeds.py:273
+#: samples/models/feeds.py:275
 #, python-brace-format
 msgid "{name} copied samples to you"
 msgstr "{name} hat Proben zu Ihnen kopiert"
 
-#: models_feeds.py:288 models_feeds.py:334
+#: samples/models/feeds.py:290 samples/models/feeds.py:336
 msgid "has responsible person changed"
 msgstr "hat der Proben-Verantwortliche sich geändert"
 
-#: models_feeds.py:291
+#: samples/models/feeds.py:293
 msgid "edited samples feed entry"
 msgstr "Feed-Eintrag für geänderte Proben"
 
-#: models_feeds.py:292
+#: samples/models/feeds.py:294
 msgid "edited samples feed entries"
 msgstr "Feed-Einträge für geänderte Proben"
 
-#: models_feeds.py:298
+#: samples/models/feeds.py:300
 #, python-brace-format
 msgid "Sample {sample} was edited"
 msgstr "Probe {sample} wurde geändert"
 
-#: models_feeds.py:300
+#: samples/models/feeds.py:302
 msgid "Samples were edited"
 msgstr "Proben wurden geändert"
 
-#: models_feeds.py:310
+#: samples/models/feeds.py:312
 msgid "sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
 
 #. Translators: Feed entry for a split of a sample
-#: models_feeds.py:314
+#: samples/models/feeds.py:316
 msgid "sample split feed entry"
 msgstr "Feed-Eintrag für gespaltene Probe"
 
 #. Translators: Feed entries for splits of samples
-#: models_feeds.py:316
+#: samples/models/feeds.py:318
 msgid "sample split feed entries"
 msgstr "Feed-Einträge für gespaltene Probe"
 
-#: models_feeds.py:321
+#: samples/models/feeds.py:323
 #, python-brace-format
 msgid "Sample “{parent_sample}” was split"
 msgstr "Probe „{parent_sample}“ wurde gespalten"
 
-#: models_feeds.py:337
+#: samples/models/feeds.py:339
 msgid "edited sample series feed entry"
 msgstr "Feed-Eintrag für geänderte Probenserie"
 
-#: models_feeds.py:338
+#: samples/models/feeds.py:340
 msgid "edited sample series feed entries"
 msgstr "Feed-Einträge für geänderte Probenserien"
 
-#: models_feeds.py:343
+#: samples/models/feeds.py:345
 #, python-brace-format
 msgid "Sample series {name} was edited"
 msgstr "Probenserie „{name}“ wurde geändert"
 
-#: models_feeds.py:355 models_feeds.py:383
+#: samples/models/feeds.py:357 samples/models/feeds.py:385
 msgid "subscribers"
 msgstr "Abonnenten"
 
-#: models_feeds.py:358
+#: samples/models/feeds.py:360
 msgid "new sample series feed entry"
 msgstr "Feed-Eintrag für neue Probenserie"
 
-#: models_feeds.py:359
+#: samples/models/feeds.py:361
 msgid "new sample series feed entries"
 msgstr "Feed-Einträge für neue Probenserien"
 
-#: models_feeds.py:364
+#: samples/models/feeds.py:366
 #, python-brace-format
 msgid "New sample series “{sample_series}” in topic “{topic}”"
 msgstr "Neue Probenserie „{sample_series}“ in Thema „{topic}“"
 
-#: models_feeds.py:386
+#: samples/models/feeds.py:388
 msgid "moved sample series feed entry"
 msgstr "Feed-Eintrag für verschobene Probenserie"
 
-#: models_feeds.py:387
+#: samples/models/feeds.py:389
 msgid "moved sample series feed entries"
 msgstr "Feed-Einträge für verschobene Probenserien"
 
-#: models_feeds.py:392
+#: samples/models/feeds.py:394
 #, python-brace-format
 msgid "Sample series {sample_series} was moved to topic “{topic}”"
 msgstr "Probenserie „{sample_series}“ wurde zum Thema „{topic}“ verschoben"
 
-#: models_feeds.py:404 views/task_lists.py:301
+#: samples/models/feeds.py:406 samples/views/task_lists.py:303
 msgid "added"
 msgstr "hinzugefügt"
 
-#: models_feeds.py:405
+#: samples/models/feeds.py:407
 msgid "removed"
 msgstr "entfernt"
 
 #. Translators: Action is either addition or removal
-#: models_feeds.py:413
+#: samples/models/feeds.py:415
 msgid "action"
 msgstr "Aktion"
 
-#: models_feeds.py:416
+#: samples/models/feeds.py:418
 msgid "changed topic feed entry"
 msgstr "Feed-Eintrag für geänderte Themen"
 
-#: models_feeds.py:417
+#: samples/models/feeds.py:419
 msgid "changed topic feed entries"
 msgstr "Feed-Einträge für geänderte Themen"
 
-#: models_feeds.py:423
+#: samples/models/feeds.py:425
 #, python-brace-format
 msgid "Now in topic “{name}”"
 msgstr "Jetzt in Thema „{name}“"
 
-#: models_feeds.py:425
+#: samples/models/feeds.py:427
 #, python-brace-format
 msgid "Not anymore in topic “{name}”"
 msgstr "Nicht mehr in Thema „{name}“"
 
-#: models_feeds.py:438
+#: samples/models/feeds.py:440
 msgid "status message feed entry"
 msgstr "Feed-Eintrag für Statusmeldung"
 
-#: models_feeds.py:439
+#: samples/models/feeds.py:441
 msgid "status message feed entries"
 msgstr "Feed-Einträge für Statusmeldungen"
 
-#: models_feeds.py:444
+#: samples/models/feeds.py:446
 #, python-brace-format
 msgid "New status message for {process_class}"
 msgstr "Neue Statusmeldung für {process_class}"
 
-#: models_feeds.py:459
+#: samples/models/feeds.py:461
 msgid "withdrawn status message feed entry"
 msgstr "Feed-Eintrag für zurückgezogene Statusmeldung"
 
-#: models_feeds.py:460
+#: samples/models/feeds.py:462
 msgid "withdrawn status message feed entries"
 msgstr "Feed-Einträge für zurückgezogene Statusmeldungen"
 
-#: models_feeds.py:465
+#: samples/models/feeds.py:467
 #, python-brace-format
 msgid "Withdrawn status message for {process_class}"
 msgstr "Zurückgezogene Statusmeldung für {process_class}"
 
-#: models_feeds.py:478
+#: samples/models/feeds.py:480
 msgid "new task feed entry"
 msgstr "Feed-Eintrag für neue Aufträge"
 
-#: models_feeds.py:479
+#: samples/models/feeds.py:481
 msgid "new task feed entries"
 msgstr "Feed-Einträge für neue Aufträge"
 
-#: models_feeds.py:484
+#: samples/models/feeds.py:486
 #, python-brace-format
 msgid "New task for {process_class}"
 msgstr "Neuer Auftrag für {process_class}"
 
-#: models_feeds.py:498
+#: samples/models/feeds.py:500
 msgid "edited task feed entry"
 msgstr "Feed-Eintrag für geänderte Aufträge"
 
-#: models_feeds.py:499
+#: samples/models/feeds.py:501
 msgid "edited task feed entries"
 msgstr "Feed-Einträge für geänderte Aufträge"
 
-#: models_feeds.py:504
+#: samples/models/feeds.py:506
 #, python-brace-format
 msgid "Edited task for {process_class}"
 msgstr "Geänderter Auftrag für {process_class}"
 
-#: models_feeds.py:519
+#: samples/models/feeds.py:521
 msgid "removed task feed entry"
 msgstr "Feed-Eintrag für entfernte Aufträge"
 
-#: models_feeds.py:520
+#: samples/models/feeds.py:522
 msgid "removed task feed entries"
 msgstr "Feed-Einträge für verschobene Aufträge"
 
-#: models_feeds.py:525
+#: samples/models/feeds.py:527
 #, python-brace-format
 msgid "Removed a task for {process_class}"
 msgstr "Entfernter Auftrag {process_class}"
 
-#: permissions.py:69
+#: samples/permissions.py:68
 msgid "[not available]"
 msgstr "[nicht vorhanden]"
 
-#: permissions.py:262
+#: samples/permissions.py:261
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
 
-#: permissions.py:304
+#: samples/permissions.py:303
 msgid ""
 "You are not allowed to view the sample since the sample doesn't belong to "
 "your department."
@@ -983,7 +1016,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da die Probe nicht zu Ihrer Abteilung "
 "gehört."
 
-#: permissions.py:309
+#: samples/permissions.py:308
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "topic, nor belongs the sample to your department."
@@ -991,7 +1024,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "die Probe zu Ihrer Abteilung gehört."
 
-#: permissions.py:313
+#: samples/permissions.py:312
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
@@ -1000,7 +1033,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher ({name}) sind."
 
-#: permissions.py:318
+#: samples/permissions.py:317
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
@@ -1010,11 +1043,11 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher ({name}) sind, noch alle Proben sehen dürfen."
 
-#: permissions.py:344 views/sample.py:1029
+#: samples/permissions.py:343 samples/views/sample.py:1031
 msgid "You are not allowed to rename the sample."
 msgstr "Sie dürfen die Probe nicht umbenennen."
 
-#: permissions.py:409
+#: samples/permissions.py:408
 #, python-brace-format
 msgid ""
 "You are not allowed to add {process_plural_name} because you don't have the "
@@ -1023,7 +1056,7 @@ msgstr ""
 "Sie dürfen keine {process_plural_name} hinzufügen, weil Sie nicht die "
 "Berechtigung „{permission}“ haben."
 
-#: permissions.py:445
+#: samples/permissions.py:444
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the process “{process}” because you are not the "
@@ -1032,7 +1065,7 @@ msgstr ""
 "Sie dürfen den Prozess „{process}“ nicht ändern, weil Sie nicht der "
 "Operateur dieses Prozesses sind."
 
-#: permissions.py:503
+#: samples/permissions.py:502
 #, python-brace-format
 msgid ""
 "You are not allowed to view lab notebooks for {process_plural_name} because "
@@ -1041,7 +1074,7 @@ msgstr ""
 "Sie dürfen keine Laborbücher für {process_plural_name} einsehen, weil Sie "
 "nicht die Berechtigung „{permission}“ haben."
 
-#: permissions.py:539
+#: samples/permissions.py:538
 #, python-brace-format
 msgid ""
 "You are not allowed to view the process “{process}” because neither you have "
@@ -1053,7 +1086,7 @@ msgstr ""
 "Berechtigung „{permission}“ haben, noch eine der beteiligten Proben sehen "
 "dürfen, noch der Operateur sind, noch eine Freigabe für diesen Prozess haben."
 
-#: permissions.py:561
+#: samples/permissions.py:560
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the result “{result}” because you didn't create "
@@ -1062,7 +1095,7 @@ msgstr ""
 "Sie dürfen das Resultat „{result}“ nicht ändern, weil Sie dieses Resultat "
 "nicht selbst angelegt haben."
 
-#: permissions.py:585
+#: samples/permissions.py:584
 #, python-brace-format
 msgid ""
 "You are not allowed to view the result “{result}” because neither did you "
@@ -1073,7 +1106,7 @@ msgstr ""
 "Urheber dieses Ergebnisses sind, noch eine der beteiligten Proben oder "
 "Probenserien sehen dürfen, noch eine Freigabe für dieses Ergebnis haben."
 
-#: permissions.py:609
+#: samples/permissions.py:608
 #, python-brace-format
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
@@ -1084,7 +1117,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probe sind, noch ein Mitglied ihres "
 "Themas."
 
-#: permissions.py:613
+#: samples/permissions.py:612
 #, python-brace-format
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
@@ -1095,7 +1128,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probenserie sind, noch ein Mitglied "
 "ihres Themas."
 
-#: permissions.py:637
+#: samples/permissions.py:636
 msgid ""
 "You are not allowed to edit the sample since the sample doesn't belong to "
 "your department."
@@ -1103,7 +1136,7 @@ msgstr ""
 "Sie dürfen die Probe nicht ändern, da die Probe nicht zu Ihrer Abteilung "
 "gehört."
 
-#: permissions.py:642
+#: samples/permissions.py:641
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the sample “{name}” (including splitting and "
@@ -1113,7 +1146,7 @@ msgstr ""
 "Sie dürfen die Probe „{name}“ nicht ändern (inklusive spalten und für tot "
 "erklären), weil Sie nicht ihr aktuell Verantwortlicher sind."
 
-#: permissions.py:663
+#: samples/permissions.py:662
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the sample series “{name}” because you are not "
@@ -1122,7 +1155,7 @@ msgstr ""
 "Sie dürfen die Probenserie „{name}“ nicht ändern, weil Sie nicht ihr aktuell "
 "Verantwortlicher sind."
 
-#: permissions.py:684
+#: samples/permissions.py:683
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample series “{name}” because neither are "
@@ -1131,7 +1164,7 @@ msgstr ""
 "Sie dürfen die Probenserie {name} nicht sehen, weil Sie weder der aktuell "
 "Verantwortliche für diese Probeserie sind, noch ein Mitglied ihres Themas."
 
-#: permissions.py:703
+#: samples/permissions.py:702
 #, python-brace-format
 msgid ""
 "You are not allowed to add an external operator because you don't have the "
@@ -1140,7 +1173,7 @@ msgstr ""
 "Sie dürfen keinen neuen externen Operateur anlegen, weil Ihnen die "
 "Berechtgung „{name}“ fehlt."
 
-#: permissions.py:723
+#: samples/permissions.py:722
 msgid ""
 "You are not allowed to edit this external operator because you aren't their "
 "current contact person."
@@ -1148,7 +1181,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht ändern, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: permissions.py:744
+#: samples/permissions.py:743
 msgid ""
 "You are not allowed to view this external operator because you are not their "
 "current contact person."
@@ -1156,7 +1189,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht einsehen, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: permissions.py:748
+#: samples/permissions.py:747
 msgid ""
 "You are not allowed to view this external operator because neither are you "
 "their current contact person, nor can you view all external operators."
@@ -1165,7 +1198,7 @@ msgstr ""
 "aktuelle Kontaktperson für ihn sind, noch alle externen Operateure sehen "
 "dürfen."
 
-#: permissions.py:772
+#: samples/permissions.py:771
 #, python-brace-format
 msgid ""
 "You are not allowed to add or list topics because you don't have the "
@@ -1174,7 +1207,7 @@ msgstr ""
 "Sie dürfen Themen nicht neu anlegen oder auflisten, weil Ihnen die "
 "Berechtgung „{name}“ fehlt."
 
-#: permissions.py:779
+#: samples/permissions.py:778
 #, python-brace-format
 msgid ""
 "You are not allowed to change this topic because you don't have the "
@@ -1183,7 +1216,7 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{1}“ fehlt."
 
-#: permissions.py:785
+#: samples/permissions.py:784
 #, python-brace-format
 msgid ""
 "You are not allowed to change this topic because you don't have the "
@@ -1192,14 +1225,14 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{name}“ "
 "fehlt."
 
-#: permissions.py:790
+#: samples/permissions.py:789
 msgid ""
 "You are not allowed to change this topic because it is confidential and you "
 "are not in this topic."
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Sie nicht in diesem Thema sind."
 
-#: permissions.py:811
+#: samples/permissions.py:810
 #, python-brace-format
 msgid ""
 "You are not allowed to change your topics because you don't have the "
@@ -1208,7 +1241,7 @@ msgstr ""
 "Sie dürfen Ihre Themen nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{1}“ fehlt."
 
-#: permissions.py:841
+#: samples/permissions.py:840
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
 "access the news feed of another user."
@@ -1217,63 +1250,86 @@ msgstr ""
 "Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
 "dürfen."
 
-#: permissions.py:845
+#: samples/permissions.py:844
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 
-#: templates/samples/about.html:30
+#: samples/settings_defaults.py:31
+msgid ""
+"The initials start with two uppercase letters.  They contain uppercase "
+"letters and digits only.  Digits are at the end."
+msgstr ""
+"Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur "
+"Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen."
+
+#: samples/settings_defaults.py:34
+msgid ""
+"The initials start with two uppercase letters.  They contain uppercase "
+"letters and digits only.  Digits are at the end.  The length is exactly 4 "
+"characters."
+msgstr ""
+"Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur "
+"Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen.  "
+"Die Länge muss exakt 4 Zeichen lang sein."
+
+#: samples/templates/samples/about.html:31
 msgid "Runtime"
 msgstr "Laufzeit-Umgebung"
 
-#: templates/samples/about.html:33
+#: samples/templates/samples/about.html:34
 msgid "Python logo"
 msgstr "Python-Logo"
 
-#: templates/samples/about.html:39
+#: samples/templates/samples/about.html:40
 msgid "Web framework"
 msgstr "Web-Framework"
 
-#: templates/samples/about.html:41 templates/samples/about.html.py:44
+#: samples/templates/samples/about.html:42
+#: samples/templates/samples/about.html:45
 msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
 msgstr "http://de.wikipedia.org/wiki/Django_(Framework)"
 
-#: templates/samples/about.html:42
+#: samples/templates/samples/about.html:43
 msgid "Django logo"
 msgstr "Django-Logo"
 
-#: templates/samples/about.html:48
+#: samples/templates/samples/about.html:49
 msgid "Plotting system"
 msgstr "Plot-Programm"
 
-#: templates/samples/about.html:50 templates/samples/about.html.py:53
+#: samples/templates/samples/about.html:51
+#: samples/templates/samples/about.html:54
 msgid "http://matplotlib.sourceforge.net/"
 msgstr "http://matplotlib.sourceforge.net/"
 
-#: templates/samples/about.html:52
+#: samples/templates/samples/about.html:53
 msgid "Matplotlib logo"
 msgstr "Matplotlib-Logo"
 
-#: templates/samples/add_claim.html:21 templates/samples/add_claim.html:22
-#: templates/samples/add_status_message.html:21
-#: templates/samples/edit_description.html:20
-#: templates/samples/edit_my_samples.html:22
-#: templates/samples/edit_result.html:23
-#: templates/samples/edit_sample_death.html:22
-#: templates/samples/edit_sample_positions.html:21
-#: templates/samples/merge_samples.html:37
-#: templates/samples/rename_sample.html:25
-#: templates/samples/show_claim.html:66 templates/samples/show_claim.html:67
-#: templates/samples/split_and_rename.html:22
-#: templates/samples/task_lists.html:124 templatetags/samples_extras.py:578
+#: samples/templates/samples/add_claim.html:21
+#: samples/templates/samples/add_claim.html:22
+#: samples/templates/samples/add_status_message.html:21
+#: samples/templates/samples/edit_description.html:20
+#: samples/templates/samples/edit_my_samples.html:22
+#: samples/templates/samples/edit_result.html:23
+#: samples/templates/samples/edit_sample_death.html:22
+#: samples/templates/samples/edit_sample_positions.html:21
+#: samples/templates/samples/merge_samples.html:37
+#: samples/templates/samples/rename_sample.html:25
+#: samples/templates/samples/show_claim.html:66
+#: samples/templates/samples/show_claim.html:67
+#: samples/templates/samples/split_and_rename.html:22
+#: samples/templates/samples/task_lists.html:125
+#: samples/templatetags/samples_extras.py:575
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
-#: templates/samples/add_topic.html:22
+#: samples/templates/samples/add_topic.html:22
 msgid "New topic"
 msgstr "Thema hinzufügen"
 
-#: templates/samples/advanced_search.html:49
-#: templates/samples/search_samples.html:30
+#: samples/templates/samples/advanced_search.html:49
+#: samples/templates/samples/search_samples.html:30
 #, python-format
 msgid ""
 "\n"
@@ -1283,41 +1339,41 @@ msgstr ""
 "\n"
 "Zu viele passende Objekte gefunden.  Ich zeige nur %(max_results)s davon."
 
-#: templates/samples/advanced_search.html:57
-#: templates/samples/search_samples.html:48
+#: samples/templates/samples/advanced_search.html:57
+#: samples/templates/samples/search_samples.html:48
 msgid "Mark samples to add them to “My Samples”."
 msgstr "Markieren Sie Proben, um sie zu „Meine Proben“ hinzuzufügen."
 
-#: templates/samples/advanced_search.html:69
-#: templates/samples/search_depositions.html:43
-#: templates/samples/search_samples.html:50
+#: samples/templates/samples/advanced_search.html:69
+#: samples/templates/samples/search_depositions.html:43
+#: samples/templates/samples/search_samples.html:50
 msgid "Nothing found."
 msgstr "Nichts gefunden."
 
-#: templates/samples/advanced_search.html:72
-#: templates/samples/search_samples.html:53
+#: samples/templates/samples/advanced_search.html:72
+#: samples/templates/samples/search_samples.html:53
 msgid "add samples"
 msgstr "Proben hinzufügen"
 
-#: templates/samples/advanced_search.html:76
+#: samples/templates/samples/advanced_search.html:76
 msgid "No search was performed yet."
 msgstr "Es ist noch keine Suche durchgeführt worden."
 
-#: templates/samples/bulk_rename.html:39
+#: samples/templates/samples/bulk_rename.html:40
 msgid "Error in prefixes"
 msgstr "Fehler in Präfixen"
 
-#: templates/samples/bulk_rename.html:52
-#: templates/samples/split_and_rename.html:44
+#: samples/templates/samples/bulk_rename.html:54
+#: samples/templates/samples/split_and_rename.html:44
 msgid "Error in new name"
 msgstr "Fehler in neuen Namen"
 
-#: templates/samples/change_password.html:17
-#: templates/samples/change_password.html:18
+#: samples/templates/samples/change_password.html:17
+#: samples/templates/samples/change_password.html:18
 msgid "Password change"
 msgstr "Passwort ändern"
 
-#: templates/samples/change_password.html:22
+#: samples/templates/samples/change_password.html:22
 msgid ""
 "Please enter your old password, for security's sake, and then enter your new "
 "password twice so we can verify you typed it in correctly."
@@ -1326,28 +1382,28 @@ msgstr ""
 "dann zweimal (um sicherzustellen, dass Sie es korrekt eingegeben haben) das "
 "neue Kennwort ein."
 
-#: templates/samples/change_password.html:27
+#: samples/templates/samples/change_password.html:27
 msgid "Old password:"
 msgstr "Altes Passwort:"
 
-#: templates/samples/change_password.html:29
+#: samples/templates/samples/change_password.html:29
 msgid "New password:"
 msgstr "Neues Passwort:"
 
-#: templates/samples/change_password.html:31
+#: samples/templates/samples/change_password.html:31
 msgid "Confirm password:"
 msgstr "Passwort wiederholen:"
 
-#: templates/samples/change_password.html:33
+#: samples/templates/samples/change_password.html:33
 msgid "Change my password"
 msgstr "Mein Passwort ändern"
 
-#: templates/samples/data_matrix_code.html:22
-#: templates/samples/show_sample.html:89 views/sample.py:1005
+#: samples/templates/samples/data_matrix_code.html:22
+#: samples/templates/samples/show_sample.html:90 samples/views/sample.py:1007
 msgid "Data Matrix code"
 msgstr "Data-Matrix-Code"
 
-#: templates/samples/disambiguation.html:21
+#: samples/templates/samples/disambiguation.html:21
 #, python-format
 msgid ""
 "\n"
@@ -1357,44 +1413,44 @@ msgstr ""
 "\n"
 "Der Name %(alias)s ist ein Alias für die folgenden Proben:"
 
-#: templates/samples/edit_external_operator.html:22
+#: samples/templates/samples/edit_external_operator.html:22
 msgid "Error in external operator"
 msgstr "Fehler im externen Operateur"
 
-#: templates/samples/edit_external_operator.html:38
-#: templates/samples/edit_preferences.html:23
+#: samples/templates/samples/edit_external_operator.html:38
+#: samples/templates/samples/edit_preferences.html:23
 msgid "Error in initials"
 msgstr "Fehler im Kürzel"
 
-#: templates/samples/edit_my_layers.html:30
+#: samples/templates/samples/edit_my_layers.html:30
 msgid "Error in My Layer"
 msgstr "Fehler in „Meinem Layer“"
 
-#: templates/samples/edit_my_samples.html:23
+#: samples/templates/samples/edit_my_samples.html:23
 msgid "Error in “My Samples”"
 msgstr "Fehler in „Meine Proben“"
 
-#: templates/samples/edit_permissions.html:32
+#: samples/templates/samples/edit_permissions.html:32
 msgid "can add"
 msgstr "darf hinzufügen"
 
-#: templates/samples/edit_permissions.html:33
+#: samples/templates/samples/edit_permissions.html:33
 msgid "can view all"
 msgstr "darf alle sehen"
 
-#: templates/samples/edit_permissions.html:34
+#: samples/templates/samples/edit_permissions.html:34
 msgid "can edit all"
 msgstr "darf alle ändern"
 
-#: templates/samples/edit_permissions.html:35
+#: samples/templates/samples/edit_permissions.html:35
 msgid "can change permissions"
 msgstr "darf Berechtigungen ändern"
 
-#: templates/samples/edit_preferences.html:22
+#: samples/templates/samples/edit_preferences.html:22
 msgid "Error in preferences"
 msgstr "Fehler in Einstellungen"
 
-#: templates/samples/edit_preferences.html:31
+#: samples/templates/samples/edit_preferences.html:31
 msgid ""
 "(This list shows\n"
 "            all topics you are a member of.  You can mark those topics that "
@@ -1405,11 +1461,11 @@ msgstr ""
 "diejenigen Themen markieren, deren neue Proben automatisch zu „Meine Proben“ "
 "hinzugefügt werden sollen.)"
 
-#: templates/samples/edit_preferences.html:42
+#: samples/templates/samples/edit_preferences.html:42
 msgid "(Once set, you can't change this anymore.)"
 msgstr "(Einmal gesetzt, kann es nie mehr geändert werden.)"
 
-#: templates/samples/edit_preferences.html:55
+#: samples/templates/samples/edit_preferences.html:55
 msgid ""
 "\n"
 "            (Choose the news feeds you are interested in. For example: If "
@@ -1422,7 +1478,7 @@ msgstr ""
 "„Probe“ auswählen, werden Sie nur über Dinge informiert, die Proben "
 "betreffen.)"
 
-#: templates/samples/edit_preferences.html:70
+#: samples/templates/samples/edit_preferences.html:70
 msgid ""
 "\n"
 "            (With this setting, it is possible to fold less interesting "
@@ -1434,7 +1490,7 @@ msgstr ""
 "Prozesse auf dem Probendatenblatt per Voreinstallung einzufalten.)\n"
 "      "
 
-#: templates/samples/edit_preferences.html:85
+#: samples/templates/samples/edit_preferences.html:85
 msgid ""
 "\n"
 "            (Select the departments from which you want to see the members "
@@ -1446,47 +1502,47 @@ msgstr ""
 "Auswahllisten erscheinen sollen.)\n"
 "             "
 
-#: templates/samples/edit_result.html:22
+#: samples/templates/samples/edit_result.html:22
 msgid "Error in result"
 msgstr "Fehler im Ergebnis"
 
-#: templates/samples/edit_result.html:64
+#: samples/templates/samples/edit_result.html:64
 msgid "Error in dimensions"
 msgstr "Fehler in den Dimensionen"
 
-#: templates/samples/edit_result.html:67
+#: samples/templates/samples/edit_result.html:67
 msgid "Number of quantities × values"
 msgstr "Anzahl der Messgrößen × Werte"
 
-#: templates/samples/edit_result.html:82
+#: samples/templates/samples/edit_result.html:82
 msgid "Error in quantity"
 msgstr "Fehler in der Messgröße"
 
-#: templates/samples/edit_result.html:93
+#: samples/templates/samples/edit_result.html:93
 msgid "Error in value"
 msgstr "Fehler im Wert"
 
-#: templates/samples/edit_sample.html:22
+#: samples/templates/samples/edit_sample.html:22
 msgid "Error in sample"
 msgstr "Fehler in den Proben"
 
-#: templates/samples/edit_sample_series.html:23
+#: samples/templates/samples/edit_sample_series.html:23
 msgid "Error in sample series"
 msgstr "Fehler in Probenserie"
 
-#: templates/samples/edit_task.html:22
+#: samples/templates/samples/edit_task.html:22
 msgid "Error in deposition"
 msgstr "Fehler in der Deposition"
 
-#: templates/samples/edit_task.html:23
+#: samples/templates/samples/edit_task.html:23
 msgid "Error in sample list"
 msgstr "Fehler in Probenliste"
 
-#: templates/samples/edit_topic.html:22
+#: samples/templates/samples/edit_topic.html:22
 msgid "Error in topic data"
 msgstr "Fehler in den Thema-Daten"
 
-#: templates/samples/feed_changed_topic.html:18
+#: samples/templates/samples/feed_changed_topic.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1496,7 +1552,7 @@ msgstr ""
 "\n"
 "Sie wurden zum Thema „%(topic)s“ hinzugefügt."
 
-#: templates/samples/feed_changed_topic.html:22
+#: samples/templates/samples/feed_changed_topic.html:22
 #, python-format
 msgid ""
 "\n"
@@ -1506,7 +1562,7 @@ msgstr ""
 "\n"
 "Sie sind nicht mehr Mitglied im Thema „%(topic)s“."
 
-#: templates/samples/feed_copied_my_samples.html:19
+#: samples/templates/samples/feed_copied_my_samples.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1527,7 +1583,7 @@ msgstr[1] ""
 "%(originator)s hat die folgenden Proben zu Ihrer „Meine-Proben“-Liste "
 "hinzugefügt:"
 
-#: templates/samples/feed_copied_my_samples.html:34
+#: samples/templates/samples/feed_copied_my_samples.html:34
 #, python-format
 msgid ""
 "\n"
@@ -1537,7 +1593,7 @@ msgstr ""
 "\n"
 "Weitere Informationen, die %(originator)s gab:"
 
-#: templates/samples/feed_edited_physical_process.html:18
+#: samples/templates/samples/feed_edited_physical_process.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1548,8 +1604,8 @@ msgstr ""
 "    %(originator)s änderte <a href=\"%(url)s\">%(process)s</a>.\n"
 "  "
 
-#: templates/samples/feed_edited_physical_process.html:21
-#: templates/samples/feed_new_physical_process.html:21
+#: samples/templates/samples/feed_edited_physical_process.html:21
+#: samples/templates/samples/feed_new_physical_process.html:21
 msgid ""
 "\n"
 "    This affected the following sample:\n"
@@ -1565,29 +1621,29 @@ msgstr[1] ""
 "\n"
 "Das betraf die folgenden Proben:"
 
-#: templates/samples/feed_edited_physical_process.html:36
-#: templates/samples/feed_edited_sample_series.html:34
-#: templates/samples/feed_edited_samples.html:45
-#: templates/samples/feed_result.html:49
+#: samples/templates/samples/feed_edited_physical_process.html:36
+#: samples/templates/samples/feed_edited_sample_series.html:33
+#: samples/templates/samples/feed_edited_samples.html:44
+#: samples/templates/samples/feed_result.html:49
 msgid "The change was significant."
 msgstr "Die Änderung war signifikant."
 
-#: templates/samples/feed_edited_physical_process.html:38
-#: templates/samples/feed_edited_sample_series.html:36
-#: templates/samples/feed_edited_samples.html:47
-#: templates/samples/feed_result.html:51
+#: samples/templates/samples/feed_edited_physical_process.html:38
+#: samples/templates/samples/feed_edited_sample_series.html:35
+#: samples/templates/samples/feed_edited_samples.html:46
+#: samples/templates/samples/feed_result.html:51
 msgid "The change was minor."
 msgstr "Die Änderung war kleinerer Natur."
 
-#: templates/samples/feed_edited_physical_process.html:40
-#: templates/samples/feed_edited_sample_series.html:39
-#: templates/samples/feed_edited_samples.html:50
-#: templates/samples/feed_edited_task.html:21
-#: templates/samples/feed_result.html:53
+#: samples/templates/samples/feed_edited_physical_process.html:40
+#: samples/templates/samples/feed_edited_sample_series.html:37
+#: samples/templates/samples/feed_edited_samples.html:48
+#: samples/templates/samples/feed_edited_task.html:21
+#: samples/templates/samples/feed_result.html:53
 msgid "Description of the change:"
 msgstr "Beschreibung der Änderung:"
 
-#: templates/samples/feed_edited_sample_series.html:18
+#: samples/templates/samples/feed_edited_sample_series.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1600,16 +1656,15 @@ msgstr ""
 "%(sample_series)s</a>“.\n"
 "  "
 
-#: templates/samples/feed_edited_sample_series.html:26
-#: templates/samples/feed_edited_samples.html:37
+#: samples/templates/samples/feed_edited_sample_series.html:26
 msgid ""
 "\n"
-"\t  You are now the new responsible person for this sample.\n"
-"\t"
+"          You are now the new responsible person for this sample.\n"
+"        "
 msgid_plural ""
 "\n"
-"\t  You are now the new responsible person for these samples.\n"
-"\t"
+"          You are now the new responsible person for these samples.\n"
+"        "
 msgstr[0] ""
 "\n"
 "Sie sind nun der neue Verantwortliche für diese Probe."
@@ -1617,7 +1672,7 @@ msgstr[1] ""
 "\n"
 "Sie sind nun der neue Verantwortliche für diese Proben."
 
-#: templates/samples/feed_edited_samples.html:19
+#: samples/templates/samples/feed_edited_samples.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1639,7 +1694,23 @@ msgstr[1] ""
 "    %(originator)s änderte die folgenden Proben: <!-- %(first_url)s "
 "%(first_sample)s (to appease gettext) -->"
 
-#: templates/samples/feed_edited_task.html:19
+#: samples/templates/samples/feed_edited_samples.html:37
+msgid ""
+"\n"
+"\t  You are now the new responsible person for this sample.\n"
+"\t"
+msgid_plural ""
+"\n"
+"\t  You are now the new responsible person for these samples.\n"
+"\t"
+msgstr[0] ""
+"\n"
+"Sie sind nun der neue Verantwortliche für diese Probe."
+msgstr[1] ""
+"\n"
+"Sie sind nun der neue Verantwortliche für diese Proben."
+
+#: samples/templates/samples/feed_edited_task.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1652,7 +1723,7 @@ msgstr ""
 "%(process_name)s geändert.\n"
 "  "
 
-#: templates/samples/feed_moved_sample_series.html:18
+#: samples/templates/samples/feed_moved_sample_series.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1665,8 +1736,8 @@ msgstr ""
 "%(originator)s hat die Probenserie „<a href=\"%(url)s\">%(sample_series)s</"
 "a>“ vom Thema „%(old_topic)s“ in das Thema „%(topic)s“ verschoben."
 
-#: templates/samples/feed_moved_sample_series.html:23
-#: templates/samples/feed_new_sample_series.html:25
+#: samples/templates/samples/feed_moved_sample_series.html:23
+#: samples/templates/samples/feed_new_sample_series.html:25
 msgid ""
 "You are subscribed to this sample series because you have at least one of "
 "its samples amongst “My Samples”."
@@ -1674,8 +1745,8 @@ msgstr ""
 "Sie sind Abonnent dieser Probenserie, weil wenigstens eine der Proben dieser "
 "Probenserie unter „Meine Proben“ aufgeführt ist."
 
-#: templates/samples/feed_moved_sample_series.html:25
-#: templates/samples/feed_new_sample_series.html:27
+#: samples/templates/samples/feed_moved_sample_series.html:25
+#: samples/templates/samples/feed_new_sample_series.html:27
 msgid ""
 "You are not subscribed to this sample series because you have none of its "
 "samples amongst “My Samples”."
@@ -1683,12 +1754,12 @@ msgstr ""
 "Sie sind kein Abonnent dieser Probenserie, weil Sie keine der Proben dieser "
 "Probenserie in „Meine Proben“ haben."
 
-#: templates/samples/feed_moved_sample_series.html:27
-#: templates/samples/feed_moved_samples.html:59
+#: samples/templates/samples/feed_moved_sample_series.html:27
+#: samples/templates/samples/feed_moved_samples.html:59
 msgid "Full description of the change:"
 msgstr "Volle Beschreibung der Änderung:"
 
-#: templates/samples/feed_moved_samples.html:20
+#: samples/templates/samples/feed_moved_samples.html:20
 #, python-format
 msgid ""
 "\n"
@@ -1709,7 +1780,7 @@ msgstr[1] ""
 "%(originator)s hat die folgenden Proben vom Thema „%(old_topic)s“ in das "
 "Thema „%(topic)s“ verschoben:"
 
-#: templates/samples/feed_moved_samples.html:26
+#: samples/templates/samples/feed_moved_samples.html:26
 #, python-format
 msgid ""
 "\n"
@@ -1730,8 +1801,8 @@ msgstr[1] ""
 "%(originator)s hat die folgenden vormals themenlosen Proben in das Thema "
 "„%(topic)s“ geschoben:"
 
-#: templates/samples/feed_moved_samples.html:42
-#: templates/samples/feed_new_samples.html:37
+#: samples/templates/samples/feed_moved_samples.html:42
+#: samples/templates/samples/feed_new_samples.html:37
 msgid ""
 "\n"
 "        The sample is amongst “My Samples”.\n"
@@ -1747,8 +1818,8 @@ msgstr[1] ""
 "\n"
 "Die Proben sind unter „Meine Proben“ aufgeführt."
 
-#: templates/samples/feed_moved_samples.html:48
-#: templates/samples/feed_new_samples.html:43
+#: samples/templates/samples/feed_moved_samples.html:48
+#: samples/templates/samples/feed_new_samples.html:43
 msgid ""
 "\n"
 "        The sample was not (at least not <em>automatically</em>) added to "
@@ -1768,7 +1839,7 @@ msgstr[1] ""
 "Die Proben wurden nicht (zumindest nicht <em>automatisch</em>) zu „Meine "
 "Proben“ hinzugefügt."
 
-#: templates/samples/feed_new_physical_process.html:18
+#: samples/templates/samples/feed_new_physical_process.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1779,7 +1850,7 @@ msgstr ""
 "    %(originator)s führte <a href=\"%(url)s\">%(process)s</a> durch.\n"
 "  "
 
-#: templates/samples/feed_new_sample_series.html:18
+#: samples/templates/samples/feed_new_sample_series.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1792,11 +1863,11 @@ msgstr ""
 "%(originator)s hat die Probenserie „<a href=\"%(url)s\">%(sample_series)s</"
 "a>“ zum Thema „%(topic)s“ hinzugefügt."
 
-#: templates/samples/feed_new_sample_series.html:22
+#: samples/templates/samples/feed_new_sample_series.html:22
 msgid "Description"
 msgstr "Beschreibung"
 
-#: templates/samples/feed_new_samples.html:19
+#: samples/templates/samples/feed_new_samples.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1815,12 +1886,12 @@ msgstr[1] ""
 "\n"
 "%(originator)s hat die folgenden Proben zum Thema „%(topic)s“ hinzugefügt:"
 
-#: templates/samples/feed_new_samples.html:34
+#: samples/templates/samples/feed_new_samples.html:34
 #, python-format
 msgid "The given purpose is “%(purpose)s”."
 msgstr "Der angegebene Zweck ist „%(purpose)s“."
 
-#: templates/samples/feed_new_task.html:19
+#: samples/templates/samples/feed_new_task.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1833,7 +1904,7 @@ msgstr ""
 "für %(process_name)s eingereiht.\n"
 "  "
 
-#: templates/samples/feed_removed_task.html:19
+#: samples/templates/samples/feed_removed_task.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1856,7 +1927,7 @@ msgstr[1] ""
 "folgenden Proben entfernt:\n"
 "  "
 
-#: templates/samples/feed_result.html:19
+#: samples/templates/samples/feed_result.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1868,7 +1939,7 @@ msgstr ""
 "ein.\n"
 "  "
 
-#: templates/samples/feed_result.html:23
+#: samples/templates/samples/feed_result.html:23
 #, python-format
 msgid ""
 "\n"
@@ -1879,15 +1950,15 @@ msgstr ""
 "    %(originator)s änderte den Auftrag „<a href=\"%(url)s\">%(title)s</a>“.\n"
 "  "
 
-#: templates/samples/feed_result.html:27
+#: samples/templates/samples/feed_result.html:27
 msgid "This affected the following samples and/or sample series:"
 msgstr "Das betraf die folgenden Proben bzw. Probenserien:"
 
-#: templates/samples/feed_result.html:38
+#: samples/templates/samples/feed_result.html:38
 msgid "Series:"
 msgstr "Serien:"
 
-#: templates/samples/feed_sample_split.html:18
+#: samples/templates/samples/feed_sample_split.html:18
 #, python-format
 msgid ""
 "\n"
@@ -1908,11 +1979,11 @@ msgstr[1] ""
 "Die Probe <a href=\\\"%(url)s\\\">%(parent)s</a> wurde in die folgenden "
 "Stücke zerlegt:"
 
-#: templates/samples/feed_sample_split.html:29
+#: samples/templates/samples/feed_sample_split.html:29
 msgid "purpose:"
 msgstr "Zweck:"
 
-#: templates/samples/feed_sample_split.html:36
+#: samples/templates/samples/feed_sample_split.html:36
 msgid ""
 "\n"
 "    The piece was added to “My Samples”.\n"
@@ -1928,7 +1999,7 @@ msgstr[1] ""
 "\n"
 "Die Stücke wurden zu „Meine Proben“ hinzugefügt."
 
-#: templates/samples/feed_sample_split.html:42
+#: samples/templates/samples/feed_sample_split.html:42
 msgid ""
 "The sample was completely split, i.e. no piece of the parent is left.  "
 "Therefore, the parent was removed from “My Samples”."
@@ -1936,7 +2007,7 @@ msgstr ""
 "Die Probe wurde vollständig gespalten, d.h. es ist kein Stück der Eltern-"
 "Probe übrig.  Die Eltern-Probe wurde daher von „Meine Proben“ entfernt."
 
-#: templates/samples/feed_status_message.html:19
+#: samples/templates/samples/feed_status_message.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1948,7 +2019,7 @@ msgstr ""
 "%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> "
 "eingestellt:"
 
-#: templates/samples/feed_withdrawn_status_message.html:19
+#: samples/templates/samples/feed_withdrawn_status_message.html:19
 #, python-format
 msgid ""
 "\n"
@@ -1960,43 +2031,43 @@ msgstr ""
 "%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> "
 "<em>zurückgezogen</em>:"
 
-#: templates/samples/lab_notebook.html:32
-#: templates/samples/show_process.html:34
-#: templates/samples/show_sample.html:77
-#: templates/samples/show_sample.html:183
-#: templates/samples/show_sample_series.html:33
+#: samples/templates/samples/lab_notebook.html:33
+#: samples/templates/samples/show_process.html:35
+#: samples/templates/samples/show_sample.html:78
+#: samples/templates/samples/show_sample.html:184
+#: samples/templates/samples/show_sample_series.html:34
 msgid "export as table"
 msgstr "als Tabelle exportieren"
 
-#: templates/samples/lab_notebook.html:36
+#: samples/templates/samples/lab_notebook.html:37
 msgid "Error in date"
 msgstr "Fehler im Datum"
 
-#: templates/samples/lab_notebook.html:44
+#: samples/templates/samples/lab_notebook.html:45
 msgid "previous month"
 msgstr "vorheriger Monat"
 
-#: templates/samples/lab_notebook.html:48
+#: samples/templates/samples/lab_notebook.html:49
 msgid "next month"
 msgstr "nächster Monat"
 
-#: templates/samples/list_claims.html:21
+#: samples/templates/samples/list_claims.html:21
 msgid "Claims with you being the requester"
 msgstr "Ansprüche, die Sie beantragt haben"
 
-#: templates/samples/list_claims.html:29
+#: samples/templates/samples/list_claims.html:29
 msgid "Assert a new claim to samples"
 msgstr "Einen neuen Anspruch auf Proben einreichen"
 
-#: templates/samples/list_claims.html:32
+#: samples/templates/samples/list_claims.html:32
 msgid "Claims with you being the reviewer"
 msgstr "Ansprüche, die Sie überprüfen sollen"
 
-#: templates/samples/list_crawlers.html:27
+#: samples/templates/samples/list_crawlers.html:27
 msgid "No crawler logs available."
 msgstr "Keine Crawler-Logs vorhanden."
 
-#: templates/samples/list_permissions.html:21
+#: samples/templates/samples/list_permissions.html:21
 msgid ""
 "People who can change permissions of users for the respective process are "
 "printed in bold."
@@ -2004,201 +2075,210 @@ msgstr ""
 "Leute, die die Berechtigungen für Benutzer des jeweiligen Prozesses ändern "
 "dürfen, sind fett gedruckt."
 
-#: templates/samples/list_permissions.html:36
-#: templates/samples/list_permissions.html:50 views/utils.py:541
+#. Translators: Intended as a separator in an enumeration of three or more items
+#: samples/templates/samples/list_permissions.html:36
+#: samples/templates/samples/list_permissions.html:50
+#: samples/views/utils.py:533
 msgid ", "
 msgstr ", "
 
-#: templates/samples/list_permissions.html:46
+#: samples/templates/samples/list_permissions.html:46
 msgid "The current topic managers are:"
 msgstr "Die momentanten Themenmanager sind:"
 
-#: templates/samples/list_permissions.html:68
+#: samples/templates/samples/list_permissions.html:68
 msgid "Error in user list"
 msgstr "Fehler in Benutzerliste"
 
-#: templates/samples/list_topics.html:31
+#: samples/templates/samples/list_topics.html:32
 msgid "No topics available."
 msgstr "Keine Themen vorhanden."
 
-#: templates/samples/log_viewer.html:21
+#: samples/templates/samples/log_viewer.html:21
 msgid "No log data found."
 msgstr "Keine Logdaten gefunden."
 
-#: templates/samples/log_viewer.html:23
+#: samples/templates/samples/log_viewer.html:23
 msgid "Last run of crawler"
 msgstr "Letzter Lauf des Crawlers"
 
-#: templates/samples/login.html:18 templates/samples/login.html.py:19
+#: samples/templates/samples/login.html:18
+#: samples/templates/samples/login.html:19
 msgid "JuliaBase login"
 msgstr "JuliaBase-Login"
 
-#: templates/samples/login.html:23
+#: samples/templates/samples/login.html:23
 msgid "Your username and password didn't match. Please try again."
 msgstr ""
 "Ihr Benutzername und Ihr Passwort passen nicht zusammen. Bitte versuchen Sie "
 "es noch einmal."
 
-#: templates/samples/login.html:29
+#: samples/templates/samples/login.html:29
 msgid "Username"
 msgstr "Benutzername"
 
-#: templates/samples/login.html:30
+#: samples/templates/samples/login.html:30
 msgid "Password"
 msgstr "Passwort"
 
-#: templates/samples/login.html:35
+#: samples/templates/samples/login.html:35
 msgid "login"
 msgstr "Anmelden"
 
-#: templates/samples/logout.html:19
+#: samples/templates/samples/logout.html:19
 msgid "Thanks for spending some quality time with the Web site today."
 msgstr "Vielen Dank, dass Sie hier ein paar nette Minuten verbracht haben."
 
-#: templates/samples/logout.html:21
+#: samples/templates/samples/logout.html:21
 msgid "Log in again"
 msgstr "Erneut anmelden"
 
-#: templates/samples/main_menu.html:53 views/my_samples.py:40
+#: samples/templates/samples/main_menu.html:54 samples/views/my_samples.py:39
 msgid "My Samples"
 msgstr "Meine Proben"
 
-#: templates/samples/main_menu.html:55
-#: templates/samples/show_external_operator.html:29
-#: templates/samples/show_process.html:27
-#: templates/samples/show_sample.html:63
-#: templates/samples/show_sample.html:176
-#: templates/samples/show_sample_series.html:23
-#: templates/samples/show_sample_series.html:64
+#: samples/templates/samples/main_menu.html:56
+#: samples/templates/samples/show_external_operator.html:30
+#: samples/templates/samples/show_process.html:28
+#: samples/templates/samples/show_sample.html:64
+#: samples/templates/samples/show_sample.html:177
+#: samples/templates/samples/show_sample_series.html:24
+#: samples/templates/samples/show_sample_series.html:65
 msgid "edit"
 msgstr "ändern"
 
-#: templates/samples/main_menu.html:73
+#: samples/templates/samples/main_menu.html:74
 msgid "Add things"
 msgstr "Dinge hinzufügen"
 
-#: templates/samples/main_menu.html:78 views/form_utils.py:646
-#: views/result.py:156 views/sample_series.py:52 views/task_lists.py:39
+#: samples/templates/samples/main_menu.html:79 samples/views/form_utils.py:645
+#: samples/views/result.py:148 samples/views/sample_series.py:52
+#: samples/views/task_lists.py:40
 msgid "Samples"
 msgstr "Proben"
 
-#: templates/samples/main_menu.html:80 views/split_and_rename.py:66
+#: samples/templates/samples/main_menu.html:81
+#: samples/views/split_and_rename.py:82
 msgid "Sample series"
 msgstr "Probenserie"
 
-#: templates/samples/main_menu.html:82
+#: samples/templates/samples/main_menu.html:83
 msgid "Result"
 msgstr "Ergebnis"
 
-#: templates/samples/main_menu.html:88
+#: samples/templates/samples/main_menu.html:89
 msgid "Search for things"
 msgstr "Nach Dingen suchen"
 
-#: templates/samples/main_menu.html:90 views/sample.py:909
+#: samples/templates/samples/main_menu.html:91 samples/views/sample.py:911
 msgid "Advanced search"
 msgstr "Erweiterte Suche"
 
-#: templates/samples/main_menu.html:91
+#: samples/templates/samples/main_menu.html:92
 msgid "Samples by name"
 msgstr "Proben nach ihren Namen"
 
-#: templates/samples/main_menu.html:92
+#: samples/templates/samples/main_menu.html:93
 msgid "Depositions by number"
 msgstr "Depositionen nach Nummer"
 
-#: templates/samples/main_menu.html:96
+#: samples/templates/samples/main_menu.html:97
 msgid "Lab notebooks"
 msgstr "Laborbücher"
 
-#: templates/samples/main_menu.html:106
+#: samples/templates/samples/main_menu.html:107
 msgid "Edit topics"
 msgstr "Themen ändern"
 
-#: templates/samples/main_menu.html:111 views/topic.py:136
+#: samples/templates/samples/main_menu.html:112 samples/views/topic.py:134
 msgid "Add new topic"
 msgstr "Neues Thema hinzufügen"
 
-#: templates/samples/main_menu.html:115
+#: samples/templates/samples/main_menu.html:116
 msgid "Change topic memberships"
 msgstr "Mitglieder von Themen ändern"
 
-#: templates/samples/main_menu.html:121
+#: samples/templates/samples/main_menu.html:122
 msgid "External operators"
 msgstr "Externe Operateure"
 
-#: templates/samples/main_menu.html:125 views/external_operator.py:82
+#: samples/templates/samples/main_menu.html:126
+#: samples/views/external_operator.py:82
 msgid "Add external operator"
 msgstr "Neuen externen Operateur anlegen"
 
-#: templates/samples/main_menu.html:128
+#: samples/templates/samples/main_menu.html:129
 msgid "Edit external operator"
 msgstr "Externen Operateur ändern"
 
-#: templates/samples/main_menu.html:133
+#: samples/templates/samples/main_menu.html:134
 msgid "Miscellaneous"
 msgstr "Sonstiges"
 
-#: templates/samples/main_menu.html:136
+#: samples/templates/samples/main_menu.html:137
 msgid "Administration"
 msgstr "Administration"
 
-#: templates/samples/main_menu.html:140 views/sample.py:1090
+#: samples/templates/samples/main_menu.html:141 samples/views/sample.py:1092
 msgid "Rename sample"
 msgstr "Probe umbenennen"
 
-#: templates/samples/main_menu.html:144 views/status.py:173
+#: samples/templates/samples/main_menu.html:145 samples/views/status.py:172
 msgid "Status messages"
 msgstr "Statusmeldungen"
 
-#: templates/samples/main_menu.html:147
+#: samples/templates/samples/main_menu.html:148
 msgid "Edit preferences"
 msgstr "Einstellungen ändern"
 
-#: templates/samples/main_menu.html:150
+#: samples/templates/samples/main_menu.html:151
 msgid "My topics and permissions"
 msgstr "Meine Themen und Berechtigungen"
 
-#: templates/samples/main_menu.html:153 views/permissions.py:237
+#: samples/templates/samples/main_menu.html:154
+#: samples/views/permissions.py:237
 msgid "Permissions to processes"
 msgstr "Berechtigungen für Prozesse"
 
-#: templates/samples/main_menu.html:155
+#: samples/templates/samples/main_menu.html:156
 msgid "Edit “My Layers”"
 msgstr "„Meine Schichten“ ändern"
 
-#: templates/samples/main_menu.html:157 views/merge_samples.py:199
+#: samples/templates/samples/main_menu.html:158
+#: samples/views/merge_samples.py:195
 msgid "Merge samples"
 msgstr "Proben verschmelzen"
 
-#: templates/samples/main_menu.html:159 views/task_lists.py:352
+#: samples/templates/samples/main_menu.html:160
+#: samples/views/task_lists.py:356
 msgid "Task lists"
 msgstr "Auftragslisten"
 
-#: templates/samples/main_menu.html:162
+#: samples/templates/samples/main_menu.html:163
 msgid "Change password"
 msgstr "Ändere Passwort"
 
-#: templates/samples/main_menu.html:165
+#: samples/templates/samples/main_menu.html:166
 msgid "Newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: templates/samples/main_menu.html:167
+#: samples/templates/samples/main_menu.html:168
 msgid "Sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: templates/samples/main_menu.html:169
+#: samples/templates/samples/main_menu.html:170
 msgid "Inspect crawler logs"
 msgstr "Crawler-Logs überprüfen"
 
-#: templates/samples/main_menu.html:172
+#: samples/templates/samples/main_menu.html:173
 msgid "About JuliaBase"
 msgstr "Über JuliaBase"
 
-#: templates/samples/main_menu.html:174
+#: samples/templates/samples/main_menu.html:175
 msgid "Server statistics"
 msgstr "Server-Statistik"
 
-#: templates/samples/merge_samples.html:23
+#: samples/templates/samples/merge_samples.html:23
 msgid ""
 "\n"
 "    Attention: The tags, purposes, topics, informal stacks, and current "
@@ -2210,19 +2290,19 @@ msgstr ""
 "Achtung: Die Tags, Zwecke, Themen, informelle Stapel und aktuelle Probenorte "
 "der Proben links werden vollständig gelöscht!"
 
-#: templates/samples/merge_samples.html:41
+#: samples/templates/samples/merge_samples.html:41
 msgid "red arrow"
 msgstr "roter Pfeil"
 
-#: templates/samples/password_changed.html:17
+#: samples/templates/samples/password_changed.html:17
 msgid "Password change successful"
 msgstr "Das Passwort wurde erfolgreich geändert"
 
-#: templates/samples/password_changed.html:23
+#: samples/templates/samples/password_changed.html:23
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: templates/samples/permission_error.html:20
+#: samples/templates/samples/permission_error.html:20
 #, python-format
 msgid ""
 "\n"
@@ -2236,7 +2316,7 @@ msgstr ""
 "Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie die "
 "Berechtigung haben sollten."
 
-#: templates/samples/permission_error.html:25
+#: samples/templates/samples/permission_error.html:25
 msgid ""
 "\n"
 "        Also note that the head of your institute group may add you to the\n"
@@ -2248,21 +2328,21 @@ msgstr ""
 "Thema hinzufügen könnte, das Sie benötigen, um auf diese Ressource "
 "zuzugreifen."
 
-#: templates/samples/permission_error.html:32
+#: samples/templates/samples/permission_error.html:32
 msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 "Dieses Ereignis wird niemandem gemeldet und in keine Logdatei geschrieben."
 
-#: templates/samples/qr_code.html:22 views/sample.py:969
+#: samples/templates/samples/qr_code.html:22 samples/views/sample.py:971
 msgid "QR code"
 msgstr "QR-Code"
 
-#: templates/samples/search_depositions.html:25
-#: templates/samples/search_samples.html:26
+#: samples/templates/samples/search_depositions.html:25
+#: samples/templates/samples/search_samples.html:26
 msgid "search"
 msgstr "suchen"
 
-#: templates/samples/search_depositions.html:30
+#: samples/templates/samples/search_depositions.html:30
 #, python-format
 msgid ""
 "\n"
@@ -2272,11 +2352,11 @@ msgstr ""
 "\n"
 "Zu viele passende Objekte gefunden.  Ich zeige nur %(max_results)s davon."
 
-#: templates/samples/show_claim.html:21
+#: samples/templates/samples/show_claim.html:21
 msgid "This claim was either approved or withdrawn."
 msgstr "Dieser Anspruch wurde entweder akzeptiert oder zurückgezogen."
 
-#: templates/samples/show_claim.html:23
+#: samples/templates/samples/show_claim.html:23
 msgid ""
 "This claim is active and needs now to be approved by the reviewer or "
 "withdrawn by the requester."
@@ -2284,15 +2364,15 @@ msgstr ""
 "Dieser Anspruch ist aktiv und muss nun entweder vom Reviewer akzeptiert oder "
 "vom Antragssteller zurückgezogen werden."
 
-#: templates/samples/show_claim.html:27
+#: samples/templates/samples/show_claim.html:27
 msgid "Requester"
 msgstr "Antragssteller"
 
-#: templates/samples/show_claim.html:31
+#: samples/templates/samples/show_claim.html:31
 msgid "Reviewer"
 msgstr "Reviewer"
 
-#: templates/samples/show_claim.html:37
+#: samples/templates/samples/show_claim.html:37
 #, python-format
 msgid ""
 "\n"
@@ -2305,12 +2385,12 @@ msgstr ""
 "Proben werden:\n"
 "    "
 
-#: templates/samples/show_external_operator.html:23
+#: samples/templates/samples/show_external_operator.html:24
 #, python-format
 msgid "External operator “%(name)s”"
 msgstr "Externer Operateur „%(name)s“"
 
-#: templates/samples/show_external_operator.html:83
+#: samples/templates/samples/show_external_operator.html:84
 msgid ""
 "\n"
 "  This external contact is <em>confidential</em>, which means that only the "
@@ -2321,22 +2401,22 @@ msgstr ""
 "Dieser externe Kontakt ist <em>vertraulich</em>, was bedeutet, daß nur die "
 "aktuelle Kontaktperson seine Daten einsehen kann.\n"
 
-#: templates/samples/show_process.html:30
-#: templates/samples/show_sample.html:179
+#: samples/templates/samples/show_process.html:31
+#: samples/templates/samples/show_sample.html:180
 msgid "duplicate"
 msgstr "duplizieren"
 
-#: templates/samples/show_process.html:38
-#: templates/samples/show_sample.html:187
+#: samples/templates/samples/show_process.html:39
+#: samples/templates/samples/show_sample.html:188
 msgid "resplit"
 msgstr "weiterspalten"
 
-#: templates/samples/show_process.html:42
-#: templates/samples/show_sample.html:195
+#: samples/templates/samples/show_process.html:43
+#: samples/templates/samples/show_sample.html:196
 msgid "(not finished)"
 msgstr "(nicht abgeschlossen)"
 
-#: templates/samples/show_process.html:49
+#: samples/templates/samples/show_process.html:50
 #, python-format
 msgid ""
 "\n"
@@ -2357,7 +2437,7 @@ msgstr[1] ""
 "Dieser Prozess wurde auf die folgenden Proben angewandt: <!-- %(link)s"
 "%(name)s -->"
 
-#: templates/samples/show_process.html:63
+#: samples/templates/samples/show_process.html:64
 #, python-format
 msgid ""
 "\n"
@@ -2378,27 +2458,27 @@ msgstr[1] ""
 "Dieser Prozess wurde auf die folgenden Probenserien angewandt: <!-- %(link)s"
 "%(name)s -->"
 
-#: templates/samples/show_sample.html:59
+#: samples/templates/samples/show_sample.html:60
 msgid "Sample “"
 msgstr "Probe „"
 
-#: templates/samples/show_sample.html:59
+#: samples/templates/samples/show_sample.html:60
 msgid "”"
 msgstr "“"
 
-#: templates/samples/show_sample.html:67
+#: samples/templates/samples/show_sample.html:68
 msgid "give name"
 msgstr "gib Namen"
 
-#: templates/samples/show_sample.html:73
+#: samples/templates/samples/show_sample.html:74
 msgid "add process"
 msgstr "Prozess hinzufügen"
 
-#: templates/samples/show_sample.html:81
+#: samples/templates/samples/show_sample.html:82
 msgid "rename sample"
 msgstr "Probe umbenennen"
 
-#: templates/samples/show_sample.html:93
+#: samples/templates/samples/show_sample.html:94
 msgid ""
 "You can see this sample only due to a clearance.  Therefore, some fields and "
 "processes are hidden."
@@ -2406,12 +2486,12 @@ msgstr ""
 "Sie können diese Probe nur aufgrund einer Freigabe sehen.  Deshalb sind "
 "einige Angaben und Prozesse versteckt."
 
-#: templates/samples/show_sample.html:110
+#: samples/templates/samples/show_sample.html:111
 msgid "Attention: Topicless samples may be viewed and edited by anyone."
 msgstr ""
 "Achtung: Themenlose Proben können von jedem eingesehen und geändert werden."
 
-#: templates/samples/show_sample.html:135
+#: samples/templates/samples/show_sample.html:136
 #, python-format
 msgid ""
 "\n"
@@ -2431,50 +2511,50 @@ msgstr[1] ""
 "\n"
 "Diese Probe gehört zu folgenden Probenserien:"
 
-#: templates/samples/show_sample.html:192
+#: samples/templates/samples/show_sample.html:193
 msgid "show process"
 msgstr "Prozess anzeigen"
 
-#: templates/samples/show_sample_death.html:19
+#: samples/templates/samples/show_sample_death.html:19
 msgid "The sample ceased their existence.  Reason:"
 msgstr "Die Probe existiert nicht mehr. Grund:"
 
-#: templates/samples/show_sample_position.html:24
-#: templates/samples/show_sample_positions.html:24
+#: samples/templates/samples/show_sample_position.html:24
+#: samples/templates/samples/show_sample_positions.html:24
 msgid "Sample name"
 msgstr "Probenname"
 
-#: templates/samples/show_sample_position.html:27
-#: templates/samples/show_sample_positions.html:27
+#: samples/templates/samples/show_sample_position.html:27
+#: samples/templates/samples/show_sample_positions.html:27
 msgid "Substrate position"
 msgstr "Substrat-Position"
 
-#: templates/samples/show_sample_series.html:28
+#: samples/templates/samples/show_sample_series.html:29
 msgid "add result"
 msgstr "Ergebnis hinzufügen"
 
-#: templates/samples/show_sample_series.html:41
+#: samples/templates/samples/show_sample_series.html:42
 msgid "This sample series contains the following samples:"
 msgstr "Diese Probenserie umfasst die folgenden Proben:"
 
-#: templates/samples/show_sample_series.html:49
+#: samples/templates/samples/show_sample_series.html:50
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
-#: templates/samples/show_sample_series.html:52 views/sample.py:66
-#: views/sample_series.py:51
+#: samples/templates/samples/show_sample_series.html:53
+#: samples/views/sample.py:68 samples/views/sample_series.py:51
 msgid "Topic"
 msgstr "Thema"
 
-#: templates/samples/show_sample_split.html:20
+#: samples/templates/samples/show_sample_split.html:20
 msgid "The parental sample"
 msgstr "Die elterliche Probe"
 
-#: templates/samples/show_sample_split.html:22
+#: samples/templates/samples/show_sample_split.html:22
 msgid "was split into the following pieces:"
 msgstr "wurde in die folgenden Stücke zerlegt:"
 
-#: templates/samples/show_sample_split.html:24
+#: samples/templates/samples/show_sample_split.html:24
 msgid ""
 "\n"
 "      The sample was split into the following pieces:\n"
@@ -2483,15 +2563,15 @@ msgstr ""
 "\n"
 "Die Probe wurde in die folgenden Stücke zerlegt:"
 
-#: templates/samples/show_sample_split.html:36
+#: samples/templates/samples/show_sample_split.html:36
 msgid "(the ancestor of this one)"
 msgstr "(der Vorfahre von dieser hier)"
 
-#: templates/samples/show_sample_split.html:40
+#: samples/templates/samples/show_sample_split.html:40
 msgid "(this one)"
 msgstr "(diese hier)"
 
-#: templates/samples/show_single_result.html:27
+#: samples/templates/samples/show_single_result.html:27
 #, python-format
 msgid ""
 "\n"
@@ -2510,7 +2590,7 @@ msgstr[1] ""
 "\n"
 "Dieses Ergebnis gehört zu den folgenden Proben: <!-- %(link)s%(name)s -->"
 
-#: templates/samples/show_single_result.html:41
+#: samples/templates/samples/show_single_result.html:41
 #, python-format
 msgid ""
 "\n"
@@ -2529,54 +2609,56 @@ msgstr[1] ""
 "\n"
 "Dieses Ergebnis gehört zu folgenden Probenserien: <!-- %(link)s%(name)s -->"
 
-#: templates/samples/show_single_result.html:60
+#: samples/templates/samples/show_single_result.html:60
 msgid "Edit this result"
 msgstr "Ergebnis ändern"
 
-#: templates/samples/show_status.html:32 templates/samples/show_status.html:90
+#: samples/templates/samples/show_status.html:33
+#: samples/templates/samples/show_status.html:91
 msgid "Process"
 msgstr "Prozess"
 
-#: templates/samples/show_status.html:38 templates/samples/show_status.html:96
+#: samples/templates/samples/show_status.html:39
+#: samples/templates/samples/show_status.html:97
 msgid "posted at"
 msgstr "eingestellt am"
 
-#: templates/samples/show_status.html:65
-#: templates/samples/show_status.html:126
+#: samples/templates/samples/show_status.html:66
+#: samples/templates/samples/show_status.html:127
 msgid "cancel"
 msgstr "entfernen"
 
-#: templates/samples/show_status.html:66
-#: templates/samples/show_status.html:127
+#: samples/templates/samples/show_status.html:67
+#: samples/templates/samples/show_status.html:128
 msgid "withdraw this status message for all processes"
 msgstr "diese Statusmeldung für alle Prozesse zurückziehen"
 
-#: templates/samples/show_status.html:75
+#: samples/templates/samples/show_status.html:76
 msgid "There are no current status messages."
 msgstr "Es sind keine aktuellen Statusmeldungen vorhanden."
 
-#: templates/samples/show_status.html:79
+#: samples/templates/samples/show_status.html:80
 msgid "Add a status message"
 msgstr "Statusmeldung hinzufügen"
 
-#: templates/samples/show_status.html:81
+#: samples/templates/samples/show_status.html:82
 msgid "Subscribe to status messages"
 msgstr "Statusmeldungen abonnieren"
 
-#: templates/samples/show_status.html:85
+#: samples/templates/samples/show_status.html:86
 msgid "Further status messages"
 msgstr "Weitere Statusmeldungen"
 
-#: templates/samples/split_after_deposition.html:33
-#: templates/samples/split_after_deposition.html:50
+#: samples/templates/samples/split_after_deposition.html:33
+#: samples/templates/samples/split_after_deposition.html:50
 msgid "Error in sample name"
 msgstr "Fehler im Probennamen"
 
-#: templates/samples/split_and_rename.html:26
+#: samples/templates/samples/split_and_rename.html:26
 msgid "Piece number"
 msgstr "Stück-Nr."
 
-#: templates/samples/split_and_rename.html:49
+#: samples/templates/samples/split_and_rename.html:49
 msgid ""
 "\n"
 "                (you must change this last name in order to create an\n"
@@ -2587,27 +2669,27 @@ msgstr ""
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
 
-#: templates/samples/statistics.html:33
+#: samples/templates/samples/statistics.html:33
 msgid "hit rate"
 msgstr "Trefferquote"
 
-#: templates/samples/statistics.html:44
+#: samples/templates/samples/statistics.html:44
 msgid "connect."
 msgstr "Verbind."
 
-#: templates/samples/statistics.html:66
+#: samples/templates/samples/statistics.html:66
 msgid "Cache status"
 msgstr "Cache-Status"
 
-#: templates/samples/table_export_content_block.html:26
+#: samples/templates/samples/table_export_content_block.html:26
 msgid "Error in column groups"
 msgstr "Fehler in Spalten-Gruppen"
 
-#: templates/samples/table_export_content_block.html:40
+#: samples/templates/samples/table_export_content_block.html:40
 msgid "Error in columns"
 msgstr "Fehler in Spalten"
 
-#: templates/samples/table_export_content_block.html:51
+#: samples/templates/samples/table_export_content_block.html:51
 msgid ""
 "\n"
 "            <p>Below, you see a preview of the table.  If you export it by\n"
@@ -2647,31 +2729,33 @@ msgstr ""
 "einfacher ist, die Tabelle in eine Datei mit der Endung <tt>\".txt\"</tt> zu "
 "speichern, bevor Sie sie importieren.</p>"
 
-#: templates/samples/table_export_content_block.html:110
+#: samples/templates/samples/table_export_content_block.html:110
 msgid "Go back"
 msgstr "Zurück"
 
-#: templates/samples/task_lists.html:29 views/task_lists.py:309
+#: samples/templates/samples/task_lists.html:30
+#: samples/views/task_lists.py:311
 msgid "Add task"
 msgstr "Auftrag hinzufügen"
 
-#: templates/samples/task_lists.html:34
+#: samples/templates/samples/task_lists.html:35
 msgid "No current tasks."
 msgstr "Keine aktuellen Aufträge."
 
-#: templates/samples/task_lists.html:46
+#: samples/templates/samples/task_lists.html:47
 msgid "edit task"
 msgstr "Auftrag ändern"
 
-#: templates/samples/task_lists.html:53 templates/samples/task_lists.html:54
+#: samples/templates/samples/task_lists.html:54
+#: samples/templates/samples/task_lists.html:55
 msgid "remove task"
 msgstr "Auftrag entfernen"
 
-#: templates/samples/topics_and_permissions.html:19
+#: samples/templates/samples/topics_and_permissions.html:19
 msgid "Topics"
 msgstr "Themen"
 
-#: templates/samples/topics_and_permissions.html:22
+#: samples/templates/samples/topics_and_permissions.html:22
 #, python-format
 msgid ""
 "\n"
@@ -2688,7 +2772,7 @@ msgstr[1] ""
 "\n"
 "%(full_user_name)s ist Mitglied in den folgenden Themen:"
 
-#: templates/samples/topics_and_permissions.html:31
+#: samples/templates/samples/topics_and_permissions.html:31
 #, python-format
 msgid ""
 "\n"
@@ -2698,7 +2782,7 @@ msgstr ""
 "\n"
 "%(full_user_name)s ist in keinem Thema Mitglied."
 
-#: templates/samples/topics_and_permissions.html:39
+#: samples/templates/samples/topics_and_permissions.html:39
 #, python-format
 msgid ""
 "\n"
@@ -2715,7 +2799,7 @@ msgstr[1] ""
 "\n"
 "%(full_user_name)s ist Manager der folgenden Themen:"
 
-#: templates/samples/topics_and_permissions.html:48
+#: samples/templates/samples/topics_and_permissions.html:48
 #, python-format
 msgid ""
 "\n"
@@ -2725,23 +2809,23 @@ msgstr ""
 "\n"
 "%(full_user_name)s ist von keinem Thema ein Manager."
 
-#: templates/samples/topics_and_permissions.html:55
+#: samples/templates/samples/topics_and_permissions.html:55
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: templates/samples/topics_and_permissions.html:57
+#: samples/templates/samples/topics_and_permissions.html:57
 msgid "General permissions"
 msgstr "Allgemeine Berechtigungen"
 
-#: templates/samples/topics_and_permissions.html:59
+#: samples/templates/samples/topics_and_permissions.html:59
 msgid "(This is only a rough summary.)"
 msgstr "(Dies ist nur eine grobe Auflistung.)"
 
-#: templates/samples/topics_and_permissions.html:62
+#: samples/templates/samples/topics_and_permissions.html:62
 msgid "You can add new samples and sample series"
 msgstr "Sie dürfen neue Proben und Probenserien anlegen"
 
-#: templates/samples/topics_and_permissions.html:63
+#: samples/templates/samples/topics_and_permissions.html:63
 msgid ""
 "You can edit all samples and sample series that you are the currently "
 "responsible person for"
@@ -2749,24 +2833,24 @@ msgstr ""
 "Sie dürfen alle Proben und Probenserien ändern, für die Sie der aktuell "
 "Verantwortliche sind"
 
-#: templates/samples/topics_and_permissions.html:64
+#: samples/templates/samples/topics_and_permissions.html:64
 msgid "You can view all samples of your topics"
 msgstr "Sie dürfen alle Proben Ihrer Themen sehen"
 
-#: templates/samples/topics_and_permissions.html:65
+#: samples/templates/samples/topics_and_permissions.html:65
 msgid "You can add results to all samples and sample series of your topics"
 msgstr ""
 "Sie dürfen Resultate zu allen Proben und Probenserien Ihrer Themen hinzufügen"
 
-#: templates/samples/topics_and_permissions.html:66
+#: samples/templates/samples/topics_and_permissions.html:66
 msgid "You can edit processes that you added"
 msgstr "Sie dürfen Prozesse, die Sie hinzugefügt haben, ändern"
 
-#: templates/samples/topics_and_permissions.html:70
+#: samples/templates/samples/topics_and_permissions.html:70
 msgid "Special permissions"
 msgstr "Besondere Berechtigungen"
 
-#: templates/samples/topics_and_permissions.html:73
+#: samples/templates/samples/topics_and_permissions.html:73
 #, python-format
 msgid ""
 "\n"
@@ -2780,105 +2864,108 @@ msgstr ""
 "Berechtigungen zu erhalten.\n"
 "  "
 
-#: templates/samples/topics_and_permissions.html:81
+#: samples/templates/samples/topics_and_permissions.html:81
 msgid "special permissions that you have"
 msgstr "besondere Berechtigungen, die Sie haben"
 
-#: templates/samples/topics_and_permissions.html:82
+#: samples/templates/samples/topics_and_permissions.html:82
 msgid "special permissions that you don't have"
 msgstr "besondere Berechtigungen, die Sie nicht haben"
 
-#: templatetags/samples_extras.py:210 views/external_operator.py:170
+#: samples/templatetags/samples_extras.py:209
+#: samples/views/external_operator.py:171
 #, python-brace-format
 msgid "Confidential operator #{number}"
 msgstr "Vertraulicher Operateur Nr. {number}"
 
 #. Translators: Only change the <sup>h</sup>!
-#: templatetags/samples_extras.py:222
+#: samples/templatetags/samples_extras.py:219
 msgid "%Y-%m-%d %H<sup>h</sup>"
 msgstr "%Y-%m-%d %H<sup>h</sup>"
 
 #. Translators: Only change order and punctuation
-#: templatetags/samples_extras.py:225
+#: samples/templatetags/samples_extras.py:222
 msgid "%b %Y"
 msgstr "%b %Y"
 
-#: templatetags/samples_extras.py:227
+#: samples/templatetags/samples_extras.py:224
 msgid "date unknown"
 msgstr "Datum unbekannt"
 
-#: templatetags/samples_extras.py:712
+#: samples/templatetags/samples_extras.py:710
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"
 msgstr ""
 "(Diese Serie enthält weitere Proben, die nicht zu Ihrer „Meine-Proben“-Liste "
 "gehören.)"
 
-#: views/bulk_rename.py:46
+#: samples/views/bulk_rename.py:46
 msgid "Prefix"
 msgstr "Präfix"
 
-#: views/bulk_rename.py:57 views/split_after_deposition.py:47
+#: samples/views/bulk_rename.py:57 samples/views/split_after_deposition.py:46
 msgid "New name"
 msgstr "Neuer Name"
 
-#: views/bulk_rename.py:75
-msgid "New name must be a valid “new-style” name."
-msgstr "Der neue Name muss ein gültiger Name der „neuen Art“ sein."
+#: samples/views/bulk_rename.py:86
+#, python-brace-format
+msgid "New name must be a valid “{sample_formats}” name."
+msgid_plural ""
+"New name must be a valid name of one of these types: {sample_formats}"
+msgstr[0] "Der neue Name muss ein gültiger „{sample_formats}“ Name sein."
+msgstr[1] ""
+"Der neue Name muss ein gültiger Name einer dieser Arten sein: "
+"{sample_formats}"
 
-#: views/bulk_rename.py:77 views/split_after_deposition.py:67
-#: views/split_after_deposition.py:352
+#: samples/views/bulk_rename.py:94 samples/views/split_after_deposition.py:60
+#: samples/views/split_after_deposition.py:349
 msgid "This sample name exists already."
 msgstr "Dieser Probenname ist schon vergeben."
 
-#: views/bulk_rename.py:111 views/split_after_deposition.py:311
-#: views/split_after_deposition.py:343
+#: samples/views/bulk_rename.py:122
+#: samples/views/split_after_deposition.py:308
+#: samples/views/split_after_deposition.py:340
 msgid "This sample name has been used already on this page."
 msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
-#: views/bulk_rename.py:114
-msgid "Only provisional names can be changed to an external name."
-msgstr ""
-"Es können nur provisorische Namen zu einem externen Namen geändert werden."
-
-#: views/bulk_rename.py:170
+#: samples/views/bulk_rename.py:212
 msgid "You may change the sample names, but you must choose initials first."
 msgstr ""
 "Sie können die Probennamen setzen, aber erst müssen Sie sich ein Kürzel "
 "ausdenken."
 
-#: views/bulk_rename.py:188
+#: samples/views/bulk_rename.py:240
 msgid "Successfully renamed the samples."
 msgstr "Proben erfolgreich umbenannt."
 
-#: views/bulk_rename.py:193
+#: samples/views/bulk_rename.py:246
 msgid "Giving new-style names"
 msgstr "Probennamen nach „neuer Art“ vergeben"
 
-#: views/claim.py:39
+#: samples/views/claim.py:40
 msgid "Claimed samples"
 msgstr "Beanspruchte Proben"
 
-#: views/claim.py:39
+#: samples/views/claim.py:40
 msgid "“My Samples” are eligible."
 msgstr "„Meine Proben“ sind auswählbar."
 
-#: views/claim.py:60
+#: samples/views/claim.py:61
 msgid "Requested reviewer"
 msgstr "Gewünschter Reviewer"
 
-#: views/claim.py:92
+#: samples/views/claim.py:93
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: views/claim.py:101
+#: samples/views/claim.py:102
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: views/claim.py:102
+#: samples/views/claim.py:103
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -2907,49 +2994,49 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: views/claim.py:120
+#: samples/views/claim.py:121
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: views/claim.py:125
+#: samples/views/claim.py:126
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: views/claim.py:153
+#: samples/views/claim.py:154
 msgid "You are not allowed to see claims of another user."
 msgstr "Sie dürfen beine Probenansprüche anderer Benutzer sehen."
 
-#: views/claim.py:155
+#: samples/views/claim.py:156
 #, python-brace-format
 msgid "Claims for {user}"
 msgstr "Ansprüche von {user}"
 
-#: views/claim.py:184
+#: samples/views/claim.py:185
 msgid "You can't withdraw and approve at the same time."
 msgstr "Sie konnen nicht gleichzeitig zurückziehen und genehmigen."
 
-#: views/claim.py:188
+#: samples/views/claim.py:189
 msgid "You must select exactly one option, or leave this page."
 msgstr "Sie müssen genau eine Option wählen, oder die Seite verlassen."
 
-#: views/claim.py:214
+#: samples/views/claim.py:215
 msgid "You are neither the requester nor the reviewer of this claim."
 msgstr "Sie sind weder der Antragssteller noch der Reviewer dieses Anspruchs."
 
-#: views/claim.py:216 views/claim.py:253
+#: samples/views/claim.py:217 samples/views/claim.py:254
 msgid "withdraw claim"
 msgstr "Anspruch zurückziehen"
 
-#: views/claim.py:217 views/claim.py:254
+#: samples/views/claim.py:218 samples/views/claim.py:255
 msgid "approve claim"
 msgstr "Anspruch genehmigen"
 
-#: views/claim.py:231
+#: samples/views/claim.py:232
 msgid "Sample request approved"
 msgstr "Probenanspruch genemigt"
 
-#: views/claim.py:232
+#: samples/views/claim.py:233
 #, python-brace-format
 msgid ""
 "Hello {requester},\n"
@@ -2970,55 +3057,55 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: views/claim.py:244
+#: samples/views/claim.py:245
 #, python-brace-format
 msgid "Sample claim {id_} was successfully approved."
 msgstr "Der Anspruch {id_} wurde erfolgreich genemigt."
 
-#: views/claim.py:250
+#: samples/views/claim.py:251
 #, python-brace-format
 msgid "Sample claim {id_} was successfully withdrawn."
 msgstr "Der Anspruch {id_} wurde erfolgreich zurückgezogen."
 
-#: views/claim.py:255
+#: samples/views/claim.py:256
 #, python-brace-format
 msgid "Claim #{number}"
 msgstr "Anspruch Nr. {number}"
 
-#: views/external_operator.py:78
+#: samples/views/external_operator.py:78
 #, python-brace-format
 msgid "The external operator “{operator}” was successfully added."
 msgstr "Der externe Operateur „{operator}“ wurde erfolgreich neu angelegt."
 
-#: views/external_operator.py:93
+#: samples/views/external_operator.py:93
 msgid "Contact persons"
 msgstr "Kontaktpersonen"
 
-#: views/external_operator.py:132
+#: samples/views/external_operator.py:133
 #, python-brace-format
 msgid "The external operator “{operator}” was successfully changed."
 msgstr "Der externe Operateur „{operator}“ wurde erfolgreich geändert."
 
-#: views/external_operator.py:137
+#: samples/views/external_operator.py:138
 #, python-brace-format
 msgid "Edit external operator “{operator}”"
 msgstr "Externen Operateur „{operator}“ ändern"
 
-#: views/external_operator.py:168
+#: samples/views/external_operator.py:169
 #, python-brace-format
 msgid "External operator “{name}”"
 msgstr "Externer Operateur „{name}“"
 
-#: views/external_operator.py:204
+#: samples/views/external_operator.py:205
 msgid "All you external contacts"
 msgstr "Alle Ihre externen Kontakte"
 
-#: views/feed.py:159
+#: samples/views/feed.py:159
 #, python-brace-format
 msgid "JuliaBase news for {user_name}"
 msgstr "JuliaBase-Neuigkeiten für {user_name}"
 
-#: views/form_utils.py:68
+#: samples/views/form_utils.py:71
 msgid ""
 "The timestamp was older than the one in the database.  Probably someone else "
 "has edited the process by now.  If so, open the process in another tab and "
@@ -3029,142 +3116,138 @@ msgstr ""
 "öffnet Sie den Prozess in einem anderen Tab und kombinieren Sie die "
 "Änderungen."
 
-#: views/form_utils.py:151
+#: samples/views/form_utils.py:154
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
-#: views/form_utils.py:153
+#: samples/views/form_utils.py:156
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: views/form_utils.py:212
-#, python-brace-format
-msgid ""
-"The initials must start with two uppercase letters.  They must contain "
-"uppercase letters and digits only.  Digits must be at the end.  The minimum "
-"length must be {min_length}."
-msgstr ""
-"Ein Namenskürzel muss mit zwei Großbuchstaben beginnen.  Es darf nur "
-"Großbuchstaben und Ziffern beinhalten.  Die Ziffern müssen hinten stehen.  "
-"Die minimale Länge beträgt {min_length} Zeichen."
-
-#: views/form_utils.py:216
+#: samples/views/form_utils.py:215
 msgid "These initials are already used."
 msgstr "Dieses Namenskürzel ist schon vergeben."
 
-#: views/form_utils.py:238
+#: samples/views/form_utils.py:237
 msgid "Description of edit"
 msgstr "Beschreibung der Änderung"
 
-#: views/form_utils.py:239
+#: samples/views/form_utils.py:238
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: views/form_utils.py:680
+#: samples/views/form_utils.py:679
 msgid "sample position"
 msgstr "Probenposition"
 
-#: views/form_utils.py:714 views/sample_series.py:80
+#: samples/views/form_utils.py:713 samples/views/sample_series.py:80
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: views/form_utils.py:724
+#: samples/views/form_utils.py:723
 msgid "Remove processed sample(s) from My Samples"
 msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
 
-#: views/form_utils.py:755
+#: samples/views/form_utils.py:754
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: views/form_utils.py:759
+#: samples/views/form_utils.py:758
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: views/form_utils.py:791 views/status.py:87
+#: samples/views/form_utils.py:790 samples/views/status.py:85
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: views/form_utils.py:794
+#: samples/views/form_utils.py:793
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: views/form_utils.py:796
+#: samples/views/form_utils.py:795
 msgid "The year must not be earlier than 1900."
 msgstr "Das Jahr darf nicht vor 1900 sein."
 
-#: views/form_utils.py:828
+#: samples/views/form_utils.py:827
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: views/form_utils.py:834
+#: samples/views/form_utils.py:833
 #, python-brace-format
 msgid "The unit is invalid.  Valid units are: {units}"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: {units}"
 
-#. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: views/form_utils.py:864
-msgid "Invalid deposition number.  It must be of the form YYL-NNN."
+#: samples/views/form_utils.py:1027 samples/views/form_utils.py:1030
+msgid "The year must be the current year."
+msgstr "Das Jahr muss das aktuelle Jahr sein."
+
+#: samples/views/form_utils.py:1037
+msgid "The initials do not match yours."
+msgstr "Das Kürzel ist nicht deines."
+
+#: samples/views/form_utils.py:1041
+msgid "The initials do not match any of your external contacts."
+msgstr "Das Kürzel passt nicht zu irgendeinem deiner externen Kontakte."
+
+#: samples/views/form_utils.py:1045
+msgid "The initials do not match yours, nor any of your external contacts."
 msgstr ""
-"Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
+"Das Kürzel ist nicht deines, noch das von irgendeinem deiner externen "
+"Kontakte."
 
-#: views/form_utils.py:867 views/form_utils.py:871
-#, python-brace-format
-msgid "The deposition letter must be an uppercase “{letter}”."
-msgstr "Der Depositionsbuchstabe muss ein großes „{letter}“ sein."
-
-#: views/json_client.py:158
+#: samples/views/json_client.py:157
 msgid "Only the administrator can access this resource."
 msgstr "Nur die Administratoren dürfen auf diese Ressource zugreifen."
 
-#: views/lab_notebook.py:48
+#: samples/views/lab_notebook.py:47
 msgid "year"
 msgstr "Jahr"
 
-#: views/lab_notebook.py:49
+#: samples/views/lab_notebook.py:48
 msgid "month"
 msgstr "Monat"
 
-#: views/lab_notebook.py:215 views/result.py:698 views/sample.py:942
-#: views/sample_series.py:371
+#: samples/views/lab_notebook.py:214 samples/views/result.py:689
+#: samples/views/sample.py:944 samples/views/sample_series.py:370
 #, python-brace-format
 msgid "Table export for “{name}”"
 msgstr "Tabellen-Export für „{name}“"
 
-#: views/log_viewer.py:84
+#: samples/views/log_viewer.py:84
 #, python-brace-format
 msgid "Log of crawler “{process_class_name}”"
 msgstr "Log des Crawlers „{process_class_name}“"
 
-#: views/log_viewer.py:118
+#: samples/views/log_viewer.py:118
 msgid "Crawler logs"
 msgstr "Crawler-Logs"
 
 #. Translators: This is a page name in the JuliaBase wiki
-#: views/main.py:88
+#: samples/views/main.py:89
 msgid "MainMenu"
 msgstr "MainMenu"
 
-#: views/main.py:120
+#: samples/views/main.py:121
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: views/main.py:142
+#: samples/views/main.py:143
 msgid "Deposition number pattern"
 msgstr "Muster für Depositionsnummer"
 
-#: views/main.py:177
+#: samples/views/main.py:178
 msgid "Search for deposition"
 msgstr "Nach Deposition suchen"
 
-#: views/merge_samples.py:38
+#: samples/views/merge_samples.py:37
 msgid "merge sample"
 msgstr "verschmelze Probe"
 
-#: views/merge_samples.py:39
+#: samples/views/merge_samples.py:38
 msgid "into sample"
 msgstr "mit Probe"
 
-#: views/merge_samples.py:52
+#: samples/views/merge_samples.py:51
 msgid ""
 "It is not possible to merge a sample that was split, killed, or is the "
 "result of a sample split."
@@ -3172,38 +3255,38 @@ msgstr ""
 "Es ist unmöglich, eine Probe zu verschmelzen, die gespalten oder getötet "
 "wurde oder das Resultat einer Spaltung ist."
 
-#: views/merge_samples.py:66
+#: samples/views/merge_samples.py:65
 msgid "You must select a target sample."
 msgstr "Sie müssen eine Zielprobe auswählen."
 
-#: views/merge_samples.py:68
+#: samples/views/merge_samples.py:67
 msgid "You must select a source sample."
 msgstr "Sie müssen eine Quellprobe auswählen."
 
-#: views/merge_samples.py:72
+#: samples/views/merge_samples.py:71
 msgid "You must be the currently responsible person of both samples."
 msgstr "Sie müssen die aktuell verantwortliche Person für beide Proben sein."
 
-#: views/merge_samples.py:76
+#: samples/views/merge_samples.py:75
 msgid "You can't merge a sample into itself."
 msgstr "Sie können keine Probe mit sich selbst verschmelzen."
 
-#: views/merge_samples.py:88
+#: samples/views/merge_samples.py:87
 #, python-brace-format
 msgid "One or more processes would be after sample death of {to_sample}."
 msgstr "Einer oder mehrere Prozesse würde nach dem Tod von {to_sample} sein."
 
-#: views/merge_samples.py:92
+#: samples/views/merge_samples.py:91
 #, python-brace-format
 msgid "One or more processes would be after sample split of {to_sample}."
 msgstr ""
 "Einer oder mehrere Prozesse würde nach der Spaltung von {to_sample} sein."
 
-#: views/merge_samples.py:148
+#: samples/views/merge_samples.py:144
 msgid "You can merge a sample only once."
 msgstr "Sie können eine Probe nur einmal verschmelzen."
 
-#: views/merge_samples.py:152
+#: samples/views/merge_samples.py:148
 msgid ""
 "You can't merge a sample which was merged shortly before.  Do this in a "
 "separate call."
@@ -3211,129 +3294,129 @@ msgstr ""
 "Sie dürfen keine Probe verschmelzen, die kurz vorher verschmolzen wurde.  "
 "Tun Sie dies in einem eigenen Aufruf."
 
-#: views/merge_samples.py:160
+#: samples/views/merge_samples.py:156
 msgid "No samples selected."
 msgstr "Keine Proben angegeben."
 
-#: views/merge_samples.py:195
+#: samples/views/merge_samples.py:191
 msgid "Samples were successfully merged."
 msgstr "Die Proben wurden erfolgreich verschmolzen."
 
-#: views/my_layers.py:40
+#: samples/views/my_layers.py:39
 msgid "Nickname"
 msgstr "Spitzname"
 
-#: views/my_layers.py:41
+#: samples/views/my_layers.py:40
 msgid "Layer identifier"
 msgstr "Schicht-Bezeichnung"
 
-#: views/my_layers.py:42
+#: samples/views/my_layers.py:41
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
 
-#: views/my_layers.py:43 views/split_and_rename.py:40
+#: samples/views/my_layers.py:42 samples/views/split_and_rename.py:41
 msgid "Delete"
 msgstr "Löschen"
 
-#: views/my_layers.py:51
+#: samples/views/my_layers.py:50
 msgid "Deposition and layer number must be separated by \"-\"."
 msgstr "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
 
-#: views/my_layers.py:56
+#: samples/views/my_layers.py:55
 msgid "Deposition number doesn't exist."
 msgstr "Diese Deposition gibt es nicht."
 
-#: views/my_layers.py:60
+#: samples/views/my_layers.py:59
 msgid "Layer number isn't a number."
 msgstr "Die Schichtnummer ist keine Zahl."
 
-#: views/my_layers.py:63
+#: samples/views/my_layers.py:62
 msgid "This layer does not exist in this deposition."
 msgstr "In dieser Deposition gibt es diesen Layer nicht."
 
-#: views/my_layers.py:141
+#: samples/views/my_layers.py:140
 msgid "Nickname is already given."
 msgstr "Dieser Spitzname ist schon vergeben."
 
-#: views/my_layers.py:158
+#: samples/views/my_layers.py:157
 msgid "Successfully changed “My Layers”"
 msgstr "Erfolgreich „Meine Schichten“ geändert"
 
-#: views/my_layers.py:160
+#: samples/views/my_layers.py:159
 msgid "Nothing changed."
 msgstr "Es wurde nichts geändert."
 
-#: views/my_layers.py:181
+#: samples/views/my_layers.py:180
 msgid "You can't access the “My Layers” section of another user."
 msgstr ""
 "Sie düfen nicht auf „Meine Schichten“ eines anderen Benutzers zugreifen."
 
-#: views/my_layers.py:190
+#: samples/views/my_layers.py:189
 msgid "Changes did not saved yet."
 msgstr "Veränderungen wurden noch nicht gespeichert."
 
-#: views/my_layers.py:194
+#: samples/views/my_layers.py:193
 msgid "My Layers"
 msgstr "Meine Schichten"
 
-#: views/my_samples.py:52
+#: samples/views/my_samples.py:51
 msgid "New currently responsible person"
 msgstr "Neuer aktuell Verantwortlicher"
 
-#: views/my_samples.py:53
+#: samples/views/my_samples.py:52
 msgid "New Topic"
 msgstr "Thema hinzufügen"
 
-#: views/my_samples.py:54 views/split_after_deposition.py:128
+#: samples/views/my_samples.py:53 samples/views/split_after_deposition.py:128
 msgid "New current location"
 msgstr "Neuer Probenort"
 
-#: views/my_samples.py:55
+#: samples/views/my_samples.py:54
 msgid "New sample tags"
 msgstr "Neue Proben-Tags"
 
-#: views/my_samples.py:57
+#: samples/views/my_samples.py:56
 msgid "Copy to user"
 msgstr "Zu Benutzer kopieren"
 
-#: views/my_samples.py:58
+#: samples/views/my_samples.py:57
 msgid "Clearance"
 msgstr "Freigabe"
 
-#: views/my_samples.py:59
+#: samples/views/my_samples.py:58
 msgid "Comment for recipient"
 msgstr "Kommentar für Empfänger"
 
-#: views/my_samples.py:60
+#: samples/views/my_samples.py:59
 msgid "Remove from “My Samples”"
 msgstr "Entferne von „Meine Proben“"
 
-#: views/my_samples.py:78
+#: samples/views/my_samples.py:77
 msgid "sample only"
 msgstr "nur die Probe"
 
-#: views/my_samples.py:79
+#: samples/views/my_samples.py:78
 msgid "all processes up to now"
 msgstr "alle bisherigen Prozesse"
 
-#: views/my_samples.py:102
+#: samples/views/my_samples.py:101
 msgid ""
 "If you copy samples over to another person, you must enter a short comment."
 msgstr ""
 "Wenn Sie Proben zu einer anderen Person kopieren, müssen Sie einen kurzen "
 "Kommentar eingeben."
 
-#: views/my_samples.py:105
+#: samples/views/my_samples.py:103
 msgid "If you set a clearance, you must copy samples to another user."
 msgstr ""
 "Wenn Sie eine Freigabe setzen, müssen sie die Proben zu einem anderen "
 "Benutzer kopieren."
 
-#: views/my_samples.py:109
+#: samples/views/my_samples.py:107
 msgid "If you edit samples, you must enter a short comment."
 msgstr "Wenn Sie Proben ändern, müssen Sie einen kurzen Kommentar eingeben."
 
-#: views/my_samples.py:144
+#: samples/views/my_samples.py:142
 msgid ""
 "You must be the currently responsible person for samples you'd like to "
 "change\n"
@@ -3343,7 +3426,7 @@ msgstr ""
 "Sie müssen die aktuell verantwortliche Person sein für die Proben, die Sie "
 "ändern wollen, oder der Manager der Proben-Themen."
 
-#: views/my_samples.py:157
+#: samples/views/my_samples.py:155
 msgid ""
 "If you copy samples over to another person who cannot fully view one of the "
 "samples, you must select a clearance option."
@@ -3351,61 +3434,55 @@ msgstr ""
 "Wenn Sie Proben zu einer anderen Person kopieren, die die Probe nicht "
 "vollständig sehen kann, müssen Sie eine Freigabe-Option wählen."
 
-#: views/my_samples.py:168
+#: samples/views/my_samples.py:166
 msgid "You cannot grant clearances for the following samples:"
 msgstr "Sie können für die folgenden Proben keine Freigaben gewähren:"
 
-#: views/my_samples.py:267
+#: samples/views/my_samples.py:265
 msgid "You can't access the “My Samples” section of another user."
 msgstr "Sie düfen nicht auf „Meine Proben“ eines anderen Benutzers zugreifen."
 
-#: views/my_samples.py:274
+#: samples/views/my_samples.py:272
 msgid "Successfully processed “My Samples”."
 msgstr "Erfolgreich „Meine Proben“ verarbeitet."
 
-#: views/my_samples.py:279
+#: samples/views/my_samples.py:277
 #, python-brace-format
 msgid "Edit “My Samples” of {user_name}"
 msgstr "„Meine Proben“ von {user_name} ändern"
 
-#: views/permissions.py:142
+#: samples/views/permissions.py:142
 msgid "Change the permissions of"
 msgstr "Berechtigungen ändern von"
 
-#: views/permissions.py:328
+#: samples/views/permissions.py:328
 #, python-brace-format
 msgid "The permissions of {name} were successfully changed."
 msgstr "Die Berechtigungen von {name} wurden erfolgreich geändert."
 
-#: views/permissions.py:332
+#: samples/views/permissions.py:332
 #, python-brace-format
 msgid "Change permissions of {name}"
 msgstr "Die Berechtigungen von {name} ändern"
 
-#: views/result.py:79
+#: samples/views/result.py:74
 msgid "Invalid file format.  Only PDF, PNG, and JPEG are allowed."
 msgstr "Ungültiges Dateiformat.  Nur PDF, PNG und JPEG sind erlaubt."
 
-#: views/result.py:99
+#: samples/views/result.py:93
 msgid "Operator"
 msgstr "Operateur"
 
-#: views/result.py:121
-msgid "For a custom substrate, you must give substrate comments."
-msgstr ""
-"Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
-"beschreiben."
-
-#: views/result.py:157
+#: samples/views/result.py:149
 msgctxt "plural"
 msgid "Sample series"
 msgstr "Probenserien"
 
-#: views/result.py:159
+#: samples/views/result.py:151
 msgid "Image file"
 msgstr "Bilddatei"
 
-#: views/result.py:210
+#: samples/views/result.py:202
 msgid ""
 "You don't have the permission to add the result to all selected samples/"
 "series."
@@ -3413,79 +3490,79 @@ msgstr ""
 "Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/"
 "Serien zu ändern."
 
-#: views/result.py:212
+#: samples/views/result.py:204
 msgid "You must select at least one samples/series."
 msgstr "Sie müssen mindestens eine Probe/Serie markieren."
 
-#: views/result.py:229
+#: samples/views/result.py:221
 msgid "Number of quantities"
 msgstr "Anzahl der Messgrößen"
 
-#: views/result.py:230
+#: samples/views/result.py:222
 msgid "Number of values"
 msgstr "Anzahl der Werte"
 
-#: views/result.py:255
+#: samples/views/result.py:247
 msgid "Quantity name"
 msgstr "Messgrößen-Name"
 
-#: views/result.py:273
+#: samples/views/result.py:265
 msgid "Value"
 msgstr "Wert"
 
-#: views/result.py:441
+#: samples/views/result.py:433
 msgid "Adding samples or sample series must be marked as important."
 msgstr ""
 "Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert "
 "werden."
 
-#: views/result.py:449
+#: samples/views/result.py:440
 msgid "This quantity is already used in this table."
 msgstr "Diese Messgröße wurde in dieser Tabelle schon verwendet."
 
-#: views/result.py:583
+#: samples/views/result.py:574
 msgid "Edit result"
 msgstr "Ergebnis ändern"
 
-#: views/result.py:583
+#: samples/views/result.py:574
 msgid "New result"
 msgstr "Ergebnis hinzufügen"
 
-#: views/result.py:611
+#: samples/views/result.py:602
 #, python-brace-format
 msgid "Result “{title}”"
 msgstr "Ergebnis „{title}“"
 
-#: views/sample.py:56
+#: samples/views/sample.py:58
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
-#: views/sample.py:65 views/sample_series.py:50
+#: samples/views/sample.py:67 samples/views/sample_series.py:50
 msgid "Currently responsible person"
 msgstr "Aktuell Verantwortlicher"
 
-#: views/sample.py:105 views/sample_series.py:237
+#: samples/views/sample.py:107 samples/views/sample_series.py:236
 msgid ""
 "Changing the topic or the responsible person must be marked as important."
 msgstr ""
 "Änderungen des Themas oder des Verantwortlichen müssen immer als „wichtig“ "
 "markiert werden."
 
-#: views/sample.py:156 views/sample.py:1087
+#: samples/views/sample.py:158 samples/views/sample.py:1089
 #, python-brace-format
 msgid "Sample {sample} was successfully changed in the database."
 msgstr "Die Probe {sample} wurde erfolgreich in der Datenbank geändert."
 
-#: views/sample.py:162
+#: samples/views/sample.py:164
 #, python-brace-format
 msgid "Edit sample “{sample}”"
 msgstr "Ändern der Probe „{sample}“"
 
-#: views/sample.py:199
+#: samples/views/sample.py:201
 msgid "split"
 msgstr "Spaltung"
 
-#: views/sample.py:209
+#: samples/views/sample.py:211
 #, python-brace-format
 msgid ""
 "You are not allowed to add any processes to the sample {sample} because "
@@ -3496,201 +3573,207 @@ msgstr ""
 "aktueller Verantwortlicher sind, noch in ihrem Thema sind, noch spezielle "
 "Berechtigungen für physikalische Prozesse haben."
 
-#: views/sample.py:663
+#: samples/views/sample.py:665
 #, python-brace-format
 msgid "Sample {samples} was added to My Samples."
 msgid_plural "Samples {samples} were added to My Samples."
 msgstr[0] "Probe {samples} wurde zu Meinen Proben hinzugefügt."
 msgstr[1] "Die Proben {samples} wurden zu Meinen Proben hinzugefügt."
 
-#: views/sample.py:671
+#: samples/views/sample.py:673
 #, python-brace-format
 msgid "Sample {samples} was removed from My Samples."
 msgid_plural "Samples {samples} were removed from My Samples."
 msgstr[0] "Probe {samples} wurde von Meinen Proben entfernt."
 msgstr[1] "Die Proben {samples} wurden von Meinen Proben entfernt."
 
-#: views/sample.py:675
+#: samples/views/sample.py:677
 msgid "Nothing was changed."
 msgstr "Es wurde nichts geändert."
 
-#: views/sample.py:685
+#: samples/views/sample.py:687
 #, python-brace-format
 msgid "Sample “{sample}”"
 msgstr "Probe „{sample}“"
 
-#: views/sample.py:748
+#: samples/views/sample.py:750
 #, python-brace-format
 msgid "Add process to sample “{sample}”"
 msgstr "Prozess zu Probe „{sample}“ hinzufügen"
 
-#: views/sample.py:758
+#: samples/views/sample.py:760
 msgid "Name pattern"
 msgstr "Namensmuster"
 
-#: views/sample.py:759
+#: samples/views/sample.py:761
 msgid "Include alias names"
 msgstr "Alternativnamen einbeziehen"
 
-#: views/sample.py:811
+#: samples/views/sample.py:813
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
-#: views/sample.py:877
+#: samples/views/sample.py:879
 msgid "search results"
 msgstr "Such-Ergebnisse"
 
-#: views/sample.py:895
+#: samples/views/sample.py:897
 msgid "You don't have the permission to see any content of the search results."
 msgstr ""
 "Sie haben nicht die erforderlichen Rechte, um irgendwelchen Inhalt der Such-"
 "Ergebnisse zu sehen."
 
-#: views/sample.py:1013
+#: samples/views/sample.py:1015
 msgid "old sample name"
 msgstr "alter Probenname"
 
-#: views/sample.py:1014
+#: samples/views/sample.py:1016
 msgid "new sample name"
 msgstr "neuer Probenname"
 
-#: views/sample.py:1015
+#: samples/views/sample.py:1017
 msgid "keep old name as sample alias name"
 msgstr "alten Namen als Aliasnamen behalten"
 
-#: views/sample.py:1027
+#: samples/views/sample.py:1029
 msgid "This sample does not exist."
 msgstr "Diese Probe existiert nicht."
 
-#: views/sample.py:1035
+#: samples/views/sample.py:1037
 msgid "New name is required."
 msgstr "Ein neuer Name ist erforderlich."
 
-#: views/sample.py:1037
+#: samples/views/sample.py:1039
 msgid "A sample with this name already exists."
 msgstr "Dieser Probenname ist schon vergeben."
 
-#: views/sample.py:1045
+#: samples/views/sample.py:1047
 msgid "The new name must be different from the old name."
 msgstr "Der neue Probenname muss sich vom alten unterscheiden."
 
-#: views/sample.py:1085
+#: samples/views/sample.py:1087
 #, python-brace-format
 msgid "Sample {old_name} was renamed to {new_name}"
 msgstr "Probe {old_name} wurde in {new_name} umbenannt."
 
-#: views/sample_death.py:55
+#: samples/views/sample_death.py:55
 msgid "Last process wasn't a split."
 msgstr "Der letzte Prozess war keine Spaltung."
 
-#: views/sample_death.py:93
+#: samples/views/sample_death.py:93
 #, python-brace-format
 msgid "Sample “{sample}” was killed."
 msgstr "Probe „{sample}“ wurde getötet."
 
-#: views/sample_death.py:97
+#: samples/views/sample_death.py:97
 #, python-brace-format
 msgid "Kill sample “{sample}”"
 msgstr "Töten der Probe „{sample}“"
 
-#: views/sample_series.py:49
+#: samples/views/sample_series.py:49
 msgid "Name"
 msgstr "Name"
 
-#: views/sample_series.py:203
+#: samples/views/sample_series.py:202
 #, python-brace-format
 msgid "Sample series “{name}”"
 msgstr "Probenserie „{name}“"
 
-#: views/sample_series.py:278
+#: samples/views/sample_series.py:277
 #, python-brace-format
 msgid "Sample series {name} was successfully updated in the database."
 msgstr "Die Probenserie {name} wurde erfolgreich in der Datenbank geändert."
 
-#: views/sample_series.py:288
+#: samples/views/sample_series.py:287
 #, python-brace-format
 msgid "Edit sample series “{name}”"
 msgstr "Ändern der Probenserie „{name}“"
 
-#: views/sample_series.py:316
+#: samples/views/sample_series.py:315
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: views/sample_series.py:319
+#: samples/views/sample_series.py:318
 #, python-brace-format
 msgid "The name is {number} letter too long."
 msgid_plural "The name is {number} letters too long."
 msgstr[0] "Der Name ist {number} Buchstaben zu lang."
 msgstr[1] "Der Name ist {number} Buchstaben zu lang."
 
-#: views/sample_series.py:330
+#: samples/views/sample_series.py:329
 #, python-brace-format
 msgid "Sample series {name} was successfully added to the database."
 msgstr "Die Probenserie {name} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: views/sample_series.py:335
+#: samples/views/sample_series.py:334
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
-#: views/split_after_deposition.py:45
+#: samples/views/split_after_deposition.py:44
 msgid "Old sample name"
 msgstr "Alter Probenname"
 
-#: views/split_after_deposition.py:48
+#: samples/views/split_after_deposition.py:47
 msgid "Pieces"
 msgstr "Stücke"
 
-#: views/split_after_deposition.py:69
+#: samples/views/split_after_deposition.py:62
 msgid "You must get rid of the provisional sample name."
 msgstr "Sie müssen den provisorischen Probennamen aufgeben."
 
-#: views/split_after_deposition.py:76
+#: samples/views/split_after_deposition.py:69
 msgid "No sample with this name found."
 msgstr "Keine Probe dieses Namens gefunden."
 
-#: views/split_after_deposition.py:78
+#: samples/views/split_after_deposition.py:71
 msgid "Alias is not unique."
 msgstr "Der Alias ist nicht eindeutig."
 
-#: views/split_after_deposition.py:83
+#: samples/views/split_after_deposition.py:76
 msgid "No sample with this ID found."
 msgstr "Keine Probe mit dieser ID gefunden."
 
-#: views/split_after_deposition.py:85
+#: samples/views/split_after_deposition.py:78
 msgid "Invalid ID format."
 msgstr "Ungültiges ID-Format."
 
-#: views/split_after_deposition.py:90
+#: samples/views/split_after_deposition.py:83
 msgid "Must be at least 1."
 msgstr "Muss mindestens 1 sein."
 
-#: views/split_after_deposition.py:101
+#: samples/views/split_after_deposition.py:94
 msgid "The new name must begin with the old name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
 
-#: views/split_after_deposition.py:105
+#: samples/views/split_after_deposition.py:97
 msgid "The new name must begin with the deposition number."
 msgstr "Der neue Name muss er mit der Depositionsnummer beginnen."
 
-#: views/split_after_deposition.py:114 views/split_and_rename.py:38
+#: samples/views/split_after_deposition.py:105
+#: samples/views/split_and_rename.py:39
 msgid "New sample name"
 msgstr "Neuer Probenname"
 
-#: views/split_after_deposition.py:129
+#: samples/views/split_after_deposition.py:118
+#: samples/views/split_and_rename.py:57
+msgid "The sample name has an invalid format."
+msgstr "Dieser Probenname hat ein ungültiges Format."
+
+#: samples/views/split_after_deposition.py:129
 msgid "(for all samples; leave empty for no change)"
 msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
 
-#: views/split_after_deposition.py:296
+#: samples/views/split_after_deposition.py:299
 #, python-brace-format
 msgid "Sample {sample} occurs multiple times."
 msgstr "Probe {sample} kommt mehrfach vor."
 
-#: views/split_after_deposition.py:302
+#: samples/views/split_after_deposition.py:304
 #, python-brace-format
 msgid "Sample {sample} doesn't belong to this deposition."
 msgstr "Probe {sample} gehört nicht zu dieser Deposition."
 
-#: views/split_after_deposition.py:315
+#: samples/views/split_after_deposition.py:312
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
 "deposition's name."
@@ -3698,23 +3781,23 @@ msgstr ""
 "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
 "Depositionsname sein."
 
-#: views/split_after_deposition.py:321
+#: samples/views/split_after_deposition.py:318
 msgid "At least one sample of the original deposition is missing."
 msgstr "Wenigstens eine Probe der originalen Deposition fehlt."
 
-#: views/split_after_deposition.py:329
+#: samples/views/split_after_deposition.py:326
 msgid ""
 "The sample can't be split, because the deposition is not the latest process."
 msgstr ""
 "Die Probe kann nicht gespalten werden, weil die Deposition nicht der letzte "
 "Prozess ist."
 
-#: views/split_after_deposition.py:338
+#: samples/views/split_after_deposition.py:335
 msgid "If you don't split, you can't rename the single piece."
 msgstr ""
 "Wenn Sie nicht spalten, dürfen Sie das einzelne Stück nicht umbenennen."
 
-#: views/split_after_deposition.py:348
+#: samples/views/split_after_deposition.py:345
 msgid ""
 "If you choose a deposition-style name, it must begin with the parent's new "
 "name."
@@ -3722,201 +3805,208 @@ msgstr ""
 "Wenn Sie einen Depositions-Probennamen wählen, muss er mit dem neuen Namen "
 "der Mutterprobe beginnen."
 
-#: views/split_after_deposition.py:490
+#: samples/views/split_after_deposition.py:494
 msgid "Samples were successfully split and/or renamed."
 msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 
-#: views/split_after_deposition.py:499
+#: samples/views/split_after_deposition.py:503
 #, python-brace-format
 msgid "Bulk sample rename for {deposition}"
 msgstr "Probenumbenennung für {deposition}"
 
-#: views/split_and_rename.py:39
+#: samples/views/split_and_rename.py:40
 msgid "New sample purpose"
 msgstr "Neuer Probenzweck"
 
-#: views/split_and_rename.py:50
-msgid "The sample name has an invalid format."
-msgstr "Dieser Probenname hat ein ungültiges Format."
-
-#: views/split_and_rename.py:53
+#: samples/views/split_and_rename.py:60
 msgid "The new sample name must start with the parent sample's name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
 
-#: views/split_and_rename.py:55
+#: samples/views/split_and_rename.py:62
+#, python-brace-format
+msgid "  Alternatively, it must be a valid “{sample_formats}” name."
+msgid_plural ""
+"  Alternatively, it must be a valid name of one of these types: "
+"{sample_formats}"
+msgstr[0] "  Alternativ muss ein gültiger „{sample_formats}“ Name sein."
+msgstr[1] ""
+"  Alternativ muss es ein gültiger Name der folgenden Arten sein: "
+"{sample_formats}"
+
+#: samples/views/split_and_rename.py:71
 msgid "Name does already exist in database."
 msgstr "Name existiert schon in der Datenbank."
 
-#: views/split_and_rename.py:64
+#: samples/views/split_and_rename.py:80
 msgid "All pieces completely entered"
 msgstr "Alle Stücke vollständig eingegeben"
 
-#: views/split_and_rename.py:65
+#: samples/views/split_and_rename.py:81
 msgid "Sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
 
-#: views/split_and_rename.py:192
+#: samples/views/split_and_rename.py:208
 msgid "You must split into at least one piece."
 msgstr "Sie müssen mindestens in ein Stück spalten."
 
-#: views/split_and_rename.py:196
+#: samples/views/split_and_rename.py:212
 msgid "You must split into at least two pieces if the split is complete."
 msgstr ""
 "Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig "
 "ist."
 
-#: views/split_and_rename.py:203
+#: samples/views/split_and_rename.py:219
 msgid "Name is already given."
 msgstr "Dieser Name ist schon vergeben."
 
-#: views/split_and_rename.py:311
+#: samples/views/split_and_rename.py:326
 #, python-brace-format
 msgid "Sample “{sample}” was successfully split."
 msgstr "Die Probe „{sample}“ wurde erfolgreich gespalten."
 
-#: views/split_and_rename.py:319
+#: samples/views/split_and_rename.py:335
 #, python-brace-format
 msgid "Split sample “{sample}”"
 msgstr "Spalten der Probe „{sample}“"
 
-#: views/statistics.py:81
+#: samples/views/statistics.py:84
 msgid "JuliaBase server statistics"
 msgstr "JuliaBase Server-Statistik"
 
-#: views/statistics.py:105
+#: samples/views/statistics.py:108
 msgid "JuliaBase is presented to you by …"
 msgstr "JuliaBase wird Ihnen präsentiert von …"
 
-#: views/status.py:55
+#: samples/views/status.py:53
 msgid "status level"
 msgstr "Statuslevel"
 
-#: views/status.py:102
+#: samples/views/status.py:100
 msgid "The begin must be before the end."
 msgstr "Der Beginn muß vor dem Ende liegen."
 
-#: views/status.py:105
+#: samples/views/status.py:103
 msgid "A message must be given when the status level is red or yellow."
 msgstr ""
 "Wenn das Statuslevel rot oder gelb ist, muß eine Nachricht eingegeben werden."
 
-#: views/status.py:133
+#: samples/views/status.py:132
 msgid "The status message was successfully added to the database."
 msgstr "Die Statusmeldung wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: views/status.py:136
+#: samples/views/status.py:135
 msgid "Add status message"
 msgstr "Statusmeldung hinzufügen"
 
-#: views/status.py:204
+#: samples/views/status.py:203
 msgid "The status message was successfully withdrawn."
 msgstr "Die Statusmeldung wurde erfolgreich zurückgezogen."
 
-#: views/table_export.py:524
+#: samples/views/table_export.py:522
 msgid "Column groups"
 msgstr "Spalten-Gruppen"
 
-#: views/table_export.py:541
+#: samples/views/table_export.py:539
 msgid "Columns"
 msgstr "Spalten"
 
-#: views/task_lists.py:173
+#: samples/views/task_lists.py:174
 msgid "With this status, you must set an operator."
 msgstr "Sie müssen bei diesem Status einen Operateur setzen."
 
-#: views/task_lists.py:184
+#: samples/views/task_lists.py:185
 msgid "show task lists for"
 msgstr "zeige Auftragslisten für"
 
-#: views/task_lists.py:282
+#: samples/views/task_lists.py:284
 #, python-brace-format
 msgid "* Status is now “{new_status}”.\n"
 msgstr "* Der Status ist nun „{new_status}“.\n"
 
-#: views/task_lists.py:285
+#: samples/views/task_lists.py:287
 #, python-brace-format
 msgid "* Priority is now “{new_priority}̣”.\n"
 msgstr "* Die Priorität ist nun „{new_priority}“.\n"
 
-#: views/task_lists.py:287
+#: samples/views/task_lists.py:289
 msgid "* Connected process.\n"
 msgstr "* Mit Prozess verbunden.\n"
 
-#: views/task_lists.py:290
+#: samples/views/task_lists.py:292
 #, python-brace-format
 msgid "* Operator is now {operator}.\n"
 msgstr "* Der Operateur ist nun {operator}.\n"
 
-#: views/task_lists.py:293
+#: samples/views/task_lists.py:295
 msgid "* No operator is set anymore.\n"
 msgstr "* Es ist kein Operateur mehr gesetzt.\n"
 
-#: views/task_lists.py:301
+#: samples/views/task_lists.py:303
 #, python-brace-format
 msgid "Task was {verb} successfully."
 msgstr "Der Auftrag wurde erfolgreich {verb}."
 
-#: views/task_lists.py:301
+#: samples/views/task_lists.py:303
 msgid "edited"
 msgstr "geändert"
 
-#: views/task_lists.py:309
+#: samples/views/task_lists.py:311
 msgid "Edit task"
 msgstr "Auftrag ändern"
 
-#: views/task_lists.py:374
+#: samples/views/task_lists.py:378
 msgid "You are not the customer of this task."
 msgstr "Sie sind nicht der Auftraggeber dieses Auftrags."
 
-#: views/task_lists.py:377
+#: samples/views/task_lists.py:381
 msgid "The task was successfully removed."
 msgstr "Der Auftrag wurde erfolgreich entfernt."
 
-#: views/topic.py:44
+#: samples/views/topic.py:43
 msgid "Name of new topic"
 msgstr "Name des neuen Themas"
 
-#: views/topic.py:47
+#: samples/views/topic.py:46
 msgid "Upper topic"
 msgstr "Überthema"
 
-#: views/topic.py:48 views/topic.py:175
+#: samples/views/topic.py:47 samples/views/topic.py:173
 msgid "topic manager"
 msgstr "Themenmanager"
 
-#: views/topic.py:75
+#: samples/views/topic.py:74
 #, python-brace-format
 msgid "You are not allowed to edit the topic “{parent_topic}”."
 msgstr "Sie dürfen das Thema „{parent_topic}“ nicht ändern."
 
-#: views/topic.py:79
+#: samples/views/topic.py:78
 msgid ""
 "You are only allowed to create sub topics. You have to select an upper topic."
 msgstr ""
 "Sie dürfen keine Unterthemen anlegen.  Sie müssen ein Überthema auswählen."
 
-#: views/topic.py:87
+#: samples/views/topic.py:86
 msgid "This topic name is already used."
 msgstr "Dieser Themenname ist bereits vergeben."
 
-#: views/topic.py:90
+#: samples/views/topic.py:88
 msgid "The topic manager must be the topic manager from the upper topic."
 msgstr "Der Themenmanager muß der Manager des Überthemas sein."
 
-#: views/topic.py:132
+#: samples/views/topic.py:130
 #, python-brace-format
 msgid "Topic {name} was successfully created."
 msgstr "Das Thema {name} wurde erfolgreich angelegt."
 
-#: views/topic.py:163
+#: samples/views/topic.py:161
 msgid "List of all topics"
 msgstr "Liste aller Themen"
 
-#: views/topic.py:173
+#: samples/views/topic.py:171
 msgid "Members"
 msgstr "Mitglieder"
 
-#: views/topic.py:191
+#: samples/views/topic.py:190
 msgid ""
 "In confidential topics, at least one member must have permission to edit the "
 "topic."
@@ -3924,50 +4014,67 @@ msgstr ""
 "Wenigstens ein Mitglied in eines vertraulichen Themas muss die Berechtigung "
 "haben, das Thema zu ändern."
 
-#: views/topic.py:246
+#: samples/views/topic.py:244
 #, python-brace-format
 msgid "Members of topic “{name}” were successfully updated."
 msgstr ""
 "Die Mitglieder des Themas „{name}“ wurden erfolgreich auf den neuesten Stand "
 "gebracht."
 
-#: views/topic.py:252
+#: samples/views/topic.py:250
 #, python-brace-format
 msgid "Change topic memberships of “{0}”"
 msgstr "Mitglieder des Themas “{0}” ändern"
 
-#: views/user_details.py:127
+#: samples/views/user_details.py:126
 msgid "You can't access the preferences of another user."
 msgstr ""
 "Sie können nicht auf die Einstellungen eines anderen Benutzers zugreifen."
 
-#: views/user_details.py:142
+#: samples/views/user_details.py:141
 msgid "The preferences were successfully updated."
 msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
 
-#: views/user_details.py:148
+#: samples/views/user_details.py:147
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Ändere Einstellungen für {user_name}"
 
-#: views/user_details.py:159
+#: samples/views/user_details.py:158
 msgid "You can't access the list of topics and permissions of another user."
 msgstr ""
 "Sie können nicht auf die Themenliste und die Berechtigungen eines anderen "
 "Benutzers zugreifen."
 
-#: views/user_details.py:162
+#: samples/views/user_details.py:161
 #, python-brace-format
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
 
-#: views/utils.py:541
+#: samples/views/utils.py:533
 msgid ", and "
 msgstr " und "
 
-#: views/utils.py:543
+#. Translators: Intended to be used in an enumeration of exactly two items
+#: samples/views/utils.py:536
 msgid " and "
 msgstr " und "
+
+#~ msgid "Only provisional names can be changed to an external name."
+#~ msgstr ""
+#~ "Es können nur provisorische Namen zu einem externen Namen geändert werden."
+
+#~ msgid "Invalid deposition number.  It must be of the form YYL-NNN."
+#~ msgstr ""
+#~ "Ungültiges Depositionsnummer-Format.  Es muss von der Form JJL-NNN sein."
+
+#~ msgid "The deposition letter must be an uppercase “{letter}”."
+#~ msgstr "Der Depositionsbuchstabe muss ein großes „{letter}“ sein."
+
+#~ msgid "For a custom substrate, you must give substrate comments."
+#~ msgstr ""
+#~ "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
+#~ "beschreiben."
 
 #, fuzzy
 #~| msgid "This field is required."
