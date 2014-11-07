@@ -21,7 +21,6 @@ from django.utils.translation import ugettext_lazy as _
 
 DEBUG_EMAIL_REDIRECT_USERNAME = ""
 JAVASCRIPT_I18N_APPS = ("django.contrib.auth", "samples", "jb_common")
-TESTING = len(sys.argv) >= 2 and sys.argv[0].endswith("manage.py") and sys.argv[1] == "test"
 USE_X_SENDFILE = False
 
 # LDAP-related settings

@@ -64,8 +64,3 @@ admin.site.register(FeedNewSampleSeries)
 admin.site.register(FeedMovedSampleSeries)
 admin.site.register(FeedChangedTopic)
 admin.site.register(FeedStatusMessage)
-
-
-if settings.TESTING:
-    from samples.models.test import TestPhysicalProcess
-    admin.site.register(TestPhysicalProcess)

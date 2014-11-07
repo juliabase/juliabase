@@ -173,20 +173,6 @@ the names of the formats to their properties.  See :doc:`sample_names` for more
 information.
 
 
-TESTING
-----------
-
-Default: ``True`` if testing, ``False`` otherwise
-
-If this setting is ``True``, we are currently testing JuliaBase, i.e. it was
-started with::
-
-    ./manage.py test {app_name}
-
-This setting is deprecated and will be removed in the future.  Do not use it in
-your own code.
-
-
 THUMBNAIL_WIDTH
 ---------------
 

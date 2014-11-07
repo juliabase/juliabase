@@ -466,7 +466,7 @@ def get_all_searchable_models():
         if isinstance(all_searchable_models, set):
             raise SetLockedException
         all_searchable_models = set()
-        for model in utils.get_all_models("samples" if settings.TESTING else None).values():
+        for model in utils.get_all_models().values():
             if hasattr(model, "get_search_tree_node"):
                 try:
                     model.get_search_tree_node()

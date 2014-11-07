@@ -18,6 +18,3 @@ from __future__ import absolute_import, unicode_literals
 from django.conf import settings
 from .shared_utils import *
 from .json_export import *
-
-
-assert settings.TESTING

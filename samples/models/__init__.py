@@ -43,8 +43,6 @@ from django.conf import settings
 from .common import *
 from .depositions import *
 from .feeds import *
-if settings.TESTING:
-    from .test import *
 
 """
 
