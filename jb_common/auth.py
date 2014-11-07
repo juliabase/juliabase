@@ -125,9 +125,9 @@ class LDAPConnection(object):
         """
         for ad_ldap_url in settings.AD_LDAP_URLS:
             try:
-                username = settings.AD_USERNAME_TEMPLATE.format(username=username)
                 bound_connection = ldap.initialize(ad_ldap_url)
-                bound_connection.simple_bind_s(username.encode("utf-8"), password.encode("utf-8"))
+                bound_connection.simple_bind_s(settings.AD_USERNAME_TEMPLATE.format(username=username).encode("utf-8"),
+                                               password.encode("utf-8"))
                 bound_connection.unbind_s()
             except ldap.INVALID_CREDENTIALS:
                 return False
