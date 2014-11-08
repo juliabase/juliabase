@@ -19,14 +19,11 @@ from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
+ADD_SAMPLES_VIEW = ""
 CACHE_ROOT = str("/tmp/juliabase_cache")
-MAP_DEPARTMENTS_TO_APP_LABELS = {}
-THUMBNAIL_WIDTH = 400
-CRAWLER_LOGS_WHITELIST = ()
 CRAWLER_LOGS_ROOT = ""
-PHYSICAL_PROCESS_BLACKLIST = ()
-ADD_SAMPLE_VIEW = ""
-MERGE_CLEANUP_FUNCTION = ""
+CRAWLER_LOGS_WHITELIST = ()
+DEPARTMENTS_TO_APP_LABELS = {}
 INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}",
                              "description": _("The initials start with two uppercase letters.  "
                                               "They contain uppercase letters and digits only.  Digits are at the end.")},
@@ -36,9 +33,12 @@ INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}"
                                                           "Digits are at the end.  "
                                                           "The length is exactly 4 characters.")}
                     }
+MERGE_CLEANUP_FUNCTION = ""
+NAME_PREFIX_TEMPLATES = ()
+PHYSICAL_PROCESSES_BLACKLIST = ()
 SAMPLE_NAME_FORMATS = {"provisional": {"possible renames": {"default"}},
                        "default":     {"pattern": r"[-A-Za-z_/0-9#()]*"}}
-NAME_PREFIX_TEMPLATES = ()
+THUMBNAIL_WIDTH = 400
 
 # Django settings which are used in samples
 

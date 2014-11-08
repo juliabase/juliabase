@@ -141,14 +141,14 @@ CACHES = {
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-MAP_DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
+DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
 
-ADD_SAMPLE_VIEW = "jb_institute.views.samples.sample.add"
+ADD_SAMPLES_VIEW = "jb_institute.views.samples.sample.add"
 
 MEASUREMENT_DATA_ROOT_DIR = str("")
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds"))
 
-PHYSICAL_PROCESS_BLACKLIST = [("jb_institute", "substrate"),
+PHYSICAL_PROCESSES_BLACKLIST = [("jb_institute", "substrate"),
                               ("jb_institute", "layerthicknessmeasurement")]
 SOLARSIMULATOR_1_ROOT_DIR = str("")
 MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"

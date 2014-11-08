@@ -102,8 +102,8 @@ class LDAPConnection(object):
         self.cached_ad_data = {}
         self.permissions_of_ad_groups = dict(
             (ad_groupname, set(Permission.objects.filter(codename__in=permission_codenames)))
-            for ad_groupname, permission_codenames in settings.PERMISSIONS_OF_AD_GROUPS.items())
-        managed_permissions_codenames = set().union(*settings.PERMISSIONS_OF_AD_GROUPS.values())
+            for ad_groupname, permission_codenames in settings.LDAP_GROUPS_TO_PERMISSIONS.items())
+        managed_permissions_codenames = set().union(*settings.LDAP_GROUPS_TO_PERMISSIONS.values())
         self.managed_permissions = set(Permission.objects.filter(codename__in=managed_permissions_codenames))
 
     def is_valid(self, username, password):
@@ -123,10 +123,10 @@ class LDAPConnection(object):
 
         :rtype: bool
         """
-        for ad_ldap_url in settings.AD_LDAP_URLS:
+        for ad_ldap_url in settings.LDAP_URLS:
             try:
                 bound_connection = ldap.initialize(ad_ldap_url)
-                bound_connection.simple_bind_s(settings.AD_USERNAME_TEMPLATE.format(username=username).encode("utf-8"),
+                bound_connection.simple_bind_s(settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
                                                password.encode("utf-8"))
                 bound_connection.unbind_s()
             except ldap.INVALID_CREDENTIALS:
@@ -159,17 +159,17 @@ class LDAPConnection(object):
             ad_data = self.cached_ad_data[username]
         except KeyError:
             found = False
-            for ad_ldap_url in settings.AD_LDAP_URLS:
+            for ad_ldap_url in settings.LDAP_URLS:
                 connection = ldap.initialize(ad_ldap_url)
                 connection.set_option(ldap.OPT_REFERRALS, 0)
                 try:
                     found, attributes = connection.search_ext_s(
-                        settings.AD_SEARCH_DN, ldap.SCOPE_SUBTREE,
-                        "(&(sAMAccountName={0}){1})".format(username, settings.AD_LDAP_ACCOUNT_FILTER),
+                        settings.LDAP_SEARCH_DN, ldap.SCOPE_SUBTREE,
+                        "(&(sAMAccountName={0}){1})".format(username, settings.LDAP_ACCOUNT_FILTER),
                         list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
                             settings.LDAP_ADDITIONAL_ATTRIBUTES)))[0][:2]
                 except ldap.LDAPError as e:
-                    if settings.AD_LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.AD_LDAP_URLS):
+                    if settings.LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.LDAP_URLS):
                         mail_admins("JuliaBase LDAP error", message=e.message["desc"])
                     else:
                         continue
@@ -197,9 +197,9 @@ class LDAPConnection(object):
         """
         attributes = self.get_ad_data(username)
         return attributes is not None and (
-            not settings.AD_LDAP_DEPARTMENTS or
-            attributes.get("department", [""])[0].decode("utf-8") in settings.AD_LDAP_DEPARTMENTS
-            or username in settings.ADDITIONAL_LDAP_USERS)
+            not settings.LDAP_DEPARTMENTS or
+            attributes.get("department", [""])[0].decode("utf-8") in settings.LDAP_DEPARTMENTS
+            or username in settings.LDAP_ADDITIONAL_USERS)
 
     @staticmethod
     def get_group_names(attributes):
@@ -258,9 +258,9 @@ class LDAPConnection(object):
             if "sn" in attributes:
                 user.last_name = attributes["sn"][0].decode("utf-8")
             if "department" in attributes:
-                jb_department_name = settings.AD_LDAP_DEPARTMENTS[attributes["department"][0].decode("utf-8")]
+                jb_department_name = settings.LDAP_DEPARTMENTS[attributes["department"][0].decode("utf-8")]
                 try:
-                    user.jb_user_details.department = settings.ADDITIONAL_LDAP_USERS[user.username]
+                    user.jb_user_details.department = settings.LDAP_ADDITIONAL_USERS[user.username]
                 except KeyError:
                     user.jb_user_details.department = Department.objects.get(name=jb_department_name)
             user.email = attributes["mail"][0]

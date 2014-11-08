@@ -66,7 +66,7 @@ class StatusForm(forms.ModelForm):
         self.fields["timestamp"].initial = datetime.datetime.now()
         self.fields["process_classes"].choices = form_utils.choices_of_content_types(
             cls for cls in get_all_addable_physical_process_models()
-            if (cls._meta.app_label, cls._meta.module_name) not in settings.PHYSICAL_PROCESS_BLACKLIST)
+            if (cls._meta.app_label, cls._meta.module_name) not in settings.PHYSICAL_PROCESSES_BLACKLIST)
         self.fields["process_classes"].widget.attrs["size"] = 24
 
     def clean_message(self):

@@ -25,14 +25,14 @@ USE_X_SENDFILE = False
 
 # LDAP-related settings
 
-ADDITIONAL_LDAP_USERS = {}
-AD_LDAP_ACCOUNT_FILTER = "(!(userAccountControl:1.2.840.113556.1.4.803:=2))"
-AD_LDAP_DEPARTMENTS = {}
-AD_LDAP_URLS = ()
-AD_SEARCH_DN = ""
-AD_USERNAME_TEMPLATE = "{username}"
+LDAP_ACCOUNT_FILTER = "(!(userAccountControl:1.2.840.113556.1.4.803:=2))"
 LDAP_ADDITIONAL_ATTRIBUTES = ()
-PERMISSIONS_OF_AD_GROUPS = {}
+LDAP_ADDITIONAL_USERS = {}
+LDAP_DEPARTMENTS = {}
+LDAP_GROUPS_TO_PERMISSIONS = {}
+LDAP_LOGIN_TEMPLATE = "{username}"
+LDAP_SEARCH_DN = ""
+LDAP_URLS = ()
 
 # Django settings which are used in jb_common
 

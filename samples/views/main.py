@@ -121,7 +121,7 @@ def main_menu(request):
         {"title": _("Main menu"),
          "my_topics": my_topics,
          "topicless_samples": topicless_samples,
-         "add_sample_url": django.core.urlresolvers.reverse(settings.ADD_SAMPLE_VIEW),
+         "add_sample_url": django.core.urlresolvers.reverse(settings.ADD_SAMPLES_VIEW),
          "user_hash": permissions.get_user_hash(request.user),
          "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
          "can_edit_topics": any(permissions.has_permission_to_edit_topic(request.user, topic)
