@@ -20,14 +20,13 @@ from __future__ import absolute_import, unicode_literals
 # Python3 note: Below, there are some str() calls that should be removed with
 # Python3.
 
-import sys, os.path, re
+import os
 from django.utils.translation import ugettext_lazy as _
 from jb_common.settings_defaults import *
 from samples.settings_defaults import *
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
