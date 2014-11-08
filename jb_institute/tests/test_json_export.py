@@ -18,6 +18,7 @@ from __future__ import absolute_import, unicode_literals
 import json
 from django.test import TestCase
 from django.test.client import Client
+import samples.views.shared_utils
 
 
 substrate_data = {"sample IDs": [1, 2], "timestamp inaccuracy": 0, "timestamp": "2010-12-02 11:07:36",
@@ -46,6 +47,30 @@ class ExportTest(TestCase):
              "external operator": None,
              "operator": "testuser", "finished": True, "comments": "",
              "PDS number": 1, "type": "PDS measurement", "raw data file": "T:/Daten/pds/p4600-/pd4636.dat"})
+
+    def test_sample_export(self):
+        response = self.client.get("/samples/by_id/2", HTTP_ACCEPT="application/json")
+        self.assertEqual(response["Content-Type"], "application/json; charset=ascii")
+        self.assertEqual(
+            json.loads(response.content.decode("ascii")),
+            {"currently responsible person": "testuser", "name": "10-TB-second", "tags": "", "topic": None, "purpose": "",
+             "current location": u"Torsten's office", "split origin": None, "ID": 2,
+             "process #1": {"sample IDs": [1, 2], "type": "substrate", "timestamp inaccuracy": 0,
+                            "timestamp": "2010-12-02 11:07:36", "external operator": None, "operator": "testuser", "finished": True,
+                            "comments": "",
+                            "material": "corning", "ID": 1},
+             "process #2": {"sample IDs": [2], "type": "PDS measurement", "timestamp inaccuracy": 0,
+                            "timestamp": "2010-12-02 12:07:36", "external operator": None, "operator": "testuser", "finished": True,
+                            "comments": "",
+                            "apparatus": "pds1", "PDS number": 1, "raw data file": "T:/Daten/pds/p4600-/pd4636.dat"}
+            })
+
+
+class SharedUtilsTest(TestCase):
+
+    def test_capitalize_first_letter(self):
+        self.assertEqual(samples.views.shared_utils.capitalize_first_letter("hello World"), "Hello World")
+        self.assertEqual(samples.views.shared_utils.capitalize_first_letter("ärgerlich"), "Ärgerlich")
 
 
 class AdminExportTest(TestCase):
