@@ -12,18 +12,18 @@
 .. permission of the copyright holder, you must destroy it immediately and
 .. completely.
 
-=============
+===============
 Programming
-=============
+===============
 
 
+This document explains JuliaBase for the programmer who wants to adapt it to
+their institute, research department, or scientific group.  It contains an
+overview of the process as a whole, and refers to other pages with the details.
+We hope that it serves as a gentle tutorial which makes the adaption process as
+easy as possible.  Feedback is welcomed!
 
-This document explains JuliaBase for the programmer.  It is a technical overview
-of the whole architecture.  Moreover, it is a guide for adapting JuliaBase to a
-new institute, research department, or scientific group.
-
-If you want to read this manual, you should be familiar with several
-technologies:
+For the adaption process, you should be familiar with several technologies:
 
 1.  *Python*.  You should have advanced experience in this language.  This
     includes the standard library; you should at least know what it can do and
@@ -33,63 +33,67 @@ technologies:
 
 3.  *HTML*.  Basic knowledge should be enough.
 
-
-Architecture
-====================
-
-Since JuliaBase is based on the Django Web framework, it consists of several
-Django apps.  The core app is called “jb_common”.  It provides
-functionality which is essential for all JuliaBase components.  On top of that,
-the app “samples” contains all features of a samples database.  However, it
-does not contain institute-specific code in order to remain generic and
-flexible.  This institute-specific code resides in an app of its own and must
-be created by a skilled programmer.
+Furthermode, some admin skills are necessary to get everything running.
 
 
-Coding guidelines
-===========================
+Organizing your source code
+===============================
 
-JuliaBase source code modules should not exceed 1000 lines of code.  You should
-stick to `PEP 8`_ and the `Django coding guidelines`_.
+It would be a bad idea to download JuliaBase's source code and modify it
+directly to your needs because then, any JuliaBase update would destroy your
+changes.  Instead, you make a structure according to this::
 
-JuliaBase makes one exception from PEP 8: I allow lines with 125 columns instead
-of only 80.
+    myproject/
+        juliabase/
+            {the original JuliaBase release}
+        mysite/
+            __init__.py
+            settings.py
+            urls.py
+            wsgi.py
+        my_institute/
+            __init__.py
+            admin.py
+            urls.py
+            migrations/
+            models/
+            static/
+            templates/
+            views/
+            ...
 
-All variables and source code comments should be in English.
+If you're using Git, you may consider using the ``subtree`` command: You
+structure your repository like above but without the :file:`juliabase`
+subdirectory.  Then, you say::
 
-.. _`PEP 8`: http://www.python.org/dev/peps/pep-0008/
-.. _`Django coding guidelines`: http://docs.djangoproject.com/en/dev/internals/contributing/?from=olddocs#coding-style
+    git subtree add --prefix juliabase --squash git@bob.ipv.kfa-juelich.de:juliabase v1.0
 
-.. note::
+A new version is pulled into your repo with::
 
-   I skip all docstrings in the code examples in this document because
-   otherwise, the examples would be too bloated.  However, write rich
-   Docstrings for all non-trivial functions and methods.  Write them in `ReST
-   format`_.  Sometimes, you can copy-and-paste the docstring with slight
-   modifications.
+    git subtree pull --prefix juliabase --squash git@bob.ipv.kfa-juelich.de:juliabase v2.0
 
-.. _`ReST format`: http://sphinx-doc.org/rest.html
-
-Internationalisation is a very important point in JuliaBase.  All strings exposed
-to the user should be marked as translatable by putting them in ``_(u"...")``
-unless you have very good reason not to do so (e.g. for some proper names).
-Note that in code which is executed at module load time (e.g. model and form
-fields), ``_`` should stand for ``ugettext_lazy``, whereas within functions and
-methods which are executed on each request, it should be ``ugettext``.
 
 Creating a new Django app
 =============================
 
-Let us assume your institute or department is called “Institute of New
-Materials”, abbreviated “INM”.  You will then create a Django app called
-``inm``.
+Okay, now let's dive into the serious stuff.
+
+You created your Django project, you added JuliaBase to it as explained in
+`Organizing your source code`_.  You copied JuliaBase's :file:`settings.py` and
+modified it for you, in order to get the demo app ``jb_institute`` working.
+
+.. todo: Explain the steps necessary to adapt settings.py.
+
+Then, you create a new app ``my_institute``, and you replace ``jb_institute``
+with ``my_institute`` in ``INSTALLED_APPS`` in your :file:`settings.py`.
+Nothing is working anymore …
 
 Adding a new process module
 =================================
 
 So you want to add a new measurement device or manufacturing process to your
 JuliaBase installation.  You do so by adding new models, views, URLs, and
-possibly an electronic lab notebook to your app “inm”.
+possibly an electronic lab notebook to your app “my_institute”.
 
 I will show how to do that step-by-step.  In this example case, we write the
 module for layer thickness measurements.
@@ -99,7 +103,7 @@ Overview
 
 The following steps are necessary for creating a process module:
 
-1. Create a database model in ``inm/models.py``.
+1. Create a database model in ``my_institute/models.py``.
 
 2. Create links in ``urls.py``.
 
@@ -172,11 +176,11 @@ It is a good idea to test a schema migration first on a test server.
 
 The schema migration is created and applied by saying::
 
-    ./manage.py makemigrations inm
-    ./manage.py migrate inm
+    ./manage.py makemigrations my_institute
+    ./manage.py migrate my_institute
 
-The first line will create a new file in :file:`inm/migrations/`.  It should be
-added to your repository.
+The first line will create a new file in :file:`my_institute/migrations/`.  It
+should be added to your repository.
 
 Creating the URLs
 ---------------------

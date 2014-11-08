@@ -1,0 +1,65 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+=======================
+Hacking on JuliaBase
+=======================
+
+Architecture
+====================
+
+Since JuliaBase is based on the Django Web framework, it consists of several
+Django apps.  The core app is called “jb_common”.  It provides
+functionality which is essential for all JuliaBase components.  On top of that,
+the app “samples” contains all features of a samples database.  However, it
+does not contain institute-specific code in order to remain generic and
+flexible.  This institute-specific code resides in an app of its own and must
+be created by a skilled programmer.
+
+JuliaBase is shipped together with an example institute app called
+“jb_institute”.  It provides not only a demo for JuliaBase, it also is a good
+starting point for your own app.  Besides, essential testing of JuliaBase can
+only be done on top of jb_institute.
+
+
+Coding guidelines
+===========================
+
+JuliaBase source code modules should not exceed 1000 lines of code.  You should
+stick to `PEP 8`_ and the `Django coding guidelines`_.
+
+JuliaBase makes one exception from PEP 8: I allow lines with 125 columns instead
+of only 80.
+
+All variables and source code comments should be in English.
+
+.. _`PEP 8`: http://www.python.org/dev/peps/pep-0008/
+.. _`Django coding guidelines`: http://docs.djangoproject.com/en/dev/internals/contributing/?from=olddocs#coding-style
+
+.. note::
+
+   I skip all docstrings in the code examples in this document because
+   otherwise, the examples would be too bloated.  However, write rich
+   Docstrings for all non-trivial functions and methods.  Write them in `ReST
+   format`_.  Sometimes, you can copy-and-paste the docstring with slight
+   modifications.
+
+.. _`ReST format`: http://sphinx-doc.org/rest.html
+
+Internationalisation is a very important point in JuliaBase.  All strings exposed
+to the user should be marked as translatable by putting them in ``_(u"...")``
+unless you have very good reason not to do so (e.g. for some proper names).
+Note that in code which is executed at module load time (e.g. model and form
+fields), ``_`` should stand for ``ugettext_lazy``, whereas within functions and
+methods which are executed on each request, it should be ``ugettext``.

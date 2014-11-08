@@ -133,18 +133,6 @@ Git repository, you can check out the source code on your computer with::
    https://docs.djangoproject.com/en/dev/ref/django-admin/
 
 
-The settings.py file
---------------------
-
-In the subdirectory “jb_institute”, there is the file `settings.py
-as known from Django`_.  It contains the global configuration of your
-JuliaBase installation and needs to be adjusted by you.
-
-.. _settings.py as known from Django:
-   https://docs.djangoproject.com/en/dev/topics/settings/
-
-TBD
-
 Apache
 ==========
 
