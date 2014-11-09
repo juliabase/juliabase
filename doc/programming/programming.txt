@@ -44,6 +44,7 @@ directly to your needs because then, any JuliaBase update would destroy your
 changes.  Instead, you make a structure according to this::
 
     myproject/
+        manage.py
         juliabase/
             {the original JuliaBase release}
         mysite/
@@ -61,6 +62,22 @@ changes.  Instead, you make a structure according to this::
             templates/
             views/
             ...
+
+
+Note that the subdirectory :file:`juliabase/` must be in your python path for
+this to work.  You may add something like
+
+::
+
+     import sys
+     sys.path.append("/home/chantal/myproject/juliabase")
+
+to your :file:`wsgi.py` and :file:`manage.py`, or alternatively, your main
+:file:`settings.py`.
+
+
+Git subtree
+-----------
 
 If you're using Git, you may consider using the ``subtree`` command: You
 structure your repository like above but without the :file:`juliabase`
@@ -87,6 +104,7 @@ modified it for you, in order to get the demo app ``jb_institute`` working.
 Then, you create a new app ``my_institute``, and you replace ``jb_institute``
 with ``my_institute`` in ``INSTALLED_APPS`` in your :file:`settings.py`.
 Nothing is working anymore …
+
 
 Adding a new process module
 =================================
