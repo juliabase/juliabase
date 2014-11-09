@@ -140,7 +140,7 @@ Add to your Apache configuration something like the following::
 
   <VirtualHost *:80>
     ServerName juliabase.example.com
-    WSGIScriptAlias / /home/username/src/jb_institute/django.wsgi
+    WSGIScriptAlias / /home/username/src/jb_institute/wsgi.py
     XSendFile on
     XSendFilePath /
     Alias /media /var/www/juliabase/media
