@@ -36,6 +36,8 @@ For the adaption process, you should be familiar with several technologies:
 Furthermode, some admin skills are necessary to get everything running.
 
 
+.. _Organizing your source code:
+
 Organizing your source code
 ===============================
 

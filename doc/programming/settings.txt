@@ -440,15 +440,15 @@ TEMPLATE_DIRS
 So that your can override JuliaBase's templates with own templates, you should
 set::
 
-    TEMPLATE_DIRS = (os.path.dirname(os.path.abspath(__file__)),)
+    TEMPLATE_DIRS = (os.path.abspath(os.path.join(os.path.dirname(__file__), "../juliabase")),)
 
-You may add further paths, but this one must be present.  It adds the directory
-in which :file:`settings.py` resides in to the template search path.  You can
-then extend Juliabase templates by beginning your template with e.g.
+You may add further paths, but if your project layout is structured according
+to :ref:`Organizing your source code`, this one must be present.  Then, you can
+extend Juliabase templates by beginning your template with e.g.
 
 ::
 
-    {% extends "juliabase/samples/templates/samples/list_claims.html" %}
+    {% extends "samples/templates/samples/list_claims.html" %}
 
 
 TEMPLATE_LOADERS
