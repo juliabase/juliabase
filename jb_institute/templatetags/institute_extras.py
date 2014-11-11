@@ -75,18 +75,6 @@ def cluster_tool_layer_type(value, type_="standard"):
 
 
 @register.filter
-def salutation(user):
-    """Filter for getting the correct form of address for the institute
-    member.  Except for Mr Rau, Mr Carius, and Mr Beyer, all members are called
-    by their first name.
-    """
-    if user.username in ["u.rau", "r.carius", "w.beyer"]:
-        return _("Mr {lastname}").format(lastname=user.last_name)
-    else:
-        return user.first_name or user.username
-
-
-@register.filter
 @stringfilter
 def basename(filepath):
     return os.path.basename(filepath)

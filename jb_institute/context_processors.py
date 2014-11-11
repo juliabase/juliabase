@@ -21,19 +21,12 @@ dictionary passed to the templates.
 from __future__ import absolute_import, unicode_literals
 
 from django.conf import settings
-from django.utils.translation import ugettext
+from django.utils.translation import ugettext as _
 
 
 def default(request):
-    """Injects some session data into the template context.
-
-    The help link on the top (see the `samples.views.utils.help_link`
-    decorator) is added to the context by extracting it (and removing it from)
-    the request object.
-
-    Moreover, it adds tuples with information needed to realise the neat little
-    flags on the top left for language switching.  These flags don't occur if
-    it was a POST request, or if the user isn't logged-in.
+    """Injects an amended salutation string into the request context.  This
+    realises a T–V distinction for some fixed users.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -47,18 +40,6 @@ def default(request):
     """
     user = request.user
     result = {}
-    if hasattr(request, "jb_help_link"):
-        result["help_link"] = request.jb_help_link
-        del request.jb_help_link
-    result["url"] = request.path
-    if request.GET:
-        result["url"] += "?" + request.GET.urlencode()
-    # Now for the flags for the language switching
-    if request.method == "GET" and user.is_authenticated():
-        result["translation_flags"] = tuple((code, ugettext(language)) for code, language in settings.LANGUAGES)
-        result["salutation"] = user.first_name or user.username
-    else:
-        result["translation_flags"] = ()
-    result["default_home_url"] = settings.LOGIN_REDIRECT_URL
-    result["add_samples_view"] = settings.ADD_SAMPLES_VIEW
+    if user.username in ["u.rau", "r.carius", "w.beyer"]:
+        result["salutation"] = _("Mr {lastname}").format(lastname=user.last_name)
     return result

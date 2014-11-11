@@ -22,9 +22,12 @@ copyright holder, you must destroy it immediately and completely.
     <link rel="stylesheet" type="text/css" media="screen" href="{% static "juliabase/css/main.css" %}"/>
     <link rel="stylesheet" type="text/css" media="print" href="{% static "juliabase/css/print.css" %}"/>
   {% endblock %}
-  <!-- FixMe: We have no favicon yet. -->
-  <link rel="shortcut icon" href="{% static "juliabase/favicon.ico" %}" type="image/x-icon"/>
+  {% block refresh_tag %}{% endblock %}
+  <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
   <script type="text/javascript" src="{% static "juliabase/js/jquery-1.5.min.js" %}"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script type="text/javascript" src="{% url 'django.views.i18n.javascript_catalog' %}"></script>
+  <script type="text/javascript" src="{% static "juliabase/js/juliabase.js" %}"></script>
   <script type="text/javascript">
   // <![CDATA[
     $(function() { $("input:text:visible:first").focus() })
@@ -34,59 +37,68 @@ copyright holder, you must destroy it immediately and completely.
 {% endblock %}
 
 {% block content %}
+  <ul style="display: none">
+    <li><a accesskey="m" href="{% url 'samples.views.main.main_menu' %}">Main menu</a></li>
+    <li><a accesskey="s" href="{% url 'samples.views.sample.advanced_search' %}">Advanced search</a></li>
+    <li><a accesskey="x" href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
+    <li><a accesskey="a" href="{% url add_samples_view %}">Add samples</a></li>
+  </ul>
   <table class="headbar">
-    <tr>
-      <td class="info">
-        {% for language_code, language in translation_flags %}
-          <a href="{% url 'jb_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
-             ><img src="{% static "juliabase/flags/"|add:language_code|add:".png" %}"
-                   alt="{% blocktrans with language as language %}switch to {{ language }}{% endblocktrans %}"
-                   width="16" height="11"/></a>
-        {% endfor %}
-      </td>
-      <td class="login-data">
-        {% if user.is_authenticated %}
-          {% trans 'Welcome,' %}
-          {% if user.first_name %}{{ user.first_name|escape }}{% else %}{{ user.username }}{% endif %}.
-          {# FixMe: Must be redirected to real main menu page of jb_common, once it exists. #}
-          <a href="/"
-             ><img src="{% static "juliabase/icons/house.png" %}" alt="home icon" title="{% trans 'Main menu' %}"
-                   width="16" height="16"/></a>
-          <a href="/trac/newticket?reporter={{ user.email|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/bug_add.png" %}" alt="add-bug icon"
-                     title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
-          {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
-             src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"/></a>{% endif %}
-          <a href="{% url 'django.contrib.auth.views.logout' %}"
-             ><img src="{% static "juliabase/icons/door_open.png" %}" alt="log-out icon" title="{% trans 'Log out' %}"
-                   width="16" height="16"/></a>
-        {% else %}
-          {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
-            src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"/></a> /{% endif %}
-          {# FixMe: Must be redirected to real main menu page of jb_common, once it exists. #}
-          <a href="/"><img src="{% static "juliabase/icons/house.png" %}" width="16" height="16"
-                           alt="log-in icon" title="{% trans 'Log in' %}"/></a>
-        {% endif %}
-      </td>
-    </tr>
+    <tbody>
+      <tr>
+        <td class="info">
+          {% for language_code, language in translation_flags %}
+            <a href="{% url 'jb_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
+               ><img src="{% static "juliabase/flags/"|add:language_code|add:".png" %}"
+                     alt="{% blocktrans with language as language %}switch to {{ language }}{% endblocktrans %}"
+                     width="16" height="11"/></a>
+          {% endfor %}
+        </td>
+        <td class="login-data">
+          {% if user.is_authenticated %}
+            {% trans 'Welcome,' %} {{ salutation|escape }}.
+            <a href="{{ default_home_url }}"
+               ><img src="{% static "juliabase/icons/house.png" %}" alt="home icon" title="{% trans 'Main menu' %}"
+                     width="16" height="16"/></a>
+            <a href="/trac/newticket?reporter={{ user|get_really_full_name:'plain'|urlquote_plus }}&amp;cc={{ user.email|urlquote_plus }}"
+                 ><img src="{% static "juliabase/icons/bug_add.png" %}" alt="add-bug icon"
+                       title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
+            {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img
+              src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"
+                                                            width="16" height="16"/></a>{% endif %}
+            <a href="{% url 'django.contrib.auth.views.logout' %}"
+               ><img src="{% static "juliabase/icons/door_open.png" %}" alt="log-out icon" title="{% trans 'Log out' %}"
+                     width="16" height="16"/></a>
+          {% else %}
+            {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
+              src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"
+                                                            width="16" height="16"/></a> /{% endif %}
+            <a href="{{ default_home_url }}"><img src="{% static "juliabase/icons/house.png" %}" width="16" height="16"
+                                                  alt="log-in icon" title="{% trans 'Log in' %}"/></a>
+          {% endif %}
+        </td>
+      </tr>
+    </tbody>
   </table>
 
   {% if messages %}
     {% for message in messages %}
-      <div class="success-report"><span{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</span></div>
+      <div class="report-{{ message.tags }}">{{ message }}</div>
     {% endfor %}
   {% endif %}
 
   <div class="main">
     <div class="screen-only">
+      {% block corporate_logo %}{% endblock %}
       <p class="logo-text">{% block app_title %}{% endblock %}</p>
+      <p class="logo-subtext">{% block app_subtitle %}{% endblock %}</p>
     </div>
 
     <div class="outer-frame">
       <div class="inner-frame">
         {% block float_image %}{% endblock %}
-    {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
-    {% block frame_content %}{% endblock %}
+        {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
+        {% block frame_content %}{% endblock %}
         <div style="clear: both"></div>
       </div>
     </div>

@@ -75,13 +75,13 @@ table.headbar td { padding: 0.3ex 25px 0.5ex }
 table.headbar td.login-data { text-align: right }
 table.headbar td.info { text-align: left }
 
-div.success-report, div.error-report, div.debug-report, div.warning-report, div.info-report {
-    color: white; padding: 0.3ex 25px 0.5ex; text-align: right; font-size: small }
-div.success-report { background-color: green }
-div.error-report { background-color: red }
-div.debug-report { background-color: gainsboro; color: black }
-div.warning-report { background-color: coral }
-div.info-report { background-color: mediumpurple }
+
+div[class^="report"] { color: white; padding: 0.3ex 25px 0.5ex; text-align: right; font-size: small }
+div.report-success { background-color: green }
+div.report-error { background-color: red }
+div.report-debug { background-color: gainsboro; color: black }
+div.report-warning { background-color: coral }
+div.report-info { background-color: mediumpurple }
 
 h1 { margin-top: 0pt }
 
