@@ -109,8 +109,6 @@ table.about td { text-align: left; width: 60%; vertical-align: top; text-indent:
 span.uptime { font-size: small }
 span.version { font-size: small }
 
-div.short-messages { text-align: center; clear: both }
-
 p.submit-button { text-align: right; margin-bottom: 0px; clear: right }
 
 a > img, img[usemap] { border: none }
