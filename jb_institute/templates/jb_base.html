@@ -1,5 +1,5 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "samples/templates/samples/base.html" %}
+{% extends "jb_common/templates/jb_base.html" %}
 {% comment %}
 This file is part of JuliaBase, the samples database.
 
@@ -13,12 +13,14 @@ received a copy of this software without the explicit permission of the
 copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
+{% load i18n %}
 {% load staticfiles %}
 
-{% comment %}
-  FixMe: "#333333" and "none" have to be replaced with "inherit"
-  once support for IE7 is dropped.
-{% endcomment %}
-{% block app_title %}<a style="color: #333333; text-decoration: none" href="{% url 'samples.views.main.main_menu' %}"
-                        >Samples</a>{% endblock %}
-
+{% block corporate_logo %}
+  <div style="float: right; vertical-align: top; width: 20em">
+    <img style="float: right; padding-left: 5px" src="{% static "institute/sonne.png" %}" alt="{% trans "INM logo" %}"/>
+    <div style="text-align: right; color: #333333; font-weight: bold">
+      {% trans "Institute of Nifty New<br/>Materials (INM)" %}
+    </div>
+  </div>
+{% endblock %}

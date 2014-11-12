@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-07 18:11+0100\n"
-"PO-Revision-Date: 2014-10-22 21:30+0200\n"
+"POT-Creation-Date: 2014-11-12 09:18+0100\n"
+"PO-Revision-Date: 2014-11-12 09:18+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -24,665 +24,628 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: jb_institute/apps.py:22
+#: apps.py:22
 msgid "Institute"
 msgstr "Institut"
 
-#: jb_institute/models/depositions.py:35 jb_institute/models/depositions.py:36
-#: jb_institute/models/depositions.py:373
-#: jb_institute/models/depositions.py:374
+#: context_processors.py:44
+#, python-brace-format
+msgid "Mr {lastname}"
+msgstr "Herr {lastname}"
+
+#: models/depositions.py:35 models/depositions.py:36 models/depositions.py:373
+#: models/depositions.py:374
 msgid "in sccm"
 msgstr "in sccm"
 
-#: jb_institute/models/depositions.py:53
-#: jb_institute/models/depositions.py:124
+#: models/depositions.py:53 models/depositions.py:124
 msgid "carrier"
 msgstr "Carrier"
 
-#: jb_institute/models/depositions.py:56
+#: models/depositions.py:56
 msgid "cluster tool deposition"
 msgstr "Cluster-Tool-Deposition"
 
-#: jb_institute/models/depositions.py:57
+#: models/depositions.py:57
 msgid "cluster tool depositions"
 msgstr "Cluster-Tool-Depositionen"
 
-#: jb_institute/models/depositions.py:59
+#: models/depositions.py:59
 msgid "Can add cluster tool depositions"
 msgstr "Darf Cluster-Tool-Depositionen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: jb_institute/models/depositions.py:63
+#: models/depositions.py:63
 msgid "Can edit perms for cluster tool I depositions"
 msgstr "Darf die Berechtigungen für Cluster-Tool-I-Depositionen ändern"
 
-#: jb_institute/models/depositions.py:64
+#: models/depositions.py:64
 msgid "Can view all cluster tool depositions"
 msgstr "Darf alle Cluster-Tool-Depositionen sehen"
 
-#: jb_institute/models/depositions.py:65
+#: models/depositions.py:65
 msgid "Can edit all cluster tool depositions"
 msgstr "Darf alle Cluster-Tool-Depositionen ändern"
 
-#: jb_institute/models/depositions.py:146
+#: models/depositions.py:146
 msgid "cluster tool deposition lab"
 msgstr "Labor des Cluster-Tools"
 
-#: jb_institute/models/depositions.py:165
-#: jb_institute/models/depositions.py:369
+#: models/depositions.py:165 models/depositions.py:369
 msgid "deposition"
 msgstr "Deposition"
 
-#: jb_institute/models/depositions.py:173
+#: models/depositions.py:173
 msgid "cluster tool layer"
 msgstr "Schicht des Cluster-Tools"
 
-#: jb_institute/models/depositions.py:174
+#: models/depositions.py:174
 msgid "cluster tool layers"
 msgstr "Schichten des Cluster-Tools"
 
-#: jb_institute/models/depositions.py:178
-#: jb_institute/models/depositions.py:390
+#: models/depositions.py:178 models/depositions.py:390
 #, python-brace-format
 msgid "layer {number} of {deposition}"
 msgstr "Schicht {number} von {deposition}"
 
-#: jb_institute/models/depositions.py:187
+#: models/depositions.py:187
 msgid "unknown"
 msgstr "unbekannt"
 
-#: jb_institute/models/depositions.py:188
+#: models/depositions.py:188
 msgid "rhenium"
 msgstr "Rhenium"
 
-#: jb_institute/models/depositions.py:189
+#: models/depositions.py:189
 msgid "tantalum"
 msgstr "Tantal"
 
-#: jb_institute/models/depositions.py:190
+#: models/depositions.py:190
 msgid "tungsten"
 msgstr "Wolfram"
 
-#: jb_institute/models/depositions.py:198
-#: jb_institute/models/depositions.py:252
+#: models/depositions.py:198 models/depositions.py:252
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: jb_institute/models/depositions.py:198
-#: jb_institute/models/depositions.py:252
+#: models/depositions.py:198 models/depositions.py:252
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
-#: jb_institute/models/depositions.py:199
-#: jb_institute/models/depositions.py:229
-#: jb_institute/models/depositions.py:253
-#: jb_institute/models/depositions.py:287
-#: jb_institute/models/sample_details.py:272
-#: jb_institute/models/sample_details.py:338
-#: jb_institute/templates/samples/lab_notebook_five_chamber_deposition.html:33
+#: models/depositions.py:199 models/depositions.py:229
+#: models/depositions.py:253 models/depositions.py:287
+#: models/sample_details.py:272 models/sample_details.py:338
+#: templates/samples/lab_notebook_five_chamber_deposition.html:33
 msgid "comments"
 msgstr "Kommentare"
 
-#: jb_institute/models/depositions.py:200
-#: jb_institute/models/depositions.py:230
+#: models/depositions.py:200 models/depositions.py:230
 msgid "wire material"
 msgstr "Drahtmaterial"
 
-#: jb_institute/models/depositions.py:201
-#: jb_institute/models/depositions.py:231
+#: models/depositions.py:201 models/depositions.py:231
 msgid "base pressure"
 msgstr "Basisdruck"
 
-#: jb_institute/models/depositions.py:201
+#: models/depositions.py:201
 msgid "in mbar"
 msgstr "in mbar"
 
-#: jb_institute/models/depositions.py:204
+#: models/depositions.py:204
 msgid "cluster tool hot-wire layer"
 msgstr "Hot-Wire-Schicht im Cluster-Tool"
 
-#: jb_institute/models/depositions.py:205
+#: models/depositions.py:205
 msgid "cluster tool hot-wire layers"
 msgstr "Hot-Wire-Schichten im Cluster-Tool"
 
-#: jb_institute/models/depositions.py:228
-#: jb_institute/models/depositions.py:286
+#: models/depositions.py:228 models/depositions.py:286
 msgid "time"
 msgstr "Zeit"
 
-#: jb_institute/models/depositions.py:251
-#: jb_institute/models/depositions.py:285
-#: jb_institute/models/depositions.py:372
-#: jb_institute/models/depositions.py:421
-#: jb_institute/templates/samples/lab_notebook_five_chamber_deposition.html:28
+#: models/depositions.py:251 models/depositions.py:285
+#: models/depositions.py:372 models/depositions.py:421
+#: templates/samples/lab_notebook_five_chamber_deposition.html:28
 msgid "chamber"
 msgstr "Kammer"
 
-#: jb_institute/models/depositions.py:254
-#: jb_institute/models/depositions.py:288
+#: models/depositions.py:254 models/depositions.py:288
 msgid "plasma start with shutter"
 msgstr "Plasma startet mit Shutter"
 
-#: jb_institute/models/depositions.py:255
-#: jb_institute/models/depositions.py:289
+#: models/depositions.py:255 models/depositions.py:289
 msgid "deposition power"
 msgstr "Depositionsleistung"
 
-#: jb_institute/models/depositions.py:256
+#: models/depositions.py:256
 msgid "in W"
 msgstr "in W"
 
-#: jb_institute/models/depositions.py:260
+#: models/depositions.py:260
 msgid "cluster tool PECVD layer"
 msgstr "PECVD-Schicht im Cluster-Tool"
 
-#: jb_institute/models/depositions.py:261
+#: models/depositions.py:261
 msgid "cluster tool PECVD layers"
 msgstr "PECVD-Schichten im Cluster-Tool"
 
-#: jb_institute/models/depositions.py:288
+#: models/depositions.py:288
 msgid "yes"
 msgstr "ja"
 
-#: jb_institute/models/depositions.py:288
+#: models/depositions.py:288
 msgid "no"
 msgstr "nein"
 
-#: jb_institute/models/depositions.py:299
+#: models/depositions.py:299
 msgid "5-chamber deposition"
 msgstr "5-Kammer-Deposition"
 
-#: jb_institute/models/depositions.py:300
+#: models/depositions.py:300
 msgid "5-chamber depositions"
 msgstr "5-Kammer-Depositionen"
 
-#: jb_institute/models/depositions.py:302
+#: models/depositions.py:302
 msgid "Can add 5-chamber depositions"
 msgstr "Darf 5-Kammer-Depositionen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: jb_institute/models/depositions.py:305
+#: models/depositions.py:305
 msgid "Can edit perms for 5-chamber depositions"
 msgstr "Darf die Berechtigungen für 5-Kammer-Depositionen ändern"
 
-#: jb_institute/models/depositions.py:306
+#: models/depositions.py:306
 msgid "Can view all 5-chamber depositions"
 msgstr "Darf alle 5-Kammer-Depositionen sehen"
 
-#: jb_institute/models/depositions.py:307
+#: models/depositions.py:307
 msgid "Can edit all 5-chamber depositions"
 msgstr "Darf alle 5-Kammer-Depositionen ändern"
 
-#: jb_institute/models/depositions.py:346
+#: models/depositions.py:346
 msgid "5-chamber deposition lab"
 msgstr "5-Kammer-Depositionslabor"
 
-#: jb_institute/models/depositions.py:370
-#: jb_institute/models/depositions.py:419
+#: models/depositions.py:370 models/depositions.py:419
 msgid "date"
 msgstr "Datum"
 
-#: jb_institute/models/depositions.py:371
-#: jb_institute/models/depositions.py:420
+#: models/depositions.py:371 models/depositions.py:420
 msgid "layer type"
 msgstr "Schichttyp"
 
-#: jb_institute/models/depositions.py:375
+#: models/depositions.py:375
 msgid "temperature 1"
 msgstr "Temperatur 1"
 
-#: jb_institute/models/depositions.py:375
-#: jb_institute/models/depositions.py:377
+#: models/depositions.py:375 models/depositions.py:377
 msgid "in ℃"
 msgstr "in ℃"
 
-#: jb_institute/models/depositions.py:377
+#: models/depositions.py:377
 msgid "temperature 2"
 msgstr "Temperatur 2"
 
-#: jb_institute/models/depositions.py:381
+#: models/depositions.py:381
 msgid "5-chamber layer"
 msgstr "5-Kammer-Schicht"
 
-#: jb_institute/models/depositions.py:382
+#: models/depositions.py:382
 msgid "5-chamber layers"
 msgstr "5-Kammer-Schichten"
 
 #. Translators: sample substrate type
-#: jb_institute/models/physical_processes.py:40
-#: jb_institute/models/physical_processes.py:390
+#: models/physical_processes.py:40 models/physical_processes.py:390
 msgid "custom"
 msgstr "speziell"
 
-#: jb_institute/models/physical_processes.py:43
+#: models/physical_processes.py:43
 msgid "Corning glass"
 msgstr "Corning-Glas"
 
-#: jb_institute/models/physical_processes.py:44
-#: jb_institute/models/sample_details.py:256
+#: models/physical_processes.py:44 models/sample_details.py:256
 msgid "glass"
 msgstr "Glas"
 
-#: jb_institute/models/physical_processes.py:45
-#: jb_institute/models/sample_details.py:255
+#: models/physical_processes.py:45 models/sample_details.py:255
 msgid "silicon wafer"
 msgstr "Silizium-Wafer"
 
-#: jb_institute/models/physical_processes.py:46
+#: models/physical_processes.py:46
 msgid "quartz"
 msgstr "Quarz"
 
-#: jb_institute/models/physical_processes.py:47
+#: models/physical_processes.py:47
 msgid "sapphire"
 msgstr "Saphir"
 
-#: jb_institute/models/physical_processes.py:48
+#: models/physical_processes.py:48
 msgid "aluminium foil"
 msgstr "Alufolie"
 
-#: jb_institute/models/physical_processes.py:67
+#: models/physical_processes.py:67
 msgid "substrate material"
 msgstr "Substratmaterial"
 
-#: jb_institute/models/physical_processes.py:70
+#: models/physical_processes.py:70
 msgid "substrate"
 msgstr "Substrat"
 
-#: jb_institute/models/physical_processes.py:71
+#: models/physical_processes.py:71
 msgid "substrates"
 msgstr "Substrate"
 
-#: jb_institute/models/physical_processes.py:74
+#: models/physical_processes.py:74
 #, python-brace-format
 msgid "{material} substrate #{number}"
 msgstr "{material}-Substrat Nr. {number}"
 
-#: jb_institute/models/physical_processes.py:87
+#: models/physical_processes.py:87
 msgid "material"
 msgstr "Material"
 
-#: jb_institute/models/physical_processes.py:106
+#: models/physical_processes.py:106
 msgid "PDS #1"
 msgstr "PDS 1"
 
-#: jb_institute/models/physical_processes.py:107
+#: models/physical_processes.py:107
 msgid "PDS #2"
 msgstr "PDS 2"
 
-#: jb_institute/models/physical_processes.py:116
-#: jb_institute/models/physical_processes.py:191
+#: models/physical_processes.py:116 models/physical_processes.py:191
 msgid "PDS number"
 msgstr "PDS-Nummer"
 
-#: jb_institute/models/physical_processes.py:117
-#: jb_institute/models/physical_processes.py:193
+#: models/physical_processes.py:117 models/physical_processes.py:193
 msgid "raw data file"
 msgstr "Rohdaten-Datei"
 
-#: jb_institute/models/physical_processes.py:118
+#: models/physical_processes.py:118
 msgid "only the relative path below \"pds/\""
 msgstr "nur der relative Pfad unterhalb von \"pds/\""
 
-#: jb_institute/models/physical_processes.py:119
-#: jb_institute/models/physical_processes.py:192
+#: models/physical_processes.py:119 models/physical_processes.py:192
 msgid "apparatus"
 msgstr "Anlage"
 
-#: jb_institute/models/physical_processes.py:122
+#: models/physical_processes.py:122
 msgid "PDS measurement"
 msgstr "PDS-Messung"
 
-#: jb_institute/models/physical_processes.py:123
+#: models/physical_processes.py:123
 msgid "PDS measurements"
 msgstr "PDS-Messungen"
 
-#: jb_institute/models/physical_processes.py:125
+#: models/physical_processes.py:125
 msgid "Can add PDS measurements"
 msgstr "Darf PDS-Messungen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: jb_institute/models/physical_processes.py:128
+#: models/physical_processes.py:128
 msgid "Can edit perms for PDS measurements"
 msgstr "Darf die Berechtigungen für PDS-Messungen ändern"
 
-#: jb_institute/models/physical_processes.py:129
+#: models/physical_processes.py:129
 msgid "Can view all PDS measurements"
 msgstr "Darf alle PDS-Messungen sehen"
 
-#: jb_institute/models/physical_processes.py:138
+#: models/physical_processes.py:138
 #, python-brace-format
 msgid "PDS measurement of {sample}"
 msgstr "PDS-Messung von {sample}"
 
-#: jb_institute/models/physical_processes.py:140
+#: models/physical_processes.py:140
 #, python-brace-format
 msgid "PDS measurement #{number}"
 msgstr "PDS-Messung Nr. {number}"
 
-#: jb_institute/models/physical_processes.py:147
+#: models/physical_processes.py:147
 msgid "energy in eV"
 msgstr "Energie in eV"
 
-#: jb_institute/models/physical_processes.py:148
+#: models/physical_processes.py:148
 msgid "α in cm⁻¹"
 msgstr "α in cm⁻¹"
 
-#: jb_institute/models/physical_processes.py:148
+#: models/physical_processes.py:148
 msgid "PDS signal in a.u."
 msgstr "PDS-Signal in w.E."
 
-#: jb_institute/models/physical_processes.py:150
+#: models/physical_processes.py:150
 msgid "unevaluated"
 msgstr "unausgewertet"
 
-#: jb_institute/models/physical_processes.py:199
-#: jb_institute/models/physical_processes.py:225
+#: models/physical_processes.py:199 models/physical_processes.py:225
 msgid "cell position"
 msgstr "Zellposition"
 
-#: jb_institute/models/physical_processes.py:200
-#: jb_institute/models/physical_processes.py:224
+#: models/physical_processes.py:200 models/physical_processes.py:224
 msgid "cell index"
 msgstr "Zellindex"
 
-#: jb_institute/models/physical_processes.py:201
+#: models/physical_processes.py:201
 msgid "data file"
 msgstr "Datendatei"
 
-#: jb_institute/models/physical_processes.py:202
+#: models/physical_processes.py:202
 msgid "only the relative path below \"maike_user/ascii files/\""
 msgstr "nur der relative Pfad unterhalb von \"maike_user/ascii files/\""
 
-#: jb_institute/models/physical_processes.py:209
+#: models/physical_processes.py:209
 #, python-brace-format
 msgid "cell {position} of {solarsimulator_measurement}"
 msgstr "Zelle {position} von {solarsimulator_measurement}"
 
-#: jb_institute/models/physical_processes.py:223
+#: models/physical_processes.py:223
 #, python-brace-format
 msgid "cell position {position}"
 msgstr "Zellposition {position}"
 
-#: jb_institute/models/physical_processes.py:226
+#: models/physical_processes.py:226
 msgid "data file name"
 msgstr "Datendatei"
 
-#: jb_institute/models/physical_processes.py:249
-#: jb_institute/models/physical_processes.py:316
+#: models/physical_processes.py:249 models/physical_processes.py:316
 msgid "irradiance"
 msgstr "Beleuchtung"
 
-#: jb_institute/models/physical_processes.py:250
-#: jb_institute/models/physical_processes.py:317
+#: models/physical_processes.py:250 models/physical_processes.py:317
 msgid "temperature"
 msgstr "Temperatur"
 
-#: jb_institute/models/physical_processes.py:250
+#: models/physical_processes.py:250
 msgid "in ℃"
 msgstr "in ℃"
 
-#: jb_institute/models/physical_processes.py:254
-#: jb_institute/models/physical_processes.py:269
-#: jb_institute/models/physical_processes.py:365
+#: models/physical_processes.py:254 models/physical_processes.py:269
+#: models/physical_processes.py:365
 msgid "solarsimulator photo measurement"
 msgstr "Hell-Sonnensimulator-Messung"
 
-#: jb_institute/models/physical_processes.py:255
+#: models/physical_processes.py:255
 msgid "solarsimulator photo measurements"
 msgstr "Hell-Sonnensimulator-Messungen"
 
-#: jb_institute/models/physical_processes.py:257
+#: models/physical_processes.py:257
 msgid "Can add photo measurements"
 msgstr "Darf Hellmessungen hinzufügen"
 
-#: jb_institute/models/physical_processes.py:261
+#: models/physical_processes.py:261
 msgid "Can edit perms for photo measurements"
 msgstr "Darf die Berechtigungen für Hellmessungen ändern"
 
-#: jb_institute/models/physical_processes.py:262
+#: models/physical_processes.py:262
 msgid "Can view all photo measurements"
 msgstr "Darf alle Hellmessungen sehen"
 
-#: jb_institute/models/physical_processes.py:267
+#: models/physical_processes.py:267
 #, python-brace-format
 msgid "solarsimulator photo measurement of {sample}"
 msgstr "Hell-Sonnensimulator-Messungen von Probe {sample}"
 
-#: jb_institute/models/physical_processes.py:334
+#: models/physical_processes.py:334
 msgid "voltage in V"
 msgstr "Spannung in V"
 
-#: jb_institute/models/physical_processes.py:335
+#: models/physical_processes.py:335
 msgid "current density in mA/cm²"
 msgstr "Stromdichte in mA/cm²"
 
-#: jb_institute/models/physical_processes.py:366
+#: models/physical_processes.py:366
 msgid "area"
 msgstr "Fläche"
 
-#: jb_institute/models/physical_processes.py:366
+#: models/physical_processes.py:366
 msgid "in cm²"
 msgstr "in cm²"
 
-#: jb_institute/models/physical_processes.py:367
+#: models/physical_processes.py:367
 msgid "efficiency η"
 msgstr "Effizienz η"
 
-#: jb_institute/models/physical_processes.py:367
-#: jb_institute/models/physical_processes.py:369
+#: models/physical_processes.py:367 models/physical_processes.py:369
 msgid "in %"
 msgstr "in %"
 
-#: jb_institute/models/physical_processes.py:368
+#: models/physical_processes.py:368
 msgid "maximum power point"
 msgstr "Maximum-Power-Point"
 
-#: jb_institute/models/physical_processes.py:368
+#: models/physical_processes.py:368
 msgid "in mW"
 msgstr "in mW"
 
-#: jb_institute/models/physical_processes.py:369
+#: models/physical_processes.py:369
 msgid "fill factor"
 msgstr "Füllfaktor"
 
-#: jb_institute/models/physical_processes.py:370
+#: models/physical_processes.py:370
 msgid "short-circuit current density"
 msgstr "Kurzschluss­strom­dichte"
 
-#: jb_institute/models/physical_processes.py:370
+#: models/physical_processes.py:370
 msgid "in mA/cm²"
 msgstr "in mA/cm²"
 
-#: jb_institute/models/physical_processes.py:372
+#: models/physical_processes.py:372
 msgid "solarsimulator photo cell measurement"
 msgstr "Hell-Sonnensimulator-Messung"
 
-#: jb_institute/models/physical_processes.py:373
+#: models/physical_processes.py:373
 msgid "solarsimulator photo cell measurements"
 msgstr "Hell-Sonnensimulator-Messungen"
 
-#: jb_institute/models/physical_processes.py:414
+#: models/physical_processes.py:414
 msgid "layout"
 msgstr "Layout"
 
-#: jb_institute/models/physical_processes.py:415
+#: models/physical_processes.py:415
 msgid "length"
 msgstr "Länge"
 
-#: jb_institute/models/physical_processes.py:415
-#: jb_institute/models/physical_processes.py:416
+#: models/physical_processes.py:415 models/physical_processes.py:416
 msgid "in mm"
 msgstr "in mm"
 
-#: jb_institute/models/physical_processes.py:416
+#: models/physical_processes.py:416
 msgid "width"
 msgstr "Breite"
 
-#: jb_institute/models/physical_processes.py:417
+#: models/physical_processes.py:417
 msgid "parameters"
 msgstr "Parameter"
 
-#: jb_institute/models/physical_processes.py:420
+#: models/physical_processes.py:420
 msgid "structuring"
 msgstr "Strukturierung"
 
-#: jb_institute/models/physical_processes.py:421
+#: models/physical_processes.py:421
 msgid "structurings"
 msgstr "Strukturierungen"
 
-#: jb_institute/models/sample_details.py:47
-#: jb_institute/views/form_utils.py:210
+#: models/sample_details.py:47 views/form_utils.py:210
 msgid "sample"
 msgstr "Probe"
 
-#: jb_institute/models/sample_details.py:51
-#: jb_institute/models/sample_details.py:268
+#: models/sample_details.py:51 models/sample_details.py:268
 msgid "sample details"
 msgstr "Probendetails"
 
-#: jb_institute/models/sample_details.py:52
+#: models/sample_details.py:52
 msgctxt "plural"
 msgid "sample details"
 msgstr "Probendetails"
 
-#: jb_institute/models/sample_details.py:249
+#: models/sample_details.py:249
 msgid "black"
 msgstr "schwarz"
 
-#: jb_institute/models/sample_details.py:249
+#: models/sample_details.py:249
 msgid "blue"
 msgstr "blau"
 
-#: jb_institute/models/sample_details.py:249
+#: models/sample_details.py:249
 msgid "brown"
 msgstr "braun"
 
-#: jb_institute/models/sample_details.py:249
+#: models/sample_details.py:249
 msgid "darkgray"
 msgstr "dunkelgrau"
 
-#: jb_institute/models/sample_details.py:250
+#: models/sample_details.py:250
 msgid "green"
 msgstr "grün"
 
-#: jb_institute/models/sample_details.py:250
+#: models/sample_details.py:250
 msgid "lightblue"
 msgstr "hellblau"
 
-#: jb_institute/models/sample_details.py:251
+#: models/sample_details.py:251
 msgid "lightgreen"
 msgstr "hellgrün"
 
-#: jb_institute/models/sample_details.py:251
+#: models/sample_details.py:251
 msgid "magenta"
 msgstr "magenta"
 
-#: jb_institute/models/sample_details.py:252
+#: models/sample_details.py:252
 msgid "orange"
 msgstr "orange"
 
-#: jb_institute/models/sample_details.py:252
+#: models/sample_details.py:252
 msgid "red"
 msgstr "rot"
 
-#: jb_institute/models/sample_details.py:252
+#: models/sample_details.py:252
 msgctxt "color"
 msgid "silver"
 msgstr "silbern"
 
-#: jb_institute/models/sample_details.py:253
+#: models/sample_details.py:253
 msgid "white"
 msgstr "weiß"
 
-#: jb_institute/models/sample_details.py:253
+#: models/sample_details.py:253
 msgid "yellow"
 msgstr "gelb"
 
-#: jb_institute/models/sample_details.py:256
+#: models/sample_details.py:256
 msgctxt "metall"
 msgid "silver"
 msgstr "Silber"
 
-#: jb_institute/models/sample_details.py:257
+#: models/sample_details.py:257
 msgid "HF dip"
 msgstr "HF-Dipp"
 
-#: jb_institute/models/sample_details.py:267
-#: jb_institute/models/sample_details.py:335
+#: models/sample_details.py:267 models/sample_details.py:335
 msgid "index"
 msgstr "Index"
 
-#: jb_institute/models/sample_details.py:269
-#: jb_institute/models/sample_details.py:336
+#: models/sample_details.py:269 models/sample_details.py:336
 msgid "doping"
 msgstr "Dotierung"
 
-#: jb_institute/models/sample_details.py:270
-#: jb_institute/models/sample_details.py:337
+#: models/sample_details.py:270 models/sample_details.py:337
 msgid "classification"
 msgstr "Klassifikation"
 
-#: jb_institute/models/sample_details.py:273
+#: models/sample_details.py:273
 msgid "color"
 msgstr "Farbe"
 
-#: jb_institute/models/sample_details.py:274
-#: jb_institute/models/sample_details.py:339
+#: models/sample_details.py:274 models/sample_details.py:339
 msgid "thickness"
 msgstr "Dicke"
 
-#: jb_institute/models/sample_details.py:274
+#: models/sample_details.py:274
 msgid "in nm"
 msgstr "in nm"
 
-#: jb_institute/models/sample_details.py:275
-#: jb_institute/models/sample_details.py:340
+#: models/sample_details.py:275 models/sample_details.py:340
 msgid "thickness reliable"
 msgstr "Dicke zuverlässig"
 
-#: jb_institute/models/sample_details.py:276
-#: jb_institute/models/sample_details.py:341
+#: models/sample_details.py:276 models/sample_details.py:341
 msgid "structured"
 msgstr "strukturiert"
 
-#: jb_institute/models/sample_details.py:277
-#: jb_institute/models/sample_details.py:342
+#: models/sample_details.py:277 models/sample_details.py:342
 msgid "textured"
 msgstr "texturiert"
 
-#: jb_institute/models/sample_details.py:278
+#: models/sample_details.py:278
 msgid "always collapsed"
 msgstr "immer verkürzt"
 
-#: jb_institute/models/sample_details.py:279
+#: models/sample_details.py:279
 msgid "process"
 msgstr "Prozess"
 
-#: jb_institute/models/sample_details.py:281
+#: models/sample_details.py:281
 msgid "additional process data"
 msgstr "zuzätzliche Prozessdaten"
 
-#: jb_institute/models/sample_details.py:282
-#: jb_institute/models/sample_details.py:343
+#: models/sample_details.py:282 models/sample_details.py:343
 msgid "verified"
 msgstr "überprüft"
 
-#: jb_institute/models/sample_details.py:287
+#: models/sample_details.py:287
 msgid "informal layer"
 msgstr "informelle Schicht"
 
-#: jb_institute/models/sample_details.py:288
+#: models/sample_details.py:288
 msgid "informal layers"
 msgstr "informelle Schichten"
 
-#: jb_institute/models/sample_details.py:365
+#: models/sample_details.py:365
 msgid "You must give a classification or comments or both."
 msgstr "Sie müssen eine Klassifikation oder Kommentare angeben, oder beides."
 
-#: jb_institute/permissions.py:52
+#: permissions.py:52
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the substrate #{number} because you are not "
@@ -691,7 +654,7 @@ msgstr ""
 "Sie dürfen das Substrat Nr. {number} nicht ändern, weil Sie nicht alle "
 "beteiligten Proben ändern dürfen."
 
-#: jb_institute/permissions.py:55
+#: permissions.py:55
 msgid ""
 "You are not allowed to add a substrate because you are not allowed to edit "
 "all affected samples."
@@ -699,11 +662,11 @@ msgstr ""
 "Sie dürfen kein Substrat hinzufügen, weil Sie nicht alle beteiligten Proben "
 "ändern dürfen."
 
-#: jb_institute/templates/404.html:28 jb_institute/templates/404.html.py:29
+#: templates/404.html:28 templates/404.html.py:29
 msgid "Resource not found"
 msgstr "Ressource nicht gefunden"
 
-#: jb_institute/templates/404.html:32
+#: templates/404.html:32
 #, python-format
 msgid ""
 "\n"
@@ -718,23 +681,23 @@ msgstr ""
 "Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
 "der angegebene Prozess etc. schon in der Datenbank existiert.\n"
 
-#: jb_institute/templates/500.html:25
+#: templates/500.html:25
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: jb_institute/templates/500.html:34 jb_institute/templates/jb_base.html:62
+#: templates/500.html:34
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: jb_institute/templates/500.html:44 jb_institute/templates/jb_base.html:95
+#: templates/500.html:44
 msgid "Jülich Forschungszentrum logo"
 msgstr "Logo des Forschungszentrums Jülich"
 
-#: jb_institute/templates/500.html:51
+#: templates/500.html:51
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: jb_institute/templates/500.html:52
+#: templates/500.html:52
 msgid ""
 "\n"
 "<p>You experienced an internal error in the JuliaBase server software.  The\n"
@@ -759,59 +722,26 @@ msgstr ""
 "aufgefordert werden, zurückzugehen und Ihre letzte Aktion zu wiederholen, "
 "damit die Daten tatsächlich in die Datenbank geschrieben werden.</p>\n"
 
-#: jb_institute/templates/jb_base.html:54
-#, python-format
-msgid "switch to %(language)s"
-msgstr "wechsle zu %(language)s"
+#: templates/jb_base.html:19
+msgid "INM logo"
+msgstr "Logo des INM"
 
-#: jb_institute/templates/jb_base.html:60
-msgid "Welcome,"
-msgstr "Willkommen,"
+#: templates/jb_base.html:19
+msgid "Institute of Nifty New<br/>Materials (INM)"
+msgstr "Institut für pfiffige neue<br/>Materialien (INM)"
 
-#: jb_institute/templates/jb_base.html:66
-msgid "Report feature wish or bug"
-msgstr "Bug oder Featurewunsch melden"
-
-#: jb_institute/templates/jb_base.html:68
-#: jb_institute/templates/jb_base.html:74
-msgid "Help"
-msgstr "Hilfe"
-
-#: jb_institute/templates/jb_base.html:70
-msgid "Log out"
-msgstr "Abmelden"
-
-#: jb_institute/templates/jb_base.html:78
-msgid "Log in"
-msgstr "Anmelden"
-
-#: jb_institute/templates/jb_common/base.html:25
-#: jb_institute/templates/samples/base.html:30
-msgid "IEF-5 logo"
-msgstr "Logo des IEF-5"
-
-#: jb_institute/templates/jb_common/base.html:26
-msgid "The database server"
-msgstr "Der Datenbank-Server"
-
-#: jb_institute/templates/samples/add_claim_oldstyle.html:21
-#: jb_institute/templates/samples/add_claim_oldstyle.html:22
-#: jb_institute/templates/samples/add_claim_oldstyle.html:23
-#: jb_institute/templates/samples/add_samples.html:22
-#: jb_institute/templates/samples/edit_sample.html:28
+#: templates/samples/add_claim_oldstyle.html:21
+#: templates/samples/add_claim_oldstyle.html:22
+#: templates/samples/add_claim_oldstyle.html:23
+#: templates/samples/add_samples.html:22 templates/samples/edit_sample.html:28
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
-#: jb_institute/templates/samples/add_claim_oldstyle.html:25
-#: jb_institute/views/samples/sample.py:66
+#: templates/samples/add_claim_oldstyle.html:25 views/samples/sample.py:66
 msgid "Substrate"
 msgstr "Substrat"
 
-#: jb_institute/templates/samples/base.html:31
-msgid "The samples database"
-msgstr "Die Probendatenbank"
-
-#: jb_institute/templates/samples/copy_informal_stack.html:21
+#: templates/samples/copy_informal_stack.html:21
 msgid ""
 "Attention: The informal stacks of the selected destination samples will be "
 "overwritten!"
@@ -819,131 +749,131 @@ msgstr ""
 "Achtung: Die informellen Stapel der ausgewählten Zielproben werden "
 "überschrieben!"
 
-#: jb_institute/templates/samples/copy_informal_stack.html:24
+#: templates/samples/copy_informal_stack.html:24
 msgid "Error in destination samples"
 msgstr "Fehler in Zielproben"
 
-#: jb_institute/templates/samples/copy_informal_stack.html:28
-#: jb_institute/templates/samples/show_sample.html:27
+#: templates/samples/copy_informal_stack.html:28
+#: templates/samples/show_sample.html:27
 msgid "layer stack"
 msgstr "Schichtstapel"
 
-#: jb_institute/templates/samples/edit_cluster_tool_deposition.html:29
-#: jb_institute/templates/samples/edit_five_chamber_deposition.html:22
+#: templates/samples/edit_cluster_tool_deposition.html:29
+#: templates/samples/edit_five_chamber_deposition.html:22
 msgid "Error in deposition"
 msgstr "Fehler in der Deposition"
 
-#: jb_institute/templates/samples/edit_cluster_tool_deposition.html:30
-#: jb_institute/templates/samples/edit_five_chamber_deposition.html:23
+#: templates/samples/edit_cluster_tool_deposition.html:30
+#: templates/samples/edit_five_chamber_deposition.html:23
 msgid "Error in sample list"
 msgstr "Fehler in Probenliste"
 
-#: jb_institute/templates/samples/edit_cluster_tool_deposition.html:66
-#: jb_institute/templates/samples/edit_five_chamber_deposition.html:58
-#: jb_institute/templates/samples/edit_five_chamber_deposition.html:59
-#: jb_institute/templates/samples/edit_sample.html:53
+#: templates/samples/edit_cluster_tool_deposition.html:66
+#: templates/samples/edit_five_chamber_deposition.html:58
+#: templates/samples/edit_five_chamber_deposition.html:59
+#: templates/samples/edit_sample.html:53
 msgid "Error in layer"
 msgstr "Fehler in der Schicht"
 
-#: jb_institute/templates/samples/edit_cluster_tool_deposition.html:78
+#: templates/samples/edit_cluster_tool_deposition.html:78
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: jb_institute/templates/samples/edit_cluster_tool_deposition.html:145
+#: templates/samples/edit_cluster_tool_deposition.html:145
 msgid "Gas flows in sccm"
 msgstr "Gasflüsse in sccm"
 
-#: jb_institute/templates/samples/edit_five_chamber_deposition.html:104
+#: templates/samples/edit_five_chamber_deposition.html:104
 msgid "Error with adding layers"
 msgstr "Fehler beim hinzufügen von Schichten"
 
-#: jb_institute/templates/samples/edit_five_chamber_deposition.html:105
+#: templates/samples/edit_five_chamber_deposition.html:105
 msgid "Error with removing from My Samples"
 msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 
-#: jb_institute/templates/samples/edit_pds_measurement.html:22
+#: templates/samples/edit_pds_measurement.html:22
 msgid "Error in PDS data"
 msgstr "Fehler in den PDS-Daten"
 
-#: jb_institute/templates/samples/edit_pds_measurement.html:23
-#: jb_institute/templates/samples/edit_solarsimulator_measurement.html:23
+#: templates/samples/edit_pds_measurement.html:23
+#: templates/samples/edit_solarsimulator_measurement.html:23
 msgid "Error in sample"
 msgstr "Fehler in den Proben"
 
-#: jb_institute/templates/samples/edit_pds_measurement.html:24
+#: templates/samples/edit_pds_measurement.html:24
 msgid "Extract from datafile error"
 msgstr "Fehler mit dem extrahieren aus der Datendatei"
 
-#: jb_institute/templates/samples/edit_pds_measurement.html:25
-#: jb_institute/templates/samples/edit_solarsimulator_measurement.html:24
+#: templates/samples/edit_pds_measurement.html:25
+#: templates/samples/edit_solarsimulator_measurement.html:24
 msgid "Error with removal from “My Samples”"
 msgstr "Fehler beim Entfernen von „Meine Proben“"
 
-#: jb_institute/templates/samples/edit_sample.html:21
+#: templates/samples/edit_sample.html:21
 msgid "Informal stack"
 msgstr "Informeller Stapel"
 
-#: jb_institute/templates/samples/edit_sample.html:48
+#: templates/samples/edit_sample.html:48
 msgid "delete"
 msgstr "löschen"
 
-#: jb_institute/templates/samples/edit_solarsimulator_measurement.html:22
+#: templates/samples/edit_solarsimulator_measurement.html:22
 msgid "Error in solarsimulator measurements"
 msgstr "Fehler in Sonnensimulator-Messungen"
 
-#: jb_institute/templates/samples/edit_solarsimulator_measurement.html:59
+#: templates/samples/edit_solarsimulator_measurement.html:59
 msgid "Error in solarsimulator measurement"
 msgstr "Fehler in der Sonnensimulator-Messung"
 
-#: jb_institute/templates/samples/edit_substrate.html:22
+#: templates/samples/edit_substrate.html:22
 msgid "Substrate error"
 msgstr "Fehler mit dem Substrat"
 
-#: jb_institute/templates/samples/edit_substrate.html:23
+#: templates/samples/edit_substrate.html:23
 msgid "Sample list error"
 msgstr "Fehler mit der Probenliste"
 
-#: jb_institute/templates/samples/lab_notebook_five_chamber_deposition.html:27
+#: templates/samples/lab_notebook_five_chamber_deposition.html:27
 msgid "number"
 msgstr "Nummer"
 
-#: jb_institute/templates/samples/lab_notebook_five_chamber_deposition.html:53
+#: templates/samples/lab_notebook_five_chamber_deposition.html:53
 msgid "(not finished)"
 msgstr "(nicht ab­ge­schlos­sen)"
 
-#: jb_institute/templates/samples/lab_notebook_five_chamber_deposition.html:75
+#: templates/samples/lab_notebook_five_chamber_deposition.html:75
 msgid "No data found for this time range."
 msgstr "Keine Daten aus diesen Zeitraum gefunden."
 
-#: jb_institute/templates/samples/list_claims.html:20
+#: templates/samples/list_claims.html:20
 msgid "http://en.wikipedia.org/wiki/Land_Run_of_1889"
 msgstr "http://de.wikipedia.org/wiki/Oklahoma_Land_Run"
 
-#: jb_institute/templates/samples/list_claims.html:20
+#: templates/samples/list_claims.html:20
 msgid "Oklahoma land rush"
 msgstr "Oklahoma Land Run"
 
-#: jb_institute/templates/samples/list_claims.html:24
+#: templates/samples/list_claims.html:24
 msgid "Assert a new claim to …"
 msgstr "Einen neuen Anspruch einreichen auf …"
 
-#: jb_institute/templates/samples/list_claims.html:27
+#: templates/samples/list_claims.html:27
 msgid "existing samples"
 msgstr "existierende Proben"
 
-#: jb_institute/templates/samples/list_claims.html:29
+#: templates/samples/list_claims.html:29
 msgid "old-style sample names which do not yet exist"
 msgstr "Probennamen nach „alter Art“, die bislang noch nicht existieren"
 
-#: jb_institute/templates/samples/list_claims.html:31
+#: templates/samples/list_claims.html:31
 msgid "“To exist” means here “to exist in the database”."
 msgstr "„Existieren“ bedeutet hier „in der Probendatenbank existieren“."
 
-#: jb_institute/templates/samples/list_permissions.html:21
+#: templates/samples/list_permissions.html:21
 msgid "woman in laboratory"
 msgstr "Frau im Labor"
 
-#: jb_institute/templates/samples/permission_error.html:22
+#: templates/samples/permission_error.html:22
 #, python-format
 msgid ""
 "\n"
@@ -957,7 +887,7 @@ msgstr ""
 "Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie die "
 "Berechtigung haben sollten."
 
-#: jb_institute/templates/samples/permission_error.html:27
+#: templates/samples/permission_error.html:27
 msgid ""
 "\n"
 "        Also note that the head of your institute group may add you to the\n"
@@ -968,140 +898,134 @@ msgstr ""
 "Beachten Sie außerdem, dass der Leiter Ihrer Institutsgruppe Sie zum Thema "
 "hinzufügen könnte, das Sie benötigen, um auf diese Ressource zuzugreifen."
 
-#: jb_institute/templates/samples/permission_error.html:34
+#: templates/samples/permission_error.html:34
 msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 "Dieses Ereignis wird niemandem gemeldet und in keine Logdatei geschrieben."
 
-#: jb_institute/templates/samples/show_five_chamber_deposition.html:50
+#: templates/samples/show_five_chamber_deposition.html:50
 msgid "Silane conc."
 msgstr "Silankonz."
 
-#: jb_institute/templates/samples/show_sample.html:24
+#: templates/samples/show_sample.html:24
 msgid "sample label"
 msgstr "Probenetikette"
 
-#: jb_institute/templates/samples/show_sample.html:29
+#: templates/samples/show_sample.html:29
 msgid "copy informal stack"
 msgstr "informellen Stapel kopieren"
 
-#: jb_institute/templates/samples/show_solarsimulator_photo_measurement.html:59
+#: templates/samples/show_solarsimulator_photo_measurement.html:59
 msgid "cell layout"
 msgstr "Zelllayout"
 
-#: jb_institute/templates/samples/show_substrate.html:19
+#: templates/samples/show_substrate.html:19
 msgid "Material"
 msgstr "Material"
 
-#: jb_institute/templatetags/institute_extras.py:72
-#: jb_institute/views/samples/cluster_tool_deposition.py:46
+#: templatetags/institute_extras.py:72
+#: views/samples/cluster_tool_deposition.py:46
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
-#: jb_institute/templatetags/institute_extras.py:84
-#, python-brace-format
-msgid "Mr {lastname}"
-msgstr "Herr {lastname}"
-
-#: jb_institute/views/form_utils.py:98
+#: views/form_utils.py:98
 #, python-brace-format
 msgid "Deposition {number} was successfully changed in the database."
 msgstr "Die Deposition {number} wurde erfolgreich in der Datenbank geändert."
 
-#: jb_institute/views/form_utils.py:102
+#: views/form_utils.py:102
 #, python-brace-format
 msgid "Deposition {number} was successfully added to the database."
 msgstr "Die Deposition {number} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: jb_institute/views/form_utils.py:107
+#: views/form_utils.py:107
 msgid "The deposition was not saved due to incorrect or missing data."
 msgstr ""
 "Die Deposition wurde nicht gespeichert, weil noch Angaben fehlen oder "
 "inkorrekt sind."
 
-#: jb_institute/views/form_utils.py:111
+#: views/form_utils.py:111
 #, python-brace-format
 msgid "Edit {name} “{number}”"
 msgstr "{name} „{number}“ ändern"
 
-#: jb_institute/views/form_utils.py:112
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:283
+#: views/form_utils.py:112
+#: views/samples/solarsimulator_photo_measurement.py:283
 #, python-brace-format
 msgid "Add {name}"
 msgstr "{name} hinzufügen"
 
-#: jb_institute/views/form_utils.py:142
+#: views/form_utils.py:142
 #, python-brace-format
 msgid "{name} “{number}”"
 msgstr "{name} „{number}“"
 
-#: jb_institute/views/form_utils.py:177
+#: views/form_utils.py:177
 msgid "This number is already in use."
 msgstr "Diese Nummer ist schon vergeben."
 
-#: jb_institute/views/form_utils.py:181
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:178
-#: jb_institute/views/samples/structuring.py:129
+#: views/form_utils.py:181
+#: views/samples/solarsimulator_photo_measurement.py:178
+#: views/samples/structuring.py:129
 msgid "Sample is already dead at this time."
 msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
 
 #. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: jb_institute/views/form_utils.py:266
+#: views/form_utils.py:266
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr "Ungültige Depositionsnummer.  Sie muss von der Form JJB-NNN sein."
 
-#: jb_institute/views/form_utils.py:269 jb_institute/views/form_utils.py:273
+#: views/form_utils.py:269 views/form_utils.py:273
 #, python-brace-format
 msgid "The deposition letter must be an uppercase “{letter}”."
 msgstr "Der Anlangen-Buchstabe muss ein großes „{letter}“ sein."
 
-#: jb_institute/views/samples/claim.py:49
+#: views/samples/claim.py:49
 msgid "Samples"
 msgstr "Proben"
 
-#: jb_institute/views/samples/claim.py:49
+#: views/samples/claim.py:49
 msgid "Comma-separated"
 msgstr "Komma-separiert"
 
-#: jb_institute/views/samples/claim.py:65
+#: views/samples/claim.py:65
 #, python-brace-format
 msgid "The name {name} appears more than once."
 msgstr "Der Name {name} kommt mehr als einmal vor."
 
-#: jb_institute/views/samples/claim.py:71
+#: views/samples/claim.py:71
 #, python-brace-format
 msgid "The name {invalid_names} is not valid."
 msgid_plural "The names {invalid_names} are not valid."
 msgstr[0] "Der Name {invalid_names} ist ungültig."
 msgstr[1] "Die Namen {invalid_names} sind ungültig."
 
-#: jb_institute/views/samples/claim.py:82
+#: views/samples/claim.py:82
 #, python-brace-format
 msgid "The name {existing_names} is already existing."
 msgid_plural "The names {existing_names} are already existing."
 msgstr[0] "Der Name {existing_names} existiert schon."
 msgstr[1] "Die Namen {existing_names} existieren schon."
 
-#: jb_institute/views/samples/claim.py:99
-#: jb_institute/views/samples/sample.py:120
-#: jb_institute/views/samples/substrate.py:70
+#: views/samples/claim.py:99 views/samples/sample.py:120
+#: views/samples/substrate.py:70
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: jb_institute/views/samples/claim.py:131
+#: views/samples/claim.py:131
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: jb_institute/views/samples/claim.py:141
+#: views/samples/claim.py:141
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: jb_institute/views/samples/claim.py:142
+#: views/samples/claim.py:142
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -1130,203 +1054,202 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: jb_institute/views/samples/claim.py:172
+#: views/samples/claim.py:172
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: jb_institute/views/samples/claim.py:178
+#: views/samples/claim.py:178
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:47
+#: views/samples/cluster_tool_deposition.py:47
 msgid "PECVD"
 msgstr "PECVD"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:48
+#: views/samples/cluster_tool_deposition.py:48
 msgid "none"
 msgstr "keine"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:58
+#: views/samples/cluster_tool_deposition.py:58
 msgid "Layer to be added"
 msgstr "Schicht, die hinzugefügt werden soll"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:61
+#: views/samples/cluster_tool_deposition.py:61
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:93
-#: jb_institute/views/samples/five_chamber_deposition.py:39
-#: jb_institute/views/samples/pds_measurement.py:120
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:39
-#: jb_institute/views/samples/structuring.py:31
-#: jb_institute/views/samples/substrate.py:34
+#: views/samples/cluster_tool_deposition.py:93
+#: views/samples/five_chamber_deposition.py:39
+#: views/samples/pds_measurement.py:120
+#: views/samples/solarsimulator_photo_measurement.py:39
+#: views/samples/structuring.py:31 views/samples/substrate.py:34
 msgid "Operator"
 msgstr "Operateur"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:111
-#: jb_institute/views/samples/five_chamber_deposition.py:59
+#: views/samples/cluster_tool_deposition.py:111
+#: views/samples/five_chamber_deposition.py:59
 msgid "The deposition number must not be changed."
 msgstr "Die Depositionsnummer darf nicht verändert werden."
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:115
-#: jb_institute/views/samples/five_chamber_deposition.py:63
+#: views/samples/cluster_tool_deposition.py:115
+#: views/samples/five_chamber_deposition.py:63
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:122
-#: jb_institute/views/samples/five_chamber_deposition.py:70
+#: views/samples/cluster_tool_deposition.py:122
+#: views/samples/five_chamber_deposition.py:70
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:243
-#: jb_institute/views/samples/five_chamber_deposition.py:111
+#: views/samples/cluster_tool_deposition.py:243
+#: views/samples/five_chamber_deposition.py:111
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:244
-#: jb_institute/views/samples/five_chamber_deposition.py:112
+#: views/samples/cluster_tool_deposition.py:244
+#: views/samples/five_chamber_deposition.py:112
 msgid "remove this layer"
 msgstr "diese Schicht löschen"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:245
-#: jb_institute/views/samples/five_chamber_deposition.py:113
+#: views/samples/cluster_tool_deposition.py:245
+#: views/samples/five_chamber_deposition.py:113
 msgid "move this layer"
 msgstr "diese Schicht verschieben"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:246
-#: jb_institute/views/samples/five_chamber_deposition.py:114
+#: views/samples/cluster_tool_deposition.py:246
+#: views/samples/five_chamber_deposition.py:114
 msgid "up"
 msgstr "hoch"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:246
-#: jb_institute/views/samples/five_chamber_deposition.py:114
+#: views/samples/cluster_tool_deposition.py:246
+#: views/samples/five_chamber_deposition.py:114
 msgid "down"
 msgstr "runter"
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:258
-#: jb_institute/views/samples/five_chamber_deposition.py:126
+#: views/samples/cluster_tool_deposition.py:258
+#: views/samples/five_chamber_deposition.py:126
 msgid "You can't duplicate, move, or remove a layer at the same time."
 msgstr ""
 "Sie können nicht gleichzeitig dieselbe Schicht duplizieren, entfernen oder "
 "verschieben."
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:574
-#: jb_institute/views/samples/five_chamber_deposition.py:411
+#: views/samples/cluster_tool_deposition.py:574
+#: views/samples/five_chamber_deposition.py:411
 #, python-brace-format
 msgid "The sample {samples} is already dead at this time."
 msgid_plural "The samples {samples} are already dead at this time."
 msgstr[0] "Die Probe {samples} ist zu diesem Zeitpunkt schon tot."
 msgstr[1] "Die Proben {samples} sind zu diesem Zeitpunkt schon tot."
 
-#: jb_institute/views/samples/cluster_tool_deposition.py:580
-#: jb_institute/views/samples/five_chamber_deposition.py:403
+#: views/samples/cluster_tool_deposition.py:580
+#: views/samples/five_chamber_deposition.py:403
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: jb_institute/views/samples/pds_measurement.py:157
+#: views/samples/pds_measurement.py:157
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
-#: jb_institute/views/samples/pds_measurement.py:275
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:262
+#: views/samples/pds_measurement.py:275
+#: views/samples/solarsimulator_photo_measurement.py:262
 #, python-brace-format
 msgid "{process} was successfully changed in the database."
 msgstr "{process} wurde erfolgreich in der Datenbank geändert."
 
-#: jb_institute/views/samples/pds_measurement.py:276
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:264
+#: views/samples/pds_measurement.py:276
+#: views/samples/solarsimulator_photo_measurement.py:264
 #, python-brace-format
 msgid "{process} was successfully added to the database."
 msgstr "{process} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: jb_institute/views/samples/pds_measurement.py:292
+#: views/samples/pds_measurement.py:292
 #, python-brace-format
 msgid "Edit PDS measurement of {sample}"
 msgstr "Ändern der PDS-Messung von {sample}"
 
-#: jb_institute/views/samples/pds_measurement.py:293
+#: views/samples/pds_measurement.py:293
 msgid "Add PDS measurement"
 msgstr "PDS-Messung hinzufügen"
 
-#: jb_institute/views/samples/pds_measurement.py:322
+#: views/samples/pds_measurement.py:322
 #, python-brace-format
 msgid "PDS measurement #{pds_number}"
 msgstr "PDS-Messung Nr. {pds_number}"
 
-#: jb_institute/views/samples/sample.py:50
+#: views/samples/sample.py:50
 msgid "no names"
 msgstr "keine Namen"
 
 #. Translators: "new-style" names
-#: jb_institute/views/samples/sample.py:52
+#: views/samples/sample.py:52
 msgid "new-style"
 msgstr "neue Art"
 
-#: jb_institute/views/samples/sample.py:53
+#: views/samples/sample.py:53
 msgid "cleaning number"
 msgstr "Reinigungsnummer"
 
-#: jb_institute/views/samples/sample.py:65
+#: views/samples/sample.py:65
 msgid "Number of samples"
 msgstr "Anzahl der Proben"
 
-#: jb_institute/views/samples/sample.py:67
+#: views/samples/sample.py:67
 msgid "Substrate comments"
 msgstr "Substrat-Kommentare"
 
-#: jb_institute/views/samples/sample.py:68
+#: views/samples/sample.py:68
 msgid "Substrate originator"
 msgstr "Substrat-Urheber"
 
-#: jb_institute/views/samples/sample.py:69
+#: views/samples/sample.py:69
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: jb_institute/views/samples/sample.py:71
+#: views/samples/sample.py:71
 msgid "Current location"
 msgstr "Aktueller Probenort"
 
-#: jb_institute/views/samples/sample.py:72
+#: views/samples/sample.py:72
 msgid "Purpose"
 msgstr "Zweck"
 
-#: jb_institute/views/samples/sample.py:73
+#: views/samples/sample.py:73
 msgid "Tags"
 msgstr "Tags"
 
-#: jb_institute/views/samples/sample.py:74
+#: views/samples/sample.py:74
 msgid "separated with commas, no whitespace"
 msgstr "getrennt durch Kommas, keine Leerzeichen"
 
-#: jb_institute/views/samples/sample.py:75
+#: views/samples/sample.py:75
 msgid "Topic"
 msgstr "Thema"
 
-#: jb_institute/views/samples/sample.py:76
+#: views/samples/sample.py:76
 msgid "Rename"
 msgstr "Namen vergeben"
 
-#: jb_institute/views/samples/sample.py:78
+#: views/samples/sample.py:78
 msgid "Cleaning number"
 msgstr "Reinigungsnummer"
 
-#: jb_institute/views/samples/sample.py:86
+#: views/samples/sample.py:86
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: jb_institute/views/samples/sample.py:103
+#: views/samples/sample.py:103
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: jb_institute/views/samples/sample.py:123
+#: views/samples/sample.py:123
 msgid "You must provide a cleaning number if you want to use it for the names."
 msgstr ""
 "Sie müssen eine Renigungsnummer angeben, wenn Sie diese für die Namen "
 "verwenden wollen."
 
-#: jb_institute/views/samples/sample.py:236
+#: views/samples/sample.py:236
 #, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
@@ -1335,44 +1258,44 @@ msgstr ""
 "Ihre Proben haben die Namen {first_name} bis {last_name}.  Sie wurden zu "
 "„Meine Proben“ hinzugefügt."
 
-#: jb_institute/views/samples/sample.py:239
+#: views/samples/sample.py:239
 #, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den Namen {name}.  Sie wurde zu „Meine Proben“ hinzugefügt."
 
-#: jb_institute/views/samples/sample.py:250
+#: views/samples/sample.py:250
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: jb_institute/views/samples/sample.py:257
+#: views/samples/sample.py:257
 msgid "Destination samples"
 msgstr "Zielproben"
 
-#: jb_institute/views/samples/sample.py:297
+#: views/samples/sample.py:297
 #, python-brace-format
 msgid "Informal stack was copied from sample {sample}."
 msgstr "Der informelle Stapel von Probe {sample} wurde übernommen."
 
-#: jb_institute/views/samples/sample.py:301
+#: views/samples/sample.py:301
 #, python-brace-format
 msgid "Informal stack of {sample} was successfully copied."
 msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 
-#: jb_institute/views/samples/sample.py:305
+#: views/samples/sample.py:305
 #, python-brace-format
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
 
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:172
+#: views/samples/solarsimulator_photo_measurement.py:172
 msgid "No measurenents given."
 msgstr "Keine Messungen angebeben."
 
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:187
+#: views/samples/solarsimulator_photo_measurement.py:187
 msgid "This cell position is already given."
 msgstr "Diese Zellposition ist schon vergeben."
 
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:197
+#: views/samples/solarsimulator_photo_measurement.py:197
 msgid ""
 "A solarsimulator measurement with this cell index and data file already "
 "exists."
@@ -1380,38 +1303,38 @@ msgstr ""
 "Eine Solarsimulatormessung mit diesem Zellindex und dieser Datendatei "
 "existiert bereits."
 
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:281
+#: views/samples/solarsimulator_photo_measurement.py:281
 #, python-brace-format
 msgid "{name} of {sample}"
 msgstr "{name} von {sample}"
 
-#: jb_institute/views/samples/solarsimulator_photo_measurement.py:328
+#: views/samples/solarsimulator_photo_measurement.py:328
 #, python-brace-format
 msgid "Solarsimulator measurement #{number}"
 msgstr "Solarsimulatormessung Nr. {number}"
 
-#: jb_institute/views/samples/stack.py:69
+#: views/samples/stack.py:69
 #, python-brace-format
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: jb_institute/views/samples/structuring.py:171
+#: views/samples/structuring.py:171
 msgid "Structuring process was successfully changed in the database."
 msgstr "Strukturierungsprozess wurde erfolgreich in der Datenbank geändert."
 
-#: jb_institute/views/samples/structuring.py:174
+#: views/samples/structuring.py:174
 msgid "Structuring process was successfully added to the database."
 msgstr "Strukturierungsprozess wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: jb_institute/views/samples/structuring.py:186
+#: views/samples/structuring.py:186
 msgid "Edit structuring process"
 msgstr "Strukturierungsprozess ändern"
 
-#: jb_institute/views/samples/structuring.py:186
+#: views/samples/structuring.py:186
 msgid "Add structuring process"
 msgstr "Strukturierungsprozess hinzufügen"
 
-#: jb_institute/views/samples/substrate.py:122
+#: views/samples/substrate.py:122
 #, python-brace-format
 msgid ""
 "Sample {0} has already processes before the timestamp of this substrate, "
@@ -1420,26 +1343,50 @@ msgstr ""
 "Probe {0} hat bereits Prozesse vor dem Zeitstempel dieses Substrates, "
 "nämlich von {1}."
 
-#: jb_institute/views/samples/substrate.py:126
+#: views/samples/substrate.py:126
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
 
-#: jb_institute/views/samples/substrate.py:168
+#: views/samples/substrate.py:168
 #, python-brace-format
 msgid "Substrate {0} was successfully changed in the database."
 msgstr "Substrat {0} wurde erfolgreich in der Datenbank geändert."
 
-#: jb_institute/views/samples/substrate.py:173
+#: views/samples/substrate.py:173
 #, python-brace-format
 msgid "Substrate {0} was successfully added to the database."
 msgstr "Substrat {0} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: jb_institute/views/samples/substrate.py:179
+#: views/samples/substrate.py:179
 #, python-brace-format
 msgid "Edit substrate “{0}”"
 msgstr "Ändern des Substrates „{0}“"
 
-#: jb_institute/views/samples/substrate.py:179
+#: views/samples/substrate.py:179
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
+
+#~ msgid "switch to %(language)s"
+#~ msgstr "wechsle zu %(language)s"
+
+#~ msgid "Welcome,"
+#~ msgstr "Willkommen,"
+
+#~ msgid "Report feature wish or bug"
+#~ msgstr "Bug oder Featurewunsch melden"
+
+#~ msgid "Help"
+#~ msgstr "Hilfe"
+
+#~ msgid "Log out"
+#~ msgstr "Abmelden"
+
+#~ msgid "Log in"
+#~ msgstr "Anmelden"
+
+#~ msgid "The database server"
+#~ msgstr "Der Datenbank-Server"
+
+#~ msgid "The samples database"
+#~ msgstr "Die Probendatenbank"
