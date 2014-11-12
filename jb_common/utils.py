@@ -36,6 +36,9 @@ from django.utils.functional import allow_lazy
 from jb_common import mimeparse
 
 
+VERSION = "0.9"
+
+
 class HttpResponseUnauthorized(django.http.HttpResponse):
     """The response sent back in case of a permission error.  This is another
     missing response class in Django.  I have no clue why they leave out such
