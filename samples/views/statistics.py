@@ -105,12 +105,10 @@ def about(request):
     :rtype: ``HttpResponse``
     """
     return render_to_response("samples/about.html",
-                              {"title": _("JuliaBase is presented to you by …"),
+                              {"title": _("With kind support of …"),
                                "language_version": sys.version.split()[0],
                                "matplotlib_version": matplotlib.__version__,
                                "framework_version": django.get_version(),
-                               # FixMe: Introduce version variable in
-                               # jb_common
-                               "juliabase_version": "unknown"
+                               "juliabase_version": utils.VERSION
                                },
                               context_instance=RequestContext(request))

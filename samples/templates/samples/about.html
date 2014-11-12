@@ -28,13 +28,12 @@ copyright holder, you must destroy it immediately and completely.
 <table class="about">
   <tbody>
   <tr>
-    <th>{% trans 'Runtime' %}:</th>
+    <th>{% trans 'Top-level framework' %}:</th>
     <td style="vertical-align: bottom">
-      <p><a href="http://www.python.org"
-            ><img class="helper-program-logo" src="{% static "samples/python.png" %}" alt="{% trans 'Python logo' %}"
-                  width="125" height="37"/></a></p>
-      <p><a href="http://www.python.org">Python</a>
-        <span class="version">{{ language_version }}</span></p></td>
+      <p><img class="helper-program-logo" src="{% static "juliabase/juliabase_logo_desat.png" %}" alt="{% trans 'JuliaBase logo' %}"
+                  width="50" height="50"/></p>
+      <p>JuliaBase
+        <span class="version">{{ juliabase_version }}</span></p></td>
   </tr>
   <tr>
     <th>{% trans 'Web framework' %}:</th>
@@ -54,6 +53,15 @@ copyright holder, you must destroy it immediately and completely.
       <p><a href="{% trans 'http://matplotlib.sourceforge.net/' %}">Matplotlib</a>
         <span class="version">{{ matplotlib_version }}</span></p>
     </td>
+  </tr>
+  <tr>
+    <th>{% trans 'Runtime' %}:</th>
+    <td style="vertical-align: bottom">
+      <p><a href="http://www.python.org"
+            ><img class="helper-program-logo" src="{% static "samples/python.png" %}" alt="{% trans 'Python logo' %}"
+                  width="125" height="37"/></a></p>
+      <p><a href="http://www.python.org">Python</a>
+        <span class="version">{{ language_version }}</span></p></td>
   </tr>
   </tbody>
 </table>

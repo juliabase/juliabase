@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-12 20:29+0100\n"
+"POT-Creation-Date: 2014-11-12 21:51+0100\n"
 "PO-Revision-Date: 2011-01-31 00:14+0100\n"
 "Last-Translator: Nicolas Raymond <Unknown>\n"
 "Language: fr\n"
@@ -1205,35 +1205,43 @@ msgid ""
 msgstr ""
 
 #: templates/samples/about.html:31
-msgid "Runtime"
+msgid "Top-level framework"
 msgstr ""
 
-#: templates/samples/about.html:34
-msgid "Python logo"
+#: templates/samples/about.html:33
+msgid "JuliaBase logo"
 msgstr ""
 
-#: templates/samples/about.html:40
+#: templates/samples/about.html:39
 msgid "Web framework"
 msgstr ""
 
-#: templates/samples/about.html:42 templates/samples/about.html.py:45
+#: templates/samples/about.html:41 templates/samples/about.html.py:44
 msgid "http://en.wikipedia.org/wiki/Django_(web_framework)"
 msgstr ""
 
-#: templates/samples/about.html:43
+#: templates/samples/about.html:42
 msgid "Django logo"
 msgstr ""
 
-#: templates/samples/about.html:49
+#: templates/samples/about.html:48
 msgid "Plotting system"
 msgstr ""
 
-#: templates/samples/about.html:51 templates/samples/about.html.py:54
+#: templates/samples/about.html:50 templates/samples/about.html.py:53
 msgid "http://matplotlib.sourceforge.net/"
 msgstr ""
 
-#: templates/samples/about.html:53
+#: templates/samples/about.html:52
 msgid "Matplotlib logo"
+msgstr ""
+
+#: templates/samples/about.html:58
+msgid "Runtime"
+msgstr ""
+
+#: templates/samples/about.html:61
+msgid "Python logo"
 msgstr ""
 
 #: templates/samples/add_claim.html:21 templates/samples/add_claim.html:22
@@ -3514,7 +3522,7 @@ msgid "JuliaBase server statistics"
 msgstr ""
 
 #: views/statistics.py:108
-msgid "JuliaBase is presented to you by …"
+msgid "With kind support of …"
 msgstr ""
 
 #: views/status.py:53
