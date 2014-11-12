@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-12 20:26+0100\n"
+"POT-Creation-Date: 2014-11-12 20:29+0100\n"
 "PO-Revision-Date: 2011-01-31 00:14+0100\n"
 "Last-Translator: JoseRoberto <Unknown>\n"
 "Language: es\n"
@@ -2672,8 +2672,9 @@ msgid "Successfully renamed the samples."
 msgstr ""
 
 #: views/bulk_rename.py:246
-msgid "Giving new-style names"
-msgstr ""
+#, fuzzy
+msgid "Rename samples"
+msgstr "Mis muestras"
 
 #: views/claim.py:40
 #, fuzzy

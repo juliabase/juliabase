@@ -243,7 +243,7 @@ def bulk_rename(request):
                             if available_prefixes else None
         new_name_forms = [NewNameForm(request.user, "", sample, prefix=str(sample.pk)) for sample in samples]
     return render_to_response("samples/bulk_rename.html",
-                              {"title": _("Giving new-style names"),
+                              {"title": _("Rename samples"),
                                "prefixes": prefixes_form, "single_prefix": single_prefix,
                                "samples": zip(samples, new_name_forms)},
                               context_instance=RequestContext(request))

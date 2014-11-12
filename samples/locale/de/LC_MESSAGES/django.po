@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-12 20:26+0100\n"
-"PO-Revision-Date: 2014-10-23 09:59+0200\n"
+"POT-Creation-Date: 2014-11-12 20:29+0100\n"
+"PO-Revision-Date: 2014-11-12 20:29+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -2896,8 +2896,8 @@ msgid "Successfully renamed the samples."
 msgstr "Proben erfolgreich umbenannt."
 
 #: views/bulk_rename.py:246
-msgid "Giving new-style names"
-msgstr "Probennamen nach „neuer Art“ vergeben"
+msgid "Rename samples"
+msgstr "Proben umbenennen"
 
 #: views/claim.py:40
 msgid "Claimed samples"
@@ -4014,6 +4014,9 @@ msgstr " und "
 #: views/utils.py:536
 msgid " and "
 msgstr " und "
+
+#~ msgid "Giving new-style names"
+#~ msgstr "Probennamen nach „neuer Art“ vergeben"
 
 #~ msgid "Only provisional names can be changed to an external name."
 #~ msgstr ""
