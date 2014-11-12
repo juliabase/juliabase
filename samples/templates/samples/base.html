@@ -13,6 +13,7 @@ received a copy of this software without the explicit permission of the
 copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
+{% load i18n %}
 {% load staticfiles %}
 
 {% block css_inclusions %}
@@ -21,4 +22,4 @@ copyright holder, you must destroy it immediately and completely.
 {% endblock %}
 
 {% block app_title %}<a style="color: inherit; text-decoration: inherit"
-                        href="{% url 'samples.views.main.main_menu' %}">Samples</a>{% endblock %}
+                        href="{% url 'samples.views.main.main_menu' %}">{% trans "Samples" %}</a>{% endblock %}

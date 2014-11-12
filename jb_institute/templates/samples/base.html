@@ -13,7 +13,6 @@ received a copy of this software without the explicit permission of the
 copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
-{% load i18n %}
 {% load staticfiles %}
 
 {% block css_inclusions %}
@@ -26,6 +25,5 @@ copyright holder, you must destroy it immediately and completely.
   once support for IE7 is dropped.
 {% endcomment %}
 {% block app_title %}<a style="color: #333333; text-decoration: none" href="{% url 'samples.views.main.main_menu' %}"
-                        >JuliaBase</a>{% endblock %}
-{% block app_subtitle %}{% trans "The samples database" %}{% endblock %}
+                        >Samples</a>{% endblock %}
 
