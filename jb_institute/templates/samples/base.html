@@ -1,5 +1,5 @@
 {# -*- indent-tabs-mode: nil -*- #}
-{% extends "jb_base.html" %}
+{% extends "samples/templates/samples/base.html" %}
 {% comment %}
 This file is part of JuliaBase, the samples database.
 
@@ -14,11 +14,6 @@ copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load staticfiles %}
-
-{% block css_inclusions %}
-  <link rel="stylesheet" type="text/css" media="screen" href="{% static "samples/css/main.css" %}"/>
-  <link rel="stylesheet" type="text/css" media="print" href="{% static "samples/css/print.css" %}"/>
-{% endblock %}
 
 {% comment %}
   FixMe: "#333333" and "none" have to be replaced with "inherit"
