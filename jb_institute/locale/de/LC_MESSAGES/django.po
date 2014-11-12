@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-12 09:18+0100\n"
+"POT-Creation-Date: 2014-11-12 20:26+0100\n"
 "PO-Revision-Date: 2014-11-12 09:18+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -722,11 +722,11 @@ msgstr ""
 "aufgefordert werden, zurückzugehen und Ihre letzte Aktion zu wiederholen, "
 "damit die Daten tatsächlich in die Datenbank geschrieben werden.</p>\n"
 
-#: templates/jb_base.html:19
+#: templates/jb_base.html:21
 msgid "INM logo"
 msgstr "Logo des INM"
 
-#: templates/jb_base.html:19
+#: templates/jb_base.html:23
 msgid "Institute of Nifty New<br/>Materials (INM)"
 msgstr "Institut für pfiffige neue<br/>Materialien (INM)"
 

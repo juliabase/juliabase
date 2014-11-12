@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-10-22 20:00+0200\n"
+"POT-Creation-Date: 2014-11-12 20:26+0100\n"
 "PO-Revision-Date: 2010-06-29 09:11+0000\n"
 "Last-Translator: nileboss <Unknown>\n"
 "Language: fr\n"
@@ -24,143 +24,139 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 
-#: models.py:35 models.py:120
+#: apps.py:23
+msgid "JuliaBase – administration"
+msgstr ""
+
+#: models.py:45 models.py:140
 msgid "name"
 msgstr "nom"
 
-#: models.py:40 models.py:61 models.py:124
+#: models.py:48 models.py:73 models.py:144
 msgid "department"
 msgstr ""
 
-#: models.py:41
+#: models.py:49
 msgid "departments"
 msgstr ""
 
-#: models.py:59 models.py:239
+#: models.py:71 models.py:262
 msgid "user"
 msgstr "utilisateur"
 
-#: models.py:69
+#: models.py:81
 msgid "language"
 msgstr "langue"
 
-#: models.py:70
+#: models.py:82
 msgid "operating system"
 msgstr ""
 
-#: models.py:71
+#: models.py:83
 msgid "layout last modified"
 msgstr ""
 
-#: models.py:76 models.py:77
+#: models.py:88 models.py:89
 msgid "user details"
 msgstr "détails de l'utilisateur"
 
-#: models.py:121
+#: models.py:141
 msgid "members"
 msgstr "membres"
 
-#: models.py:123
+#: models.py:143
 msgid "confidential"
 msgstr ""
 
-#: models.py:125
+#: models.py:145
 msgid "parent topic"
 msgstr ""
 
-#: models.py:127
+#: models.py:147
 msgid "topic manager"
 msgstr ""
 
-#: models.py:131
+#: models.py:151
 msgid "topic"
 msgstr ""
 
-#: models.py:132
+#: models.py:152
 msgid "topics"
 msgstr ""
 
-#: models.py:135
+#: models.py:155
 msgid "Can edit all topics, and can add new topics"
 msgstr ""
 
-#: models.py:136
+#: models.py:156
 msgid "Can edit topics that he/she is a manager of"
 msgstr ""
 
-#: models.py:168
+#: models.py:191
 #, python-brace-format
 msgid "topic #{number} (confidential)"
 msgstr ""
 
-#: models.py:238
+#: models.py:261
 msgid "hash value"
 msgstr ""
 
-#: models.py:241
+#: models.py:264
 msgid "requested URL"
 msgstr ""
 
-#: models.py:243
+#: models.py:266
 msgid "timestamp"
 msgstr ""
 
-#: models.py:246
+#: models.py:269
 msgid "error page"
 msgstr ""
 
-#: models.py:247
+#: models.py:270
 msgid "error pages"
 msgstr ""
 
-#: search.py:254
+#: search.py:258
 msgid "You can't search for empty values while giving a non-empty value."
 msgstr ""
 
-#: search.py:261
+#: search.py:265
 msgid "explicitly empty"
 msgstr ""
 
-#: search.py:342
+#: search.py:347
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 
-#: search.py:370
+#: search.py:375
 msgid "Invalid date or time."
 msgstr ""
 
-#: search.py:402
+#: search.py:409
 msgid "doesn't matter"
 msgstr ""
 
-#: search.py:402
+#: search.py:409
 #, fuzzy
 #| msgid "Yes"
 msgid "yes"
 msgstr "Oui"
 
-#: search.py:402
+#: search.py:409
 msgid "no"
 msgstr ""
 
-#: search.py:424
+#: search.py:431
 msgid "containing"
 msgstr ""
 
-#: search.py:761
+#: search.py:769
 #, fuzzy
 #| msgid "restricted"
 msgid "restrict to"
 msgstr "restreint"
-
-#: settings_defaults.py:41
-msgid "English"
-msgstr "Anglais"
-
-#: settings_defaults.py:41
-msgid "German"
-msgstr "Allemand"
 
 #: templates/404.html:26 templates/404.html.py:27
 msgid "Resource not found"
@@ -181,7 +177,7 @@ msgstr ""
 msgid "Internal JuliaBase error"
 msgstr "Erreur interne de JuliaBase"
 
-#: templates/500.html:35 templates/jb_base.html:67
+#: templates/500.html:35 templates/jb_base.html:77
 msgid "Log in"
 msgstr "Se connecter"
 
@@ -199,30 +195,36 @@ msgid ""
 "is tackled.\n"
 msgstr ""
 
-#: templates/jb_base.html:42
+#: templates/jb_base.html:53
 #, python-format
 msgid "switch to %(language)s"
 msgstr ""
 
-#: templates/jb_base.html:48
+#: templates/jb_base.html:59
 msgid "Welcome,"
 msgstr "Bienvenue,"
 
-#: templates/jb_base.html:52
+#: templates/jb_base.html:61
 msgid "Main menu"
 msgstr "Menu principal"
 
-#: templates/jb_base.html:56
+#: templates/jb_base.html:65
 msgid "Report feature wish or bug"
 msgstr ""
 
-#: templates/jb_base.html:58 templates/jb_base.html.py:64
+#: templates/jb_base.html:67 templates/jb_base.html.py:74
 msgid "Help"
 msgstr "Aide"
 
-#: templates/jb_base.html:60
+#: templates/jb_base.html:70
 msgid "Log out"
 msgstr "Se déconnecter"
+
+#: templates/jb_base.html:94
+#, fuzzy
+#| msgid "JuliaBase login"
+msgid "JuliaBase logo"
+msgstr "Identifiant JuliaBase"
 
 #: templates/jb_common/change_password.html:18
 #: templates/jb_common/change_password.html:19
@@ -329,29 +331,29 @@ msgstr ""
 msgid "Department"
 msgstr ""
 
-#: templatetags/juliabase.py:149
+#: templatetags/juliabase.py:148
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr ""
 
-#: templatetags/juliabase.py:158
+#: templatetags/juliabase.py:157
 msgid "Yes"
 msgstr "Oui"
 
-#: templatetags/juliabase.py:158
+#: templatetags/juliabase.py:157
 msgid "No"
 msgstr "Non"
 
-#: utils.py:184
+#: utils.py:157
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 
-#: utils.py:215
+#: utils.py:188
 #, python-brace-format
 msgid "Couldn't open {filename}."
 msgstr ""
 
-#: utils.py:234
+#: utils.py:202
 msgid "This file is not in an allowed directory."
 msgstr ""
 
@@ -366,6 +368,12 @@ msgstr ""
 #: views.py:96
 msgid "Markdown sandbox"
 msgstr ""
+
+#~ msgid "English"
+#~ msgstr "Anglais"
+
+#~ msgid "German"
+#~ msgstr "Allemand"
 
 #~ msgid "Chinese"
 #~ msgstr "Chinois"
