@@ -165,6 +165,11 @@ def available_items(request, model_name):
     else:
         raise Http404("Model name not found.")
     try:
+        # Instead of natural keys – which we don't need in JuliaBase in other
+        # places BTW – one should use values_list with a "primary_field", which
+        # defaults to "pk".  Unfortunately, Django doesn't allow to set such a
+        # primary_field for a class so far.  See
+        # <https://code.djangoproject.com/ticket/5793>.
         return respond_in_json([instance.natural_key()[0] for instance in model.objects.iterator()])
     except AttributeError:
         return respond_in_json(list(model.objects.values_list("pk", flat=True)))
