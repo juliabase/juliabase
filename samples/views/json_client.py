@@ -165,7 +165,7 @@ def available_items(request, model_name):
     else:
         raise Http404("Model name not found.")
     try:
-        return respond_in_json([instance.natural_key() for instance in model.objects.all()])
+        return respond_in_json([instance.natural_key()[0] for instance in model.objects.iterator()])
     except AttributeError:
         return respond_in_json(list(model.objects.values_list("pk", flat=True)))
 
