@@ -159,8 +159,8 @@ class JSONClientMiddleware(object):
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
                                      html=response.content)
             return HttpResponseUnprocessableEntity(
-                json.dumps((1, django.core.urlresolvers.reverse("jb_common.views.show_error_page",
-                                                                kwargs={"hash_value": hash_value}))),
+                json.dumps((1, request.build_absolute_uri(
+                    django.core.urlresolvers.reverse("jb_common.views.show_error_page", kwargs={"hash_value": hash_value})))),
                 content_type="application/json; charset=ascii")
         return response
 
