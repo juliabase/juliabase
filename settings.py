@@ -145,12 +145,12 @@ DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
 
 ADD_SAMPLES_VIEW = "jb_institute.views.samples.sample.add"
 
-MEASUREMENT_DATA_ROOT_DIR = str("")
+MEASUREMENT_DATA_ROOT_DIR = str("/tmp")
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds"))
+SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("solarsimulator"))
 
 PHYSICAL_PROCESSES_BLACKLIST = [("jb_institute", "substrate"),
                               ("jb_institute", "layerthicknessmeasurement")]
-SOLARSIMULATOR_1_ROOT_DIR = str("")
 MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
 
 SAMPLE_NAME_FORMATS = {
