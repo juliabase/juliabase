@@ -141,14 +141,10 @@ class PDSMeasurement(PhysicalProcess):
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
-        evaluated = os.path.basename(filename).lower().startswith("a_")
-        x_values, y_values = utils.read_techplot_file(filename)
+        x_values, y_values = numpy.loadtxt(filename, comments="#", unpack=True)
         axes.semilogy(x_values, y_values)
         axes.set_xlabel(_("energy in eV"))
-        axes.set_ylabel(_("α in cm⁻¹") if evaluated else _("PDS signal in a.u."))
-        if not evaluated:
-            axes.text(0.05, 0.95, _("unevaluated"), verticalalignment="top", horizontalalignment="left",
-                      transform=axes.transAxes, bbox={"edgecolor": "white", "facecolor": "white", "pad": 5}, style="italic")
+        axes.set_ylabel(_("α in cm⁻¹"))
 
     def get_datafile_name(self, plot_id):
         return os.path.join(settings.PDS_ROOT_DIR, self.raw_datafile)
