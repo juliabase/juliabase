@@ -278,246 +278,58 @@ class Substrate(object):
             return connection.open("substrates/add/", data)
 
 
-main_sample_name_pattern = re.compile(r"(?P<year>\d\d)(?P<letter>[ABCDEFHKLNOPQSTVWXYabcdefhklnopqstvwxy])-?"
-                                      r"(?P<number>\d{1,4})(?P<suffix>[-A-Za-z_/#()][-A-Za-z_/0-9#()]*)?$")
+name_pattern = re.compile(r"\d\d[A-Z]-\d{{3,4}}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?"
+                          r"|(\d\d-[A-Z]{2}[A-Z0-9]{0,2}|[A-Z]{2}[A-Z0-9]{2})-[-A-Za-z_/0-9#()]+")
 allowed_character_pattern = re.compile("[-A-Za-z_/0-9#()]")
 
-def normalize_sample_name(sample_name):
-    """Normalises a sample name.  Unfortunately, co-workers tend to write
-    sample names in many variations.  For example, instead of 10B-010, they
-    write 10b-010 or 10b010 or 10B-10.  In this routine, I normalise to known
-    sample patterns.  Additionally, if a known pattern is found, this routine
-    makes suggestions for the currently reponsible person, the topic, and some
-    other things.
-
-    This routine is used in crawlers and legacy importers.
-
-    :Parameter:
-      - `sample_name`: the raw name of the sample
-
-    :type sample_name: unicode
-
-    :Return:
-      The normalised sample data.  The keys of this dictionary are ``"name"``
-      (this is the normalised name), ``"currently_responsible_person"``,
-      ``"current_location"``, ``"substrate_operator"``,
-      ``"substrate_external_operator"``, ``"topic"``, and ``"legacy"``.  The
-      latter is a boolean denoting whether the database must prepend a legacy
-      prefix à la “10-LGCY--” when creating the sample.
-
-    :rtype: dict mapping str to unicode
-    """
-    result = {"currently_responsible_person": "nobody", "substrate_operator": "nobody", "substrate_external_operator": None,
-              "legacy": True, "current_location": "unknown", "topic": "Legacy", "alias": None}
-
-    sample_name = " ".join(sample_name.split())
-    translations = {"ä": "ae", "ö": "oe", "ü": "ue", "Ä": "Ae", "Ö": "Oe", "Ü": "Ue", "ß": "ss",
-                    " ": "_", "°": "o"}
-    for from_, to in translations.items():
-        sample_name = sample_name.replace(from_, to)
-    allowed_sample_name_characters = []
-    for character in sample_name:
-        if allowed_character_pattern.match(character):
-            allowed_sample_name_characters.append(character)
-    result["name"] = "".join(allowed_sample_name_characters)[:30]
-    current_year = int(datetime.datetime.now().strftime("%y"))
-    match = main_sample_name_pattern.match(sample_name)
-    if match and int(match.group("year")) <= current_year:
-        parts = match.groupdict("")
-        parts["number"] = "{0:03}".format(int(parts["number"]))
-        parts["letter"] = parts["letter"].upper()
-        if parts["letter"] == "D":
-            result["current_location"] = "02.4u/82b, Schrank hinter Flasher"
-            result["topic"] = "LADA intern"
-            parts["number"] = "{0:04}".format(int(parts["number"]))
-        result["name"] = "{year}{letter}-{number}{suffix}".format(**parts)
-        result["legacy"] = False
-        return result
-    return result
-
-
-class SubstrateFound(Exception):
-    """Exception raised for simpler control flow in
-    `normalize_substrate_name`.  It is only used there.
-    """
-    def __init__(self, key_name, substrate_comments):
-        self.key_name, self.substrate_comments = key_name, substrate_comments
-
-unknown_substrate_comment = "unknown substrate material"
-
-def normalize_substrate_name(substrate_name, is_general_comment=False, add_zno_warning=False):
-    """Normalises a substrate name to data directly usable for the sample
-    database.
-
-    :Parameters:
-      - `substrate_name`: a string which contains information about the substrate
-      - `is_general_comment`: whether `substrate_name` is a general comment
-        containing the substrate name somewhere, or only the substrate name
-        (albeit in raw form)
-      - `add_zno_warning`: whether a warning should be issued if the sample
-        probably had a ZnO process (because such processes are not yet in the
-        database)
-
-    :type substrate_name: unicode
-    :type is_general_comment: bool
-    :type add_zno_warning: bool
-
-    :Return:
-      the substrate name as needed by JuliaBase, comments of the substrate
-      process
-
-    :rtype: unicode, unicode
-    """
-    substrate_name = " ".join(substrate_name.split())
-    normalized_substrate_name = substrate_name.lower().replace("-", " ").replace("(", ""). \
-        replace(")", "")
-    normalized_substrate_name = " ".join(normalized_substrate_name.split())
-    def test_name(pattern, key_name, comment=""):
-        if re.match("^({0})$".format(pattern), normalized_substrate_name, re.UNICODE):
-            raise SubstrateFound(key_name, comment)
-        elif re.search(pattern, normalized_substrate_name, re.UNICODE):
-            raise SubstrateFound(key_name, substrate_name if not is_general_comment else comment)
-    try:
-        if not normalized_substrate_name:
-            raise SubstrateFound("custom", unknown_substrate_comment)
-        test_name("asahi ?vu|asahi ?uv", "asahi-vu")
-        test_name("asahi|ashi", "asahi-u")
-        test_name("corning|coaring", "corning")
-        test_name("eagle ?(2000|xg)", "corning", "Eagle 2000")
-        test_name("quartz|quarz", "quartz")
-        test_name("ilmasil", "quartz", "Ilmasil")
-        test_name("qsil", "quartz", "Qsil")
-        test_name("sapphire|saphir|korund|corundum", "sapphire")
-        test_name("glas", "glass")
-        test_name(r"\balu", "aluminium foil")
-        test_name(r"\bsi\b.*wafer|wafer.*\bsi\b|silicon.*wafer|wafer.*silicon|c ?si", "si-wafer")
-        raise SubstrateFound("custom", substrate_name if not is_general_comment else unknown_substrate_comment)
-    except SubstrateFound as found_substrate:
-        key_name, substrate_comments = found_substrate.key_name, found_substrate.substrate_comments
-        if add_zno_warning and "zno" in normalized_substrate_name:
-            if substrate_comments:
-                substrate_comments += "\n\n"
-            substrate_comments += "ZnO may have been applied to the substrate without an explicitly shown sputter process."
-        return key_name, substrate_comments
-
-
-def get_or_create_sample(sample_name, substrate_name, timestamp, timestamp_inaccuracy="3", comments=None,
-                         add_zno_warning=False, create=True):
+def get_or_create_sample(sample_name):
     """Looks up a sample name in the database, and creates a new one if it
     doesn't exist yet.  You can only use this function if you are an
     administrator.  This function is used in crawlers and legacy importers.
     The sample is added to “My Samples”.
 
+    If it creates a new one, a `Sample` and `Substrate` instance are returned.
+    In the `Sample` instance, only the name is set.  In the `Substrate`
+    instance, only the sample ID is set.  You have to fill in the rest and
+    submit the data to the database.
+
+    If the sample name doesn't fit into the naming scheme, a legacy sample name
+    accoring to ``{short_year}-LGCY-...`` is generated.
+
+    Otherwise, if the sample alrewady exists, the sample ID is returned.  (No
+    full `Sample` instance is returned to spare ressources.  Mostly, only the
+    ID is subsequently needed after all.)
+
     :Parameters:
       - `sample_name`: the name of the sample
-      - `substrate_name`: the concise descriptive name of the substrate.  This
-        routine tries heavily to normalise it.
-      - `timestamp`: the timestamp of the sample/substrate
-      - `timestamp_inaccuracy`: the timestamp inaccuracy of the
-        sample/substrate
-      - `comments`: Comment which may contain information about the substrate.
-        They are ignored if `substrate_name` is given.  In a way, this
-        parameter is a poor man's `substrate_name`.
-      - `add_zno_warning`: whether a warnign should be issued if the sample
-        probably had a ZnO process (because such processes are not yet in the
-        database)
-      - `create`: if ``True``, create the sample if it doesn't exist yet; if
-        ``False``, return ``None`` if the sample coudn't be found
 
     :type sample_name: unicode
-    :type substrate_name: unicode or ``NoneType``
-    :type timestamp_inaccuracy: unicode
-    :type comments: unicode
-    :type add_zno_warning: bool
 
     :Return:
-      the ID of the sample, either the existing or the newly created; or
-      ``None`` if ``create=False`` and the sample could not be found
+      If a new sample had to be created, this sample and its substrate are
+      returned (but not yet sent to the database, see above).  Else, the sample
+      ID and ``None`` are returned.  Thus, you can easily distinguish between
+      both cases by testing the second argument for ``None``.
 
-    :rtype: int or ``NoneType``
+    :rtype: (`Sample`, `Substrate`) or (int, ``NoneType``)
     """
-    name_info = normalize_sample_name(sample_name)
-    substrate_material, substrate_comments = normalize_substrate_name(substrate_name or comments or "",
-                                                                      is_general_comment=not substrate_name,
-                                                                      add_zno_warning=add_zno_warning)
-    if name_info["name"] != "unknown_name":
-        sample_id = connection.open("primary_keys?samples=" + urllib.quote_plus(name_info["name"]))["samples"].\
-            get(name_info["name"])
-        if not sample_id and name_info["legacy"]:
-            sample_name = "{year}-LGCY--{name}".format(year=timestamp.strftime("%y"), name=name_info["name"])[:30]
-            sample_id = connection.open("primary_keys?samples=" + urllib.quote_plus(sample_name))["samples"].\
-                get(sample_name)
-        if name_info["legacy"]:
-            if sample_id is not None:
-                best_match = {}
-                sample_ids = sample_id if isinstance(sample_id, list) else [sample_id]
-                for sample_id in sample_ids:
-                    substrate_data = connection.open("substrates_by_sample/{0}".format(sample_id))
-                    if substrate_data:
-                        current_substrate = Substrate(substrate_data)
-                        timedelta = abs(current_substrate.timestamp - timestamp)
-                        if timedelta < datetime.timedelta(weeks=104) and \
-                                ("timedelta" not in best_match or timedelta < best_match["timedelta"]):
-                            best_match["timedelta"] = timedelta
-                            best_match["id"] = sample_id
-                            best_match["substrate"] = current_substrate
-                sample_id = best_match.get("id")
-                substrate = best_match.get("substrate")
-        else:
-            if isinstance(sample_id, list):
-                sample_id = None
-            elif sample_id is not None:
-                substrate = Substrate(connection.open("substrates_by_sample/{0}".format(sample_id)))
-                assert substrate.timestamp, Exception("sample ID {0} had no substrate".format(sample_id))
+
+    if not name_pattern.match(sample_name):
+        # Build a legacy name with the ``{short_year}-LGCY-`` prefix.
+        allowed_sample_name_characters = []
+        for character in sample_name:
+            if allowed_character_pattern.match(character):
+                allowed_sample_name_characters.append(character)
+        sample_name = "{}-LGCY-{}".format(str(datetime.datetime.now())[2:], "".join(allowed_sample_name_characters)[:30])
+    sample_id = connection.open("primary_keys?samples=" + urllib.quote_plus(sample_name))["samples"].get(sample_name)
+    if sample_id is not None and not  isinstance(sample_id, list):
+        return sample_id, None
     else:
-        sample_id = None
-    if sample_id is None:
-        if create:
-            new_sample = Sample()
-            new_sample.name = name_info["name"]
-            new_sample.current_location = name_info["current_location"]
-            new_sample.currently_responsible_person = name_info["currently_responsible_person"]
-            new_sample.topic = name_info["topic"]
-            new_sample.legacy = name_info["legacy"]
-            new_sample.timestamp = timestamp
-            sample_id = new_sample.submit()
-            assert sample_id, Exception("Could not create sample {0}".format(name_info["name"]))
-            substrate = Substrate()
-            substrate.timestamp = timestamp - datetime.timedelta(seconds=2)
-            substrate.timestamp_inaccuracy = timestamp_inaccuracy
-            substrate.material = substrate_material
-            substrate.comments = substrate_comments
-            substrate.operator = name_info["substrate_operator"]
-            substrate.sample_ids = [sample_id]
-            if name_info["substrate_external_operator"]:
-                substrate.external_operator = name_info["substrate_external_operator"]
-            substrate.submit()
-    else:
-        connection.open("change_my_samples", {"add": sample_id})
-        substrate_changed = False
-        if substrate.timestamp > timestamp:
-            substrate.timestamp = timestamp - datetime.timedelta(seconds=2)
-            substrate.timestamp_inaccuracy = timestamp_inaccuracy
-            substrate_changed = True
-        if substrate.material == "custom" and substrate.comments == unknown_substrate_comment:
-            substrate.material = substrate_material
-            substrate.comments = substrate_comments
-            substrate_changed = True
-        else:
-            if substrate.material != substrate_material:
-                additional_substrate_comments = substrate_comments if substrate_material == "custom" else substrate_material
-            elif substrate_material == "custom":
-                additional_substrate_comments = substrate_comments
-            else:
-                additional_substrate_comments = None
-            if additional_substrate_comments:
-                if substrate.comments:
-                    substrate.comments += "\n\n"
-                substrate_comments += "Alternative information: " + additional_substrate_comments
-                substrate_changed = True
-        if substrate_changed:
-            substrate.submit()
-    return sample_id
+        new_sample = Sample()
+        new_sample.name = sample_name
+        substrate = Substrate()
+        substrate.sample_ids = [sample_id]
+        return new_sample, substrate
 
 
 class SolarsimulatorPhotoMeasurement(object):
