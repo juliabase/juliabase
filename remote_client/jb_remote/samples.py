@@ -137,8 +137,7 @@ class Sample(object):
             self.processes = dict((key, value) for key, value in data.iteritems() if key.startswith("process "))
         else:
             self.id = self.name = self.current_location = self.currently_responsible_person = self.purpose = self.tags = \
-                self.topic = self.timestamp = None
-        self.legacy = False
+                self.topic = None
         self.edit_description = None
         self.edit_important = True
 
@@ -153,10 +152,7 @@ class Sample(object):
         if self.id:
             connection.open("samples/by_id/{0}/edit/".format(self.id), data)
         else:
-            if not self.timestamp:
-                self.timestamp = datetime.datetime(1990, 1, 1)
-            return connection.open("add_sample?" + urllib.urlencode(
-                    {"legacy": self.legacy, "timestamp": format_timestamp(self.timestamp)}), data)
+            return connection.open("add_sample", data)
 
     def add_to_my_samples(self):
         connection.open("change_my_samples", {"add": self.id})

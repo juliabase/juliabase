@@ -37,51 +37,11 @@ from jb_institute.views import shared_utils
 from jb_common.utils import respond_in_json, JSONRequestException
 
 
-def get_next_quirky_name(sample_name, year_digits):
-    """Returns the next sample name for legacy samples that don't fit into any
-    known name scheme.
-
-    :Parameters:
-      - `sample_name`: the legacy sample name
-      - `year_digits`: the last two digits of the year of creation of the
-        sample
-
-    :type sample_name: unicode
-    :type year_digits: str
-
-    :Return:
-      the JuliaBase legacy sample name
-
-    :rtype: unicode
-    """
-    prefixes = set()
-    legacy_prefix = year_digits + "-LGCY-"
-    for name in models.Sample.objects.filter(name__startswith=legacy_prefix).values_list("name", flat=True):
-        prefix, __, original_name = name[len(legacy_prefix):].partition("-")
-        if original_name == sample_name:
-            prefixes.add(prefix)
-    free_prefix = ""
-    while free_prefix in prefixes:
-        digits = [ord(digit) for digit in free_prefix]
-        for i in range(len(digits) - 1, -1 , -1):
-            digits[i] += 1
-            if digits[i] > 122:
-                digits[i] = 97
-            else:
-                break
-        else:
-            digits[0:0] = [97]
-        free_prefix = "".join(chr(digit) for digit in digits)
-    return "{0}{1}-{2}".format(legacy_prefix, free_prefix, sample_name)
-
-
 @login_required
 @require_http_methods(["POST"])
 def add_sample(request):
     """Adds a new sample to the database.  It is added without processes.
-    This view can only be used by admin accounts.  If the query string contains
-    ``"legacy=True"``, the sample gets a quirky legacy name (and an appropriate
-    alias).
+    This view can only be used by admin accounts.
 
     :Parameters:
       - `request`: the current HTTP Request object; it must contain the sample
@@ -107,14 +67,6 @@ def add_sample(request):
         return respond_in_json(False)
     if len(name) > 30:
         return respond_in_json(False)
-    is_legacy_name = request.GET.get("legacy") == "True"
-    if is_legacy_name:
-        year_digits = request.GET.get("timestamp", "")[2:4]
-        try:
-            int(year_digits)
-        except ValueError:
-            return respond_in_json(False)
-        name = get_next_quirky_name(name, year_digits)[:30]
     if currently_responsible_person:
         currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
                                                          pk=utils.convert_id_to_int(currently_responsible_person))
@@ -124,15 +76,12 @@ def add_sample(request):
         sample = models.Sample.objects.create(name=name, current_location=current_location,
                                               currently_responsible_person=currently_responsible_person, purpose=purpose,
                                               tags=tags, topic=topic)
-        if is_legacy_name:
-            models.SampleAlias.objects.create(name=request.POST["name"], sample=sample)
-        else:
-            for alias in models.SampleAlias.objects.filter(name=name):
-                # They will be shadowed anyway.  Nevertheless, this action is
-                # an emergency measure.  Probably the samples the aliases point
-                # to should be merged with the sample but this can't be decided
-                # automatically.
-                alias.delete()
+        for alias in models.SampleAlias.objects.filter(name=name):
+            # They will be shadowed anyway.  Nevertheless, this action is
+            # an emergency measure.  Probably the samples the aliases point
+            # to should be merged with the sample but this can't be decided
+            # automatically.
+            alias.delete()
     except IntegrityError:
         return respond_in_json(False)
     sample.watchers.add(request.user)
