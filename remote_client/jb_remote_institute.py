@@ -24,6 +24,7 @@ Unix-like systems, it is in /tmp.
 """
 
 from __future__ import absolute_import, unicode_literals
+import six
 
 import re, logging, datetime, urllib
 from jb_remote import *
@@ -478,6 +479,7 @@ class FiveChamberDeposition(object):
                 FiveChamberLayer(self, layer_data)
             self.existing = True
         else:
+            self.number = None
             self.sample_ids = []
             self.operator = self.timestamp = None
             self.comments = ""
