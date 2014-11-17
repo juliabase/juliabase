@@ -278,27 +278,33 @@ class Substrate(object):
             return connection.open("substrates/add/", data)
 
 
+class SampleNotFound(Exception):
+    """Raised if a sample was not found in `get_sample`.  If you catch such an
+    exception, you have to fill in the missing attributes of the sample and
+    submit it.
+
+    :ivar sample: a newly created `Sample` instance with only the name set, and
+      not yet sumbitted to the database.
+
+    :type sample: `Sample`
+    """
+    def __init__(self, sample):
+        super(SampleNotFound, self).__init__()
+        self.sample = sample
+
 name_pattern = re.compile(r"\d\d[A-Z]-\d{{3,4}}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?"
                           r"|(\d\d-[A-Z]{2}[A-Z0-9]{0,2}|[A-Z]{2}[A-Z0-9]{2})-[-A-Za-z_/0-9#()]+")
 allowed_character_pattern = re.compile("[-A-Za-z_/0-9#()]")
 
-def get_or_create_sample(sample_name):
-    """Looks up a sample name in the database, and creates a new one if it
-    doesn't exist yet.  You can only use this function if you are an
-    administrator.  This function is used in crawlers and legacy importers.
+def get_sample(sample_name):
+    """Looks up a sample name in the database, and returns its ID.  (No full
+    `Sample` instance is returned to spare ressources.  Mostly, only the ID is
+    subsequently needed after all.)  You can only use this function if you are
+    an administrator.  This function is used in crawlers and legacy importers.
     The sample is added to “My Samples”.
-
-    If it creates a new one, a `Sample` and `Substrate` instance are returned.
-    In the `Sample` instance, only the name is set.  In the `Substrate`
-    instance, only the sample ID is set.  You have to fill in the rest and
-    submit the data to the database.
 
     If the sample name doesn't fit into the naming scheme, a legacy sample name
     accoring to ``{short_year}-LGCY-...`` is generated.
-
-    Otherwise, if the sample alrewady exists, the sample ID is returned.  (No
-    full `Sample` instance is returned to spare ressources.  Mostly, only the
-    ID is subsequently needed after all.)
 
     :Parameters:
       - `sample_name`: the name of the sample
@@ -306,12 +312,14 @@ def get_or_create_sample(sample_name):
     :type sample_name: unicode
 
     :Return:
-      If a new sample had to be created, this sample and its substrate are
-      returned (but not yet sent to the database, see above).  Else, the sample
-      ID and ``None`` are returned.  Thus, you can easily distinguish between
-      both cases by testing the second argument for ``None``.
+      the ID of the sample
 
-    :rtype: (`Sample`, `Substrate`) or (int, ``NoneType``)
+    :rtype: int
+
+    :Exceptions:
+      - `SampleNotFound`: Raised if the sample was not found.  It contains a
+        newly created sample and substrate for your convenience.  See the
+        documentation of this exception class for more information.
     """
 
     if not name_pattern.match(sample_name):
@@ -322,14 +330,12 @@ def get_or_create_sample(sample_name):
                 allowed_sample_name_characters.append(character)
         sample_name = "{}-LGCY-{}".format(str(datetime.datetime.now())[2:], "".join(allowed_sample_name_characters)[:30])
     sample_id = connection.open("primary_keys?samples=" + urllib.quote_plus(sample_name))["samples"].get(sample_name)
-    if sample_id is not None and not  isinstance(sample_id, list):
-        return sample_id, None
+    if sample_id is not None and not isinstance(sample_id, list):
+        return sample_id
     else:
         new_sample = Sample()
         new_sample.name = sample_name
-        substrate = Substrate()
-        substrate.sample_ids = [sample_id]
-        return new_sample, substrate
+        raise SampleNotFound(new_sample)
 
 
 class SolarsimulatorPhotoMeasurement(object):

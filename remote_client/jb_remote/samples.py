@@ -152,7 +152,8 @@ class Sample(object):
         if self.id:
             connection.open("samples/by_id/{0}/edit/".format(self.id), data)
         else:
-            return connection.open("add_sample", data)
+            self.id = connection.open("add_sample", data)
+        return self.id
 
     def add_to_my_samples(self):
         connection.open("change_my_samples", {"add": self.id})
