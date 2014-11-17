@@ -1,0 +1,71 @@
+# This file is part of JuliaBase, the samples database.
+#
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
+#
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
+
+- fields:
+    username: n.burkhardt
+    first_name: "Nick"
+    last_name: "Burkhardt"
+    # 12345
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_pds_measurement, jb_institute, pdsmeasurement]
+    - [edit_permissions_for_pds_measurement, jb_institute, pdsmeasurement]
+    - [view_every_pds_measurement, jb_institute, pdsmeasurement]
+  model: auth.user
+  pk: 3
+- fields:
+    username: h.griffin
+    first_name: "Hank"
+    last_name: "Griffin"
+    # 12345
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
+    - [edit_permissions_for_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
+    - [view_every_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
+  model: auth.user
+  pk: 4
+- fields:
+    username: j.silverton
+    first_name: "Juliette"
+    last_name: "Silverton"
+    # 12345
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
+  model: auth.user
+  pk: 5
+- fields:
+    username: e.monroe
+    first_name: "Eddie"
+    last_name: "Monroe"
+    # 12345
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_cluster_tool_deposition, jb_institute, clustertooldeposition]
+    - [edit_permissions_for_cluster_tool_deposition, jb_institute, clustertooldeposition]
+    - [view_every_cluster_tool_deposition, jb_institute, clustertooldeposition]
+    - [edit_every_cluster_tool_deposition, jb_institute, clustertooldeposition]
+  model: auth.user
+  pk: 6
+- fields:
+    username: r.calvert
+    first_name: "Rosalee"
+    last_name: "Calvert"
+    # 12345
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_five_chamber_deposition, jb_institute, fivechamberdeposition]
+    - [edit_permissions_for_five_chamber_deposition, jb_institute, fivechamberdeposition]
+    - [view_every_five_chamber_deposition, jb_institute, fivechamberdeposition]
+    - [edit_every_five_chamber_deposition, jb_institute, fivechamberdeposition]
+  model: auth.user
+  pk: 7
