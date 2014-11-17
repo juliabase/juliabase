@@ -258,8 +258,8 @@ class Substrate(object):
                 initial_data["timestamp inaccuracy"], initial_data["operator"], initial_data["external operator"], \
                 initial_data["material"], initial_data["comments"], initial_data["sample IDs"]
         else:
-            self.id = self.timestamp = self.timestamp_inaccuracy = self.operator = self.external_operator = self.material = \
-                self.comments = None
+            self.id = self.timestamp = self.operator = self.external_operator = self.material = self.comments = None
+            self.timestamp_inaccuracy = 0
             self.sample_ids = []
 
     def submit(self):
@@ -268,8 +268,7 @@ class Substrate(object):
                 "material": self.material,
                 "comments": self.comments,
                 "operator": primary_keys["users"][self.operator],
-                "external_operator": self.external_operator and \
-                    primary_keys["external_operators"][self.external_operator],
+                "external_operator": self.external_operator and primary_keys["external_operators"][self.external_operator],
                 "sample_list": self.sample_ids}
         if self.id:
             data["edit_description-description"] = "automatic change by a non-interactive program"
