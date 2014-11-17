@@ -14,19 +14,51 @@
 
 from __future__ import unicode_literals
 
-import sys, os, datetime
+import sys, os, datetime, glob
 sys.path.append(os.path.abspath(".."))
 from jb_remote_institute import *
 
+
+def read_pds_file(filepath):
+    result = {}
+    for line in open(filepath):
+        if line.startswith("# -"):
+            break
+        key, __, value = line[1:].partition(":")
+        key, value = key.strip().lower(), value.strip()
+        if key == "timestamp":
+            result[key] = datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+        else:
+            result[key] = value
+    return result
+
+        
 login("juliabase", "12345")
 
-sample_id = get_or_create_sample("14-TB-1", "Corning", datetime.datetime.now())
+for filepath in glob.glob("pds_raw_data/*.dat"):
+    pds_header_data = read_pds_file(filepath)
+    try:
+        sample_id = get_sample(pds_header_data["sample"])
+    except SampleNotFound as exception:
+        sample = exception.sample
+        sample.currently_responsible_person = pds_header_data["operator"]
+        sample.topic = "Legacy"
+        sample_id = sample.submit()
 
-pds_measurement = PDSMeasurement()
-pds_measurement.number = 1
-pds_measurement.apparatus = "pds1"
-pds_measurement.raw_datafile = "measurement-1.dat"
-pds_measurement.sample_id = sample_id
-pds_measurement.submit()
+        substrate = Substrate()
+        substrate.timestamp = pds_header_data["timestamp"] - datetime.timedelta(minutes=1)
+        substrate.timestamp_inaccuracy = 3
+        substrate.sample_ids = [sample_id]
+        substrate.material = "corning"
+        substrate.operator = "e.monroe"
+        substrate.submit()
+    pds_measurement = PDSMeasurement()
+    pds_measurement.operator = pds_header_data["operator"]
+    pds_measurement.timestamp = pds_header_data["timestamp"]
+    pds_measurement.number = pds_header_data["number"]
+    pds_measurement.apparatus = "pds" + pds_header_data["apparatus"]
+    pds_measurement.raw_datafile = os.path.basename(filepath)
+    pds_measurement.sample_id = sample_id
+    pds_measurement.submit()
 
 logout()

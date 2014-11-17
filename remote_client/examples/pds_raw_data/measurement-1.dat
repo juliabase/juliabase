@@ -1,11 +1,12 @@
+# Number: 1
 # Timestamp: 2014-11-13 12:21:10
-# Operator: j.doe
+# Operator: e.monroe
 # Comments:
-# Sample: 14-JD-thickness1
+# Sample: 14-EM-1
 # Apparatus: 1
 # ----------------------------------------------------------------------
 # energy/eV     absorption/cm⁻¹
 0.5 8
 1.0 10
 1.5 1800
-1.0 2000
+2.0 2000
