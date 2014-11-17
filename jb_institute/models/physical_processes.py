@@ -241,34 +241,34 @@ irradiance_choices = (("AM1.5", "AM1.5"),
                       ("BG7", "BG7"))
 
 @python_2_unicode_compatible
-class SolarsimulatorPhotoMeasurement(PhysicalProcess):
+class SolarsimulatorMeasurement(PhysicalProcess):
     irradiance = models.CharField(_("irradiance"), max_length=10, choices=irradiance_choices)
     temperature = models.DecimalField(_("temperature"), max_digits=3, decimal_places=1, help_text=_("in ℃"),
                                       default=25.0)
 
     class Meta(PhysicalProcess.Meta):
-        verbose_name = _("solarsimulator photo measurement")
-        verbose_name_plural = _("solarsimulator photo measurements")
+        verbose_name = _("solarsimulator measurement")
+        verbose_name_plural = _("solarsimulator measurements")
         _ = lambda x: x
-        permissions = (("add_solarsimulator_photo_measurement", _("Can add photo measurements")),
+        permissions = (("add_solarsimulator_measurement", _("Can add solarsimulator measurements")),
                        # Translators: Don't abbreviate "perms" in translation
                        # (not even to English)
-                       ("edit_permissions_for_solarsimulator_photo_measurement",
-                        _("Can edit perms for photo measurements")),
-                       ("view_every_solarsimulator_photo_measurement", _("Can view all photo measurements")))
+                       ("edit_permissions_for_solarsimulator_measurement",
+                        _("Can edit perms for solarsimulator measurements")),
+                       ("view_every_solarsimulator_measurement", _("Can view all solarsimulator measurements")))
 
     def __str__(self):
         _ = ugettext
         try:
-            return _("solarsimulator photo measurement of {sample}").format(sample=self.samples.get())
+            return _("solarsimulator measurement of {sample}").format(sample=self.samples.get())
         except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
-            return _("solarsimulator photo measurement")
+            return _("solarsimulator measurement")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         if permissions.has_permission_to_edit_physical_process(user, self):
             context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_solarsimulator_photo_measurement", kwargs={"process_id": self.id})
+                django.core.urlresolvers.reverse("edit_solarsimulator_measurement", kwargs={"process_id": self.id})
         else:
             context["edit_url"] = None
         sample = self.samples.get()
@@ -278,7 +278,7 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
         context["thumbnail_layout"] = django.core.urlresolvers.reverse(
             "jb_institute.views.samples.layout.show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
         if "cells" not in context:
-            context["cells"] = self.photo_cells.all()
+            context["cells"] = self.cells.all()
         if "image_urls" not in context:
             context["image_urls"] = {}
             for cell in context["cells"]:
@@ -291,31 +291,31 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
             else:
                 default_cell = sorted([(cell.isc, cell.position) for cell in context["cells"]], reverse=True)[0][1]
             context["default_cell"] = (default_cell,) + context["image_urls"][default_cell]
-        return super(SolarsimulatorPhotoMeasurement, self).get_context_for_user(user, context)
+        return super(SolarsimulatorMeasurement, self).get_context_for_user(user, context)
 
     @classmethod
     def get_add_link(cls):
         _ = ugettext
-        return django.core.urlresolvers.reverse("add_solarsimulator_photo_measurement")
+        return django.core.urlresolvers.reverse("add_solarsimulator_measurement")
 
     def get_data(self):
-        data_node = super(SolarsimulatorPhotoMeasurement, self).get_data()
+        data_node = super(SolarsimulatorMeasurement, self).get_data()
         data_node.items.extend([DataItem("irradiance", self.irradiance),
                                 DataItem("temperature/degC", self.temperature), ])
-        data_node.children = [photo_cell.get_data() for photo_cell in self.photo_cells.all()]
+        data_node.children = [cell.get_data() for cell in self.cells.all()]
         return data_node
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
-        data_node = super(SolarsimulatorPhotoMeasurement, self).get_data_for_table_export()
+        data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
         data_node.items.extend([DataItem(_("irradiance"), self.irradiance),
                                 DataItem(_("temperature") + "/℃", self.temperature)])
         return data_node
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
-        related_cell = self.photo_cells.get(position=plot_id)
+        related_cell = self.cells.get(position=plot_id)
         x_values, y_values = institute_utils.read_solarsimulator_plot_file(filename, columns=(0, int(related_cell.cell_index)))
         y_values = 1000 * numpy.array(y_values)
         if not related_cell.area:
@@ -332,21 +332,21 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
 
     def get_datafile_name(self, plot_id):
         try:
-            related_cell = self.photo_cells.get(position=plot_id)
-        except SolarsimulatorPhotoCellMeasurement.DoesNotExist:
+            related_cell = self.cells.get(position=plot_id)
+        except SolarsimulatorCellMeasurement.DoesNotExist:
             return None
         return os.path.join(settings.SOLARSIMULATOR_1_ROOT_DIR, related_cell.data_file)
 
     def get_plotfile_basename(self, plot_id):
         try:
-            related_cell = self.photo_cells.get(position=plot_id)
-        except SolarsimulatorPhotoCellMeasurement.DoesNotExist:
+            related_cell = self.cells.get(position=plot_id)
+        except SolarsimulatorCellMeasurement.DoesNotExist:
             return None
         return "{filename}_{position}".format(filename=related_cell.data_file, position=related_cell.position)
 
     @classmethod
     def get_search_tree_node(cls):
-        model_field = super(SolarsimulatorPhotoMeasurement, cls).get_search_tree_node()
+        model_field = super(SolarsimulatorMeasurement, cls).get_search_tree_node()
         model_field.search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name"),
                          search.DateTimeSearchField(cls, "timestamp"),
@@ -356,22 +356,22 @@ class SolarsimulatorPhotoMeasurement(PhysicalProcess):
         return model_field
 
 
-class SolarsimulatorPhotoCellMeasurement(SolarsimulatorCell):
-    measurement = models.ForeignKey(SolarsimulatorPhotoMeasurement, related_name="photo_cells",
-                                    verbose_name=_("solarsimulator photo measurement"))
+class SolarsimulatorCellMeasurement(SolarsimulatorCell):
+    measurement = models.ForeignKey(SolarsimulatorMeasurement, related_name="cells",
+                                    verbose_name=_("solarsimulator measurement"))
     area = models.FloatField(_("area"), help_text=_("in cm²"), null=True, blank=True)
     eta = models.FloatField(_("efficiency η"), help_text=_("in %"), null=True, blank=True)
     p_max = models.FloatField(_("maximum power point"), help_text=_("in mW"), null=True, blank=True)
     ff = models.FloatField(_("fill factor"), help_text=_("in %"), null=True, blank=True)
     isc = models.FloatField(_("short-circuit current density"), help_text=_("in mA/cm²"), null=True, blank=True)
     class Meta:
-        verbose_name = _("solarsimulator photo cell measurement")
-        verbose_name_plural = _("solarsimulator photo cell measurements")
+        verbose_name = _("solarsimulator cell measurement")
+        verbose_name_plural = _("solarsimulator cell measurements")
         unique_together = (("measurement", "position"), ("cell_index", "data_file"), ("position", "data_file"))
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
-        data_node = super(SolarsimulatorPhotoCellMeasurement, self).get_data()
+        data_node = super(SolarsimulatorCellMeasurement, self).get_data()
         data_node.items.extend([DataItem("area/cm^2", self.area),
                            DataItem("efficiency/%", self.eta),
                            DataItem("fill factor/%", self.ff),

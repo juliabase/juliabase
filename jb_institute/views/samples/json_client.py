@@ -200,9 +200,9 @@ def _get_maike_by_filepath(filepath, user):
         solarsimulator measurement
       - `Http404`: if the filepath was not found in the database
     """
-    photo_cells = institute_models.SolarsimulatorPhotoCellMeasurement.objects.filter(data_file=filepath)
-    if photo_cells.exists():
-        measurement = photo_cells[0].measurement
+    cells = institute_models.SolarsimulatorCellMeasurement.objects.filter(data_file=filepath)
+    if cells.exists():
+        measurement = cells[0].measurement
     else:
         raise Http404("No matching solarsimulator measurement found.")
     permissions.assert_can_view_physical_process(user, measurement)
@@ -277,9 +277,9 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
         sample = get_object_or_404(models.Sample, id=sample_id)
         start_date = datetime.datetime.strptime(date, "%Y-%m-%d")
         end_date = start_date + datetime.timedelta(days=1)
-        matching_measurements = institute_models.SolarsimulatorPhotoMeasurement.objects.filter(
+        matching_measurements = institute_models.SolarsimulatorMeasurement.objects.filter(
             samples__id=sample_id, irradiance=irradiance, timestamp__gte=start_date, timestamp__lt=end_date). \
-            exclude(photo_cells__position=cell_position).order_by("timestamp")
+            exclude(cells__position=cell_position).order_by("timestamp")
         if matching_measurements.exists():
             solarsimulator_measurement = matching_measurements[0]
             permissions.assert_can_fully_view_sample(request.user, sample)

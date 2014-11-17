@@ -337,11 +337,11 @@ def get_sample(sample_name):
         raise SampleNotFound(new_sample)
 
 
-class SolarsimulatorPhotoMeasurement(object):
+class SolarsimulatorMeasurement(object):
 
     def __init__(self, process_id=None):
         if process_id:
-            data = connection.open("solarsimulator_measurements/photo/{0}".format(process_id))
+            data = connection.open("solarsimulator_measurements/{0}".format(process_id))
             self.process_id = process_id
             self.irradiance = data["irradiance"]
             self.temperature = data["temperature/degC"]
@@ -353,7 +353,7 @@ class SolarsimulatorPhotoMeasurement(object):
             self.cells = {}
             for key, value in data.items():
                 if key.startswith("cell position "):
-                    cell = PhotoCellMeasurement(value)
+                    cell = SolarsimulatorCellMeasurement(value)
                     self.cells[cell.position] = cell
             self.existing = True
         else:
@@ -382,12 +382,12 @@ class SolarsimulatorPhotoMeasurement(object):
         with TemporaryMySamples(self.sample_id):
             if self.existing:
                 query_string = "?only_single_cell_added=true" if only_single_cell_added else ""
-                connection.open("solarsimulator_measurements/photo/{0}/edit/".format(self.process_id) + query_string, data)
+                connection.open("solarsimulator_measurements/{0}/edit/".format(self.process_id) + query_string, data)
             else:
-                return connection.open("solarsimulator_measurements/photo/add/", data)
+                return connection.open("solarsimulator_measurements/add/", data)
 
 
-class PhotoCellMeasurement(object):
+class SolarsimulatorCellMeasurement(object):
 
     def __init__(self, data={}):
         if data:

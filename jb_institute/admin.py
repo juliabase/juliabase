@@ -18,8 +18,8 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib import admin
 from jb_institute.models.depositions import ClusterToolDeposition, ClusterToolHotWireLayer, \
     ClusterToolPECVDLayer, FiveChamberDeposition, FiveChamberLayer
-from jb_institute.models.physical_processes import PDSMeasurement, Substrate, SolarsimulatorPhotoMeasurement, \
-    SolarsimulatorPhotoCellMeasurement, Structuring
+from jb_institute.models.physical_processes import PDSMeasurement, Substrate, SolarsimulatorMeasurement, \
+    SolarsimulatorCellMeasurement, Structuring
 from jb_institute.models import SampleDetails, InformalLayer
 
 admin.site.register(ClusterToolDeposition)
@@ -30,8 +30,8 @@ admin.site.register(FiveChamberLayer)
 
 admin.site.register(Substrate)
 admin.site.register(PDSMeasurement)
-admin.site.register(SolarsimulatorPhotoMeasurement)
-admin.site.register(SolarsimulatorPhotoCellMeasurement)
+admin.site.register(SolarsimulatorMeasurement)
+admin.site.register(SolarsimulatorCellMeasurement)
 admin.site.register(SampleDetails)
 
 admin.site.register(InformalLayer)

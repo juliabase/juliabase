@@ -183,7 +183,7 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='SolarsimulatorPhotoCellMeasurement',
+            name='SolarsimulatorCellMeasurement',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('position', models.CharField(max_length=5, verbose_name='cell position')),
@@ -196,13 +196,13 @@ class Migration(migrations.Migration):
                 ('isc', models.FloatField(help_text='in mA/cm\xb2', null=True, verbose_name='short-circuit current density', blank=True)),
             ],
             options={
-                'verbose_name': 'solarsimulator photo cell measurement',
-                'verbose_name_plural': 'solarsimulator photo cell measurements',
+                'verbose_name': 'solarsimulator cell measurement',
+                'verbose_name_plural': 'solarsimulator cell measurements',
             },
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='SolarsimulatorPhotoMeasurement',
+            name='SolarsimulatorMeasurement',
             fields=[
                 ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
                 ('irradiance', models.CharField(max_length=10, verbose_name='irradiance', choices=[('AM1.5', 'AM1.5'), ('OG590', 'OG590'), ('BG7', 'BG7')])),
@@ -211,9 +211,9 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['timestamp'],
                 'abstract': False,
-                'verbose_name': 'solarsimulator photo measurement',
-                'verbose_name_plural': 'solarsimulator photo measurements',
-                'permissions': (('add_solarsimulator_photo_measurement', 'Can add photo measurements'), ('edit_permissions_for_solarsimulator_photo_measurement', 'Can edit perms for photo measurements'), ('view_every_solarsimulator_photo_measurement', 'Can view all photo measurements')),
+                'verbose_name': 'solarsimulator measurement',
+                'verbose_name_plural': 'solarsimulator measurements',
+                'permissions': (('add_solarsimulator_measurement', 'Can add solarsimulator measurements'), ('edit_permissions_for_solarsimulator_measurement', 'Can edit perms for solarsimulator measurements'), ('view_every_solarsimulator_measurement', 'Can view all solarsimulator measurements')),
             },
             bases=('samples.process',),
         ),
@@ -249,13 +249,13 @@ class Migration(migrations.Migration):
             bases=('samples.process',),
         ),
         migrations.AddField(
-            model_name='solarsimulatorphotocellmeasurement',
+            model_name='solarsimulatorcellmeasurement',
             name='measurement',
-            field=models.ForeignKey(related_name='photo_cells', verbose_name='solarsimulator photo measurement', to='jb_institute.SolarsimulatorPhotoMeasurement'),
+            field=models.ForeignKey(related_name='cells', verbose_name='solarsimulator measurement', to='jb_institute.SolarsimulatorMeasurement'),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
-            name='solarsimulatorphotocellmeasurement',
+            name='solarsimulatorcellmeasurement',
             unique_together=set([('position', 'data_file'), ('cell_index', 'data_file'), ('measurement', 'position')]),
         ),
         migrations.AddField(

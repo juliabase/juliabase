@@ -313,7 +313,7 @@ class CellsLayout(Layout):
             return colors[i]
         irradiance = solarsimulator_measurement.irradiance
         colors_and_labels = {}
-        cell_measurements = solarsimulator_measurement.photo_cells.all()
+        cell_measurements = solarsimulator_measurement.cells.all()
         for cell in cell_measurements:
             if irradiance == "AM1.5":
                 color = map_value_to_RGB(cell.eta, [0.33, 3.1, 5.3, 6.3, 7.0, 7.7, 8.4, 9.2])
@@ -331,7 +331,7 @@ class CellsLayout(Layout):
         return colors_and_labels
 
     def draw_layout(self, canvas):
-        if isinstance(self.process, (jb_institute.models.SolarsimulatorPhotoMeasurement)):
+        if isinstance(self.process, (jb_institute.models.SolarsimulatorMeasurement)):
             colors_and_labels = self._get_colors_and_labels(self.process)
             if self.process.irradiance == "AM1.5":
                 global_label = "η in %"

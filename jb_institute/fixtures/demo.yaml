@@ -28,9 +28,9 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
-    - [edit_permissions_for_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
-    - [view_every_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
+    - [add_solarsimulator_measurement, jb_institute, solarsimulatormeasurement]
+    - [edit_permissions_for_solarsimulator_measurement, jb_institute, solarsimulatormeasurement]
+    - [view_every_solarsimulator_measurement, jb_institute, solarsimulatormeasurement]
   model: auth.user
   pk: 4
 - fields:
@@ -40,7 +40,7 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_solarsimulator_photo_measurement, jb_institute, solarsimulatorphotomeasurement]
+    - [add_solarsimulator_measurement, jb_institute, solarsimulatormeasurement]
   model: auth.user
   pk: 5
 - fields:
