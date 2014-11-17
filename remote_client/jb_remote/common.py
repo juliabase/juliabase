@@ -224,6 +224,8 @@ class JuliaBaseConnection(object):
           - `urllib2.URLError`: raise if a lower-level error occured, e.g. the
             HTTP connection couldn't be established.
         """
+        if not self.root_url:
+            raise Exception("No root URL defined.  Maybe not logged-in?")
         if data is not None:
             cleaned_data = {}
             for key, value in data.iteritems():
@@ -253,6 +255,7 @@ class JuliaBaseConnection(object):
 
     def logout(self):
         self.open("logout_remote_client")
+        self.username = self.root_url = None
 
 connection = JuliaBaseConnection()
 
