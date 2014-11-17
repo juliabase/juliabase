@@ -141,7 +141,7 @@ CACHES = {
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
+DEPARTMENTS_TO_APP_LABELS = {"INM": "jb_institute"}
 
 ADD_SAMPLES_VIEW = "jb_institute.views.samples.sample.add"
 

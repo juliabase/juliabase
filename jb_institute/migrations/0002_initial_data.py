@@ -27,10 +27,10 @@ def populate_with_initial_data(apps, schema_editor):
                                 is_superuser=True, is_staff=True)
 
     Department = apps.get_model("jb_common", "Department")
-    generic_institute = Department.objects.create(name="Generic Institute")
+    inm_institute = Department.objects.create(name="INM")
 
     Topic = apps.get_model("jb_common", "Topic")
-    Topic.objects.create(name="Legacy", manager=nobody, department=generic_institute)
+    Topic.objects.create(name="Legacy", manager=nobody, department=inm_institute)
 
     Initials = apps.get_model("samples", "Initials")
     Initials.objects.create(initials="LGCY", user=nobody)
