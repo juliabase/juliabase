@@ -119,7 +119,8 @@ class ClusterToolHotWireLayer(object):
 
     def get_data(self, layer_index):
         prefix = six.text_type(layer_index) + "-"
-        data = {prefix + "layer_type": "hot-wire",
+        data = {prefix + "number": layer_index + 1,
+                prefix + "layer_type": "hot-wire",
                 prefix + "time": self.time,
                 prefix + "comments": self.comments,
                 prefix + "wire_material": self.wire_material,
@@ -149,7 +150,8 @@ class ClusterToolPECVDLayer(object):
 
     def get_data(self, layer_index):
         prefix = six.text_type(layer_index) + "-"
-        data = {prefix + "layer_type": "PECVD",
+        data = {prefix + "number": layer_index + 1,
+                prefix + "layer_type": "PECVD",
                 prefix + "chamber": self.chamber,
                 prefix + "time": self.time,
                 prefix + "comments": self.comments,
