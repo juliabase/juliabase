@@ -155,11 +155,17 @@ class Sample(object):
             self.id = connection.open("add_sample", data)
         return self.id
 
-    def add_to_my_samples(self):
-        connection.open("change_my_samples", {"add": self.id})
+    def add_to_my_samples(self, user=None):
+        data = {"add": self.id}
+        if user:
+            data["user"] = primary_keys["users"][user]
+        connection.open("change_my_samples", data)
 
-    def remove_from_my_samples(self):
-        connection.open("change_my_samples", {"remove": self.id})
+    def remove_from_my_samples(self, user=None):
+        data = {"remove": self.id}
+        if user:
+            data["user"] = primary_keys["users"][user]
+        connection.open("change_my_samples", data)
 
 
 class Result(object):
