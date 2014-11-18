@@ -40,8 +40,8 @@ from jb_common.utils import respond_in_json, JSONRequestException
 @login_required
 @require_http_methods(["POST"])
 def add_sample(request):
-    """Adds a new sample to the database.  It is added without processes.
-    This view can only be used by admin accounts.
+    """Adds a new sample to the database.  It is added without processes.  This
+    view can only be used by admin accounts.
 
     :Parameters:
       - `request`: the current HTTP Request object; it must contain the sample
@@ -55,21 +55,20 @@ def add_sample(request):
     :rtype: ``HttpResponse``
     """
     if not request.user.is_staff:
-        return respond_in_json(False)
+        raise JSONRequestException(6, "Only admins can access this ressource.")
     try:
         name = request.POST["name"]
-        current_location = request.POST.get("current_location", "")
-        currently_responsible_person = request.POST.get("currently_responsible_person")
+        current_location = request.POST["current_location"]
+        currently_responsible_person = request.POST["currently_responsible_person"]
         purpose = request.POST.get("purpose", "")
         tags = request.POST.get("tags", "")
         topic = request.POST.get("topic")
-    except KeyError:
-        return respond_in_json(False)
+    except KeyError as error:
+        raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
     if len(name) > 30:
-        return respond_in_json(False)
-    if currently_responsible_person:
-        currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
-                                                         pk=utils.convert_id_to_int(currently_responsible_person))
+        raise JSONRequestException(5, "The sample name is too long.")
+    currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
+                                                     pk=utils.convert_id_to_int(currently_responsible_person))
     if topic:
         topic = get_object_or_404(Topic, pk=utils.convert_id_to_int(topic))
     try:
@@ -82,8 +81,10 @@ def add_sample(request):
             # to should be merged with the sample but this can't be decided
             # automatically.
             alias.delete()
-    except IntegrityError:
-        return respond_in_json(False)
+    except IntegrityError as error:
+        # If this function is refactored into a non-admin-only function, no
+        # database error message must be returned to non-privileged users.
+        raise JSONRequestException(5, "The sample with this data could not be added: {}".format(error))
     sample.watchers.add(request.user)
     return respond_in_json(sample.pk)
 

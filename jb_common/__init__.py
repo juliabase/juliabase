@@ -24,6 +24,7 @@ The error codes for a JSON client are the following:
     3       GET/POST parameter missing
     4       user could not be authenticated
     5       GET/POST parameter invalid
+    6       Access denied
     ======= ===============================================
 """
 
