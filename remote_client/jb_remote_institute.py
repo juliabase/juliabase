@@ -294,7 +294,7 @@ class SampleNotFound(Exception):
         super(SampleNotFound, self).__init__()
         self.sample = sample
 
-name_pattern = re.compile(r"\d\d[A-Z]-\d{{3,4}}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?"
+name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?"
                           r"|(\d\d-[A-Z]{2}[A-Z0-9]{0,2}|[A-Z]{2}[A-Z0-9]{2})-[-A-Za-z_/0-9#()]+")
 allowed_character_pattern = re.compile("[-A-Za-z_/0-9#()]")
 
