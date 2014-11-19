@@ -168,9 +168,9 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
     """
     referentially_valid = True
     if not solarsimulator_cell_forms:
-        samples_form.add_error(None, _("No measurenents given."))
+        solarsimulator_measurement_form.add_error(None, _("No measurenents given."))
         referentially_valid = False
-    if solarsimulator_measurement_form and solarsimulator_measurement_form.is_valid():
+    if solarsimulator_measurement_form.is_valid():
         if samples_form.is_valid() and referentially_valid:
             sample = samples_form.cleaned_data["sample"]
             if form_utils.dead_samples([sample], solarsimulator_measurement_form.cleaned_data.get("timestamp")):
