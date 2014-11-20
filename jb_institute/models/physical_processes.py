@@ -385,7 +385,8 @@ class SolarsimulatorCellMeasurement(SolarsimulatorCell):
 layout_choices = (("juelich standard", "Jülich standard"),
                   ("custom", _("custom")),)
 
-class Structuring(Process):
+@python_2_unicode_compatible
+class Structuring(PhysicalProcess):
     """Pseudo-Process which contains structuring/mask/layout information.  It
     may contain the cell layout for solarsimulator measurements, or the
     compound hall bar/contacts layout of Hall samples, or conductivity gap
@@ -415,3 +416,10 @@ class Structuring(Process):
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("structuring")
         verbose_name_plural = _("structurings")
+
+    def __str__(self):
+        _ = ugettext
+        try:
+            return _("structuring of {sample}").format(sample=self.samples.get())
+        except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
+            return _("structuring")
