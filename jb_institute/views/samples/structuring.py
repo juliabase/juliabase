@@ -184,9 +184,9 @@ def edit(request, process_id):
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not structuring else None
         edit_description_form = form_utils.EditDescriptionForm() if structuring else None
     title = _("Edit structuring process") if process_id else _("Add structuring process")
-    return render_to_response("samples/edit_structuring_process.html", {"title": title,
-                                                                   "process": structuring_form,
-                                                                   "sample": sample_form,
-                                                                   "remove_from_my_samples": remove_from_my_samples_form,
-                                                                   "edit_description": edit_description_form},
+    return render_to_response("samples/edit_structuring.html", {"title": title,
+                                                                "process": structuring_form,
+                                                                "sample": sample_form,
+                                                                "remove_from_my_samples": remove_from_my_samples_form,
+                                                                "edit_description": edit_description_form},
                               context_instance=RequestContext(request))
