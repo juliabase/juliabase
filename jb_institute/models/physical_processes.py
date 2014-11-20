@@ -190,52 +190,6 @@ class PDSMeasurement(PhysicalProcess):
         return data_node
 
 
-@python_2_unicode_compatible
-class SolarsimulatorCell(models.Model):
-    position = models.CharField(_("cell position"), max_length=5)
-    cell_index = models.PositiveIntegerField(_("cell index"))
-    data_file = models.CharField(_("data file"), max_length=200, db_index=True,
-                                 help_text=_("only the relative path below \"maike_user/ascii files/\""))
-
-    class Meta:
-        abstract = True
-
-    def __str__(self):
-        _ = ugettext
-        return _("cell {position} of {solarsimulator_measurement}").format(
-            position=self.position, solarsimulator_measurement=self.measurement)
-
-    def get_data(self):
-        # See `Process.get_data` for the documentation.
-        data_node = DataNode("cell position {0}".format(self.position))
-        data_node.items = [DataItem("cell index", self.cell_index),
-                           DataItem("cell position", self.position),
-                           DataItem("data file name", self.data_file), ]
-        return data_node
-
-    def get_data_for_table_export(self):
-        # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
-        data_node = DataNode(self, _("cell position {position}").format(position=self.position))
-        data_node.items = [DataItem(_("cell index"), self.cell_index),
-                           DataItem(_("cell position"), self.position),
-                           DataItem(_("data file name"), self.data_file), ]
-        return data_node
-
-    @classmethod
-    def get_search_tree_node(cls):
-        """Class method for generating the search tree node for this model
-        instance.
-
-        :Return:
-          the tree node for this model instance
-
-        :rtype: ``jb_common.search.SearchTreeNode``
-        """
-        search_fields = search.convert_fields_to_search_fields(cls)
-        return search.SearchTreeNode(cls, {}, search_fields)
-
-
 irradiance_choices = (("AM1.5", "AM1.5"),
                       ("OG590", "OG590"),
                       ("BG7", "BG7"))
@@ -356,30 +310,57 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         return model_field
 
 
-class SolarsimulatorCellMeasurement(SolarsimulatorCell):
+@python_2_unicode_compatible
+class SolarsimulatorCellMeasurement(models.Model):
     measurement = models.ForeignKey(SolarsimulatorMeasurement, related_name="cells",
                                     verbose_name=_("solarsimulator measurement"))
+    position = models.CharField(_("cell position"), max_length=5)
+    cell_index = models.PositiveIntegerField(_("cell index"))
+    data_file = models.CharField(_("data file"), max_length=200, db_index=True,
+                                 help_text=_("only the relative path below \"maike_user/ascii files/\""))
     area = models.FloatField(_("area"), help_text=_("in cm²"), null=True, blank=True)
     eta = models.FloatField(_("efficiency η"), help_text=_("in %"), null=True, blank=True)
     p_max = models.FloatField(_("maximum power point"), help_text=_("in mW"), null=True, blank=True)
     ff = models.FloatField(_("fill factor"), help_text=_("in %"), null=True, blank=True)
     isc = models.FloatField(_("short-circuit current density"), help_text=_("in mA/cm²"), null=True, blank=True)
+
     class Meta:
         verbose_name = _("solarsimulator cell measurement")
         verbose_name_plural = _("solarsimulator cell measurements")
         unique_together = (("measurement", "position"), ("cell_index", "data_file"), ("position", "data_file"))
 
+    def __str__(self):
+        _ = ugettext
+        return _("cell {position} of {solarsimulator_measurement}").format(
+            position=self.position, solarsimulator_measurement=self.measurement)
+
     def get_data(self):
         # See `Process.get_data` for the documentation.
-        data_node = super(SolarsimulatorCellMeasurement, self).get_data()
-        data_node.items.extend([DataItem("area/cm^2", self.area),
+        data_node = DataNode("cell position {0}".format(self.position))
+        data_node.items = [DataItem("cell index", self.cell_index),
+                           DataItem("cell position", self.position),
+                           DataItem("data file name", self.data_file),
+                           DataItem("area/cm^2", self.area),
                            DataItem("efficiency/%", self.eta),
                            DataItem("fill factor/%", self.ff),
-                           DataItem("short-circuit current density/(mA/cm^2)", self.isc)])
+                           DataItem("short-circuit current density/(mA/cm^2)", self.isc)]
         return data_node
 
     def get_data_for_table_export(self):
-        return NotImplementedError
+        raise NotImplementedError
+
+    @classmethod
+    def get_search_tree_node(cls):
+        """Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``jb_common.search.SearchTreeNode``
+        """
+        search_fields = search.convert_fields_to_search_fields(cls)
+        return search.SearchTreeNode(cls, {}, search_fields)
 
 
 layout_choices = (("juelich standard", "Jülich standard"),
