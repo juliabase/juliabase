@@ -356,12 +356,13 @@ class SolarsimulatorMeasurement(object):
             self.cells = {}
             for key, value in data.items():
                 if key.startswith("cell position "):
-                    cell = SolarsimulatorCellMeasurement(value)
-                    self.cells[cell.position] = cell
+                    data = value
+                    cell = SolarsimulatorCellMeasurement(self, data["cell position"], data)
             self.existing = True
         else:
             self.process_id = self.irradiance = self.temperature = self.sample_id = self.operator = self.timestamp = \
-                self.timestamp_inaccuracy = self.comments = None
+                self.comments = None
+            self.timestamp_inaccuracy = 0
             self.cells = {}
             self.existing = False
         self.edit_important = True
@@ -392,9 +393,10 @@ class SolarsimulatorMeasurement(object):
 
 class SolarsimulatorCellMeasurement(object):
 
-    def __init__(self, data={}):
+    def __init__(self, measurement, position, data={}):
+        self.position = position
+        measurement.cells[position] = self
         if data:
-            self.position = data["cell position"]
             self.cell_index = data["cell index"]
             self.area = data["area/cm^2"]
             self.eta = data["efficiency/%"]
@@ -403,8 +405,7 @@ class SolarsimulatorCellMeasurement(object):
             self.isc = data["short-circuit current density/(mA/cm^2)"]
             self.data_file = data["data file name"]
         else:
-            self.position = self.cell_index = self.area = self.eta = self.p_max = self.ff = \
-                self.isc = self.data_file = None
+            self.cell_index = self.area = self.eta = self.p_max = self.ff = self.isc = self.data_file = None
 
     def get_data(self, index):
         prefix = six.text_type(index) + "-"
@@ -417,17 +418,15 @@ class SolarsimulatorCellMeasurement(object):
                 prefix + "isc": self.isc,
                 prefix + "data_file": self.data_file}
 
-    def __eq__(self, other):
-        return self.cell_index == other.cell_index and self.data_file == other.data_file
-
 
 class Structuring(object):
+
     def __init__(self):
         self.sample_id = None
         self.process_id = None
         self.operator = None
         self.timestamp = None
-        self.timestamp_inaccuracy = None
+        self.timestamp_inaccuracy = 0
         self.comments = None
         self.layout = None
         self.edit_description = None
@@ -440,7 +439,6 @@ class Structuring(object):
                 "timestamp": format_timestamp(self.timestamp),
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "operator": primary_keys["users"][self.operator],
-                "process_id": self.process_id,
                 "layout": self.layout,
                 "comments": self.comments,
                 "remove_from_my_samples": True,
