@@ -13,35 +13,53 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import absolute_import, unicode_literals, division
+from django.utils.six.moves import cStringIO as StringIO
 
 import datetime, re
+import numpy
 from samples.views import shared_utils
 from samples import models
 
 
-def read_solarsimulator_plot_file(filename, columns=(0, 1)):
-    """Read a datafile from a solarsimulator measurement and return the content of selected
-    columns.
+def read_solarsimulator_plot_file(filename, position):
+    """Read a datafile from a solarsimulator measurement and return the content of
+    the voltage column and the selected current column.
 
     :Parameters:
       - `filename`: full path to the solarsimulator measurement data file
-      - `columns`: the columns that should be read.  Defaults to the first two,
-        i.e., ``(0, 1)``.  Note that the column numbering starts with zero.
+      - `position`: the position of the cell the currents of which should be read.
 
     :type filename: str
-    :type columns: list of int
+    :type position: str
 
     :Return:
-      List of all columns.  Every column is represented as a list of floating
-      point values.
+      all voltages in Volt, then all currents in Ampere
 
-    :rtype: list of list of float
+    :rtype: list of float, list of float
 
     :Exceptions:
       - `PlotError`: if something wents wrong with interpreting the file (I/O,
         unparseble data)
     """
-    return shared_utils._read_plot_file_beginning_after_start_value(filename, columns, start_value=";U/V", separator=",")
+    try:
+        datafile_content = StringIO(open(filename).read())
+    except IOError:
+        raise shared_utils.PlotError("Data file could not be read.")
+    for line in datafile_content:
+        if line.startswith("# positions:"):
+            positions = line.partition(":")[2].split()
+            break
+    else:
+        positions = []
+    try:
+        column = positions.index(position)
+    except ValueError:
+        raise shared_utils.PlotError("Cell position not found in the datafile.")
+    datafile_content.seek(0)
+    try:
+        return numpy.loadtxt(datafile_content, usecols=(0, column), unpack=True)
+    except ValueError:
+        raise shared_utils.PlotError("Data file format was invalid.")
 
 
 deposition_index_pattern = re.compile(r"\d{3,4}")
