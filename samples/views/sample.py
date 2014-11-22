@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
-from django.utils.six.moves import cStringIO
+from django.utils.six.moves import cStringIO as StringIO
 
 import hashlib, os.path, time, urllib, json
 import PIL
@@ -997,7 +997,7 @@ def data_matrix_code(request):
     url = staticfiles_storage.url("data_matrix/" + filename)
     if not os.path.exists(filepath):
         mkdirs(filepath)
-        image = PIL.Image.open(cStringIO.StringIO(urllib.urlopen(
+        image = PIL.Image.open(StringIO(urllib.urlopen(
                     "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"
                     "MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
         image = image.crop((38, 3, 118, 83))
