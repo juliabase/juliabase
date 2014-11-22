@@ -90,11 +90,10 @@ function showCellData{{ process.id }}(process_id, position) {
          id="cell_table_{{ process.id }}_{{ cell.position }}">
     <tbody>
     <tr>{% value_field cell.position %}</tr>
-      <tr>{% value_field cell.area "cm²" 3 %}</tr>
-      <tr>{% value_field cell.eta "%" 3 %}</tr>
-      <tr>{% value_field cell.ff "%" 3 %}</tr>
-      <tr>{% value_field cell.isc "mA/cm²" 3 %}</tr>
-    <tr>{% value_field cell.cell_index %}</tr>
+    <tr>{% value_field cell.area "cm²" 3 %}</tr>
+    <tr>{% value_field cell.eta "%" 3 %}</tr>
+    <tr>{% value_field cell.ff "%" 3 %}</tr>
+    <tr>{% value_field cell.isc "mA/cm²" 3 %}</tr>
     <tr>
       <td class="label" style="font-weight: normal">
           {% verbose_name SolarsimulatorCellMeasurement.data_file %}:

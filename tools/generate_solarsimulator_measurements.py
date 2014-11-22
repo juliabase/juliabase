@@ -37,10 +37,10 @@ Temperature: {}
 positions: {}
 ----------------------------------------------------------------------
 U/V{}""".format(measurement_index, datetime.datetime(2014, 11, 8, 10, 0, 0).strftime("%Y-%m-%d %H:%M:%S"), "h.griffin", "",
-                sample_name, "juelich standard", "AM1.5", "23.5", " ".join(str(cell_index) for cell_index in range(1, 37)),
+                sample_name, "juelich standard", "AM1.5", "23.5", " ".join(str(index) for index in range(1, 37)),
                 36 * "  I/A")
     data = [voltages]
-    for cell_index in range(1, 37):
+    for index in range(1, 37):
         data.append(create_data())
     numpy.savetxt(os.path.join(rootdir, "measurement-{}.dat".format(measurement_index)), numpy.transpose(data),
                   "%04.3f", header=header)

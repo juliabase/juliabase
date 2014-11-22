@@ -315,7 +315,6 @@ class SolarsimulatorCellMeasurement(models.Model):
     measurement = models.ForeignKey(SolarsimulatorMeasurement, related_name="cells",
                                     verbose_name=_("solarsimulator measurement"))
     position = models.CharField(_("cell position"), max_length=5)
-    cell_index = models.PositiveIntegerField(_("cell index"))
     data_file = models.CharField(_("data file"), max_length=200, db_index=True,
                                  help_text=_("only the relative path below \"maike_user/ascii files/\""))
     area = models.FloatField(_("area"), help_text=_("in cm²"), null=True, blank=True)
@@ -327,7 +326,7 @@ class SolarsimulatorCellMeasurement(models.Model):
     class Meta:
         verbose_name = _("solarsimulator cell measurement")
         verbose_name_plural = _("solarsimulator cell measurements")
-        unique_together = (("measurement", "position"), ("cell_index", "data_file"), ("position", "data_file"))
+        unique_together = (("measurement", "position"), ("position", "data_file"))
 
     def __str__(self):
         _ = ugettext
@@ -337,8 +336,7 @@ class SolarsimulatorCellMeasurement(models.Model):
     def get_data(self):
         # See `Process.get_data` for the documentation.
         data_node = DataNode("cell position {0}".format(self.position))
-        data_node.items = [DataItem("cell index", self.cell_index),
-                           DataItem("cell position", self.position),
+        data_node.items = [DataItem("cell position", self.position),
                            DataItem("data file name", self.data_file),
                            DataItem("area/cm^2", self.area),
                            DataItem("efficiency/%", self.eta),

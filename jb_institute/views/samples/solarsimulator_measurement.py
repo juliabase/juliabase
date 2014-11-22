@@ -180,21 +180,12 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
         for measurement_form in solarsimulator_cell_forms:
             if measurement_form.is_valid():
                 data_file = measurement_form.cleaned_data["data_file"]
-                cell_index = measurement_form.cleaned_data["cell_index"]
                 position = measurement_form.cleaned_data["position"]
                 if position in positions:
                     measurement_form.add_error(None, _("This cell position is already given."))
                     referentially_valid = False
                 else:
                     positions.add(position)
-                cell_index = measurement_form.cleaned_data["cell_index"]
-                query_set = measurement_form._meta.model.objects.filter(data_file=data_file, cell_index=cell_index)
-                if process_id:
-                    query_set = query_set.exclude(measurement__id=process_id)
-                if query_set.exists():
-                    measurement_form.add_error(None,
-                                 _("A solarsimulator measurement with this cell index and data file already exists."))
-                    referentially_valid = False
     else:
         referentially_valid = False
     return referentially_valid
