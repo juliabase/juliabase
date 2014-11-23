@@ -16,7 +16,6 @@ import random, os, datetime
 import numpy
 
 
-measurement_index = 1
 rootdir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../remote_client/examples/solarsimulator_raw_data"))
 voltages = numpy.arange(-0.1, 1.001, 0.01)
 
@@ -65,31 +64,52 @@ def create_data(x_scale, y_scale, y_offset):
     return y_scale * (numpy.exp((voltages - 0.8) * x_scale) - 1 - y_offset + 0.3 * (numpy.random.sample((len(voltages),)) - 0.5))
 
 
-measured_positions = []
-for position in range(1, 37):
-    if random.random() > 0.6:
-        measured_positions.append(str(position))
+measurement_index = 1
 
-for sample_name in ("14C-{:03}".format(number) for number in range(1, 10)):
-    header = """Number: {}
-Timestamp: {}
-Operator: {}
-Comments: {}
-Sample: {}
-Layout: {}
-Irradiance: {}
-Temperature: {}
-Positions: {}
-Areas: {}
+
+for sample_name in ("14-JS-{}".format(number) for number in range(1, 7)):
+    measured_positions = []
+    for position in range(1, 37):
+        if random.random() > 0.6:
+            measured_positions.append(str(position))
+
+    header = """Number: {number}
+Timestamp: {timestamp}
+Operator: {operator}
+Comments: {comments}
+Sample: {sample}
+Layout: {layout}
+Irradiance: {irradiance}
+Temperature: {temperature}
+Positions: {positions}
+Areas: {areas}
 ----------------------------------------------------------------------
-U/V{}""".format(measurement_index, datetime.datetime(2014, 11, 8, 10, 0, 0).strftime("%Y-%m-%d %H:%M:%S"), "h.griffin", "",
-                sample_name, "juelich standard", "AM1.5", "23.5", " ".join(measured_positions),
-                " ".join(str(areas[position]) for position in measured_positions), len(measured_positions) * "  I/A")
+U/V{column_headers}"""
+    header_data = {"number": measurement_index,
+                   "timestamp": datetime.datetime(2014, 11, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S"),
+                   "operator": "h.griffin",
+                   "comments": "",
+                   "sample": sample_name,
+                   "layout": "juelich standard",
+                   "irradiance": "AM1.5",
+                   "temperature": "23.5",
+                   "positions": " ".join(measured_positions),
+                   "areas": " ".join(str(areas[position]) for position in measured_positions),
+                   "column_headers": len(measured_positions) * "  I/A"}
     data = [voltages]
     for index in measured_positions:
         width, height = shapes[str(index)][1]
         area = width * height / 100
-        data.append(create_data(random.gauss(10, 3), random.gauss(0.001 * area, 0.0003 * area), random.gauss(0, 0.01)))
+        data.append(create_data(random.gauss(10, 3), random.gauss(0.01 * area, 0.003 * area), random.gauss(0, 0.01)))
     numpy.savetxt(os.path.join(rootdir, "measurement-{}.dat".format(measurement_index)), numpy.transpose(data), "%06.5f",
-                  header=header)
+                  header=header.format(**header_data))
     measurement_index += 1
+    if random.random() > 0.2:
+        header_data["number"] = measurement_index
+        header_data["timestamp"] = datetime.datetime(2014, 11, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S")
+        header_data["irradiance"] = "BG7"
+        for i in range(1, len(data)):
+            data[i] *= numpy.random.sample((len(voltages),)) * 0.03 + 0.2
+        numpy.savetxt(os.path.join(rootdir, "measurement-{}.dat".format(measurement_index)), numpy.transpose(data), "%06.5f",
+                      header=header.format(**header_data))
+        measurement_index += 1
