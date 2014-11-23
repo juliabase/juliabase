@@ -359,6 +359,7 @@ class SolarsimulatorCellMeasurement(models.Model):
 
 
 layout_choices = (("juelich standard", "Jülich standard"),
+                  ("acme1", "ACME 1"),
                   ("custom", _("custom")),)
 
 @python_2_unicode_compatible

@@ -110,7 +110,8 @@ def get_layout(sample, process):
     except NoStructuringFound:
         return None
     else:
-        layout_class = {"juelich standard": JuelichStandard, }.get(current_structuring.layout)
+        layout_class = {"juelich standard": JuelichStandard,
+                        "acme1": ACME1}.get(current_structuring.layout)
         return layout_class and layout_class(sample, process, current_structuring)
 
 
@@ -416,3 +417,34 @@ class JuelichStandard(CellsLayout):
     height *= _scaling
     width *= _scaling
 
+
+class ACME1(CellsLayout):
+    width = 34.84 * mm
+    height = 34.84 * mm
+    shapes = {"1A": ((4.42, 29.12), (2.6, 2.6)),
+              "1B": ((12.22, 29.12), (2.6, 2.6)),
+              "1C": ((20.02, 29.12), (2.6, 2.6)),
+              "1D": ((27.82, 29.12), (2.6, 2.6)),
+              "2A": ((4.42, 22.62), (3.9, 3.9)),
+              "2B": ((12.22, 22.62), (3.9, 3.9)),
+              "2C": ((20.02, 22.62), (3.9, 3.9)),
+              "2D": ((27.82, 22.62), (3.9, 3.9)),
+              "3A": ((4.42, 16.12), (2.6, 2.6)),
+              "3B": ((12.22, 16.12), (2.6, 2.6)),
+              "3C": ((20.02, 16.12), (2.6, 2.6)),
+              "3D": ((27.82, 16.12), (2.6, 2.6)),
+              "4A": ((4.42, 8.32), (3.9, 3.9)),
+              "4B": ((12.22, 8.32), (3.9, 3.9)),
+              "4C": ((20.02, 8.32), (3.9, 3.9)),
+              "4D": ((27.82, 8.32), (3.9, 3.9)),
+              "5A": ((4.42, 3.12), (2.6, 2.6)),
+              "5B": ((12.22, 3.12), (2.6, 2.6)),
+              "5C": ((20.02, 3.12), (2.6, 2.6)),
+              "5D": ((27.82, 3.12), (2.6, 2.6))}
+
+    _scaling = 80 * mm / max(height, width)
+    for cell_index, coords in shapes.iteritems():
+        shapes[cell_index] = ((_scaling * coords[0][0] * mm, _scaling * coords[0][1] * mm),
+                              (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
+    height *= _scaling
+    width *= _scaling
