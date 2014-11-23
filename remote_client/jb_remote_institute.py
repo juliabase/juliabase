@@ -388,7 +388,9 @@ class SolarsimulatorMeasurement(object):
                 query_string = "?only_single_cell_added=true" if only_single_cell_added else ""
                 connection.open("solarsimulator_measurements/{0}/edit/".format(self.process_id) + query_string, data)
             else:
-                return connection.open("solarsimulator_measurements/add/", data)
+                process_id = connection.open("solarsimulator_measurements/add/", data)
+                logging.info("Successfully added solarsimulator measurement {0}.".format(process_id))
+                return process_id
 
 
 class SolarsimulatorCellMeasurement(object):
@@ -442,7 +444,9 @@ class Structuring(object):
             if self.process_id:
                 connection.open("structuring_process/{0}/edit/".format(self.process_id), data)
             else:
-                return connection.open("structuring_process/add/", data)
+                self.process_id = connection.open("structuring_process/add/", data)
+                logging.info("Successfully added structuring {0}.".format(self.process_id))
+                return self.process_id
 
 
 class FiveChamberDeposition(object):

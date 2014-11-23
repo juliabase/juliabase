@@ -19,7 +19,7 @@ import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os.path,
 from . import settings
 
 
-def setup_logging(enable=False):
+def setup_logging(destination=None):
     """If the user wants to call this in order to enable logging, he must do
     so before logging in.  Note that it is a no-op if called a second time.
     """
@@ -28,12 +28,16 @@ def setup_logging(enable=False):
     # pretty sure that this is the case.  The clean solution would involve more
     # boilerplate code for the end-user, which I don't want, or replacing all
     # ``logging.info`` etc. calls with an own wrapper.
-    if enable:
+    if destination == "file":
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s %(levelname)-8s %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S",
                             filename="/tmp/jb_remote.log" if os.path.exists("/tmp") else "jb_remote.log",
                             filemode="w")
+    elif destination == "console":
+        logging.basicConfig(level=logging.INFO,
+                            format="%(asctime)s %(levelname)-8s %(message)s",
+                            datefmt="%Y-%m-%d %H:%M:%S")
     else:
         class LogSink(object):
             def write(self, *args, **kwargs):

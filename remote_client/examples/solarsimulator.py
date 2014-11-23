@@ -64,7 +64,8 @@ def read_solarsimulator_file(filepath):
     voltages, current_curves = data[0], data[1:]
     return header_data, evaluate_raw_data(voltages, current_curves, [float(area) for area in header_data["areas"].split()])
 
-        
+
+setup_logging("console")
 login("juliabase", "12345")
 
 for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
@@ -108,6 +109,5 @@ for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
         cell.data_file = os.path.relpath(filepath, "solarsimulator_raw_data")
     
     measurement.submit()
-    print("Added measurement {number} (sample {sample}).".format(**header_data))
 
 logout()
