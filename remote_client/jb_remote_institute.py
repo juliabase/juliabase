@@ -163,7 +163,7 @@ class ClusterToolPECVDLayer(object):
 
 
 def rename_after_deposition(deposition_number, new_names):
-    """Rename samples after a deposition.  In the IEK-PV, it is custom to give
+    """Rename samples after a deposition.  In some institutes, it is custom to give
     samples the name of the deposition after the deposition.  This is realised
     here.
 
