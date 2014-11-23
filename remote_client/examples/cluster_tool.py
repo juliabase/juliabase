@@ -73,11 +73,11 @@ def create_depo(timestamp, sample_name, comments=None):
 
     deposition.submit()
 
-create_depo(datetime.datetime(2014, 11, 1, 10, 30), "14C-001")
-create_depo(datetime.datetime(2014, 11, 2, 11, 10), "14C-002")
-create_depo(datetime.datetime(2014, 11, 2, 12, 10), "14C-003")
-create_depo(datetime.datetime(2014, 11, 2, 13, 10), "14C-004")
-create_depo(datetime.datetime(2014, 11, 2, 14, 10), "14C-005")
-create_depo(datetime.datetime(2014, 11, 2, 15, 10), "14C-006")
+create_depo(datetime.datetime(2014, 11, 1, 10, 30), "14-JS-1")
+create_depo(datetime.datetime(2014, 11, 2, 11, 10), "14-JS-2")
+create_depo(datetime.datetime(2014, 11, 2, 12, 10), "14-JS-3")
+create_depo(datetime.datetime(2014, 11, 2, 13, 10), "14-JS-4")
+create_depo(datetime.datetime(2014, 11, 2, 14, 10), "14-JS-5")
+create_depo(datetime.datetime(2014, 11, 2, 15, 10), "14-JS-6")
 
 logout()
