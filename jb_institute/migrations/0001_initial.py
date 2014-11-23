@@ -190,8 +190,6 @@ class Migration(migrations.Migration):
                 ('data_file', models.CharField(help_text='only the relative path below "maike_user/ascii files/"', max_length=200, verbose_name='data file', db_index=True)),
                 ('area', models.FloatField(help_text='in cm\xb2', null=True, verbose_name='area', blank=True)),
                 ('eta', models.FloatField(help_text='in %', null=True, verbose_name='efficiency \u03b7', blank=True)),
-                ('p_max', models.FloatField(help_text='in mW', null=True, verbose_name='maximum power point', blank=True)),
-                ('ff', models.FloatField(help_text='in %', null=True, verbose_name='fill factor', blank=True)),
                 ('isc', models.FloatField(help_text='in mA/cm\xb2', null=True, verbose_name='short-circuit current density', blank=True)),
             ],
             options={

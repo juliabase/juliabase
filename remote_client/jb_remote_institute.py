@@ -399,20 +399,16 @@ class SolarsimulatorCellMeasurement(object):
         if data:
             self.area = data["area/cm^2"]
             self.eta = data["efficiency/%"]
-            self.p_max = data["maximum power point/mW"]
-            self.ff = data["fill factor/%"]
             self.isc = data["short-circuit current density/(mA/cm^2)"]
             self.data_file = data["data file name"]
         else:
-            self.area = self.eta = self.p_max = self.ff = self.isc = self.data_file = None
+            self.area = self.eta = self.isc = self.data_file = None
 
     def get_data(self, index):
         prefix = six.text_type(index) + "-"
         return {prefix + "position": self.position,
                 prefix + "area": self.area,
                 prefix + "eta": self.eta,
-                prefix + "p_max": self.p_max,
-                prefix + "ff": self.ff,
                 prefix + "isc": self.isc,
                 prefix + "data_file": self.data_file}
 

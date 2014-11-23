@@ -319,8 +319,6 @@ class SolarsimulatorCellMeasurement(models.Model):
                                  help_text=_("only the relative path below \"maike_user/ascii files/\""))
     area = models.FloatField(_("area"), help_text=_("in cm²"), null=True, blank=True)
     eta = models.FloatField(_("efficiency η"), help_text=_("in %"), null=True, blank=True)
-    p_max = models.FloatField(_("maximum power point"), help_text=_("in mW"), null=True, blank=True)
-    ff = models.FloatField(_("fill factor"), help_text=_("in %"), null=True, blank=True)
     isc = models.FloatField(_("short-circuit current density"), help_text=_("in mA/cm²"), null=True, blank=True)
 
     class Meta:
@@ -340,7 +338,6 @@ class SolarsimulatorCellMeasurement(models.Model):
                            DataItem("data file name", self.data_file),
                            DataItem("area/cm^2", self.area),
                            DataItem("efficiency/%", self.eta),
-                           DataItem("fill factor/%", self.ff),
                            DataItem("short-circuit current density/(mA/cm^2)", self.isc)]
         return data_node
 
