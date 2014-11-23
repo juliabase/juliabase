@@ -21,7 +21,7 @@ sys.path.append(os.path.abspath(".."))
 from jb_remote_institute import *
 
 
-def evaluate_raw_data(voltages, current_curves):
+def evaluate_raw_data(voltages, current_curves, areas):
 
     def smooth(y, window_len=5):
         s = numpy.r_[2*y[0] - y[window_len:1:-1], y, 2*y[-1] - y[-1:-window_len:-1]]
@@ -30,13 +30,13 @@ def evaluate_raw_data(voltages, current_curves):
         return y_smooth[window_len-1:-window_len+1]
 
     evaluated_data = []
-    for currents in current_curves:
+    for currents, area in zip(current_curves, areas):
         currents = smooth(currents)
         data = {}
-        data["isc"] = - numpy.interp(0, voltages, currents) * 1000
+        data["isc"] = - numpy.interp(0, voltages, currents) * 1000 / float(area)
         interpolated_current = scipy.interpolate.interp1d(voltages, currents)
         power_max = - scipy.optimize.fmin(lambda x: x * interpolated_current(x), 0.1, full_output=True, disp=False)[1]
-        data["eta"] = power_max * 10000
+        data["eta"] = power_max * 1000
         evaluated_data.append(data)
     return evaluated_data
         
@@ -55,7 +55,7 @@ def read_solarsimulator_file(filepath):
                 header_data[key] = value
     data = numpy.loadtxt(filepath, unpack=True)
     voltages, current_curves = data[0], data[1:]
-    return header_data, evaluate_raw_data(voltages, current_curves)
+    return header_data, evaluate_raw_data(voltages, current_curves, [float(area) for area in header_data["areas"].split()])
 
         
 login("juliabase", "12345")
