@@ -87,12 +87,15 @@ for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
         substrate.operator = header_data["operator"]
         substrate.submit()
 
-    structuring = Structuring()
-    structuring.sample_id = sample_id
-    structuring.timestamp = header_data["timestamp"] - datetime.timedelta(minutes=1)
-    structuring.operator = header_data["operator"]
-    structuring.layout = header_data["layout"]
-    structuring.submit()
+    structuring = connection.open("structurings/by_sample/{0}?timestamp={1}".format(
+            urllib.quote_plus(str(sample_id)), urllib.quote_plus(str(header_data["timestamp"].strftime("%Y-%m-%d %H:%M:%S")))))
+    if not structuring:
+        structuring = Structuring()
+        structuring.sample_id = sample_id
+        structuring.timestamp = header_data["timestamp"] - datetime.timedelta(minutes=1)
+        structuring.operator = header_data["operator"]
+        structuring.layout = header_data["layout"]
+        structuring.submit()
     
     measurement = SolarsimulatorMeasurement()
     measurement.operator = header_data["operator"]
