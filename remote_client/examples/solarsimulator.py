@@ -108,5 +108,6 @@ for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
         cell.data_file = os.path.relpath(filepath, "solarsimulator_raw_data")
     
     measurement.submit()
+    print("Added measurement {number} (sample {sample}).".format(**header_data))
 
 logout()
