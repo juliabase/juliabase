@@ -31,11 +31,18 @@ def evaluate_raw_data(voltages, current_curves, areas):
 
     evaluated_data = []
     for currents, area in zip(current_curves, areas):
-        currents = smooth(currents)
+        currents = smooth(currents) / float(area)
         data = {}
-        data["isc"] = - numpy.interp(0, voltages, currents) * 1000 / float(area)
+        data["isc"] = - numpy.interp(0, voltages, currents) * 1000
         interpolated_current = scipy.interpolate.interp1d(voltages, currents)
-        power_max = - scipy.optimize.fmin(lambda x: x * interpolated_current(x), 0.1, full_output=True, disp=False)[1]
+        def current(voltage):
+            if voltage < voltages[0]:
+                return currents[0]
+            elif voltage > voltages[-1]:
+                return currents[-1]
+            else:
+                return interpolated_current(voltage)
+        power_max = - scipy.optimize.fmin(lambda voltage: voltage * current(voltage), 0.1, full_output=True, disp=False)[1]
         data["eta"] = power_max * 1000
         evaluated_data.append(data)
     return evaluated_data
