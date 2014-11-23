@@ -16,10 +16,31 @@ from __future__ import unicode_literals
 
 import sys, os, datetime, glob, random
 import numpy
+import scipy.interpolate, scipy.optimize
 sys.path.append(os.path.abspath(".."))
 from jb_remote_institute import *
 
 
+def evaluate_raw_data(voltages, current_curves):
+
+    def smooth(y, window_len=5):
+        s = numpy.r_[2*y[0] - y[window_len:1:-1], y, 2*y[-1] - y[-1:-window_len:-1]]
+        w = numpy.hanning(window_len)
+        y_smooth = numpy.convolve(w / w.sum(), s, mode="same")
+        return y_smooth[window_len-1:-window_len+1]
+
+    evaluated_data = []
+    for currents in current_curves:
+        currents = smooth(currents)
+        data = {}
+        data["isc"] = - numpy.interp(0, voltages, currents) * 1000
+        interpolated_current = scipy.interpolate.interp1d(voltages, currents)
+        power_max = - scipy.optimize.fmin(lambda x: x * interpolated_current(x), 0.1, full_output=True, disp=False)[1]
+        data["eta"] = power_max * 10000
+        evaluated_data.append(data)
+    return evaluated_data
+        
+    
 def read_solarsimulator_file(filepath):
     header_data = {}
     for line in open(filepath):
@@ -32,13 +53,15 @@ def read_solarsimulator_file(filepath):
                 header_data[key] = datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
             else:
                 header_data[key] = value
-    return header_data
+    data = numpy.loadtxt(filepath, unpack=True)
+    voltages, current_curves = data[0], data[1:]
+    return header_data, evaluate_raw_data(voltages, current_curves)
 
         
 login("juliabase", "12345")
 
 for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
-    header_data = read_solarsimulator_file(filepath)
+    header_data, evaluated_data = read_solarsimulator_file(filepath)
     try:
         sample_id = get_sample(header_data["sample"])
     except SampleNotFound as exception:
@@ -70,10 +93,11 @@ for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
     measurement.irradiance = header_data["irradiance"]
     measurement.temperature = header_data["temperature"]
 
-    for position in header_data["positions"].split():
+    for position, area, data in zip(header_data["positions"].split(), header_data["areas"].split(), evaluated_data):
         cell = SolarsimulatorCellMeasurement(measurement, position)
-        cell.area = 1
-        cell.eta = random.random() * 14
+        cell.area = area
+        cell.isc = data["isc"]
+        cell.eta = data["eta"]
         cell.data_file = os.path.relpath(filepath, "solarsimulator_raw_data")
     
     measurement.submit()

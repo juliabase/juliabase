@@ -46,13 +46,13 @@ def read_solarsimulator_plot_file(filename, position):
     except IOError:
         raise shared_utils.PlotError("Data file could not be read.")
     for line in datafile_content:
-        if line.startswith("# positions:"):
+        if line.startswith("# Positions:"):
             positions = line.partition(":")[2].split()
             break
     else:
         positions = []
     try:
-        column = positions.index(position)
+        column = positions.index(position) + 1
     except ValueError:
         raise shared_utils.PlotError("Cell position not found in the datafile.")
     datafile_content.seek(0)
