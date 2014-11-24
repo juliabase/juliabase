@@ -152,14 +152,11 @@ def list_(request):
     :rtype: ``HttpResponse``
     """
     user = request.user
-    all_toplevel_topics = Topic.objects.filter(parent_topic=None).order_by("name").all()
-    user_toplevel_topics = Topic.objects.filter(department=user.jb_user_details.department,
-                                                parent_topic=None).order_by("name").all()
-    toplevel_topics = set(topic for topic in user_toplevel_topics if permissions.has_permission_to_edit_topic(user, topic))
-    if not toplevel_topics:
-        raise Http404("Can't find any topic that you can edit.")
-    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"),
-                                                           "topics": all_toplevel_topics if user.is_superuser else toplevel_topics},
+    editable_topics = [topic for topic in Topic.objects.filter(parent_topic=None).all()
+                                if permissions.has_permission_to_edit_topic(user, topic)]
+    if not editable_topics:
+        raise Http404("Can't find any topics that you can edit.")
+    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"), "topics": editable_topics},
                               context_instance=RequestContext(request))
 
 

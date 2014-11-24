@@ -148,6 +148,7 @@ class Topic(models.Model):
                                 related_name="managed_topics")
 
     class Meta:
+        ordering = ["name"]
         verbose_name = _("topic")
         verbose_name_plural = _("topics")
         unique_together = ("name", "department")
