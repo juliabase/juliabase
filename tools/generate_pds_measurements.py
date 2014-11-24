@@ -34,7 +34,7 @@ Comments:
 Sample: {}
 Apparatus: 1
 ----------------------------------------------------------------------
-energy/eV     absorption/cm^-1""".format(number, datetime.datetime(2014, 11, 7, 10, number, 0).strftime("%Y-%m-%d %H:%M:%S"),
+energy/eV     absorption/cm^-1""".format(number, datetime.datetime(2014, 10, 7, 10, number, 0).strftime("%Y-%m-%d %H:%M:%S"),
                                          sample_name)
     absorptions = 1 / (1 / (random.gauss(1, 0.2) * numpy.exp((energies - 1) * 10)) + 1 / 10000) + \
                   max(random.gauss(10, 10), 0) + 30 * numpy.random.sample((len(energies),))
