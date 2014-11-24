@@ -53,7 +53,7 @@ class UserDetailsForm(forms.ModelForm):
         processes = [process_class for process_class in jb_common_utils.get_all_models().values()
                     if issubclass(process_class, models.Process) and not process_class._meta.abstract
                     and process_class not in [models.Process, models.Deposition]]
-        for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
+        for department in user.samples_user_details.show_users_from_department.iterator():
             process_from_department = set(process for process in processes
                                           if process._meta.app_label == settings.DEPARTMENTS_TO_APP_LABELS.get(department.name))
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))

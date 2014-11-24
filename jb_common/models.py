@@ -45,6 +45,7 @@ class Department(models.Model):
     name = models.CharField(_("name"), max_length=30, unique=True)
 
     class Meta:
+        ordering = ["name"]
         verbose_name = _("department")
         verbose_name_plural = _("departments")
 

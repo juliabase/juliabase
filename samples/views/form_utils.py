@@ -348,7 +348,7 @@ def _user_choices_by_department(user, include=(), exclude=()):
     :rtype: list of (int, str) or list of (str, list of (int, str))
     """
     choices = []
-    for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
+    for department in user.samples_user_details.show_users_from_department.iterator():
         users_from_department = set(django.contrib.auth.models.User.objects.
                                     filter(is_active=True, jb_user_details__department=department))
         users_from_department |= set(user for user in include if user.jb_user_details.department == department)
