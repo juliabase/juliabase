@@ -31,7 +31,7 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from jb_common.utils import get_really_full_name, check_markdown
-from jb_common.models import Topic
+from jb_common.models import Topic, Department
 from samples import models
 from samples.views import utils
 from django.utils.text import capfirst
@@ -348,13 +348,21 @@ def _user_choices_by_department(user, include=(), exclude=()):
     :rtype: list of (int, str) or list of (str, list of (int, str))
     """
     choices = []
-    for department in user.samples_user_details.show_users_from_department.iterator():
-        users_from_department = set(django.contrib.auth.models.User.objects.
-                                    filter(is_active=True, jb_user_details__department=department))
-        users_from_department |= set(user for user in include if user.jb_user_details.department == department)
+    for department in Department.objects.all():
+        users_from_department = set(user for user in include if user.jb_user_details.department == department)
+        if department in user.samples_user_details.show_users_from_department.all():
+            users_from_department |= set(django.contrib.auth.models.User.objects.
+                                         filter(is_active=True, jb_user_details__department=department))
         users_from_department -= set(user for user in exclude if user.jb_user_details.department == department)
-        choices.append((department.name, [(user.pk, get_really_full_name(user))
-                                          for user in utils.sorted_users_by_first_name(users_from_department)]))
+        if users_from_department:
+            choices.append((department.name, [(user.pk, get_really_full_name(user))
+                                              for user in utils.sorted_users_by_first_name(users_from_department)]))
+    departmentless_users = [user for user in include
+                            if user in django.contrib.auth.models.User.objects.filter(jb_user_details__department=None)]
+    if departmentless_users:
+        choices.append(("", [(user.pk, get_really_full_name(user))
+                             for user in utils.sorted_users_by_first_name(departmentless_users)]))
+            
     if len(choices) == 1:
         choices = choices[0][1]
     return choices
