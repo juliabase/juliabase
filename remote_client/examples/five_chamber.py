@@ -29,7 +29,7 @@ def create_depo(timestamp, sample_name, comments=None):
         sample = exception.sample
         sample.currently_responsible_person = "r.calvert"
         sample.current_location = "Rosalee's office"
-        sample.topic = "Legacy"
+        sample.topic = "Cooperation with Paris University"
         sample_id = sample.submit()
 
         substrate = Substrate()
