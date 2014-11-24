@@ -344,18 +344,18 @@ def show(request):
         active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
             exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists[process_content_type] = [TaskForTemplate(task, request.user) for task in active_tasks]
-    task_list_for_department = {}
+    task_lists_for_department = {}
     for process_content_type, tasks in task_lists.iteritems():
         # FixMe: it is possible that some processes are in more then one department available
         # maybe we need a better way to determine the department
-        app_label = process_content_type.model_class()._meta.app_label
-        department_name = apps.get_app_config(app_label).verbose_name
-        if not department_name in task_list_for_department:
-            task_list_for_department[department_name] = {}
-        task_list_for_department[department_name].update({process_content_type: tasks})
+        department_names = {name for name, app_label in settings.DEPARTMENTS_TO_APP_LABELS.items()
+                           if app_label == process_content_type.model_class()._meta.app_label}
+        assert len(department_names) == 1
+        department_name = department_names.pop()
+        task_lists_for_department.setdefault(department_name, {}).update({process_content_type: tasks})
     return render_to_response("samples/task_lists.html", {"title": _("Task lists"),
-                                                          "chose_task_lists": choose_task_lists_form,
-                                                          "task_lists": task_list_for_department},
+                                                          "choose_task_lists": choose_task_lists_form,
+                                                          "task_lists": task_lists_for_department},
                               context_instance=RequestContext(request))
 
 
