@@ -148,8 +148,11 @@ def show(request, process_name, year_and_month):
     process_class = get_all_models()[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     if not year_and_month:
-        today = datetime.date.today()
-        return HttpResponseSeeOther("{0}/{1}".format(today.year, today.month))
+        try:
+            timestamp = process_class.objects.latest().timestamp
+        except process_class.DoesNotExist:
+            timestamp = datetime.datetime.today()
+        return HttpResponseSeeOther("{0}/{1}".format(timestamp.year, timestamp.month))
     year, month = parse_year_and_month(year_and_month)
     if request.method == "POST":
         year_month_form = YearMonthForm(request.POST)

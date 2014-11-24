@@ -527,10 +527,10 @@ class PhysicalProcess(Process):
     """
     class Meta(Process.Meta):
         abstract = True
-        # FixMe: The following line is necessary as long as
-        # http://code.djangoproject.com/ticket/11369 is not fixed.  But check
-        # ordering nevertheless.
+        # FixMe: The following two lines are necessary possibly due to a Django
+        # bug.  This should be cleared up.
         ordering = ["timestamp"]
+        get_latest_by = "timestamp"
 
     @classmethod
     def get_add_link(cls):
