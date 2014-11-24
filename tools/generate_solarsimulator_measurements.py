@@ -128,7 +128,7 @@ U/V{column_headers}"""
     numpy.savetxt(os.path.join(rootdir, "measurement-{}.dat".format(measurement_index)), numpy.transpose(data), "%06.5f",
                   header=header.format(**header_data))
     measurement_index += 1
-    if random.random() > 0.2:
+    if random.random() > 0.3:
         header_data["timestamp"] = datetime.datetime(2014, 11, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S")
         header_data["irradiance"] = "BG7"
         for i in range(1, len(data)):
@@ -141,7 +141,7 @@ U/V{column_headers}"""
 for sample_name in ("14S-{:03}".format(number) for number in range(1, 7)):
     measured_positions = []
     for position in (a + b for a, b in itertools.product("1234", "ABCD")):
-        if random.random() > 0.2:
+        if random.random() > 0.3:
             measured_positions.append(position)
 
     header = """Timestamp: {timestamp}
