@@ -107,7 +107,7 @@ Areas: {areas}
 U/V{column_headers}"""
     header_data = {"timestamp": datetime.datetime(2014, 11, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S"),
                    "operator": "h.griffin",
-                   "comments": "",
+                   "comments": "Click on cells to change data.",
                    "sample": sample_name,
                    "layout": "juelich standard",
                    "irradiance": "AM1.5",
@@ -150,7 +150,7 @@ Areas: {areas}
 ----------------------------------------------------------------------
 U/V{column_headers}"""
     header_data = {"timestamp": datetime.datetime(2014, 11, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S"),
-                   "operator": "h.griffin",
+                   "operator": "r.calvert",
                    "comments": "",
                    "sample": sample_name,
                    "layout": "acme1",
@@ -169,6 +169,8 @@ U/V{column_headers}"""
     if random.random() > 0.2:
         header_data["timestamp"] = datetime.datetime(2014, 11, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S")
         header_data["irradiance"] = "BG7"
+        header_data["comments"] = r"There was a *small* crack in the filter.  Note that $I_{\mathrm{sc}}$ is actually" \
+                                  r"$J_{\mathrm{sc}} = \frac{I_{\mathrm{sc}}}{A}$."
         for i in range(1, len(data)):
             data[i] *= numpy.random.sample((len(voltages),)) * 0.05 + 0.2
         numpy.savetxt(os.path.join(rootdir, "measurement-{}.dat".format(measurement_index)), numpy.transpose(data), "%06.5f",
