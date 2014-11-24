@@ -9,10 +9,28 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+
+# First, the users with their permissions.
+
+- fields:
+    username: juliabase
+    first_name: Julia
+    # 12345
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    is_superuser: true
+    is_staff: true
+  model: auth.user
+  pk: 1
+- fields:
+    username: nobody
+    last_name: Nobody
+    password: !
+  model: auth.user
+  pk: 2
 - fields:
     username: n.burkhardt
-    first_name: "Nick"
-    last_name: "Burkhardt"
+    first_name: Nick
+    last_name: Burkhardt
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -23,8 +41,8 @@
   pk: 3
 - fields:
     username: h.griffin
-    first_name: "Hank"
-    last_name: "Griffin"
+    first_name: Hank
+    last_name: Griffin
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -35,8 +53,8 @@
   pk: 4
 - fields:
     username: j.silverton
-    first_name: "Juliette"
-    last_name: "Silverton"
+    first_name: Juliette
+    last_name: Silverton
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -45,8 +63,8 @@
   pk: 5
 - fields:
     username: e.monroe
-    first_name: "Eddie"
-    last_name: "Monroe"
+    first_name: Eddie
+    last_name: Monroe
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -58,8 +76,8 @@
   pk: 6
 - fields:
     username: r.calvert
-    first_name: "Rosalee"
-    last_name: "Calvert"
+    first_name: Rosalee
+    last_name: Calvert
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -69,3 +87,68 @@
     - [edit_every_five_chamber_deposition, jb_institute, fivechamberdeposition]
   model: auth.user
   pk: 7
+
+- fields:
+    name: INM
+  model: jb_common.department
+  pk: 1
+
+
+# Now the user details; it's only to set the department.
+
+- fields:
+    user: 3
+    department: 1
+    layout_last_modified: 1990-01-01 00:00:00
+  model: jb_common.userdetails
+  pk: 3
+- fields:
+    user: 4
+    department: 1
+    layout_last_modified: 1990-01-01 00:00:00
+  model: jb_common.userdetails
+  pk: 4
+- fields:
+    user: 5
+    department: 1
+    layout_last_modified: 1990-01-01 00:00:00
+  model: jb_common.userdetails
+  pk: 5
+- fields:
+    user: 6
+    department: 1
+    layout_last_modified: 1990-01-01 00:00:00
+  model: jb_common.userdetails
+  pk: 6
+- fields:
+    user: 7
+    department: 1
+    layout_last_modified: 1990-01-01 00:00:00
+  model: jb_common.userdetails
+  pk: 7
+
+- fields:
+    name: Legacy
+    department: 1
+    manager: 2
+  model: jb_common.topic
+  pk: 1
+
+- fields:
+    name: Juliette's PhD thesis
+    department: 1
+    manager: 4
+  model: jb_common.topic
+  pk: 2
+
+- fields:
+    name: Cooperation with Paris University
+    department: 1
+    manager: 7
+  model: jb_common.topic
+  pk: 3
+
+- fields:
+    initials: JS
+    user: 5
+  model: samples.initials
