@@ -358,7 +358,7 @@ class SolarsimulatorCellMeasurement(models.Model):
         return search.SearchTreeNode(cls, {}, search_fields)
 
 
-layout_choices = (("juelich standard", "Jülich standard"),
+layout_choices = (("inm standard", "INM Standard"),
                   ("acme1", "ACME 1"),
                   ("custom", _("custom")),)
 

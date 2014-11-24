@@ -218,7 +218,7 @@ class Migration(migrations.Migration):
             name='Structuring',
             fields=[
                 ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
-                ('layout', models.CharField(max_length=30, verbose_name='layout', choices=[('juelich standard', 'J\xfclich standard'), ('custom', 'custom')])),
+                ('layout', models.CharField(max_length=30, verbose_name='layout', choices=[('inm standard', 'INM Standard'), ('custom', 'custom')])),
                 ('length', models.FloatField(help_text='in\xa0mm', null=True, verbose_name='length', blank=True)),
                 ('width', models.FloatField(help_text='in\xa0mm', null=True, verbose_name='width', blank=True)),
                 ('parameters', models.TextField(verbose_name='parameters', blank=True)),

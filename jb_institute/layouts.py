@@ -110,7 +110,7 @@ def get_layout(sample, process):
     except NoStructuringFound:
         return None
     else:
-        layout_class = {"juelich standard": JuelichStandard,
+        layout_class = {"inm standard": INMStandard,
                         "acme1": ACME1}.get(current_structuring.layout)
         return layout_class and layout_class(sample, process, current_structuring)
 
@@ -367,7 +367,7 @@ class CellsLayout(Layout):
         return canvas
 
 
-class JuelichStandard(CellsLayout):
+class INMStandard(CellsLayout):
     height = (105 - 30) * mm
     width = (110 - 30) * mm
     shapes = {"1": ((18, 18.5), (10, 10)),
