@@ -12,12 +12,18 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-import random, os, datetime, itertools
+import random, os, datetime, itertools, glob
 import numpy
 
 
+numpy.random.seed(8765432)
+random.seed(8765432)
 rootdir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../remote_client/examples/solarsimulator_raw_data"))
 voltages = numpy.arange(-0.1, 1.001, 0.01)
+
+
+for filepath in glob.glob(os.path.join(rootdir, "measurement-*.dat")):
+    os.remove(filepath)
 
 
 shapes_juelich = {"1": ((18, 18.5), (10, 10)),
