@@ -229,7 +229,9 @@ class PDSMeasurement(object):
             if self.existing:
                 connection.open("pds_measurements/{0}/edit/".format(self.number), data)
             else:
-                return connection.open("pds_measurements/add/", data)
+                process_id = connection.open("pds_measurements/add/", data)
+                logging.info("Successfully added PDS measurement {0}.".format(process_id))
+                return process_id
 
     @classmethod
     def get_already_available_pds_numbers(cls):

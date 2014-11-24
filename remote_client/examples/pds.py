@@ -33,6 +33,7 @@ def read_pds_file(filepath):
     return result
 
         
+setup_logging("console")
 login("juliabase", "12345")
 
 for filepath in glob.glob("pds_raw_data/*.dat"):

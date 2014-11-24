@@ -19,6 +19,7 @@ sys.path.append(os.path.abspath(".."))
 from jb_remote_institute import *
 
 
+setup_logging("console")
 login("juliabase", "12345")
 
 def create_depo(timestamp, sample_name, comments=None):
