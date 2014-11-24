@@ -137,7 +137,8 @@
 - fields:
     name: Juliette's PhD thesis
     department: 1
-    manager: 4
+    manager: 5
+    members: [5]
   model: jb_common.topic
   pk: 2
 
@@ -145,6 +146,7 @@
     name: Cooperation with Paris University
     department: 1
     manager: 7
+    members: [7, 3, 6]
   model: jb_common.topic
   pk: 3
 
