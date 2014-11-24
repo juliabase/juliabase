@@ -42,6 +42,7 @@ for filepath in glob.glob("pds_raw_data/*.dat"):
     except SampleNotFound as exception:
         sample = exception.sample
         sample.currently_responsible_person = pds_header_data["operator"]
+        sample.current_location = "PDS lab"
         sample.topic = "Legacy"
         sample_id = sample.submit()
 
@@ -50,7 +51,7 @@ for filepath in glob.glob("pds_raw_data/*.dat"):
         substrate.timestamp_inaccuracy = 3
         substrate.sample_ids = [sample_id]
         substrate.material = "corning"
-        substrate.operator = "e.monroe"
+        substrate.operator = "n.burkhardt"
         substrate.submit()
     pds_measurement = PDSMeasurement()
     pds_measurement.operator = pds_header_data["operator"]
