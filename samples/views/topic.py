@@ -165,6 +165,7 @@ class EditTopicForm(forms.Form):
     no members at all in a topic.  However, if the topic is confidential, the
     currently logged-in user must remain a member of the topic.
     """
+    _ = ugettext_lazy
     members = form_utils.MultipleUsersField(label=_("Members"), required=False)
     confidential = forms.BooleanField(label=_("confidential"), required=False)
     topic_manager = form_utils.UserField(label=capfirst(_("topic manager")))
@@ -186,6 +187,7 @@ class EditTopicForm(forms.Form):
                 self.add_error("members",
                                _("In confidential topics, at least one member must have permission to edit the topic."))
         return cleaned_data
+
 
 @login_required
 def edit(request, id):
