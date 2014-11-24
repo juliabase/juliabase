@@ -439,7 +439,7 @@ class Structuring(object):
                 "operator": primary_keys["users"][self.operator],
                 "layout": self.layout,
                 "comments": self.comments,
-                "remove_from_my_samples": True,
+                "remove_from_my_samples": False,
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
         with TemporaryMySamples(self.sample_id):
@@ -507,7 +507,7 @@ class FiveChamberDeposition(object):
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "comments": self.comments,
                 "sample_list": self.sample_ids,
-                "remove_from_my_samples": True,
+                "remove_from_my_samples": False,
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
         for layer_index, layer in enumerate(self.layers):
