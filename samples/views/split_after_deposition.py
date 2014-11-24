@@ -113,10 +113,9 @@ class NewNameForm(Form):
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        sample_name_format, match = utils.sample_name_format(new_name, with_match_object=True)
+        sample_name_format = utils.sample_name_format(new_name)
         if not sample_name_format:
             raise ValidationError(_("The sample name has an invalid format."))
-        form_utils.check_sample_name(match, self.user)
         return new_name
 
 

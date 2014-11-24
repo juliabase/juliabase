@@ -55,8 +55,8 @@ class NewNameForm(forms.Form):
         sample_name_format, match = utils.sample_name_format(new_name, with_match_object=True)
         if not sample_name_format:
             raise ValidationError(_("The sample name has an invalid format."))
-        elif sample_name_format not in self.possible_new_name_formats:
-            if not new_name.startswith(self.parent_name):
+        elif not new_name.startswith(self.parent_name):
+            if sample_name_format not in self.possible_new_name_formats:
                 error_message = _("The new sample name must start with the parent sample's name.")
                 if self.possible_new_name_formats:
                     further_error_message = ungettext("  Alternatively, it must be a valid “{sample_formats}” name.",
@@ -66,7 +66,7 @@ class NewNameForm(forms.Form):
                         utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
                     error_message += further_error_message
                 raise ValidationError(error_message)
-        form_utils.check_sample_name(match, self.user)
+            form_utils.check_sample_name(match, self.user)
         if utils.does_sample_exist(new_name):
             raise ValidationError(_("Name does already exist in database."))
         return new_name
