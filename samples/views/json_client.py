@@ -29,7 +29,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
@@ -178,12 +178,13 @@ def available_items(request, model_name):
 
 # FixMe: The following two functions must go to jb_common.
 
-@csrf_exempt
-@require_http_methods(["POST"])
+@never_cache
+@ensure_csrf_cookie
 def login_remote_client(request):
-    """Login for the JuliaBase Remote Client.  It only supports the HTTP POST
-    method and expects ``username`` and ``password``.  AJAX code shouldn't need
-    this because it has the cookie already.
+    """Login for the JuliaBase Remote Client.  It expects ``username`` and
+    ``password``.  AJAX code shouldn't need it because it has the cookie
+    already.  An HTTP GET request yields nothing – this can be used to get the
+    CSRF cookie.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -196,16 +197,19 @@ def login_remote_client(request):
 
     :rtype: ``HttpResponse``
     """
-    try:
-        username = request.POST["username"]
-        password = request.POST["password"]
-    except KeyError:
-        raise JSONRequestException(3, '"username" and/or "password" missing')
-    user = django.contrib.auth.authenticate(username=username, password=password)
-    if user is not None and user.is_active:
-        django.contrib.auth.login(request, user)
-        return respond_in_json(True)
-    raise JSONRequestException(4, "user could not be authenticated")
+    if request.method == "POST":
+        try:
+            username = request.POST["username"]
+            password = request.POST["password"]
+        except KeyError:
+            raise JSONRequestException(3, '"username" and/or "password" missing')
+        user = django.contrib.auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            django.contrib.auth.login(request, user)
+            return respond_in_json(True)
+        raise JSONRequestException(4, "user could not be authenticated")
+    else:
+        return respond_in_json(None)
 
 
 @never_cache

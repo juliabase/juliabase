@@ -163,8 +163,9 @@ class JuliaBaseConnection(object):
     """
     cookie_jar = cookielib.CookieJar()
     opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
-    opener.addheaders = [("User-agent", "JuliaBase-Remote/0.1"),
-                         ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
+    http_headers = [("User-agent", "JuliaBase-Remote/0.1"),
+                    ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
+    opener.addheaders = http_headers
 
     def __init__(self):
         self.username = None
@@ -253,14 +254,22 @@ class JuliaBaseConnection(object):
         else:
             return response.read()
 
-    def login(self, root_url, username, password):
-        self.root_url = root_url
-        self.username = username
-        self.open("login_remote_client", {"username": username, "password": password})
+    def set_csrf_header(self):
         csrf_cookies = {cookie for cookie in self.cookie_jar if cookie.name == "csrftoken"}
         if csrf_cookies:
             assert len(csrf_cookies) == 1
-            self.opener.addheaders.append(("X-CSRFToken", csrf_cookies.pop().value))
+            self.opener.addheaders = self.http_headers + [("X-CSRFToken", csrf_cookies.pop().value)]
+
+    def login(self, root_url, username, password):
+        self.root_url = root_url
+        self.username = username
+        # First, a GET request to get the CSRF cookie used only for the
+        # following POST request.
+        self.open("login_remote_client")
+        self.set_csrf_header()
+        self.open("login_remote_client", {"username": username, "password": password})
+        # Now, set the CSRF token for the rest of the communication.
+        self.set_csrf_header()
 
     def logout(self):
         self.open("logout_remote_client")
