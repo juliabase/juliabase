@@ -29,6 +29,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
@@ -177,6 +178,7 @@ def available_items(request, model_name):
 
 # FixMe: The following two functions must go to jb_common.
 
+@csrf_exempt
 @require_http_methods(["POST"])
 def login_remote_client(request):
     """Login for the JuliaBase Remote Client.  It only supports the HTTP POST

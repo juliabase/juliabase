@@ -161,7 +161,8 @@ class JuliaBaseConnection(object):
     This is a singleton class, and its only instance resides at top-level in
     this module.
     """
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
+    cookie_jar = cookielib.CookieJar()
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookie_jar))
     opener.addheaders = [("User-agent", "JuliaBase-Remote/0.1"),
                          ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
 
@@ -256,6 +257,10 @@ class JuliaBaseConnection(object):
         self.root_url = root_url
         self.username = username
         self.open("login_remote_client", {"username": username, "password": password})
+        csrf_cookies = {cookie for cookie in self.cookie_jar if cookie.name == "csrftoken"}
+        if csrf_cookies:
+            assert len(csrf_cookies) == 1
+            self.opener.addheaders.append(("X-CSRFToken", csrf_cookies.pop().value))
 
     def logout(self):
         self.open("logout_remote_client")
