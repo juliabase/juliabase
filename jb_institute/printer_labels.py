@@ -142,7 +142,7 @@ def printer_label(sample):
         first, second = best_split(text)
         print_line(c, height / 2, fontsize_half, first, force=True)
         print_line(c, 0, fontsize_half, second, force=True)
-    c.drawImage(ImageReader("http://chart.apis.google.com/chart?chs=116x116&cht=qr&chl={0}&chld=H|1".format(sample.id)),
+    c.drawImage(ImageReader("http://chart.googleapis.com/chart?chs=116x116&cht=qr&chl={0}&chld=H|1".format(sample.id)),
                 width - height, 0, height, height)
     c.showPage()
     c.save()
