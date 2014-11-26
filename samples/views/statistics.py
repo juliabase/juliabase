@@ -27,8 +27,7 @@ except ImportError:
     memcache = None
 import matplotlib
 from django.utils.translation import ugettext as _
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.conf import settings
 import django
 from jb_common import utils, __version__
@@ -80,11 +79,10 @@ def statistics(request):
 
     :rtype: ``HttpResponse``
     """
-    return render_to_response("samples/statistics.html",
-                              {"title": _("JuliaBase server statistics"),
-                               "cache_hit_rate": int(round((utils.cache_hit_rate() or 0) * 100)),
-                               "cache_connections": get_cache_connections()},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/statistics.html",
+                  {"title": _("JuliaBase server statistics"),
+                   "cache_hit_rate": int(round((utils.cache_hit_rate() or 0) * 100)),
+                   "cache_connections": get_cache_connections()})
 
 
 def about(request):
@@ -104,11 +102,9 @@ def about(request):
 
     :rtype: ``HttpResponse``
     """
-    return render_to_response("samples/about.html",
-                              {"title": _("With kind support of …"),
-                               "language_version": sys.version.split()[0],
-                               "matplotlib_version": matplotlib.__version__,
-                               "framework_version": django.get_version(),
-                               "juliabase_version": __version__
-                               },
-                              context_instance=RequestContext(request))
+    return render(request, "samples/about.html", {"title": _("With kind support of …"),
+                                                  "language_version": sys.version.split()[0],
+                                                  "matplotlib_version": matplotlib.__version__,
+                                                  "framework_version": django.get_version(),
+                                                  "juliabase_version": __version__
+                                              })

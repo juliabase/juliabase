@@ -18,12 +18,11 @@ import copy, datetime
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
-from django.template import RequestContext
 from django.utils.text import capfirst
 from jb_common import utils as common_utils
 from samples.models import Process, Task
@@ -309,10 +308,7 @@ def edit(request, task_id):
             initial["process_class"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
     title = _("Edit task") if task else _("Add task")
-    return render_to_response("samples/edit_task.html", {"title": title,
-                                                         "task": task_form,
-                                                         "samples": samples_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_task.html", {"title": title, "task": task_form, "samples": samples_form})
 
 @login_required
 def show(request):
@@ -353,10 +349,9 @@ def show(request):
         assert len(department_names) == 1
         department_name = department_names.pop()
         task_lists_for_department.setdefault(department_name, {}).update({process_content_type: tasks})
-    return render_to_response("samples/task_lists.html", {"title": _("Task lists"),
-                                                          "choose_task_lists": choose_task_lists_form,
-                                                          "task_lists": task_lists_for_department},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/task_lists.html", {"title": _("Task lists"),
+                                                       "choose_task_lists": choose_task_lists_form,
+                                                       "task_lists": task_lists_for_department})
 
 
 @login_required

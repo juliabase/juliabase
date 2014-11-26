@@ -37,8 +37,7 @@ import django.forms as forms
 from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
@@ -164,7 +163,7 @@ def edit(request, sample_name):
     context = {"title": _("Edit sample “{sample}”").format(sample=sample), "sample": sample_form,
                "edit_description": edit_description_form}
     context.update(sample_details_context)
-    return render_to_response("samples/edit_sample.html", context, context_instance=RequestContext(request))
+    return render(request, "samples/edit_sample.html", context)
 
 
 def get_allowed_processes(user, sample):
@@ -682,11 +681,9 @@ def show(request, sample_name):
             return respond_in_json(sample.get_data().to_dict())
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
-    return render_to_response(
-        "samples/show_sample.html",
-        {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
-         "samples_and_processes": samples_and_processes},
-        context_instance=RequestContext(request))
+    return render(request, "samples/show_sample.html",
+                  {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
+                   "samples_and_processes": samples_and_processes})
 
 
 @login_required
@@ -746,10 +743,9 @@ def add_process(request, sample_name):
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
     for process in general_processes:
         process["url"] += "?sample={0}&next={1}".format(urlquote_plus(sample_name), sample.get_absolute_url())
-    return render_to_response("samples/add_process.html",
-                              {"title": _("Add process to sample “{sample}”").format(sample=sample),
-                               "processes": sample_processes + general_processes},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/add_process.html",
+                  {"title": _("Add process to sample “{sample}”").format(sample=sample),
+                   "processes": sample_processes + general_processes})
 
 
 class SearchSamplesForm(forms.Form):
@@ -810,12 +806,11 @@ def search(request):
         request.user.my_samples.add(*samples)
     add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
                                for sample in found_samples]
-    return render_to_response("samples/search_samples.html", {"title": _("Search for sample"),
-                                                              "search_samples": search_samples_form,
-                                                              "found_samples": zip(found_samples, add_to_my_samples_forms),
-                                                              "too_many_results": too_many_results,
-                                                              "max_results": max_results},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/search_samples.html", {"title": _("Search for sample"),
+                                                           "search_samples": search_samples_form,
+                                                           "found_samples": zip(found_samples, add_to_my_samples_forms),
+                                                           "too_many_results": too_many_results,
+                                                           "max_results": max_results})
 
 
 @login_required
@@ -914,7 +909,7 @@ def advanced_search(request):
                     "column_groups": column_groups_form, "columns": columns_form, "old_data": old_data_form,
                     "rows": zip(table, switch_row_forms) if table else None,
                     "no_permission_message": no_permission_message}
-    return render_to_response("samples/advanced_search.html", content_dict, context_instance=RequestContext(request))
+    return render(request, "samples/advanced_search.html", content_dict)
 
 
 @login_required
@@ -942,12 +937,11 @@ def export(request, sample_name):
     elif isinstance(result, HttpResponse):
         return result
     title = _("Table export for “{name}”").format(name=data.descriptive_name)
-    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
-                                                            "columns": columns_form,
-                                                            "rows": zip(table, switch_row_forms) if table else None,
-                                                            "old_data": old_data_form,
-                                                            "backlink": request.GET.get("next", "")},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                         "columns": columns_form,
+                                                         "rows": zip(table, switch_row_forms) if table else None,
+                                                         "old_data": old_data_form,
+                                                         "backlink": request.GET.get("next", "")})
 
 
 def qr_code(request):
@@ -968,8 +962,7 @@ def qr_code(request):
         data = request.GET["data"]
     except KeyError:
         raise Http404('GET parameter "data" missing.')
-    return render_to_response("samples/qr_code.html", {"title": _("QR code"), "data": data},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/qr_code.html", {"title": _("QR code"), "data": data})
 
 
 def data_matrix_code(request):
@@ -1004,8 +997,9 @@ def data_matrix_code(request):
         image = PIL.ImageOps.expand(image, border=16, fill=256).convert("1")
         image.save(filepath)
         storage_changed.send(data_matrix_code)
-    return render_to_response("samples/data_matrix_code.html", {"title": _("Data Matrix code"), "data_matrix_url": url, "data": data},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/data_matrix_code.html", {"title": _("Data Matrix code"),
+                                                             "data_matrix_url": url,
+                                                             "data": data})
 
 
 class SampleRenameForm(forms.Form):
@@ -1090,7 +1084,4 @@ def rename_sample(request):
     else:
         sample_rename_form = SampleRenameForm(request.user, initial={"old_name": sample.name if sample else ""})
     title = _("Rename sample") + " “{sample}”".format(sample=sample) if sample else ""
-    return render_to_response("samples/rename_sample.html",
-                              {"title": title,
-                               "sample_rename": sample_rename_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})

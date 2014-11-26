@@ -20,8 +20,7 @@ better place to be (yet).
 from __future__ import absolute_import, unicode_literals, division
 import django.utils.six as six
 
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
 from django.http import HttpResponsePermanentRedirect, Http404
 import django.core.urlresolvers
@@ -116,22 +115,20 @@ def main_menu(request):
                 lab_notebooks.append({"label": process["label_plural"], "url": url})
     if lab_notebooks:
         lab_notebooks.sort(key=lambda process: process["label"].lower())
-    return render_to_response(
-        "samples/main_menu.html",
-        {"title": _("Main menu"),
-         "my_topics": my_topics,
-         "topicless_samples": topicless_samples,
-         "add_sample_url": django.core.urlresolvers.reverse(settings.ADD_SAMPLES_VIEW),
-         "user_hash": permissions.get_user_hash(request.user),
-         "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
-         "can_edit_topics": any(permissions.has_permission_to_edit_topic(request.user, topic)
-                                for topic in Topic.objects.all()),
-         "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
-         "has_external_contacts": request.user.external_contacts.exists() or request.user.is_superuser,
-         "can_rename_samples": request.user.has_perm("samples.rename_samples") or request.user.is_superuser,
-         "physical_processes": allowed_physical_processes,
-         "lab_notebooks": lab_notebooks},
-        context_instance=RequestContext(request))
+    return render(request, "samples/main_menu.html",
+                  {"title": _("Main menu"),
+                   "my_topics": my_topics,
+                   "topicless_samples": topicless_samples,
+                   "add_sample_url": django.core.urlresolvers.reverse(settings.ADD_SAMPLES_VIEW),
+                   "user_hash": permissions.get_user_hash(request.user),
+                   "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
+                   "can_edit_topics": any(permissions.has_permission_to_edit_topic(request.user, topic)
+                                          for topic in Topic.objects.all()),
+                   "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
+                   "has_external_contacts": request.user.external_contacts.exists() or request.user.is_superuser,
+                   "can_rename_samples": request.user.has_perm("samples.rename_samples") or request.user.is_superuser,
+                   "physical_processes": allowed_physical_processes,
+                   "lab_notebooks": lab_notebooks})
 
 
 class SearchDepositionsForm(forms.Form):
@@ -175,12 +172,11 @@ def deposition_search(request):
             too_many_results = found_depositions.count() > max_results
             found_depositions = found_depositions[:max_results] if too_many_results else found_depositions
             found_depositions = [deposition.actual_instance for deposition in found_depositions]
-    return render_to_response("samples/search_depositions.html", {"title": _("Search for deposition"),
-                                                                  "search_depositions": search_depositions_form,
-                                                                  "found_depositions": found_depositions,
-                                                                  "too_many_results": too_many_results,
-                                                                  "max_results": max_results},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/search_depositions.html", {"title": _("Search for deposition"),
+                                                               "search_depositions": search_depositions_form,
+                                                               "found_depositions": found_depositions,
+                                                               "too_many_results": too_many_results,
+                                                               "max_results": max_results})
 
 
 @login_required
@@ -232,4 +228,4 @@ def show_process(request, process_id):
         return respond_in_json(process.get_data().to_dict())
     template_context = {"title": six.text_type(process), "samples": process.samples.all(), "process": process}
     template_context.update(utils.digest_process(process, request.user))
-    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
+    return render(request, "samples/show_process.html", template_context)

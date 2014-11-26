@@ -21,8 +21,7 @@ removing them from the list.
 from __future__ import absolute_import, unicode_literals
 
 import re
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
@@ -273,7 +272,6 @@ def edit(request, username):
     else:
         my_samples_form = MySamplesForm(user)
         action_form = ActionForm(user)
-    return render_to_response("samples/edit_my_samples.html",
-                              {"title": _("Edit “My Samples” of {user_name}").format(user_name=get_really_full_name(user)),
-                               "my_samples": my_samples_form, "action": action_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_my_samples.html",
+                  {"title": _("Edit “My Samples” of {user_name}").format(user_name=get_really_full_name(user)),
+                   "my_samples": my_samples_form, "action": action_form})

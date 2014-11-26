@@ -16,8 +16,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _
 from samples.views import utils
@@ -184,9 +183,8 @@ def edit(request, process_id):
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not structuring else None
         edit_description_form = form_utils.EditDescriptionForm() if structuring else None
     title = _("Edit structuring process") if process_id else _("Add structuring process")
-    return render_to_response("samples/edit_structuring.html", {"title": title,
-                                                                "process": structuring_form,
-                                                                "sample": sample_form,
-                                                                "remove_from_my_samples": remove_from_my_samples_form,
-                                                                "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_structuring.html", {"title": title,
+                                                             "process": structuring_form,
+                                                             "sample": sample_form,
+                                                             "remove_from_my_samples": remove_from_my_samples_form,
+                                                             "edit_description": edit_description_form})

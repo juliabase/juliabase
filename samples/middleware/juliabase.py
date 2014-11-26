@@ -21,7 +21,7 @@ from samples.permissions import PermissionError
 from jb_common.utils import HttpResponseUnauthorized
 from django.utils.translation import ugettext as _
 import django.http
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 
 """Middleware for handling samples-database-specific exceptions.
 """
@@ -47,7 +47,6 @@ class ExceptionsMiddleware(object):
                                         {"title": _("Access denied"), "exception": exception},
                                         context_instance=RequestContext(request)))
         elif isinstance(exception, utils.AmbiguityException):
-            return render_to_response("samples/disambiguation.html",
-                                      {"alias": exception.sample_name, "samples": exception.samples,
-                                       "title": _("Ambiguous sample name")},
-                                      context_instance=RequestContext(request))
+            return render(request, "samples/disambiguation.html",
+                          {"alias": exception.sample_name, "samples": exception.samples,
+                           "title": _("Ambiguous sample name")})

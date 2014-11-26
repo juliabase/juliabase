@@ -23,8 +23,7 @@ from jb_institute.models import SolarsimulatorMeasurement, SolarsimulatorCellMea
 from jb_institute.views import form_utils
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext, ugettext_lazy
 from samples import permissions
 from samples.views import utils, feed_utils
@@ -271,14 +270,13 @@ def edit(request, process_id):
     title = _(u"{name} of {sample}").format(name=SolarsimulatorMeasurement._meta.verbose_name,
                                                         sample=samples[0]) if solarsimulator_measurement \
         else _(u"Add {name}").format(name=SolarsimulatorMeasurement._meta.verbose_name)
-    return render_to_response("samples/edit_solarsimulator_measurement.html",
-                              {"title": title,
-                               "solarsimulator_measurement": solarsimulator_measurement_form,
-                               "solarsimulator_cell_measurements": solarsimulator_cell_forms,
-                               "sample": sample_form,
-                               "remove_from_my_samples": remove_from_my_samples_form,
-                               "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_solarsimulator_measurement.html",
+                  {"title": title,
+                   "solarsimulator_measurement": solarsimulator_measurement_form,
+                   "solarsimulator_cell_measurements": solarsimulator_cell_forms,
+                   "sample": sample_form,
+                   "remove_from_my_samples": remove_from_my_samples_form,
+                   "edit_description": edit_description_form})
 
 
 @login_required
@@ -319,4 +317,4 @@ def show(request, process_id):
                         "samples": solarsimulator_measurement.samples.all(), "process": solarsimulator_measurement,
                         "cells": solarsimulator_measurement.cells.all()}
     template_context.update(utils.digest_process(solarsimulator_measurement, request.user))
-    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
+    return render(request, "samples/show_process.html", template_context)

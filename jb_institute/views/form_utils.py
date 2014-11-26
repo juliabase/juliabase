@@ -22,8 +22,7 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 import urllib
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _
 import django.core.urlresolvers
 from django.contrib import messages
@@ -113,7 +112,7 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
     title = utils.capitalize_first_letter(title)
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
-    return render_to_response(edit_url, context_dict, context_instance=RequestContext(request))
+    return render(request, edit_url, context_dict)
 
 
 def show_depositions(request, deposition_number, institute_model):
@@ -143,7 +142,7 @@ def show_depositions(request, deposition_number, institute_model):
                         "samples": deposition.samples.all(),
                         "process": deposition}
     template_context.update(utils.digest_process(deposition, request.user))
-    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
+    return render(request, "samples/show_process.html", template_context)
 
 
 def measurement_is_referentially_valid(measurement_form, sample_form, measurement_number, institute_model):

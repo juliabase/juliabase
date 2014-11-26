@@ -22,8 +22,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime, json
 from django.http import Http404
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
@@ -499,8 +498,7 @@ def split_and_rename_after_deposition(request, deposition_number):
         new_names.pop(0, None)
         original_data_forms, new_name_form_lists, global_new_data_form = \
             forms_from_database(request.user, deposition, remote_client, new_names)
-    return render_to_response("samples/split_after_deposition.html",
-                              {"title": _("Bulk sample rename for {deposition}").format(deposition=deposition),
-                               "samples": zip(original_data_forms, new_name_form_lists),
-                               "new_sample_data": global_new_data_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/split_after_deposition.html",
+                  {"title": _("Bulk sample rename for {deposition}").format(deposition=deposition),
+                   "samples": zip(original_data_forms, new_name_form_lists),
+                   "new_sample_data": global_new_data_form})

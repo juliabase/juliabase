@@ -29,8 +29,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms.util import ValidationError
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
 from samples import models, permissions
@@ -198,12 +197,11 @@ def show(request, name):
     result_processes = [utils.digest_process(result, request.user) for result in sample_series.results.all()]
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
-    return render_to_response("samples/show_sample_series.html",
-                              {"title": _("Sample series “{name}”").format(name=sample_series.name),
-                               "can_edit": can_edit, "can_add_result": can_add_result,
-                               "sample_series": sample_series,
-                               "result_processes": result_processes},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/show_sample_series.html",
+                  {"title": _("Sample series “{name}”").format(name=sample_series.name),
+                   "can_edit": can_edit, "can_add_result": can_add_result,
+                   "sample_series": sample_series,
+                   "result_processes": result_processes})
 
 
 def is_referentially_valid(sample_series, sample_series_form, edit_description_form):
@@ -283,11 +281,10 @@ def edit(request, name):
                                       "topic": sample_series.topic.pk,
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
         edit_description_form = form_utils.EditDescriptionForm()
-    return render_to_response("samples/edit_sample_series.html",
-                              {"title": _("Edit sample series “{name}”").format(name=sample_series.name),
-                               "sample_series": sample_series_form,
-                               "is_new": False, "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_sample_series.html",
+                  {"title": _("Edit sample series “{name}”").format(name=sample_series.name),
+                   "sample_series": sample_series_form,
+                   "is_new": False, "edit_description": edit_description_form})
 
 
 @login_required
@@ -329,13 +326,11 @@ def new(request):
                     request, _("Sample series {name} was successfully added to the database.").format(name=full_name))
     else:
         sample_series_form = SampleSeriesForm(request.user)
-    return render_to_response(
-        "samples/edit_sample_series.html",
-        {"title": _("Create new sample series"),
-         "sample_series": sample_series_form,
-         "is_new": True,
-         "name_prefix": "{0}-{1}".format(request.user.username, datetime.datetime.today().strftime("%y"))},
-        context_instance=RequestContext(request))
+    return render(request, "samples/edit_sample_series.html",
+                  {"title": _("Create new sample series"),
+                   "sample_series": sample_series_form,
+                   "is_new": True,
+                   "name_prefix": "{0}-{1}".format(request.user.username, datetime.datetime.today().strftime("%y"))})
 
 
 @login_required
@@ -368,10 +363,9 @@ def export(request, name):
     elif isinstance(result, HttpResponse):
         return result
     title = _("Table export for “{name}”").format(name=data.descriptive_name)
-    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
-                                                            "columns": columns_form,
-                                                            "rows": zip(table, switch_row_forms) if table else None,
-                                                            "old_data": old_data_form,
-                                                            "backlink": request.GET.get("next", "")},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                         "columns": columns_form,
+                                                         "rows": zip(table, switch_row_forms) if table else None,
+                                                         "old_data": old_data_form,
+                                                         "backlink": request.GET.get("next", "")})
 

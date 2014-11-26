@@ -20,11 +20,10 @@ actually only a stepping stone to the membership edit view.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 import django.utils.http
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
@@ -131,8 +130,7 @@ def add(request):
                 next_view, kwargs=next_view_kwargs)
     else:
         new_topic_form = NewTopicForm(request.user)
-    return render_to_response("samples/add_topic.html", {"title": _("Add new topic"), "new_topic": new_topic_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/add_topic.html", {"title": _("Add new topic"), "new_topic": new_topic_form})
 
 
 @login_required
@@ -156,8 +154,7 @@ def list_(request):
                                 if permissions.has_permission_to_edit_topic(user, topic)]
     if not editable_topics:
         raise Http404("Can't find any topics that you can edit.")
-    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"), "topics": editable_topics},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/list_topics.html", {"title": _("List of all topics"), "topics": editable_topics})
 
 
 class EditTopicForm(forms.Form):
@@ -245,7 +242,5 @@ def edit(request, id):
         edit_topic_form = \
             EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True),
                                                         "topic_manager": topic.manager.pk})
-    return render_to_response("samples/edit_topic.html",
-                              {"title": _("Change topic memberships of “{0}”").format(topic.name),
-                               "edit_topic": edit_topic_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_topic.html", {"title": _("Change topic memberships of “{0}”").format(topic.name),
+                                                       "edit_topic": edit_topic_form})

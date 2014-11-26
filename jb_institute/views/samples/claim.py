@@ -22,8 +22,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime
 import django.contrib.auth.models
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
@@ -175,6 +174,5 @@ JuliaBase.
         samples_form = SamplesForm()
         substrate_form = SubstrateForm()
         reviewer_form = ReviewerForm()
-    return render_to_response("samples/add_claim_oldstyle.html", {"title": _("Assert claim"), "samples": samples_form,
-                                                                  "substrate": substrate_form, "reviewer": reviewer_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/add_claim_oldstyle.html", {"title": _("Assert claim"), "samples": samples_form,
+                                                               "substrate": substrate_form, "reviewer": reviewer_form})

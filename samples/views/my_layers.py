@@ -23,8 +23,7 @@ import re, json
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.forms.util import ValidationError
 import django.contrib.auth.models
 from samples import models, permissions
@@ -190,6 +189,4 @@ def edit(request, login_name):
     else:
         my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
-    return render_to_response("samples/edit_my_layers.html", {"title": _("My Layers"), "my_layers": my_layer_forms},
-                              context_instance=RequestContext(request))
-
+    return render(request, "samples/edit_my_layers.html", {"title": _("My Layers"), "my_layers": my_layer_forms})

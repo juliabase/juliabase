@@ -21,9 +21,8 @@ import matplotlib.dates
 from django import forms
 from django.forms.util import ValidationError
 from django.conf import settings
-from django.template import RequestContext
 from django.db.models import Q
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
@@ -354,10 +353,8 @@ def update_plot():
 def summary(request):
     update_plot()
     eligible_players = get_eligible_players()
-    return render_to_response("kicker/summary.html", {
-        "title": _("Kicker summary"), "kicker_numbers": eligible_players,
-        "latest_matches": models.Match.objects.reverse()[:20]},
-        context_instance=RequestContext(request))
+    return render(request, "kicker/summary.html", {"title": _("Kicker summary"), "kicker_numbers": eligible_players,
+                                                   "latest_matches": models.Match.objects.reverse()[:20]})
 
 
 class UserDetailsForm(forms.ModelForm):
@@ -398,9 +395,9 @@ def edit_user_details(request, username):
             return successful_response(request, _("The preferences were successfully updated."), summary)
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
-    return render_to_response("kicker/user_details.html", {
+    return render(request, "kicker/user_details.html", {
             "title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(user)),
-            "user_details": user_details_form}, context_instance=RequestContext(request))
+            "user_details": user_details_form})
 
 
 @login_required

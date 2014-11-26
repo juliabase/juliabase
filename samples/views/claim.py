@@ -23,8 +23,7 @@ import django.utils.six as six
 
 import django.contrib.auth.models
 from django.db.models import Q
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
@@ -123,9 +122,8 @@ JuliaBase.
     else:
         samples_form = SamplesForm(user)
         reviewer_form = ReviewerForm()
-    return render_to_response("samples/add_claim.html", {"title": _("Assert claim"), "samples": samples_form,
-                                                         "reviewer": reviewer_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/add_claim.html", {"title": _("Assert claim"), "samples": samples_form,
+                                                      "reviewer": reviewer_form})
 
 
 
@@ -152,11 +150,10 @@ def list_(request, username):
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user and not user.is_staff:
         raise permissions.PermissionError(request.user, _("You are not allowed to see claims of another user."))
-    return render_to_response("samples/list_claims.html",
-                              {"title": _("Claims for {user}").format(user=get_really_full_name(user)),
-                               "claims": user.claims.filter(closed=False),
-                               "claims_as_reviewer": user.claims_as_reviewer.filter(closed=False)},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/list_claims.html",
+                  {"title": _("Claims for {user}").format(user=get_really_full_name(user)),
+                   "claims": user.claims.filter(closed=False),
+                   "claims_as_reviewer": user.claims_as_reviewer.filter(closed=False)})
 
 
 class CloseForm(forms.Form):
@@ -253,8 +250,7 @@ JuliaBase.
     else:
         withdraw_form = CloseForm(_("withdraw claim"), prefix="withdraw") if is_requester else None
         approve_form = CloseForm(_("approve claim"), prefix="approve") if is_reviewer else None
-    return render_to_response("samples/show_claim.html", {"title": _("Claim #{number}").format(number=claim_id),
-                                                          "claim": claim, "is_reviewer": is_reviewer,
-                                                          "is_requester": is_requester,
-                                                          "withdraw": withdraw_form, "approve": approve_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/show_claim.html", {"title": _("Claim #{number}").format(number=claim_id),
+                                                       "claim": claim, "is_reviewer": is_reviewer,
+                                                       "is_requester": is_requester,
+                                                       "withdraw": withdraw_form, "approve": approve_form})

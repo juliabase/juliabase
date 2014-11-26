@@ -22,8 +22,7 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 import datetime, os.path, re, codecs
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django import forms
@@ -254,10 +253,10 @@ def edit(request, pds_number):
         overwrite_form = OverwriteForm()
         edit_description_form = form_utils.EditDescriptionForm() if pds_measurement else None
     title = _("Edit PDS measurement of {sample}").format(sample=old_sample) if pds_measurement else _("Add PDS measurement")
-    return render_to_response("samples/edit_pds_measurement.html",
-                              {"title": title, "pds_measurement": pds_measurement_form, "overwrite": overwrite_form,
-                               "sample": sample_form, "remove_from_my_samples": remove_from_my_samples_form,
-                               "edit_description": edit_description_form}, context_instance=RequestContext(request))
+    return render(request, "samples/edit_pds_measurement.html",
+                  {"title": title, "pds_measurement": pds_measurement_form, "overwrite": overwrite_form,
+                   "sample": sample_form, "remove_from_my_samples": remove_from_my_samples_form,
+                   "edit_description": edit_description_form})
 
 
 @login_required
@@ -283,4 +282,4 @@ def show(request, pds_number):
     template_context = {"title": _("PDS measurement #{pds_number}").format(pds_number=pds_number),
                         "samples": pds_measurement.samples.all(), "process": pds_measurement}
     template_context.update(utils.digest_process(pds_measurement, request.user))
-    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
+    return render(request, "samples/show_process.html", template_context)
