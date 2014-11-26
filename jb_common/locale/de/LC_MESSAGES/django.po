@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-24 15:54+0100\n"
-"PO-Revision-Date: 2014-11-12 20:27+0100\n"
+"POT-Creation-Date: 2014-11-26 18:55+0100\n"
+"PO-Revision-Date: 2014-11-26 18:32+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -367,29 +367,34 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: jb_common/utils.py:160
+#: jb_common/utils.py:157
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: jb_common/utils.py:191
+#: jb_common/utils.py:188
 #, python-brace-format
 msgid "Couldn't open {filename}."
 msgstr "Konnte {filename} nicht öffnen."
 
-#: jb_common/utils.py:205
+#: jb_common/utils.py:202
 msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
-#: jb_common/views.py:62
+#: jb_common/utils.py:601
+#, python-brace-format
+msgid "in {unit}"
+msgstr "in {unit}"
+
+#: jb_common/views.py:59
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: jb_common/views.py:72
+#: jb_common/views.py:69
 msgid "MarkdownMarkup"
 msgstr "MarkdownMarkup"
 
-#: jb_common/views.py:96
+#: jb_common/views.py:92
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
 

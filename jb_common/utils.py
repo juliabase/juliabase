@@ -31,7 +31,7 @@ from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.translation import ugettext as _, ugettext
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.utils.functional import allow_lazy
 from jb_common import mimeparse
 
@@ -579,6 +579,26 @@ def format_lazy(string, *args, **kwargs):
 # Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
 # whatever reason.
 format_lazy = allow_lazy(format_lazy, six.text_type)
+
+
+def in_(unit):
+    """Returns a lazily translated idiom of the form “in mm” or “in_MPa”, i.e. an
+    expression stating in which unit of measurements something is given.  It is
+    used heavily in the help texts of form fields.  This makes translating
+    easier because you don't have to translate all these expressions
+    separately.
+
+    :Parameters:
+      - `unit`: abbreviated unit of measurement
+
+    :type unit: unicode
+
+    :Return:
+      the string ``"in {unit}"`` with ``{unit}`` replaced with the given unit.
+
+    :rtype: unicode
+    """
+    return format_lazy(ugettext_lazy("in {unit}"), unit=unit)
 
 
 def static_file_response(filepath, served_filename=None):

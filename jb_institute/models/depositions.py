@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote_plus
 from django.db import models
+from jb_common.utils import in_
 import samples.models.depositions
 from samples import permissions
 from samples.data_tree import DataItem
@@ -32,8 +33,8 @@ from jb_common import models as jb_common_models
 
 
 class ClusterToolHotWireAndPECVDGases(models.Model):
-    h2 = models.DecimalField("H₂", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
-    sih4 = models.DecimalField("SiH₄", max_digits=5, decimal_places=2, null=True, blank=True, help_text=_("in sccm"))
+    h2 = models.DecimalField("H₂", max_digits=5, decimal_places=2, null=True, blank=True, help_text=in_("sccm"))
+    sih4 = models.DecimalField("SiH₄", max_digits=5, decimal_places=2, null=True, blank=True, help_text=in_("sccm"))
 
     class Meta:
         abstract = True
@@ -198,7 +199,7 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
     wire_material = models.CharField(_("wire material"), max_length=20, choices=cluster_tool_wire_material_choices)
-    base_pressure = models.FloatField(_("base pressure"), help_text=_("in mbar"), null=True, blank=True)
+    base_pressure = models.FloatField(_("base pressure"), help_text=in_("mbar"), null=True, blank=True)
 
     class Meta(ClusterToolLayer.Meta):
         verbose_name = _("cluster tool hot-wire layer")
@@ -253,7 +254,7 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     comments = models.TextField(_("comments"), blank=True)
     plasma_start_with_shutter = models.BooleanField(_("plasma start with shutter"), default=False)
     deposition_power = models.DecimalField(_("deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                           help_text=_("in W"))
+                                           help_text=in_("W"))
 
 
     class Meta(ClusterToolLayer.Meta):
@@ -370,12 +371,10 @@ class FiveChamberLayer(samples.models.depositions.Layer):
     date = models.DateField(_("date"))
     layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
     chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
-    sih4 = models.DecimalField("SiH₄", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
-    h2 = models.DecimalField("H₂", max_digits=7, decimal_places=3, help_text=_("in sccm"), null=True, blank=True)
-    temperature_1 = models.DecimalField(_("temperature 1"), max_digits=7, decimal_places=3, help_text=_("in ℃"),
-                                      null=True, blank=True)
-    temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=_("in ℃"),
-                                      null=True, blank=True)
+    sih4 = models.DecimalField("SiH₄", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
+    h2 = models.DecimalField("H₂", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
+    temperature_1 = models.DecimalField(_("temperature 1"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
+    temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
     class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")
         verbose_name = _("5-chamber layer")

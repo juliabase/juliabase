@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-24 15:54+0100\n"
+"POT-Creation-Date: 2014-11-26 18:55+0100\n"
 "PO-Revision-Date: 2014-11-24 16:01+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -145,23 +145,23 @@ msgstr "Benutzerdetails"
 msgid "IEF-5 logo"
 msgstr "IEF-5-Logo"
 
-#: kicker/views.py:358
+#: kicker/views.py:356
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:374
+#: kicker/views.py:371
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:380
+#: kicker/views.py:377
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
-#: kicker/views.py:398
+#: kicker/views.py:395
 msgid "The preferences were successfully updated."
 msgstr "Die Einstellungen wurden erfolgreich geändert."
 
-#: kicker/views.py:402
+#: kicker/views.py:399
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"
