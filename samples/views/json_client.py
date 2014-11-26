@@ -235,6 +235,7 @@ def logout_remote_client(request):
 
 @login_required
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def add_alias(request):
     """Adds a new sample alias name to the database.  This view can only be
     used by admin accounts.
@@ -269,6 +270,7 @@ def add_alias(request):
 
 @login_required
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def change_my_samples(request):
     """Adds or remove samples from “My Samples”.
 
@@ -353,6 +355,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 @login_required
 @never_cache
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def fold_process(request, sample_id):
     """Fold a single process in one sample data sheet. The new behavior is also saved.
 
@@ -415,6 +418,7 @@ def get_folded_processes(request, sample_id):
 @login_required
 @never_cache
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def fold_main_menu_element(request):
     """Fold a single topic or sample series from the main menu.
 

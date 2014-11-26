@@ -27,6 +27,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from jb_common.models import Topic
@@ -39,6 +40,7 @@ from jb_common.utils import respond_in_json, JSONRequestException
 
 @login_required
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def add_sample(request):
     """Adds a new sample to the database.  It is added without processes.  This
     view can only be used by admin accounts.
