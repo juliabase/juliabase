@@ -20,7 +20,7 @@ copyright holder, you must destroy it immediately and completely.
 {% block frame_content %}
     {% error_list status _("General error") %}
 
-<form method="post">
+<form method="post">{% csrf_token %}
 <table class="padding5">
     <tbody>
     <tr>

@@ -153,7 +153,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
           {% endif %}
         {% endwith %}
       {% endwith %}
-      <form method="post">
+      <form method="post">{% csrf_token %}
         <table>
           <tbody>
           <tr style="vertical-align: top">

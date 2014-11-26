@@ -25,7 +25,7 @@ copyright holder, you must destroy it immediately and completely.
 {% endblock %}
 
 {% block frame_content %}
-<form method="post">
+<form method="post">{% csrf_token %}
   {% error_list deposition _("Error in deposition") %}
   {% error_list samples _("Error in sample list") %}
   <table class="padding5">

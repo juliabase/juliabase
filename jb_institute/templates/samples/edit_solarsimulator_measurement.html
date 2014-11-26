@@ -18,7 +18,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post">
+<form method="post">{% csrf_token %}
   {% error_list solarsimulator_measurement _("Error in solarsimulator measurements") %}
   {% error_list sample _("Error in sample") %}
   {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}

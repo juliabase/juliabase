@@ -36,7 +36,7 @@ copyright holder, you must destroy it immediately and completely.
   saved.</p>
 {% endblocktrans %}
 
-<form method="post">
+<form method="post">{% csrf_token %}
   {% error_list sandbox _("Error in markup") %}
   <table border="1" style="width: 100%" class="padding">
     <thead>
