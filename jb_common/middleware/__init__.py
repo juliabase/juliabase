@@ -28,7 +28,6 @@ from jb_common.utils import is_json_requested, JSONRequestException
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
-from django.shortcuts import render_to_response
 
 
 """Middleware classes for various totally unrelated things."""
