@@ -40,6 +40,7 @@ It offers:
 - fully translatable; core is available in English and German so far
 - fully brandable; adjust the look to your corporate identity and/or your taste
 - mature codebase
+- compliance with state-of-the-art Web standards and security considerations
 - fully open source
 
 We believe that the database should adapt to the people and the existing
