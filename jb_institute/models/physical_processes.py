@@ -115,7 +115,7 @@ class PDSMeasurement(PhysicalProcess):
 
     number = models.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_("raw data file"), max_length=200,
-                                    help_text=_("only the relative path below \"pds/\""))
+                                    help_text=_("only the relative path below \"pds_raw_data/\""))
     apparatus = models.CharField(_("apparatus"), max_length=15, choices=pds_apparatus_choices, default="pds1")
 
     class Meta(PhysicalProcess.Meta):
@@ -316,7 +316,7 @@ class SolarsimulatorCellMeasurement(models.Model):
                                     verbose_name=_("solarsimulator measurement"))
     position = models.CharField(_("cell position"), max_length=5)
     data_file = models.CharField(_("data file"), max_length=200, db_index=True,
-                                 help_text=_("only the relative path below \"maike_user/ascii files/\""))
+                                 help_text=_("only the relative path below \"solarsimulator_raw_data/\""))
     area = models.FloatField(_("area"), help_text=_("in cm²"), null=True, blank=True)
     eta = models.FloatField(_("efficiency η"), help_text=_("in %"), null=True, blank=True)
     isc = models.FloatField(_("short-circuit current density"), help_text=_("in mA/cm²"), null=True, blank=True)
