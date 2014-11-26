@@ -202,7 +202,7 @@ class Migration(migrations.Migration):
             name='SolarsimulatorMeasurement',
             fields=[
                 ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
-                ('irradiance', models.CharField(max_length=10, verbose_name='irradiance', choices=[('AM1.5', 'AM1.5'), ('OG590', 'OG590'), ('BG7', 'BG7')])),
+                ('irradiation', models.CharField(max_length=10, verbose_name='irradiation', choices=[('AM1.5', 'AM1.5'), ('OG590', 'OG590'), ('BG7', 'BG7')])),
                 ('temperature', models.DecimalField(default=25.0, help_text='in \u2103', verbose_name='temperature', max_digits=3, decimal_places=1)),
             ],
             options={

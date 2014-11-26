@@ -3,7 +3,7 @@
 # Comments: Click on cells to change data.
 # Sample: 14-JS-5
 # Layout: inm standard
-# Irradiance: AM1.5
+# Irradiation: AM1.5
 # Temperature: 23.5
 # Positions: 3 6 9 10 11 12 13 14 16 17 18 22 24 28 32
 # Areas: 1.0 1.0 0.1 0.1 0.1 0.1 0.5 1.0 1.0 1.0 1.0 0.1 0.1 1.0 1.0

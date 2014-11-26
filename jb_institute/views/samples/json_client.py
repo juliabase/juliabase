@@ -240,7 +240,7 @@ def get_maike_by_filepath(request):
 @login_required
 @never_cache
 @require_http_methods(["GET"])
-def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell_position, date):
+def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cell_position, date):
     """Finds the solarsimulator measurement which is best suited for the given
     data file.  This view is to solve the problem that for non-standard-Jülich
     cell layouts, many single data files must be merged into one solarsimulator
@@ -253,7 +253,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
     :Parameters:
       - `request`: the HTTP request object
       - `sample_id`: the ID of the sample which was measured
-      - `irradiance`: the irradiance (AM1.5, BG7 etc) which was used
+      - `irradiation`: the irradiation (AM1.5, BG7 etc) which was used
       - `cell_position`: the position of the cell on the layout; don't mix it
         up with the *index* of the cell, which is the number used in the MAIKE
         datafile in the first column
@@ -261,7 +261,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
 
     :type request: ``HttpRequest``
     :type sample_id: unicode
-    :type irradiance: unicode
+    :type irradiation: unicode
     :type cell_position: unicode
     :type date: unicode
 
@@ -281,7 +281,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
         start_date = datetime.datetime.strptime(date, "%Y-%m-%d")
         end_date = start_date + datetime.timedelta(days=1)
         matching_measurements = institute_models.SolarsimulatorMeasurement.objects.filter(
-            samples__id=sample_id, irradiance=irradiance, timestamp__gte=start_date, timestamp__lt=end_date). \
+            samples__id=sample_id, irradiation=irradiation, timestamp__gte=start_date, timestamp__lt=end_date). \
             exclude(cells__position=cell_position).order_by("timestamp")
         if matching_measurements.exists():
             solarsimulator_measurement = matching_measurements[0]

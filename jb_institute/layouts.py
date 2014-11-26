@@ -312,17 +312,17 @@ class CellsLayout(Layout):
                 if i == len(thresholds):
                     return colors[-1]
             return colors[i]
-        irradiance = solarsimulator_measurement.irradiance
+        irradiation = solarsimulator_measurement.irradiation
         colors_and_labels = {}
         cell_measurements = solarsimulator_measurement.cells.all()
         for cell in cell_measurements:
-            if irradiance == "AM1.5":
+            if irradiation == "AM1.5":
                 color = map_value_to_RGB(cell.eta, [0.33, 3.1, 5.3, 6.3, 7.0, 7.7, 8.4, 9.2])
                 label = samples.views.utils.round(cell.eta, 3)
-            elif irradiance == "OG590":
+            elif irradiation == "OG590":
                 color = map_value_to_RGB(cell.isc, [2.5, 3.6, 4.3, 5.0, 6.7, 9.1, 10, 12])
                 label = samples.views.utils.round(cell.isc, 3)
-            elif irradiance == "BG7":
+            elif irradiation == "BG7":
                 color = map_value_to_RGB(cell.isc, [1.66, 2.45, 2.65, 2.77, 2.87, 2.93, 3.00, 3.13])
                 label = samples.views.utils.round(cell.isc, 3)
             else:
@@ -334,9 +334,9 @@ class CellsLayout(Layout):
     def draw_layout(self, canvas):
         if isinstance(self.process, (jb_institute.models.SolarsimulatorMeasurement)):
             colors_and_labels = self._get_colors_and_labels(self.process)
-            if self.process.irradiance == "AM1.5":
+            if self.process.irradiation == "AM1.5":
                 global_label = "η in %"
-            elif self.process.irradiance in ["OG590", "BG7"]:
+            elif self.process.irradiation in ["OG590", "BG7"]:
                 global_label = "Isc in mA/cm²"
             else:
                 global_label = None

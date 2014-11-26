@@ -191,13 +191,13 @@ class PDSMeasurement(PhysicalProcess):
         return data_node
 
 
-irradiance_choices = (("AM1.5", "AM1.5"),
-                      ("OG590", "OG590"),
-                      ("BG7", "BG7"))
+irradiation_choices = (("AM1.5", "AM1.5"),
+                       ("OG590", "OG590"),
+                       ("BG7", "BG7"))
 
 @python_2_unicode_compatible
 class SolarsimulatorMeasurement(PhysicalProcess):
-    irradiance = models.CharField(_("irradiance"), max_length=10, choices=irradiance_choices)
+    irradiation = models.CharField(_("irradiation"), max_length=10, choices=irradiation_choices)
     temperature = models.DecimalField(_("temperature"), max_digits=3, decimal_places=1, help_text=_("in ℃"),
                                       default=25.0)
 
@@ -241,7 +241,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
                 _thumbnail, _figure = plot_locations["thumbnail_url"], plot_locations["plot_url"]
                 context["image_urls"][cell.position] = (_thumbnail, _figure)
         if "default_cell" not in context:
-            if self.irradiance == "AM1.5":
+            if self.irradiation == "AM1.5":
                 default_cell = sorted([(cell.eta, cell.position) for cell in context["cells"]], reverse=True)[0][1]
             else:
                 default_cell = sorted([(cell.isc, cell.position) for cell in context["cells"]], reverse=True)[0][1]
@@ -255,7 +255,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
     def get_data(self):
         data_node = super(SolarsimulatorMeasurement, self).get_data()
-        data_node.items.extend([DataItem("irradiance", self.irradiance),
+        data_node.items.extend([DataItem("irradiation", self.irradiation),
                                 DataItem("temperature/degC", self.temperature), ])
         data_node.children = [cell.get_data() for cell in self.cells.all()]
         return data_node
@@ -264,7 +264,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
-        data_node.items.extend([DataItem(_("irradiance"), self.irradiance),
+        data_node.items.extend([DataItem(_("irradiation"), self.irradiation),
                                 DataItem(_("temperature") + "/℃", self.temperature)])
         return data_node
 
@@ -306,7 +306,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
                          search.TextSearchField(cls, "external_operator", "name"),
                          search.DateTimeSearchField(cls, "timestamp"),
                          search.TextSearchField(cls, "comments"),
-                         search.ChoiceSearchField(cls, "irradiance"),
+                         search.ChoiceSearchField(cls, "irradiation"),
                          search.IntervalSearchField(cls, "temperature")]
         return model_field
 

@@ -105,7 +105,7 @@ Operator: {operator}
 Comments: {comments}
 Sample: {sample}
 Layout: {layout}
-Irradiance: {irradiance}
+Irradiation: {irradiation}
 Temperature: {temperature}
 Positions: {positions}
 Areas: {areas}
@@ -116,7 +116,7 @@ U/V{column_headers}"""
                    "comments": "Click on cells to change data.",
                    "sample": sample_name,
                    "layout": "inm standard",
-                   "irradiance": "AM1.5",
+                   "irradiation": "AM1.5",
                    "temperature": "23.5",
                    "positions": " ".join(measured_positions),
                    "areas": " ".join(str(areas_inm[position]) for position in measured_positions),
@@ -130,7 +130,7 @@ U/V{column_headers}"""
     measurement_index += 1
     if random.random() > 0.3:
         header_data["timestamp"] = datetime.datetime(2014, 10, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S")
-        header_data["irradiance"] = "BG7"
+        header_data["irradiation"] = "BG7"
         for i in range(1, len(data)):
             data[i] *= numpy.random.sample((len(voltages),)) * 0.05 + 0.2
         numpy.savetxt(os.path.join(rootdir, "measurement-{}.dat".format(measurement_index)), numpy.transpose(data), "%06.5f",
@@ -149,7 +149,7 @@ Operator: {operator}
 Comments: {comments}
 Sample: {sample}
 Layout: {layout}
-Irradiance: {irradiance}
+Irradiation: {irradiation}
 Temperature: {temperature}
 Positions: {positions}
 Areas: {areas}
@@ -160,7 +160,7 @@ U/V{column_headers}"""
                    "comments": "",
                    "sample": sample_name,
                    "layout": "acme1",
-                   "irradiance": "AM1.5",
+                   "irradiation": "AM1.5",
                    "temperature": "23.5",
                    "positions": " ".join(measured_positions),
                    "areas": " ".join(str(areas_acme[position]) for position in measured_positions),
@@ -174,7 +174,7 @@ U/V{column_headers}"""
     measurement_index += 1
     if random.random() > 0.2:
         header_data["timestamp"] = datetime.datetime(2014, 10, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S")
-        header_data["irradiance"] = "BG7"
+        header_data["irradiation"] = "BG7"
         header_data["comments"] = r"There was a *small* crack in the filter.  Note that $I_{\mathrm{sc}}$ is actually" \
                                   r"$J_{\mathrm{sc}} = \frac{I_{\mathrm{sc}}}{A}$."
         for i in range(1, len(data)):

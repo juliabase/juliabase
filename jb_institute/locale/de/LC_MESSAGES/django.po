@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-26 18:55+0100\n"
-"PO-Revision-Date: 2014-11-26 18:56+0100\n"
+"POT-Creation-Date: 2014-11-26 20:45+0100\n"
+"PO-Revision-Date: 2014-11-26 20:43+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -360,7 +360,7 @@ msgstr "α in cm⁻¹"
 
 #: jb_institute/models/physical_processes.py:200
 #: jb_institute/models/physical_processes.py:267
-msgid "irradiance"
+msgid "irradiation"
 msgstr "Beleuchtung"
 
 #: jb_institute/models/physical_processes.py:201

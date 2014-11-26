@@ -102,7 +102,7 @@ for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
     measurement.timestamp = header_data["timestamp"]
     measurement.comments = header_data["comments"]
     measurement.sample_id = sample_id
-    measurement.irradiance = header_data["irradiance"]
+    measurement.irradiation = header_data["irradiation"]
     measurement.temperature = header_data["temperature"]
 
     for position, area, data in zip(header_data["positions"].split(), header_data["areas"].split(), evaluated_data):

@@ -62,9 +62,9 @@ function showCellData{{ process.id }}(process_id, position) {
       {% for cell in cells|sort_cells %}
         <li onclick="showCellData{{ process.id }}({{ process.id }}, '{{ cell.position }}')">
           {{ cell.position }}
-          {% if process.irradiance == "AM1.5" %}
+          {% if process.irradiation == "AM1.5" %}
             ({{ cell.eta|round:"3" }} %)
-          {% elif process.irradiance == "OG590" or process.irradiance == "BG7" %}
+          {% elif process.irradiation == "OG590" or process.irradiation == "BG7" %}
             ({{ cell.isc|round:"3" }} mA/cm²)
           {% endif %}
         </li>
@@ -76,8 +76,8 @@ function showCellData{{ process.id }}(process_id, position) {
 <table style="background-color: {{ process|solarsimulator_color }}">
   <tbody>
     <tr>
-      <td class="label">{% verbose_name SolarsimulatorMeasurement.irradiance %}:</td>
-      <td class="value">{{ process.get_irradiance_display }}</td>
+      <td class="label">{% verbose_name SolarsimulatorMeasurement.irradiation %}:</td>
+      <td class="value">{{ process.get_irradiation_display }}</td>
     </tr>
     <tr>
         {% value_field process.temperature "℃" %}

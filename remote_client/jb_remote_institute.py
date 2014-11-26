@@ -348,7 +348,7 @@ class SolarsimulatorMeasurement(object):
         if process_id:
             data = connection.open("solarsimulator_measurements/{0}".format(process_id))
             self.process_id = process_id
-            self.irradiance = data["irradiance"]
+            self.irradiation = data["irradiation"]
             self.temperature = data["temperature/degC"]
             self.sample_id = data["sample IDs"][0]
             self.operator = data["operator"]
@@ -362,7 +362,7 @@ class SolarsimulatorMeasurement(object):
                     cell = SolarsimulatorCellMeasurement(self, data["cell position"], data)
             self.existing = True
         else:
-            self.process_id = self.irradiance = self.temperature = self.sample_id = self.operator = self.timestamp = \
+            self.process_id = self.irradiation = self.temperature = self.sample_id = self.operator = self.timestamp = \
                 self.comments = None
             self.timestamp_inaccuracy = 0
             self.cells = {}
@@ -377,7 +377,7 @@ class SolarsimulatorMeasurement(object):
                 "timestamp": format_timestamp(self.timestamp),
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "operator": primary_keys["users"][self.operator],
-                "irradiance": self.irradiance,
+                "irradiation": self.irradiation,
                 "temperature": self.temperature,
                 "comments": self.comments,
                 "remove_from_my_samples": False,

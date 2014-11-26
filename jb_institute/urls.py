@@ -81,7 +81,7 @@ urlpatterns += patterns("jb_institute.views.samples",
                         (r"^next_deposition_number/(?P<letter>.+)", "json_client.next_deposition_number"),
                         (r"^solarsimulator_measurements/by_filepath", "json_client.get_maike_by_filepath"),
                         (r"^structurings/by_sample/(?P<sample_id>.+)", "json_client.get_current_structuring"),
-                        (r"^solarsimulator_measurements/matching/(?P<irradiance>[A-Za-z0-9.]+)/(?P<sample_id>\d+)/"
+                        (r"^solarsimulator_measurements/matching/(?P<irradiation>[A-Za-z0-9.]+)/(?P<sample_id>\d+)/"
                          r"(?P<cell_position>[^/]+)/(?P<date>\d{4}-\d\d-\d\d)/",
                          "json_client.get_matching_solarsimulator_measurement"),
 
