@@ -134,7 +134,7 @@ class Sample(object):
             self.purpose = data["purpose"]
             self.tags = data["tags"]
             self.topic = data["topic"]
-            self.processes = dict((key, value) for key, value in data.iteritems() if key.startswith("process "))
+            self.processes = dict((key, value) for key, value in data.items() if key.startswith("process "))
         else:
             self.id = self.name = self.current_location = self.currently_responsible_person = self.purpose = self.tags = \
                 self.topic = None

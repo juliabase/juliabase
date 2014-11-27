@@ -24,9 +24,10 @@ Unix-like systems, it is in /tmp.
 """
 
 from __future__ import absolute_import, unicode_literals
-import six
+from jb_remote import six
+from jb_remote.six.moves import urllib
 
-import re, logging, datetime, urllib
+import re, logging, datetime
 from jb_remote import *
 
 
@@ -333,7 +334,7 @@ def get_sample(sample_name):
             if allowed_character_pattern.match(character):
                 allowed_sample_name_characters.append(character)
         sample_name = "{}-LGCY-{}".format(str(datetime.datetime.now().year)[2:], "".join(allowed_sample_name_characters)[:30])
-    sample_id = connection.open("primary_keys?samples=" + urllib.quote_plus(sample_name))["samples"].get(sample_name)
+    sample_id = connection.open("primary_keys?samples=" + urllib.parse.quote_plus(sample_name))["samples"].get(sample_name)
     if sample_id is not None and not isinstance(sample_id, list):
         return sample_id
     else:
