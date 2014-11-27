@@ -99,9 +99,9 @@ function showCellData{{ process.id }}(process_id, position) {
       </td>
       <td class="value" style="font-weight: normal">
         {% if browser_system == "windows" %}
-          <a href="file:///P:/LABOR%20USER/maike_user/ascii%20files/{{ cell.data_file|urlquote }}">
+          <a href="file:///P:/inm_nas/lab_data/solarsimulator_raw_data/{{ cell.data_file|urlquote }}">
         {% else %}
-          <a href="file:///mnt/P/LABOR%20USER/maike_user/ascii%20files/{{ cell.data_file|urlquote }}">
+          <a href="file:///mnt/P/inm_nas/lab_data/solarsimulator_raw_data/{{ cell.data_file|urlquote }}">
         {% endif %}
             {{ cell.data_file }}</a></td>
         </tr>
