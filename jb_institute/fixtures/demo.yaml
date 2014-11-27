@@ -87,6 +87,21 @@
     - [edit_every_five_chamber_deposition, jb_institute, fivechamberdeposition]
   model: auth.user
   pk: 7
+- fields:
+    username: s.renard
+    first_name: Jean
+    last_name: Renard
+    # 12345
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [view_all_samples, samples, sample]
+    - [adopt_samples, samples, sample]
+    - [edit_permissions_for_all_physical_processes, samples, userdetails]
+    - [add_external_operator, samples, externaloperator]
+    - [view_all_external_operators, samples, externaloperator]
+    - [can_edit_all_topics, jb_common, topic]
+  model: auth.user
+  pk: 8
 
 - fields:
     name: INM
@@ -126,6 +141,12 @@
     layout_last_modified: 1990-01-01 00:00:00
   model: jb_common.userdetails
   pk: 7
+- fields:
+    user: 8
+    department: 1
+    layout_last_modified: 1990-01-01 00:00:00
+  model: jb_common.userdetails
+  pk: 8
 
 - fields:
     user: 3
@@ -162,6 +183,13 @@
     my_samples_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 7
+- fields:
+    user: 8
+    show_users_from_department: [1]
+    display_settings_timestamp: 1990-01-01 00:00:00
+    my_samples_timestamp: 1990-01-01 00:00:00
+  model: samples.userdetails
+  pk: 8
 
 
 # And the rest
