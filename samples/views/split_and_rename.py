@@ -332,9 +332,9 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                                       prefix=next_prefix))
     return render(request, "samples/split_and_rename.html",
                   {"title": _("Split sample “{sample}”").format(sample=parent),
-                   "new_names": zip(range(number_of_old_pieces + 1,
-                                          number_of_old_pieces + 1 + len(new_name_forms)),
-                                    new_name_forms),
+                   "new_names": list(zip(range(number_of_old_pieces + 1,
+                                               number_of_old_pieces + 1 + len(new_name_forms)),
+                                         new_name_forms)),
                    "global_data": global_data_form,
                    "old_split": old_split})
 

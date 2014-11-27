@@ -500,5 +500,5 @@ def split_and_rename_after_deposition(request, deposition_number):
             forms_from_database(request.user, deposition, remote_client, new_names)
     return render(request, "samples/split_after_deposition.html",
                   {"title": _("Bulk sample rename for {deposition}").format(deposition=deposition),
-                   "samples": zip(original_data_forms, new_name_form_lists),
+                   "samples": list(zip(original_data_forms, new_name_form_lists)),
                    "new_sample_data": global_new_data_form})

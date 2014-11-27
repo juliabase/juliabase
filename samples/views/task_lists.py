@@ -341,7 +341,7 @@ def show(request):
             exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists[process_content_type] = [TaskForTemplate(task, request.user) for task in active_tasks]
     task_lists_for_department = {}
-    for process_content_type, tasks in task_lists.iteritems():
+    for process_content_type, tasks in task_lists.items():
         # FixMe: it is possible that some processes are in more then one department available
         # maybe we need a better way to determine the department
         department_names = {name for name, app_label in settings.DEPARTMENTS_TO_APP_LABELS.items()

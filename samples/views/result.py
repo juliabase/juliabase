@@ -688,6 +688,6 @@ def export(request, process_id):
     title = _("Table export for “{name}”").format(name=data.descriptive_name)
     return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
                                                          "columns": columns_form,
-                                                         "rows": zip(table, switch_row_forms) if table else None,
+                                                         "rows": list(zip(table, switch_row_forms)) if table else None,
                                                          "old_data": old_data_form,
                                                          "backlink": request.GET.get("next", "")})

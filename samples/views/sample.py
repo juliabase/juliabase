@@ -808,7 +808,7 @@ def search(request):
                                for sample in found_samples]
     return render(request, "samples/search_samples.html", {"title": _("Search for sample"),
                                                            "search_samples": search_samples_form,
-                                                           "found_samples": zip(found_samples, add_to_my_samples_forms),
+                                                           "found_samples": list(zip(found_samples, add_to_my_samples_forms)),
                                                            "too_many_results": too_many_results,
                                                            "max_results": max_results})
 
@@ -843,7 +843,7 @@ def advanced_search(request):
     search_performed = False
     no_permission_message = None
     _search_parameters_hash = hashlib.sha1(json.dumps(sorted(dict((key, value) for key, value in request.GET.items()
-                                                    if not "__" in key and key != "_search_parameters_hash").items()))).hexdigest()
+                                    if not "__" in key and key != "_search_parameters_hash").items())).encode("utf-8")).hexdigest()
     column_groups_form = columns_form = table = switch_row_forms = old_data_form = None
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
         search_tree = get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
@@ -904,10 +904,10 @@ def advanced_search(request):
         root_form = jb_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = ""
     content_dict = {"title": _("Advanced search"), "search_root": root_form, "search_tree": search_tree,
-                    "results": zip(results, add_forms), "search_performed": search_performed,
+                    "results": list(zip(results, add_forms)), "search_performed": search_performed,
                     "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results,
                     "column_groups": column_groups_form, "columns": columns_form, "old_data": old_data_form,
-                    "rows": zip(table, switch_row_forms) if table else None,
+                    "rows": list(zip(table, switch_row_forms)) if table else None,
                     "no_permission_message": no_permission_message}
     return render(request, "samples/advanced_search.html", content_dict)
 
@@ -939,7 +939,7 @@ def export(request, sample_name):
     title = _("Table export for “{name}”").format(name=data.descriptive_name)
     return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
                                                          "columns": columns_form,
-                                                         "rows": zip(table, switch_row_forms) if table else None,
+                                                         "rows": list(zip(table, switch_row_forms)) if table else None,
                                                          "old_data": old_data_form,
                                                          "backlink": request.GET.get("next", "")})
 

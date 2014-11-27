@@ -244,4 +244,4 @@ def bulk_rename(request):
     return render(request, "samples/bulk_rename.html",
                   {"title": _("Rename samples"),
                    "prefixes": prefixes_form, "single_prefix": single_prefix,
-                   "samples": zip(samples, new_name_forms)})
+                   "samples": list(zip(samples, new_name_forms))})

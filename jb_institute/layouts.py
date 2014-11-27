@@ -443,7 +443,7 @@ class ACME1(CellsLayout):
               "5D": ((27.82, 3.12), (2.6, 2.6))}
 
     _scaling = 80 * mm / max(height, width)
-    for cell_index, coords in shapes.iteritems():
+    for cell_index, coords in shapes.items():
         shapes[cell_index] = ((_scaling * coords[0][0] * mm, _scaling * coords[0][1] * mm),
                               (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
     height *= _scaling

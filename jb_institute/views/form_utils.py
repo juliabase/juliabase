@@ -20,8 +20,8 @@ functions.
 
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
+from django.utils.six.moves import urllib
 
-import urllib
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _
 import django.core.urlresolvers
@@ -88,8 +88,8 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
                 if rename:
                     next_view = "samples.views.split_after_deposition.split_and_rename_after_deposition"
                     next_view_kwargs = {"deposition_number": deposition.number}
-                    query_string = urllib.urlencode([("new-name-{0}".format(id_), new_name)
-                                                     for id_, new_name in new_names.items()])
+                    query_string = urllib.parse.urlencode([("new-name-{0}".format(id_), new_name)
+                                                           for id_, new_name in new_names.items()])
             elif not deposition.finished:
                 next_view, __, next_view_kwargs = django.core.urlresolvers.resolve(request.path)
                 next_view_kwargs["deposition_number"] = deposition.number

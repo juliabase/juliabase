@@ -341,7 +341,7 @@ def unicode_strftime(timestamp, format_string):
     """Formats a timestamp to a string.  Unfortunately, the built-in method
     ``strftime`` of ``datetime.datetime`` objects is not unicode-safe.
     Therefore, I have to do a conversion into an UTF-8 intermediate
-    representation.  In Python 3.0, this problem is probably gone.
+    representation.  In Python 3.0, this problem is gone.
 
     :Parameters:
       - `timestamp`: the timestamp to be converted
@@ -358,7 +358,10 @@ def unicode_strftime(timestamp, format_string):
 
     :rtype: unicode
     """
-    return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+    if six.PY2:
+        return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+    else:
+        return timestamp.strftime(format_string)
 
 
 def adjust_timezone_information(timestamp):
@@ -619,7 +622,7 @@ def static_file_response(filepath, served_filename=None):
     """
     response = django.http.HttpResponse()
     if not settings.USE_X_SENDFILE:
-        response.write(open(filepath).read())
+        response.write(open(filepath, "rb").read())
     response["X-Sendfile"] = filepath
     response["Content-Type"] = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
     response["Content-Length"] = os.path.getsize(filepath)

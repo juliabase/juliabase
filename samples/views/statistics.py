@@ -47,7 +47,7 @@ def get_cache_connections():
         memcached_client = memcache.Client(settings.CACHES["default"]["LOCATION"])
         servers = memcached_client.get_stats()
         number_of_servers = len(servers)
-        connections = sum(int(server[1]["curr_connections"]) for server in servers)
+        connections = sum(int(server[1][b"curr_connections"]) for server in servers)
     else:
         number_of_servers = 0
         connections = 0

@@ -13,11 +13,12 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import unicode_literals
+import sys, os; sys.path.append(os.path.abspath(".."))
+from jb_remote.six.moves import urllib
 
-import sys, os, datetime, glob, random
+import os, datetime, glob, random
 import numpy
 import scipy.interpolate, scipy.optimize
-sys.path.append(os.path.abspath(".."))
 from jb_remote_institute import *
 
 
@@ -88,7 +89,8 @@ for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
         substrate.submit()
 
     structuring = connection.open("structurings/by_sample/{0}?timestamp={1}".format(
-            urllib.quote_plus(str(sample_id)), urllib.quote_plus(str(header_data["timestamp"].strftime("%Y-%m-%d %H:%M:%S")))))
+        urllib.parse.quote_plus(str(sample_id)),
+        urllib.parse.quote_plus(str(header_data["timestamp"].strftime("%Y-%m-%d %H:%M:%S")))))
     if not structuring:
         structuring = Structuring()
         structuring.sample_id = sample_id

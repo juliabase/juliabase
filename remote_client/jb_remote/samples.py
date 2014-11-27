@@ -246,7 +246,7 @@ class Result(object):
             for j, value in enumerate(values):
                 data["{0}_{1}-value".format(i, j)] = value
         if self.image_filename:
-            data["image_file"] = open(self.image_filename)
+            data["image_file"] = open(self.image_filename, "rb")
         with TemporaryMySamples(self.sample_ids):
             if self.existing:
                 result = connection.open("results/{0}/edit/".format(self.id), data)
