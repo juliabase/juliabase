@@ -24,6 +24,7 @@ import dateutil.tz
 import django.http
 import django.contrib.auth.models
 from django.core.cache import cache
+from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
 from django.conf import settings
 from django.utils.encoding import iri_to_uri
@@ -455,6 +456,17 @@ def is_json_requested(request):
     return requested_mime_type == "application/json"
 
 
+class JSONEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        try:
+            return float(o)
+        except (ValueError, TypeError):
+            try:
+                return list(o)
+            except (ValueError, TypeError):
+                return super(JSONEncoder, self).default(o)
+
+
 def respond_in_json(value):
     """The communication with the JuliaBase Remote Client or to AJAX clients
     should be done without generating HTML pages in order to have better
@@ -474,16 +486,7 @@ def respond_in_json(value):
 
     :rtype: ``HttpResponse``
     """
-    def default(x):
-        try:
-            return float(x)
-        except (ValueError, TypeError):
-            try:
-                return list(x)
-            except (ValueError, TypeError):
-                return six.text_type(x)
-
-    return django.http.HttpResponse(json.dumps(value, default=default), content_type="application/json; charset=ascii")
+    return django.http.JsonResponse(value, JSONEncoder, safe=False)
 
 
 all_models = None
