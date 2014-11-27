@@ -327,7 +327,7 @@ class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
 def _user_choices_by_department(user, include=(), exclude=()):
     """Returns a choices list ready-to-be-used in multiple- and single-selection
     widgets.  Basically, it consists of all users in the departments that the
-    user wants to see accorint to the `show_users_from_department` field.  It
+    user wants to see accorint to the `show_users_from_departments` field.  It
     collapses the list automatically if only one department is present.  Note
     that no entry for “empty choice” is added.  This must be done by the
     caller, if necessary.
@@ -348,7 +348,7 @@ def _user_choices_by_department(user, include=(), exclude=()):
     :rtype: list of (int, str) or list of (str, list of (int, str))
     """
     choices = []
-    for department in user.samples_user_details.show_users_from_department.order_by("name").iterator():
+    for department in user.samples_user_details.show_users_from_departments.order_by("name").iterator():
         users_from_department = set(django.contrib.auth.models.User.objects.
                                     filter(is_active=True, jb_user_details__department=department))
         users_from_department |= set(user for user in include if user.jb_user_details.department == department)
