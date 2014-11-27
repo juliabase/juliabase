@@ -30,7 +30,7 @@ import re, logging, datetime, urllib
 from jb_remote import *
 
 
-settings.root_url = settings.testserver_root_url = "http://demo.juliabase.org/"
+settings.root_url = settings.testserver_root_url = "https://demo.juliabase.org/"
 
 
 class ClusterToolDeposition(object):
