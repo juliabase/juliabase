@@ -15,8 +15,9 @@
 
 """Default values of jb_common settings."""
 
-import sys
+import sys, os
 from django.utils.translation import ugettext_lazy as _
+from django.utils.crypto import get_random_string
 
 
 DEBUG_EMAIL_REDIRECT_USERNAME = ""
@@ -41,3 +42,33 @@ LDAP_URLS = ()
 # DEFAULT_FROM_EMAIL
 # LOGIN_REDIRECT_URL
 # TEMPLATE_CONTEXT_PROCESSORS
+
+def get_secret_key_from_file(filepath):
+    """Returns the secret key used for the Django setting ``SECRET_KEY`` in your
+    ``settings.py``.  It reads it from the given file.  If this file doesn't
+    exist, a new key is generated and stored in that file.  This has the
+    benefit of not having the secret key in ``settings.py``, which may be part
+    of your revisioned source code repository.  Besides, this function
+    simplifies bootstrapping.
+
+    :Parameters:
+      - `filepath`: path to the file that stores the secret key.  It may
+        contain a tilde ``~``.
+
+    :type filepath: str
+
+    :Return:
+      The secret key.
+
+    :rtype: str
+    """
+    filepath = os.path.abspath(os.path.expanduser(filepath))
+    try:
+        secret_key = open(filepath).read().strip()
+    except IOError:
+        chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
+        secret_key = get_random_string(50, chars)
+        with open(filepath, "w") as outfile:
+            outfile.write(secret_key)
+        os.chmod(filepath, 0o600)
+    return secret_key
