@@ -255,7 +255,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
             jb_common.signals.add_user_details(User, instance, created=True)
             department = instance.jb_user_details.department
         if department:
-            user_details.show_users_from_department = [department]
+            user_details.show_users_from_departments = [department]
 
         user_details.save()
 

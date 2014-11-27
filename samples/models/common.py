@@ -1480,7 +1480,7 @@ class UserDetails(models.Model):
     # Translators: This is plural.
     folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
                                      default="[]")
-    show_users_from_department = models.ManyToManyField(Department, related_name="shown_users",
+    show_users_from_departments = models.ManyToManyField(Department, related_name="shown_users",
                                                         verbose_name=_("show users from department"), blank=True)
 
 
