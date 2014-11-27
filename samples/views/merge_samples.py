@@ -19,13 +19,13 @@ from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.forms.util import ValidationError
 from samples import models
 from samples.views import utils
 from samples.views import form_utils
-import settings
 from django.core.urlresolvers import get_callable
 
 
