@@ -177,7 +177,7 @@ class JuliaBaseConnection(object):
             request = urllib2.Request(url)
         else:
             content_type, body = encode_multipart_formdata(data)
-            headers = {"Content-Type": content_type}
+            headers = {"Content-Type": content_type, "Referer": url}
             request = urllib2.Request(url, body, headers)
         max_cycles = 10
         while max_cycles > 0:
