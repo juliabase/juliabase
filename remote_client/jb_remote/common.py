@@ -189,10 +189,8 @@ class JuliaBaseConnection(object):
                 if error.code in [404, 422] and error.info()["Content-Type"].startswith("application/json"):
                     error_code, error_message = json.loads(error.read())
                     raise JuliaBaseError(error_code, error_message)
-                try:
-                    open("/tmp/juliabase_error.html", "w").write(error.read())
-                except IOError:
-                    pass
+                server_error_message = error.read().decode("utf-8")
+                error.msg = "{}\n\n{}".format(error.msg, server_error_message).encode("utf-8")
                 raise error
             except urllib2.URLError:
                 if max_cycles == 0:
