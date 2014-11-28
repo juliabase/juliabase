@@ -148,14 +148,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.95682511"
-     inkscape:cx="634.22943"
-     inkscape:cy="754.04147"
+     inkscape:zoom="0.3230309"
+     inkscape:cx="1209.3712"
+     inkscape:cy="649.56127"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="975"
+     inkscape:window-width="1366"
+     inkscape:window-height="721"
      inkscape:window-x="0"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
@@ -176,13 +176,13 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:url(#pattern5526);fill-opacity:1;stroke:none;filter:url(#filter5551);opacity:0.3"
+       style="opacity:0.3;fill:url(#pattern5526);fill-opacity:1;stroke:none;filter:url(#filter5551)"
        id="rect3845"
-       width="729.49591"
-       height="227.82846"
+       width="2403.783"
+       height="218.42238"
        x="7.4796848"
        y="293.58972"
-       inkscape:export-filename="/tmp/bronger/src/juliabase/juliabase/doc/images/juliabase.png"
+       inkscape:export-filename="/home/bronger/src/juliabase/juliabase/doc/images/juliabase.png"
        inkscape:export-xdpi="54.971565"
        inkscape:export-ydpi="54.971565" />
     <path
@@ -194,14 +194,20 @@
        sodipodi:rx="87.213539"
        sodipodi:ry="87.213539"
        d="m 332.99714,399.49948 a 87.213539,87.213539 0 1 1 -174.42708,0 87.213539,87.213539 0 1 1 174.42708,0 z"
-       transform="matrix(0.91949563,0,0,0.91949563,-107.29254,38.231715)" />
+       transform="matrix(0.91949563,0,0,0.91949563,-107.29254,38.231715)"
+       inkscape:export-filename="/home/bronger/src/juliabase/juliabase/doc/images/juliabase.png"
+       inkscape:export-xdpi="54"
+       inkscape:export-ydpi="54" />
     <text
        xml:space="preserve"
        style="font-size:144px;font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:125%;letter-spacing:0px;word-spacing:0px;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:url(#radialGradient3808);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Myriad;-inkscape-font-specification:Myriad Bold Italic"
        x="57.683197"
        y="449.85318"
        id="text3095"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/bronger/src/juliabase/juliabase/doc/images/juliabase.png"
+       inkscape:export-xdpi="54"
+       inkscape:export-ydpi="54"><tspan
          sodipodi:role="line"
          id="tspan3097"
          x="57.683197"
@@ -216,14 +222,20 @@
        sodipodi:rx="89.18956"
        sodipodi:ry="89.18956"
        d="m 325.92972,409.78177 a 89.18956,89.18956 0 1 1 -178.37912,0 89.18956,89.18956 0 1 1 178.37912,0 z"
-       transform="matrix(0.97697961,0,0,0.97697961,-112.5859,5.221309)" />
+       transform="matrix(0.97697961,0,0,0.97697961,-112.5859,5.221309)"
+       inkscape:export-filename="/home/bronger/src/juliabase/juliabase/doc/images/juliabase.png"
+       inkscape:export-xdpi="54"
+       inkscape:export-ydpi="54" />
     <text
        xml:space="preserve"
        style="font-size:128px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:125%;letter-spacing:0px;word-spacing:0px;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:MyriadCondensed;-inkscape-font-specification:MyriadCondensed Bold"
        x="240.35413"
        y="445.03912"
        id="text3073"
-       sodipodi:linespacing="125%"><tspan
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/bronger/src/juliabase/juliabase/doc/images/juliabase.png"
+       inkscape:export-xdpi="54"
+       inkscape:export-ydpi="54"><tspan
          sodipodi:role="line"
          id="tspan3075"
          x="240.35413"
