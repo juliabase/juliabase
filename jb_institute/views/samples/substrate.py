@@ -18,10 +18,9 @@
 
 from __future__ import unicode_literals
 import datetime
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from jb_institute import models as institute_models
 from samples import permissions
 from samples.views import utils, feed_utils, form_utils
@@ -177,7 +176,6 @@ def edit(request, substrate_id):
         samples_form = form_utils.DepositionSamplesForm(request.user, preset_sample, substrate)
         edit_description_form = form_utils.EditDescriptionForm() if substrate else None
     title = _("Edit substrate “{0}”").format(substrate) if substrate else _("Add substrate")
-    return render_to_response("samples/edit_substrate.html", {"title": title, "substrate": substrate_form,
-                                                              "samples": samples_form,
-                                                              "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_substrate.html", {"title": title, "substrate": substrate_form,
+                                                           "samples": samples_form,
+                                                           "edit_description": edit_description_form})

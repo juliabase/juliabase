@@ -24,8 +24,7 @@ from django.views.decorators.http import require_http_methods
 from django.conf import settings
 from django.forms import widgets
 from django.forms.util import ValidationError
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 import django.core.urlresolvers
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
@@ -133,8 +132,7 @@ def add(request):
     else:
         status_form = StatusForm(request.user)
     title = _("Add status message")
-    return render_to_response("samples/add_status_message.html", {"title": title, "status": status_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/add_status_message.html", {"title": title, "status": status_form})
 
 
 @login_required
@@ -169,10 +167,9 @@ def show(request):
         for process_class in status_message.process_classes.all():
             further_status_messages.setdefault(process_class.model_class()._meta.verbose_name, []).append(status_message)
     further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())
-    return render_to_response("samples/show_status.html", {"title": _("Status messages"),
-                                                           "status_messages": status_messages,
-                                                           "further_status_messages": further_status_messages},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/show_status.html", {"title": _("Status messages"),
+                                                        "status_messages": status_messages,
+                                                        "further_status_messages": further_status_messages})
 
 
 @login_required

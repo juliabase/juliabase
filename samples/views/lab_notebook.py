@@ -27,7 +27,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime, re
 from django.http import Http404, HttpResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 import django.core.urlresolvers
 from django.template import loader, RequestContext
 import django.forms as forms
@@ -148,8 +148,11 @@ def show(request, process_name, year_and_month):
     process_class = get_all_models()[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     if not year_and_month:
-        today = datetime.date.today()
-        return HttpResponseSeeOther("{0}/{1}".format(today.year, today.month))
+        try:
+            timestamp = process_class.objects.latest().timestamp
+        except process_class.DoesNotExist:
+            timestamp = datetime.datetime.today()
+        return HttpResponseSeeOther("{0}/{1}".format(timestamp.year, timestamp.month))
     year, month = parse_year_and_month(year_and_month)
     if request.method == "POST":
         year_month_form = YearMonthForm(request.POST)
@@ -169,14 +172,12 @@ def show(request, process_name, year_and_month):
             kwargs={"year_and_month": year_and_month}) + "?next=" + urlquote_plus(request.path)
     except django.core.urlresolvers.NoReverseMatch:
         export_url = None
-    return render_to_response(
-        "samples/lab_notebook.html",
-        {"title": utils.capitalize_first_letter(_("lab notebook for {process_name}")
-                                                .format(process_name=process_class._meta.verbose_name_plural)),
-         "year": year, "month": month, "year_month": year_month_form,
-         "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
-         "export_url": export_url},
-        context_instance=RequestContext(request))
+    return render(request, "samples/lab_notebook.html",
+                  {"title": utils.capitalize_first_letter(_("lab notebook for {process_name}")
+                                                          .format(process_name=process_class._meta.verbose_name_plural)),
+                   "year": year, "month": month, "year_month": year_month_form,
+                   "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
+                   "export_url": export_url})
 
 
 @login_required
@@ -212,9 +213,8 @@ def export(request, process_name, year_and_month):
     elif isinstance(result, HttpResponse):
         return result
     title = _("Table export for “{name}”").format(name=data.descriptive_name)
-    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
-                                                            "columns": columns_form,
-                                                            "rows": zip(table, switch_row_forms) if table else None,
-                                                            "old_data": old_data_form,
-                                                            "backlink": request.GET.get("next", "")},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                         "columns": columns_form,
+                                                         "rows": list(zip(table, switch_row_forms)) if table else None,
+                                                         "old_data": old_data_form,
+                                                         "backlink": request.GET.get("next", "")})

@@ -1,0 +1,61 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load juliabase %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post">{% csrf_token %}
+  {% error_list process _("Error in structuring process") %}
+  {% error_list sample _("Error in sample") %}
+  {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
+
+  <table class="padding5">
+    <tbody>
+    <tr>
+      {% input_field sample.sample %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr>
+      {% input_field process.timestamp %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr style="display: none">
+      {% input_field process.operator %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr>
+      {% input_field process.layout %}
+    </tr>
+</tbody>
+  </table>
+
+
+    {% include "samples/edit_description.html" %}
+
+  {% if remove_from_my_samples %}
+    <div style="text-align: right; clear: both">
+      {{ remove_from_my_samples.as_p }}
+    </div>
+  {% endif %}
+
+  <div style="display: none">
+    {{ process.timestamp_inaccuracy }}
+  </div>
+
+  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+</form>
+{% endblock %}

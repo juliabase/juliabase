@@ -24,12 +24,14 @@ Unix-like systems, it is in /tmp.
 """
 
 from __future__ import absolute_import, unicode_literals
+from jb_remote import six
+from jb_remote.six.moves import urllib
 
-import re, logging, datetime, urllib
+import re, logging, datetime
 from jb_remote import *
 
 
-settings.root_url = settings.testserver_root_url = "http://127.0.0.1:8000/"
+settings.root_url = settings.testserver_root_url = "https://demo.juliabase.org/"
 
 
 class ClusterToolDeposition(object):
@@ -118,7 +120,8 @@ class ClusterToolHotWireLayer(object):
 
     def get_data(self, layer_index):
         prefix = six.text_type(layer_index) + "-"
-        data = {prefix + "layer_type": "hot-wire",
+        data = {prefix + "number": layer_index + 1,
+                prefix + "layer_type": "hot-wire",
                 prefix + "time": self.time,
                 prefix + "comments": self.comments,
                 prefix + "wire_material": self.wire_material,
@@ -148,7 +151,8 @@ class ClusterToolPECVDLayer(object):
 
     def get_data(self, layer_index):
         prefix = six.text_type(layer_index) + "-"
-        data = {prefix + "layer_type": "PECVD",
+        data = {prefix + "number": layer_index + 1,
+                prefix + "layer_type": "PECVD",
                 prefix + "chamber": self.chamber,
                 prefix + "time": self.time,
                 prefix + "comments": self.comments,
@@ -160,7 +164,7 @@ class ClusterToolPECVDLayer(object):
 
 
 def rename_after_deposition(deposition_number, new_names):
-    """Rename samples after a deposition.  In the IEK-PV, it is custom to give
+    """Rename samples after a deposition.  In some institutes, it is custom to give
     samples the name of the deposition after the deposition.  This is realised
     here.
 
@@ -226,7 +230,9 @@ class PDSMeasurement(object):
             if self.existing:
                 connection.open("pds_measurements/{0}/edit/".format(self.number), data)
             else:
-                return connection.open("pds_measurements/add/", data)
+                process_id = connection.open("pds_measurements/add/", data)
+                logging.info("Successfully added PDS measurement {0}.".format(process_id))
+                return process_id
 
     @classmethod
     def get_already_available_pds_numbers(cls):
@@ -258,8 +264,8 @@ class Substrate(object):
                 initial_data["timestamp inaccuracy"], initial_data["operator"], initial_data["external operator"], \
                 initial_data["material"], initial_data["comments"], initial_data["sample IDs"]
         else:
-            self.id = self.timestamp = self.timestamp_inaccuracy = self.operator = self.external_operator = self.material = \
-                self.comments = None
+            self.id = self.timestamp = self.operator = self.external_operator = self.material = self.comments = None
+            self.timestamp_inaccuracy = 0
             self.sample_ids = []
 
     def submit(self):
@@ -268,8 +274,7 @@ class Substrate(object):
                 "material": self.material,
                 "comments": self.comments,
                 "operator": primary_keys["users"][self.operator],
-                "external_operator": self.external_operator and \
-                    primary_keys["external_operators"][self.external_operator],
+                "external_operator": self.external_operator and primary_keys["external_operators"][self.external_operator],
                 "sample_list": self.sample_ids}
         if self.id:
             data["edit_description-description"] = "automatic change by a non-interactive program"
@@ -278,255 +283,73 @@ class Substrate(object):
             return connection.open("substrates/add/", data)
 
 
-main_sample_name_pattern = re.compile(r"(?P<year>\d\d)(?P<letter>[ABCDEFHKLNOPQSTVWXYabcdefhklnopqstvwxy])-?"
-                                      r"(?P<number>\d{1,4})(?P<suffix>[-A-Za-z_/#()][-A-Za-z_/0-9#()]*)?$")
+class SampleNotFound(Exception):
+    """Raised if a sample was not found in `get_sample`.  If you catch such an
+    exception, you have to fill in the missing attributes of the sample and
+    submit it.
+
+    :ivar sample: a newly created `Sample` instance with only the name set, and
+      not yet sumbitted to the database.
+
+    :type sample: `Sample`
+    """
+    def __init__(self, sample):
+        super(SampleNotFound, self).__init__()
+        self.sample = sample
+
+name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?"
+                          r"|(\d\d-[A-Z]{2}[A-Z0-9]{0,2}|[A-Z]{2}[A-Z0-9]{2})-[-A-Za-z_/0-9#()]+")
 allowed_character_pattern = re.compile("[-A-Za-z_/0-9#()]")
 
-def normalize_sample_name(sample_name):
-    """Normalises a sample name.  Unfortunately, co-workers tend to write
-    sample names in many variations.  For example, instead of 10B-010, they
-    write 10b-010 or 10b010 or 10B-10.  In this routine, I normalise to known
-    sample patterns.  Additionally, if a known pattern is found, this routine
-    makes suggestions for the currently reponsible person, the topic, and some
-    other things.
-
-    This routine is used in crawlers and legacy importers.
-
-    :Parameter:
-      - `sample_name`: the raw name of the sample
-
-    :type sample_name: unicode
-
-    :Return:
-      The normalised sample data.  The keys of this dictionary are ``"name"``
-      (this is the normalised name), ``"currently_responsible_person"``,
-      ``"current_location"``, ``"substrate_operator"``,
-      ``"substrate_external_operator"``, ``"topic"``, and ``"legacy"``.  The
-      latter is a boolean denoting whether the database must prepend a legacy
-      prefix à la “10-LGCY--” when creating the sample.
-
-    :rtype: dict mapping str to unicode
-    """
-    result = {"currently_responsible_person": "nobody", "substrate_operator": "nobody", "substrate_external_operator": None,
-              "legacy": True, "current_location": "unknown", "topic": "Legacy", "alias": None}
-
-    sample_name = " ".join(sample_name.split())
-    translations = {"ä": "ae", "ö": "oe", "ü": "ue", "Ä": "Ae", "Ö": "Oe", "Ü": "Ue", "ß": "ss",
-                    " ": "_", "°": "o"}
-    for from_, to in translations.items():
-        sample_name = sample_name.replace(from_, to)
-    allowed_sample_name_characters = []
-    for character in sample_name:
-        if allowed_character_pattern.match(character):
-            allowed_sample_name_characters.append(character)
-    result["name"] = "".join(allowed_sample_name_characters)[:30]
-    current_year = int(datetime.datetime.now().strftime("%y"))
-    match = main_sample_name_pattern.match(sample_name)
-    if match and int(match.group("year")) <= current_year:
-        parts = match.groupdict("")
-        parts["number"] = "{0:03}".format(int(parts["number"]))
-        parts["letter"] = parts["letter"].upper()
-        if parts["letter"] == "D":
-            result["current_location"] = "02.4u/82b, Schrank hinter Flasher"
-            result["topic"] = "LADA intern"
-            parts["number"] = "{0:04}".format(int(parts["number"]))
-        result["name"] = "{year}{letter}-{number}{suffix}".format(**parts)
-        result["legacy"] = False
-        return result
-    return result
-
-
-class SubstrateFound(Exception):
-    """Exception raised for simpler control flow in
-    `normalize_substrate_name`.  It is only used there.
-    """
-    def __init__(self, key_name, substrate_comments):
-        self.key_name, self.substrate_comments = key_name, substrate_comments
-
-unknown_substrate_comment = "unknown substrate material"
-
-def normalize_substrate_name(substrate_name, is_general_comment=False, add_zno_warning=False):
-    """Normalises a substrate name to data directly usable for the sample
-    database.
-
-    :Parameters:
-      - `substrate_name`: a string which contains information about the substrate
-      - `is_general_comment`: whether `substrate_name` is a general comment
-        containing the substrate name somewhere, or only the substrate name
-        (albeit in raw form)
-      - `add_zno_warning`: whether a warning should be issued if the sample
-        probably had a ZnO process (because such processes are not yet in the
-        database)
-
-    :type substrate_name: unicode
-    :type is_general_comment: bool
-    :type add_zno_warning: bool
-
-    :Return:
-      the substrate name as needed by JuliaBase, comments of the substrate
-      process
-
-    :rtype: unicode, unicode
-    """
-    substrate_name = " ".join(substrate_name.split())
-    normalized_substrate_name = substrate_name.lower().replace("-", " ").replace("(", ""). \
-        replace(")", "")
-    normalized_substrate_name = " ".join(normalized_substrate_name.split())
-    def test_name(pattern, key_name, comment=""):
-        if re.match("^({0})$".format(pattern), normalized_substrate_name, re.UNICODE):
-            raise SubstrateFound(key_name, comment)
-        elif re.search(pattern, normalized_substrate_name, re.UNICODE):
-            raise SubstrateFound(key_name, substrate_name if not is_general_comment else comment)
-    try:
-        if not normalized_substrate_name:
-            raise SubstrateFound("custom", unknown_substrate_comment)
-        test_name("asahi ?vu|asahi ?uv", "asahi-vu")
-        test_name("asahi|ashi", "asahi-u")
-        test_name("corning|coaring", "corning")
-        test_name("eagle ?(2000|xg)", "corning", "Eagle 2000")
-        test_name("quartz|quarz", "quartz")
-        test_name("ilmasil", "quartz", "Ilmasil")
-        test_name("qsil", "quartz", "Qsil")
-        test_name("sapphire|saphir|korund|corundum", "sapphire")
-        test_name("glas", "glass")
-        test_name(r"\balu", "aluminium foil")
-        test_name(r"\bsi\b.*wafer|wafer.*\bsi\b|silicon.*wafer|wafer.*silicon|c ?si", "si-wafer")
-        raise SubstrateFound("custom", substrate_name if not is_general_comment else unknown_substrate_comment)
-    except SubstrateFound as found_substrate:
-        key_name, substrate_comments = found_substrate.key_name, found_substrate.substrate_comments
-        if add_zno_warning and "zno" in normalized_substrate_name:
-            if substrate_comments:
-                substrate_comments += "\n\n"
-            substrate_comments += "ZnO may have been applied to the substrate without an explicitly shown sputter process."
-        return key_name, substrate_comments
-
-
-def get_or_create_sample(sample_name, substrate_name, timestamp, timestamp_inaccuracy="3", comments=None,
-                         add_zno_warning=False, create=True):
-    """Looks up a sample name in the database, and creates a new one if it
-    doesn't exist yet.  You can only use this function if you are an
-    administrator.  This function is used in crawlers and legacy importers.
+def get_sample(sample_name):
+    """Looks up a sample name in the database, and returns its ID.  (No full
+    `Sample` instance is returned to spare ressources.  Mostly, only the ID is
+    subsequently needed after all.)  You can only use this function if you are
+    an administrator.  This function is used in crawlers and legacy importers.
     The sample is added to “My Samples”.
+
+    If the sample name doesn't fit into the naming scheme, a legacy sample name
+    accoring to ``{short_year}-LGCY-...`` is generated.
 
     :Parameters:
       - `sample_name`: the name of the sample
-      - `substrate_name`: the concise descriptive name of the substrate.  This
-        routine tries heavily to normalise it.
-      - `timestamp`: the timestamp of the sample/substrate
-      - `timestamp_inaccuracy`: the timestamp inaccuracy of the
-        sample/substrate
-      - `comments`: Comment which may contain information about the substrate.
-        They are ignored if `substrate_name` is given.  In a way, this
-        parameter is a poor man's `substrate_name`.
-      - `add_zno_warning`: whether a warnign should be issued if the sample
-        probably had a ZnO process (because such processes are not yet in the
-        database)
-      - `create`: if ``True``, create the sample if it doesn't exist yet; if
-        ``False``, return ``None`` if the sample coudn't be found
 
     :type sample_name: unicode
-    :type substrate_name: unicode or ``NoneType``
-    :type timestamp_inaccuracy: unicode
-    :type comments: unicode
-    :type add_zno_warning: bool
 
     :Return:
-      the ID of the sample, either the existing or the newly created; or
-      ``None`` if ``create=False`` and the sample could not be found
+      the ID of the sample
 
-    :rtype: int or ``NoneType``
+    :rtype: int
+
+    :Exceptions:
+      - `SampleNotFound`: Raised if the sample was not found.  It contains a
+        newly created sample and substrate for your convenience.  See the
+        documentation of this exception class for more information.
     """
-    name_info = normalize_sample_name(sample_name)
-    substrate_material, substrate_comments = normalize_substrate_name(substrate_name or comments or "",
-                                                                      is_general_comment=not substrate_name,
-                                                                      add_zno_warning=add_zno_warning)
-    if name_info["name"] != "unknown_name":
-        sample_id = connection.open("primary_keys?samples=" + urllib.quote_plus(name_info["name"]))["samples"].\
-            get(name_info["name"])
-        if not sample_id and name_info["legacy"]:
-            sample_name = "{year}-LGCY--{name}".format(year=timestamp.strftime("%y"), name=name_info["name"])[:30]
-            sample_id = connection.open("primary_keys?samples=" + urllib.quote_plus(sample_name))["samples"].\
-                get(sample_name)
-        if name_info["legacy"]:
-            if sample_id is not None:
-                best_match = {}
-                sample_ids = sample_id if isinstance(sample_id, list) else [sample_id]
-                for sample_id in sample_ids:
-                    substrate_data = connection.open("substrates_by_sample/{0}".format(sample_id))
-                    if substrate_data:
-                        current_substrate = Substrate(substrate_data)
-                        timedelta = abs(current_substrate.timestamp - timestamp)
-                        if timedelta < datetime.timedelta(weeks=104) and \
-                                ("timedelta" not in best_match or timedelta < best_match["timedelta"]):
-                            best_match["timedelta"] = timedelta
-                            best_match["id"] = sample_id
-                            best_match["substrate"] = current_substrate
-                sample_id = best_match.get("id")
-                substrate = best_match.get("substrate")
-        else:
-            if isinstance(sample_id, list):
-                sample_id = None
-            elif sample_id is not None:
-                substrate = Substrate(connection.open("substrates_by_sample/{0}".format(sample_id)))
-                assert substrate.timestamp, Exception("sample ID {0} had no substrate".format(sample_id))
+
+    if not name_pattern.match(sample_name):
+        # Build a legacy name with the ``{short_year}-LGCY-`` prefix.
+        allowed_sample_name_characters = []
+        for character in sample_name:
+            if allowed_character_pattern.match(character):
+                allowed_sample_name_characters.append(character)
+        sample_name = "{}-LGCY-{}".format(str(datetime.datetime.now().year)[2:], "".join(allowed_sample_name_characters)[:30])
+    sample_id = connection.open("primary_keys?samples=" + urllib.parse.quote_plus(sample_name))["samples"].get(sample_name)
+    if sample_id is not None and not isinstance(sample_id, list):
+        return sample_id
     else:
-        sample_id = None
-    if sample_id is None:
-        if create:
-            new_sample = Sample()
-            new_sample.name = name_info["name"]
-            new_sample.current_location = name_info["current_location"]
-            new_sample.currently_responsible_person = name_info["currently_responsible_person"]
-            new_sample.topic = name_info["topic"]
-            new_sample.legacy = name_info["legacy"]
-            new_sample.timestamp = timestamp
-            sample_id = new_sample.submit()
-            assert sample_id, Exception("Could not create sample {0}".format(name_info["name"]))
-            substrate = Substrate()
-            substrate.timestamp = timestamp - datetime.timedelta(seconds=2)
-            substrate.timestamp_inaccuracy = timestamp_inaccuracy
-            substrate.material = substrate_material
-            substrate.comments = substrate_comments
-            substrate.operator = name_info["substrate_operator"]
-            substrate.sample_ids = [sample_id]
-            if name_info["substrate_external_operator"]:
-                substrate.external_operator = name_info["substrate_external_operator"]
-            substrate.submit()
-    else:
-        connection.open("change_my_samples", {"add": sample_id})
-        substrate_changed = False
-        if substrate.timestamp > timestamp:
-            substrate.timestamp = timestamp - datetime.timedelta(seconds=2)
-            substrate.timestamp_inaccuracy = timestamp_inaccuracy
-            substrate_changed = True
-        if substrate.material == "custom" and substrate.comments == unknown_substrate_comment:
-            substrate.material = substrate_material
-            substrate.comments = substrate_comments
-            substrate_changed = True
-        else:
-            if substrate.material != substrate_material:
-                additional_substrate_comments = substrate_comments if substrate_material == "custom" else substrate_material
-            elif substrate_material == "custom":
-                additional_substrate_comments = substrate_comments
-            else:
-                additional_substrate_comments = None
-            if additional_substrate_comments:
-                if substrate.comments:
-                    substrate.comments += "\n\n"
-                substrate_comments += "Alternative information: " + additional_substrate_comments
-                substrate_changed = True
-        if substrate_changed:
-            substrate.submit()
-    return sample_id
+        new_sample = Sample()
+        new_sample.name = sample_name
+        raise SampleNotFound(new_sample)
 
 
-class SolarsimulatorPhotoMeasurement(object):
+class SolarsimulatorMeasurement(object):
 
     def __init__(self, process_id=None):
         if process_id:
-            data = connection.open("solarsimulator_measurements/photo/{0}".format(process_id))
+            data = connection.open("solarsimulator_measurements/{0}".format(process_id))
             self.process_id = process_id
-            self.irradiance = data["irradiance"]
+            self.irradiation = data["irradiation"]
             self.temperature = data["temperature/degC"]
             self.sample_id = data["sample IDs"][0]
             self.operator = data["operator"]
@@ -536,12 +359,13 @@ class SolarsimulatorPhotoMeasurement(object):
             self.cells = {}
             for key, value in data.items():
                 if key.startswith("cell position "):
-                    cell = PhotoCellMeasurement(value)
-                    self.cells[cell.position] = cell
+                    data = value
+                    cell = SolarsimulatorCellMeasurement(self, data["cell position"], data)
             self.existing = True
         else:
-            self.process_id = self.irradiance = self.temperature = self.sample_id = self.operator = self.timestamp = \
-                self.timestamp_inaccuracy = self.comments = None
+            self.process_id = self.irradiation = self.temperature = self.sample_id = self.operator = self.timestamp = \
+                self.comments = None
+            self.timestamp_inaccuracy = 0
             self.cells = {}
             self.existing = False
         self.edit_important = True
@@ -554,7 +378,7 @@ class SolarsimulatorPhotoMeasurement(object):
                 "timestamp": format_timestamp(self.timestamp),
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "operator": primary_keys["users"][self.operator],
-                "irradiance": self.irradiance,
+                "irradiation": self.irradiation,
                 "temperature": self.temperature,
                 "comments": self.comments,
                 "remove_from_my_samples": False,
@@ -565,49 +389,43 @@ class SolarsimulatorPhotoMeasurement(object):
         with TemporaryMySamples(self.sample_id):
             if self.existing:
                 query_string = "?only_single_cell_added=true" if only_single_cell_added else ""
-                connection.open("solarsimulator_measurements/photo/{0}/edit/".format(self.process_id) + query_string, data)
+                connection.open("solarsimulator_measurements/{0}/edit/".format(self.process_id) + query_string, data)
             else:
-                return connection.open("solarsimulator_measurements/photo/add/", data)
+                process_id = connection.open("solarsimulator_measurements/add/", data)
+                logging.info("Successfully added solarsimulator measurement {0}.".format(process_id))
+                return process_id
 
 
-class PhotoCellMeasurement(object):
+class SolarsimulatorCellMeasurement(object):
 
-    def __init__(self, data={}):
+    def __init__(self, measurement, position, data={}):
+        self.position = position
+        measurement.cells[position] = self
         if data:
-            self.position = data["cell position"]
-            self.cell_index = data["cell index"]
             self.area = data["area/cm^2"]
             self.eta = data["efficiency/%"]
-            self.p_max = data["maximum power point/mW"]
-            self.ff = data["fill factor/%"]
             self.isc = data["short-circuit current density/(mA/cm^2)"]
             self.data_file = data["data file name"]
         else:
-            self.position = self.cell_index = self.area = self.eta = self.p_max = self.ff = \
-                self.isc = self.data_file = None
+            self.area = self.eta = self.isc = self.data_file = None
 
     def get_data(self, index):
         prefix = six.text_type(index) + "-"
         return {prefix + "position": self.position,
-                prefix + "cell_index": self.cell_index,
                 prefix + "area": self.area,
                 prefix + "eta": self.eta,
-                prefix + "p_max": self.p_max,
-                prefix + "ff": self.ff,
                 prefix + "isc": self.isc,
                 prefix + "data_file": self.data_file}
 
-    def __eq__(self, other):
-        return self.cell_index == other.cell_index and self.data_file == other.data_file
-
 
 class Structuring(object):
+
     def __init__(self):
         self.sample_id = None
         self.process_id = None
         self.operator = None
         self.timestamp = None
-        self.timestamp_inaccuracy = None
+        self.timestamp_inaccuracy = 0
         self.comments = None
         self.layout = None
         self.edit_description = None
@@ -620,17 +438,18 @@ class Structuring(object):
                 "timestamp": format_timestamp(self.timestamp),
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "operator": primary_keys["users"][self.operator],
-                "process_id": self.process_id,
                 "layout": self.layout,
                 "comments": self.comments,
-                "remove_from_my_samples": True,
+                "remove_from_my_samples": False,
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
         with TemporaryMySamples(self.sample_id):
             if self.process_id:
                 connection.open("structuring_process/{0}/edit/".format(self.process_id), data)
             else:
-                return connection.open("structuring_process/add/", data)
+                self.process_id = connection.open("structuring_process/add/", data)
+                logging.info("Successfully added structuring {0}.".format(self.process_id))
+                return self.process_id
 
 
 class FiveChamberDeposition(object):
@@ -661,6 +480,7 @@ class FiveChamberDeposition(object):
                 FiveChamberLayer(self, layer_data)
             self.existing = True
         else:
+            self.number = None
             self.sample_ids = []
             self.operator = self.timestamp = None
             self.comments = ""
@@ -688,7 +508,7 @@ class FiveChamberDeposition(object):
                 "timestamp_inaccuracy": self.timestamp_inaccuracy,
                 "comments": self.comments,
                 "sample_list": self.sample_ids,
-                "remove_from_my_samples": True,
+                "remove_from_my_samples": False,
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
         for layer_index, layer in enumerate(self.layers):

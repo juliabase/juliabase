@@ -73,7 +73,7 @@ STATIC_URL = str("/media/")
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + str("admin/")
 
-SECRET_KEY = "vew7ooes7bt7aetrb77wuhwe95zislisdfo8z"
+SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
@@ -113,10 +113,11 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.debug",
                                "django.core.context_processors.i18n",
                                "django.core.context_processors.media",
+                               "django.core.context_processors.static",
+                               "django.core.context_processors.tz",
                                "django.contrib.messages.context_processors.messages",
                                "jb_common.context_processors.default",
-                               "jb_institute.context_processors.default",
-                               "django.core.context_processors.static")
+                               "jb_institute.context_processors.default")
 
 JAVASCRIPT_I18N_APPS += ("jb_institute",)
 
@@ -141,7 +142,7 @@ CACHES = {
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-DEPARTMENTS_TO_APP_LABELS = {"Institute": "jb_institute"}
+DEPARTMENTS_TO_APP_LABELS = {"INM": "jb_institute"}
 
 ADD_SAMPLES_VIEW = "jb_institute.views.samples.sample.add"
 
@@ -149,8 +150,7 @@ MEASUREMENT_DATA_ROOT_DIR = os.path.join(os.path.abspath(os.path.dirname(__file_
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds_raw_data"))
 SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("solarsimulator_raw_data"))
 
-PHYSICAL_PROCESSES_BLACKLIST = [("jb_institute", "substrate"),
-                              ("jb_institute", "layerthicknessmeasurement")]
+PHYSICAL_PROCESSES_BLACKLIST = [("jb_institute", "substrate")]
 MERGE_CLEANUP_FUNCTION = "jb_institute.utils.clean_up_after_merging"
 
 SAMPLE_NAME_FORMATS = {

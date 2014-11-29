@@ -624,7 +624,7 @@ class FormSet(object):
         :rtype: dict mapping str to various types
         """
         return {"deposition": self.deposition_form, "samples": self.samples_form,
-                "layers_and_change_layers": zip(self.layer_forms, self.change_layer_forms),
+                "layers_and_change_layers": list(zip(self.layer_forms, self.change_layer_forms)),
                 "add_layers": self.add_layers_form, "remove_from_my_samples": self.remove_from_my_samples_form,
                 "edit_description": self.edit_description_form}
 

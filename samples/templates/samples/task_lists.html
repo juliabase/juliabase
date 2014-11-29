@@ -50,7 +50,7 @@ copyright holder, you must destroy it immediately and completely.
       {% if task.user_can_delete %}
         <form method="post"
               action="{% url 'samples.views.task_lists.remove' task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}"
-              style="display: inline">
+              style="display: inline">{% csrf_token %}
           <input type="image" src="{% static "juliabase/icons/layout_delete.png" %}" alt="{% trans 'remove task' %}"
                  title="{% trans 'remove task' %}"/>
         </form>
@@ -119,13 +119,13 @@ copyright holder, you must destroy it immediately and completely.
   {% endfor %}
 {% endfor %}
 {% endfor %}
-<form method="POST" style="margin-top: 5ex" class="screen-only">
+<form method="POST" style="margin-top: 5ex" class="screen-only">{% csrf_token %}
   <table style="float: right">
     <tbody>
-      {% error_list chose_task_lists _("General error") "<tr>" 2 %}
+      {% error_list choose_task_lists _("General error") "<tr>" 2 %}
       <tr>
-    <td class="label">{{ chose_task_lists.visible_task_lists.label }}:</td>
-    <td class="input">{{ chose_task_lists.visible_task_lists }}</td>
+    <td class="label">{{ choose_task_lists.visible_task_lists.label }}:</td>
+    <td class="input">{{ choose_task_lists.visible_task_lists }}</td>
       </tr>
     </tbody>
   </table>

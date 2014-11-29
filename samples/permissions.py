@@ -757,7 +757,7 @@ def assert_can_edit_topic(user, topic=None):
     :Parameters:
       - `user`: the user whose permission should be checked
       - `topic`: the topic whose members are about to be edited; ``None``
-        if we create a new one, list topics etc
+        if we create a new one
 
     :type user: ``django.contrib.auth.models.User``
     :type topic: ``jb_common.models.Topic`` or ``NoneType``
@@ -768,7 +768,7 @@ def assert_can_edit_topic(user, topic=None):
     """
     if not topic:
         if not user.has_perm("jb_common.can_edit_all_topics"):
-            description = _("You are not allowed to add or list topics because you don't have the permission “{name}”.") \
+            description = _("You are not allowed to add topics because you don't have the permission “{name}”.") \
                 .format(name=translate_permission("jb_common.can_edit_all_topics"))
             raise PermissionError(user, description)
     else:

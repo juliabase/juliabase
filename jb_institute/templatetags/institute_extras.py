@@ -86,7 +86,7 @@ def solarsimulator_color(measurement):
     measurement.  The returned string is ready-to-be-used in CSS directives as
     a colour name.
     """
-    return {"dark": "gray", "AM1.5": "inherited", "BG7": "lightblue", "OG590": "darkorange"}[measurement.irradiance]
+    return {"dark": "gray", "AM1.5": "inherited", "BG7": "lightblue", "OG590": "darkorange"}[measurement.irradiation]
 
 
 @register.filter

@@ -13,13 +13,18 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import absolute_import, unicode_literals, division
+from . import six
+from .six.moves import urllib, http_cookiejar, _thread
 
-import urllib, urllib2, cookielib, mimetools, mimetypes, json, logging, os.path, datetime, time, random
+import mimetypes, json, logging, os, datetime, time, random
+from io import IOBase
+if six.PY3:
+    file = IOBase
 
 from . import settings
 
 
-def setup_logging(enable=False):
+def setup_logging(destination=None):
     """If the user wants to call this in order to enable logging, he must do
     so before logging in.  Note that it is a no-op if called a second time.
     """
@@ -28,12 +33,16 @@ def setup_logging(enable=False):
     # pretty sure that this is the case.  The clean solution would involve more
     # boilerplate code for the end-user, which I don't want, or replacing all
     # ``logging.info`` etc. calls with an own wrapper.
-    if enable:
+    if destination == "file":
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s %(levelname)-8s %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S",
                             filename="/tmp/jb_remote.log" if os.path.exists("/tmp") else "jb_remote.log",
                             filemode="w")
+    elif destination == "console":
+        logging.basicConfig(level=logging.INFO,
+                            format="%(asctime)s %(levelname)-8s %(message)s",
+                            datefmt="%Y-%m-%d %H:%M:%S")
     else:
         class LogSink(object):
             def write(self, *args, **kwargs):
@@ -54,7 +63,10 @@ def clean_header(value):
     elif isinstance(value, file):
         return value
     else:
-        return unicode(value).encode("utf-8")
+        if six.PY2:
+            return unicode(value).encode("utf-8")
+        else:
+            return str(value)
 
 
 def comma_separated_ids(ids):
@@ -67,6 +79,73 @@ def format_timestamp(timestamp):
     except AttributeError:
         return timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+
+def python_2_unicode_compatible(klass):
+    """Taken from Django 1.7.  See
+    https://github.com/django/django/blob/master/LICENSE for the license.
+
+    A decorator that defines __unicode__ and __str__ methods under Python 2.
+    Under Python 3 it does nothing.
+
+    To support Python 2 and 3 with a single code base, define a __str__ method
+    returning text and apply this decorator to the class.
+    """
+    if six.PY2:
+        if '__str__' not in klass.__dict__:
+            raise ValueError("@python_2_unicode_compatible cannot be applied "
+                             "to %s because it doesn't define __str__()." %
+                             klass.__name__)
+        klass.__unicode__ = klass.__str__
+        klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
+    return klass
+
+
+# The following is taken from Python2's mimetools.py.  FixMe: Find a better way
+# to have the functionality of ``encode_multipart_formdata()``.  See
+# <http://stackoverflow.com/questions/680305>.
+
+_counter_lock = _thread.allocate_lock()
+
+_counter = 0
+def _get_next_counter():
+    global _counter
+    _counter_lock.acquire()
+    _counter += 1
+    result = _counter
+    _counter_lock.release()
+    return result
+
+_prefix = None
+
+def choose_boundary():
+    """Return a string usable as a multipart boundary.
+
+    The string chosen is unique within a single program run, and
+    incorporates the user id (if available), process id (if available),
+    and current time.  So it's very unlikely the returned string appears
+    in message text, but there's no guarantee.
+
+    The boundary contains dots so you have to quote it in the header.
+    """
+    global _prefix
+    if _prefix is None:
+        import socket
+        try:
+            hostid = socket.gethostbyname(socket.gethostname())
+        except socket.gaierror:
+            hostid = "127.0.0.1"
+        try:
+            uid = repr(os.getuid())
+        except AttributeError:
+            uid = "1"
+        try:
+            pid = repr(os.getpid())
+        except AttributeError:
+            pid = "1"
+        _prefix = "{}.{}.{}".format(hostid, uid, pid)
+    return "{}.{:.3f}.{}".format(_prefix, time.time(), _get_next_counter())
+
+# End of taken from Python2's mimetools.py.
 
 def encode_multipart_formdata(data):
     """Generates content type and body for an HTTP POST request.  It can also
@@ -89,7 +168,7 @@ def encode_multipart_formdata(data):
 
     non_file_items = []
     file_items = []
-    for key, value in data.iteritems():
+    for key, value in data.items():
         if isinstance(value, file):
             file_items.append((key, value))
         else:
@@ -102,8 +181,8 @@ def encode_multipart_formdata(data):
     # http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
     assert len(file_items) <= 1
     if not file_items:
-        return "application/x-www-form-urlencoded", urllib.urlencode(data, doseq=True)
-    boundary = mimetools.choose_boundary()
+        return "application/x-www-form-urlencoded", urllib.parse.urlencode(data, doseq=True).encode("utf-8")
+    boundary = choose_boundary()
     lines = []
     for key, value in non_file_items:
         lines.append("--" + boundary)
@@ -127,6 +206,7 @@ def encode_multipart_formdata(data):
     return content_type, body
 
 
+@python_2_unicode_compatible
 class JuliaBaseError(Exception):
     """Exception class for high-level JuliaBase errors.
 
@@ -145,11 +225,7 @@ class JuliaBaseError(Exception):
         self.error_code, self.error_message = error_code, message
 
     def __str__(self):
-        # FixMe: In Python3, the ``encode`` call must be dropped.
-        return "({0}) {1}".format(self.error_code, self.error_message.encode("utf-8"))
-
-    def __unicode__(self):
-        return self.__str__()
+        return "({0}) {1}".format(self.error_code, self.error_message)
 
 
 class JuliaBaseConnection(object):
@@ -157,9 +233,12 @@ class JuliaBaseConnection(object):
     This is a singleton class, and its only instance resides at top-level in
     this module.
     """
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
-    opener.addheaders = [("User-agent", "JuliaBase-Remote/0.1"),
-                         ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
+    cookie_jar = http_cookiejar.CookieJar()
+    opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
+    http_headers = [("User-agent", "JuliaBase-Remote/0.1"),
+                    ("X-requested-with", "XMLHttpRequest"),
+                    ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
+    opener.addheaders = http_headers
 
     def __init__(self):
         self.username = None
@@ -168,26 +247,26 @@ class JuliaBaseConnection(object):
     def _do_http_request(self, url, data=None):
         logging.debug("{0} {1!r}".format(url, data))
         if data is None:
-            request = urllib2.Request(url)
+            request = urllib.request.Request(url)
         else:
             content_type, body = encode_multipart_formdata(data)
-            headers = {"Content-Type": content_type}
-            request = urllib2.Request(url, body, headers)
+            headers = {"Content-Type": content_type, "Referer": url}
+            request = urllib.request.Request(url, body, headers)
         max_cycles = 10
         while max_cycles > 0:
             max_cycles -= 1
             try:
                 return self.opener.open(request)
-            except urllib2.HTTPError as error:
+            except urllib.error.HTTPError as error:
                 if error.code in [404, 422] and error.info()["Content-Type"].startswith("application/json"):
-                    error_code, error_message = json.loads(error.read())
+                    error_code, error_message = json.loads(error.read().decode("utf-8"))
                     raise JuliaBaseError(error_code, error_message)
-                try:
-                    open("/tmp/juliabase_error.html", "w").write(error.read())
-                except IOError:
-                    pass
+                server_error_message = error.read().decode("utf-8")
+                error.msg = "{}\n\n{}".format(error.msg, server_error_message)
+                if six.PY2:
+                    error.msg = error.msg.encode("utf-8")
                 raise error
-            except urllib2.URLError:
+            except urllib.error.URLError:
                 if max_cycles == 0:
                     logging.error("Request failed.")
                     raise
@@ -221,12 +300,14 @@ class JuliaBaseConnection(object):
             because it contained errors.  For example, you requested a sample
             that doesn't exist, or the transmitted measurement data was
             incomplete.
-          - `urllib2.URLError`: raise if a lower-level error occured, e.g. the
+          - `urllib.error.URLError`: raise if a lower-level error occured, e.g. the
             HTTP connection couldn't be established.
         """
+        if not self.root_url:
+            raise Exception("No root URL defined.  Maybe not logged-in?")
         if data is not None:
             cleaned_data = {}
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 key = clean_header(key)
                 if value is not None:
                     if not isinstance(value, list):
@@ -242,17 +323,30 @@ class JuliaBaseConnection(object):
             response = self._do_http_request(self.root_url + relative_url)
         if response_is_json:
             assert response.info()["Content-Type"].startswith("application/json")
-            return json.loads(response.read())
+            return json.loads(response.read().decode("utf-8"))
         else:
             return response.read()
+
+    def set_csrf_header(self):
+        csrf_cookies = {cookie for cookie in self.cookie_jar if cookie.name == "csrftoken"}
+        if csrf_cookies:
+            assert len(csrf_cookies) == 1
+            self.opener.addheaders = self.http_headers + [("X-CSRFToken", csrf_cookies.pop().value)]
 
     def login(self, root_url, username, password):
         self.root_url = root_url
         self.username = username
+        # First, a GET request to get the CSRF cookie used only for the
+        # following POST request.
+        self.open("login_remote_client")
+        self.set_csrf_header()
         self.open("login_remote_client", {"username": username, "password": password})
+        # Now, set the CSRF token for the rest of the communication.
+        self.set_csrf_header()
 
     def logout(self):
         self.open("logout_remote_client")
+        self.username = self.root_url = None
 
 connection = JuliaBaseConnection()
 

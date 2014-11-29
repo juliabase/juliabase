@@ -110,7 +110,8 @@ def get_layout(sample, process):
     except NoStructuringFound:
         return None
     else:
-        layout_class = {"juelich standard": JuelichStandard, }.get(current_structuring.layout)
+        layout_class = {"inm standard": INMStandard,
+                        "acme1": ACME1}.get(current_structuring.layout)
         return layout_class and layout_class(sample, process, current_structuring)
 
 
@@ -311,17 +312,17 @@ class CellsLayout(Layout):
                 if i == len(thresholds):
                     return colors[-1]
             return colors[i]
-        irradiance = solarsimulator_measurement.irradiance
+        irradiation = solarsimulator_measurement.irradiation
         colors_and_labels = {}
-        cell_measurements = solarsimulator_measurement.photo_cells.all()
+        cell_measurements = solarsimulator_measurement.cells.all()
         for cell in cell_measurements:
-            if irradiance == "AM1.5":
+            if irradiation == "AM1.5":
                 color = map_value_to_RGB(cell.eta, [0.33, 3.1, 5.3, 6.3, 7.0, 7.7, 8.4, 9.2])
                 label = samples.views.utils.round(cell.eta, 3)
-            elif irradiance == "OG590":
+            elif irradiation == "OG590":
                 color = map_value_to_RGB(cell.isc, [2.5, 3.6, 4.3, 5.0, 6.7, 9.1, 10, 12])
                 label = samples.views.utils.round(cell.isc, 3)
-            elif irradiance == "BG7":
+            elif irradiation == "BG7":
                 color = map_value_to_RGB(cell.isc, [1.66, 2.45, 2.65, 2.77, 2.87, 2.93, 3.00, 3.13])
                 label = samples.views.utils.round(cell.isc, 3)
             else:
@@ -331,11 +332,11 @@ class CellsLayout(Layout):
         return colors_and_labels
 
     def draw_layout(self, canvas):
-        if isinstance(self.process, (jb_institute.models.SolarsimulatorPhotoMeasurement)):
+        if isinstance(self.process, (jb_institute.models.SolarsimulatorMeasurement)):
             colors_and_labels = self._get_colors_and_labels(self.process)
-            if self.process.irradiance == "AM1.5":
+            if self.process.irradiation == "AM1.5":
                 global_label = "η in %"
-            elif self.process.irradiance in ["OG590", "BG7"]:
+            elif self.process.irradiation in ["OG590", "BG7"]:
                 global_label = "Isc in mA/cm²"
             else:
                 global_label = None
@@ -347,10 +348,10 @@ class CellsLayout(Layout):
                 canvas.drawCentredString(self.width / 2, -descent, global_label)
         else:
             colors_and_labels = {}
-        for cell_index, coords in self.shapes.items():
+        for index, coords in self.shapes.items():
             origin, dimensions = coords
             try:
-                color, label = colors_and_labels[cell_index]
+                color, label = colors_and_labels[index]
             except KeyError:
                 color = (0.85, 0.85, 0.85)
                 label = None
@@ -366,7 +367,7 @@ class CellsLayout(Layout):
         return canvas
 
 
-class JuelichStandard(CellsLayout):
+class INMStandard(CellsLayout):
     height = (105 - 30) * mm
     width = (110 - 30) * mm
     shapes = {"1": ((18, 18.5), (10, 10)),
@@ -406,8 +407,40 @@ class JuelichStandard(CellsLayout):
               "35": ((58, 82.5), (20, 5)),
               "36": ((81.5, 82.5), (10, 5))}
 
-    for cell_index, coords in shapes.items():
-        shapes[cell_index] = ((coords[0][0] - 15, coords[0][1] - 15), coords[1])
+    for index, coords in shapes.items():
+        shapes[index] = ((coords[0][0] - 15, coords[0][1] - 15), coords[1])
+
+    _scaling = 80 * mm / max(height, width)
+    for index, coords in shapes.items():
+        shapes[index] = ((_scaling * coords[0][0] * mm, _scaling * coords[0][1] * mm),
+                         (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
+    height *= _scaling
+    width *= _scaling
+
+
+class ACME1(CellsLayout):
+    width = 34.84 * mm
+    height = 34.84 * mm
+    shapes = {"1A": ((4.42, 29.12), (2.6, 2.6)),
+              "1B": ((12.22, 29.12), (2.6, 2.6)),
+              "1C": ((20.02, 29.12), (2.6, 2.6)),
+              "1D": ((27.82, 29.12), (2.6, 2.6)),
+              "2A": ((4.42, 22.62), (3.9, 3.9)),
+              "2B": ((12.22, 22.62), (3.9, 3.9)),
+              "2C": ((20.02, 22.62), (3.9, 3.9)),
+              "2D": ((27.82, 22.62), (3.9, 3.9)),
+              "3A": ((4.42, 16.12), (2.6, 2.6)),
+              "3B": ((12.22, 16.12), (2.6, 2.6)),
+              "3C": ((20.02, 16.12), (2.6, 2.6)),
+              "3D": ((27.82, 16.12), (2.6, 2.6)),
+              "4A": ((4.42, 8.32), (3.9, 3.9)),
+              "4B": ((12.22, 8.32), (3.9, 3.9)),
+              "4C": ((20.02, 8.32), (3.9, 3.9)),
+              "4D": ((27.82, 8.32), (3.9, 3.9)),
+              "5A": ((4.42, 3.12), (2.6, 2.6)),
+              "5B": ((12.22, 3.12), (2.6, 2.6)),
+              "5C": ((20.02, 3.12), (2.6, 2.6)),
+              "5D": ((27.82, 3.12), (2.6, 2.6))}
 
     _scaling = 80 * mm / max(height, width)
     for cell_index, coords in shapes.items():
@@ -415,4 +448,3 @@ class JuelichStandard(CellsLayout):
                               (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
     height *= _scaling
     width *= _scaling
-

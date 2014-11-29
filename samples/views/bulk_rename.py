@@ -21,9 +21,8 @@ view just to rename *one* sample (but it *must* have a provisional name).
 from __future__ import absolute_import, unicode_literals
 
 import datetime, string, itertools
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from django.template import RequestContext
 from django.http import Http404
 import django.utils.http
 from django import forms
@@ -242,8 +241,7 @@ def bulk_rename(request):
         prefixes_form = PrefixesForm(available_prefixes, initial={"prefix": available_prefixes[0][0]}) \
                             if available_prefixes else None
         new_name_forms = [NewNameForm(request.user, "", sample, prefix=str(sample.pk)) for sample in samples]
-    return render_to_response("samples/bulk_rename.html",
-                              {"title": _("Rename samples"),
-                               "prefixes": prefixes_form, "single_prefix": single_prefix,
-                               "samples": zip(samples, new_name_forms)},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/bulk_rename.html",
+                  {"title": _("Rename samples"),
+                   "prefixes": prefixes_form, "single_prefix": single_prefix,
+                   "samples": list(zip(samples, new_name_forms))})

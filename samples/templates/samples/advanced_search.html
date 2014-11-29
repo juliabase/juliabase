@@ -51,7 +51,7 @@ $(function() {
       {% endblocktrans %}
     {% endif %}
   </p>
-  <form method="post">
+  <form method="post">{% csrf_token %}
     {% if results %}
       {% if something_to_add %}
         <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>

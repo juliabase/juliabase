@@ -23,7 +23,7 @@ unit of measurement in ReportLab.
 
 from __future__ import division, unicode_literals, absolute_import
 import django.utils.six as six
-from django.utils.six.moves import cStringIO
+from django.utils.six.moves import cStringIO as StringIO
 
 import re
 from reportlab.pdfgen import canvas
@@ -130,7 +130,7 @@ def printer_label(sample):
 
     :rtype: str
     """
-    output = cStringIO.StringIO()
+    output = StringIO()
     text = sample.name
     c = canvas.Canvas(output, pagesize=(width, height))
     c.setAuthor("JuliaBase samples database")
@@ -142,7 +142,7 @@ def printer_label(sample):
         first, second = best_split(text)
         print_line(c, height / 2, fontsize_half, first, force=True)
         print_line(c, 0, fontsize_half, second, force=True)
-    c.drawImage(ImageReader("http://chart.apis.google.com/chart?chs=116x116&cht=qr&chl={0}&chld=H|1".format(sample.id)),
+    c.drawImage(ImageReader("http://chart.googleapis.com/chart?chs=116x116&cht=qr&chl={0}&chld=H|1".format(sample.id)),
                 width - height, 0, height, height)
     c.showPage()
     c.save()

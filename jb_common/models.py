@@ -45,6 +45,7 @@ class Department(models.Model):
     name = models.CharField(_("name"), max_length=30, unique=True)
 
     class Meta:
+        ordering = ["name"]
         verbose_name = _("department")
         verbose_name_plural = _("departments")
 
@@ -148,6 +149,7 @@ class Topic(models.Model):
                                 related_name="managed_topics")
 
     class Meta:
+        ordering = ["name"]
         verbose_name = _("topic")
         verbose_name_plural = _("topics")
         unique_together = ("name", "department")

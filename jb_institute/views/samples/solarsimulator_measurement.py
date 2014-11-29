@@ -19,12 +19,11 @@ from __future__ import absolute_import, unicode_literals
 
 from jb_common.utils import is_json_requested, \
     respond_in_json
-from jb_institute.models import SolarsimulatorPhotoMeasurement, SolarsimulatorPhotoCellMeasurement
+from jb_institute.models import SolarsimulatorMeasurement, SolarsimulatorCellMeasurement
 from jb_institute.views import form_utils
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext, ugettext_lazy
 from samples import permissions
 from samples.views import utils, feed_utils
@@ -77,21 +76,20 @@ class SolarsimulatorMeasurementForm(form_utils.ProcessForm):
         return cleaned_data
 
     class Meta:
-        model = SolarsimulatorPhotoMeasurement
+        model = SolarsimulatorMeasurement
         fields = "__all__"
 
 
-class SolarsimulatorPhotoCellForm(forms.ModelForm):
+class SolarsimulatorCellForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(SolarsimulatorPhotoCellForm, self).__init__(*args, **kwargs)
-        self.type = "photo"
+        super(SolarsimulatorCellForm, self).__init__(*args, **kwargs)
 
     def validate_unique(self):
         pass
 
     class Meta:
-        model = SolarsimulatorPhotoCellMeasurement
+        model = SolarsimulatorCellMeasurement
         exclude = ("measurement",)
 
 
@@ -105,7 +103,7 @@ def solarsimulator_cell_forms_from_post(post, form_cls):
     :type post: `request.POST`
 
     :Return:
-     a list of bound solarsimulator photo cell forms or solarsimulator dark cell forms
+     a list of bound solarsimulator cell forms or solarsimulator dark cell forms
 
     :rtype: list
     """
@@ -131,7 +129,7 @@ def is_all_valid(solarsimulator_measurement_form, sample_form, remove_from_my_sa
     :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or
       ``NoneType``
     :type edit_description_form: `form_utils.EditDescriptionForm`
-    :type solarsimulator_cell_forms: `SolarsimulatorPhotoCellForm` or
+    :type solarsimulator_cell_forms: `SolarsimulatorCellForm` or
         `SolarsimulatorDarkCellForm`
 
     :Return:
@@ -169,9 +167,9 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
     """
     referentially_valid = True
     if not solarsimulator_cell_forms:
-        samples_form.add_error(None, _("No measurenents given."))
+        solarsimulator_measurement_form.add_error(None, _("No measurenents given."))
         referentially_valid = False
-    if solarsimulator_measurement_form and solarsimulator_measurement_form.is_valid():
+    if solarsimulator_measurement_form.is_valid():
         if samples_form.is_valid() and referentially_valid:
             sample = samples_form.cleaned_data["sample"]
             if form_utils.dead_samples([sample], solarsimulator_measurement_form.cleaned_data.get("timestamp")):
@@ -181,21 +179,12 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
         for measurement_form in solarsimulator_cell_forms:
             if measurement_form.is_valid():
                 data_file = measurement_form.cleaned_data["data_file"]
-                cell_index = measurement_form.cleaned_data["cell_index"]
                 position = measurement_form.cleaned_data["position"]
                 if position in positions:
                     measurement_form.add_error(None, _("This cell position is already given."))
                     referentially_valid = False
                 else:
                     positions.add(position)
-                cell_index = measurement_form.cleaned_data["cell_index"]
-                query_set = measurement_form._meta.model.objects.filter(data_file=data_file, cell_index=cell_index)
-                if process_id:
-                    query_set = query_set.exclude(measurement__id=process_id)
-                if query_set.exists():
-                    measurement_form.add_error(None,
-                                 _("A solarsimulator measurement with this cell index and data file already exists."))
-                    referentially_valid = False
     else:
         referentially_valid = False
     return referentially_valid
@@ -224,10 +213,10 @@ def edit(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    solarsimulator_measurement = get_object_or_404(SolarsimulatorPhotoMeasurement, id=process_id)\
+    solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement, id=process_id)\
         if process_id is not None else None
     permissions.assert_can_add_edit_physical_process(request.user, solarsimulator_measurement,
-                                                     SolarsimulatorPhotoMeasurement)
+                                                     SolarsimulatorMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not solarsimulator_measurement else None
     if request.method == "POST":
         sample_form = form_utils.SampleForm(request.user, solarsimulator_measurement, preset_sample, request.POST)
@@ -236,7 +225,7 @@ def edit(request, process_id):
             else None
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if solarsimulator_measurement else None
         solarsimulator_cell_forms = solarsimulator_cell_forms_from_post(request.POST,
-                                                                                             SolarsimulatorPhotoCellForm)
+                                                                                             SolarsimulatorCellForm)
         solarsimulator_measurement_form = SolarsimulatorMeasurementForm(request.user, request.POST,
                                                                         instance=solarsimulator_measurement)
         all_valid = is_all_valid(solarsimulator_measurement_form, sample_form, remove_from_my_samples_form,
@@ -247,7 +236,7 @@ def edit(request, process_id):
             solarsimulator_measurement = solarsimulator_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]
             solarsimulator_measurement.samples = samples
-            solarsimulator_measurement.photo_cells.all().delete()
+            solarsimulator_measurement.cells.all().delete()
             for solarsimulator_cell_form in solarsimulator_cell_forms:
                 solarsimulator_cell_measurement = solarsimulator_cell_form.save(commit=False)
                 solarsimulator_cell_measurement.measurement = solarsimulator_measurement
@@ -273,31 +262,30 @@ def edit(request, process_id):
             if samples:
                 initial["sample"] = samples[0].pk
             solarsimulator_cell_forms = \
-                [SolarsimulatorPhotoCellForm(prefix=str(index), instance=solarsimulator_photo_cell)
-                 for index, solarsimulator_photo_cell in enumerate(solarsimulator_measurement.photo_cells.all())]
+                [SolarsimulatorCellForm(prefix=str(index), instance=solarsimulator_cell)
+                 for index, solarsimulator_cell in enumerate(solarsimulator_measurement.cells.all())]
         sample_form = form_utils.SampleForm(request.user, solarsimulator_measurement, preset_sample, initial=initial)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not solarsimulator_measurement else None
         edit_description_form = form_utils.EditDescriptionForm() if solarsimulator_measurement else None
-    title = _(u"{name} of {sample}").format(name=SolarsimulatorPhotoMeasurement._meta.verbose_name,
+    title = _(u"{name} of {sample}").format(name=SolarsimulatorMeasurement._meta.verbose_name,
                                                         sample=samples[0]) if solarsimulator_measurement \
-        else _(u"Add {name}").format(name=SolarsimulatorPhotoMeasurement._meta.verbose_name)
-    return render_to_response("samples/edit_solarsimulator_measurement.html",
-                              {"title": title,
-                               "solarsimulator_measurement": solarsimulator_measurement_form,
-                               "solarsimulator_cell_measurements": solarsimulator_cell_forms,
-                               "sample": sample_form,
-                               "remove_from_my_samples": remove_from_my_samples_form,
-                               "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+        else _(u"Add {name}").format(name=SolarsimulatorMeasurement._meta.verbose_name)
+    return render(request, "samples/edit_solarsimulator_measurement.html",
+                  {"title": title,
+                   "solarsimulator_measurement": solarsimulator_measurement_form,
+                   "solarsimulator_cell_measurements": solarsimulator_cell_forms,
+                   "sample": sample_form,
+                   "remove_from_my_samples": remove_from_my_samples_form,
+                   "edit_description": edit_description_form})
 
 
 @login_required
 def show(request, process_id):
-    """Show an existing ssolarsimulator photo measurement.
+    """Show an existing ssolarsimulator measurement.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `process_id`: the id of the solarsimulator photo measurement
+      - `process_id`: the id of the solarsimulator measurement
 
     :type request: ``HttpRequest``
     :type process_id: unicode
@@ -321,12 +309,12 @@ def show(request, process_id):
 
     :rtype: ``HttpResponse``
     """
-    solarsimulator_measurement = get_object_or_404(SolarsimulatorPhotoMeasurement, id=utils.convert_id_to_int(process_id))
+    solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement, id=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_physical_process(request.user, solarsimulator_measurement)
     if is_json_requested(request):
         return respond_in_json(solarsimulator_measurement.get_data().to_dict())
     template_context = {"title": _(u"Solarsimulator measurement #{number}").format(number=process_id),
                         "samples": solarsimulator_measurement.samples.all(), "process": solarsimulator_measurement,
-                        "cells": solarsimulator_measurement.photo_cells.all()}
+                        "cells": solarsimulator_measurement.cells.all()}
     template_context.update(utils.digest_process(solarsimulator_measurement, request.user))
-    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
+    return render(request, "samples/show_process.html", template_context)

@@ -19,9 +19,8 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import Http404
-from django.template import RequestContext
 from django.forms.util import ValidationError
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -94,6 +93,5 @@ def new(request, sample_name):
                                              "show_sample_by_name", {"sample_name": sample_name})
     else:
         sample_death_form = SampleDeathForm(sample)
-    return render_to_response("samples/edit_sample_death.html", {"title": _("Kill sample “{sample}”").format(sample=sample),
-                                                                 "sample_death": sample_death_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_sample_death.html", {"title": _("Kill sample “{sample}”").format(sample=sample),
+                                                              "sample_death": sample_death_form})

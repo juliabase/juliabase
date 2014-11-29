@@ -20,10 +20,9 @@ functions.
 
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
+from django.utils.six.moves import urllib
 
-import urllib
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _
 import django.core.urlresolvers
 from django.contrib import messages
@@ -89,8 +88,8 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
                 if rename:
                     next_view = "samples.views.split_after_deposition.split_and_rename_after_deposition"
                     next_view_kwargs = {"deposition_number": deposition.number}
-                    query_string = urllib.urlencode([("new-name-{0}".format(id_), new_name)
-                                                     for id_, new_name in new_names.items()])
+                    query_string = urllib.parse.urlencode([("new-name-{0}".format(id_), new_name)
+                                                           for id_, new_name in new_names.items()])
             elif not deposition.finished:
                 next_view, __, next_view_kwargs = django.core.urlresolvers.resolve(request.path)
                 next_view_kwargs["deposition_number"] = deposition.number
@@ -113,7 +112,7 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
     title = utils.capitalize_first_letter(title)
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
-    return render_to_response(edit_url, context_dict, context_instance=RequestContext(request))
+    return render(request, edit_url, context_dict)
 
 
 def show_depositions(request, deposition_number, institute_model):
@@ -143,7 +142,7 @@ def show_depositions(request, deposition_number, institute_model):
                         "samples": deposition.samples.all(),
                         "process": deposition}
     template_context.update(utils.digest_process(deposition, request.user))
-    return render_to_response("samples/show_process.html", template_context, context_instance=RequestContext(request))
+    return render(request, "samples/show_process.html", template_context)
 
 
 def measurement_is_referentially_valid(measurement_form, sample_form, measurement_number, institute_model):

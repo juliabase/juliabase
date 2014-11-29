@@ -20,11 +20,10 @@ actually only a stepping stone to the membership edit view.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 import django.utils.http
 from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
@@ -131,8 +130,7 @@ def add(request):
                 next_view, kwargs=next_view_kwargs)
     else:
         new_topic_form = NewTopicForm(request.user)
-    return render_to_response("samples/add_topic.html", {"title": _("Add new topic"), "new_topic": new_topic_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/add_topic.html", {"title": _("Add new topic"), "new_topic": new_topic_form})
 
 
 @login_required
@@ -152,15 +150,11 @@ def list_(request):
     :rtype: ``HttpResponse``
     """
     user = request.user
-    all_toplevel_topics = Topic.objects.filter(parent_topic=None).order_by("name").all()
-    user_toplevel_topics = Topic.objects.filter(department=user.jb_user_details.department,
-                                                parent_topic=None).order_by("name").all()
-    toplevel_topics = set(topic for topic in user_toplevel_topics if permissions.has_permission_to_edit_topic(user, topic))
-    if not toplevel_topics:
-        raise Http404("Can't find any topic that you can edit.")
-    return render_to_response("samples/list_topics.html", {"title": _("List of all topics"),
-                                                           "topics": all_toplevel_topics if user.is_superuser else toplevel_topics},
-                              context_instance=RequestContext(request))
+    editable_topics = [topic for topic in Topic.objects.filter(parent_topic=None).all()
+                                if permissions.has_permission_to_edit_topic(user, topic)]
+    if not editable_topics:
+        raise Http404("Can't find any topics that you can edit.")
+    return render(request, "samples/list_topics.html", {"title": _("List of all topics"), "topics": editable_topics})
 
 
 class EditTopicForm(forms.Form):
@@ -168,6 +162,7 @@ class EditTopicForm(forms.Form):
     no members at all in a topic.  However, if the topic is confidential, the
     currently logged-in user must remain a member of the topic.
     """
+    _ = ugettext_lazy
     members = form_utils.MultipleUsersField(label=_("Members"), required=False)
     confidential = forms.BooleanField(label=_("confidential"), required=False)
     topic_manager = form_utils.UserField(label=capfirst(_("topic manager")))
@@ -189,6 +184,7 @@ class EditTopicForm(forms.Form):
                 self.add_error("members",
                                _("In confidential topics, at least one member must have permission to edit the topic."))
         return cleaned_data
+
 
 @login_required
 def edit(request, id):
@@ -246,7 +242,5 @@ def edit(request, id):
         edit_topic_form = \
             EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True),
                                                         "topic_manager": topic.manager.pk})
-    return render_to_response("samples/edit_topic.html",
-                              {"title": _("Change topic memberships of “{0}”").format(topic.name),
-                               "edit_topic": edit_topic_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_topic.html", {"title": _("Change topic memberships of “{0}”").format(topic.name),
+                                                       "edit_topic": edit_topic_form})

@@ -427,6 +427,21 @@ Note that while you may add further middleware, you must not change the inner
 ordering of extisting middleware.
 
 
+SECRET_KEY
+----------
+
+Note that in the :file:`settings.py` file shipped with JuliaBase, the
+``SECRET_KEY`` is read from the file :file:`~/.juliabase_secret_key`.  If this
+file doesn't exist, it is generated.  This is good for quickly gettings things
+running and not insecure per se, but you should be aware of this.  In
+particular, once generated, you must not lose this file in your production
+environment because it would result in data loss, and nobody else should have
+access to it.
+
+Of course, alternatively, you may set the ``SECRET_KEY`` in a completely
+different way.
+
+
 TEMPLATE_CONTEXT_PROCESSORS
 ---------------------------
 

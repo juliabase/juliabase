@@ -19,8 +19,7 @@ managers.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
 from django.db.models import Q
@@ -178,7 +177,7 @@ def get_physical_processes(user):
         user_department = user.jb_user_details.department
         if user_department:
             all_physical_processes = [process for process in all_physical_processes
-                                      if process._meta.app_label in settings.DEPARTMENTS_TO_APP_LABELS.get(user_department.name)]
+                                      if process._meta.app_label in settings.DEPARTMENTS_TO_APP_LABELS[user_department.name]]
         else:
             all_physical_processes = []
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
@@ -232,11 +231,9 @@ def list_(request):
                     Q(user_permissions=PermissionsPhysicalProcess.topic_manager_permission)).distinct())
     else:
         topic_managers = None
-    return render_to_response(
-        "samples/list_permissions.html",
-        {"title": _("Permissions to processes"), "physical_processes": physical_processes,
-         "user_list": user_list_form, "topic_managers": topic_managers},
-        context_instance=RequestContext(request))
+    return render(request, "samples/list_permissions.html",
+                  {"title": _("Permissions to processes"), "physical_processes": physical_processes,
+                   "user_list": user_list_form, "topic_managers": topic_managers})
 
 
 class PermissionsForm(forms.Form):
@@ -327,8 +324,6 @@ def edit(request, username):
                 process_permission("can_edit_permissions", "permission_editors", process.edit_permissions_permission)
             return utils.successful_response(request, _("The permissions of {name} were successfully changed."). \
                                                  format(name=get_really_full_name(edited_user)), list_)
-    return render_to_response(
-        "samples/edit_permissions.html",
-        {"title": _("Change permissions of {name}").format(name=get_really_full_name(edited_user)),
-         "permissions_list": permissions_list},
-        context_instance=RequestContext(request))
+    return render(request, "samples/edit_permissions.html",
+                  {"title": _("Change permissions of {name}").format(name=get_really_full_name(edited_user)),
+                   "permissions_list": permissions_list})

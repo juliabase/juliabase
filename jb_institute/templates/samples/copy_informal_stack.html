@@ -20,7 +20,7 @@ copyright holder, you must destroy it immediately and completely.
 
 <p>{% trans "Attention: The informal stacks of the selected destination samples will be overwritten!" %}</p>
 
-<form method="post">
+<form method="post">{% csrf_token %}
   {% error_list destination_samples _("Error in destination samples") %}
 
   {% if informal_stack_thumbnail_url %}

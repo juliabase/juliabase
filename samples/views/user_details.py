@@ -20,8 +20,7 @@ information, and preferences.
 from __future__ import absolute_import, unicode_literals
 
 import json, copy
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
@@ -53,7 +52,7 @@ class UserDetailsForm(forms.ModelForm):
         processes = [process_class for process_class in jb_common_utils.get_all_models().values()
                     if issubclass(process_class, models.Process) and not process_class._meta.abstract
                     and process_class not in [models.Process, models.Deposition]]
-        for department in user.samples_user_details.show_users_from_departments.order_by("name").iterator():
+        for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = set(process for process in processes
                                           if process._meta.app_label == settings.DEPARTMENTS_TO_APP_LABELS.get(department.name))
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
@@ -142,12 +141,10 @@ def edit_preferences(request, login_name):
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
         initials_form = form_utils.InitialsForm(user, initials_mandatory)
-    return render_to_response(
-        "samples/edit_preferences.html",
-        {"title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
-         "user_details": user_details_form, "initials": initials_form,
-         "has_topics": user.topics.exists()},
-        context_instance=RequestContext(request))
+    return render(request, "samples/edit_preferences.html",
+                  {"title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
+                   "user_details": user_details_form, "initials": initials_form,
+                   "has_topics": user.topics.exists()})
 
 
 @login_required
@@ -156,11 +153,9 @@ def topics_and_permissions(request, login_name):
     if not request.user.is_staff and request.user != user:
         raise permissions.PermissionError(
             request.user, _("You can't access the list of topics and permissions of another user."))
-    return render_to_response(
-        "samples/topics_and_permissions.html",
-        {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
-         "topics": user.topics.all(), "managed_topics": user.managed_topics.all(),
-         "permissions": permissions.get_user_permissions(user),
-         "full_user_name": get_really_full_name(request.user),
-         "permissions_url": django.core.urlresolvers.reverse("samples.views.permissions.list_")},
-        context_instance=RequestContext(request))
+    return render(request, "samples/topics_and_permissions.html",
+                  {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
+                   "topics": user.topics.all(), "managed_topics": user.managed_topics.all(),
+                   "permissions": permissions.get_user_permissions(user),
+                   "full_user_name": get_really_full_name(request.user),
+                   "permissions_url": django.core.urlresolvers.reverse("samples.views.permissions.list_")})

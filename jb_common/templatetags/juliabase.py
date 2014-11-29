@@ -106,7 +106,7 @@ def substitute_formulae(string):
                 latex_markup = string[start:end]
                 result += escape(string[position:start - 1]) + \
                     """<img style="vertical-align: middle" alt="{0}" """ \
-                    """src="http://chart.apis.google.com/chart?chf=bg,s,00000000&cht=tx&chl={1}"/>""".\
+                    """src="https://chart.googleapis.com/chart?chf=bg,s,00000000&cht=tx&chl={1}"/>""".\
                     format(escape(" ".join(latex_markup.split())).replace("\\", "&#x5c;"),
                            urlquote_plus(r"\Large " + latex_markup))
                 position = end + 1

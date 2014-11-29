@@ -24,6 +24,7 @@ import dateutil.tz
 import django.http
 import django.contrib.auth.models
 from django.core.cache import cache
+from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
 from django.conf import settings
 from django.utils.encoding import iri_to_uri
@@ -31,12 +32,9 @@ from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.translation import ugettext as _, ugettext
+from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.utils.functional import allow_lazy
 from jb_common import mimeparse
-
-
-VERSION = "0.9"
 
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
@@ -343,7 +341,7 @@ def unicode_strftime(timestamp, format_string):
     """Formats a timestamp to a string.  Unfortunately, the built-in method
     ``strftime`` of ``datetime.datetime`` objects is not unicode-safe.
     Therefore, I have to do a conversion into an UTF-8 intermediate
-    representation.  In Python 3.0, this problem is probably gone.
+    representation.  In Python 3.0, this problem is gone.
 
     :Parameters:
       - `timestamp`: the timestamp to be converted
@@ -360,7 +358,10 @@ def unicode_strftime(timestamp, format_string):
 
     :rtype: unicode
     """
-    return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+    if six.PY2:
+        return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
+    else:
+        return timestamp.strftime(format_string)
 
 
 def adjust_timezone_information(timestamp):
@@ -458,6 +459,17 @@ def is_json_requested(request):
     return requested_mime_type == "application/json"
 
 
+class JSONEncoder(DjangoJSONEncoder):
+    def default(self, o):
+        try:
+            return float(o)
+        except (ValueError, TypeError):
+            try:
+                return list(o)
+            except (ValueError, TypeError):
+                return super(JSONEncoder, self).default(o)
+
+
 def respond_in_json(value):
     """The communication with the JuliaBase Remote Client or to AJAX clients
     should be done without generating HTML pages in order to have better
@@ -477,16 +489,7 @@ def respond_in_json(value):
 
     :rtype: ``HttpResponse``
     """
-    def default(x):
-        try:
-            return float(x)
-        except (ValueError, TypeError):
-            try:
-                return list(x)
-            except (ValueError, TypeError):
-                return six.text_type(x)
-
-    return django.http.HttpResponse(json.dumps(value, default=default), content_type="application/json; charset=ascii")
+    return django.http.JsonResponse(value, JSONEncoder, safe=False)
 
 
 all_models = None
@@ -584,6 +587,26 @@ def format_lazy(string, *args, **kwargs):
 format_lazy = allow_lazy(format_lazy, six.text_type)
 
 
+def in_(unit):
+    """Returns a lazily translated idiom of the form “in mm” or “in_MPa”, i.e. an
+    expression stating in which unit of measurements something is given.  It is
+    used heavily in the help texts of form fields.  This makes translating
+    easier because you don't have to translate all these expressions
+    separately.
+
+    :Parameters:
+      - `unit`: abbreviated unit of measurement
+
+    :type unit: unicode
+
+    :Return:
+      the string ``"in {unit}"`` with ``{unit}`` replaced with the given unit.
+
+    :rtype: unicode
+    """
+    return format_lazy(ugettext_lazy("in {unit}"), unit=unit)
+
+
 def static_file_response(filepath, served_filename=None):
     """Serves a file of the local file system.
 
@@ -599,7 +622,7 @@ def static_file_response(filepath, served_filename=None):
     """
     response = django.http.HttpResponse()
     if not settings.USE_X_SENDFILE:
-        response.write(open(filepath).read())
+        response.write(open(filepath, "rb").read())
     response["X-Sendfile"] = filepath
     response["Content-Type"] = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
     response["Content-Length"] = os.path.getsize(filepath)

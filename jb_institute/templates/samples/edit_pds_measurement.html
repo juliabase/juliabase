@@ -18,7 +18,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post">
+<form method="post">{% csrf_token %}
   {% error_list pds_measurement _("Error in PDS data") %}
   {% error_list sample _("Error in sample") %}
   {% error_list overwrite _("Extract from datafile error") %}

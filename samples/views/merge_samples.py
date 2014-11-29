@@ -19,14 +19,13 @@ from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django import forms
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.forms.util import ValidationError
 from samples import models
 from samples.views import utils
 from samples.views import form_utils
-import settings
 from django.core.urlresolvers import get_callable
 
 
@@ -192,6 +191,5 @@ def merge(request):
     else:
         merge_samples_forms = [MergeSamplesForm(request.user, my_samples, prefix=str(index))
                                for index in range(number_of_pairs)]
-    return render_to_response("samples/merge_samples.html", {"title": _("Merge samples"),
-                                                             "merge_forms": merge_samples_forms},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/merge_samples.html", {"title": _("Merge samples"),
+                                                          "merge_forms": merge_samples_forms})

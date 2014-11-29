@@ -27,6 +27,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from jb_common.models import Topic
@@ -37,51 +38,12 @@ from jb_institute.views import shared_utils
 from jb_common.utils import respond_in_json, JSONRequestException
 
 
-def get_next_quirky_name(sample_name, year_digits):
-    """Returns the next sample name for legacy samples that don't fit into any
-    known name scheme.
-
-    :Parameters:
-      - `sample_name`: the legacy sample name
-      - `year_digits`: the last two digits of the year of creation of the
-        sample
-
-    :type sample_name: unicode
-    :type year_digits: str
-
-    :Return:
-      the JuliaBase legacy sample name
-
-    :rtype: unicode
-    """
-    prefixes = set()
-    legacy_prefix = year_digits + "-LGCY-"
-    for name in models.Sample.objects.filter(name__startswith=legacy_prefix).values_list("name", flat=True):
-        prefix, __, original_name = name[len(legacy_prefix):].partition("-")
-        if original_name == sample_name:
-            prefixes.add(prefix)
-    free_prefix = ""
-    while free_prefix in prefixes:
-        digits = [ord(digit) for digit in free_prefix]
-        for i in range(len(digits) - 1, -1 , -1):
-            digits[i] += 1
-            if digits[i] > 122:
-                digits[i] = 97
-            else:
-                break
-        else:
-            digits[0:0] = [97]
-        free_prefix = "".join(chr(digit) for digit in digits)
-    return "{0}{1}-{2}".format(legacy_prefix, free_prefix, sample_name)
-
-
 @login_required
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def add_sample(request):
-    """Adds a new sample to the database.  It is added without processes.
-    This view can only be used by admin accounts.  If the query string contains
-    ``"legacy=True"``, the sample gets a quirky legacy name (and an appropriate
-    alias).
+    """Adds a new sample to the database.  It is added without processes.  This
+    view can only be used by admin accounts.
 
     :Parameters:
       - `request`: the current HTTP Request object; it must contain the sample
@@ -95,46 +57,36 @@ def add_sample(request):
     :rtype: ``HttpResponse``
     """
     if not request.user.is_staff:
-        return respond_in_json(False)
+        raise JSONRequestException(6, "Only admins can access this ressource.")
     try:
         name = request.POST["name"]
-        current_location = request.POST.get("current_location", "")
-        currently_responsible_person = request.POST.get("currently_responsible_person")
+        current_location = request.POST["current_location"]
+        currently_responsible_person = request.POST["currently_responsible_person"]
         purpose = request.POST.get("purpose", "")
         tags = request.POST.get("tags", "")
         topic = request.POST.get("topic")
-    except KeyError:
-        return respond_in_json(False)
+    except KeyError as error:
+        raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
     if len(name) > 30:
-        return respond_in_json(False)
-    is_legacy_name = request.GET.get("legacy") == "True"
-    if is_legacy_name:
-        year_digits = request.GET.get("timestamp", "")[2:4]
-        try:
-            int(year_digits)
-        except ValueError:
-            return respond_in_json(False)
-        name = get_next_quirky_name(name, year_digits)[:30]
-    if currently_responsible_person:
-        currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
-                                                         pk=utils.convert_id_to_int(currently_responsible_person))
+        raise JSONRequestException(5, "The sample name is too long.")
+    currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
+                                                     pk=utils.convert_id_to_int(currently_responsible_person))
     if topic:
         topic = get_object_or_404(Topic, pk=utils.convert_id_to_int(topic))
     try:
         sample = models.Sample.objects.create(name=name, current_location=current_location,
                                               currently_responsible_person=currently_responsible_person, purpose=purpose,
                                               tags=tags, topic=topic)
-        if is_legacy_name:
-            models.SampleAlias.objects.create(name=request.POST["name"], sample=sample)
-        else:
-            for alias in models.SampleAlias.objects.filter(name=name):
-                # They will be shadowed anyway.  Nevertheless, this action is
-                # an emergency measure.  Probably the samples the aliases point
-                # to should be merged with the sample but this can't be decided
-                # automatically.
-                alias.delete()
-    except IntegrityError:
-        return respond_in_json(False)
+        for alias in models.SampleAlias.objects.filter(name=name):
+            # They will be shadowed anyway.  Nevertheless, this action is
+            # an emergency measure.  Probably the samples the aliases point
+            # to should be merged with the sample but this can't be decided
+            # automatically.
+            alias.delete()
+    except IntegrityError as error:
+        # If this function is refactored into a non-admin-only function, no
+        # database error message must be returned to non-privileged users.
+        raise JSONRequestException(5, "The sample with this data could not be added: {}".format(error))
     sample.watchers.add(request.user)
     return respond_in_json(sample.pk)
 
@@ -251,9 +203,9 @@ def _get_maike_by_filepath(filepath, user):
         solarsimulator measurement
       - `Http404`: if the filepath was not found in the database
     """
-    photo_cells = institute_models.SolarsimulatorPhotoCellMeasurement.objects.filter(data_file=filepath)
-    if photo_cells.exists():
-        measurement = photo_cells[0].measurement
+    cells = institute_models.SolarsimulatorCellMeasurement.objects.filter(data_file=filepath)
+    if cells.exists():
+        measurement = cells[0].measurement
     else:
         raise Http404("No matching solarsimulator measurement found.")
     permissions.assert_can_view_physical_process(user, measurement)
@@ -288,7 +240,7 @@ def get_maike_by_filepath(request):
 @login_required
 @never_cache
 @require_http_methods(["GET"])
-def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell_position, date):
+def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cell_position, date):
     """Finds the solarsimulator measurement which is best suited for the given
     data file.  This view is to solve the problem that for non-standard-Jülich
     cell layouts, many single data files must be merged into one solarsimulator
@@ -301,7 +253,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
     :Parameters:
       - `request`: the HTTP request object
       - `sample_id`: the ID of the sample which was measured
-      - `irradiance`: the irradiance (AM1.5, BG7 etc) which was used
+      - `irradiation`: the irradiation (AM1.5, BG7 etc) which was used
       - `cell_position`: the position of the cell on the layout; don't mix it
         up with the *index* of the cell, which is the number used in the MAIKE
         datafile in the first column
@@ -309,7 +261,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
 
     :type request: ``HttpRequest``
     :type sample_id: unicode
-    :type irradiance: unicode
+    :type irradiation: unicode
     :type cell_position: unicode
     :type date: unicode
 
@@ -328,9 +280,9 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiance, cell
         sample = get_object_or_404(models.Sample, id=sample_id)
         start_date = datetime.datetime.strptime(date, "%Y-%m-%d")
         end_date = start_date + datetime.timedelta(days=1)
-        matching_measurements = institute_models.SolarsimulatorPhotoMeasurement.objects.filter(
-            samples__id=sample_id, irradiance=irradiance, timestamp__gte=start_date, timestamp__lt=end_date). \
-            exclude(photo_cells__position=cell_position).order_by("timestamp")
+        matching_measurements = institute_models.SolarsimulatorMeasurement.objects.filter(
+            samples__id=sample_id, irradiation=irradiation, timestamp__gte=start_date, timestamp__lt=end_date). \
+            exclude(cells__position=cell_position).order_by("timestamp")
         if matching_measurements.exists():
             solarsimulator_measurement = matching_measurements[0]
             permissions.assert_can_fully_view_sample(request.user, sample)

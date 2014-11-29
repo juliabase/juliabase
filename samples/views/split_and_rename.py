@@ -20,8 +20,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.conf import settings
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -331,14 +330,13 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     new_name_forms.append(NewNameForm(request.user, parent.name,
                                       initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=next_prefix))
-    return render_to_response("samples/split_and_rename.html",
-                              {"title": _("Split sample “{sample}”").format(sample=parent),
-                               "new_names": zip(range(number_of_old_pieces + 1,
-                                                      number_of_old_pieces + 1 + len(new_name_forms)),
-                                                new_name_forms),
-                               "global_data": global_data_form,
-                               "old_split": old_split},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/split_and_rename.html",
+                  {"title": _("Split sample “{sample}”").format(sample=parent),
+                   "new_names": list(zip(range(number_of_old_pieces + 1,
+                                               number_of_old_pieces + 1 + len(new_name_forms)),
+                                         new_name_forms)),
+                   "global_data": global_data_form,
+                   "old_split": old_split})
 
 
 @login_required

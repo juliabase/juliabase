@@ -18,7 +18,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 {% block frame_content %}
-<form method="post">
+<form method="post">{% csrf_token %}
   {% error_list solarsimulator_measurement _("Error in solarsimulator measurements") %}
   {% error_list sample _("Error in sample") %}
   {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
@@ -31,7 +31,7 @@ copyright holder, you must destroy it immediately and completely.
       {% input_field sample.sample %}
     </tr>
     <tr>
-      {% input_field solarsimulator_measurement.irradiance %}
+      {% input_field solarsimulator_measurement.irradiation %}
     </tr>
     <tr>
       {% input_field solarsimulator_measurement.temperature %}
@@ -59,7 +59,6 @@ copyright holder, you must destroy it immediately and completely.
               {% error_list measurement _("Error in solarsimulator measurement") "<tr>" 4 %}
                 <tr>
                   {% input_field measurement.position %}
-                  {% input_field measurement.cell_index %}
                 </tr>
             <tr><td><br/></td></tr>
                 <tr>
@@ -70,7 +69,6 @@ copyright holder, you must destroy it immediately and completely.
                   {% input_field measurement.eta %}
                 </tr>
                  <tr>
-                  {% input_field measurement.ff %}
                   {% input_field measurement.isc %}
                 </tr>
              <tr><td><br/></td></tr>

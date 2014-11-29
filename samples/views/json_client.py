@@ -29,6 +29,7 @@ from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import ensure_csrf_cookie
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
@@ -177,11 +178,13 @@ def available_items(request, model_name):
 
 # FixMe: The following two functions must go to jb_common.
 
-@require_http_methods(["POST"])
+@never_cache
+@ensure_csrf_cookie
 def login_remote_client(request):
-    """Login for the JuliaBase Remote Client.  It only supports the HTTP POST
-    method and expects ``username`` and ``password``.  AJAX code shouldn't need
-    this because it has the cookie already.
+    """Login for the JuliaBase Remote Client.  It expects ``username`` and
+    ``password``.  AJAX code shouldn't need it because it has the cookie
+    already.  An HTTP GET request yields nothing – this can be used to get the
+    CSRF cookie.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -194,16 +197,19 @@ def login_remote_client(request):
 
     :rtype: ``HttpResponse``
     """
-    try:
-        username = request.POST["username"]
-        password = request.POST["password"]
-    except KeyError:
-        raise JSONRequestException(3, '"username" and/or "password" missing')
-    user = django.contrib.auth.authenticate(username=username, password=password)
-    if user is not None and user.is_active:
-        django.contrib.auth.login(request, user)
-        return respond_in_json(True)
-    raise JSONRequestException(4, "user could not be authenticated")
+    if request.method == "POST":
+        try:
+            username = request.POST["username"]
+            password = request.POST["password"]
+        except KeyError:
+            raise JSONRequestException(3, '"username" and/or "password" missing')
+        user = django.contrib.auth.authenticate(username=username, password=password)
+        if user is not None and user.is_active:
+            django.contrib.auth.login(request, user)
+            return respond_in_json(True)
+        raise JSONRequestException(4, "user could not be authenticated")
+    else:
+        return respond_in_json(None)
 
 
 @never_cache
@@ -229,6 +235,7 @@ def logout_remote_client(request):
 
 @login_required
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def add_alias(request):
     """Adds a new sample alias name to the database.  This view can only be
     used by admin accounts.
@@ -263,6 +270,7 @@ def add_alias(request):
 
 @login_required
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def change_my_samples(request):
     """Adds or remove samples from “My Samples”.
 
@@ -270,6 +278,9 @@ def change_my_samples(request):
       - `request`: The current HTTP Request object.  It must contain the sample
         IDs of the to-be-removed samples comma-separated list in ``"remove"``
         and the to-be-added sample IDs in ``"add"``.  Both can be empty.
+        Moreover, it may contain the ID of the user whose “My Samples” should
+        be changed in ``"user"``.  If not given, the logged-in user is used.
+        If given, the currently logged-in user must be admin.
 
     :type request: ``HttpRequest``
 
@@ -280,10 +291,19 @@ def change_my_samples(request):
     :rtype: ``HttpResponse``
     """
     try:
-        sample_ids_to_remove = set(int(id_) for id_ in request.POST.get("remove", "").split(",") if id_)
-        sample_ids_to_add = set(int(id_) for id_ in request.POST.get("add", "").split(",") if id_)
+        sample_ids_to_remove = {int(id_) for id_ in request.POST.get("remove", "").split(",") if id_}
+        sample_ids_to_add = {int(id_) for id_ in request.POST.get("add", "").split(",") if id_}
     except ValueError:
         raise Http404("One or more of the sample IDs were invalid.")
+    user = request.user
+    user_id = request.POST.get("user")
+    if user_id:
+        if not request.user.is_superuser:
+            raise JSONRequestException(6, "Only admins can change other users' My Samples.")
+        try:
+            user = django.contrib.auth.models.User.objects.get(pk=user_id)
+        except django.contrib.auth.models.User.DoesNotExist:
+            raise Http404("User not found.")
     doubled_ids = sample_ids_to_remove & sample_ids_to_add
     sample_ids_to_remove -= doubled_ids
     sample_ids_to_add -= doubled_ids
@@ -292,11 +312,11 @@ def change_my_samples(request):
         samples_to_add = utils.restricted_samples_query(request.user).in_bulk(list(sample_ids_to_add))
     except models.Sample.DoesNotExist:
         raise Http404("One or more of the sample IDs could not be found.")
-    current_my_samples = set(request.user.my_samples.values_list("id", flat=True))
+    current_my_samples = set(user.my_samples.values_list("id", flat=True))
     changed_sample_ids = sample_ids_to_remove & current_my_samples | \
         sample_ids_to_add - (current_my_samples - sample_ids_to_remove)
-    request.user.my_samples.remove(*samples_to_remove.values())
-    request.user.my_samples.add(*samples_to_add.values())
+    user.my_samples.remove(*samples_to_remove.values())
+    user.my_samples.add(*samples_to_add.values())
     return respond_in_json(changed_sample_ids)
 
 
@@ -335,6 +355,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 @login_required
 @never_cache
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def fold_process(request, sample_id):
     """Fold a single process in one sample data sheet. The new behavior is also saved.
 
@@ -397,6 +418,7 @@ def get_folded_processes(request, sample_id):
 @login_required
 @never_cache
 @require_http_methods(["POST"])
+@ensure_csrf_cookie
 def fold_main_menu_element(request):
     """Fold a single topic or sample series from the main menu.
 

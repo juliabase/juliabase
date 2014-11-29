@@ -134,11 +134,10 @@ class Sample(object):
             self.purpose = data["purpose"]
             self.tags = data["tags"]
             self.topic = data["topic"]
-            self.processes = dict((key, value) for key, value in data.iteritems() if key.startswith("process "))
+            self.processes = dict((key, value) for key, value in data.items() if key.startswith("process "))
         else:
             self.id = self.name = self.current_location = self.currently_responsible_person = self.purpose = self.tags = \
-                self.topic = self.timestamp = None
-        self.legacy = False
+                self.topic = None
         self.edit_description = None
         self.edit_important = True
 
@@ -153,16 +152,20 @@ class Sample(object):
         if self.id:
             connection.open("samples/by_id/{0}/edit/".format(self.id), data)
         else:
-            if not self.timestamp:
-                self.timestamp = datetime.datetime(1990, 1, 1)
-            return connection.open("add_sample?" + urllib.urlencode(
-                    {"legacy": self.legacy, "timestamp": format_timestamp(self.timestamp)}), data)
+            self.id = connection.open("add_sample", data)
+        return self.id
 
-    def add_to_my_samples(self):
-        connection.open("change_my_samples", {"add": self.id})
+    def add_to_my_samples(self, user=None):
+        data = {"add": self.id}
+        if user:
+            data["user"] = primary_keys["users"][user]
+        connection.open("change_my_samples", data)
 
-    def remove_from_my_samples(self):
-        connection.open("change_my_samples", {"remove": self.id})
+    def remove_from_my_samples(self, user=None):
+        data = {"remove": self.id}
+        if user:
+            data["user"] = primary_keys["users"][user]
+        connection.open("change_my_samples", data)
 
 
 class Result(object):
@@ -243,7 +246,7 @@ class Result(object):
             for j, value in enumerate(values):
                 data["{0}_{1}-value".format(i, j)] = value
         if self.image_filename:
-            data["image_file"] = open(self.image_filename)
+            data["image_file"] = open(self.image_filename, "rb")
         with TemporaryMySamples(self.sample_ids):
             if self.existing:
                 result = connection.open("results/{0}/edit/".format(self.id), data)

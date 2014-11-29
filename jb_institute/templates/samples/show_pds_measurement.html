@@ -34,12 +34,8 @@ copyright holder, you must destroy it immediately and completely.
     <tr>
       <td class="label">{% verbose_name PDSMeasurement.raw_datafile %}:</td>
       <td class="value" style="font-weight: normal">
-      {% if browser_system == "windows" %}
-        <a href="file:///T:/Daten/pds/{{ process.raw_datafile }}">
-      {% else %}
-        <a href="file:///mnt/T/Daten/pds/{{ process.raw_datafile }}">
-      {% endif %}
-      T:/Daten/pds/{{ process.raw_datafile }}</a></td>
+        {{ process.raw_datafile }}
+      </td>
     </tr>
   {% endif %}
   {% if process.comments %}

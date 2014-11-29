@@ -14,123 +14,53 @@
 
 from __future__ import unicode_literals
 
-from jb_remote import *
-import os, re, codecs, datetime
-
-import ConfigParser
-credentials = ConfigParser.SafeConfigParser()
-credentials.read(os.path.expanduser("~/juliabase.auth"))
-credentials = dict(credentials.items("DEFAULT"))
-
-root_dir = "/home/bronger/temp/pds/"  # "/windows/T/daten/pds/"
-database_path = "/home/bronger/temp/pdscpmdb/pds_tab.txt"  # "/windows/T/datenbank/pdscpmdb/PDS_tab.txt"
-
-login(credentials["crawlers_login"], credentials["crawlers_password"])
+import sys, os, datetime, glob
+sys.path.append(os.path.abspath(".."))
+from jb_remote_institute import *
 
 
-def read_lines(filename):
-    try:
-        return codecs.open(filename, encoding="cp1252").readlines()
-    except UnicodeDecodeError:
-        try:
-            return codecs.open(filename, encoding="cp437").readlines()
-        except UnicodeDecodeError:
-            return open(filename).readlines()
-
-
-evaluated_data_files = {}
-evaluated_filename_pattern = re.compile(r"a_pd(?P<number>\d+)(?P<suffix>.*)\.dat", re.IGNORECASE)
-for directory, __, filenames in os.walk(root_dir):
-    if os.path.basename(directory).startswith("p"):
-        for filename in filenames:
-            match = evaluated_filename_pattern.match(filename)
-            if match:
-                number = int(match.group("number"))
-                evaluated_data_files[number] = os.path.join(directory, filename)
-
-
-date_pattern = re.compile(r"#?(?P<day>\d{1,2})\.(?P<month>\d{1,2})\.(?P<year>\d{2,4})")
-date2_pattern = re.compile(r"(?P<day>\d{1,2})\s*(?P<month>[A-Za-z]{3})\s+(?P<year>\d{4})")
-def parse_date(datestring):
-    match = date_pattern.match(datestring)
-    if match:
-        year = int(match.group("year"))
-        if year < 100:
-            year = 1900 + year if year > 40 else 2000 + year
-        return datetime.datetime(year, int(match.group("month")), int(match.group("day")), 10, 0)
-    match = date2_pattern.match(datestring)
-    if match:
-        month = [None, "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].\
-            index(match.group("month"))
-        return datetime.datetime(int(match.group("year")), month, int(match.group("day")), 10, 0)
-
-
-def extract_comments(filename):
-    comment_lines = []
-    for linenumber, line in enumerate(read_lines(filename)):
-        linenumber += 1
-        line = line.strip()
-        if line.startswith("BEGIN") or linenumber >= 21:
+def read_pds_file(filepath):
+    result = {}
+    for line in open(filepath):
+        if line.startswith("# -"):
             break
-        if linenumber >= 5:
-            comment_lines.append(line)
-    comments = "\n".join(comment_lines) + "\n"
-    while "\n\n" in comments:
-        comments = comments.replace("\n\n", "\n")
-    if comments.startswith("\n"):
-        comments = comments[1:]
-    return comments
-
-
-raw_filename_pattern = re.compile(r"pd(?P<number>\d+)\.dat", re.IGNORECASE)
-
-class LegacyPDSMeasurement(object):
-
-    def __init__(self, line):
-        self.path, filename, self.date, self.sample_name, self.substrate, self.material, self.remarks = \
-            line.strip().split(";", 6)
-        match = raw_filename_pattern.match(filename)
-        if match:
-            self.number = int(match.group("number"))
+        key, __, value = line[1:].partition(":")
+        key, value = key.strip().lower(), value.strip()
+        if key == "timestamp":
+            result[key] = datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
         else:
-            raise ValueError
-        self.date = parse_date(self.date)
-        dirname = os.path.join(root_dir, os.path.basename(self.path[:-1].replace("\\", "/")))
-        self.path = os.path.join(dirname, filename)
-        if not os.path.exists(self.path):
-            raise ValueError
-        self.comments = extract_comments(self.path)
-        if not self.comments.startswith(self.remarks):
-            self.comments = "Abweichende Angaben in Datenbank und Messdatei!\n"
-        self.evaluated_path = evaluated_data_files.get(self.number)
+            result[key] = value
+    return result
 
+        
+setup_logging("console")
+login("juliabase", "12345")
 
-pds_measurements = {}
-for line in open(database_path):
+for filepath in glob.glob("pds_raw_data/*.dat"):
+    pds_header_data = read_pds_file(filepath)
     try:
-        measurement = LegacyPDSMeasurement(line)
-        pds_measurements[measurement.number] = measurement
-    except ValueError:
-        pass
+        sample_id = get_sample(pds_header_data["sample"])
+    except SampleNotFound as exception:
+        sample = exception.sample
+        sample.currently_responsible_person = pds_header_data["operator"]
+        sample.current_location = "PDS lab"
+        sample.topic = "Legacy"
+        sample_id = sample.submit()
 
-already_available_pds_numbers = connection.open("available_items/PDSMeasurement")
-
-for legacy_pds_measurement in pds_measurements.values():
-    if len(legacy_pds_measurement.sample_name) > 2 and legacy_pds_measurement.sample_name[2].upper() not in ["L", "B"]:
-        continue
-    if legacy_pds_measurement.numer not in already_available_pds_numbers:
-        sample_id = get_or_create_sample(legacy_pds_measurement.sample_name)
-        if sample_id is not None:
-            pds_measurement = PDSMeasurement(sample_id)
-            pds_measurement.number = legacy_pds_measurement.number
-            pds_measurement.timestamp = legacy_pds_measurement.date
-            pds_measurement.timestamp_inaccuracy = 3
-            pds_measurement.raw_datafile = legacy_pds_measurement.path[len(root_dir):]
-            if legacy_pds_measurement.evaluated_path:
-                pds_measurement.evaluated_datafile = legacy_pds_measurement.evaluated_path[len(root_dir):]
-            pds_measurement.comments = legacy_pds_measurement.comments
-            pds_measurement.submit()
-    else:
-        print legacy_pds_measurement.number, "war schon drin!"
+        substrate = Substrate()
+        substrate.timestamp = pds_header_data["timestamp"] - datetime.timedelta(minutes=1)
+        substrate.timestamp_inaccuracy = 3
+        substrate.sample_ids = [sample_id]
+        substrate.material = "corning"
+        substrate.operator = "n.burkhardt"
+        substrate.submit()
+    pds_measurement = PDSMeasurement()
+    pds_measurement.operator = pds_header_data["operator"]
+    pds_measurement.timestamp = pds_header_data["timestamp"]
+    pds_measurement.number = pds_header_data["number"]
+    pds_measurement.apparatus = "pds" + pds_header_data["apparatus"]
+    pds_measurement.raw_datafile = os.path.basename(filepath)
+    pds_measurement.sample_id = sample_id
+    pds_measurement.submit()
 
 logout()

@@ -18,12 +18,11 @@ import copy, datetime
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
-from django.template import RequestContext
 from django.utils.text import capfirst
 from jb_common import utils as common_utils
 from samples.models import Process, Task
@@ -187,7 +186,7 @@ class ChooseTaskListsForm(forms.Form):
     def __init__(self, user, data=None, **kwargs):
         super(ChooseTaskListsForm, self).__init__(data, **kwargs)
         choices = []
-        for department in user.samples_user_details.show_users_from_departments.order_by("name").iterator():
+        for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().keys()
                                           if process._meta.app_label ==
                                           settings.DEPARTMENTS_TO_APP_LABELS.get(department.name))
@@ -309,10 +308,7 @@ def edit(request, task_id):
             initial["process_class"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
     title = _("Edit task") if task else _("Add task")
-    return render_to_response("samples/edit_task.html", {"title": title,
-                                                         "task": task_form,
-                                                         "samples": samples_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_task.html", {"title": title, "task": task_form, "samples": samples_form})
 
 @login_required
 def show(request):
@@ -344,19 +340,18 @@ def show(request):
         active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
             exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists[process_content_type] = [TaskForTemplate(task, request.user) for task in active_tasks]
-    task_list_for_department = {}
-    for process_content_type, tasks in task_lists.iteritems():
+    task_lists_for_department = {}
+    for process_content_type, tasks in task_lists.items():
         # FixMe: it is possible that some processes are in more then one department available
         # maybe we need a better way to determine the department
-        app_label = process_content_type.model_class()._meta.app_label
-        department_name = apps.get_app_config(app_label).verbose_name
-        if not department_name in task_list_for_department:
-            task_list_for_department[department_name] = {}
-        task_list_for_department[department_name].update({process_content_type: tasks})
-    return render_to_response("samples/task_lists.html", {"title": _("Task lists"),
-                                                          "chose_task_lists": choose_task_lists_form,
-                                                          "task_lists": task_list_for_department},
-                              context_instance=RequestContext(request))
+        department_names = {name for name, app_label in settings.DEPARTMENTS_TO_APP_LABELS.items()
+                           if app_label == process_content_type.model_class()._meta.app_label}
+        assert len(department_names) == 1
+        department_name = department_names.pop()
+        task_lists_for_department.setdefault(department_name, {}).update({process_content_type: tasks})
+    return render(request, "samples/task_lists.html", {"title": _("Task lists"),
+                                                       "choose_task_lists": choose_task_lists_form,
+                                                       "task_lists": task_lists_for_department})
 
 
 @login_required

@@ -62,9 +62,9 @@ function showCellData{{ process.id }}(process_id, position) {
       {% for cell in cells|sort_cells %}
         <li onclick="showCellData{{ process.id }}({{ process.id }}, '{{ cell.position }}')">
           {{ cell.position }}
-          {% if process.irradiance == "AM1.5" %}
+          {% if process.irradiation == "AM1.5" %}
             ({{ cell.eta|round:"3" }} %)
-          {% elif process.irradiance == "OG590" or process.irradiance == "BG7" %}
+          {% elif process.irradiation == "OG590" or process.irradiation == "BG7" %}
             ({{ cell.isc|round:"3" }} mA/cm²)
           {% endif %}
         </li>
@@ -76,8 +76,8 @@ function showCellData{{ process.id }}(process_id, position) {
 <table style="background-color: {{ process|solarsimulator_color }}">
   <tbody>
     <tr>
-      <td class="label">{% verbose_name SolarsimulatorPhotoMeasurement.irradiance %}:</td>
-      <td class="value">{{ process.get_irradiance_display }}</td>
+      <td class="label">{% verbose_name SolarsimulatorMeasurement.irradiation %}:</td>
+      <td class="value">{{ process.get_irradiation_display }}</td>
     </tr>
     <tr>
         {% value_field process.temperature "℃" %}
@@ -90,20 +90,18 @@ function showCellData{{ process.id }}(process_id, position) {
          id="cell_table_{{ process.id }}_{{ cell.position }}">
     <tbody>
     <tr>{% value_field cell.position %}</tr>
-      <tr>{% value_field cell.area "cm²" 3 %}</tr>
-      <tr>{% value_field cell.eta "%" 3 %}</tr>
-      <tr>{% value_field cell.ff "%" 3 %}</tr>
-      <tr>{% value_field cell.isc "mA/cm²" 3 %}</tr>
-    <tr>{% value_field cell.cell_index %}</tr>
+    <tr>{% value_field cell.area "cm²" 3 %}</tr>
+    <tr>{% value_field cell.eta "%" 3 %}</tr>
+    <tr>{% value_field cell.isc "mA/cm²" 3 %}</tr>
     <tr>
       <td class="label" style="font-weight: normal">
-          {% verbose_name SolarsimulatorPhotoCellMeasurement.data_file %}:
+          {% verbose_name SolarsimulatorCellMeasurement.data_file %}:
       </td>
       <td class="value" style="font-weight: normal">
         {% if browser_system == "windows" %}
-          <a href="file:///P:/LABOR%20USER/maike_user/ascii%20files/{{ cell.data_file|urlquote }}">
+          <a href="file:///P:/inm_nas/lab_data/solarsimulator_raw_data/{{ cell.data_file|urlquote }}">
         {% else %}
-          <a href="file:///mnt/P/LABOR%20USER/maike_user/ascii%20files/{{ cell.data_file|urlquote }}">
+          <a href="file:///mnt/P/inm_nas/lab_data/solarsimulator_raw_data/{{ cell.data_file|urlquote }}">
         {% endif %}
             {{ cell.data_file }}</a></td>
         </tr>
@@ -115,7 +113,7 @@ function showCellData{{ process.id }}(process_id, position) {
   <table>
     <tbody>
     <tr>
-      <td class="label" style="vertical-align: top">{% verbose_name SolarsimulatorPhotoMeasurement.comments %}:</td>
+      <td class="label" style="vertical-align: top">{% verbose_name SolarsimulatorMeasurement.comments %}:</td>
       <td class="value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
     </tr>
     </tbody>

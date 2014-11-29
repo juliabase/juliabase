@@ -106,7 +106,7 @@ strightforward).
 
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
-from django.utils.six.moves import cStringIO
+from django.utils.six.moves import cStringIO as StringIO
 
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
@@ -142,9 +142,9 @@ class UnicodeWriter(object):
         :type dialect: ``csv.Dialect``
         :type encoding: str
         """
-        self.queue = cStringIO.StringIO()
+        self.queue = StringIO()
         self.writer = csv.writer(self.queue, dialect=dialect, **kwargs)
-        self.stream = stream if stream else cStringIO.StringIO()
+        self.stream = stream if stream else StringIO()
         self.encoder = codecs.getincrementalencoder(encoding)()
 
     def writerow(self, row):

@@ -23,8 +23,7 @@ import django.utils.six as six
 
 import datetime
 from django.db import transaction, IntegrityError
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.forms.util import ValidationError
 from django.forms import widgets
@@ -246,11 +245,9 @@ def add(request):
                 return utils.successful_response(request, success_report, json_response=ids)
     else:
         add_samples_form = AddSamplesForm(user)
-    return render_to_response("samples/add_samples.html",
-                              {"title": _("Add samples"),
-                               "add_samples": add_samples_form,
-                               "external_operators_available": user.external_contacts.exists()},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/add_samples.html", {"title": _("Add samples"),
+                                                        "add_samples": add_samples_form,
+                                                        "external_operators_available": user.external_contacts.exists()})
 
 
 class DestinationSamplesForm(forms.Form):
@@ -305,7 +302,7 @@ def copy_informal_stack(request, sample_name):
     context = {"title": _("Copy informal stack of “{sample}”").format(sample=sample),
                "sample": sample, "destination_samples": destination_samples_form}
     context.update(sample.sample_details.get_context_for_user(request.user, {}))
-    return render_to_response("samples/copy_informal_stack.html", context, context_instance=RequestContext(request))
+    return render(request, "samples/copy_informal_stack.html", context)
 
 
 @login_required

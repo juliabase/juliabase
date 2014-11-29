@@ -20,8 +20,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime, re, os.path, codecs
 from django.http import Http404
-from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
@@ -80,11 +79,10 @@ def view(request, process_class_name):
     assert "." not in process_class_name and "/" not in process_class_name
     filepath = os.path.join(settings.CRAWLER_LOGS_ROOT, process_class_name + ".log")
     log_content, log_timestamp = read_crawler_log(filepath)
-    return render_to_response("samples/log_viewer.html",
-                              {"title": _("Log of crawler “{process_class_name}”").format(
-                                  process_class_name=process_class._meta.verbose_name_plural),
-                               "log_content": log_content, "log_timestamp": log_timestamp},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/log_viewer.html",
+                  {"title": _("Log of crawler “{process_class_name}”").format(
+                      process_class_name=process_class._meta.verbose_name_plural),
+                   "log_content": log_content, "log_timestamp": log_timestamp})
 
 
 @login_required
@@ -115,5 +113,4 @@ def list(request):
             if os.path.exists(filepath):
                 crawlers.append((process_class._meta.verbose_name_plural, process_class_name))
     crawlers.sort()
-    return render_to_response("samples/list_crawlers.html", {"title": _("Crawler logs"), "crawlers": crawlers},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/list_crawlers.html", {"title": _("Crawler logs"), "crawlers": crawlers})

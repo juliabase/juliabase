@@ -18,8 +18,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django import forms
@@ -79,10 +78,9 @@ def new(request):
     else:
         external_operator_form = AddExternalOperatorForm(request.user)
         initials_form = form_utils.InitialsForm(person=None, initials_mandatory=True)
-    return render_to_response("samples/edit_external_operator.html", {"title": _("Add external operator"),
-                                                                      "external_operator": external_operator_form,
-                                                                      "initials": initials_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_external_operator.html", {"title": _("Add external operator"),
+                                                                   "external_operator": external_operator_form,
+                                                                   "initials": initials_form})
 
 
 class EditExternalOperatorForm(forms.ModelForm):
@@ -134,11 +132,10 @@ def edit(request, external_operator_id):
     else:
         external_operator_form = EditExternalOperatorForm(request.user, instance=external_operator)
     initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=True)
-    return render_to_response("samples/edit_external_operator.html",
-                              {"title": _("Edit external operator “{operator}”").format(operator=external_operator.name),
-                               "external_operator": external_operator_form,
-                               "initials": initials_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_external_operator.html",
+                  {"title": _("Edit external operator “{operator}”").format(operator=external_operator.name),
+                   "external_operator": external_operator_form,
+                   "initials": initials_form})
 
 
 @login_required
@@ -171,12 +168,11 @@ def show(request, external_operator_id):
         title = _("Confidential operator #{number}").format(number=external_operator.pk)
         external_operator = None
         initials = None
-    return render_to_response("samples/show_external_operator.html",
-                              {"title": title,
-                               "external_operator": external_operator, "initials": initials,
-                               "contact_persons" : contact_persons,
-                               "can_edit": request.user in contact_persons},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/show_external_operator.html",
+                  {"title": title,
+                   "external_operator": external_operator, "initials": initials,
+                   "contact_persons" : contact_persons,
+                   "can_edit": request.user in contact_persons})
 
 
 @login_required
@@ -201,6 +197,5 @@ def list_(request):
         external_operators = list(request.user.external_contacts.all())
     if not external_operators:
         raise Http404("You have no external contacts.")
-    return render_to_response("samples/list_external_operators.html",
-                              {"title": _("All you external contacts"), "external_operators": external_operators},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/list_external_operators.html",
+                  {"title": _("All you external contacts"), "external_operators": external_operators})

@@ -28,7 +28,6 @@ from jb_common.utils import is_json_requested, JSONRequestException
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http
-from django.shortcuts import render_to_response
 
 
 """Middleware classes for various totally unrelated things."""
@@ -159,8 +158,8 @@ class JSONClientMiddleware(object):
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
                                      html=response.content)
             return HttpResponseUnprocessableEntity(
-                json.dumps((1, django.core.urlresolvers.reverse("jb_common.views.show_error_page",
-                                                                kwargs={"hash_value": hash_value}))),
+                json.dumps((1, request.build_absolute_uri(
+                    django.core.urlresolvers.reverse("jb_common.views.show_error_page", kwargs={"hash_value": hash_value})))),
                 content_type="application/json; charset=ascii")
         return response
 

@@ -31,8 +31,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, get_object_or_404
-from django.template import RequestContext
+from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext, ugettext_lazy, pgettext_lazy
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
@@ -574,7 +573,7 @@ def edit(request, process_id):
     title = _("Edit result") if form_set.result else _("New result")
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
-    return render_to_response("samples/edit_result.html", context_dict, context_instance=RequestContext(request))
+    return render(request, "samples/edit_result.html", context_dict)
 
 
 @login_required
@@ -602,7 +601,7 @@ def show(request, process_id):
     template_context = {"title": _("Result “{title}”").format(title=result.title), "result": result,
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.digest_process(result, request.user))
-    return render_to_response("samples/show_single_result.html", template_context, context_instance=RequestContext(request))
+    return render(request, "samples/show_single_result.html", template_context)
 
 
 @login_required
@@ -687,9 +686,8 @@ def export(request, process_id):
     elif isinstance(result, HttpResponse):
         return result
     title = _("Table export for “{name}”").format(name=data.descriptive_name)
-    return render_to_response("samples/table_export.html", {"title": title, "column_groups": column_groups_form,
-                                                            "columns": columns_form,
-                                                            "rows": zip(table, switch_row_forms) if table else None,
-                                                            "old_data": old_data_form,
-                                                            "backlink": request.GET.get("next", "")},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                         "columns": columns_form,
+                                                         "rows": list(zip(table, switch_row_forms)) if table else None,
+                                                         "old_data": old_data_form,
+                                                         "backlink": request.GET.get("next", "")})
