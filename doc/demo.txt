@@ -1,0 +1,121 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+
+=======================
+The demo site
+=======================
+
+At https://demo.juliabase.org, a demo of JuliaBase is installed so that you can
+play with it a little bit.  You can log in with various accounts with different
+levels of permissions, add samples, processes, tasks etc., have a look at
+sample data sheets or a lab notebook, and much more.
+
+However, since this site is accessable to everyone, it may become chaotic over
+time.  In order to prevent that, all the data is resetted every hour on the
+hour.  So, don't be suprised if you have to log in again after some time – all
+session data is resetted, too.  There is nothing to worry though as you may log
+in as often as you wish.
+
+This demo site is also the default target of the remote client code shipped
+with JuliaBase.  You are encouraged to use the demo as a test bed for your
+client code.
+
+
+The demo accounts
+=====================
+
+The demo site is the JuliaBase installation of the “Institute of Nifty New
+Materials” (INM).  It's a very small institute with only six employees.  All
+accounts have the password “12345”.
+
+
+The boss
+--------
+
+**Jean Renard** (s.renard) is the lead scientist and director of this
+institute.  Accordingly, his JuliaBase account allows him to view all samples.
+Moreover, he can set permissions of all of the institute's setups, and change
+memberships for topics.  Finally, he is the only person that can approve or
+reject so-called “sample claims”.  More about this later.
+
+
+The technical staff
+-------------------
+
+**Nick Burkhardt** is a technician in the INM for a very long time.  He is
+responsible for the *PDS setup* (photothermal deflection spectroscopy), a
+measurement setup.  He performs measurements for researchers.  He would never
+let another person use his PDS.
+
+**Hank Griffin** is also a technician.  He is responsible for the
+*solarsimulator*, another measurement setup.  He performs measurements for
+researchers, but after proper instructions by him, other people may use the
+apparatus, too.
+
+**Eddie Monroe** is a depositeur.  This is a technician who manages a
+deposition system, in his case, the *cluster tool deposition*.  Here too, other
+institute members may use this system after proper instructions.
+
+The scientific staff
+--------------------
+
+**Rosalee Calvert** is a tenure scientist and creates samples by herself in the
+*5-chamber deposition setup*.  Currently, she's the only one using this setup.
+Afterwards, she measures the samples in the solarsimulator.  His current
+project is a cooperation with the University of Paris.
+
+**Juliette Silverton** is a PhD student with a lot of work.  Thus, she is
+unable to do sample preparation and measurements herself, and let others do it.
+Consequently, she makes intensive use of JuliaBase's “task lists” feature in
+order to commission the work.
+
+
+First steps
+===========
+
+
+The “My Samples” list
+---------------------
+
+Log in as ``r.calvert``.  In the main menu, you can see Rosalee's “My Samples”
+on the right hand side.  This list usually contains not *all* samples of a user
+but only those that are *currently of interest* to him/her.  Still, this list
+may become quite long, and is therefore structured by *topics* and *sample
+series*.  You may click on the bullet icons in the list to fold and unfold
+sections that you want to hide.
+
+
+Topics
+------
+
+One sample usually belongs to exactly one topic.  This helps to organize
+samples.  For one thing, one can give topics expressive names, which makes the
+samples' purpose clear.  But even more important is that topics define who can
+see the sample.
+
+The most important rule in JuliaBase is: *You can only see samples of your
+topics.*
+
+If a sample is in no topic, it is completely unprotected.  Everyone can see it
+and take possession of it.  There may be use cases for that but usually, you
+should put all your samples in topics.
+
+People can be in an arbitrary lot of topics at the same time, but a sample is
+in exactly one topic.  It may change it during its lifetime, though.  Senior
+team members may have the permission to see all samples, whether in their
+topics or not.  Jean Renard is such a person.
+
+Jean also has the permission to change topic memberships of all topics, and to
+add new topics.
