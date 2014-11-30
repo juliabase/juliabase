@@ -492,7 +492,7 @@ class Migration(migrations.Migration):
                 ('folded_series', models.TextField(default='[]', help_text='in JSON format', verbose_name='folded sample series', blank=True)),
                 ('auto_addition_topics', models.ManyToManyField(help_text='new samples in these topics are automatically added to \u201cMy Samples\u201d', related_name='auto_adders', verbose_name='auto-addition topics', to='jb_common.Topic', blank=True)),
                 ('default_folded_process_classes', models.ManyToManyField(related_name='dont_show_to_user', verbose_name='folded processes', to='contenttypes.ContentType', blank=True)),
-                ('show_users_from_department', models.ManyToManyField(related_name='shown_users', verbose_name='show users from department', to='jb_common.Department', blank=True)),
+                ('show_users_from_departments', models.ManyToManyField(related_name='shown_users', verbose_name='show users from department', to='jb_common.Department', blank=True)),
                 ('subscribed_feeds', models.ManyToManyField(related_name='subscribed_users', verbose_name='subscribed newsfeeds', to='contenttypes.ContentType', blank=True)),
                 ('visible_task_lists', models.ManyToManyField(related_name='task_lists_from_user', verbose_name='visible task lists', to='contenttypes.ContentType', blank=True)),
             ],
