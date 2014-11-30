@@ -182,7 +182,8 @@ def show(request, username, user_hash):
                 continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
-            "tag:{0},{1}:{2}".format(request.build_absolute_uri("/"), entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
+            "tag:{0},{1}:{2}".format(request.build_absolute_uri("/").partition("//")[2][:-1], entry.timestamp.strftime("%Y-%m-%d"),
+                                     entry.sha1_hash)
         metadata = entry.get_metadata()
         ElementTree.SubElement(entry_element, "title").text = metadata["title"]
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
