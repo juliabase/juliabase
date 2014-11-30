@@ -16,11 +16,11 @@ copyright holder, you must destroy it immediately and completely.
 
 <p>
   {% if entry.is_new %}
-    {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url|prepend_domain as url and entry.result.title as title %}
+    {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url as url and entry.result.title as title %}
       {{ originator }} added the result “<a href="{{ url }}">{{ title }}</a>”.
     {% endblocktrans %}
   {% else %}
-    {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url|prepend_domain as url and entry.result.title as title %}
+    {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url as url and entry.result.title as title %}
       {{ originator }} edited the result “<a href="{{ url }}">{{ title }}</a>”.
     {% endblocktrans %}
   {% endif %}
@@ -30,7 +30,7 @@ copyright holder, you must destroy it immediately and completely.
 {% if entry.result.samples.count %}
   <ul>
     {% for sample in entry.result.samples.all %}
-      <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
+      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
     {% endfor %}
   </ul>
 {% endif %}
@@ -38,7 +38,7 @@ copyright holder, you must destroy it immediately and completely.
   <p>{% trans 'Series:' %}</p>
   <ul>
     {% for sample_series in entry.result.sample_series.all %}
-      <li><a href="{{ sample_series.get_absolute_url|prepend_domain }}">{{ sample_series.name }}</a></li>
+      <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series.name }}</a></li>
     {% endfor %}
   </ul>
 {% endif %}

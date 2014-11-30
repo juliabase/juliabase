@@ -338,16 +338,6 @@ def markdown_samples(value, margins="default"):
 
 @register.filter
 @stringfilter
-def prepend_domain(value):
-    """Prepend the domain to an absolute URL without domain.
-    """
-    assert value[0] == "/"
-    prefix = "http://" + settings.DOMAIN_NAME
-    return prefix + value
-
-
-@register.filter
-@stringfilter
 def first_upper(value):
     """Filter for formatting the value to set the first character to uppercase.
     """

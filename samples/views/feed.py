@@ -150,10 +150,10 @@ def show(request, username, user_hash):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     permissions.assert_can_view_feed(user_hash, user)
-    url_prefix = "{0}://{1}".format(settings.PROTOCOL, settings.DOMAIN_NAME)
-    feed_absolute_url = url_prefix + django.core.urlresolvers.reverse(show,
-                                                                      kwargs={"username": username, "user_hash": user_hash})
+    feed_absolute_url = request.build_absolute_uri(django.core.urlresolvers.reverse(
+        show, kwargs={"username": username, "user_hash": user_hash}))
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
+    feed.attrib["xml:base"] = request.build_absolute_uri("/")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url
     ElementTree.SubElement(feed, "title").text = \
         _("JuliaBase news for {user_name}").format(user_name=get_really_full_name(user))
@@ -182,7 +182,7 @@ def show(request, username, user_hash):
                 continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
-            "tag:{0},{1}:{2}".format(settings.DOMAIN_NAME, entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
+            "tag:{0},{1}:{2}".format(request.build_absolute_uri("/"), entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
         metadata = entry.get_metadata()
         ElementTree.SubElement(entry_element, "title").text = metadata["title"]
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
@@ -193,7 +193,7 @@ def show(request, username, user_hash):
         category = ElementTree.SubElement(
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])
         if "link" in metadata:
-            ElementTree.SubElement(entry_element, "link", rel="alternate", href=url_prefix + metadata["link"])
+            ElementTree.SubElement(entry_element, "link", rel="alternate", href=request.build_absolute_uri(metadata["link"]))
         else:
             # Add bogus <link> tags for Thunderbird, see
             # https://bugzilla.mozilla.org/show_bug.cgi?id=297569
@@ -201,7 +201,7 @@ def show(request, username, user_hash):
             if user_agent.startswith("Mozilla") and "Thunderbird" in user_agent:
                 ElementTree.SubElement(
                     entry_element, "link", rel="alternate",
-                    href=url_prefix + django.core.urlresolvers.reverse("samples.views.main.main_menu"))
+                    href=request.build_absolute_uri(django.core.urlresolvers.reverse("samples.views.main.main_menu")))
         template = loader.get_template("samples/" + utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}

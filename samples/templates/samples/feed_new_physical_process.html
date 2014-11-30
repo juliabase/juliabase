@@ -15,7 +15,7 @@ copyright holder, you must destroy it immediately and completely.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and process.get_absolute_url|prepend_domain as url %}
+  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and process.get_absolute_url as url %}
     {{ originator }} finished <a href="{{ url }}">{{ process }}</a>.
   {% endblocktrans %}
   {% blocktrans count process.samples.all.count as counter %}
@@ -27,6 +27,6 @@ copyright holder, you must destroy it immediately and completely.
 
 <ul>
   {% for sample in process.samples.all %}
-    <li><a href="{{ sample.get_absolute_url|prepend_domain }}">{{ sample }}</a></li>
+    <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
   {% endfor %}
 </ul>

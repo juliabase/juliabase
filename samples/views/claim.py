@@ -112,8 +112,7 @@ to withdraw the request.
 
 JuliaBase.
 """), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
-                 "url": "http://" + settings.DOMAIN_NAME +
-                 django.core.urlresolvers.reverse(show, kwargs={"claim_id": claim.pk})})
+                 "url": request.build_absolute_uri(django.core.urlresolvers.reverse(show, kwargs={"claim_id": claim.pk}))})
             _ = ugettext
             claim.samples = samples_form.cleaned_data["samples"]
             return utils.successful_response(request,
