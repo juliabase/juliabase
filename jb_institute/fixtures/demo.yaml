@@ -150,42 +150,42 @@
 
 - fields:
     user: 3
-    show_users_from_department: [1]
+    show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 3
 - fields:
     user: 4
-    show_users_from_department: [1]
+    show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 4
 - fields:
     user: 5
-    show_users_from_department: [1]
+    show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 5
 - fields:
     user: 6
-    show_users_from_department: [1]
+    show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 6
 - fields:
     user: 7
-    show_users_from_department: [1]
+    show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 7
 - fields:
     user: 8
-    show_users_from_department: [1]
+    show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
