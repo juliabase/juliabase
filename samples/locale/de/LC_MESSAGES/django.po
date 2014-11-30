@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-26 20:45+0100\n"
-"PO-Revision-Date: 2014-11-24 15:49+0100\n"
+"POT-Creation-Date: 2014-11-27 18:27+0100\n"
+"PO-Revision-Date: 2014-12-01 00:20+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -1915,8 +1915,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    %(originator)s stellte den Auftrag „<a href=\"%(url)s\">%(title)s</a>“ "
-"ein.\n"
+"    %(originator)s stellte das Ergebnis „<a href=\"%(url)s\">%(title)s</a>“ ein.\n"
 "  "
 
 #: samples/templates/samples/feed_result.html:23
@@ -1927,7 +1926,7 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    %(originator)s änderte den Auftrag „<a href=\"%(url)s\">%(title)s</a>“.\n"
+"    %(originator)s änderte das Ergebnis „<a href=\"%(url)s\">%(title)s</a>“.\n"
 "  "
 
 #: samples/templates/samples/feed_result.html:27
@@ -2853,13 +2852,13 @@ msgstr[1] ""
 "{sample_formats}"
 
 #: samples/views/bulk_rename.py:93 samples/views/split_after_deposition.py:59
-#: samples/views/split_after_deposition.py:348
+#: samples/views/split_after_deposition.py:347
 msgid "This sample name exists already."
 msgstr "Dieser Probenname ist schon vergeben."
 
 #: samples/views/bulk_rename.py:121
-#: samples/views/split_after_deposition.py:307
-#: samples/views/split_after_deposition.py:339
+#: samples/views/split_after_deposition.py:306
+#: samples/views/split_after_deposition.py:338
 msgid "This sample name has been used already on this page."
 msgstr "Dieser Probenname wurde auf dieser Seite bereits verwendet."
 
@@ -3302,7 +3301,7 @@ msgstr "Neuer aktuell Verantwortlicher"
 msgid "New Topic"
 msgstr "Thema hinzufügen"
 
-#: samples/views/my_samples.py:52 samples/views/split_after_deposition.py:127
+#: samples/views/my_samples.py:52 samples/views/split_after_deposition.py:126
 msgid "New current location"
 msgstr "Neuer Probenort"
 
@@ -3694,21 +3693,21 @@ msgstr "Neuer Probenname"
 msgid "The sample name has an invalid format."
 msgstr "Dieser Probenname hat ein ungültiges Format."
 
-#: samples/views/split_after_deposition.py:128
+#: samples/views/split_after_deposition.py:127
 msgid "(for all samples; leave empty for no change)"
 msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
 
-#: samples/views/split_after_deposition.py:298
+#: samples/views/split_after_deposition.py:297
 #, python-brace-format
 msgid "Sample {sample} occurs multiple times."
 msgstr "Probe {sample} kommt mehrfach vor."
 
-#: samples/views/split_after_deposition.py:303
+#: samples/views/split_after_deposition.py:302
 #, python-brace-format
 msgid "Sample {sample} doesn't belong to this deposition."
 msgstr "Probe {sample} gehört nicht zu dieser Deposition."
 
-#: samples/views/split_after_deposition.py:311
+#: samples/views/split_after_deposition.py:310
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
 "deposition's name."
@@ -3716,23 +3715,23 @@ msgstr ""
 "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
 "Depositionsname sein."
 
-#: samples/views/split_after_deposition.py:317
+#: samples/views/split_after_deposition.py:316
 msgid "At least one sample of the original deposition is missing."
 msgstr "Wenigstens eine Probe der originalen Deposition fehlt."
 
-#: samples/views/split_after_deposition.py:325
+#: samples/views/split_after_deposition.py:324
 msgid ""
 "The sample can't be split, because the deposition is not the latest process."
 msgstr ""
 "Die Probe kann nicht gespalten werden, weil die Deposition nicht der letzte "
 "Prozess ist."
 
-#: samples/views/split_after_deposition.py:334
+#: samples/views/split_after_deposition.py:333
 msgid "If you don't split, you can't rename the single piece."
 msgstr ""
 "Wenn Sie nicht spalten, dürfen Sie das einzelne Stück nicht umbenennen."
 
-#: samples/views/split_after_deposition.py:344
+#: samples/views/split_after_deposition.py:343
 msgid ""
 "If you choose a deposition-style name, it must begin with the parent's new "
 "name."
@@ -3740,11 +3739,11 @@ msgstr ""
 "Wenn Sie einen Depositions-Probennamen wählen, muss er mit dem neuen Namen "
 "der Mutterprobe beginnen."
 
-#: samples/views/split_after_deposition.py:493
+#: samples/views/split_after_deposition.py:492
 msgid "Samples were successfully split and/or renamed."
 msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 
-#: samples/views/split_after_deposition.py:502
+#: samples/views/split_after_deposition.py:501
 #, python-brace-format
 msgid "Bulk sample rename for {deposition}"
 msgstr "Probenumbenennung für {deposition}"
