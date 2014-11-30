@@ -27,6 +27,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
 from jb_common.utils import get_really_full_name
+from jb_common import __version__
 from samples import permissions, models
 from django.conf import settings
 import django.core.urlresolvers
@@ -163,12 +164,11 @@ def show(request, username, user_hash):
     else:
         ElementTree.SubElement(feed, "updated").text = format_timestamp(datetime.datetime.now())
     author = ElementTree.SubElement(feed, "author")
-    ElementTree.SubElement(author, "name").text = "Torsten Bronger"
-    ElementTree.SubElement(author, "email").text = "bronger@physik.rwth-aachen.de"
+    if settings.ADMINS:
+        ElementTree.SubElement(author, "name").text, ElementTree.SubElement(author, "email").text = settings.ADMINS[0]
     ElementTree.SubElement(feed, "link", rel="self", href=feed_absolute_url)
-    ElementTree.SubElement(feed, "generator", version="1.0").text = "JuliaBase"
-    ElementTree.SubElement(feed, "icon").text = url_prefix + "/media/ipv/sonne.png"
-    ElementTree.SubElement(feed, "logo").text = url_prefix + "/media/ipv/juelich.png"
+    ElementTree.SubElement(feed, "generator", version=__version__).text = "JuliaBase"
+    ElementTree.SubElement(feed, "icon").text = request.build_absolute_uri("/media/juliabase/juliabase_logo.png")
     only_important = user.samples_user_details.only_important_news
     for entry in entries:
         if only_important and not entry.important:
@@ -209,4 +209,6 @@ def show(request, username, user_hash):
         content.text = template.render(Context(context_dict))
         content.attrib["type"] = "html"
 #    indent(feed)
-    return HttpResponse(ElementTree.tostring(feed, "utf-8"), content_type="application/atom+xml; charset=utf-8")
+    return HttpResponse("""<?xml version="1.0"?>\n<?xml-stylesheet type="text/xsl" href="/media/samples/xslt/atom2html.xslt"?>\n"""
+                        + ElementTree.tostring(feed, "utf-8").decode("utf-8"),
+                        content_type="application/xml; charset=utf-8")
