@@ -58,6 +58,8 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     full_name = utils.get_really_full_name(user)
     if autoescape:
         full_name = conditional_escape(full_name)
+    if anchor_type == "mailto" and not user.email:
+        anchor_type = "plain"
     if anchor_type == "plain" or not user.jb_user_details.department:
         return mark_safe(full_name)
     elif anchor_type == "http":
