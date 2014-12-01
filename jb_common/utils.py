@@ -467,7 +467,10 @@ class JSONEncoder(DjangoJSONEncoder):
             try:
                 return list(o)
             except (ValueError, TypeError):
-                return super(JSONEncoder, self).default(o)
+                try:
+                    return super(JSONEncoder, self).default(o)
+                except (ValueError, TypeError):
+                    return six.text_type(o)
 
 
 def respond_in_json(value):
