@@ -36,7 +36,7 @@ import django.utils.six as six
 import random, math, decimal
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
-from reportlab.lib.styles import PropertySet
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.colors import black, getAllNamedColors
 from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Paragraph
@@ -65,28 +65,13 @@ parameters = {"roughness": 3, "grid_points": 24}
 ``grid_points``: number of grid points used for the textured line
 """
 
-
-class SingleLabelStyle(PropertySet):
-    """Style which is used for the labels on both sides of the stack.
-    """
-    defaults = {
-        "fontName": "DejaVu", "fontSize": 10, "leading": 12, "leftIndent": 0, "rightIndent": 0, "firstLineIndent": 0,
-        "alignment": TA_LEFT, "spaceBefore": 0, "spaceAfter": 0, "bulletFontName": "DejaVu", "bulletFontSize": 10,
-        "bulletIndent": 0, "textColor": black, "backColor": None, "wordWrap": None, "borderWidth": 0, "borderPadding": 0,
-        "borderColor": None, "borderRadius": None, "allowWidows": 1, "allowOrphans": 0, "textTransform": None}
+single_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu")
+legend_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu",
+                                    leftIndent=14.5, firstLineIndent=-14.5, spaceAfter=10)
 
 
-class LegendLabelStyle(PropertySet):
-    """Style which is used for the optional legend below the stack.
-    """
-    defaults = {
-        "fontName": "DejaVu", "fontSize": 10, "leading": 12, "leftIndent": 14.5, "rightIndent": 0, "firstLineIndent":-14.5,
-        "alignment": TA_LEFT, "spaceBefore": 0, "spaceAfter": 10, "bulletFontName": "DejaVu", "bulletFontSize": 10,
-        "bulletIndent": 0, "textColor": black, "backColor": None, "wordWrap": None, "borderWidth": 0, "borderPadding": 0,
-        "borderColor": None, "borderRadius": None, "allowWidows": 1, "allowOrphans": 0, "textTransform": None}
-
-lineskip = SingleLabelStyle.defaults["leading"]
-line_height = SingleLabelStyle.defaults["fontSize"]
+lineskip = single_label_style.leading
+line_height = single_label_style.fontSize
 
 
 def get_circled_number(number, largest_number):
@@ -585,7 +570,6 @@ def build_stack(layers, scale):
 
     :rtype: float
     """
-    style = SingleLabelStyle("label")
     total_height = 0
     for i, layer in enumerate(layers):
         layer.height = scale(layer.nm) if layer.nm > 0 else 0
@@ -593,7 +577,7 @@ def build_stack(layers, scale):
             layer.collapsed = layer.height > 10 * lineskip
         if layer.collapsed:
             layer.height = 2 * lineskip
-        layer.label = Paragraph(layer.name, style)
+        layer.label = Paragraph(layer.name, single_label_style)
         __, layer.label_height = layer.label.wrap(dimensions["label_width"], 10 * lineskip)
         layer.one_liner = len(layer.label.blPara.lines) == 1
         if i == 0:
@@ -665,8 +649,7 @@ class Label(object):
             hoffset = dimensions["stack_width"] + dimensions["label_skip"] if self.right_row else 0
         if not self.right_row:
             self.text = """<para alignment="right">{0}</para>""".format(self.text)
-        style = SingleLabelStyle("label")
-        paragraph = Paragraph(self.text, style)
+        paragraph = Paragraph(self.text, single_label_style)
         __, height = paragraph.wrap(dimensions["label_width"], 10 * lineskip)
         paragraph.drawOn(canvas, hoffset, self.voffset - height / 2)
 
@@ -788,13 +771,12 @@ def build_legend(displaced_labels, width):
 
     :rtype: list of `Paragraph`, float
     """
-    style = LegendLabelStyle("legend")
     legend = []
     for i, label in enumerate(displaced_labels):
         number = i + 1
         legend.append(
             Paragraph("""<bullet>{0}</bullet>{1}""".format(get_circled_number(number, NumberedLabel.largest_number), label),
-                      style))
+                      legend_label_style))
     total_height = 0
     for item in legend:
         total_height += item.wrap(width, 100 * lineskip)[1]
