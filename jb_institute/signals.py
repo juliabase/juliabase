@@ -117,6 +117,10 @@ def update_informal_layers(sender, instance, created, **kwargs):
     # ``PhysicalProcess``.  If this is not possible because ``PhysicalProcess``
     # is abstract, this line must stay, and this function must be connected
     # with senders of ``Process`` only.
+    #
+    # FixMe: The following code doesn't seem to work if the index of an
+    # existing informal layer is 0.  Either one must fix it here or prevent
+    # such indices from happening.
     if isinstance(instance, PhysicalProcess) and instance.finished:
         def append_non_process_layers(consumed_layers=None):
             """Appends old informal layers not connected with a process to the
@@ -155,8 +159,8 @@ def update_informal_layers(sender, instance, created, **kwargs):
                     process_layers = [layer for layer in old_layers if layer.process == process]
                     process.update_informal_layers(
                         sample, instance, informal_layers, process_layers, modified_layers,
-                        lambda ** kwargs: jb_institute_app.InformalLayer(sample_details=sample.sample_details,
-                                                                       process=process, **kwargs))
+                        lambda **kwargs: jb_institute_app.InformalLayer(sample_details=sample.sample_details,
+                                                                        process=process, **kwargs))
                     append_non_process_layers(process_layers)
             informal_layers.extend(sorted(non_process_layers, key=lambda layer: layer.index))
             # This also removes layers whose processes have been withdrawn from
