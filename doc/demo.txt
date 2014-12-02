@@ -135,4 +135,54 @@ Sample data sheet
    :align: right
    :scale: 50%
 
-Let's visit a sample by clicking on “14S-001”.  
+Let's visit a sample by clicking on “14S-001”.  You see its data sheet.  At the
+top, it contains some general information like the currently responsible person
+and the topic.  Then, you see a list of everything that has been done with this
+sample, in chronological order.  It starts with the substrate, is continued
+with the deposition of the silicon layers, and ends with a measurement in the
+solar simulator.
+
+Every such step is called a “process” in JuliaBase.  Even the “Substrate” is a
+process, albeit a slightly odd one.  Every process has an operator and a
+timestamp.  You can fold processes that would otherwise clobber the data sheet
+by clicking on the heading.
+
+The main work when adapting JuliaBase to a new institute is programming all the
+processes that the institute needs.  The solarsimulator measurement at the
+bottom is a good example why it is worth the effort.  Just click on the colored
+squares, and you see how the data and the plot change immediately.  Such
+features are lacking in off-the-shelf databases.  This high degree of
+adaptability and flexibility is the primary strength of JuliaBase.
+
+Let's scroll back to the top.  You see a schematic cross section of the sample,
+called an “informal stack” because it may not be totally accurate.  This is not
+part of JuliaBase's core because it may not be useful for every institute.  But
+it's part of the source code and you may use it.  If you click on it, you get
+it as a PDF.  This is also true for all plots in JuliaBase.
+
+
+Edit samples
+------------
+
+You can edit a sample by clicking on the pencil icon next to the sample's
+name.  “Editing a sample” refers *only* to the data at the top of the data
+sheet.  In particular, no processes are affected.  Very often when you change
+somethin in JuliaBase, you have to describe your changes shortly at the bottom
+right.  It may be tedious sometimes, but it may be very helpful to others who
+get notified by your changes.
+
+
+Add processes
+-------------
+
+Also on the top of the sample data sheet there is the gear icon, which is to
+append a new process to the sample.  If you click on it, you are asked which
+kind of process you'd like to add.  Let's have a look at two possibilities:
+Splitting and result process.
+
+
+Split a sample
+..............
+
+Depending on your workflow, it may happen a lot that you split samples into
+pieces.
