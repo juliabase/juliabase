@@ -120,8 +120,8 @@ class UserDetails(models.Model):
 
 
 class TopicManager(models.Manager):
-    def get_by_natural_key(self, name, department):
-        return self.get(name=name, department=department)
+    def get_by_natural_key(self, name, department_name):
+        return self.get(name=name, department__name=department_name)
 
 
 @python_2_unicode_compatible
@@ -158,7 +158,8 @@ class Topic(models.Model):
                        ("can_edit_their_topics", _("Can edit topics that he/she is a manager of")))
 
     def natural_key(self):
-        return (self.name, self.department)
+        return (self.name,) + self.department.natural_key()
+    natural_key.dependencies = ["jb_common.department"]
 
     def __str__(self):
         return six.text_type(self.name)
