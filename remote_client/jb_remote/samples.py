@@ -13,8 +13,8 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import absolute_import, unicode_literals, division
+from .six.moves import urllib
 
-import datetime, urllib
 from .common import connection, primary_keys, comma_separated_ids, format_timestamp, logging
 
 
@@ -126,7 +126,7 @@ class Sample(object):
         """
         if name or id_:
             data = connection.open("samples/by_id/{0}".format(id_)) if id_ else \
-                connection.open("samples/{0}".format(urllib.quote(name)))
+                connection.open("samples/{0}".format(urllib.parse.quote(name)))
             self.id = data["ID"]
             self.name = data["name"]
             self.current_location = data["current location"]
