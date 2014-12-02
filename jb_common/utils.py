@@ -492,7 +492,9 @@ def respond_in_json(value):
 
     :rtype: ``HttpResponse``
     """
-    return django.http.JsonResponse(value, JSONEncoder, safe=False)
+    # FixMe: The "charset" may be dropped if
+    # https://code.djangoproject.com/ticket/23949 gets accepted.
+    return django.http.JsonResponse(value, JSONEncoder, safe=False, content_type='application/json; charset=ascii')
 
 
 all_models = None

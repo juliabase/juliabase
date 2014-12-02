@@ -21,7 +21,7 @@ from django.test.client import Client
 import samples.views.shared_utils
 
 
-substrate_data = {"sample IDs": [1, 2], "timestamp inaccuracy": 0, "timestamp": "2010-12-02 11:07:36",
+substrate_data = {"sample IDs": [1, 2], "timestamp inaccuracy": 0, "timestamp": "2010-12-02T11:07:36",
                   "material": "corning", "external operator": None, "finished": True, "comments": "",
                   "operator": "testuser", "type": "substrate", "ID": 1}
 
@@ -43,7 +43,7 @@ class ExportTest(TestCase):
         self.assertEqual(response["Content-Type"], "application/json; charset=ascii")
         self.assertEqual(
             json.loads(response.content.decode("ascii")),
-            {"sample IDs": [2], "apparatus": "pds1", "timestamp inaccuracy": 0, "timestamp": "2010-12-02 12:07:36",
+            {"sample IDs": [2], "apparatus": "pds1", "timestamp inaccuracy": 0, "timestamp": "2010-12-02T12:07:36",
              "external operator": None,
              "operator": "testuser", "finished": True, "comments": "",
              "PDS number": 1, "type": "PDS measurement", "raw data file": "T:/Daten/pds/p4600-/pd4636.dat"})
@@ -56,11 +56,11 @@ class ExportTest(TestCase):
             {"currently responsible person": "testuser", "name": "10-TB-second", "tags": "", "topic": None, "purpose": "",
              "current location": u"Torsten's office", "split origin": None, "ID": 2,
              "process #1": {"sample IDs": [1, 2], "type": "substrate", "timestamp inaccuracy": 0,
-                            "timestamp": "2010-12-02 11:07:36", "external operator": None, "operator": "testuser", "finished": True,
+                            "timestamp": "2010-12-02T11:07:36", "external operator": None, "operator": "testuser", "finished": True,
                             "comments": "",
                             "material": "corning", "ID": 1},
              "process #2": {"sample IDs": [2], "type": "PDS measurement", "timestamp inaccuracy": 0,
-                            "timestamp": "2010-12-02 12:07:36", "external operator": None, "operator": "testuser", "finished": True,
+                            "timestamp": "2010-12-02T12:07:36", "external operator": None, "operator": "testuser", "finished": True,
                             "comments": "",
                             "apparatus": "pds1", "PDS number": 1, "raw data file": "T:/Daten/pds/p4600-/pd4636.dat"}
             })
@@ -85,6 +85,6 @@ class AdminExportTest(TestCase):
         response = self.client.get("/substrates_by_sample/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["Content-Type"], "application/json; charset=ascii")
         self.assertEqual(json.loads(response.content.decode("ascii")),
-                         {"operator": "testuser", "timestamp": "2010-12-02 11:07:36", "material": "corning",
+                         {"operator": "testuser", "timestamp": "2010-12-02T11:07:36", "material": "corning",
                           "timestamp inaccuracy": 0, "comments": "", "finished": True, "sample IDs": [1, 2],
                           "external operator": None, "type": "substrate", "ID": 1})

@@ -73,7 +73,42 @@ def comma_separated_ids(ids):
     return ",".join(str(id_) for id_ in ids)
 
 
+def parse_timestamp(timestamp):
+    """Convert a timestamp coming from the server to a Python `datetime` object.
+    The server serialises with the `DjangoJSONEncoder`, which in turn uses the
+    ``.isoformat()`` method.  As long as the server does not handle
+    timezone-aware timestamps (i.e., ``USE_TZ=False``), this works.
+
+    :Parameters:
+      - `timestamp`: the timestamp to parse, coming from the server.  It must
+        have ISO 8601 format format without timezone information.
+
+    :type timestamp: str
+
+    :Return:
+      the timestamp as a Python datetime object
+
+    :rtype: `datetime.datetime`
+    """
+    return datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S" + (".%f" if "." in timestamp else ""))
+
+
 def format_timestamp(timestamp):
+    """Serializses a timestamp.  This is the counter function to `parse_timestamp`,
+    however, there is an asymmetry: Here, we don't generate ISO 8601 timestamps
+    (with the ``"T"`` inbetween).  The reason is that Django's `DateTimeField`
+    would not be able to parse it.
+
+    :Parameters:
+      - `timestamp`: the timestamp to format
+
+    :type timestamp: `datetime.datetime`
+
+    :Return:
+      the timestamp in the format “YYYY-MM-DD HH:MM:SS”.
+
+    :rtype: str
+    """
     try:
         return timestamp.strftime("%Y-%m-%d %H:%M:%S")
     except AttributeError:

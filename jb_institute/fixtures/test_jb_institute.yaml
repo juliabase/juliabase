@@ -13,6 +13,14 @@
 # auth
 
 - fields:
+    first_name: "Julia"
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    is_superuser: true
+    is_staff: true
+    username: juliabase
+  model: auth.user
+  pk: 1
+- fields:
     first_name: "Testuser"
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     username: testuser
@@ -28,6 +36,12 @@
 
 # jb_common
 
+- fields:
+    browser_system: windows
+    language: en
+    layout_last_modified: 2010-12-02 10:58:14.147042
+  model: jb_common.userdetails
+  pk: 1
 - fields:
     browser_system: windows
     language: en
@@ -56,6 +70,11 @@
     manager: 1
   model: jb_common.topic
   pk: 3
+
+- fields:
+    name: INM
+  model: jb_common.department
+  pk: 1
 
 
 # samples
@@ -147,6 +166,15 @@
 - fields: {external_operator: null, user: 3}
   model: samples.initials
   pk: TU
+- fields:
+    auto_addition_topics: []
+    display_settings_timestamp: 2010-12-02 11:00:16.637389
+    idenfifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
+    my_layers: ''
+    my_samples_timestamp: 2010-12-02 11:09:38.992000
+    only_important_news: false
+  model: samples.userdetails
+  pk: 1
 - fields:
     auto_addition_topics: [2, 3]
     display_settings_timestamp: 2010-12-02 11:00:16.637389

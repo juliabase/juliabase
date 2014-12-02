@@ -482,3 +482,12 @@ and without caching, like::
 
     TEMPLATE_LOADERS = ("django.template.loaders.app_directories.Loader",
                         "django.template.loaders.filesystem.Loader")
+
+
+USE_TZ
+------
+
+You may set it to ``True`` (the default for newly created Django projects).
+This may or may not work for you since JuliaBase is not tested with
+timezone-awareness.  In particular, the remote client will surely fail.
+Therefore, we recommend to leave it at the default value ``False``.

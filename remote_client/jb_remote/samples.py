@@ -188,7 +188,7 @@ class Result(object):
             self.sample_ids = data["sample IDs"]
             self.sample_series = data["sample series"]
             self.operator = data["operator"]
-            self.timestamp = datetime.datetime.strptime(data["timestamp"], "%Y-%m-%d %H:%M:%S")
+            self.timestamp = parse_timestamp(data["timestamp"])
             self.timestamp_inaccuracy = data["timestamp inaccuracy"]
             self.comments = data["comments"]
             self.title = data["title"]

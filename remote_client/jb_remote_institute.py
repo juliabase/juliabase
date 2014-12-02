@@ -43,7 +43,7 @@ class ClusterToolDeposition(object):
             data = connection.open("cluster_tool_depositions/{0}".format(number))
             self.sample_ids = data["sample IDs"]
             self.operator = data["operator"]
-            self.timestamp = datetime.datetime.strptime(data["timestamp"], "%Y-%m-%d %H:%M:%S")
+            self.timestamp = parse_timestamp(data["timestamp"])
             self.timestamp_inaccuracy = data["timestamp inaccuracy"]
             self.comments = data["comments"]
             self.number = data["number"]
@@ -197,7 +197,7 @@ class PDSMeasurement(object):
             self.sample_id = data["sample IDs"][0]
             self.number = data["PDS number"]
             self.operator = data["operator"]
-            self.timestamp = datetime.datetime.strptime(data["timestamp"], "%Y-%m-%d %H:%M:%S")
+            self.timestamp = parse_timestamp(data["timestamp"])
             self.timestamp_inaccuracy = data["timestamp inaccuracy"]
             self.comments = data["comments"]
             self.apparatus = data["apparatus"]
@@ -259,8 +259,7 @@ class Substrate(object):
         if initial_data:
             self.id, self.timestamp, self.timestamp_inaccuracy, self.operator, self.external_operator, self.material, \
                 self.comments, self.sample_ids = \
-                initial_data["ID"], \
-                datetime.datetime.strptime(initial_data["timestamp"].partition(".")[0], "%Y-%m-%d %H:%M:%S"), \
+                initial_data["ID"], parse_timestamp(initial_data["timestamp"]), \
                 initial_data["timestamp inaccuracy"], initial_data["operator"], initial_data["external operator"], \
                 initial_data["material"], initial_data["comments"], initial_data["sample IDs"]
         else:
@@ -353,7 +352,7 @@ class SolarsimulatorMeasurement(object):
             self.temperature = data["temperature/degC"]
             self.sample_id = data["sample IDs"][0]
             self.operator = data["operator"]
-            self.timestamp = datetime.datetime.strptime(data["timestamp"], "%Y-%m-%d %H:%M:%S")
+            self.timestamp = parse_timestamp(data["timestamp"])
             self.timestamp_inaccuracy = data["timestamp inaccuracy"]
             self.comments = data["comments"]
             self.cells = {}
@@ -470,7 +469,7 @@ class FiveChamberDeposition(object):
             data = connection.open("5-chamber_depositions/{0}".format(number))
             self.sample_ids = data["sample IDs"]
             self.operator = data["operator"]
-            self.timestamp = datetime.datetime.strptime(data["timestamp"], "%Y-%m-%d %H:%M:%S")
+            self.timestamp = parse_timestamp(data["timestamp"])
             self.timestamp_inaccuracy = data["timestamp inaccuracy"]
             self.comments = data["comments"]
             self.number = data["number"]
