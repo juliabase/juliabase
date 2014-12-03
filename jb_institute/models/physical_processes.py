@@ -264,8 +264,10 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
+        best_eta = self.cells.aggregate(models.Max("eta"))["eta__max"]
         data_node.items.extend([DataItem(_("irradiation"), self.irradiation),
-                                DataItem(_("temperature") + "/℃", self.temperature)])
+                                DataItem(_("temperature") + "/℃", self.temperature),
+                                DataItem(_("η of best cell") + "/%", utils.round(best_eta, 3))])
         return data_node
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
