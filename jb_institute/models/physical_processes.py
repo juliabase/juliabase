@@ -301,6 +301,14 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
     @classmethod
     def get_search_tree_node(cls):
+        """Class method for generating the search tree node for this model
+        instance.
+
+        :Return:
+          the tree node for this model instance
+
+        :rtype: ``jb_common.search.SearchTreeNode``
+        """
         model_field = super(SolarsimulatorMeasurement, cls).get_search_tree_node()
         model_field.search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name"),
