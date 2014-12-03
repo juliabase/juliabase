@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-27 18:27+0100\n"
+"POT-Creation-Date: 2014-12-03 11:08+0100\n"
 "PO-Revision-Date: 2014-12-01 00:20+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -214,7 +214,7 @@ msgstr "Thema"
 
 #: samples/models/common.py:607 samples/models/common.py:914
 #: samples/models/common.py:1005 samples/templates/samples/show_claim.html:44
-#: samples/views/form_utils.py:686 samples/views/sample_series.py:360
+#: samples/views/form_utils.py:685 samples/views/sample_series.py:360
 msgid "sample"
 msgstr "Probe"
 
@@ -1323,7 +1323,7 @@ msgstr "Python-Logo"
 #: samples/templates/samples/show_claim.html:67
 #: samples/templates/samples/split_and_rename.html:22
 #: samples/templates/samples/task_lists.html:125
-#: samples/templatetags/samples_extras.py:575
+#: samples/templatetags/samples_extras.py:565
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -1363,7 +1363,7 @@ msgid "No search was performed yet."
 msgstr "Es ist noch keine Suche durchgeführt worden."
 
 #: samples/templates/samples/base.html:25
-#: samples/templates/samples/main_menu.html:79 samples/views/form_utils.py:653
+#: samples/templates/samples/main_menu.html:79 samples/views/form_utils.py:652
 #: samples/views/result.py:147 samples/views/sample_series.py:51
 #: samples/views/task_lists.py:39
 msgid "Samples"
@@ -1915,7 +1915,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    %(originator)s stellte das Ergebnis „<a href=\"%(url)s\">%(title)s</a>“ ein.\n"
+"    %(originator)s stellte das Ergebnis „<a href=\"%(url)s\">%(title)s</a>“ "
+"ein.\n"
 "  "
 
 #: samples/templates/samples/feed_result.html:23
@@ -1926,7 +1927,8 @@ msgid ""
 "    "
 msgstr ""
 "\n"
-"    %(originator)s änderte das Ergebnis „<a href=\"%(url)s\">%(title)s</a>“.\n"
+"    %(originator)s änderte das Ergebnis „<a href=\"%(url)s\">%(title)s</"
+"a>“.\n"
 "  "
 
 #: samples/templates/samples/feed_result.html:27
@@ -2826,7 +2828,7 @@ msgstr "%b %Y"
 msgid "date unknown"
 msgstr "Datum unbekannt"
 
-#: samples/templatetags/samples_extras.py:710
+#: samples/templatetags/samples_extras.py:700
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"
 msgstr ""
@@ -2928,49 +2930,49 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: samples/views/claim.py:120
+#: samples/views/claim.py:119
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: samples/views/claim.py:125
+#: samples/views/claim.py:124
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: samples/views/claim.py:152
+#: samples/views/claim.py:151
 msgid "You are not allowed to see claims of another user."
 msgstr "Sie dürfen beine Probenansprüche anderer Benutzer sehen."
 
-#: samples/views/claim.py:154
+#: samples/views/claim.py:153
 #, python-brace-format
 msgid "Claims for {user}"
 msgstr "Ansprüche von {user}"
 
-#: samples/views/claim.py:182
+#: samples/views/claim.py:181
 msgid "You can't withdraw and approve at the same time."
 msgstr "Sie konnen nicht gleichzeitig zurückziehen und genehmigen."
 
-#: samples/views/claim.py:186
+#: samples/views/claim.py:185
 msgid "You must select exactly one option, or leave this page."
 msgstr "Sie müssen genau eine Option wählen, oder die Seite verlassen."
 
-#: samples/views/claim.py:212
+#: samples/views/claim.py:211
 msgid "You are neither the requester nor the reviewer of this claim."
 msgstr "Sie sind weder der Antragssteller noch der Reviewer dieses Anspruchs."
 
-#: samples/views/claim.py:214 samples/views/claim.py:251
+#: samples/views/claim.py:213 samples/views/claim.py:250
 msgid "withdraw claim"
 msgstr "Anspruch zurückziehen"
 
-#: samples/views/claim.py:215 samples/views/claim.py:252
+#: samples/views/claim.py:214 samples/views/claim.py:251
 msgid "approve claim"
 msgstr "Anspruch genehmigen"
 
-#: samples/views/claim.py:229
+#: samples/views/claim.py:228
 msgid "Sample request approved"
 msgstr "Probenanspruch genemigt"
 
-#: samples/views/claim.py:230
+#: samples/views/claim.py:229
 #, python-brace-format
 msgid ""
 "Hello {requester},\n"
@@ -2991,17 +2993,17 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: samples/views/claim.py:242
+#: samples/views/claim.py:241
 #, python-brace-format
 msgid "Sample claim {id_} was successfully approved."
 msgstr "Der Anspruch {id_} wurde erfolgreich genemigt."
 
-#: samples/views/claim.py:248
+#: samples/views/claim.py:247
 #, python-brace-format
 msgid "Sample claim {id_} was successfully withdrawn."
 msgstr "Der Anspruch {id_} wurde erfolgreich zurückgezogen."
 
-#: samples/views/claim.py:253
+#: samples/views/claim.py:252
 #, python-brace-format
 msgid "Claim #{number}"
 msgstr "Anspruch Nr. {number}"
@@ -3034,7 +3036,7 @@ msgstr "Externer Operateur „{name}“"
 msgid "All you external contacts"
 msgstr "Alle Ihre externen Kontakte"
 
-#: samples/views/feed.py:159
+#: samples/views/feed.py:160
 #, python-brace-format
 msgid "JuliaBase news for {user_name}"
 msgstr "JuliaBase-Neuigkeiten für {user_name}"
@@ -3070,60 +3072,60 @@ msgstr "Beschreibung der Änderung"
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: samples/views/form_utils.py:687
+#: samples/views/form_utils.py:686
 msgid "sample position"
 msgstr "Probenposition"
 
-#: samples/views/form_utils.py:721 samples/views/sample_series.py:79
+#: samples/views/form_utils.py:720 samples/views/sample_series.py:79
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: samples/views/form_utils.py:731
+#: samples/views/form_utils.py:730
 msgid "Remove processed sample(s) from My Samples"
 msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
 
-#: samples/views/form_utils.py:762
+#: samples/views/form_utils.py:761
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/views/form_utils.py:766
+#: samples/views/form_utils.py:765
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/views/form_utils.py:798 samples/views/status.py:84
+#: samples/views/form_utils.py:797 samples/views/status.py:84
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: samples/views/form_utils.py:801
+#: samples/views/form_utils.py:800
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: samples/views/form_utils.py:803
+#: samples/views/form_utils.py:802
 msgid "The year must not be earlier than 1900."
 msgstr "Das Jahr darf nicht vor 1900 sein."
 
-#: samples/views/form_utils.py:835
+#: samples/views/form_utils.py:834
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/views/form_utils.py:841
+#: samples/views/form_utils.py:840
 #, python-brace-format
 msgid "The unit is invalid.  Valid units are: {units}"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: {units}"
 
-#: samples/views/form_utils.py:1035 samples/views/form_utils.py:1038
+#: samples/views/form_utils.py:1034 samples/views/form_utils.py:1037
 msgid "The year must be the current year."
 msgstr "Das Jahr muss das aktuelle Jahr sein."
 
-#: samples/views/form_utils.py:1045
+#: samples/views/form_utils.py:1044
 msgid "The initials do not match yours."
 msgstr "Das Kürzel ist nicht deines."
 
-#: samples/views/form_utils.py:1049
+#: samples/views/form_utils.py:1048
 msgid "The initials do not match any of your external contacts."
 msgstr "Das Kürzel passt nicht zu irgendeinem deiner externen Kontakte."
 
-#: samples/views/form_utils.py:1053
+#: samples/views/form_utils.py:1052
 msgid "The initials do not match yours, nor any of your external contacts."
 msgstr ""
 "Das Kürzel ist nicht deines, noch das von irgendeinem deiner externen "

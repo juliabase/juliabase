@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-26 20:45+0100\n"
-"PO-Revision-Date: 2014-11-26 20:43+0100\n"
+"POT-Creation-Date: 2014-12-03 11:08+0100\n"
+"PO-Revision-Date: 2014-12-03 11:09+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -238,7 +238,7 @@ msgstr "5-Kammer-Schichten"
 
 #. Translators: sample substrate type
 #: jb_institute/models/physical_processes.py:41
-#: jb_institute/models/physical_processes.py:364
+#: jb_institute/models/physical_processes.py:374
 msgid "custom"
 msgstr "speziell"
 
@@ -308,7 +308,7 @@ msgid "raw data file"
 msgstr "Rohdaten-Datei"
 
 #: jb_institute/models/physical_processes.py:119
-#: jb_institute/models/physical_processes.py:320
+#: jb_institute/models/physical_processes.py:330
 #, python-brace-format
 msgid "only the relative path below \"{path}\""
 msgstr "nur der relative Pfad unterhalb von \"{path}\""
@@ -359,12 +359,12 @@ msgid "α in cm⁻¹"
 msgstr "α in cm⁻¹"
 
 #: jb_institute/models/physical_processes.py:200
-#: jb_institute/models/physical_processes.py:267
+#: jb_institute/models/physical_processes.py:268
 msgid "irradiation"
 msgstr "Beleuchtung"
 
 #: jb_institute/models/physical_processes.py:201
-#: jb_institute/models/physical_processes.py:268
+#: jb_institute/models/physical_processes.py:269
 msgid "temperature"
 msgstr "Temperatur"
 
@@ -374,7 +374,7 @@ msgstr "in ℃"
 
 #: jb_institute/models/physical_processes.py:205
 #: jb_institute/models/physical_processes.py:220
-#: jb_institute/models/physical_processes.py:317
+#: jb_institute/models/physical_processes.py:327
 msgid "solarsimulator measurement"
 msgstr "Sonnensimulator-Messung"
 
@@ -399,85 +399,89 @@ msgstr "Darf alle Sonnensimlulator-Messungen sehen"
 msgid "solarsimulator measurement of {sample}"
 msgstr "Sonnensimlulator-Messung von {sample}"
 
-#: jb_institute/models/physical_processes.py:285
+#: jb_institute/models/physical_processes.py:270
+msgid "η of best cell"
+msgstr "η der besten Zelle"
+
+#: jb_institute/models/physical_processes.py:287
 msgid "voltage in V"
 msgstr "Spannung in V"
 
-#: jb_institute/models/physical_processes.py:286
+#: jb_institute/models/physical_processes.py:288
 msgid "current density in mA/cm²"
 msgstr "Stromdichte in mA/cm²"
 
-#: jb_institute/models/physical_processes.py:318
+#: jb_institute/models/physical_processes.py:328
 msgid "cell position"
 msgstr "Zellposition"
 
-#: jb_institute/models/physical_processes.py:319
+#: jb_institute/models/physical_processes.py:329
 msgid "data file"
 msgstr "Datendatei"
 
-#: jb_institute/models/physical_processes.py:321
+#: jb_institute/models/physical_processes.py:331
 msgid "area"
 msgstr "Fläche"
 
-#: jb_institute/models/physical_processes.py:321
+#: jb_institute/models/physical_processes.py:331
 msgid "in cm²"
 msgstr "in cm²"
 
-#: jb_institute/models/physical_processes.py:322
+#: jb_institute/models/physical_processes.py:332
 msgid "efficiency η"
 msgstr "Effizienz η"
 
-#: jb_institute/models/physical_processes.py:322
+#: jb_institute/models/physical_processes.py:332
 msgid "in %"
 msgstr "in %"
 
-#: jb_institute/models/physical_processes.py:323
+#: jb_institute/models/physical_processes.py:333
 msgid "short-circuit current density"
 msgstr "Kurzschluss­strom­dichte"
 
-#: jb_institute/models/physical_processes.py:323
+#: jb_institute/models/physical_processes.py:333
 msgid "in mA/cm²"
 msgstr "in mA/cm²"
 
-#: jb_institute/models/physical_processes.py:326
+#: jb_institute/models/physical_processes.py:336
 msgid "solarsimulator cell measurement"
 msgstr "Sonnensimulator-Zellmessung"
 
-#: jb_institute/models/physical_processes.py:327
+#: jb_institute/models/physical_processes.py:337
 msgid "solarsimulator cell measurements"
 msgstr "Sonnensimulator-Zellmessungen"
 
-#: jb_institute/models/physical_processes.py:332
+#: jb_institute/models/physical_processes.py:342
 #, python-brace-format
 msgid "cell {position} of {solarsimulator_measurement}"
 msgstr "Zelle {position} von {solarsimulator_measurement}"
 
-#: jb_institute/models/physical_processes.py:389
+#: jb_institute/models/physical_processes.py:399
 msgid "layout"
 msgstr "Layout"
 
-#: jb_institute/models/physical_processes.py:390
+#: jb_institute/models/physical_processes.py:400
 msgid "length"
 msgstr "Länge"
 
-#: jb_institute/models/physical_processes.py:391
+#: jb_institute/models/physical_processes.py:401
 msgid "width"
 msgstr "Breite"
 
-#: jb_institute/models/physical_processes.py:392
+#: jb_institute/models/physical_processes.py:402
 msgid "parameters"
 msgstr "Parameter"
 
-#: jb_institute/models/physical_processes.py:395
-#: jb_institute/models/physical_processes.py:403
+#: jb_institute/models/physical_processes.py:405
+#: jb_institute/models/physical_processes.py:413
 msgid "structuring"
 msgstr "Strukturierung"
 
-#: jb_institute/models/physical_processes.py:396
+#: jb_institute/models/physical_processes.py:406
 msgid "structurings"
 msgstr "Strukturierungen"
 
-#: jb_institute/models/physical_processes.py:401
+#: jb_institute/models/physical_processes.py:411
 #, python-brace-format
 msgid "structuring of {sample}"
 msgstr "Strukturierung von {sample}"

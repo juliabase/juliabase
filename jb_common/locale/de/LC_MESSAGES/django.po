@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-26 20:45+0100\n"
+"POT-Creation-Date: 2014-12-03 11:08+0100\n"
 "PO-Revision-Date: 2014-11-26 18:32+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -40,7 +40,7 @@ msgstr "Abteilung"
 msgid "departments"
 msgstr "Abteilungen"
 
-#: jb_common/models.py:72 jb_common/models.py:264
+#: jb_common/models.py:72 jb_common/models.py:265
 msgid "user"
 msgstr "Benutzer"
 
@@ -92,28 +92,28 @@ msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 msgid "Can edit topics that he/she is a manager of"
 msgstr "Darf Themen ändern, für die er/sie Manager ist"
 
-#: jb_common/models.py:193
+#: jb_common/models.py:194
 #, python-brace-format
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: jb_common/models.py:263
+#: jb_common/models.py:264
 msgid "hash value"
 msgstr "Hashwert"
 
-#: jb_common/models.py:266
+#: jb_common/models.py:267
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: jb_common/models.py:268
+#: jb_common/models.py:269
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: jb_common/models.py:271
+#: jb_common/models.py:272
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: jb_common/models.py:272
+#: jb_common/models.py:273
 msgid "error pages"
 msgstr "Fehlerseiten"
 
@@ -354,34 +354,34 @@ msgstr "Email-Adresse"
 msgid "Department"
 msgstr "Abteilung"
 
-#: jb_common/templatetags/juliabase.py:148
+#: jb_common/templatetags/juliabase.py:150
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: jb_common/templatetags/juliabase.py:157
+#: jb_common/templatetags/juliabase.py:159
 msgid "Yes"
 msgstr "Ja"
 
-#: jb_common/templatetags/juliabase.py:157
+#: jb_common/templatetags/juliabase.py:159
 msgid "No"
 msgstr "Nein"
 
-#: jb_common/utils.py:157
+#: jb_common/utils.py:158
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: jb_common/utils.py:188
+#: jb_common/utils.py:189
 #, python-brace-format
 msgid "Couldn't open {filename}."
 msgstr "Konnte {filename} nicht öffnen."
 
-#: jb_common/utils.py:202
+#: jb_common/utils.py:203
 msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
-#: jb_common/utils.py:601
+#: jb_common/utils.py:612
 #, python-brace-format
 msgid "in {unit}"
 msgstr "in {unit}"
