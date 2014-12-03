@@ -99,11 +99,15 @@ her work done.
 The “My Samples” list
 ---------------------
 
+.. |group icon| image:: ../jb_common/static/juliabase/icons/group.png
+.. |sample series icon| image:: ../jb_common/static/juliabase/icons/chart_organisation.png
+
 In the main menu, you can see Rosalee's “My Samples” on the right hand side.
 This list usually contains not *all* samples of a user but only those that are
 *currently of interest* to him/her.  Still, this list may become quite long,
 and is therefore structured by *topics* and *sample series*.  You may click on
-the bullet icons in the list to fold and unfold sections that you want to hide.
+the bullet icons (|group icon| or |sample series icon|) in the list to fold and
+unfold sections that you want to hide.
 
 
 Topics
@@ -161,34 +165,38 @@ it's part of the source code and you may use it.  If you click on it, you get
 it as a PDF.  This is also true for all plots in JuliaBase.
 
 
+.. |pencil icon| image:: ../jb_common/static/juliabase/icons/pencil.png
+
 Edit samples
 ------------
 
-You can edit a sample by clicking on the pencil icon next to the sample's
-name.  “Editing a sample” refers *only* to the data at the top of the data
-sheet.  In particular, no processes are affected.  Very often when you change
-somethin in JuliaBase, you have to describe your changes shortly at the bottom
-right.  It may be tedious sometimes, but it may be very helpful to others who
-get notified by your changes.
+You can edit a sample by clicking on the pencil icon |pencil icon| next to the
+sample's name.  “Editing a sample” refers *only* to the data at the top of the
+data sheet.  In particular, no processes are affected.  Very often when you
+change somethin in JuliaBase, you have to describe your changes shortly at the
+bottom right.  It may be tedious sometimes, but it may be very helpful to
+others who get notified by your changes.
 
 
 Add processes
 -------------
 
-Also on the top of the sample data sheet there is the gear icon, which is to
-append a new process to the sample.  If you click on it, you are asked which
-kind of process you'd like to add.  Let's have a look at two possibilities:
-Splitting and result process.
+.. |gear add icon| image:: ../jb_common/static/juliabase/icons/cog_add.png
+
+Also on the top of the sample data sheet there is the gear icon |gear add
+icon|, which is to append a new process to the sample.  If you click on it, you
+are asked which kind of process you'd like to add.  Let's have a look at two
+possibilities: Splitting and result process.
 
 
 Split a sample
 ..............
 
 If you split samples into pieces, you surely want to keep track of that.  For
-doing so, you click on the gear icon and select “sample split”.  Then, you can
-enter the new names of the samples.  Usually, they extend their parent's name.
-When looking at a sample's data sheet, you also see all processes of the
-parents.
+doing so, you click on the gear icon |gear add icon| and select “sample split”.
+Then, you can enter the new names of the samples.  Usually, they extend their
+parent's name.  When looking at a sample's data sheet, you also see all
+processes of the parents.
 
 
 Result process
@@ -211,10 +219,12 @@ Advanced search
    :align: right
    :scale: 50%
 
+.. |house icon| image:: ../jb_common/static/juliabase/icons/house.png
+
 Rosalee wants to see her best samples.  For this, go back to the main menu (the
-house icon on the top right, or the big text “Samples”) and select “Search for
-things – Advanced search”.  Now, perform the following steps, clicking on
-“Submit” after each step:
+house icon |house icon| on the top right, or the big text “Samples”) and select
+“Search for things – Advanced search”.  Now, perform the following steps,
+clicking on “Submit” after each step:
 
 1. Select “sample” in the drop down menu.
 2. Enter “calvert” in “currently responsible person” and select “solarsimulator
@@ -259,3 +269,108 @@ will be included into the output.  Click one last time on “Submit”, and you 
 download that table as a CSV file ready-to-be-opened with your favourite
 spreadsheet program.  When opening it, take care that columns are separated
 *only* by tabstops.
+
+
+Add samples
+-----------
+
+From the main menu, you can click on “Add things – Samples” to add samples.
+Note that this page is quite institute-specific.  Your institute may not have
+the concept of subtrates, for example, and surely not something like a
+“cleaning number”.  Anyway, you must enter the number of samples as well as
+their currect location.  Add a couple of samples, but don't rename them yet.
+
+Fresh samples have a provisional name in JuliaBase.  It looks like “\*00034”,
+i.e., an asterisk followed by a five-digit number.  Never use these names on
+sample boxes or in lab notebooks.  They are meant to be replaced by a real name
+as quickly as possible.  Rosalee's samples get their names after the first
+deposition of silicon, so let's do that now.
+
+
+Lab notebooks
+-------------
+
+From the main menu, open the lab notebook of the five-chamber deposition.  You
+see six depositions of Octobre 2014.  Select one of them.  JuliaBase shows you
+a page containing the details of only this deposition.  At the top of it, click
+on the gear icon |gear add icon| in order to duplicate this deposition.
+
+
+Add new deposition process
+--------------------------
+
+Rosalee duplicates old depositions because she doesn't vary much.  This way,
+she adds new depositions without fuss.  In the page for the new deposition, whe
+only has to select the samples for the deposition (which are the samples
+recently added, with these “*…” names), change some other things that were
+different in this run, and click on “Submit”.
+
+.. image:: images/ss_rename_after_depo.png
+   :alt: Rename after deposition screenshot
+   :align: right
+   :scale: 50%
+
+Now, its a habit in the Institute of Nifty New Materials to give the sample the
+same name as the deposition.  Therefore, immediately after havin added the
+deposition, you are redirected to a page where you can check and change the new
+sample names.  JuliaBase suggests the deposition's name for all samples (in the
+case of the screenshot, three of them).  However, names must be unique, so
+Rosalee appends “…-a”, “…-b”, and “…-c” (see screenshot, second column).  Click
+on “Submit”, that's it!  The newly deposited samples appear with their proper
+names under “My Samples” on the main menu page.
+
+Of course, your institute may have another workflow without such renaming,
+which is a bad idea anyway – names in a database should never change.  So you
+can just leave out the renaming page in your own code.
+
+
+Change permissions for processes
+--------------------------------
+
+As already mentioned, Rosalee is responsible for the 5-chamber deposition
+setup.  But let's assume Eddie wants to do such depositions, too, and gets an
+introduction?  Then, he should also be allowed to add such depositions to
+JuliaBase.
+
+Rosalee visits “Miscellaneous – Permissions to processes” from the main menu,
+selects Eddie from the drop-down menu and clicks on “Submit”.  She puts tick
+marks into the first two checkboxes and clicks again on “Submit”.  Now Eddie
+has got the following additional permissions:
+
+- He can add new 5-chamber depositions.
+- He can edit his own 5-chamber depositions (those that he's the operator of).
+- He can view all 5-chamber depositions.  In particular, this implies that he
+  can view the lab notebook.
+
+
+Claims of samples
+-----------------
+
+There is one of Juliette's samples that Rosalee wants to acquire posession of.
+In principle, Juliette could set the sample's “currently responsible person” to
+Rosalee, but Juliette is reluctant to do work that also other could do (more on
+that later).
+
+Moreover, sometimes you must acquire possesion of orphaned samples; or of
+samples that were imported as legacy data without any ownership information.
+In these cases, it is really *necessary* to be able to claim samples.  This is
+done in two steps.
+
+
+Adding a sample to My Samples
+.............................
+
+Rosalee clicks on “Search for things – Samples by name” in the main menu and
+enters the name “14-JS-2” into the field.  The puts a tick into the checkbox
+and clicks on “add samples”.  This way, the sample 14-JS-2 is added to
+Rosalee's “My Samples”.
+
+
+The actual claim
+................
+
+Next, Rosalee visits “Miscellaneous – Sample claims” from the main menu, and on
+the next page, selects “existing samples”.  Here, she selects 14-JS-2, and
+“Jean Renard” as the reviewer of the claim (he's the only choice anyway).
+That's it.  The next page lets Rosalee review the claim.  But now she has to
+wait for Sean (who got an automatic email) for approving it.
