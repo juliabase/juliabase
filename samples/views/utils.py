@@ -615,7 +615,7 @@ def round(value, digits):
         except (ValueError, TypeError):
             pass
         else:
-            return "{{0:.{0}g}}".format(digits).format(float(value))
+            return "{{0:.{0}g}}".format(digits).format(value)
 
 
 def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
