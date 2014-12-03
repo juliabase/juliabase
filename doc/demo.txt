@@ -184,5 +184,78 @@ Splitting and result process.
 Split a sample
 ..............
 
-Depending on your workflow, it may happen a lot that you split samples into
-pieces.
+If you split samples into pieces, you surely want to keep track of that.  For
+doing so, you click on the gear icon and select “sample split”.  Then, you can
+enter the new names of the samples.  Usually, they extend their parent's name.
+When looking at a sample's data sheet, you also see all processes of the
+parents.
+
+
+Result process
+..............
+
+Result processes, often simply called “result”, are a handy ad-hoc way to
+append something to a sample's data sheet.  If you want to add a measurement
+result for which no dedicated process has been programmed so far, or if you
+want to add a plot, a picture, or a comment, then create a result.  It's the
+Swiss-Army-knife process if nothing else fits.  Because it's so flexible, be
+careful not to have spelling errors in order to keep searching and exporting
+easy.
+
+
+Advanced search
+---------------
+
+.. image:: images/ss_advanced_search.png
+   :alt: Advanced search screenshot
+   :align: right
+   :scale: 50%
+
+Rosalee wants to see her best samples.  For this, go back to the main menu (the
+house icon on the top right, or the big text “Samples”) and select “Search for
+things – Advanced search”.  Now, perform the following steps, clicking on
+“Submit” after each step:
+
+1. Select “sample” in the drop down menu.
+2. Enter “calvert” in “currently responsible person” and select “solarsimulator
+   measurement” in the drop-down menu “containing”.
+3. Select “AM1.5” in “irradiation”, and select “solarsimulator cell
+   measurement” in the inner drop-down menu “containing”.
+4. Enter in “efficiency η“ the value “8”.
+
+You get the result as in the image next to this text: Two of her samples match
+the criteria, namely “14S-002” and “14S-003”.  This means, both samples have at
+least one solarsimulator measurement under AM 1.5 irradiation, with at least
+one cell with an efficiency greater than 8 %.
+
+.. note::
+
+   You may bookmark advanced searches and revisit them as often as you wish.
+   Every time, you get new results for your old search criteria.
+
+
+.. raw:: html
+
+   <div style="clear: both"/>
+
+Data export
+-----------
+
+.. image:: images/ss_csv_export.png
+   :alt: CSV export screenshot
+   :align: right
+   :scale: 50%
+
+Rosalee needs the data in her spreadsheet program.  So, click yet another time
+on “Submit”.  You may select the processes on the sample data sheet that should
+be included into the output.  Select the second layer of the 5-chamber
+deposition and the first solarsimulator measurement.  Click on “Submit”.  Now,
+you may select the fields of these processes that should be included into the
+output.  Select “SiH₄/sccm” (the silane flux, by the way) of the layer and “η
+of best cell/%” of the solarsimulator measurement.  Click on “Submit”.
+
+The result is shown in the screenshot.  The table comprises all the data that
+will be included into the output.  Click one last time on “Submit”, and you can
+download that table as a CSV file ready-to-be-opened with your favourite
+spreadsheet program.  When opening it, take care that columns are separated
+*only* by tabstops.
