@@ -17,6 +17,10 @@ institute-specific module, just import this one with::
 
     from jb_remote import settings
 
+or::
+
+    from jb_remote import *
+
 and change the settings like this::
 
     settings.root_url = "https://juliabase.ipv.kfa-juelich.de/"
