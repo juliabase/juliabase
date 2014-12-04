@@ -47,7 +47,7 @@ accounts have the password “12345”.
 The boss
 --------
 
-**Jean Renard** (s.renard) is the lead scientist and director of this
+**Sean Renard** (s.renard) is the lead scientist and director of this
 institute.  Accordingly, his JuliaBase account allows him to view all samples,
 but he has got other privileges, too.  More about that later.
 
@@ -128,7 +128,7 @@ should put all your samples in topics.
 People can be in an arbitrary lot of topics at the same time, but a sample is
 in exactly one topic.  It may change it during its lifetime, though.  Senior
 team members may have the permission to see all samples, whether in their
-topics or not.  Jean Renard is such a person.
+topics or not.  Sean Renard is such a person.
 
 
 Sample data sheet
@@ -371,6 +371,117 @@ The actual claim
 
 Next, Rosalee visits “Miscellaneous – Sample claims” from the main menu, and on
 the next page, selects “existing samples”.  Here, she selects 14-JS-2, and
-“Jean Renard” as the reviewer of the claim (he's the only choice anyway).
+“Sean Renard” as the reviewer of the claim (he's the only choice anyway).
 That's it.  The next page lets Rosalee review the claim.  But now she has to
 wait for Sean (who got an automatic email) for approving it.
+
+
+Juliette: The assigner of work
+================================
+
+Juliette has a lot to do and cannot deal with such things as sample preparation
+and characterisation itself.  Thus, she assigns tasks to other people and
+analyses the results.  Logout and re-login as j.silverton/12345.
+
+
+Adding a task
+-------------
+
+Let us assume Juliette wants to have a PDS measurement for her sample 14-JS-1.
+Therefore, visit “Miscellaneous – Task lists” from the main menu.  There,
+first set up the page by selecting the processes that you're interested in.
+Select “PDS measurements” and click on “Submit”.
+
+Now you add a new task for the PDS setup by clicking on the plus icon for PDS
+measurements.  Select the sample 14-JS-1, click on “Submit” and you're
+finished.  You can see the new task in the list of tasks.  There, you may
+withdraw it by clicking on the minus icon, or edit it by clicking on the pencil
+icon.
+
+
+Sending a sample to another user
+--------------------------------
+
+Juliette wants to show the sample 14-JS-1 to Nick so that he can have a look at
+it.  Of course, Nick could look for the sample himself, but since the sample is
+in the topic “Juliette's PhD thesis” and Nick isn't, he cannot view the
+sample's data sheet.
+
+To send the sample to Nick, click on the pencil icon next to “My samples” on
+the main menu page.  Select the sample 14-JS-1 on the left.  Then, on the
+right, select Nick in the drop-down menu “Copy to user” and enter, say, “Please
+have a look at this sample” at “Comment for recipient”.  Finally, set
+“Clearance” to “all processes up to now”, because Juliette wants Nick to be
+able to see the whole data sheet of 14-JS-1.
+
+
+Nick: Technical service for others
+====================================
+
+Now login as n.burkhardt/12345.  You can see 14-JS-1 under “My Samples”, and
+you can view its data sheet.  The transfer has worked.
+
+
+The newsfeed
+------------
+
+Moreover, Nick has been notified by the transfer in “Main menu – Miscellaneous
+– Newsfeed”.  There, he can also see that Juliette has files a new task for PDS
+measurements because Nick has the necessary permissions for the PDS.  The
+newsfeed contains all important news for the respective user: Changes in their
+samples, new samples in their topics, samples transfered to them, new tasks,
+and much more.
+
+The newsfeed is not really intended to be view in the browser.  You may do so,
+but it is a little bit awkward.  Rather, use a program capable of RSS feeds
+like Thunderbird.  It is able to show you which entries in the feed are really
+new.
+
+
+Tasks
+-----
+
+Since Nick has read that Juliette had filed a new PDS task, he visits the “Task
+lists” page himself.  When doing this the first time, you have to select the
+PDS and click on “Submit” to make PDS tasks viewable to Nick.
+
+In general, there are more than one person working at a setup like the PDS.
+Sometimes, people are absent (holidays, illness, etc).  Therefore, it is not
+a-priori clear who will actually do a task, and the task must be explicitly
+accepted by someone and assigned to someone.  In order to so this, click on the
+pencil icon to edit it.  Set the “status” to “accepted” and “operator” to Nick
+himself.  Juliette will get notified of this.
+
+When Nick is actually doing the measurement, he may set the  task's status to
+“in progress”, and after that, to “finished”.  A finished task may even be
+connected with the concrete PDS measurement.
+
+Some of these steps are optional.  It depends on your workflow.  An operator
+might only set finished tasks to “finished” without further ado.  Or he may use
+all of the features offered by task lists.  Or anything in between.
+
+
+Sean: The team leader
+========================
+
+Login as s.renard/12345.  Sean, being the team leader, has extended
+permissions.  They are:
+
+- View all samples
+- Create new topics
+- Change memberships in all topics
+- Grant and revoke permissions to all setups
+- Approve or reject sample claims
+
+The Institute of Nifty New Materials only has two levels: The team leader and
+the rest.  You may add further levels in your institution, and you may set the
+permissions in a different way.  However, we've made the experience that
+complex permission plans are a burden that should be avoided.
+
+
+Approve a sample claim
+----------------------
+
+Visit on the main menu “Miscellaneous – sample claims”.  At the bottom of this
+page, you see the sample claim of Juliette.  Click on it.  Sean can now review
+it in detail, and approve or reject it.
