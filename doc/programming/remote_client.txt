@@ -13,6 +13,125 @@
 .. completely.
 
 ====================
-The Remote Client
+The remote client
 ====================
 
+The “remote client” is a programming library for contacting JuliaBase over the
+network.  Being a library, it is not a program per se but used by your own code
+for the bidirectional communication with the database.  The remote client
+communicates through a REST HTTP interface implemented in the JuliaBase server.
+This interface could be used directly, however, the remote client makes it much
+easier.
+
+
+Use cases
+===========
+
+The remote client has many applications.
+
+
+Crawlers
+----------
+
+Crawlers are programs that go through a bunch of data or log files and transmit
+their content to the database.  For example, a measurement setup may write a
+data file for every measurement run.  Every hour, a crawler is called, which
+scans for new files.  It reads the new files and uses the content to add new
+measurements processes to the database.  This way, new measurements
+automatically end up in the database.  You may have more than one crawler
+regularly running in your institute.
+
+The very same crawler can also be used to import legacy data.  The crawler can
+be programmed in such a way that during its first run, it imports thousands of
+data sets of recent years, and from there on, it imports newly added data sets
+every hour.
+
+Since crawlers run unattendedly, they must be very robust.  If a data file is
+invalid, or if the central server is temporarily unavailable, it must gently
+exit and try again next time, without forgetting to add something, and without
+adding things twice.
+
+Moreover, legacy data mostly is poorly structured and organised.  If you think
+your data is the exception, think again.  During writing the crawler, you will
+be surprised how many odd ideas and mistakes your collegues are capable of.
+
+Be that as it may, crawlers are the primary use case for the remote client.
+The remote client contains functions especially for making writing them as easy
+as possible.
+
+
+Connecting the setup with the database
+------------------------------------------
+
+A more direct way than the crawler for bringing processing and measurement data
+into the database, albeit not always feasible, is to extend the control program
+of the experimental setup.  For this, you must have access to the source code
+of the control program.  Then, you can use the remote client for writing new
+runs immediately into the database.
+
+However, the communication needn't be one-way.  You can also use the remote
+client to authenticate the user, to check whether he or she is allowed to use
+this setup, and to check whether the sample names belong to valid and for the
+user accessible samples.
+
+The remote client is written in Python, however, it is easy to use it from
+programs written in other programming languages, and JuliaBase ships with a
+Delphi binding.
+
+
+Data mining and analysing
+----------------------------
+
+Everyone with browser access to the JuliaBase database can use the remote
+client for accessing, too.  The permissions will be the same in both cases, of
+course.  This can be used by researchers capable of programming to get data
+from the database and do something with it, e.g. creating statistics or
+evaluating raw data.
+
+Imagine the following: A researcher makes many sample series and measures their
+temperature-dependent conductivity.  The researcher can write a program that
+extracts the names of the raw data files from the database, then creates a plot
+for each sample series with the conductivity curves of all samples of that
+series, and writes these plots back to the database.  There, one can see them
+on the series' pages, and in every sample's data sheet.
+
+
+Extending the remote client
+=============================
+
+As for JuliaBase itself, also the remote client should be extended with the
+functionality special to your institution.  This is not absolutely necessary,
+but without it, you can only use the very basic functionality.  However,
+extending the remote client is *much* easier than extending JuliaBase.
+
+In JuliaBases' source code, the remote client resides in the directory
+:file:`remote_client/`, and it has the following structure::
+
+    remote_client/
+        jb_remote_institute.py
+        jb_remote/
+            __init__.py
+            common.py
+            samples.py
+            settings.py
+            ...
+
+Replace the file :file:`jb_remote_institute.py` with your own institute's code,
+and give your file a name derived from your institution's name.  Your file
+should start with::
+
+    from __future__ import absolute_import
+    from jb_remote import *
+
+    settings.root_url = settings.testserver_root_url = "https://juliabase.my-institute.edu/"
+
+From there on, you are totally free how to program your incarnation of the
+remote client.  You may use :file:`jb_remote_institute.py` as a source of
+inspiration, though.
+
+
+Local installation and usage
+==============================
+
+In order to install the remote client on a computer (e.g. the control computer
+of a measurement setup), just copy the directory :file:`jb_remote`
