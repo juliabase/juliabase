@@ -362,17 +362,33 @@ In these cases, it is really *necessary* to be able to claim samples.  This is
 done in two steps.
 
 
+.. image:: images/ss_search_for_sample.png
+   :alt: Search for sample by name screenshot
+   :align: right
+   :scale: 50%
+
+
 Adding a sample to My Samples
 .............................
 
 Rosalee clicks on “Search for things – Samples by name” in the main menu and
-enters the name “14-JS-2” into the field.  The puts a tick into the checkbox
+enters the name “14-JS-2” into the field.  She puts a tick into the checkbox
 and clicks on “add samples”.  This way, the sample 14-JS-2 is added to
 Rosalee's “My Samples”.
 
 
+.. raw:: html
+
+   <div style="clear: both"/>
+
+
 The actual claim
 ................
+
+.. image:: images/ss_sample_claim.png
+   :alt: Sample claim screenshot
+   :align: right
+   :scale: 50%
 
 Next, Rosalee visits “Miscellaneous – Sample claims” from the main menu, and on
 the next page, selects “existing samples”.  Here, she selects 14-JS-2, and
@@ -392,30 +408,49 @@ analyses the results.  Logout and re-login as j.silverton/12345.
 Adding a task
 -------------
 
+.. image:: images/ss_task_lists.png
+   :alt: Task lists screenshot
+   :align: right
+   :scale: 50%
+
 Let us assume Juliette wants to have a PDS measurement for her sample 14-JS-1.
 Therefore, visit “Miscellaneous – Task lists” from the main menu.  There,
 first set up the page by selecting the processes that you're interested in.
 Select “PDS measurements” and click on “Submit”.
 
-Now you add a new task for the PDS setup by clicking on the plus icon for PDS
-measurements.  Select the sample 14-JS-1, click on “Submit” and you're
-finished.  You can see the new task in the list of tasks.  There, you may
-withdraw it by clicking on the minus icon, or edit it by clicking on the pencil
-icon.
+.. |layout add icon| image:: ../jb_common/static/juliabase/icons/layout_add.png
+.. |layout delete icon| image:: ../jb_common/static/juliabase/icons/layout_delete.png
+.. |layout edit icon| image:: ../jb_common/static/juliabase/icons/layout_edit.png
+
+Now you add a new task for the PDS setup by clicking on the plus icon |layout
+add icon| for PDS measurements.  Select the sample 14-JS-1, click on “Submit”
+and you're finished.  You can see the new task in the list of tasks.  There,
+you may withdraw it by clicking on the minus icon |layout delete icon|, or edit
+it by clicking on the pencil icon |layout edit icon|.
+
+
+.. raw:: html
+
+   <div style="clear: both"/>
 
 
 Sending a sample to another user
 --------------------------------
+
+.. image:: images/ss_edit_my_samples.png
+   :alt: Edit My Samples screenshot
+   :align: right
+   :scale: 50%
 
 Juliette wants to show the sample 14-JS-1 to Nick so that he can have a look at
 it.  Of course, Nick could look for the sample himself, but since the sample is
 in the topic “Juliette's PhD thesis” and Nick isn't, he cannot view the
 sample's data sheet.
 
-To send the sample to Nick, click on the pencil icon next to “My samples” on
-the main menu page.  Select the sample 14-JS-1 on the left.  Then, on the
-right, select Nick in the drop-down menu “Copy to user” and enter, say, “Please
-have a look at this sample” at “Comment for recipient”.  Finally, set
+To send the sample to Nick, click on the pencil icon |pencil icon| next to “My
+samples” on the main menu page.  Select the sample 14-JS-1 on the left.  Then,
+on the right, select Nick in the multiple choice “Copy to user” and enter, say,
+“Please have a look at this sample” at “Comment for recipient”.  Finally, set
 “Clearance” to “all processes up to now”, because Juliette wants Nick to be
 able to see the whole data sheet of 14-JS-1.
 
@@ -446,6 +481,11 @@ new.
 Tasks
 -----
 
+.. image:: images/ss_edit_task.png
+   :alt: Edit task screenshot
+   :align: right
+   :scale: 50%
+
 Since Nick has read that Juliette had filed a new PDS task, he visits the “Task
 lists” page himself.  When doing this the first time, you have to select the
 PDS and click on “Submit” to make PDS tasks viewable to Nick.
@@ -457,7 +497,8 @@ accepted by someone and assigned to someone.  In order to so this, click on the
 pencil icon to edit it.  Set the “status” to “accepted” and “operator” to Nick
 himself.  Juliette will get notified of this.
 
-When Nick is actually doing the measurement, he may set the  task's status to
+Nick can edit all PDS tasks by clicking on the pencil icon |layout edit icon|.
+When Nick is actually doing the measurement, he may set the task's status to
 “in progress”, and after that, to “finished”.  A finished task may even be
 connected with the concrete PDS measurement.
 
