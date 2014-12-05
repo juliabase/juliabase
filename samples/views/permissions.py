@@ -138,6 +138,7 @@ class PermissionsPhysicalProcess(object):
 class UserListForm(forms.Form):
     """Form class for selecting the user to change the permissions for him/her.
     """
+    _ = ugettext_lazy
     selected_user = form_utils.UserField(label=_("Change the permissions of"))
 
     def __init__(self, user, *args, **kwargs):

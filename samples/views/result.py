@@ -32,13 +32,12 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext, ugettext_lazy, pgettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy, pgettext_lazy
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 import jb_common.utils
 import django.forms as forms
 
-_ = ugettext
 
 def save_image_file(image_data, result, related_data_form):
     """Saves an uploaded image file stream to its final destination in

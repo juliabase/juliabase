@@ -48,7 +48,6 @@ from samples.views import utils, form_utils, feed_utils
 from django.forms.util import ValidationError
 
 
-
 class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
     amongst “My Samples”.

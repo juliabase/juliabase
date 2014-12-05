@@ -18,15 +18,14 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
 from jb_institute.views import form_utils
 import jb_institute.models as institute_models
 
 
 class StructuringForm(form_utils.ProcessForm):
-    """
-    """
+    _ = ugettext_lazy
     combined_operator = form_utils.OperatorField(label=_("Operator"))
 
     def __init__(self, user, *args, **kwargs):

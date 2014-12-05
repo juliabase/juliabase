@@ -181,6 +181,7 @@ class TaskForm(forms.ModelForm):
 class ChooseTaskListsForm(forms.Form):
     """Form for the task lists multiple selection list.
     """
+    _ = ugettext_lazy
     visible_task_lists = forms.MultipleChoiceField(label=capfirst(_("show task lists for")), required=False)
 
     def __init__(self, user, data=None, **kwargs):

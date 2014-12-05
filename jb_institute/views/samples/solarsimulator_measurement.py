@@ -24,15 +24,12 @@ from jb_institute.views import form_utils
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy
 from samples import permissions
 from samples.views import utils, feed_utils
 import datetime
 
 
-_ = ugettext
-
-_ = ugettext
 class SolarsimulatorMeasurementForm(form_utils.ProcessForm):
     _ = ugettext_lazy
     combined_operator = form_utils.OperatorField(label=_(u"Operator"))
