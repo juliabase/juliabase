@@ -79,7 +79,7 @@ programs written in other programming languages, and JuliaBase ships with a
 Delphi binding.
 
 
-Data mining and analysing
+Data mining and analysis
 ----------------------------
 
 Everyone with browser access to the JuliaBase database can use the remote
@@ -104,7 +104,9 @@ functionality special to your institution.  This is not absolutely necessary,
 but without it, you can only use the very basic functionality.  However,
 extending the remote client is *much* easier than extending JuliaBase.
 
-In JuliaBases' source code, the remote client resides in the directory
+.. _remote-client-file-list:
+
+In JuliaBases' source code, the default remote client resides in the directory
 :file:`remote_client/`, and it has the following structure::
 
     remote_client/
@@ -118,7 +120,7 @@ In JuliaBases' source code, the remote client resides in the directory
 
 Replace the file :file:`jb_remote_institute.py` with your own institute's code,
 and give your file a name derived from your institution's name.  Your file
-should start with::
+should start with something like::
 
     from __future__ import absolute_import
     from jb_remote import *
@@ -127,11 +129,32 @@ should start with::
 
 From there on, you are totally free how to program your incarnation of the
 remote client.  You may use :file:`jb_remote_institute.py` as a source of
-inspiration, though.
+inspiration, of course.
 
 
 Local installation and usage
 ==============================
 
-In order to install the remote client on a computer (e.g. the control computer
-of a measurement setup), just copy the directory :file:`jb_remote`
+Once you finished extending the default remote client, *your* remote client
+consists of the files listed :ref:`above <remote-client-file-list>`, with
+:file:`jb_remote_institute.py` substituted by your file called, say,
+:file:`jb_remote_inm.py`.  This set of files needs to be copied to the machines
+where the remote client is supposed to be used, and the top directory (the one
+with your :file:`jb_remote_inm.py`) should be in :envvar:`PYTHONPATH`.
+
+Then, you use the remote client in a Python script as easily as this::
+
+    from jb_remote_inm import *
+
+    setup_logging("console")
+    login("juliabase", "12345")
+
+    sample = Sample("14-JS-1")
+    sample.current_location = "Sean's office"
+    sample.submit()
+
+    logout()
+
+By the way, the files are organised in a way that you can update very
+conveniently: If a new version of JuliaBase is released, you simply have to
+replace the :file:`jb_remote/` subdirectory with the new one.

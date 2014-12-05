@@ -302,7 +302,7 @@ Add new deposition process
 Rosalee duplicates old depositions because she doesn't vary much.  This way,
 she adds new depositions without fuss.  In the page for the new deposition, whe
 only has to select the samples for the deposition (which are the samples
-recently added, with these “*…” names), change some other things that were
+recently added, with these “\*…” names), change some other things that were
 different in this run, and click on “Submit”.
 
 .. image:: images/ss_rename_after_depo.png
@@ -326,6 +326,11 @@ can just leave out the renaming page in your own code.
 
 Change permissions for processes
 --------------------------------
+
+.. image:: images/ss_change_permissions.png
+   :alt: Change permissions screenshot
+   :align: right
+   :scale: 50%
 
 As already mentioned, Rosalee is responsible for the 5-chamber deposition
 setup.  But let's assume Eddie wants to do such depositions, too, and gets an
@@ -476,11 +481,16 @@ permissions.  They are:
 The Institute of Nifty New Materials only has two levels: The team leader and
 the rest.  You may add further levels in your institution, and you may set the
 permissions in a different way.  However, we've made the experience that
-complex permission plans are a burden that should be avoided.
+complex permission policies are a burden that should be avoided.
 
 
 Approve a sample claim
 ----------------------
+
+.. image:: images/ss_approve_claim.png
+   :alt: Approve sample claim screenshot
+   :align: right
+   :scale: 50%
 
 Visit on the main menu “Miscellaneous – sample claims”.  At the bottom of this
 page, you see the sample claim of Juliette.  Click on it.  Sean can now review
