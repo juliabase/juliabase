@@ -87,11 +87,10 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   programming/installation
    demo
+   programming/installation
    programming/programming
    programming/remote_client
    programming/settings
    programming/sample_names
    programming/hacking_on_juliabase
-
