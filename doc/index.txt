@@ -31,7 +31,7 @@ It offers:
 - sample management by sample series, topics, and tags
 - arbitrarily complex searches made easy, e.g. “find all samples with infrared
   measurements, deposited together with a sample on glass substrate with a
-  conductivity greater than 10⁻⁶ S/cm; oh yes, and only from this year and made
+  conductivity greater than :math:`10^{-6}` S/cm; oh yes, and only from this year and made
   by John”
 - export to spreadsheets
 - automatic lab notebooks

@@ -235,8 +235,8 @@ clicking on “Submit” after each step:
 
 You get the result as in the image next to this text: Two of her samples match
 the criteria, namely “14S-002” and “14S-003”.  This means, both samples have at
-least one solarsimulator measurement under AM 1.5 irradiation, with at least
-one cell with an efficiency greater than 8 %.
+least one solarsimulator measurement under AM 1.5 irradiation, with at least
+one cell with an efficiency greater than 8%.
 
 .. note::
 
@@ -261,8 +261,9 @@ on “Submit”.  You may select the processes on the sample data sheet that sho
 be included into the output.  Select the second layer of the 5-chamber
 deposition and the first solarsimulator measurement.  Click on “Submit”.  Now,
 you may select the fields of these processes that should be included into the
-output.  Select “SiH₄/sccm” (the silane flux, by the way) of the layer and “η
-of best cell/%” of the solarsimulator measurement.  Click on “Submit”.
+output.  Select “:math:`\mathrm{SiH}_4`/sccm” (the silane flux, by the way) of
+the layer and “η of best cell/%” of the solarsimulator measurement.  Click on
+“Submit”.
 
 The result is shown in the screenshot.  The table comprises all the data that
 will be included into the output.  Click one last time on “Submit”, and you can

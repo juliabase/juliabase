@@ -35,11 +35,11 @@ worth, the authors run Ubuntu Server.
    https://docs.djangoproject.com/en/1.7/topics/install/
 
 Mostly, no sophisticated finetuning of the components is necessary because
-JuliaBase deployments will serve only a few (< 1000) people.  In particular,
+JuliaBase deployments will serve only a few (< 1000) people.  In particular,
 PostgreSQL and Apache can run in default configuration by and large.  On the
 other hand, the computer should be a `high-availability system`_, possibly
 realised with virtual machines.  In our own installation, we manage a
-three-nines system, i. e. 99.9 % availability.  Additionally, regular backups
+three-nines system, i.e. 99.9 % availability.  Additionally, regular backups
 are a must! To set up these things, however, is beyond the scope of this
 document.  Your IT department may turn out to be very helpful with this.
 
@@ -80,7 +80,7 @@ typically found in /etc/postgresql/*version*/main/.
 
 Anyway, you create a PostgreSQL user with this::
 
-  $ sudo −u postgres psql
+  $ sudo -u postgres psql
   psql (9.3.4)
   Type "help" for help.
 
