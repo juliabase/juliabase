@@ -39,7 +39,7 @@ Default: ``""`` (Empty string)
 Name of the view in Python's dot notation which points to the view to add
 samples.  For example::
 
-    ADD_SAMPLES_VIEW = "jb_institute.views.samples.sample.add"
+    ADD_SAMPLES_VIEW = "inm.views.samples.sample.add"
 
 This view function must have exactly one parameter, namely the ``request``
 instance.
@@ -166,8 +166,8 @@ This lists all physical process classes which should not appear in the status
 messages tables.  Every entry itself is a tuple containing the app name and the
 process class, in all-lowercase::
 
-    PHYSICAL_PROCESSES_BLACKLIST = [("jb_institute", "substrate"),
-                                  ("jb_institute", "layerthicknessmeasurement")]
+    PHYSICAL_PROCESSES_BLACKLIST = [("inm", "substrate"),
+                                  ("inm", "layerthicknessmeasurement")]
 
 
 SAMPLE_NAME_FORMATS
@@ -381,7 +381,7 @@ The minimal set of installed apps for JuliaBase is::
         "django.contrib.admin",
         "django.contrib.messages",
         "django.contrib.staticfiles",
-        "jb_institute",
+        "inm",
         "samples",
         "jb_common"
     )

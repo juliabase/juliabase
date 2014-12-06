@@ -35,31 +35,31 @@ open("informal_stack.yaml", "w").write("""- fields: {{additional_process_data: '
     color: red, comments: '', doping: p, index: 2, process: null, sample_details: {0},
     structured: false, textured: false, thickness: '50.0', thickness_reliable: true,
     verified: true}}
-  model: jb_institute.informallayer
+  model: inm.informallayer
   pk: 1
 - fields: {{additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
     color: orange, comments: '', doping: i, index: 3, process: null, sample_details: {0},
     structured: false, textured: false, thickness: '120.0', thickness_reliable: true,
     verified: true}}
-  model: jb_institute.informallayer
+  model: inm.informallayer
   pk: 2
 - fields: {{additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
     color: green, comments: '', doping: n, index: 4, process: null, sample_details: {0},
     structured: false, textured: false, thickness: '50.0', thickness_reliable: true,
     verified: true}}
-  model: jb_institute.informallayer
+  model: inm.informallayer
   pk: 3
 - fields: {{additional_process_data: '', always_collapsed: false, classification: glass,
     color: lightblue, comments: '', doping: null, index: 1, process: null, sample_details: {0},
     structured: false, textured: false, thickness: '1100000.0', thickness_reliable: true,
     verified: true}}
-  model: jb_institute.informallayer
+  model: inm.informallayer
   pk: 4
 - fields: {{additional_process_data: '', always_collapsed: false, classification: silver,
     color: silver, comments: '', doping: null, index: 5, process: null, sample_details: {0},
     structured: true, textured: false, thickness: '800.0', thickness_reliable: true,
     verified: true}}
-  model: jb_institute.informallayer
+  model: inm.informallayer
   pk: 5
 """.format(sample_id))
 

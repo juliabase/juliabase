@@ -14,30 +14,21 @@
 # Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>
 
 
-"""Root URL dispach for the JuliaBase installation.  Mapping URL patterns to
-function calls.  This is the local URL dispatch of the Django application
-“jb_common”, which provides core functionality and core views for all JuliaBase
-apps.
-
-
-:var urlpatterns: the actual mapping.  See the `Django documentation`_ for
-  details.
-
-.. _Django documentation:
-    http://docs.djangoproject.com/en/dev/topics/http/urls/
+"""Root URL dispach for testing the “inm” app.
 """
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import patterns, include
+from django.conf.urls.defaults import *
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
 
+
 urlpatterns = patterns("",
-                       (r"", include("inm.urls")),
                        (r"", include("jb_common.urls")),
                        (r"", include("samples.urls")),
+                       (r"", include("inm.urls")),
                        )
 
 urlpatterns += patterns("",

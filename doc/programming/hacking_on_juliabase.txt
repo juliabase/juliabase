@@ -27,10 +27,10 @@ does not contain institute-specific code in order to remain generic and
 flexible.  This institute-specific code resides in an app of its own and must
 be created by a skilled programmer.
 
-JuliaBase is shipped together with an example institute app called
-“jb_institute”.  It provides not only a demo for JuliaBase, it also is a good
-starting point for your own app.  Besides, essential testing of JuliaBase can
-only be done on top of jb_institute.
+JuliaBase is shipped together with an example institute app called “inm”.  It
+provides not only a demo for JuliaBase, it also is a good starting point for
+your own app.  Besides, essential testing of JuliaBase can only be done on top
+of inm.
 
 
 Coding guidelines

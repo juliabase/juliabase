@@ -639,7 +639,7 @@ class OperatorField(forms.ChoiceField):
             return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
 
 
-# FixMe: This should be moved to jb_institute, because this special case is only
+# FixMe: This should be moved to inm, because this special case is only
 # necessary because samples may get renamed after depositions.  Maybe
 # refactoring should be done because it is used for substrates, too.
 

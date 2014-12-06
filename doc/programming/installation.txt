@@ -107,19 +107,18 @@ instructions`_.  Not further configuration is necessary.
 JuliaBase
 ===========================
 
-Currently, JuliaBase is organised in a non-public `Git`_ repository.
-It contains three Django apps:
+Currently, JuliaBase is organised in a non-public `Git`_ repository.  It
+contains three Django apps:
 
 1. jb_common
 2. samples
-3. jb_institute
+3. inm
 
 “jb_common” implements the basic JuliaBase functionality.  On top of that,
-“samples” implements the actual samples database.  And on top of that,
-“jb_institute” implements code that is specific to the specific institution or
-department or work group that wants to use JuliaBase.  jb_institute implements
-a *generic* institute.  You will replace jb_institute with your own app and
-rename it accordingly.
+“samples” implements the actual samples database.  And on top of that, “inm”
+implements code that is specific to the specific institution or department or
+work group that wants to use JuliaBase.  “inm” implements a *generic*
+institute.  You will replace “inm” with your own app and rename it accordingly.
 
 .. _Git: http://git-scm.com/
 

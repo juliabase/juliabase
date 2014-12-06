@@ -14,8 +14,8 @@
 
 
 """Custom logging class which doesn't send HTML emails.  This module must
-reside on top-level because in jb_institute, the settings would be implicitly
-imported, which leads to a cyclic import.
+reside on top-level because in inm, the settings would be implicitly imported,
+which leads to a cyclic import.
 """
 
 from __future__ import unicode_literals

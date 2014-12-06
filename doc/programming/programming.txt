@@ -99,13 +99,13 @@ Okay, now let's dive into the serious stuff.
 
 You created your Django project, you added JuliaBase to it as explained in
 `Organizing your source code`_.  You copied JuliaBase's :file:`settings.py` and
-modified it for you, in order to get the demo app ``jb_institute`` working.
+modified it for you, in order to get the demo app ``inm`` working.
 
 .. todo: Explain the steps necessary to adapt settings.py.
 
-Then, you create a new app ``my_institute``, and you replace ``jb_institute``
-with ``my_institute`` in ``INSTALLED_APPS`` in your :file:`settings.py`.
-Nothing is working anymore …
+Then, you create a new app ``my_institute``, and you replace ``inm`` with
+``my_institute`` in ``INSTALLED_APPS`` in your :file:`settings.py`.  Nothing is
+working anymore …
 
 
 Adding a new process module
