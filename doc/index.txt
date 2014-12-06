@@ -93,4 +93,5 @@ Contents
    programming/remote_client
    programming/settings
    programming/sample_names
+   programming/hacking_on_juliabase
 

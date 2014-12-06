@@ -16,16 +16,20 @@
 Hacking on JuliaBase
 =======================
 
+This *unfinished* document explains how to contribute to the JuliaBase project
+itself instead of adapting it to your institution.
+
+
 Architecture
 ====================
 
 Since JuliaBase is based on the Django Web framework, it consists of several
-Django apps.  The core app is called “jb_common”.  It provides
-functionality which is essential for all JuliaBase components.  On top of that,
-the app “samples” contains all features of a samples database.  However, it
-does not contain institute-specific code in order to remain generic and
-flexible.  This institute-specific code resides in an app of its own and must
-be created by a skilled programmer.
+Django apps.  The core app is called “jb_common”.  It provides functionality
+which is essential for all JuliaBase components.  On top of that, the app
+“samples” contains all features of a samples database.  However, it does not
+contain institute-specific code in order to remain generic and flexible.  This
+institute-specific code resides in an app of its own and must be created by a
+skilled programmer.
 
 JuliaBase is shipped together with an example institute app called “inm”.  It
 provides not only a demo for JuliaBase, it also is a good starting point for
@@ -37,10 +41,17 @@ Coding guidelines
 ===========================
 
 JuliaBase source code modules should not exceed 1000 lines of code.  You should
-stick to `PEP 8`_ and the `Django coding guidelines`_.
+stick to `PEP 8`_ and the `Django coding guidelines`_.  String literals are
+double-quoted unless double quotes appear in them::
 
-JuliaBase makes one exception from PEP 8: I allow lines with 125 columns instead
-of only 80.
+    "This is a string literal"
+    'This is "another" string literal'
+
+Never use ``u`` in front of a string literal.  Instead, JuliaBase code uses the
+``unicode_literals`` future import.
+
+JuliaBase makes one exception from PEP 8: It allows lines with 125 columns
+instead of only 80.
 
 All variables and source code comments should be in English.
 
@@ -52,14 +63,52 @@ All variables and source code comments should be in English.
    I skip all docstrings in the code examples in this document because
    otherwise, the examples would be too bloated.  However, write rich
    Docstrings for all non-trivial functions and methods.  Write them in `ReST
-   format`_.  Sometimes, you can copy-and-paste the docstring with slight
-   modifications.
+   format`_.
 
 .. _`ReST format`: http://sphinx-doc.org/rest.html
 
 Internationalisation is a very important point in JuliaBase.  All strings exposed
-to the user should be marked as translatable by putting them in ``_(u"...")``
+to the user should be marked as translatable by putting them in ``_("...")``
 unless you have very good reason not to do so (e.g. for some proper names).
 Note that in code which is executed at module load time (e.g. model and form
 fields), ``_`` should stand for ``ugettext_lazy``, whereas within functions and
 methods which are executed on each request, it should be ``ugettext``.
+
+
+Python 3
+--------
+
+JuliaBase runs on both Python 2.7 and Python 3.2+.  Take care that your
+contributions do the same.  We found the `Django documentation on this topic`_
+extremely useful.  The remote client comes with its own copy of the ``six``
+module in order to keep external dependencies at a minimum.
+
+.. _`Django documentation on this topic`: https://docs.djangoproject.com/en/dev/topics/python3/
+
+
+Boilerplate code
+----------------
+
+Start every file with::
+
+    #!/usr/bin/env python
+    # -*- coding: utf-8 -*-
+    #
+    # {Licence}
+
+    """{Module docstring}
+    """
+    
+    from __future__ import absolute_import, unicode_literals, division
+    {Python 3 compatibility statements}
+
+    {Python standard library imports}
+    {Non-standard imports (Numpy, Scipy, matplotlib etc)
+    {Django imports}
+    {JuliaBase imports}
+
+The “Python 3 compatibility statements“ may be lines like::
+
+    import django.utils.six as six
+    from django.utils.six.moves import cStringIO as StringIO
+    from django.utils.encoding import python_2_unicode_compatible
