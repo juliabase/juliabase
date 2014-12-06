@@ -23,6 +23,11 @@ communicates through a REST HTTP interface implemented in the JuliaBase server.
 This interface could be used directly, however, the remote client makes it much
 easier.
 
+In the following, we will describe what the remote client can do and how to get
+it running.  For the API itself, we have to refer to the documentation in the
+sources of the Python files in :file:`remote_client/`.  Note especially the
+examples in :file:`remote_client/examples/`.
+
 
 Use cases
 ===========
@@ -142,7 +147,7 @@ consists of the files listed :ref:`above <remote-client-file-list>`, with
 where the remote client is supposed to be used, and the top directory (the one
 with your :file:`jb_remote_inm.py`) should be in :envvar:`PYTHONPATH`.
 
-Then, you use the remote client in a Python script as easily as this::
+Then, you use the remote client with a Python script as easy as this::
 
     from jb_remote_inm import *
 
