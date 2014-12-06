@@ -60,7 +60,7 @@ JuliaBase:
 
 - JuliaBase is built on top of the `Django web framework`_.
 - JuliaBase is written 100% in the Python programming language (version 2.7 or
-  3.0 onward).
+  3.2 onward).
 - Although other setups are possible, the easiest server installation bases on
   Linux, PostgreSQL, and Apache.
 - Hardware requirements are very low; a 100 people institute could be served by
@@ -72,13 +72,13 @@ JuliaBase:
 Getting started
 ====================
 
-If you want to give JuliaBase a try, we recomment to :doc:`install it
-</programming/installation>`.  It is pretty straightforward.  Login as
-``juliabase``/``12345`` (login/password) and you will even have administrator
-privileges.  Look around, add samples, add measurements.
+If you want to give JuliaBase a try, visit the :doc:`demo site <demo>`.  If you
+like it, the next step could be :doc:`installing it
+</programming/installation>`.  Its installation includes the demo site, so you
+have immediately something up and running, and you can evaluate it even better.
 
 If you consider actually using JuliaBase, have a look at the :doc:`programming
-guide <programming/programming>` for how to adapt it to you needs.
+guide <programming/programming>` for how to adapt it to your needs.
 
 
 Contents
