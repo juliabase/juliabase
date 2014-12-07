@@ -130,7 +130,7 @@ should start with something like::
     from __future__ import absolute_import
     from jb_remote import *
 
-    settings.root_url = settings.testserver_root_url = "https://juliabase.my-institute.edu/"
+    settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = "https://juliabase.my-institute.edu/"
 
 From there on, you are totally free how to program your incarnation of the
 remote client.  You may use :file:`jb_remote_institute.py` as a source of

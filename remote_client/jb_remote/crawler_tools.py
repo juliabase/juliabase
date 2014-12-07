@@ -219,20 +219,20 @@ def send_error_mail(from_, subject, text, html=None):
     cycles = 5
     while cycles:
         try:
-            server = smtplib.SMTP(settings.smtp_server)
-            if settings.smtp_login:
+            server = smtplib.SMTP(settings.SMTP_SERVER)
+            if settings.SMTP_LOGIN:
                 server.starttls()
-                server.login(settings.smtp_login, settings.smtp_password)
+                server.login(settings.SMTP_LOGIN, settings.SMTP_PASSWORD)
             message = MIMEMultipart()
             message["Subject"] = subject
             message["From"] = '"{0}" <{1}>'. \
-                format(from_.replace('"', ""), settings.email_from).encode("ascii", "replace")
-            message["To"] = settings.email_to
+                format(from_.replace('"', ""), settings.EMAIL_FROM).encode("ascii", "replace")
+            message["To"] = settings.EMAIL_TO
             message["Date"] = email.utils.formatdate()
             message.attach(MIMEText(text.encode("utf-8"), _charset="utf-8"))
             if html:
                 message.attach(MIMEText(html.encode("utf-8"), "html", _charset="utf-8"))
-            server.sendmail(settings.email_from, message["To"], message.as_string())
+            server.sendmail(settings.EMAIL_FROM, message["To"], message.as_string())
             server.quit()
         except smtplib.SMTPException:
             pass

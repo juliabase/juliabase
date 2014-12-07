@@ -23,7 +23,7 @@ or::
 
 and change the settings like this::
 
-    settings.root_url = "https://juliabase.ipv.kfa-juelich.de/"
+    settings.ROOT_URL = "https://juliabase.ipv.kfa-juelich.de/"
 
 It is important to change the settings before the login into JuliaBase takes
 place.
@@ -32,12 +32,12 @@ place.
 from __future__ import absolute_import, unicode_literals, division
 
 # Must end in "/".
-root_url = "https://juliabase.my_institute.kfa-juelich.de/"
-testserver_root_url = "https://test-jb.my_institute.kfa-juelich.de/"
+ROOT_URL = None
+TESTSERVER_ROOT_URL = "https://demo.juliabase.org/"
 
-smtp_server = "mailrelay.example.com:587"
+SMTP_SERVER = "mailrelay.example.com:587"
 # If not empty, TLS is used.
-smtp_login = "username"
-smtp_password = "password"
-email_from = "me@example.com"
-email_to = "admins@example.com"
+SMTP_LOGIN = "username"
+SMTP_PASSWORD = "password"
+EMAIL_FROM = "me@example.com"
+EMAIL_TO = "admins@example.com"

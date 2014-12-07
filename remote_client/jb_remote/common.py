@@ -402,9 +402,9 @@ def login(username, password, testserver=False):
     setup_logging()
     if testserver:
         logging.info("Logging into the testserver.")
-        connection.login(settings.testserver_root_url, username, password)
+        connection.login(settings.TESTSERVER_ROOT_URL, username, password)
     else:
-        connection.login(settings.root_url, username, password)
+        connection.login(settings.ROOT_URL, username, password)
     logging.info("Successfully logged-in as {0}.".format(username))
 
 
