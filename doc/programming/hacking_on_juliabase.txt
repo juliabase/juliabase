@@ -16,7 +16,7 @@
 Hacking on JuliaBase
 =======================
 
-This *unfinished* document explains how to contribute to the JuliaBase project
+This *unfinished* chapter explains how to contribute to the JuliaBase project
 itself instead of adapting it to your institution.
 
 
