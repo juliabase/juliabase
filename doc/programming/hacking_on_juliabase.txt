@@ -89,7 +89,9 @@ module in order to keep external dependencies at a minimum.
 Boilerplate code
 ----------------
 
-Start every file with::
+Start every file with:
+
+.. code-block:: python
 
     #!/usr/bin/env python
     # -*- coding: utf-8 -*-
