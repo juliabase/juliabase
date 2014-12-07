@@ -13,6 +13,7 @@
 .. completely.
 
 
+=============
 Introduction
 =============
 
@@ -79,18 +80,3 @@ have immediately something up and running, and you can evaluate it even better.
 
 If you consider actually using JuliaBase, have a look at the :doc:`programming
 guide <programming/programming>` for how to adapt it to your needs.
-
-
-Contents
-==========
-
-.. toctree::
-   :maxdepth: 2
-
-   demo
-   programming/installation
-   programming/programming
-   programming/remote_client
-   programming/settings
-   programming/sample_names
-   programming/hacking_on_juliabase
