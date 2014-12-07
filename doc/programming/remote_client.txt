@@ -156,6 +156,7 @@ Then, you use the remote client with a Python script as easy as this::
 
     sample = Sample("14-JS-1")
     sample.current_location = "Sean's office"
+    sample.edit_description = "location changed"
     sample.submit()
 
     logout()
