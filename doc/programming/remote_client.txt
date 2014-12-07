@@ -164,3 +164,43 @@ Then, you use the remote client with a Python script as easy as this::
 By the way, the files are organised in a way that you can update very
 conveniently: If a new version of JuliaBase is released, you simply have to
 replace the :file:`jb_remote/` subdirectory with the new one.
+
+
+Other programming languages
+=================================
+
+You can communicate with a JuliaBase server using any programming language.
+You can implement the HTTP communication directly in most modern languages.
+However, it is probably much easier to write a thin wrapper around the Python
+implementation.
+
+For Delphi, this has already been done in
+:file:`remote_client/delphi/juliabase.pas`.  The code is only 150 lines long.
+Using it is as simple as
+
+.. code-block:: delphi
+
+    program juliabase_example;
+
+    {$APPTYPE CONSOLE}
+
+    uses
+      SysUtils, juliabase;
+    var
+      result : String
+
+    begin
+      execute_jb('juliabase', '12345',
+           'sample = Sample("14-JS-1");' +
+           'sample.current_location = "Sean''s office";' +
+           'sample.edit_description = "location changed";' +
+           'sample.submit()');
+    end.
+
+:code:`execute_jb` adds some boilerplate code and calls the Python interpreter,
+which executes the commands you passed as a string.  You must install the Python
+interpreter and the Python version of the remote client on the machine, but the
+avoidance of code duplication makes up for it.
+
+See the top comment in :file:`remote_client/delphi/juliabase.pas` for further
+instructions.
