@@ -1,33 +1,73 @@
 unit juliabase;
 
+{ This file is part of JuliaBase, the samples database.
+
+  Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+                        Marvin Goblet <m.goblet@fz-juelich.de>,
+                        Torsten Bronger <t.bronger@fz-juelich.de>
+
+  You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+  this software without explicit permission of the copyright holder.  If you have
+  received a copy of this software without the explicit permission of the
+  copyright holder, you must destroy it immediately and completely.
+  }
+
 (*
-=======================================================================================
+  Delphi wrapper for the remote client
+  ====================================
 
-  Delphi Wrapper für den Chantal Remote-Client
+  See also http://www.juliabase.org/programming/remote_client.html for further
+  information.
+  
+  This unit exports only one function, namely execute_jb.  This function has
+  three parameters, namely the login name, the password, and the command
+  string.  For example, in order to set a sample's current location, you may
+  use this program:
 
-  Diese Unit bietet nur eine einzige Funktion an, nämlich execute_jb.  Diese
-  Funktion erhält drei Strings als Parameter, nämlich den Loginnamen, das
-  Paßwort, und den Befehlsstring.  Um beispielsweise eine eine neue Probe
-  anzulegen, kann man aufrufen:
+  .. code-block:: delphi
 
-      execute_jb('b.bunny', 'bugspasswort', 'new_samples(1, u"Peters Büro")');
+      program juliabase_example;
 
-  Es gibt auch noch einen vierten, optionalen Parameter, der boolsch ist.  Ist
-  er True, wird der Befehlsstring auf dem Testserver ausgeführt.  Per Default
-  ist er False, so daß der Befehlsstring mit der richtigen Datenbank ausgeführt
-  wird.
+      {$APPTYPE CONSOLE}
 
-  Außerdem bietet diese Unit drei globale Variablen, mit denen man
-  Einstellungen vornehmen kann:
+      uses
+        SysUtils, juliabase;
+      var
+        result : String
 
-      package_path enthält den Pfad zum Python-Package des Remote-Clients
-      python_path enthält den Pfad zum Python-Interpreter
-      open_error_page_in_browser ist per Default False.  Wenn es True ist, wird
-        im Fehlerfall, d.h. wenn ein Webformular falsch oder unvollständig
-        ausgefüllt wurde, automatisch im Browser geöffnet.
+      begin
+        execute_jb('juliabase', '12345',
+             'sample = Sample("14-JS-1");' +
+             'sample.current_location = "Sean''s office";' +
+             'sample.edit_description = "location changed";' +
+             'sample.submit()');
+      end.
+  
+  Additionally, there is a forth, optional parameter, which is boolean.  If
+  it's true, the command is executed on the test server.  By default, it is
+  false, so that the command is executed on the production server.
+  
+  Moreover, this unit contains four global variables that serve as settings
+  that you can modifiy.
+ 
+  ``package_path``
+    contains the directory of the institute's adaption of the remote client.
+    Default: :file:'c:/JuliaBase/remote_client'
 
-=======================================================================================
-*)
+  ``module``
+    contains the module name of the institute's adaption of the remote client.
+    Default: ``jb_remote_inm``
+
+  ``python_path``
+    contains the path of the Python interpreter.  Default:
+    :file:'c:/Python2.7/python.exe'
+
+  ``open_error_page_in_browser``
+    If ``true``, in case of error the error page will be automatically opened
+    in the browser.  Default: ``false``
+
+  =======================================================================================
+  *)
 
 interface
 
@@ -50,51 +90,51 @@ implementation
 
 uses Windows, ShellAPI;
 
-// Entnommen aus http://www.delphi-forum.de/topic_ConsolenOutput+in+Memo+pipen+UND+in+Konsole_98927,0.html
+// Taken from
+// http://www.delphi-forum.de/topic_ConsolenOutput+in+Memo+pipen+UND+in+Konsole_98927,0.html
 
 function ExecConsoleCommand(const ACommand, AInput: String; var AOutput, AErrors: String;
                             var AExitCode: Cardinal): Boolean;
-  var
-    dw: dword;
-    StartupInfo: TStartupInfo;
-    ProcessInfo: TProcessInformation;
-    SecurityAttr: TSecurityAttributes;
-    PipeInputRead, PipeInputWrite,
-    PipeOutputRead, PipeOutputWrite,
-    PipeErrorsRead, PipeErrorsWrite: THandle;
+var
+  dw: dword;
+  StartupInfo: TStartupInfo;
+  ProcessInfo: TProcessInformation;
+  SecurityAttr: TSecurityAttributes;
+  PipeInputRead, PipeInputWrite,
+  PipeOutputRead, PipeOutputWrite,
+  PipeErrorsRead, PipeErrorsWrite: THandle;
 
-  // Pipe in einen String auslesen
   procedure ReadPipeToString(const hPipe: THandle; var Result: String);
-    var
-      AvailableBytes,
-      ReadBytes: Cardinal;
-      Buffer: String;
+  var
+    AvailableBytes, ReadBytes: Cardinal;
+    Buffer: String;
   begin
-    PeekNamedPipe(hPipe, NIL, 0, NIL, @AvailableBytes, NIL); // wieviel ist da
-    while (AvailableBytes > 0) do begin // überhaupt was da?
-      SetLength(Buffer,AvailableBytes); // Buffer
-      if ReadFile(hPipe,PChar(Buffer)^,AvailableBytes,ReadBytes,NIL) then // Lesen hat geklappt
-        if (ReadBytes > 0) then begin // Daten angekommen?
-          SetLength(Buffer,ReadBytes); // falls weniger kam, als da ist (warum auch immer)
-          Result := Result +Buffer; // an den Ergebnis-String
+    PeekNamedPipe(hPipe, NIL, 0, NIL, @AvailableBytes, NIL);
+    while (AvailableBytes > 0) do
+    begin
+      SetLength(Buffer, AvailableBytes);
+      if ReadFile(hPipe, PChar(Buffer)^, AvailableBytes, ReadBytes, NIL) then
+        if (ReadBytes > 0) then begin
+          SetLength(Buffer, ReadBytes);
+          Result := Result + Buffer;
         end;
-      PeekNamedPipe(hPipe, NIL, 0, NIL, @AvailableBytes, NIL); // noch was da?
+      PeekNamedPipe(hPipe, NIL, 0, NIL, @AvailableBytes, NIL);
     end;
   end;
 
 begin
   AOutput := '';
   AErrors := '';
-  // Win-API-Strukturen initialisieren/füllen
-  FillChar(ProcessInfo,SizeOf(TProcessInformation),0);
-  FillChar(SecurityAttr,SizeOf(TSecurityAttributes),0);
+  // initialize and fill Win-API structures
+  FillChar(ProcessInfo, SizeOf(TProcessInformation), 0);
+  FillChar(SecurityAttr, SizeOf(TSecurityAttributes), 0);
   SecurityAttr.nLength := SizeOf(SecurityAttr);
   SecurityAttr.bInheritHandle := TRUE;
   SecurityAttr.lpSecurityDescriptor := NIL;
-  CreatePipe(PipeInputRead,PipeInputWrite,@SecurityAttr,0);
-  CreatePipe(PipeOutputRead,PipeOutputWrite,@SecurityAttr,0);
-  CreatePipe(PipeErrorsRead,PipeErrorsWrite,@SecurityAttr,0);
-  FillChar(StartupInfo,SizeOf(TStartupInfo),0);
+  CreatePipe(PipeInputRead, PipeInputWrite, @SecurityAttr, 0);
+  CreatePipe(PipeOutputRead, PipeOutputWrite, @SecurityAttr, 0);
+  CreatePipe(PipeErrorsRead, PipeErrorsWrite, @SecurityAttr, 0);
+  FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
   StartupInfo.cb := SizeOf(StartupInfo);
   StartupInfo.hStdInput := PipeInputRead;
   StartupInfo.hStdOutput := PipeOutputWrite;
@@ -102,24 +142,25 @@ begin
   StartupInfo.wShowWindow := SW_HIDE;
   StartupInfo.dwFlags := STARTF_USESHOWWINDOW or STARTF_USESTDHANDLES;
   // msdn2.microsoft.com/...ibrary/ms682425.aspx
-  Result := CreateProcess(NIL,PChar(ACommand),NIL,NIL,TRUE,
+  Result := CreateProcess(NIL, PChar(ACommand), NIL, NIL, TRUE, 
                           CREATE_DEFAULT_ERROR_MODE
                           or CREATE_NEW_CONSOLE
                           or NORMAL_PRIORITY_CLASS,
-                          NIL,NIL,StartupInfo,ProcessInfo);
+                          NIL, NIL, StartupInfo, ProcessInfo);
   WriteFile(PipeInputWrite, AInput[1], length(AInput), dw, nil);
-  if Result then begin // Prozess erfolgreich gestartet?
+  if Result then
+  begin // process started sucessfully?
     repeat
-      GetExitCodeProcess(ProcessInfo.hProcess,AExitCode); // msdn2.microsoft.com/...ibrary/ms683189.aspx
-      ReadPipeToString(PipeOutputRead,AOutput); // Ausgaben lesen
-      ReadPipeToString(PipeErrorsRead,AErrors); // Fehler lesen
+      GetExitCodeProcess(ProcessInfo.hProcess, AExitCode); // msdn2.microsoft.com/...ibrary/ms683189.aspx
+      ReadPipeToString(PipeOutputRead, AOutput);
+      ReadPipeToString(PipeErrorsRead, AErrors);
       if (AExitCode = STILL_ACTIVE) then
         Sleep(1);
-    until (AExitCode <> STILL_ACTIVE); // bis der Prozess sich selbst beendet hat
-    CloseHandle(ProcessInfo.hThread); // Handles freigeben
+    until (AExitCode <> STILL_ACTIVE);
+    CloseHandle(ProcessInfo.hThread);
     CloseHandle(ProcessInfo.hProcess);
   end;
-  CloseHandle(PipeOutputWrite); // Pipes schließen
+  CloseHandle(PipeOutputWrite);
   CloseHandle(PipeErrorsWrite);
   CloseHandle(PipeOutputRead);
   CloseHandle(PipeErrorsRead);
