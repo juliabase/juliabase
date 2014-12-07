@@ -16,7 +16,7 @@ from __future__ import unicode_literals
 
 import sys, os, datetime, random
 sys.path.append(os.path.abspath(".."))
-from jb_remote_institute import *
+from jb_remote_inm import *
 
 
 setup_logging("console")

@@ -115,7 +115,7 @@ In JuliaBases' source code, the default remote client resides in the directory
 :file:`remote_client/`, and it has the following structure::
 
     remote_client/
-        jb_remote_institute.py
+        jb_remote_inm.py
         jb_remote/
             __init__.py
             common.py
@@ -123,7 +123,7 @@ In JuliaBases' source code, the default remote client resides in the directory
             settings.py
             ...
 
-Replace the file :file:`jb_remote_institute.py` with your own institute's code,
+Replace the file :file:`jb_remote_inm.py` with your own institute's code,
 and give your file a name derived from your institution's name.  Your file
 should start with something like::
 
@@ -133,7 +133,7 @@ should start with something like::
     settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = "https://juliabase.my-institute.edu/"
 
 From there on, you are totally free how to program your incarnation of the
-remote client.  You may use :file:`jb_remote_institute.py` as a source of
+remote client.  You may use :file:`jb_remote_inm.py` as a source of
 inspiration, of course.
 
 
@@ -141,7 +141,7 @@ Settings
 --------
 
 The following settings in the remote client are available and should be set in
-your :file:`jb_remote_institute.py`:
+your :file:`jb_remote_inm.py`:
 
 ``ROOT_URL``
   The URL of the production server.  It must end in a slash.  Default: ``None``
@@ -175,14 +175,14 @@ Local installation and usage
 
 Once you finished extending the default remote client, *your* remote client
 consists of the files listed :ref:`above <remote-client-file-list>`, with
-:file:`jb_remote_institute.py` substituted by your file called, say,
-:file:`jb_remote_inm.py`.  This set of files needs to be copied to the machines
+:file:`jb_remote_inm.py` substituted by your file called, say,
+:file:`jb_remote_my_institute.py`.  This set of files needs to be copied to the machines
 where the remote client is supposed to be used, and the top directory (the one
-with your :file:`jb_remote_inm.py`) should be in :envvar:`PYTHONPATH`.
+with your :file:`jb_remote_my_institute.py`) should be in :envvar:`PYTHONPATH`.
 
 Then, you use the remote client with a Python script as easy as this::
 
-    from jb_remote_inm import *
+    from jb_remote_my_institute import *
 
     setup_logging("console")
     login("juliabase", "12345")

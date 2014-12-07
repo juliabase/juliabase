@@ -19,7 +19,7 @@ from jb_remote.six.moves import urllib
 import os, datetime, glob, random
 import numpy
 import scipy.interpolate, scipy.optimize
-from jb_remote_institute import *
+from jb_remote_inm import *
 
 
 def evaluate_raw_data(voltages, current_curves, areas):
