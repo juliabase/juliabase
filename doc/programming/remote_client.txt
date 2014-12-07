@@ -137,6 +137,39 @@ remote client.  You may use :file:`jb_remote_institute.py` as a source of
 inspiration, of course.
 
 
+Settings
+--------
+
+The following settings in the remote client are available and should be set in
+your :file:`jb_remote_institute.py`:
+
+``ROOT_URL``
+  The URL of the production server.  It must end in a slash.  Default: ``None``
+
+``TESTSERVER_ROOT_URL``
+  The URL of the test server.  It must end in a slash.  Default:
+  ``"https://demo.juliabase.org/"``
+
+``SMTP_SERVER``
+  The DNS name of the SMTP server used for outgoing mail.  It may be used in
+  crawlers to send success or error emails.  You may add a port number after a
+  colon.  Default: ``"mailrelay.example.com:587"``
+
+``SMTP_LOGIN``
+  The login name of the SMTP server.  If empty, no login is performed.  If not
+  empty, TLS is used.  Default: ``"username"``
+
+``SMTP_PASSWORD``
+  The password used to login to the SMTP server through TLS.  Default:
+  ``"password"``
+
+``EMAIL_FROM``
+  The sender used for outgoing mails.  Default: ``"me@example.com"``
+
+``EMAIL_TO``
+  The recipient of outgoing mails.  Default: ``"admins@example.com"``
+
+
 Local installation and usage
 ==============================
 
