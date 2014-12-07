@@ -102,7 +102,7 @@ for sample_name in ("14-JS-{}".format(number) for number in range(1, 7)):
 
     header = """Timestamp: {timestamp}
 Operator: {operator}
-Comments: {comments}
+Comments:
 Sample: {sample}
 Layout: {layout}
 Irradiation: {irradiation}
@@ -113,7 +113,6 @@ Areas: {areas}
 U/V{column_headers}"""
     header_data = {"timestamp": datetime.datetime(2014, 10, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S"),
                    "operator": "h.griffin",
-                   "comments": "Click on cells to change data.",
                    "sample": sample_name,
                    "layout": "inm standard",
                    "irradiation": "AM1.5",
@@ -157,7 +156,7 @@ Areas: {areas}
 U/V{column_headers}"""
     header_data = {"timestamp": datetime.datetime(2014, 10, 8, 10, measurement_index, 0).strftime("%Y-%m-%d %H:%M:%S"),
                    "operator": "r.calvert",
-                   "comments": "",
+                   "comments": "Click on cells to change data.",
                    "sample": sample_name,
                    "layout": "acme1",
                    "irradiation": "AM1.5",
