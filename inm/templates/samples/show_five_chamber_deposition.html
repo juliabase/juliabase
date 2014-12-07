@@ -51,7 +51,6 @@ copyright holder, you must destroy it immediately and completely.
           <td class="value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
         </tr>
         <tr>
-          {% value_field layer.date %}
           {% value_split_field layer.temperature_1 layer.temperature_2 "℃" %}
         </tr>
         </tbody>

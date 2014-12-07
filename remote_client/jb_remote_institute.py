@@ -547,10 +547,9 @@ class FiveChamberLayer(object):
             self.sih4 = data["SiH4/sccm"]
             self.h2 = data["H2/sccm"]
             self.silane_concentration = data["SC/%"]
-            self.date = data["date"]
         else:
             self.chamber = self.temperature_1 = self.temperature_2 = self.layer_type = \
-                self.sih4 = self.h2 = self.silane_concentration = self.date = None
+                self.sih4 = self.h2 = self.silane_concentration = None
 
     def get_data(self, layer_index):
         prefix = six.text_type(layer_index) + "-"
@@ -558,7 +557,6 @@ class FiveChamberLayer(object):
                 prefix + "chamber": self.chamber,
                 prefix + "temperature_1": self.temperature_1,
                 prefix + "temperature_2": self.temperature_2,
-                prefix + "date": self.date,
                 prefix + "layer_type": self.layer_type,
                 prefix + "sih4": self.sih4,
                 prefix + "h2": self.h2}

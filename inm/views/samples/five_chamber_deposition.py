@@ -79,24 +79,14 @@ class LayerForm(forms.ModelForm):
     """Model form for a single layer.
     """
     def __init__(self, *args, **kwargs):
-        """Form constructor.  I only tweak the HTML layout slightly, and I set
-        the initial date to today for fresh layers.
+        """Form constructor.  I only tweak the HTML layout slightly.
         """
-        if "instance" not in kwargs:
-            # Note that ``initial`` has higher priority than ``instance`` in
-            # model forms.
-            initial = kwargs.get("initial", {})
-            initial["date"] = datetime.date.today()
-            kwargs["initial"] = initial
         super(LayerForm, self).__init__(*args, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
-        for fieldname in ["date", "sih4", "h2", ]:
+        for fieldname in ["sih4", "h2", ]:
             self.fields[fieldname].widget.attrs["size"] = "10"
         self.fields["temperature_1"].widget.attrs["size"] = "5"
         self.fields["temperature_2"].widget.attrs["size"] = "5"
-
-    def clean_date(self):
-        return form_utils.clean_timestamp_field(self.cleaned_data["date"])
 
     class Meta:
         model = institute_models.FiveChamberLayer

@@ -50,7 +50,6 @@ def create_depo(timestamp, sample_name, comments=None):
     deposition.comments = comments
 
     layer = FiveChamberLayer(deposition)
-    layer.date = timestamp.date()
     layer.temperature_1 = int(random.uniform(150, 160))
     layer.temperature_2 = int(random.uniform(150, 180))
     layer.sih4 = int(random.uniform(0, 5))
@@ -59,7 +58,6 @@ def create_depo(timestamp, sample_name, comments=None):
     layer.layer_type = "p"
 
     layer = FiveChamberLayer(deposition)
-    layer.date = timestamp.date()
     layer.temperature_1 = int(random.uniform(100, 160))
     layer.temperature_2 = int(random.uniform(170, 180))
     layer.sih4 = int(random.uniform(0, 4))
@@ -68,7 +66,6 @@ def create_depo(timestamp, sample_name, comments=None):
     layer.layer_type = "i"
 
     layer = FiveChamberLayer(deposition)
-    layer.date = timestamp.date()
     layer.temperature_1 = int(random.uniform(130, 150))
     layer.temperature_2 = int(random.uniform(155, 160))
     layer.sih4 = int(random.uniform(0, 10))

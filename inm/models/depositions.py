@@ -368,13 +368,13 @@ class FiveChamberLayer(samples.models.depositions.Layer):
     objects = FiveChamberLayerManager()
 
     deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
-    date = models.DateField(_("date"))
     layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
     chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
     sih4 = models.DecimalField("SiH₄", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
     h2 = models.DecimalField("H₂", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
     temperature_1 = models.DecimalField(_("temperature 1"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
     temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
+
     class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")
         verbose_name = _("5-chamber layer")
@@ -396,8 +396,7 @@ class FiveChamberLayer(samples.models.depositions.Layer):
             silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100
         else:
             silane_concentration = 0
-        data_node.items.extend([DataItem("date", self.date),
-                                DataItem("layer type", self.layer_type),
+        data_node.items.extend([DataItem("layer type", self.layer_type),
                                 DataItem("chamber", self.chamber),
                                 DataItem("SiH4/sccm", self.sih4),
                                 DataItem("H2/sccm", self.h2),
@@ -415,8 +414,7 @@ class FiveChamberLayer(samples.models.depositions.Layer):
             silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100
         else:
             silane_concentration = 0
-        data_node.items.extend([DataItem(_("date"), self.date),
-                                DataItem(_("layer type"), self.get_layer_type_display()),
+        data_node.items.extend([DataItem(_("layer type"), self.get_layer_type_display()),
                                 DataItem(_("chamber"), self.get_chamber_display()),
                                 DataItem("SiH₄/sccm", self.sih4),
                                 DataItem("H₂/sccm", self.h2),
