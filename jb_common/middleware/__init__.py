@@ -59,7 +59,11 @@ class LocaleMiddleware(object):
         return match.group(0) if match else "en"
 
     def process_request(self, request):
-        language = self.get_language_for_user(request)
+        if is_json_requested(request):
+            # JSON responses are made for programs, so strings must be stable
+            language = "en"
+        else:
+            language = self.get_language_for_user(request)
         translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
 
