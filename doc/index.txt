@@ -19,7 +19,8 @@ Introduction
 
 Your scientific institute or working group creates lots of samples, and your
 team needs a tool to keep track of them?  JuliaBase is made for exactly that!
-It offers:
+It is a database solution for samples, their processing and their
+characterization, with the following features:
 
 - intuitive browser-based interface, fully working even on mobile devices
 - maximal flexibility for being adapted perfectly to your production and
