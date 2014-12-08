@@ -77,7 +77,7 @@ class Substrate(PhysicalProcess):
     def get_data(self):
         # See `Process.get_data` for the documentation.
         data_node = super(Substrate, self).get_data()
-        data_node.items.append(DataItem("ID", self.id))
+        data_node.items.append(DataItem("id", self.id))
         data_node.items.append(DataItem("material", self.material))
         return data_node
 
@@ -176,9 +176,9 @@ class PDSMeasurement(PhysicalProcess):
     def get_data(self):
         # See `Process.get_data` for the documentation.
         data_node = super(PDSMeasurement, self).get_data()
-        data_node.items.append(DataItem("PDS number", self.number))
+        data_node.items.append(DataItem("number", self.number))
         data_node.items.append(DataItem("apparatus", self.apparatus))
-        data_node.items.append(DataItem("raw data file", self.raw_datafile))
+        data_node.items.append(DataItem("raw_datafile", self.raw_datafile))
         return data_node
 
     def get_data_for_table_export(self):
@@ -256,7 +256,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
     def get_data(self):
         data_node = super(SolarsimulatorMeasurement, self).get_data()
         data_node.items.extend([DataItem("irradiation", self.irradiation),
-                                DataItem("temperature/degC", self.temperature), ])
+                                DataItem("temperature", self.temperature), ])
         data_node.children = [cell.get_data() for cell in self.cells.all()]
         return data_node
 
@@ -345,11 +345,11 @@ class SolarsimulatorCellMeasurement(models.Model):
     def get_data(self):
         # See `Process.get_data` for the documentation.
         data_node = DataNode("cell position {0}".format(self.position))
-        data_node.items = [DataItem("cell position", self.position),
-                           DataItem("data file name", self.data_file),
-                           DataItem("area/cm^2", self.area),
-                           DataItem("efficiency/%", self.eta),
-                           DataItem("short-circuit current density/(mA/cm^2)", self.isc)]
+        data_node.items = [DataItem("position", self.position),
+                           DataItem("data_file", self.data_file),
+                           DataItem("area", self.area),
+                           DataItem("eta", self.eta),
+                           DataItem("isc", self.isc)]
         return data_node
 
     def get_data_for_table_export(self):

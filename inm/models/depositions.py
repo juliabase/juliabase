@@ -396,13 +396,12 @@ class FiveChamberLayer(samples.models.depositions.Layer):
             silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100
         else:
             silane_concentration = 0
-        data_node.items.extend([DataItem("layer type", self.layer_type),
+        data_node.items.extend([DataItem("layer_type", self.layer_type),
                                 DataItem("chamber", self.chamber),
-                                DataItem("SiH4/sccm", self.sih4),
-                                DataItem("H2/sccm", self.h2),
-                                DataItem("SC/%", "{0:5.2f}".format(silane_concentration)),
-                                DataItem("T/degC (1)", self.temperature_1),
-                                DataItem("T/degC (2)", self.temperature_2)])
+                                DataItem("sih4", self.sih4),
+                                DataItem("h2", self.h2),
+                                DataItem("temperature_1", self.temperature_1),
+                                DataItem("temperature_2", self.temperature_2)])
         return data_node
 
     def get_data_for_table_export(self):

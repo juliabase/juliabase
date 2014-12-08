@@ -335,14 +335,14 @@ class Process(PolymorphicModel):
         :rtype: `samples.data_tree.DataNode`
         """
         data_node = DataNode("process #{0}".format(self.pk))
-        data_node.items = [DataItem("type", shared_utils.camel_case_to_human_text(self.__class__.__name__), "process"),
+        data_node.items = [DataItem("content_type", shared_utils.camel_case_to_human_text(self.__class__.__name__), "process"),
                            DataItem("timestamp", self.timestamp, "process"),
-                           DataItem("timestamp inaccuracy", self.timestamp_inaccuracy, "process"),
+                           DataItem("timestamp_inaccuracy", self.timestamp_inaccuracy, "process"),
                            DataItem("operator", self.operator, "process"),
-                           DataItem("external operator", self.external_operator, "process"),
+                           DataItem("external_operator", self.external_operator, "process"),
                            DataItem("finished", self.finished, "process"),
                            DataItem("comments", self.comments.strip(), "process"),
-                           DataItem("sample IDs", self.samples.values_list("id", flat=True), "process")]
+                           DataItem("samples", self.samples.values_list("id", flat=True), "process")]
         return data_node
 
     def get_data_for_table_export(self):
@@ -824,13 +824,13 @@ class Sample(models.Model):
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
             data_node.children.extend(ancestor_data.children)
         data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
-        data_node.items = [DataItem("ID", self.pk),
+        data_node.items = [DataItem("id", self.pk),
                            DataItem("name", self.name),
-                           DataItem("currently responsible person", self.currently_responsible_person),
-                           DataItem("current location", self.current_location),
+                           DataItem("currently_responsible_person", self.currently_responsible_person),
+                           DataItem("current_location", self.current_location),
                            DataItem("purpose", self.purpose),
                            DataItem("tags", self.tags),
-                           DataItem("split origin", self.split_origin and self.split_origin.id),
+                           DataItem("split_origin", self.split_origin and self.split_origin.id),
                            DataItem("topic", self.topic)]
         if not only_processes and sample_details:
             data_node.items.extend(sample_details_data.items)
@@ -1231,9 +1231,9 @@ class Result(Process):
             values = [values[i] for values in values_lists]
             quantities_and_values.append((quantity, values))
         data_node.items.extend([DataItem("title", self.title),
-                                DataItem("image type", self.image_type),
-                                DataItem("quantities and values", quantities_and_values),
-                                DataItem("sample series", self.sample_series.values_list("name", flat=True))])
+                                DataItem("image_type", self.image_type),
+                                DataItem("quantities_and_values", quantities_and_values),
+                                DataItem("sample_series", self.sample_series.values_list("name", flat=True))])
         return data_node
 
     def get_data_for_table_export(self):
@@ -1340,7 +1340,7 @@ class SampleSeries(models.Model):
         """
         data_node = DataNode(self.name)
         data_node.children.extend(sample.get_data() for sample in self.samples.all())
-        data_node.items = [DataItem("currently responsible person", self.currently_responsible_person),
+        data_node.items = [DataItem("currently_responsible_person", self.currently_responsible_person),
                            DataItem("timestamp", self.timestamp),
                            DataItem("description", self.description),
                            DataItem("topic", self.topic)]
