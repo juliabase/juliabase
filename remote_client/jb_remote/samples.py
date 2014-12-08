@@ -15,7 +15,7 @@
 from __future__ import absolute_import, unicode_literals, division
 from .six.moves import urllib
 
-from .common import connection, primary_keys, comma_separated_ids, format_timestamp, logging
+from .common import connection, primary_keys, comma_separated_ids, format_timestamp, parse_timestamp, logging
 
 
 primary_keys.components.add("external_operators=*")
