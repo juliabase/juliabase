@@ -160,7 +160,7 @@ class JSONClientMiddleware(object):
             return HttpResponseUnprocessableEntity(
                 json.dumps((1, request.build_absolute_uri(
                     django.core.urlresolvers.reverse("jb_common.views.show_error_page", kwargs={"hash_value": hash_value})))),
-                content_type="application/json; charset=ascii")
+                content_type="application/json")
         return response
 
 
@@ -170,8 +170,7 @@ class JSONClientMiddleware(object):
         """
         if isinstance(exception, django.http.Http404):
             if is_json_requested(request):
-                return django.http.HttpResponseNotFound(json.dumps((2, exception.args[0])),
-                                                        content_type="application/json; charset=ascii")
+                return django.http.HttpResponseNotFound(json.dumps((2, exception.args[0])), content_type="application/json")
         elif isinstance(exception, JSONRequestException):
             return HttpResponseUnprocessableEntity(json.dumps((exception.error_number, exception.error_message)),
-                                                   content_type="application/json; charset=ascii")
+                                                   content_type="application/json")
