@@ -15,6 +15,7 @@
 from __future__ import absolute_import, unicode_literals, division
 from .six.moves import urllib
 
+import json
 from .common import connection, primary_keys, comma_separated_ids, format_timestamp, parse_timestamp, logging
 
 
@@ -127,10 +128,10 @@ class Sample(object):
         if name or id_:
             data = connection.open("samples/by_id/{0}".format(id_)) if id_ else \
                 connection.open("samples/{0}".format(urllib.parse.quote(name)))
-            self.id = data["ID"]
+            self.id = data["id"]
             self.name = data["name"]
-            self.current_location = data["current location"]
-            self.currently_responsible_person = data["currently responsible person"]
+            self.current_location = data["current_location"]
+            self.currently_responsible_person = data["currently_responsible_person"]
             self.purpose = data["purpose"]
             self.tags = data["tags"]
             self.topic = data["topic"]
@@ -185,18 +186,18 @@ class Result(object):
         if id_:
             self.id = id_
             data = connection.open("results/{0}".format(id_))
-            self.sample_ids = data["sample IDs"]
-            self.sample_series = data["sample series"]
+            self.sample_ids = data["samples"]
+            self.sample_series = data["sample_series"]
             self.operator = data["operator"]
             self.timestamp = parse_timestamp(data["timestamp"])
-            self.timestamp_inaccuracy = data["timestamp inaccuracy"]
+            self.timestamp_inaccuracy = data["timestamp_inaccuracy"]
             self.comments = data["comments"]
             self.title = data["title"]
-            self.image_type = data["image type"]
+            self.image_type = data["image_type"]
             if self.image_type != "none" and with_image:
                 self.image_data = connection.open("results/images/{0}".format(id_), response_is_json=False)
-            self.external_operator = data["external operator"]
-            self.quantities_and_values = data["quantities and values"]
+            self.external_operator = data["external_operator"]
+            self.quantities, self.values = json.loads(data["quantities_and_values"])
             self.existing = True
         else:
             self.id = None
@@ -204,7 +205,8 @@ class Result(object):
             self.sample_series = []
             self.external_operator = self.operator = self.timestamp = self.comments = self.title = self.image_type = None
             self.timestamp_inaccuracy = 0
-            self.quantities_and_values = []
+            self.quantities = []
+            self.values = []
             self.existing = False
         self.image_filename = None
         self.finished = True
@@ -221,8 +223,8 @@ class Result(object):
         """
         if not self.operator:
             self.operator = connection.username
-        number_of_quantities = len(self.quantities_and_values)
-        number_of_values = number_of_quantities and len(self.quantities_and_values[0][1])
+        number_of_quantities = len(self.quantities)
+        number_of_values = number_of_quantities and len(self.values[0])
         data = {"finished": self.finished,
                 "operator": primary_keys["users"][self.operator],
                 "timestamp": format_timestamp(self.timestamp),
@@ -240,11 +242,11 @@ class Result(object):
                     primary_keys["external_operators"][self.external_operator],
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
-        for i, quantity_and_values in enumerate(self.quantities_and_values):
-            quantity, values = quantity_and_values
+        for i, quantity in enumerate(self.quantities):
             data["{0}-quantity".format(i)] = quantity
-            for j, value in enumerate(values):
-                data["{0}_{1}-value".format(i, j)] = value
+        for i, column in enumerate(self.values):
+            for j, value in enumerate(column):
+                data["{0}_{1}-value".format(j, i)] = value
         if self.image_filename:
             data["image_file"] = open(self.image_filename, "rb")
         with TemporaryMySamples(self.sample_ids):
