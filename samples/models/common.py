@@ -316,34 +316,24 @@ class Process(PolymorphicModel):
         return basename
 
     def get_data(self):
-        """Extract the data of this process as a tree of nodes (or a single
-        node) with lists of key–value pairs, ready to be used for general data
-        export.  In contrast to `get_data_for_table_export`, I export *all*
-        attributes that may be interesting for the user, and even some related
-        data.  Typically, this data is used if a non-browser client retrieves a
-        single resource (*not* its table export!) and expects JSON output.
+        """Extract the data of this process as a dictionary, ready to be used for
+        general data export.  In contrast to `get_data_for_table_export`, I
+        export *all* attributes that may be interesting for the user, and even
+        some related data.  Typically, this data is used if a non-browser
+        client retrieves a single resource and expects JSON output.
 
-        Additionaly, nothing is translated here.  This is in order to have
-        stable keys and values.  Otherwise, interpretation of the extracted
-        data would be a nightmare.  This also means that you must pass a
-        unicode to ``DataNode`` instead of an instance because an instance gets
-        translated.
+        The type of the process (e.g. “PDS measurement”) is returned with the
+        key ``"type"``.
 
         :Return:
-          a node for building a data tree
+          the content of all fields of this process
 
-        :rtype: `samples.data_tree.DataNode`
+        :rtype: `dict`
         """
-        data_node = DataNode("process #{0}".format(self.pk))
-        data_node.items = [DataItem("content_type", shared_utils.camel_case_to_human_text(self.__class__.__name__), "process"),
-                           DataItem("timestamp", self.timestamp, "process"),
-                           DataItem("timestamp_inaccuracy", self.timestamp_inaccuracy, "process"),
-                           DataItem("operator", self.operator, "process"),
-                           DataItem("external_operator", self.external_operator, "process"),
-                           DataItem("finished", self.finished, "process"),
-                           DataItem("comments", self.comments.strip(), "process"),
-                           DataItem("samples", self.samples.values_list("id", flat=True), "process")]
-        return data_node
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields
+                if field.name not in {"actual_object_id", "process_ptr"}}
+        data["samples"] = self.samples.values_list("id", flat=True)
+        return data
 
     def get_data_for_table_export(self):
         """Extract the data of this process as a tree of nodes (or a single
@@ -788,20 +778,7 @@ class Sample(models.Model):
             return None
 
     def get_data(self, only_processes=False):
-        """Extract the data of this sample as a tree of nodes (or a single
-        node) with lists of key–value pairs, ready to be used for general data
-        export.  Every child of the top-level node is a process of the sample.
-        In contrast to `get_data_for_table_export`, I export *all* attributes
-        that may be interesting for the user, and even some related data.
-        Typically, this data is used if a non-browser client retrieves a single
-        resource (*not* its table export!) and expects JSON output.
-
-        Additionaly, nothing is translated here.  This is in order to have
-        stable keys and values.  Otherwise, interpretation of the extracted
-        data would be a nightmare.  This also means that you must pass a
-        unicode to ``DataNode`` instead of an instance because an instance gets
-        translated.
-
+        """
         :Parameters:
           - `only_processes`: Whether only processes should be included.  It is
             not part of the official `get_data` API.  I use it only to avoid
@@ -809,32 +786,21 @@ class Sample(models.Model):
 
         :type only_processes: bool
 
-        :Return:
-          a node for building a data tree
-
-        :rtype: `samples.data_tree.DataNode`
+        :rtype: `dict`
         """
-        data_node = DataNode(self.name)
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
         if not only_processes:
             sample_details = self.get_sample_details()
             if sample_details:
                 sample_details_data = sample_details.get_data()
-                data_node.children = sample_details_data.children
+                del sample_details_data["sample"]
+                data.update(sample_details_data)
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
-            data_node.children.extend(ancestor_data.children)
-        data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
-        data_node.items = [DataItem("id", self.pk),
-                           DataItem("name", self.name),
-                           DataItem("currently_responsible_person", self.currently_responsible_person),
-                           DataItem("current_location", self.current_location),
-                           DataItem("purpose", self.purpose),
-                           DataItem("tags", self.tags),
-                           DataItem("split_origin", self.split_origin and self.split_origin.id),
-                           DataItem("topic", self.topic)]
-        if not only_processes and sample_details:
-            data_node.items.extend(sample_details_data.items)
-        return data_node
+            data.update(ancestor_data)
+        data.update(("process #{}".format(process.pk), process.actual_instance.get_data())
+                    for process in self.processes.all())
+        return data
 
 
     def get_data_for_table_export(self):

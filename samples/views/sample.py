@@ -677,7 +677,7 @@ def show(request, sample_name):
     else:
         if is_json_requested(request):
             sample = utils.lookup_sample(sample_name, request.user)
-            return respond_in_json(sample.get_data().to_dict())
+            return respond_in_json(sample.get_data())
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     return render(request, "samples/show_sample.html",

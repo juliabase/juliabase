@@ -74,13 +74,6 @@ class Substrate(PhysicalProcess):
     def __str__(self):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
-    def get_data(self):
-        # See `Process.get_data` for the documentation.
-        data_node = super(Substrate, self).get_data()
-        data_node.items.append(DataItem("id", self.id))
-        data_node.items.append(DataItem("material", self.material))
-        return data_node
-
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
@@ -173,14 +166,6 @@ class PDSMeasurement(PhysicalProcess):
             context["edit_url"] = None
         return super(PDSMeasurement, self).get_context_for_user(user, context)
 
-    def get_data(self):
-        # See `Process.get_data` for the documentation.
-        data_node = super(PDSMeasurement, self).get_data()
-        data_node.items.append(DataItem("number", self.number))
-        data_node.items.append(DataItem("apparatus", self.apparatus))
-        data_node.items.append(DataItem("raw_datafile", self.raw_datafile))
-        return data_node
-
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
@@ -254,11 +239,12 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         return django.core.urlresolvers.reverse("add_solarsimulator_measurement")
 
     def get_data(self):
-        data_node = super(SolarsimulatorMeasurement, self).get_data()
-        data_node.items.extend([DataItem("irradiation", self.irradiation),
-                                DataItem("temperature", self.temperature), ])
-        data_node.children = [cell.get_data() for cell in self.cells.all()]
-        return data_node
+        data = super(SolarsimulatorMeasurement, self).get_data()
+        for cell in self.cells.all():
+            cell_data = cell.get_data()
+            del cell_data["measurement"]
+            data["cell position {}".format(cell.position)] = cell_data
+        return data
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
@@ -343,14 +329,7 @@ class SolarsimulatorCellMeasurement(models.Model):
             position=self.position, solarsimulator_measurement=self.measurement)
 
     def get_data(self):
-        # See `Process.get_data` for the documentation.
-        data_node = DataNode("cell position {0}".format(self.position))
-        data_node.items = [DataItem("position", self.position),
-                           DataItem("data_file", self.data_file),
-                           DataItem("area", self.area),
-                           DataItem("eta", self.eta),
-                           DataItem("isc", self.isc)]
-        return data_node
+        return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):
         raise NotImplementedError

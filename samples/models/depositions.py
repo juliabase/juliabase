@@ -83,10 +83,13 @@ class Deposition(PhysicalProcess):
 
     def get_data(self):
         # See `Process.get_data` for the documentation.
-        data_node = super(Deposition, self).get_data()
-        data_node.items.append(DataItem("number", self.number, "deposition"))
-        data_node.children = [layer.get_data() for layer in self.layers.all()]
-        return data_node
+        data = super(Deposition, self).get_data()
+        del data["deposition_ptr"]
+        for layer in self.layers.all():
+            layer_data = layer.get_data()
+            del layer_data["deposition"]
+            data["layer {}".format(layer.number)] = layer_data
+        return data
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
@@ -149,10 +152,7 @@ class Layer(models.Model):
         verbose_name_plural = _("layers")
 
     def get_data(self):
-        # See `Process.get_data` for the documentation.
-        data_node = DataNode("layer {0}".format(self.number))
-        data_node.items = [DataItem("number", self.number, "layer")]
-        return data_node
+        return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
