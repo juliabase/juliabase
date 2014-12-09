@@ -86,6 +86,11 @@ class Deposition(PhysicalProcess):
         data = super(Deposition, self).get_data()
         del data["deposition_ptr"]
         for layer in self.layers.all():
+            try:
+                # For deposition systems with polymorphic layers
+                layer = layer.actual_instance
+            except AttributeError:
+                pass
             layer_data = layer.get_data()
             del layer_data["deposition"]
             data["layer {}".format(layer.number)] = layer_data
