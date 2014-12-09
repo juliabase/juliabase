@@ -1172,37 +1172,9 @@ class Result(Process):
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
-        """Extract the data of this result process as a tree of nodes (or a
-        single node) with lists of key–value pairs, ready to be used for
-        general data export.  In contrast to `get_data_for_table_export`, I
-        export *all* attributes that may be interesting for the user, and even
-        some related data.  Typically, this data is used if a non-browser
-        client retrieves a single resource (*not* its table export!) and
-        expects JSON output.
-
-        Additionaly, nothing is translated here.  This is in order to have
-        stable keys and values.  Otherwise, interpretation of the extracted
-        data would be a nightmare.  This also means that you must pass a
-        unicode to ``DataNode`` instead of an instance because an instance gets
-        translated.
-
-        :Return:
-          a node for building a data tree
-
-        :rtype: `samples.data_tree.DataNode`
-        """
-        data_node = super(Result, self).get_data()
-        data_node.name = data_node.descriptive_name = self.title
-        quantities, values_lists = json.loads(self.quantities_and_values)
-        quantities_and_values = []
-        for i, quantity in enumerate(quantities):
-            values = [values[i] for values in values_lists]
-            quantities_and_values.append((quantity, values))
-        data_node.items.extend([DataItem("title", self.title),
-                                DataItem("image_type", self.image_type),
-                                DataItem("quantities_and_values", quantities_and_values),
-                                DataItem("sample_series", self.sample_series.values_list("name", flat=True))])
-        return data_node
+        data = super(Result, self).get_data()
+        data["sample_series"] = self.sample_series.values_list("pk", flat=True)
+        return data
 
     def get_data_for_table_export(self):
         """Extract the data of this result process as a tree of nodes (or a
