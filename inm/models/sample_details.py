@@ -213,9 +213,9 @@ class SampleDetails(models.Model):
         self.save()
 
     def get_data(self):
-        data_node = DataNode(self)
-        data_node.children.extend(layer.get_data() for layer in self.informal_layers.all())
-        return data_node
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data.update(("informal layer #{}".format(layer.index), layer.get_data()) for layer in self.informal_layers.all())
+        return data
 
     def get_data_for_table_export(self):
         _ = ugettext
@@ -318,17 +318,7 @@ class InformalLayer(models.Model):
             self.sample_details.save()
 
     def get_data(self):
-        data_node = DataNode(self)
-        data_node.items = [DataItem("index", self.index),
-                           DataItem("doping", self.doping),
-                           DataItem("classification", self.classification),
-                           DataItem("comments", self.comments),
-                           DataItem("thickness", self.thickness),
-                           DataItem("thickness reliable", self.thickness_reliable),
-                           DataItem("structured", self.structured),
-                           DataItem("textured", self.textured),
-                           DataItem("verified", self.verified)]
-        return data_node
+        return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):
         _ = ugettext

@@ -316,34 +316,26 @@ class Process(PolymorphicModel):
         return basename
 
     def get_data(self):
-        """Extract the data of this process as a tree of nodes (or a single
-        node) with lists of key–value pairs, ready to be used for general data
-        export.  In contrast to `get_data_for_table_export`, I export *all*
-        attributes that may be interesting for the user, and even some related
-        data.  Typically, this data is used if a non-browser client retrieves a
-        single resource (*not* its table export!) and expects JSON output.
+        """Extract the data of this process as a dictionary, ready to be used for
+        general data export.  In contrast to `get_data_for_table_export`, I
+        export *all* attributes that may be interesting for the user, and even
+        some related data.  Typically, this data is used if a non-browser
+        client retrieves a single resource and expects JSON output.
 
-        Additionaly, nothing is translated here.  This is in order to have
-        stable keys and values.  Otherwise, interpretation of the extracted
-        data would be a nightmare.  This also means that you must pass a
-        unicode to ``DataNode`` instead of an instance because an instance gets
-        translated.
+        The type of the process (e.g. “PDS measurement”) is returned with the
+        key ``"type"``.
 
         :Return:
-          a node for building a data tree
+          the content of all fields of this process
 
-        :rtype: `samples.data_tree.DataNode`
+        :rtype: `dict`
         """
-        data_node = DataNode("process #{0}".format(self.pk))
-        data_node.items = [DataItem("type", shared_utils.camel_case_to_human_text(self.__class__.__name__), "process"),
-                           DataItem("timestamp", self.timestamp, "process"),
-                           DataItem("timestamp inaccuracy", self.timestamp_inaccuracy, "process"),
-                           DataItem("operator", self.operator, "process"),
-                           DataItem("external operator", self.external_operator, "process"),
-                           DataItem("finished", self.finished, "process"),
-                           DataItem("comments", self.comments.strip(), "process"),
-                           DataItem("sample IDs", self.samples.values_list("id", flat=True), "process")]
-        return data_node
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields
+                if field.name not in {"actual_object_id", "process_ptr"}}
+        data["samples"] = self.samples.values_list("id", flat=True)
+        if "sample_positions" in data:
+            data["sample_positions"] = json.loads(data["sample_positions"])
+        return data
 
     def get_data_for_table_export(self):
         """Extract the data of this process as a tree of nodes (or a single
@@ -788,20 +780,7 @@ class Sample(models.Model):
             return None
 
     def get_data(self, only_processes=False):
-        """Extract the data of this sample as a tree of nodes (or a single
-        node) with lists of key–value pairs, ready to be used for general data
-        export.  Every child of the top-level node is a process of the sample.
-        In contrast to `get_data_for_table_export`, I export *all* attributes
-        that may be interesting for the user, and even some related data.
-        Typically, this data is used if a non-browser client retrieves a single
-        resource (*not* its table export!) and expects JSON output.
-
-        Additionaly, nothing is translated here.  This is in order to have
-        stable keys and values.  Otherwise, interpretation of the extracted
-        data would be a nightmare.  This also means that you must pass a
-        unicode to ``DataNode`` instead of an instance because an instance gets
-        translated.
-
+        """
         :Parameters:
           - `only_processes`: Whether only processes should be included.  It is
             not part of the official `get_data` API.  I use it only to avoid
@@ -809,32 +788,21 @@ class Sample(models.Model):
 
         :type only_processes: bool
 
-        :Return:
-          a node for building a data tree
-
-        :rtype: `samples.data_tree.DataNode`
+        :rtype: `dict`
         """
-        data_node = DataNode(self.name)
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
         if not only_processes:
             sample_details = self.get_sample_details()
             if sample_details:
                 sample_details_data = sample_details.get_data()
-                data_node.children = sample_details_data.children
+                del sample_details_data["sample"]
+                data.update(sample_details_data)
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
-            data_node.children.extend(ancestor_data.children)
-        data_node.children.extend(process.actual_instance.get_data() for process in self.processes.all())
-        data_node.items = [DataItem("ID", self.pk),
-                           DataItem("name", self.name),
-                           DataItem("currently responsible person", self.currently_responsible_person),
-                           DataItem("current location", self.current_location),
-                           DataItem("purpose", self.purpose),
-                           DataItem("tags", self.tags),
-                           DataItem("split origin", self.split_origin and self.split_origin.id),
-                           DataItem("topic", self.topic)]
-        if not only_processes and sample_details:
-            data_node.items.extend(sample_details_data.items)
-        return data_node
+            data.update(ancestor_data)
+        data.update(("process #{}".format(process.pk), process.actual_instance.get_data())
+                    for process in self.processes.all())
+        return data
 
 
     def get_data_for_table_export(self):
@@ -1204,37 +1172,9 @@ class Result(Process):
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
-        """Extract the data of this result process as a tree of nodes (or a
-        single node) with lists of key–value pairs, ready to be used for
-        general data export.  In contrast to `get_data_for_table_export`, I
-        export *all* attributes that may be interesting for the user, and even
-        some related data.  Typically, this data is used if a non-browser
-        client retrieves a single resource (*not* its table export!) and
-        expects JSON output.
-
-        Additionaly, nothing is translated here.  This is in order to have
-        stable keys and values.  Otherwise, interpretation of the extracted
-        data would be a nightmare.  This also means that you must pass a
-        unicode to ``DataNode`` instead of an instance because an instance gets
-        translated.
-
-        :Return:
-          a node for building a data tree
-
-        :rtype: `samples.data_tree.DataNode`
-        """
-        data_node = super(Result, self).get_data()
-        data_node.name = data_node.descriptive_name = self.title
-        quantities, values_lists = json.loads(self.quantities_and_values)
-        quantities_and_values = []
-        for i, quantity in enumerate(quantities):
-            values = [values[i] for values in values_lists]
-            quantities_and_values.append((quantity, values))
-        data_node.items.extend([DataItem("title", self.title),
-                                DataItem("image type", self.image_type),
-                                DataItem("quantities and values", quantities_and_values),
-                                DataItem("sample series", self.sample_series.values_list("name", flat=True))])
-        return data_node
+        data = super(Result, self).get_data()
+        data["sample_series"] = self.sample_series.values_list("pk", flat=True)
+        return data
 
     def get_data_for_table_export(self):
         """Extract the data of this result process as a tree of nodes (or a
@@ -1338,13 +1278,9 @@ class SampleSeries(models.Model):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        data_node = DataNode(self.name)
-        data_node.children.extend(sample.get_data() for sample in self.samples.all())
-        data_node.items = [DataItem("currently responsible person", self.currently_responsible_person),
-                           DataItem("timestamp", self.timestamp),
-                           DataItem("description", self.description),
-                           DataItem("topic", self.topic)]
-        return data_node
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data["samples"] = self.samples.values_list("id", flat=True)
+        return data
 
     def get_data_for_table_export(self):
         """Extract the data of this sample series as a tree of nodes with
@@ -1588,18 +1524,21 @@ class Task(models.Model):
 
 
 class ProcessWithSamplePositions(models.Model):
-    """An abstract class for saving the positions of the samples
-    in an apparatus.
+    """An abstract mixin class for saving the positions of the samples in an
+    apparatus.
+
     The ``sample_positions`` field may be used by derived models for storing
-    where the samples were mounted during the deposition.  Sometimes it is
+    where the samples were mounted during e.g. the deposition.  Sometimes it is
     interesting to know that because the deposition device may not work
     homogeneously.  It is placed here in order to be able to extend the
     split-after-deposition view so that it offers input fields for it if it is
     applicable.  (For example, this can be given in the query string.)
     """
+
     sample_positions = models.TextField(_("sample positions"), default="{}", help_text=_("in JSON format"))
     """In JSON format, mapping sample IDs to positions.  Positions can be
     numbers or strings."""
+
     class Meta:
         abstract = True
 
@@ -1609,31 +1548,31 @@ class ProcessWithSamplePositions(models.Model):
             sample = context.get("sample")
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict and sample:
-                context["sample_position"] = (sample if (sample.topic and not sample.topic.confidential) or
-                                                    samples.permissions.has_permission_to_fully_view_sample(user, sample) or
-                                                    samples.permissions.has_permission_to_add_edit_physical_process(user, self,
-                                                                                    self.content_type.model_class())
-                                                    else _("confidential sample"),
-                                                    sample_positions_dict[six.text_type(sample.id)])
+                context["sample_position"] = (sample if sample.topic and not sample.topic.confidential or
+                                              samples.permissions.has_permission_to_fully_view_sample(user, sample) or
+                                              samples.permissions.has_permission_to_add_edit_physical_process(
+                                                  user, self, self.content_type.model_class())
+                                              else _("confidential sample"),
+                                              sample_positions_dict[six.text_type(sample.id)])
         if "sample_positions" not in context:
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict:
-                context["sample_positions"] = collections.OrderedDict((sample if (sample.topic and not sample.topic.confidential) or
-                                                    samples.permissions.has_permission_to_fully_view_sample(user, sample) or
-                                                    samples.permissions.has_permission_to_add_edit_physical_process(user, self,
-                                                                                    self.content_type.model_class())
-                                                    else _("confidential sample"),
-                                                    sample_positions_dict[six.text_type(sample.id)])
-                                                   for sample in self.samples.order_by("name").iterator())
+                context["sample_positions"] = \
+                    collections.OrderedDict((sample if sample.topic and not sample.topic.confidential or
+                                             samples.permissions.has_permission_to_fully_view_sample(user, sample) or
+                                             samples.permissions.has_permission_to_add_edit_physical_process(
+                                                 user, self, self.content_type.model_class())
+                                             else _("confidential sample"),
+                                             sample_positions_dict[six.text_type(sample.id)])
+                                            for sample in self.samples.order_by("name").iterator())
         return context
 
 
     def get_cache_key(self, user_settings_hash, local_context):
-        """Generates an own cache key for every instance of this process.
-        When a process inherits from both ``Process`` class and
-        ``ProcessWithSamplePositions`` class, you have to make shure, that the
-        process uses this method for the cache key and not the method from
-        the ``Process`` class.
+        """Generates an own cache key for every instance of this process.  If a process
+        inherits from both ``Process`` class and ``ProcessWithSamplePositions``
+        class, you have to make sure that the process uses this method for the
+        cache key and not the method from the ``Process`` class.
 
         For the parameter description see
             ``samples.models.common.Process.get_cache_key()``

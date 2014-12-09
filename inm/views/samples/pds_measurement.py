@@ -278,7 +278,7 @@ def show(request, pds_number):
     pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number))
     permissions.assert_can_view_physical_process(request.user, pds_measurement)
     if is_json_requested(request):
-        return respond_in_json(pds_measurement.get_data().to_dict())
+        return respond_in_json(pds_measurement.get_data())
     template_context = {"title": _("PDS measurement #{pds_number}").format(pds_number=pds_number),
                         "samples": pds_measurement.samples.all(), "process": pds_measurement}
     template_context.update(utils.digest_process(pds_measurement, request.user))

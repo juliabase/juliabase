@@ -137,7 +137,7 @@ def show_depositions(request, deposition_number, institute_model):
     deposition = get_object_or_404(institute_model, number=deposition_number)
     permissions.assert_can_view_physical_process(request.user, deposition)
     if is_json_requested(request):
-        return respond_in_json(deposition.get_data().to_dict())
+        return respond_in_json(deposition.get_data())
     template_context = {"title": _("{name} “{number}”").format(name=institute_model._meta.verbose_name, number=deposition.number),
                         "samples": deposition.samples.all(),
                         "process": deposition}

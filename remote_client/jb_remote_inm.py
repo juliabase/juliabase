@@ -41,20 +41,22 @@ class ClusterToolDeposition(object):
     def __init__(self, number=None):
         if number:
             data = connection.open("cluster_tool_depositions/{0}".format(number))
-            self.sample_ids = data["sample IDs"]
+            self.sample_ids = data["samples"]
             self.operator = data["operator"]
             self.timestamp = parse_timestamp(data["timestamp"])
-            self.timestamp_inaccuracy = data["timestamp inaccuracy"]
+            self.timestamp_inaccuracy = data["timestamp_inaccuracy"]
             self.comments = data["comments"]
             self.number = data["number"]
             self.carrier = data["carrier"]
             self.layers = []
             layers = [(int(key[6:]), value) for key, value in data.items() if key.startswith("layer ")]
             for __, layer_data in sorted(layers):
-                if layer_data["layer type"] == "PECVD":
+                if layer_data["content_type"] == "cluster tool PECVD layer":
                     ClusterToolPECVDLayer(self, layer_data)
-                elif layer_data["layer type"] == "hot-wire":
+                elif layer_data["content_type"] == "cluster tool hot-wire layer":
                     ClusterToolHotWireLayer(self, layer_data)
+                else:
+                    raise Exception("{} is an unknown layer type".format(layer_data["content_type"]))
             self.existing = True
         else:
             self.sample_ids = []
@@ -111,10 +113,10 @@ class ClusterToolHotWireLayer(object):
         if data:
             self.time = data["time"]
             self.comments = data["comments"]
-            self.wire_material = data["wire material"]
-            self.base_pressure = data["base pressure/mbar"]
-            self.h2 = data["H2/sccm"]
-            self.sih4 = data["SiH4/sccm"]
+            self.wire_material = data["wire_material"]
+            self.base_pressure = data["base_pressure"]
+            self.h2 = data["h2"]
+            self.sih4 = data["sih4"]
         else:
             self.time = self.comments = self.wire_material = self.base_pressure = self.h2 = self.sih4 = None
 
@@ -141,10 +143,10 @@ class ClusterToolPECVDLayer(object):
             self.chamber = data["chamber"]
             self.time = data["time"]
             self.comments = data["comments"]
-            self.plasma_start_with_shutter = data["plasma start with shutter"]
-            self.deposition_power = data["deposition power/W"]
-            self.h2 = data["H2/sccm"]
-            self.sih4 = data["SiH4/sccm"]
+            self.plasma_start_with_shutter = data["plasma_start_with_shutter"]
+            self.deposition_power = data["deposition_power"]
+            self.h2 = data["h2"]
+            self.sih4 = data["sih4"]
         else:
             self.chamber = self.pressure = self.time = self.comments = self.plasma_start_with_shutter = \
                 self.deposition_power = self.h2 = self.sih4 = None
@@ -194,14 +196,14 @@ class PDSMeasurement(object):
         """
         if number:
             data = connection.open("pds_measurements/{0}".format(number))
-            self.sample_id = data["sample IDs"][0]
-            self.number = data["PDS number"]
+            self.sample_id = data["samples"][0]
+            self.number = data["number"]
             self.operator = data["operator"]
             self.timestamp = parse_timestamp(data["timestamp"])
-            self.timestamp_inaccuracy = data["timestamp inaccuracy"]
+            self.timestamp_inaccuracy = data["timestamp_inaccuracy"]
             self.comments = data["comments"]
             self.apparatus = data["apparatus"]
-            self.raw_datafile = data["raw data file"]
+            self.raw_datafile = data["raw_datafile"]
             self.existing = True
         else:
             self.sample_id = self.number = self.operator = self.timestamp = self.comments = self.apparatus = None
@@ -260,8 +262,8 @@ class Substrate(object):
             self.id, self.timestamp, self.timestamp_inaccuracy, self.operator, self.external_operator, self.material, \
                 self.comments, self.sample_ids = \
                 initial_data["ID"], parse_timestamp(initial_data["timestamp"]), \
-                initial_data["timestamp inaccuracy"], initial_data["operator"], initial_data["external operator"], \
-                initial_data["material"], initial_data["comments"], initial_data["sample IDs"]
+                initial_data["timestamp_inaccuracy"], initial_data["operator"], initial_data["external_operator"], \
+                initial_data["material"], initial_data["comments"], initial_data["samples"]
         else:
             self.id = self.timestamp = self.operator = self.external_operator = self.material = self.comments = None
             self.timestamp_inaccuracy = 0
@@ -349,17 +351,17 @@ class SolarsimulatorMeasurement(object):
             data = connection.open("solarsimulator_measurements/{0}".format(process_id))
             self.process_id = process_id
             self.irradiation = data["irradiation"]
-            self.temperature = data["temperature/degC"]
-            self.sample_id = data["sample IDs"][0]
+            self.temperature = data["temperature"]
+            self.sample_id = data["samples"][0]
             self.operator = data["operator"]
             self.timestamp = parse_timestamp(data["timestamp"])
-            self.timestamp_inaccuracy = data["timestamp inaccuracy"]
+            self.timestamp_inaccuracy = data["timestamp_inaccuracy"]
             self.comments = data["comments"]
             self.cells = {}
             for key, value in data.items():
                 if key.startswith("cell position "):
                     data = value
-                    cell = SolarsimulatorCellMeasurement(self, data["cell position"], data)
+                    cell = SolarsimulatorCellMeasurement(self, data["position"], data)
             self.existing = True
         else:
             self.process_id = self.irradiation = self.temperature = self.sample_id = self.operator = self.timestamp = \
@@ -401,10 +403,10 @@ class SolarsimulatorCellMeasurement(object):
         self.position = position
         measurement.cells[position] = self
         if data:
-            self.area = data["area/cm^2"]
-            self.eta = data["efficiency/%"]
-            self.isc = data["short-circuit current density/(mA/cm^2)"]
-            self.data_file = data["data file name"]
+            self.area = data["area"]
+            self.eta = data["eta"]
+            self.isc = data["isc"]
+            self.data_file = data["data_file"]
         else:
             self.area = self.eta = self.isc = self.data_file = None
 
@@ -467,10 +469,10 @@ class FiveChamberDeposition(object):
         """
         if number:
             data = connection.open("5-chamber_depositions/{0}".format(number))
-            self.sample_ids = data["sample IDs"]
+            self.sample_ids = data["samples"]
             self.operator = data["operator"]
             self.timestamp = parse_timestamp(data["timestamp"])
-            self.timestamp_inaccuracy = data["timestamp inaccuracy"]
+            self.timestamp_inaccuracy = data["timestamp_inaccuracy"]
             self.comments = data["comments"]
             self.number = data["number"]
             self.layers = []
@@ -541,12 +543,11 @@ class FiveChamberLayer(object):
         deposition.layers.append(self)
         if data:
             self.chamber = data["chamber"]
-            self.temperature_1 = data["T/degC (1)"]
-            self.temperature_2 = data["T/degC (2)"]
-            self.layer_type = data["layer type"]
-            self.sih4 = data["SiH4/sccm"]
-            self.h2 = data["H2/sccm"]
-            self.silane_concentration = data["SC/%"]
+            self.temperature_1 = data["temperature_1"]
+            self.temperature_2 = data["temperature_2"]
+            self.layer_type = data["layer_type"]
+            self.sih4 = data["sih4"]
+            self.h2 = data["h2"]
         else:
             self.chamber = self.temperature_1 = self.temperature_2 = self.layer_type = \
                 self.sih4 = self.h2 = self.silane_concentration = None
