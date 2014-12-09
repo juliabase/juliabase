@@ -92,7 +92,9 @@ class Deposition(PhysicalProcess):
             except AttributeError:
                 pass
             layer_data = layer.get_data()
-            del layer_data["deposition"]
+            for key in list(layer_data):
+                if key in {"deposition", "actual_object_id"} or key.endswith("_ptr"):
+                    del layer_data[key]
             data["layer {}".format(layer.number)] = layer_data
         return data
 
