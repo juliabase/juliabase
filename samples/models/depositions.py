@@ -82,7 +82,20 @@ class Deposition(PhysicalProcess):
         return _("deposition {number}").format(number=self.number)
 
     def get_data(self):
-        # See `Process.get_data` for the documentation.
+        """Extract the data of the deposition as a dictionary, ready to be used for
+        general data export.  In contrast to `get_data_for_table_export`, I
+        export all fields automatically of the instance, including foreign
+        keys.  The layers, together with their data, is included in the keys
+        ``"layer {number}"``.  Typically, this data is used when a non-browser
+        client retrieves a single resource and expects JSON output.
+
+        You will rarely need to override this method.
+
+        :Return:
+          the content of all fields of this deposition
+
+        :rtype: `dict`
+        """
         data = super(Deposition, self).get_data()
         del data["deposition_ptr"]
         for layer in self.layers.all():
@@ -159,6 +172,20 @@ class Layer(models.Model):
         verbose_name_plural = _("layers")
 
     def get_data(self):
+        """Extract the data of this layer as a dictionary, ready to be used for general
+        data export.  In contrast to `get_data_for_table_export`, I export all
+        fields automatically of the layer, including foreign keys.  It does
+        not, however, include reverse relations.  This method is only called
+        from the ``get_data()`` method of the respective deposition, which in
+        turn mostly is `Deposition.get_data` (i.e., not overridden).
+
+        You will rarely need to override this method in derived layer classes.
+
+        :Return:
+          the content of all fields of this layer
+
+        :rtype: `dict`
+        """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):

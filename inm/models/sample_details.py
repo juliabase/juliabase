@@ -213,6 +213,18 @@ class SampleDetails(models.Model):
         self.save()
 
     def get_data(self):
+        """Extract the data of the sample details as a dictionary, ready to be used for
+        general data export.  In contrast to `get_data_for_table_export`, I
+        export all fields automatically of the instance, including foreign
+        keys.  Moreover, all informal layers are exported together with their
+        data in nested dictionaries.  Typically, this data is used when a
+        non-browser client retrieves a single resource and expects JSON output.
+
+        :Return:
+          the content of all fields of these sample details
+
+        :rtype: `dict`
+        """
         data = {field.name: getattr(self, field.name) for field in self._meta.fields}
         data.update(("informal layer #{}".format(layer.index), layer.get_data()) for layer in self.informal_layers.all())
         return data
@@ -318,6 +330,14 @@ class InformalLayer(models.Model):
             self.sample_details.save()
 
     def get_data(self):
+        """Extract the data of this process as a dictionary, ready to be used for
+        general data export.  It is only used in `SampleDetails.get_data`.
+
+        :Return:
+          the content of all fields of this informal layer
+
+        :rtype: `dict`
+        """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):

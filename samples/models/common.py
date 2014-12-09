@@ -318,12 +318,15 @@ class Process(PolymorphicModel):
     def get_data(self):
         """Extract the data of this process as a dictionary, ready to be used for
         general data export.  In contrast to `get_data_for_table_export`, I
-        export *all* attributes that may be interesting for the user, and even
-        some related data.  Typically, this data is used if a non-browser
-        client retrieves a single resource and expects JSON output.
+        export all fields automatically of the instance, including foreign
+        keys.  In addition to all fields, it exports the IDs of the contained
+        samples with the key ``"samples"``.  It does not, however, include
+        reverse relations of derived processes automatically.  Typically, this
+        data is used when a non-browser client retrieves a single resource and
+        expects JSON output.
 
-        The type of the process (e.g. “PDS measurement”) is returned with the
-        key ``"type"``.
+        You will rarely need to override this method.  One case is if you need
+        to include reverse relation fields, e.g. of sub-measurements.
 
         :Return:
           the content of all fields of this process
@@ -780,13 +783,22 @@ class Sample(models.Model):
             return None
 
     def get_data(self, only_processes=False):
-        """
+        """Extract the data of this sample as a dictionary, ready to be used for
+        general data export.  In contrast to `get_data_for_table_export`, I
+        export all fields automatically of the instance, including foreign
+        keys.  It does not, however, include reverse relations.  Typically,
+        this data is used when a non-browser client retrieves a single resource
+        and expects JSON output.
+
         :Parameters:
           - `only_processes`: Whether only processes should be included.  It is
             not part of the official `get_data` API.  I use it only to avoid
             having a special inner function in this method.
 
         :type only_processes: bool
+
+        :Return:
+          the content of all fields of this process
 
         :rtype: `dict`
         """
@@ -1172,6 +1184,14 @@ class Result(Process):
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
+        """Extract the data of this result process as a dictionary.  See
+        `Process.get_data` for more information.
+
+        :Return:
+          the content of all fields of this process
+
+        :rtype: `dict`
+        """
         data = super(Result, self).get_data()
         data["sample_series"] = self.sample_series.values_list("pk", flat=True)
         return data
@@ -1259,24 +1279,16 @@ class SampleSeries(models.Model):
         return ("samples.views.sample_series.show", [self.name])
 
     def get_data(self):
-        """Extract the data of this sample series as a tree of nodes with
-        lists of key–value pairs, ready to be used for general data export.
-        Every child of the top-level node is a sample of the sample series.  In
-        contrast to `get_data_for_table_export`, I export *all* attributes that
-        may be interesting for the user, and even some related data.
-        Typically, this data is used if a non-browser client retrieves a single
-        resource (*not* its table export!) and expects JSON output.
-
-        Additionaly, nothing is translated here.  This is in order to have
-        stable keys and values.  Otherwise, interpretation of the extracted
-        data would be a nightmare.  This also means that you must pass a
-        unicode to ``DataNode`` instead of an instance because an instance gets
-        translated.
+        """Extract the data of this sample series as a dictionary, ready to be used for
+        general data export.  In addition to all fields, it exports the IDs of
+        the contained samples with the key ``"samples"``.  Typically, this data
+        is used when a non-browser client retrieves a single resource and
+        expects JSON output.
 
         :Return:
-          a node for building a data tree
+          the content of all fields of this sample series
 
-        :rtype: `samples.data_tree.DataNode`
+        :rtype: `dict`
         """
         data = {field.name: getattr(self, field.name) for field in self._meta.fields}
         data["samples"] = self.samples.values_list("id", flat=True)

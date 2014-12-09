@@ -239,6 +239,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         return django.core.urlresolvers.reverse("add_solarsimulator_measurement")
 
     def get_data(self):
+        # See `Process.get_data` for documentation of this method.
         data = super(SolarsimulatorMeasurement, self).get_data()
         for cell in self.cells.all():
             cell_data = cell.get_data()
@@ -329,6 +330,14 @@ class SolarsimulatorCellMeasurement(models.Model):
             position=self.position, solarsimulator_measurement=self.measurement)
 
     def get_data(self):
+        """Extract the data of this single cell measurement as a dictionary.  It is
+        called only from `SolarsimulatorMeasurement.get_data`.
+
+        :Return:
+          the content of all fields of this cell measurement
+
+        :rtype: `dict`
+        """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):
