@@ -333,6 +333,8 @@ class Process(PolymorphicModel):
         data = {field.name: getattr(self, field.name) for field in self._meta.fields
                 if field.name not in {"actual_object_id", "process_ptr"}}
         data["samples"] = self.samples.values_list("id", flat=True)
+        if "sample_positions" in data:
+            data["sample_positions"] = json.loads(data["sample_positions"])
         return data
 
     def get_data_for_table_export(self):
