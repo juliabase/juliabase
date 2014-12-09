@@ -1278,13 +1278,9 @@ class SampleSeries(models.Model):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        data_node = DataNode(self.name)
-        data_node.children.extend(sample.get_data() for sample in self.samples.all())
-        data_node.items = [DataItem("currently_responsible_person", self.currently_responsible_person),
-                           DataItem("timestamp", self.timestamp),
-                           DataItem("description", self.description),
-                           DataItem("topic", self.topic)]
-        return data_node
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data["samples"] = self.samples.values_list("id", flat=True)
+        return data
 
     def get_data_for_table_export(self):
         """Extract the data of this sample series as a tree of nodes with
