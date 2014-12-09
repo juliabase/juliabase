@@ -1580,7 +1580,7 @@ class ProcessWithSamplePositions(models.Model):
             sample = context.get("sample")
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict and sample:
-                context["sample_position"] = (sample if (sample.topic and not sample.topic.confidential) or
+                context["sample_position"] = (sample if sample.topic and not sample.topic.confidential or
                                               samples.permissions.has_permission_to_fully_view_sample(user, sample) or
                                               samples.permissions.has_permission_to_add_edit_physical_process(
                                                   user, self, self.content_type.model_class())
@@ -1590,7 +1590,7 @@ class ProcessWithSamplePositions(models.Model):
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict:
                 context["sample_positions"] = \
-                    collections.OrderedDict((sample if (sample.topic and not sample.topic.confidential) or
+                    collections.OrderedDict((sample if sample.topic and not sample.topic.confidential or
                                              samples.permissions.has_permission_to_fully_view_sample(user, sample) or
                                              samples.permissions.has_permission_to_add_edit_physical_process(
                                                  user, self, self.content_type.model_class())
