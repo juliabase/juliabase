@@ -309,7 +309,7 @@ def show(request, process_id):
     solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement, id=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_physical_process(request.user, solarsimulator_measurement)
     if is_json_requested(request):
-        return respond_in_json(solarsimulator_measurement.get_data().to_dict())
+        return respond_in_json(solarsimulator_measurement.get_data())
     template_context = {"title": _(u"Solarsimulator measurement #{number}").format(number=process_id),
                         "samples": solarsimulator_measurement.samples.all(), "process": solarsimulator_measurement,
                         "cells": solarsimulator_measurement.cells.all()}

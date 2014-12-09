@@ -154,7 +154,7 @@ def substrate_by_sample(request, sample_id):
         return respond_in_json(False)
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     substrate = get_substrate(sample)
-    return respond_in_json(substrate.get_data().to_dict())
+    return respond_in_json(substrate.get_data())
 
 
 @never_cache

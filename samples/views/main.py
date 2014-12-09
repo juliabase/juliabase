@@ -225,7 +225,7 @@ def show_process(request, process_id):
         raise Http404("No physical process with that ID was found.")
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
-        return respond_in_json(process.get_data().to_dict())
+        return respond_in_json(process.get_data())
     template_context = {"title": six.text_type(process), "samples": process.samples.all(), "process": process}
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)
