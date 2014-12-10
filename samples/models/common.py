@@ -1077,13 +1077,13 @@ class Result(Process):
     image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
         # Translators: Physical quantities are meant
     quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_("in JSON format"))
-    """This is a data structure, serialised in JSON.  If you de-serialise it,
-    it is a tuple with two items.  The first is a list of unicodes with all
+    """This is a data structure, serialised in JSON.  If you de-serialise it, it is
+    a tuple with two items.  The first is a list of unicodes with all
     quantities (the table headings).  The second is a list of lists with
     unicodes (the values; the table cells).  The outer list is the set of rows,
-    the inner the columns.  No Markdown is used here, just plain strings.  (The
-    HTML entity substitution in quantities has taken place already *before*
-    anyting is written here.)
+    the inner the cells in each row.  No Markdown is used here, just plain
+    strings.  (The HTML entity substitution in quantities has taken place
+    already *before* anyting is written here.)
     """
 
     class Meta(Process.Meta):

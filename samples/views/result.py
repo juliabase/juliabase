@@ -294,8 +294,8 @@ class FormSet(object):
 
     :ivar value_form_lists: The (mostly) bound forms of result values in the
       table.  Those that are newly added are unbound.  The outer list are the
-      rows, the inner the columns.  (In case of a GET method, all are unbound
-      of course.)
+      rows, the inner the cells in each row.  (In case of a GET method, all are
+      unbound of course.)
 
     :ivar edit_description_form: the bound form with the edit description if
       we're editing an existing result, and ``None`` otherwise
