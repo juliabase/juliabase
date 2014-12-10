@@ -341,17 +341,9 @@ class InformalLayer(models.Model):
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):
-        _ = ugettext
         data_node = DataNode(self)
-        data_node.items = [DataItem(_("index"), self.index),
-                           DataItem(_("doping"), self.get_doping_display()),
-                           DataItem(_("classification"), self.get_classification_display()),
-                           DataItem(_("comments"), self.comments),
-                           DataItem(_("thickness"), self.thickness),
-                           DataItem(_("thickness reliable"), self.thickness_reliable),
-                           DataItem(_("structured"), self.structured),
-                           DataItem(_("textured"), self.textured),
-                           DataItem(_("verified"), self.verified)]
+        samples.models.fields_to_data_items(self, data_node, {"sample_details", "color", "always_collapsed", "process",
+                                                              "additional_process_data"})
         return data_node
 
     @classmethod

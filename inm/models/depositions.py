@@ -109,13 +109,6 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
             context["duplicate_url"] = None
         return super(ClusterToolDeposition, self).get_context_for_user(user, context)
 
-    def get_data_for_table_export(self):
-        _ = ugettext
-        data_node = super(ClusterToolDeposition, self).get_data_for_table_export()
-        data_node.items.append(DataItem(_("carrier"), self.carrier))
-        data_node.children = [layer.actual_instance.get_data_for_table_export() for layer in self.layers.all()]
-        return data_node
-
     @classmethod
     def get_search_tree_node(cls):
         """Class method for generating the search tree node for this model
@@ -200,17 +193,6 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         return self.deposition.natural_key() + (self.number,)
     natural_key.dependencies = ["samples.Deposition"]
 
-    def get_data_for_table_export(self):
-        # See `Layer.get_data_for_table_export` for the documentation.
-        _ = ugettext
-        data_node = samples.models.depositions.Layer.get_data_for_table_export(self)
-        data_node.items = [DataItem(_("time"), self.time),
-                            DataItem(_("comments"), self.comments),
-                            DataItem(_("wire material"), self.get_wire_material_display()),
-                            DataItem(_("base pressure") + "/mbar", self.base_pressure)]
-        data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items_for_table_export(self))
-        return data_node
-
 
 class ClusterToolPECVDLayerManager(models.Manager):
     def get_by_natural_key(self, deposition_number, layer_number):
@@ -243,19 +225,6 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     def natural_key(self):
         return self.deposition.natural_key() + (self.number,)
     natural_key.dependencies = ["samples.Deposition"]
-
-    def get_data_for_table_export(self):
-        _ = ugettext
-        # See `Layer.get_data_for_table_export` for the documentation.
-        data_node = samples.models.depositions.Layer.get_data_for_table_export(self)
-        data_node.items = [DataItem(_("chamber"), self.get_chamber_display()),
-                            DataItem(_("time"), self.time),
-                            DataItem(_("comments"), self.comments),
-                            DataItem(_("plasma start with shutter"), _("yes") if self.plasma_start_with_shutter else _("no")),
-                            DataItem(_("deposition power") + "/W", self.deposition_power), ]
-        data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items_for_table_export(self))
-        return data_node
-
 
 
 class FiveChamberDeposition(samples.models.depositions.Deposition):
@@ -364,11 +333,5 @@ class FiveChamberLayer(samples.models.depositions.Layer):
             silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100
         else:
             silane_concentration = 0
-        data_node.items.extend([DataItem(_("layer type"), self.get_layer_type_display()),
-                                DataItem(_("chamber"), self.get_chamber_display()),
-                                DataItem("SiH₄/sccm", self.sih4),
-                                DataItem("H₂/sccm", self.h2),
-                                DataItem("SC/%", "{0:5.2f}".format(silane_concentration)),
-                                DataItem("T/℃ (1)", self.temperature_1),
-                                DataItem("T/℃ (2)", self.temperature_2)])
+        data_node.items.append(DataItem("SC/%", "{0:5.2f}".format(silane_concentration)))
         return data_node

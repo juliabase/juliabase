@@ -44,6 +44,29 @@ from django.contrib.contenttypes.models import ContentType
 import collections
 
 
+table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
+def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
+    blacklist = table_export_blacklist | additional_blacklist
+    for field in instance._meta.fields:
+        if field.name not in blacklist and not field.name.endswith("_ptr"):
+            if field.choices:
+                value = getattr(instance, "get_{}_display".format(field.name))()
+            else:
+                value = getattr(instance, field.name)
+                if isinstance(value, django.contrib.auth.models.User):
+                    value = get_really_full_name(value)
+            try:
+                unit = "/" + field.unit
+            except AttributeError:
+                unit = ""
+            data_node.items.append(DataItem(field.verbose_name + unit, value, field.model.__name__.lower()))
+
+
+def remove_data_item(instance, data_node, field_name):
+    key = instance._meta.get_field(field_name).verbose_name
+    data_node.items = [item for item in data_node.items if item.key != key]
+
+
 class ExternalOperatorManager(models.Manager):
     def get_by_natural_key(self, name):
         return self.get(name=name)
@@ -354,11 +377,8 @@ class Process(PolymorphicModel):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        _ = ugettext
         data_node = DataNode(self)
-        data_node.items = [DataItem(_("timestamp"), self.timestamp, "process"),
-                           DataItem(_("operator"), get_really_full_name(self.operator), "process"),
-                           DataItem(_("comments"), self.comments.strip(), "process")]
+        fields_to_data_items(self, data_node)
         return data_node
 
     @classmethod
@@ -834,13 +854,7 @@ class Sample(models.Model):
         """
         _ = ugettext
         data_node = DataNode(self, six.text_type(self))
-        data_node.items = [DataItem("name", self.name),
-                           DataItem("currently responsible person", self.currently_responsible_person),
-                           DataItem("current location", self.current_location),
-                           DataItem("purpose", self.purpose),
-                           DataItem("tags", self.tags),
-                           DataItem("split origin", self.split_origin),
-                           DataItem("topic", self.topic)]
+        fields_to_data_items(self, data_node)
         sample_details = self.get_sample_details()
         if sample_details:
             sample_details_data = sample_details.get_data_for_table_export()
@@ -1218,6 +1232,7 @@ class Result(Process):
         """
         _ = ugettext
         data_node = super(Result, self).get_data_for_table_export()
+        remove_data_item(self, data_node, "quantities_and_values")
         data_node.name = data_node.descriptive_name = self.title
         quantities, value_lists = json.loads(self.quantities_and_values)
         if len(value_lists) > 1:

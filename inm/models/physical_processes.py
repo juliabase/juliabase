@@ -74,13 +74,6 @@ class Substrate(PhysicalProcess):
     def __str__(self):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
-    def get_data_for_table_export(self):
-        # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
-        data_node = super(Substrate, self).get_data_for_table_export()
-        data_node.items.append(DataItem(_("material"), self.get_material_display()))
-        return data_node
-
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         if permissions.has_permission_to_edit_physical_process(user, self):
@@ -166,15 +159,6 @@ class PDSMeasurement(PhysicalProcess):
             context["edit_url"] = None
         return super(PDSMeasurement, self).get_context_for_user(user, context)
 
-    def get_data_for_table_export(self):
-        # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
-        data_node = super(PDSMeasurement, self).get_data_for_table_export()
-        data_node.items.append(DataItem(_("PDS number"), self.number))
-        data_node.items.append(DataItem(_("apparatus"), self.get_apparatus_display()))
-        data_node.items.append(DataItem(_("raw data file"), self.raw_datafile))
-        return data_node
-
 
 irradiation_choices = (("AM1.5", "AM1.5"),
                        ("OG590", "OG590"),
@@ -245,16 +229,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
             del cell_data["measurement"]
             data["cell position {}".format(cell.position)] = cell_data
         return data
-
-    def get_data_for_table_export(self):
-        # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
-        data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
-        best_eta = self.cells.aggregate(models.Max("eta"))["eta__max"]
-        data_node.items.extend([DataItem(_("irradiation"), self.irradiation),
-                                DataItem(_("temperature") + "/℃", self.temperature),
-                                DataItem(_("η of best cell") + "/%", utils.round(best_eta, 3))])
-        return data_node
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
@@ -339,9 +313,6 @@ class SolarsimulatorCellMeasurement(models.Model):
         :rtype: `dict`
         """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
-
-    def get_data_for_table_export(self):
-        raise NotImplementedError
 
     @classmethod
     def get_search_tree_node(cls):

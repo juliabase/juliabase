@@ -26,7 +26,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.db import models
-from samples.models.common import PhysicalProcess
+from samples.models.common import PhysicalProcess, fields_to_data_items, remove_data_item
 from samples.data_tree import DataNode, DataItem
 from jb_common import search
 
@@ -115,8 +115,14 @@ class Deposition(PhysicalProcess):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = super(Deposition, self).get_data_for_table_export()
-        data_node.items.append(DataItem(_("number"), self.number, "deposition"))
-        data_node.children = [layer.get_data_for_table_export() for layer in self.layers.all()]
+        remove_data_item(self, data_node, "split_done")
+        for layer in self.layers.all():
+            try:
+                # For deposition systems with polymorphic layers
+                layer = layer.actual_instance
+            except AttributeError:
+                pass
+            data_node.children.append(layer.get_data_for_table_export())
         return data_node
 
     @classmethod
@@ -192,7 +198,7 @@ class Layer(models.Model):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = DataNode(self, _("layer {number}").format(number=self.number))
-        data_node.items = [DataItem(_("number"), self.number, "layer")]
+        fields_to_data_items(self, data_node, {"deposition"})
         return data_node
 
     @classmethod
