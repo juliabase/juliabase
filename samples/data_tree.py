@@ -30,17 +30,14 @@ class DataNode(object):
     :ivar descriptive_name: name which is used if this node is a row node in
       the final tree, as a row description in the very first column.
 
-    :ivar items: Key–value pairs with the actual data.  Again, for nodes with
-      the same `name` (i.e. of the same *type*), this list must always have the
-      same length and the sample key ordering.  Note that this is not a
-      dictionary in order to preserve ordering.
+    :ivar items: list of Key–value structures with the actual data.
 
     :ivar children: the child nodes of this node in the three; for example,
       they may be the samples of a sample series
 
     :type name: unicode
     :type descriptive_name: unicode
-    :type items: list of (unicode, unicode)
+    :type items: list of `DataItem`
     :type childen: list of `DataNode`
     """
 
