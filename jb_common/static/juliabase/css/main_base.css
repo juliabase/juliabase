@@ -84,7 +84,8 @@ td.value, td.input { text-align: left }
 td.value { font-weight: bold; vertical-align: text-top }
 td.input { vertical-align: top }
 td.label { text-align: right; vertical-align: text-top; padding-right: 0.3em }
-span.help { font-size: small; font-weight: normal }
+span.help { font-size: small; font-weight: normal; margin-left: 0.6em }
+span.unit-of-measurement { padding-left: 0.3em }
 
 /* MESSAGES & ERRORS */
 div.errorlist, td.error-messages { text-align: left; font-size: x-small; padding: 0pt }

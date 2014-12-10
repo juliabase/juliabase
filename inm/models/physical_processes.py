@@ -29,7 +29,7 @@ from django.conf import settings
 from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataNode, DataItem
-from jb_common import search
+from jb_common import search, model_fields
 from jb_common.utils import in_, format_lazy
 from samples.views import utils
 from inm import layouts
@@ -183,8 +183,7 @@ irradiation_choices = (("AM1.5", "AM1.5"),
 @python_2_unicode_compatible
 class SolarsimulatorMeasurement(PhysicalProcess):
     irradiation = models.CharField(_("irradiation"), max_length=10, choices=irradiation_choices)
-    temperature = models.DecimalField(_("temperature"), max_digits=3, decimal_places=1, help_text=_("in ℃"),
-                                      default=25.0)
+    temperature = model_fields.DecimalQuantityField(_("temperature"), max_digits=3, decimal_places=1, unit="℃", default=25.0)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("solarsimulator measurement")
@@ -314,10 +313,11 @@ class SolarsimulatorCellMeasurement(models.Model):
                                     verbose_name=_("solarsimulator measurement"))
     position = models.CharField(_("cell position"), max_length=5)
     data_file = models.CharField(_("data file"), max_length=200, db_index=True,
-                                 help_text=format_lazy(_('only the relative path below "{path}"'), path="solarsimulator_raw_data/"))
-    area = models.FloatField(_("area"), help_text=_("in cm²"), null=True, blank=True)
-    eta = models.FloatField(_("efficiency η"), help_text=_("in %"), null=True, blank=True)
-    isc = models.FloatField(_("short-circuit current density"), help_text=_("in mA/cm²"), null=True, blank=True)
+                                 help_text=format_lazy(_('only the relative path below "{path}"'),
+                                                       path="solarsimulator_raw_data/"))
+    area = model_fields.FloatQuantityField(_("area"), unit="cm²", null=True, blank=True)
+    eta = model_fields.FloatQuantityField(_("efficiency η"), unit="%", null=True, blank=True)
+    isc = model_fields.FloatQuantityField(_("short-circuit current density"), unit="mA/cm²", null=True, blank=True)
 
     class Meta:
         verbose_name = _("solarsimulator cell measurement")
@@ -385,8 +385,8 @@ class Structuring(PhysicalProcess):
     ``parameters``.
     """
     layout = models.CharField(_("layout"), max_length=30, choices=layout_choices)
-    length = models.FloatField(_("length"), help_text=in_("mm"), blank=True, null=True)
-    width = models.FloatField(_("width"), help_text=in_("mm"), blank=True, null=True)
+    length = model_fields.FloatQuantityField(_("length"), unit="mm", blank=True, null=True)
+    width = model_fields.FloatQuantityField(_("width"), unit="mm", blank=True, null=True)
     parameters = models.TextField(_("parameters"), blank=True)
 
     class Meta(PhysicalProcess.Meta):
