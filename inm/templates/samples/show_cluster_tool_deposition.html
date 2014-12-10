@@ -78,7 +78,7 @@ copyright holder, you must destroy it immediately and completely.
                   {% if layer.type == "hot-wire" %}
                     {% value_field layer.base_pressure %}
                   {% elif layer.type == "PECVD" %}
-                    {% value_field layer.deposition_power "W" %}
+                    {% value_field layer.deposition_power %}
                   {% endif %}
               </tr>
               </tbody>
@@ -102,12 +102,12 @@ copyright holder, you must destroy it immediately and completely.
                     <tbody>
                     {% if layer.h2 %}
                     <tr>
-                        {% value_field layer.h2 "sccm" %}
+                        {% value_field layer.h2 %}
                     </tr>
                     {% endif %}
                     {% if layer.sih4 %}
                     <tr>
-                        {% value_field layer.sih4 "sccm" %}
+                        {% value_field layer.sih4 %}
                     </tr>
                     {% endif %}
                     </tbody>
