@@ -208,7 +208,7 @@ def _read_plot_file_beginning_after_start_value(filename, columns, start_value, 
             cells = line.strip().split(separator)
             for column, result_array in zip(columns, result):
                 try:
-                    value = float(cells[column])
+                    value = float(cells[column].replace(",", "."))
                 except IndexError:
                     raise PlotError("datafile contained too few columns")
                 except ValueError:
