@@ -230,6 +230,14 @@ class SolarsimulatorMeasurement(PhysicalProcess):
             data["cell position {}".format(cell.position)] = cell_data
         return data
 
+    def get_data_for_table_export(self):
+        # See `Process.get_data_for_table_export` for the documentation.
+        _ = ugettext
+        data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
+        best_eta = self.cells.aggregate(models.Max("eta"))["eta__max"]
+        data_node.items.append(DataItem(_("η of best cell") + "/%", utils.round(best_eta, 3)))
+        return data_node
+
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
         x_values, y_values = institute_utils.read_solarsimulator_plot_file(filename, position=plot_id)
