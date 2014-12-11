@@ -56,7 +56,7 @@ class Deposition(PhysicalProcess):
     words, ``instance.layers.all()`` must work if ``instance`` is an instance
     of your deposition class.
     """
-    number = models.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
+    number = models.CharField(_("deposition number"), max_length=15, primary_key=True, db_index=True)
     split_done = models.BooleanField(_("split after deposition done"), default=False)
 
     class Meta(PhysicalProcess.Meta):
