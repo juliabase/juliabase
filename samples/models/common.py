@@ -45,7 +45,23 @@ import collections
 
 
 table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
+"""Set of field names that should never be included by `fields_to_data_items`."""
+
 def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
+    """Adds all fields of a model instance to the items of a data node.  This
+    function is called inside `get_data_for_table_export` in order to
+    conveniently fill the `DataNode` with the fields.
+
+    :Parameters:
+      - `instance`: model field instance from which this is called
+      - `data_node`: the data node the items of which the fields should be
+        added; this means, it is changed in place
+      - `additional_blacklist`: field names that should not be added
+
+    :type instance: `model.Model`
+    :type data_node: `DataNode`
+    :type additional_blacklist: set of str
+    """
     blacklist = table_export_blacklist | additional_blacklist
     for field in instance._meta.fields:
         if field.name not in blacklist and not field.name.endswith("_ptr"):
@@ -63,6 +79,22 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
 
 
 def remove_data_item(instance, data_node, field_name):
+    """Remove an item from a `DataNode` with a certain key.  This is called
+    from a `get_data_for_table_export` method for refine the `DataNode`.
+    Typically, the items of the `DataNode` have been populated by an inherited
+    `fields_to_data_items`, and in this step, too many fields were added.  This
+    can be corrected by call this function.
+
+    :Parameters:
+      - `instance`: model field instance from which this is called
+      - `data_node`: the data node the items of which should be filtered; this
+        means that this variable is changed in place
+      - `field_name`: name of the field to be removed, if available
+
+    :type instance: `model.Model`
+    :type data_node: `DataNode`
+    :type field_name: str
+    """
     key = instance._meta.get_field(field_name).verbose_name
     data_node.items = [item for item in data_node.items if item.key != key]
 
@@ -369,8 +401,11 @@ class Process(PolymorphicModel):
         data export.  See the `samples.views.table_export` module for all the
         glory details.
 
-        Note that ``_`` must get ``ugettext`` in these methods because
-        otherwise, subsequent modifications in derived classes break.
+        If you're lucky, you don't need to override this method in derived
+        processes.  You may need to do this in case of sub-models contained in
+        a reverse foreign key.  Note that the `Deposition` class can handle
+        layers already.  Moreover, you may wish to refine the `DataNode` by
+        adding further fields and by using `remove_data_item`.
 
         :Return:
           a node for building a data tree
@@ -838,21 +873,16 @@ class Sample(models.Model):
 
 
     def get_data_for_table_export(self):
-        """Extract the data of this sample as a tree of nodes (or a single
-        node) with lists of key–value pairs, ready to be used for the table
-        data export.  Every child of the top-level node is a process of the
-        sample.  See the `samples.views.table_export` module for all the glory
-        details.
-
-        Note that ``_`` must get ``ugettext`` in these methods because
-        otherwise, subsequent modifications in derived classes break.
+        """Extract the data of this sample as a tree of nodes with lists of key–value
+        pairs, ready to be used for the table data export.  Every child of the
+        top-level node is a process of the sample.  See the
+        `samples.views.table_export` module for all the glory details.
 
         :Return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
         """
-        _ = ugettext
         data_node = DataNode(self, six.text_type(self))
         fields_to_data_items(self, data_node)
         sample_details = self.get_sample_details()
@@ -1211,10 +1241,10 @@ class Result(Process):
         return data
 
     def get_data_for_table_export(self):
-        """Extract the data of this result process as a tree of nodes (or a
-        single node) with lists of key–value pairs, ready to be used for the
-        table data export.  See the `samples.views.table_export` module for all
-        the glory details.
+        """Extract the data of this result process as a tree of nodes (or a single
+        node) with lists of key–value pairs, ready to be used for the table
+        data export.  See the `samples.views.table_export` module for all the
+        glory details.
 
         However, I should point out the peculiarities of result processes in
         this respect.  Result comments are exported by the parent class, here
@@ -1310,9 +1340,9 @@ class SampleSeries(models.Model):
         return data
 
     def get_data_for_table_export(self):
-        """Extract the data of this sample series as a tree of nodes with
-        lists of key–value pairs, ready to be used for the data export.  Every
-        child of the top-level node is a sample of the sample series.  See the
+        """Extract the data of this sample series as a tree of nodes with lists of
+        key–value pairs, ready to be used for the data export.  Every child of
+        the top-level node is a sample of the sample series.  See the
         `samples.views.table_export` module for all the glory details.
 
         :Return:
@@ -1320,7 +1350,6 @@ class SampleSeries(models.Model):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        _ = ugettext
         data_node = DataNode(self, six.text_type(self))
         data_node.children.extend(sample.get_data_for_table_export() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for

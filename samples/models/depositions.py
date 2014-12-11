@@ -113,7 +113,6 @@ class Deposition(PhysicalProcess):
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
         data_node = super(Deposition, self).get_data_for_table_export()
         remove_data_item(self, data_node, "split_done")
         for layer in self.layers.all():

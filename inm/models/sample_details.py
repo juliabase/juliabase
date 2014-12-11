@@ -230,7 +230,16 @@ class SampleDetails(models.Model):
         return data
 
     def get_data_for_table_export(self):
-        _ = ugettext
+        """Extract the data of these sample details as a set of nodes with lists of
+        key–value pairs, ready to be used for the table data export.  Informal
+        layers are added as children to the node.  See the
+        `samples.views.table_export` module for all the glory details.
+
+        :Return:
+          a node for building a data tree
+
+        :rtype: `samples.data_tree.DataNode`
+        """
         data_node = DataNode(self)
         data_node.children.extend(layer.get_data_for_table_export() for layer in self.informal_layers.iterator())
         if self.sample.split_origin:
@@ -341,6 +350,15 @@ class InformalLayer(models.Model):
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):
+        """Extract the data of this informal layer as a `DataNode` with lists of
+        key–value pairs, ready to be used for the table data export.  See the
+        `samples.views.table_export` module for all the glory details.
+
+        :Return:
+          a node for building a data tree
+
+        :rtype: `samples.data_tree.DataNode`
+        """
         data_node = DataNode(self)
         samples.models.fields_to_data_items(self, data_node, {"sample_details", "color", "always_collapsed", "process",
                                                               "additional_process_data"})
