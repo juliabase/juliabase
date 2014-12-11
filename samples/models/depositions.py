@@ -63,6 +63,9 @@ class Deposition(PhysicalProcess):
         verbose_name = _("deposition")
         verbose_name_plural = _("depositions")
 
+    class JBMeta:
+        identifying_field = "number"
+
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.main.show_deposition", [self.number])

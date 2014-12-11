@@ -116,6 +116,9 @@ class PDSMeasurement(PhysicalProcess):
                        ("view_every_pds_measurement", _("Can view all PDS measurements")))
         ordering = ["number"]
 
+    class JBMeta:
+        identifying_field = "number"
+
     def __str__(self):
         _ = ugettext
         try:
