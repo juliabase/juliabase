@@ -38,11 +38,6 @@ This is used in
 """
 
 
-class DepositionManager(models.Manager):
-    def get_by_natural_key(self, number):
-        return self.get(number=number)
-
-
 @python_2_unicode_compatible
 class Deposition(PhysicalProcess):
     """The base class for deposition processes.  Note that, like `Process`,
@@ -61,8 +56,6 @@ class Deposition(PhysicalProcess):
     words, ``instance.layers.all()`` must work if ``instance`` is an instance
     of your deposition class.
     """
-    objects = DepositionManager()
-
     number = models.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
     split_done = models.BooleanField(_("split after deposition done"), default=False)
 
@@ -73,9 +66,6 @@ class Deposition(PhysicalProcess):
     @models.permalink
     def get_absolute_url(self):
         return ("samples.views.main.show_deposition", [self.number])
-
-    def natural_key(self):
-        return (self.number,)
 
     def __str__(self):
         _ = ugettext
