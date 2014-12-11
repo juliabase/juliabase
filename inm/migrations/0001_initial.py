@@ -158,8 +158,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PDSMeasurement',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
-                ('number', models.PositiveIntegerField(unique=True, verbose_name='PDS number', db_index=True)),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, to='samples.Process')),
+                # FixMe: ``serialize=False`` should actually be at
+                # ``process_ptr``, see
+                # <https://code.djangoproject.com/ticket/23956#comment:7>.
+                ('number', models.PositiveIntegerField(serialize=False, primary_key=True, verbose_name='PDS number')),
                 ('raw_datafile', models.CharField(help_text='only the relative path below "pds_raw_data/"', max_length=200, verbose_name='raw data file')),
                 ('apparatus', models.CharField(default='pds1', max_length=15, verbose_name='apparatus', choices=[('pds1', 'PDS #1'), ('pds2', 'PDS #2')])),
             ],
