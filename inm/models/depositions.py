@@ -297,10 +297,8 @@ class FiveChamberLayer(samples.models.depositions.Layer):
     chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
     sih4 = models.DecimalField("SiH₄", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
     h2 = models.DecimalField("H₂", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
-    temperature_1 = models.DecimalField(_("temperature 1"), max_digits=7, decimal_places=3, help_text=in_("℃"),
-                                        null=True, blank=True)
-    temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=in_("℃"),
-                                        null=True, blank=True)
+    temperature_1 = models.DecimalField(_("temperature 1"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
+    temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
 
     class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")

@@ -100,7 +100,7 @@ pds_apparatus_choices = (
 class PDSMeasurement(PhysicalProcess):
     """Model for PDS measurements.
     """
-    number = models.PositiveIntegerField(_("PDS number"), primary_key=True)
+    number = models.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_("raw data file"), max_length=200,
                                     help_text=format_lazy(_('only the relative path below "{path}"'), path="pds_raw_data/"))
     apparatus = models.CharField(_("apparatus"), max_length=15, choices=pds_apparatus_choices, default="pds1")

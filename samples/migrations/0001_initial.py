@@ -332,11 +332,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Deposition',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, to='samples.Process')),
-                # FixMe: ``serialize=False`` should actually be at
-                # ``process_ptr``, see
-                # <https://code.djangoproject.com/ticket/23956#comment:7>.
-                ('number', models.CharField(serialize=False, primary_key=True, max_length=15, verbose_name='deposition number')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('number', models.CharField(unique=True, max_length=15, verbose_name='deposition number', db_index=True)),
                 ('split_done', models.BooleanField(default=False, verbose_name='split after deposition done')),
             ],
             options={
