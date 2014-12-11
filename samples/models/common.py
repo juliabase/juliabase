@@ -109,6 +109,11 @@ class Process(PolymorphicModel):
     in the ``Meta`` subclass because I must be able to link to it with
     ``ForeignKey``.
 
+    Note that derived processes might set their own primary key.  So if you
+    need the process as such to identify uniquely within the set of all
+    processes, you must use the ``id`` attribute rather than the ``pk``
+    attribute.
+
     If you retrieve a `Process`, you may read (inherited) field
     `actual_instance` to get the actual object, e.g. a `SixChamberDeposition`::
 
@@ -149,8 +154,8 @@ class Process(PolymorphicModel):
 
         :type with_relations: bool
         """
-        keys_list_key = "process-keys:{0}".format(self.pk)
-        with cache_key_locked("process-lock:{0}".format(self.pk)):
+        keys_list_key = "process-keys:{0}".format(self.id)
+        with cache_key_locked("process-lock:{0}".format(self.id)):
             keys = cache.get(keys_list_key)
             if keys:
                 cache.delete_many(keys)
@@ -164,7 +169,7 @@ class Process(PolymorphicModel):
     def __str__(self):
         actual_instance = self.actual_instance
         if actual_instance == self:
-            return _("process #{0}").format(self.pk)
+            return _("process #{0}").format(self.id)
         else:
             return six.text_type(actual_instance)
 
@@ -185,7 +190,7 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return ("samples.views.main.show_process", [str(self.pk)])
+        return ("samples.views.main.show_process", [str(self.id)])
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
@@ -214,16 +219,16 @@ class Process(PolymorphicModel):
         """
         if not plot_id:
             # We give this a nicer URL because this case is so common
-            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.pk)})
+            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.id)})
             thumbnail_url = django.core.urlresolvers.reverse("default_process_plot_thumbnail",
-                                                             kwargs={"process_id": str(self.pk)})
+                                                             kwargs={"process_id": str(self.id)})
         else:
             plot_url = django.core.urlresolvers.reverse("process_plot",
-                                                        kwargs={"process_id": str(self.pk), "plot_id": plot_id})
+                                                        kwargs={"process_id": str(self.id), "plot_id": plot_id})
             thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
-                                                             kwargs={"process_id": str(self.pk), "plot_id": plot_id})
+                                                             kwargs={"process_id": str(self.id), "plot_id": plot_id})
         basename = "{0}-{1}-{2}-{3}-{4}".format(
-            self.content_type.app_label, self.content_type.model, get_language(), self.pk, plot_id)
+            self.content_type.app_label, self.content_type.model, get_language(), self.id, plot_id)
         return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".pdf"),
                 "plot_url": plot_url,
                 "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".png"),
@@ -310,7 +315,7 @@ class Process(PolymorphicModel):
 
         :rtype: unicode
         """
-        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.pk)
+        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.id)
         if plot_id:
             basename += "_" + plot_id
         return basename
@@ -390,7 +395,7 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return "process:{0}-{1}".format(self.pk, user_settings_hash)
+        return "process:{0}-{1}".format(self.id, user_settings_hash)
 
     def get_context_for_user(self, user, old_context):
         """Create the context dict for this process, or fill missing fields,
@@ -812,7 +817,7 @@ class Sample(models.Model):
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
             data.update(ancestor_data)
-        data.update(("process #{}".format(process.pk), process.actual_instance.get_data())
+        data.update(("process #{}".format(process.id), process.actual_instance.get_data())
                     for process in self.processes.all())
         return data
 
@@ -944,7 +949,7 @@ class SampleSplit(Process):
         hash_.update("\x04{0}\x04{1}\x04{2}".format(local_context.get("original_sample", ""),
                                                     local_context.get("latest_descendant", ""),
                                                     local_context.get("sample", "")).encode("utf-8"))
-        return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
+        return "process:{0}-{1}".format(self.id, hash_.hexdigest())
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -955,7 +960,7 @@ class SampleSplit(Process):
         if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
             context["resplit_url"] = django.core.urlresolvers.reverse(
-                "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
+                "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.id})
         else:
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)
@@ -1393,7 +1398,7 @@ class UserDetails(models.Model):
     my_layers = models.TextField(_("my layers"), blank=True, help_text=_("in JSON format"))
     """This string is the JSON serialisation of the list with contains
     3-tuples of the the form ``(nickname, deposition, layer)``, where
-    “deposition” is the *process id* (``Process.pk``, not the deposition
+    “deposition” is the *process id* (``Process.id``, not the deposition
     number!) of the deposition, and “layer” is the layer number
     (`models.depositions.Layer.number`).
     """
@@ -1592,4 +1597,4 @@ class ProcessWithSamplePositions(models.Model):
         hash_ = hashlib.sha1()
         hash_.update(user_settings_hash.encode("utf-8"))
         hash_.update("\x04{0}".format(local_context.get("sample", "")).encode("utf-8"))
-        return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
+        return "process:{0}-{1}".format(self.id, hash_.hexdigest())
