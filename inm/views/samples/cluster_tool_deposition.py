@@ -630,47 +630,42 @@ class FormSet(object):
 
 
 @login_required
-def edit(request, deposition_number):
+def edit(request, number):
     """Central view for editing, creating, and duplicating cluster tool
-    depositions.  If ``deposition_number`` is ``None``, a new depositon is
+    depositions.  If ``number`` is ``None``, a new depositon is
     created (possibly by duplicating another one).
 
     :Parameters:
       - `request`: the HTTP request object
-      - `deposition_number`: the number (=name) or the deposition
+      - `number`: the number (=name) or the deposition
 
     :type request: ``QueryDict``
-    :type deposition_number: unicode or ``NoneType``
+    :type number: unicode or ``NoneType``
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    return form_utils.edit_depositions(request,
-                                       deposition_number,
-                                       FormSet(request, deposition_number),
-                                       institute_models.ClusterToolDeposition,
+    return form_utils.edit_depositions(request, number, FormSet(request, number), institute_models.ClusterToolDeposition,
                                        "samples/edit_cluster_tool_deposition.html")
 
 @login_required
-def show(request, deposition_number):
+def show(request, number):
     """Show an existing cluster tool deposision.  You must be a
     cluster-tool operator *or* be able to view one of the samples
     affected by this deposition in order to be allowed to view it.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `deposition_number`: the number (=name) or the deposition
+      - `number`: the number (=name) or the deposition
 
     :type request: ``HttpRequest``
-    :type deposition_number: unicode
+    :type number: unicode
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    return form_utils.show_depositions(request,
-                                       deposition_number,
-                                       institute_models.ClusterToolDeposition)
+    return form_utils.show_depositions(request, number, institute_models.ClusterToolDeposition)
