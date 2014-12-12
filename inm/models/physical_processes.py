@@ -83,11 +83,6 @@ class Substrate(PhysicalProcess):
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_substrate", kwargs={"substrate_id": self.id})
-        else:
-            context["edit_url"] = None
         return super(Substrate, self).get_context_for_user(user, context)
 
 
