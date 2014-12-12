@@ -72,9 +72,9 @@ urlpatterns += patterns("inm.views.samples",
                             "solarsimulator_measurement.show", name="show_solarsimulator_measurement"),
 
                         url(r"^structuring_process/add/$", "structuring.edit", {"process_id": None},
-                            "add_sructuring_process"),
-                        url(r"^structuring_process/(?P<process_id>.+)/edit/$", "structuring.edit",
-                            name="edit_structuring_process"),
+                            "add_sructuring"),
+                        url(r"^structuring_process/(?P<structuring_id>.+)/edit/$", "structuring.edit",
+                            name="edit_structuring"),
 
                         (r"^add_sample$", "json_client.add_sample"),
                         (r"^substrates_by_sample/(?P<sample_id>.+)", "json_client.substrate_by_sample"),
