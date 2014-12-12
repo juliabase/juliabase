@@ -55,9 +55,9 @@ urlpatterns += patterns("inm.views.samples",
                         (r"^pds_measurements/(?P<pds_number>.+)", "pds_measurement.show"),
 
                         url(r"^5-chamber_depositions/add/$", "five_chamber_deposition.edit",
-                            {"deposition_number": None}, "add_5-chamber_deposition"),
+                            {"deposition_number": None}, "add_five_chamber_deposition"),
                         url(r"^5-chamber_depositions/(?P<deposition_number>.+)/edit/$",
-                            "five_chamber_deposition.edit", name="edit_5-chamber_deposition"),
+                            "five_chamber_deposition.edit", name="edit_five_chamber_deposition"),
                         (r"^5-chamber_depositions/(?P<deposition_number>.+)", "five_chamber_deposition.show"),
 
                         url(r"^substrates/add/$", "substrate.edit", {"substrate_id": None}, "add_substrate"),

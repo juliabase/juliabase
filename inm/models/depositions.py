@@ -249,13 +249,13 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
         :rtype: str
         """
         _ = ugettext
-        return django.core.urlresolvers.reverse("add_5-chamber_deposition")
+        return django.core.urlresolvers.reverse("add_five_chamber_deposition")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.core.urlresolvers.reverse("add_5-chamber_deposition"), urlquote_plus(self.number))
+                django.core.urlresolvers.reverse("add_five_chamber_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
