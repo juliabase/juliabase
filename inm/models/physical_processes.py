@@ -152,11 +152,6 @@ class PDSMeasurement(PhysicalProcess):
         context = old_context.copy()
         plot_locations = self.calculate_plot_locations()
         context["thumbnail"], context["figure"] = plot_locations["thumbnail_url"], plot_locations["plot_url"]
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pds_number": self.number})
-        else:
-            context["edit_url"] = None
         return super(PDSMeasurement, self).get_context_for_user(user, context)
 
     def get_data_for_table_export(self):
@@ -199,11 +194,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_solarsimulator_measurement", kwargs={"process_id": self.id})
-        else:
-            context["edit_url"] = None
         sample = self.samples.get()
         if "shapes" not in context:
             layout = layouts.get_layout(sample, self)

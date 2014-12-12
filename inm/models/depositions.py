@@ -97,11 +97,6 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
                 layer.type = "PECVD"
             layers.append(layer)
         context["layers"] = layers
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = django.core.urlresolvers.reverse("edit_cluster_tool_deposition",
-                                                                   kwargs={"deposition_number": self.number})
-        else:
-            context["edit_url"] = None
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
                 django.core.urlresolvers.reverse("add_cluster_tool_deposition"), urlquote_plus(self.number))
@@ -258,11 +253,6 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_5-chamber_deposition", kwargs={"deposition_number": self.number})
-        else:
-            context["edit_url"] = None
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
                 django.core.urlresolvers.reverse("add_5-chamber_deposition"), urlquote_plus(self.number))

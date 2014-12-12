@@ -463,6 +463,17 @@ class Process(PolymorphicModel):
             context["timestamp"] = self.timestamp
         if "timestamp_inaccuracy" not in context:
             context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
+        if samples.permissions.has_permission_to_edit_physical_process(user, self):
+            try:
+                field_name = self._meta.JBMeta.identifying_field
+            except AttributeError:
+                field_name = self._meta.pk.name
+            parameter_name = "process_id" if field_name == "id" else field_name
+            context["edit_url"] = \
+                django.core.urlresolvers.reverse("edit_" + shared_utils.camel_case_to_underscores(self.__class__.__name__),
+                                                 kwargs={parameter_name: getattr(self, field_name)})
+        else:
+            context["edit_url"] = None
         return context
 
     @classmethod
@@ -1150,11 +1161,6 @@ class Result(Process):
                                 "image_url": image_locations["image_url"]})
             else:
                 context["thumbnail_url"] = context["image_url"] = None
-        if samples.permissions.has_permission_to_edit_result_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
-        else:
-            context["edit_url"] = None
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
