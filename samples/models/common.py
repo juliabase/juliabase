@@ -471,7 +471,7 @@ class Process(PolymorphicModel):
                 context["edit_url"] = \
                     django.core.urlresolvers.reverse("edit_" + class_name, kwargs={parameter_name: getattr(self, field_name)})
             except django.core.urlresolvers.NoReverseMatch:
-                pass
+                context["edit_url"] = None
         else:
             context["edit_url"] = None
         return context
