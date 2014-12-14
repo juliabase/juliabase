@@ -49,10 +49,10 @@ urlpatterns += patterns("inm.views.samples",
                         (r"^cluster_tool_depositions/(?P<number>.+)",
                          "cluster_tool_deposition.show"),
 
-                        url(r"^pds_measurements/add/$", "pds_measurement.edit", {"pds_number": None}, "add_pds_measurement"),
-                        url(r"^pds_measurements/(?P<pds_number>\d+)/edit/$", "pds_measurement.edit",
+                        url(r"^pds_measurements/add/$", "pds_measurement.edit", {"number": None}, "add_pds_measurement"),
+                        url(r"^pds_measurements/(?P<number>\d+)/edit/$", "pds_measurement.edit",
                             name="edit_pds_measurement"),
-                        (r"^pds_measurements/(?P<pds_number>.+)", "pds_measurement.show"),
+                        (r"^pds_measurements/(?P<number>.+)", "pds_measurement.show"),
 
                         url(r"^5-chamber_depositions/add/$", "five_chamber_deposition.edit",
                             {"number": None}, "add_five_chamber_deposition"),

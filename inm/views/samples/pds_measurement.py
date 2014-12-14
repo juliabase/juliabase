@@ -159,7 +159,7 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     return all_valid
 
 
-def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
+def is_referentially_valid(pds_measurement_form, sample_form, number):
     """Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement.
@@ -167,40 +167,39 @@ def is_referentially_valid(pds_measurement_form, sample_form, pds_number):
     :Parameters:
       - `pds_measurement_form`: a bound PDS measurement form
       - `sample_form`: a bound sample selection form
-      - `pds_number`: The PDS number of the PDS measurement to be edited.  If
-        it is ``None``, a new measurement is added to the database.
+      - `number`: The PDS number of the PDS measurement to be edited.  If it is
+        ``None``, a new measurement is added to the database.
 
     :type pds_measurement_form: `PDSMeasurementForm`
     :type sample_form: `SampleForm`
-    :type pds_number: unicode
+    :type number: unicode
 
     :Return:
       whether the forms are consistent with each other and the database
 
     :rtype: bool
     """
-    return form_utils.measurement_is_referentially_valid(pds_measurement_form, sample_form, pds_number,
-                                                         institute_models.PDSMeasurement)
+    return form_utils.measurement_is_referentially_valid(pds_measurement_form, sample_form, number, institute_models.PDSMeasurement)
 
 @login_required
-def edit(request, pds_number):
+def edit(request, number):
     """Edit and create view for PDS measurements.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `pds_number`: The PDS number of the PDS measurement to be edited.  If
-        it is ``None``, a new measurement is added to the database.
+      - `number`: The PDS number of the PDS measurement to be edited.  If it is
+        ``None``, a new measurement is added to the database.
 
     :type request: ``HttpRequest``
-    :type pds_number: unicode
+    :type number: unicode
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number)) \
-        if pds_number is not None else None
+    pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(number)) \
+        if number is not None else None
     old_sample = pds_measurement.samples.get() if pds_measurement else None
     permissions.assert_can_add_edit_physical_process(request.user, pds_measurement, institute_models.PDSMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not pds_measurement else None
@@ -225,7 +224,7 @@ def edit(request, pds_number):
             pds_measurement_form = PDSMeasurementForm(request.user, request.POST, instance=pds_measurement)
         all_valid = is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form,
                                  edit_description_form)
-        referentially_valid = is_referentially_valid(pds_measurement_form, sample_form, pds_number)
+        referentially_valid = is_referentially_valid(pds_measurement_form, sample_form, number)
         if all_valid and referentially_valid:
             pds_measurement = pds_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]
@@ -236,11 +235,11 @@ def edit(request, pds_number):
             if remove_from_my_samples_form and remove_from_my_samples_form.cleaned_data["remove_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, request.user)
             success_report = _("{process} was successfully changed in the database.").format(process=pds_measurement) \
-                if pds_number else _("{process} was successfully added to the database.").format(process=pds_measurement)
+                if number else _("{process} was successfully added to the database.").format(process=pds_measurement)
             return utils.successful_response(request, success_report, json_response=pds_measurement.pk)
     else:
         initial = {}
-        if pds_number is None:
+        if number is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
             numbers = institute_models.PDSMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
@@ -260,7 +259,7 @@ def edit(request, pds_number):
 
 
 @login_required
-def show(request, pds_number):
+def show(request, number):
     """Show an existing PDS measurement.
 
     :Parameters:
@@ -275,11 +274,11 @@ def show(request, pds_number):
 
     :rtype: ``HttpResponse``
     """
-    pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(pds_number))
+    pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(number))
     permissions.assert_can_view_physical_process(request.user, pds_measurement)
     if is_json_requested(request):
         return respond_in_json(pds_measurement.get_data())
-    template_context = {"title": _("PDS measurement #{pds_number}").format(pds_number=pds_number),
+    template_context = {"title": _("PDS measurement #{number}").format(number=number),
                         "samples": pds_measurement.samples.all(), "process": pds_measurement}
     template_context.update(utils.digest_process(pds_measurement, request.user))
     return render(request, "samples/show_process.html", template_context)
