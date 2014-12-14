@@ -81,10 +81,6 @@ class Substrate(PhysicalProcess):
         data_node.items.append(DataItem(_("material"), self.get_material_display()))
         return data_node
 
-    def get_context_for_user(self, user, old_context):
-        context = old_context.copy()
-        return super(Substrate, self).get_context_for_user(user, context)
-
 
 pds_apparatus_choices = (
     ("pds1", _("PDS #1")),
