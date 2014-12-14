@@ -130,9 +130,6 @@ class PDSMeasurement(PhysicalProcess):
     def get_plotfile_basename(self, plot_id):
         return "pds_{0}".format(self.samples.get()).replace("*", "")
 
-    def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("inm.views.samples.pds_measurement.show", kwargs={"number": self.number})
-
     @classmethod
     def get_add_link(cls):
         _ = ugettext

@@ -162,6 +162,14 @@ class Process(PolymorphicModel):
         else:
             return six.text_type(actual_instance)
 
+    def _urlresolve(self, prefix):
+        class_name = shared_utils.camel_case_to_underscores(self.__class__.__name__)
+        try:
+            field_name = parameter_name = self.JBMeta.identifying_field
+        except AttributeError:
+            field_name, parameter_name = "id", class_name + "_id"
+        return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: getattr(self, field_name)})
+
     def get_absolute_url(self):
         """Returns the relative URL (ie, without the domain name) of the
         database object.  Django calls this method ``get_absolute_url`` to make
@@ -178,7 +186,10 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return django.core.urlresolvers.reverse("samples.views.main.show_process", args=(str(self.id),))
+        try:
+            return self._urlresolve("show_")
+        except django.core.urlresolvers.NoReverseMatch:
+            return django.core.urlresolvers.reverse("samples.views.main.show_process", args=(str(self.id),))
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
@@ -462,14 +473,8 @@ class Process(PolymorphicModel):
         if "timestamp_inaccuracy" not in context:
             context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
         if samples.permissions.has_permission_to_edit_physical_process(user, self):
-            class_name = shared_utils.camel_case_to_underscores(self.__class__.__name__)
             try:
-                field_name = parameter_name = self.JBMeta.identifying_field
-            except AttributeError:
-                field_name, parameter_name = "id", class_name + "_id"
-            try:
-                context["edit_url"] = \
-                    django.core.urlresolvers.reverse("edit_" + class_name, kwargs={parameter_name: getattr(self, field_name)})
+                context["edit_url"] = self._urlresolve("edit_")
             except django.core.urlresolvers.NoReverseMatch:
                 context["edit_url"] = None
         else:

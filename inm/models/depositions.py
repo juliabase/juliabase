@@ -61,9 +61,6 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
                        ("view_every_cluster_tool_deposition", _("Can view all cluster tool depositions")),
                        ("edit_every_cluster_tool_deposition", _("Can edit all cluster tool depositions")))
 
-    def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("inm.views.samples.cluster_tool_deposition.show", args=(self.number,))
-
     @classmethod
     def get_add_link(cls):
         """Return all you need to generate a link to the “add” view for this
@@ -232,9 +229,6 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
                        ("edit_permissions_for_five_chamber_deposition", _("Can edit perms for 5-chamber depositions")),
                        ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
                        ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
-
-    def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("inm.views.samples.five_chamber_deposition.show", args=(self.number,))
 
     @classmethod
     def get_add_link(cls):
