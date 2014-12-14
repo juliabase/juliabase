@@ -121,10 +121,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 
 JAVASCRIPT_I18N_APPS += ("inm",)
 
-DOMAIN_NAME = "0.0.0.0:8000"
-PROTOCOL = "http"
-
-LOGIN_URL = "{0}://{1}/login".format(PROTOCOL, DOMAIN_NAME)
+LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
 
 # This determines which flags are shown
