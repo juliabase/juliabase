@@ -188,7 +188,7 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
 
 
 @login_required
-def edit(request, process_id):
+def edit(request, solarsimulator_measurement_id):
     """Create or edit an existing solarsimulator measurement.
 
     If you pass "only_single_cell_added=true" in the query string *and* you
@@ -199,19 +199,19 @@ def edit(request, process_id):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `process_id`: the id of the solarsimulator measurement; if ``None``, a
-        new measurement is created
+      - `solarsimulator_measurement_id`: the id of the solarsimulator
+        measurement; if ``None``, a new measurement is created
 
     :type request: ``HttpRequest``
-    :type process_id: unicode
+    :type solarsimulator_measurement_id: unicode
 
     :Return:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement, id=process_id)\
-        if process_id is not None else None
+    solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement, id=solarsimulator_measurement_id)\
+        if solarsimulator_measurement_id is not None else None
     permissions.assert_can_add_edit_physical_process(request.user, solarsimulator_measurement,
                                                      SolarsimulatorMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not solarsimulator_measurement else None
@@ -228,7 +228,7 @@ def edit(request, process_id):
         all_valid = is_all_valid(solarsimulator_measurement_form, sample_form, remove_from_my_samples_form,
                                  edit_description_form, solarsimulator_cell_forms)
         referentially_valid = is_referentially_valid(solarsimulator_measurement_form,
-                                                                          solarsimulator_cell_forms, sample_form, process_id)
+                                                     solarsimulator_cell_forms, sample_form, solarsimulator_measurement_id)
         if all_valid and referentially_valid:
             solarsimulator_measurement = solarsimulator_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]
@@ -247,7 +247,7 @@ def edit(request, process_id):
                 utils.remove_samples_from_my_samples(samples, request.user)
             success_report = _(u"{process} was successfully changed in the database."). \
                 format(process=solarsimulator_measurement) \
-                if process_id else _(u"{process} was successfully added to the database."). \
+                if solarsimulator_measurement_id else _(u"{process} was successfully added to the database."). \
                 format(process=solarsimulator_measurement)
             return utils.successful_response(request, success_report, json_response=solarsimulator_measurement.pk)
     else:
@@ -277,15 +277,16 @@ def edit(request, process_id):
 
 
 @login_required
-def show(request, process_id):
+def show(request, solarsimulator_measurement_id):
     """Show an existing ssolarsimulator measurement.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `process_id`: the id of the solarsimulator measurement
+      - `solarsimulator_measurement_id`: the id of the solarsimulator
+        measurement
 
     :type request: ``HttpRequest``
-    :type process_id: unicode
+    :type solarsimulator_measurement_id: unicode
 
     :Return:
       the HTTP response object
@@ -296,21 +297,22 @@ def show(request, process_id):
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `process_id`: the id of the solarsimulator measurement
+      - `solarsimulator_measurement_id`: the id of the solarsimulator measurement
 
     :type request: ``HttpRequest``
-    :type process_id: unicode
+    :type solarsimulator_measurement_id: unicode
 
     :Return:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement, id=utils.convert_id_to_int(process_id))
+    solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement,
+                                                   id=utils.convert_id_to_int(solarsimulator_measurement_id))
     permissions.assert_can_view_physical_process(request.user, solarsimulator_measurement)
     if is_json_requested(request):
         return respond_in_json(solarsimulator_measurement.get_data())
-    template_context = {"title": _(u"Solarsimulator measurement #{number}").format(number=process_id),
+    template_context = {"title": _(u"Solarsimulator measurement #{number}").format(number=solarsimulator_measurement_id),
                         "samples": solarsimulator_measurement.samples.all(), "process": solarsimulator_measurement,
                         "cells": solarsimulator_measurement.cells.all()}
     template_context.update(utils.digest_process(solarsimulator_measurement, request.user))
