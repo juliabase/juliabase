@@ -61,9 +61,8 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
                        ("view_every_cluster_tool_deposition", _("Can view all cluster tool depositions")),
                        ("edit_every_cluster_tool_deposition", _("Can edit all cluster tool depositions")))
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("inm.views.samples.cluster_tool_deposition.show", [self.number])
+        return django.core.urlresolvers.reverse("inm.views.samples.cluster_tool_deposition.show", args=(self.number,))
 
     @classmethod
     def get_add_link(cls):
@@ -234,9 +233,8 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
                        ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
                        ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("inm.views.samples.five_chamber_deposition.show", [self.number])
+        return django.core.urlresolvers.reverse("inm.views.samples.five_chamber_deposition.show", args=(self.number,))
 
     @classmethod
     def get_add_link(cls):

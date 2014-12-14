@@ -75,9 +75,8 @@ class ExternalOperator(models.Model):
     def __str__(self):
         return self.name
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.external_operator.show", [self.pk])
+        return django.core.urlresolvers.reverse("samples.views.external_operator.show", args=(self.pk,))
 
 
 timestamp_inaccuracy_choices = (
@@ -163,7 +162,6 @@ class Process(PolymorphicModel):
         else:
             return six.text_type(actual_instance)
 
-    @models.permalink
     def get_absolute_url(self):
         """Returns the relative URL (ie, without the domain name) of the
         database object.  Django calls this method ``get_absolute_url`` to make
@@ -180,7 +178,7 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return ("samples.views.main.show_process", [str(self.id)])
+        return django.core.urlresolvers.reverse("samples.views.main.show_process", args=(str(self.id),))
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
@@ -714,12 +712,11 @@ class Sample(models.Model):
         """
         return six.text_type(self) + self.tags_suffix(user)
 
-    @models.permalink
     def get_absolute_url(self):
         if self.name.startswith("*"):
-            return ("show_sample_by_id", (), {"sample_id": str(self.pk), "path_suffix": ""})
+            return django.core.urlresolvers.reverse("show_sample_by_id", kwargs={"sample_id": str(self.pk), "path_suffix": ""})
         else:
-            return ("show_sample_by_name", [self.name])
+            return django.core.urlresolvers.reverse("show_sample_by_name", args=(self.name,))
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
@@ -1005,9 +1002,8 @@ class SampleClaim(models.Model):
         _ = ugettext
         return _("sample claim #{number}").format(number=self.pk)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.claim.show", (self.pk,))
+        return django.core.urlresolvers.reverse("samples.views.claim.show", args=(self.pk,))
 
 
 sample_death_reasons = (
@@ -1102,9 +1098,8 @@ class Result(Process):
                 # Translators: experimental result
                 return _("result #{number}").format(number=self.pk)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.result.show", (self.pk,))
+        return django.core.urlresolvers.reverse("samples.views.result.show", args=(self.pk,))
 
     def get_image_locations(self):
         """Get the location of the image in the local filesystem as well
@@ -1256,9 +1251,8 @@ class SampleSeries(models.Model):
     def __str__(self):
         return self.name
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.sample_series.show", [self.name])
+        return django.core.urlresolvers.reverse("samples.views.sample_series.show", args=(self.name,))
 
     def get_data(self):
         """Extract the data of this sample series as a dictionary, ready to be used for
