@@ -540,17 +540,20 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_add_link(cls):
-        """Returns the URL to the “add” view for this process.  This should be
-        implemented in derived model classes which is actually instantiated
-        unless this process class should not be explicitly added by users (but
-        is created by the program somehow).
+        """Returns the URL to the “add” view for this process.  A physical process
+        should define a named URL called ``"add_process_class_name"`` unless
+        this process class should not be explicitly added by users (but is
+        created by the program somehow).
 
         :Return:
           the full URL to the add page for this process
 
         :rtype: str
         """
-        raise NotImplementedError
+        try:
+            return django.core.urlresolvers.reverse("add_" + shared_utils.camel_case_to_underscores(cls.__name__))
+        except django.core.urlresolvers.NoReverseMatch:
+            return None
 
     @classmethod
     def get_lab_notebook_data(cls, year, month):

@@ -60,10 +60,6 @@ class Substrate(PhysicalProcess):
 
     Note that it doesn't define permissions because everyone can create
     substrates.
-
-    Additionally, we don't implement ``get_add_link`` because a substrate
-    cannot be added by users.  Instead, it is created implicitly whenever new
-    samples are created.
     """
     material = models.CharField(_("substrate material"), max_length=30, choices=substrate_materials)
 
@@ -129,11 +125,6 @@ class PDSMeasurement(PhysicalProcess):
 
     def get_plotfile_basename(self, plot_id):
         return "pds_{0}".format(self.samples.get()).replace("*", "")
-
-    @classmethod
-    def get_add_link(cls):
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_pds_measurement")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -202,11 +193,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
                 default_cell = sorted([(cell.isc, cell.position) for cell in context["cells"]], reverse=True)[0][1]
             context["default_cell"] = (default_cell,) + context["image_urls"][default_cell]
         return super(SolarsimulatorMeasurement, self).get_context_for_user(user, context)
-
-    @classmethod
-    def get_add_link(cls):
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_solarsimulator_measurement")
 
     def get_data(self):
         # See `Process.get_data` for documentation of this method.

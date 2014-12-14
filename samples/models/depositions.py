@@ -42,8 +42,7 @@ This is used in
 class Deposition(PhysicalProcess):
     """The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
-    class from it.  (By the way, this is the reason why this class needn't
-    define a ``get_add_link`` method.)
+    class from it.
 
     It is only sensible to use this class if your institution has
     institution-wide unique deposition numbers.  Else, make distict model

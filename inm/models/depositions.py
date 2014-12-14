@@ -61,19 +61,6 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
                        ("view_every_cluster_tool_deposition", _("Can view all cluster tool depositions")),
                        ("edit_every_cluster_tool_deposition", _("Can edit all cluster tool depositions")))
 
-    @classmethod
-    def get_add_link(cls):
-        """Return all you need to generate a link to the “add” view for this
-        process.
-
-        :Return:
-          the full URL to the add page for this process
-
-        :rtype: str
-        """
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_cluster_tool_deposition")
-
     def get_context_for_user(self, user, old_context):
         """
         Additionally, because this is a cluster tool and thus has different
@@ -229,19 +216,6 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
                        ("edit_permissions_for_five_chamber_deposition", _("Can edit perms for 5-chamber depositions")),
                        ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
                        ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
-
-    @classmethod
-    def get_add_link(cls):
-        """Return all you need to generate a link to the “add” view for this
-        process.
-
-        :Return:
-          the full URL to the add page for this process
-
-        :rtype: str
-        """
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_five_chamber_deposition")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
