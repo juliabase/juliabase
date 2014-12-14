@@ -60,7 +60,6 @@ urlpatterns += patterns("inm.views.samples",
                             "five_chamber_deposition.edit", name="edit_five_chamber_deposition"),
                         (r"^5-chamber_depositions/(?P<number>.+)", "five_chamber_deposition.show"),
 
-                        url(r"^substrates/add/$", "substrate.edit", {"substrate_id": None}, "add_substrate"),
                         url(r"^substrates/(?P<substrate_id>.+)/edit/$", "substrate.edit",
                             name="edit_substrate"),
 
