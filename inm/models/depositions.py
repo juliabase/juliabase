@@ -25,7 +25,6 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote_plus
 from django.db import models
-from jb_common.utils import in_
 import samples.models.depositions
 from samples import permissions
 from samples.data_tree import DataItem

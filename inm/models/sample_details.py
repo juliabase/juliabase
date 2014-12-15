@@ -30,8 +30,7 @@ from django import forms
 from django.forms.util import ValidationError
 from django.forms.models import inlineformset_factory
 from jb_common.signals import storage_changed
-from jb_common import search
-from jb_common.utils import in_
+from jb_common import search, model_fields
 from samples.data_tree import DataNode, DataItem
 import samples.models, samples.views.shared_utils
 
@@ -293,7 +292,7 @@ class InformalLayer(models.Model):
                                       choices=classification_choices)
     comments = models.CharField(_("comments"), max_length=100, null=True, blank=True)
     color = models.CharField(_("color"), max_length=30, choices=color_choices)
-    thickness = models.DecimalField(_("thickness"), max_digits=8, decimal_places=1, help_text=in_("nm"))
+    thickness = model_fields.DecimalQuantityField(_("thickness"), max_digits=8, decimal_places=1, unit="nm")
     thickness_reliable = models.BooleanField(_("thickness reliable"), default=False)
     structured = models.BooleanField(_("structured"), default=False)
     textured = models.BooleanField(_("textured"), default=False)
