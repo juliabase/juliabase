@@ -256,29 +256,3 @@ def edit(request, number):
                   {"title": title, "pds_measurement": pds_measurement_form, "overwrite": overwrite_form,
                    "sample": sample_form, "remove_from_my_samples": remove_from_my_samples_form,
                    "edit_description": edit_description_form})
-
-
-@login_required
-def show(request, number):
-    """Show an existing PDS measurement.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `deposition_number`: the number (=name) or the deposition
-
-    :type request: ``HttpRequest``
-    :type deposition_number: unicode
-
-    :Return:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(number))
-    permissions.assert_can_view_physical_process(request.user, pds_measurement)
-    if is_json_requested(request):
-        return respond_in_json(pds_measurement.get_data())
-    template_context = {"title": _("PDS measurement #{number}").format(number=number),
-                        "samples": pds_measurement.samples.all(), "process": pds_measurement}
-    template_context.update(utils.digest_process(pds_measurement, request.user))
-    return render(request, "samples/show_process.html", template_context)

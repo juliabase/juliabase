@@ -470,23 +470,3 @@ def edit(request, number):
     """
     return form_utils.edit_depositions(request, number, FormSet(request, number), institute_models.FiveChamberDeposition,
                                        "samples/edit_five_chamber_deposition.html")
-
-@login_required
-def show(request, number):
-    """Show an existing 5-chamber_deposision.  You must be a 5-chamber
-    operator *or* be able to view one of the samples affected by this
-    deposition in order to be allowed to view it.
-
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `number`: the number (=name) or the deposition
-
-    :type request: ``HttpRequest``
-    :type number: unicode
-
-    :Returns:
-      the HTTP response object
-
-    :rtype: ``HttpResponse``
-    """
-    return form_utils.show_depositions(request, number, institute_models.FiveChamberDeposition)
