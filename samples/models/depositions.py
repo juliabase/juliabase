@@ -65,9 +65,6 @@ class Deposition(PhysicalProcess):
     class JBMeta:
         identifying_field = "number"
 
-    def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.main.show_deposition", args=(self.number,))
-
     def __str__(self):
         _ = ugettext
         return _("deposition {number}").format(number=self.number)
