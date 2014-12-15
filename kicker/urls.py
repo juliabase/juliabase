@@ -13,20 +13,21 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Mapping URL patterns to function calls.  This is the local URL dispatch of
+"""Mapping URL patterns to function calls.  This is the local URL dispatch of
 the Django application “kicker”.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import *
+from django.conf.urls import url
 
-urlpatterns = patterns("kicker.views",
-                       (r"^matches/(?P<id_>\d+)/edit/$", "edit_match"),
-                       url(r"^matches/add/$", "edit_match", {"id_": None}),
-                       (r"^matches/(?P<id_>\d+)/cancel/$", "cancel_match"),
-                       (r"^starting_numbers/(?P<username>.+)/add/$", "set_start_kicker_number"),
-                       (r"^details/(?P<username>.+)", "edit_user_details"),
-                       (r"^player", "get_player"),
-                       (r"^$", "summary"),
-                       )
+
+urlpatterns = [
+    url(r"^matches/(?P<id_>\d+)/edit/$", "kicker.views.edit_match"),
+    url(r"^matches/add/$", "kicker.views.edit_match", {"id_": None}),
+    url(r"^matches/(?P<id_>\d+)/cancel/$", "kicker.views.cancel_match"),
+    url(r"^starting_numbers/(?P<username>.+)/add/$", "kicker.views.set_start_kicker_number"),
+    url(r"^details/(?P<username>.+)", "kicker.views.edit_user_details"),
+    url(r"^player", "kicker.views.get_player"),
+    url(r"^$", "kicker.views.summary"),
+]
