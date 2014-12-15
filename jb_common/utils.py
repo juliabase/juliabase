@@ -788,3 +788,29 @@ def convert_bytes_to_bool(byte_array):
     :rtype: ``tuple`` of ``boolean``
     """
     return tuple(True if byte else False for byte in byte_array)
+
+
+def format_enumeration(items):
+    """Generates a pretty-printed enumeration of all given names.  For
+    example, if the list contains ``["a", "b", "c"]``, it yields ``"a, b, and
+    c"``.
+
+    :Parameters:
+      - `items`: iterable of names to be put into the enumeration
+
+    :type items: iterable of unicode
+
+    :Return:
+      human-friendly enumeration of all names
+
+    :rtype: unicode
+    """
+    items = sorted(six.text_type(item) for item in items)
+    if len(items) > 2:
+        # Translators: Intended as a separator in an enumeration of three or more items
+        return _(", ").join(items[:-1]) + _(", and ") + items[-1]
+    elif len(items) == 2:
+        # Translators: Intended to be used in an enumeration of exactly two items
+        return _(" and ").join(items)
+    else:
+        return "".join(items)

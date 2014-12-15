@@ -29,7 +29,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext, ugettext_lazy, ungettext
 from django.conf import settings
-from jb_common.utils import send_email, get_really_full_name
+from jb_common.utils import send_email, get_really_full_name, format_enumeration
 from jb_common.models import Topic
 from samples.views import utils
 from samples import permissions
@@ -68,7 +68,7 @@ class SamplesForm(forms.Form):
         if invalid_names:
             error_message = ungettext(
                 "The name {invalid_names} is not valid.", "The names {invalid_names} are not valid.",
-                len(invalid_names)).format(invalid_names=utils.format_enumeration(invalid_names))
+                len(invalid_names)).format(invalid_names=format_enumeration(invalid_names))
             raise ValidationError(error_message)
         if not valid_names:
             raise ValidationError(self.fields["samples"].error_messages["required"])
@@ -79,7 +79,7 @@ class SamplesForm(forms.Form):
             # have non-oldstyle names anyway.
             error_message = ungettext(
                 "The name {existing_names} is already existing.", "The names {existing_names} are already existing.",
-                len(existing_names)).format(existing_names=utils.format_enumeration(existing_names))
+                len(existing_names)).format(existing_names=format_enumeration(existing_names))
             raise ValidationError(error_message)
         return valid_names
 

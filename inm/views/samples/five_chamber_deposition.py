@@ -25,7 +25,7 @@ from samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
-from jb_common.utils import is_json_requested
+from jb_common.utils import is_json_requested, format_enumeration
 from samples.views import utils, feed_utils
 from inm.views import form_utils, shared_utils
 import inm.models as institute_models
@@ -400,7 +400,7 @@ class FormSet(object):
                     error_message = ungettext(
                         "The sample {samples} is already dead at this time.",
                         "The samples {samples} are already dead at this time.", len(dead_samples)).format(
-                        samples=utils.format_enumeration([sample.name for sample in dead_samples]))
+                        samples=format_enumeration([sample.name for sample in dead_samples]))
                     self.deposition_form.add_error("timestamp", error_message)
                     referentially_valid = False
         return referentially_valid

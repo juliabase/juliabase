@@ -573,7 +573,7 @@ class FormSet(object):
                 error_message = ungettext(
                     "The sample {samples} is already dead at this time.",
                     "The samples {samples} are already dead at this time.", len(dead_samples)).format(
-                    samples=utils.format_enumeration([sample.name for sample in dead_samples]))
+                    samples=jb_common.utils.format_enumeration([sample.name for sample in dead_samples]))
                 self.deposition_form.add_error("timestamp", error_message)
                 referentially_valid = False
         if not self.layer_forms:

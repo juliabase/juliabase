@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from samples import models, permissions
-from jb_common.utils import respond_in_json
+from jb_common.utils import respond_in_json, format_enumeration
 from samples.views import utils, feed_utils, form_utils
 
 
@@ -61,7 +61,7 @@ class NewNameForm(forms.Form):
                     further_error_message = ungettext("  Alternatively, it must be a valid “{sample_formats}” name.",
                                                       "  Alternatively, it must be a valid name of one of these types: "
                                                       "{sample_formats}", len(self.possible_new_name_formats))
-                    further_error_message = further_error_message.format(sample_formats=utils.format_enumeration(
+                    further_error_message = further_error_message.format(sample_formats=format_enumeration(
                         utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
                     error_message += further_error_message
                 raise ValidationError(error_message)

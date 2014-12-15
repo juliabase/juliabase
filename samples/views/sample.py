@@ -43,6 +43,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
 import jb_common.search
+from jb_common.utils import format_enumeration
 from samples import models, permissions, data_tree
 from samples.views import utils, form_utils, feed_utils
 from django.forms.util import ValidationError
@@ -662,7 +663,7 @@ def show(request, sample_name):
             if added:
                 success_message = ungettext("Sample {samples} was added to My Samples.",
                                             "Samples {samples} were added to My Samples.",
-                                            len(added)).format(samples=utils.format_enumeration(added))
+                                            len(added)).format(samples=format_enumeration(added))
             else:
                 success_message = ""
             if removed:
@@ -670,7 +671,7 @@ def show(request, sample_name):
                     success_message += "  "
                 success_message += ungettext("Sample {samples} was removed from My Samples.",
                                              "Samples {samples} were removed from My Samples.",
-                                             len(removed)).format(samples=utils.format_enumeration(removed))
+                                             len(removed)).format(samples=format_enumeration(removed))
             elif not added:
                 success_message = _("Nothing was changed.")
             messages.success(request, success_message)

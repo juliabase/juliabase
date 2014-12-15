@@ -34,10 +34,10 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from jb_common.utils import get_really_full_name, cache_key_locked
+from jb_common.utils import get_really_full_name, cache_key_locked, format_enumeration
 from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
-from samples.views import utils
+from samples.views import shared_utils
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType
@@ -174,7 +174,7 @@ class Process(PolymorphicModel):
                 format(process_class_name=self._meta.verbose_name, identifier=getattr(self, field_name))
         elif samples:
             return ungettext("{process_class_name} of {samples}", "{process_class_name} of {samples}", len(samples)). \
-                format(process_class_name=self._meta.verbose_name, samples=utils.format_enumeration(samples))
+                format(process_class_name=self._meta.verbose_name, samples=format_enumeration(samples))
         else:
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=self.id)
@@ -321,7 +321,7 @@ class Process(PolymorphicModel):
 
         :rtype: unicode
         """
-        basename = "{0}_{1}".format(utils.camel_case_to_underscores(self.__class__.__name__), self.pk)
+        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.pk)
         if plot_id:
             basename += "_" + plot_id
         return basename
@@ -455,13 +455,13 @@ class Process(PolymorphicModel):
             context["name"] = name[:1].upper() + name[1:]
         if "html_body" not in context:
             context["html_body"] = render_to_string(
-                "samples/show_" + utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
+                "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
                 context_instance=Context(context))
             if "short_html_body" not in context:
                 try:
                     context["short_html_body"] = render_to_string(
                         "samples/show-short_{0}.html". \
-                            format(utils.camel_case_to_underscores(self.__class__.__name__)),
+                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
                         context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["short_html_body"] = None
@@ -469,7 +469,7 @@ class Process(PolymorphicModel):
                 try:
                     context["extended_html_body"] = render_to_string(
                         "samples/show-extended_{0}.html". \
-                            format(utils.camel_case_to_underscores(self.__class__.__name__)),
+                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
                         context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["extended_html_body"] = None

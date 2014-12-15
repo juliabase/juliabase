@@ -27,8 +27,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-import jb_common.utils
-from jb_common.utils import get_really_full_name
+from jb_common.utils import get_really_full_name, format_enumeration, check_markdown
 from samples import permissions
 from samples.views import utils, form_utils, feed_utils
 
@@ -81,7 +80,7 @@ class ActionForm(forms.Form):
         """Forbid image and headings syntax in Markdown markup.
         """
         comment = self.cleaned_data["comment"]
-        jb_common.utils.check_markdown(comment)
+        check_markdown(comment)
         return comment
 
     def clean_clearance(self):
@@ -163,7 +162,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     failed_samples.append(sample)
             if failed_samples:
                 my_samples_form.add_error("samples", _("You cannot grant clearances for the following samples:") + " " +
-                             utils.format_enumeration(failed_samples))
+                             format_enumeration(failed_samples))
                 referentially_valid = False
     return referentially_valid
 
