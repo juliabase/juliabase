@@ -168,7 +168,10 @@ class Process(PolymorphicModel):
             field_name = parameter_name = self.JBMeta.identifying_field
         except AttributeError:
             field_name, parameter_name = "id", class_name + "_id"
-        return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: getattr(self, field_name)})
+        try:
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: getattr(self, field_name)})
+        except django.core.urlresolvers.NoReverseMatch:
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={"process_id": getattr(self, field_name)})
 
     def get_absolute_url(self):
         """Returns the relative URL (ie, without the domain name) of the

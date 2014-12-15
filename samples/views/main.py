@@ -29,7 +29,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
-from jb_common.utils import help_link, is_json_requested, respond_in_json
+from jb_common.utils import help_link, is_json_requested, respond_in_json, get_all_models
 from jb_common.models import Topic
 
 
@@ -205,23 +205,36 @@ def show_deposition(request, deposition_number):
 
 
 @login_required
-def show_process(request, process_id):
-    """Show an existing physical process.  This is some sort of fallback view
-    in case a process doesn't provide its own show view.
+def show_process(request, process_id, process_name=None):
+    """Show an existing physical process.  This is some sort of fallback view in
+    case a process doesn't provide its own show view (which is mostly the
+    case).
+
+    The `process_id` needn't be the ``"id"`` field: If `process_name` is not
+    ``None``, its ``JBMeta.identifying_field``, it given, is used instead for
+    the lookup.
 
     :Parameters:
       - `request`: the current HTTP Request object
       - `process_id`: the ID or the process
+      - `process_name`: the class name of the process; if ``None``, ``Process``
+        is assumed
 
     :type request: ``HttpRequest``
     :type process_id: unicode
+    :type process_name: unicode
 
     :Return:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    process = get_object_or_404(models.Process, id=utils.convert_id_to_int(process_id)).actual_instance
+    process_class = get_all_models()[process_name]
+    try:
+        identifying_field = process_class.JBMeta.identifying_field
+    except AttributeError:
+        identifying_field = "id"
+    process = get_object_or_404(process_class, **{identifying_field: process_id})
     if not isinstance(process, models.PhysicalProcess):
         raise Http404("No physical process with that ID was found.")
     permissions.assert_can_view_physical_process(request.user, process)

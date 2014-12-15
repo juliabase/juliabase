@@ -42,19 +42,22 @@ class PatternGenerator(object):
         camel_case_class_name = camel_case_to_underscores(class_name)
         url_name = url_name or camel_case_class_name + "s"
         assert not views - {"add", "edit", "show", "lab_notebook"}
-        if not identifying_field:
-            identifying_field = camel_case_class_name + "_id"
+        normalized_id_field = identifying_field or camel_case_class_name + "_id"
         if "add" in views:
             self.url_patterns.append(url(r"^{}/add/$".format(url_name), self.views_prefix + camel_case_class_name + ".edit",
-                                         {identifying_field: None}, "add_" + camel_case_class_name))
+                                         {normalized_id_field: None}, "add_" + camel_case_class_name))
         if "edit" in views:
-            self.url_patterns.append(url(r"^{}/(?P<{}>.+)/edit/$".format(url_name, identifying_field),
+            self.url_patterns.append(url(r"^{}/(?P<{}>.+)/edit/$".format(url_name, normalized_id_field),
                                          self.views_prefix + camel_case_class_name + ".edit", name="edit_" +
                                          camel_case_class_name))
         if "show" in views:
-            self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, identifying_field),
+            self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field),
                                          self.views_prefix + camel_case_class_name + ".show", name="show_" +
                                          camel_case_class_name))
+        else:
+            self.url_patterns.append(url(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
+                                         "samples.views.main.show_process", {"process_name": class_name},
+                                         name="show_" + camel_case_class_name))
         if "lab_notebook" in views:
             self.url_patterns.extend([url(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
                                           "samples.views.lab_notebook.export", {"process_name": class_name},
