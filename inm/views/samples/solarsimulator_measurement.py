@@ -278,7 +278,7 @@ def edit(request, solarsimulator_measurement_id):
 
 @login_required
 def show(request, solarsimulator_measurement_id):
-    """Show an existing ssolarsimulator measurement.
+    """Show an existing solarsimulator measurement.
 
     :Parameters:
       - `request`: the current HTTP Request object
