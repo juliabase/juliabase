@@ -101,7 +101,6 @@ pds_apparatus_choices = (
     ("pds2", _("PDS #2"))
 )
 
-@python_2_unicode_compatible
 class PDSMeasurement(PhysicalProcess):
     """Model for PDS measurements.
     """
@@ -125,13 +124,6 @@ class PDSMeasurement(PhysicalProcess):
 
     def natural_key(self):
         return (self.number,)
-
-    def __str__(self):
-        _ = ugettext
-        try:
-            return _("PDS measurement of {sample}").format(sample=self.samples.get())
-        except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
-            return _("PDS measurement #{number}").format(number=self.number)
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
@@ -180,7 +172,6 @@ irradiation_choices = (("AM1.5", "AM1.5"),
                        ("OG590", "OG590"),
                        ("BG7", "BG7"))
 
-@python_2_unicode_compatible
 class SolarsimulatorMeasurement(PhysicalProcess):
     irradiation = models.CharField(_("irradiation"), max_length=10, choices=irradiation_choices)
     temperature = models.DecimalField(_("temperature"), max_digits=3, decimal_places=1, help_text=_("in ℃"),
@@ -196,13 +187,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
                        ("edit_permissions_for_solarsimulator_measurement",
                         _("Can edit perms for solarsimulator measurements")),
                        ("view_every_solarsimulator_measurement", _("Can view all solarsimulator measurements")))
-
-    def __str__(self):
-        _ = ugettext
-        try:
-            return _("solarsimulator measurement of {sample}").format(sample=self.samples.get())
-        except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
-            return _("solarsimulator measurement")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -361,7 +345,6 @@ layout_choices = (("inm standard", "INM Standard"),
                   ("acme1", "ACME 1"),
                   ("custom", _("custom")),)
 
-@python_2_unicode_compatible
 class Structuring(PhysicalProcess):
     """Pseudo-Process which contains structuring/mask/layout information.  It
     may contain the cell layout for solarsimulator measurements, or the
@@ -392,10 +375,3 @@ class Structuring(PhysicalProcess):
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("structuring")
         verbose_name_plural = _("structurings")
-
-    def __str__(self):
-        _ = ugettext
-        try:
-            return _("structuring of {sample}").format(sample=self.samples.get())
-        except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
-            return _("structuring")

@@ -27,7 +27,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy, get_language
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
 import django.core.urlresolvers
@@ -37,7 +37,7 @@ from django.core.cache import cache
 from jb_common.utils import get_really_full_name, cache_key_locked
 from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
-from samples.views import shared_utils
+from samples.views import utils
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType
@@ -162,11 +162,22 @@ class Process(PolymorphicModel):
                 sample.save(with_relations=False)
 
     def __str__(self):
-        actual_instance = self.actual_instance
-        if actual_instance == self:
-            return _("process #{0}").format(self.pk)
+        _ = ugettext
+        self = self.actual_instance
+        samples = self.samples.values_list("name", flat=True)
+        try:
+            field_name = self.JBMeta.identifying_field
+        except AttributeError:
+            field_name = None
+        if field_name:
+            return _("{process_class_name} {identifier}"). \
+                format(process_class_name=self._meta.verbose_name, identifier=getattr(self, field_name))
+        elif samples:
+            return ungettext("{process_class_name} of {samples}", "{process_class_name} of {samples}", len(samples)). \
+                format(process_class_name=self._meta.verbose_name, samples=utils.format_enumeration(samples))
         else:
-            return six.text_type(actual_instance)
+            return _("{process_class_name} {identifier}"). \
+                format(process_class_name=self._meta.verbose_name, identifier=self.id)
 
     @models.permalink
     def get_absolute_url(self):
@@ -310,7 +321,7 @@ class Process(PolymorphicModel):
 
         :rtype: unicode
         """
-        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.pk)
+        basename = "{0}_{1}".format(utils.camel_case_to_underscores(self.__class__.__name__), self.pk)
         if plot_id:
             basename += "_" + plot_id
         return basename
@@ -444,13 +455,13 @@ class Process(PolymorphicModel):
             context["name"] = name[:1].upper() + name[1:]
         if "html_body" not in context:
             context["html_body"] = render_to_string(
-                "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
+                "samples/show_" + utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
                 context_instance=Context(context))
             if "short_html_body" not in context:
                 try:
                     context["short_html_body"] = render_to_string(
                         "samples/show-short_{0}.html". \
-                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
+                            format(utils.camel_case_to_underscores(self.__class__.__name__)),
                         context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["short_html_body"] = None
@@ -458,7 +469,7 @@ class Process(PolymorphicModel):
                 try:
                     context["extended_html_body"] = render_to_string(
                         "samples/show-extended_{0}.html". \
-                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
+                            format(utils.camel_case_to_underscores(self.__class__.__name__)),
                         context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["extended_html_body"] = None
@@ -1031,7 +1042,6 @@ sample_death_reasons = (
 """Contains all possible choices for `SampleDeath.reason`.
 """
 
-@python_2_unicode_compatible
 class SampleDeath(Process):
     """This special process marks the end of the sample.  It can have various
     reasons accoring to `sample_death_reasons`.  It is impossible to add
@@ -1046,15 +1056,6 @@ class SampleDeath(Process):
         verbose_name = _("cease of existence")
             # Translators: Of a sample
         verbose_name_plural = _("ceases of existence")
-
-    def __str__(self):
-        _ = ugettext
-        try:
-            # Translators: Of a sample
-            return _("cease of existence of {sample}").format(sample=self.samples.get())
-        except (Sample.DoesNotExist, Sample.MultipleObjectsReturned):
-            # Translators: Of a sample
-            return _("cease of existence #{number}").format(number=self.pk)
 
     @classmethod
     def get_search_tree_node(cls):

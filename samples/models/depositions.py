@@ -43,7 +43,6 @@ class DepositionManager(models.Manager):
         return self.get(number=number)
 
 
-@python_2_unicode_compatible
 class Deposition(PhysicalProcess):
     """The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
@@ -76,10 +75,6 @@ class Deposition(PhysicalProcess):
 
     def natural_key(self):
         return (self.number,)
-
-    def __str__(self):
-        _ = ugettext
-        return _("deposition {number}").format(number=self.number)
 
     def get_data(self):
         """Extract the data of the deposition as a dictionary, ready to be used for
