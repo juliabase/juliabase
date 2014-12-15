@@ -28,43 +28,8 @@ root URL module.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url, patterns
-from samples.views.shared_utils import camel_case_to_underscores
-
-
-class PatternGenerator(object):
-
-    def __init__(self, url_patterns, views_prefix):
-        self.views_prefix = views_prefix + "."
-        self.url_patterns = url_patterns
-
-    def physical_process(self, class_name, identifying_field=None, url_name=None, views={"add", "edit"}):
-        camel_case_class_name = camel_case_to_underscores(class_name)
-        url_name = url_name or camel_case_class_name + "s"
-        assert not views - {"add", "edit", "show", "lab_notebook"}
-        normalized_id_field = identifying_field or camel_case_class_name + "_id"
-        if "add" in views:
-            self.url_patterns.append(url(r"^{}/add/$".format(url_name), self.views_prefix + camel_case_class_name + ".edit",
-                                         {normalized_id_field: None}, "add_" + camel_case_class_name))
-        if "edit" in views:
-            self.url_patterns.append(url(r"^{}/(?P<{}>.+)/edit/$".format(url_name, normalized_id_field),
-                                         self.views_prefix + camel_case_class_name + ".edit", name="edit_" +
-                                         camel_case_class_name))
-        if "show" in views:
-            self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field),
-                                         self.views_prefix + camel_case_class_name + ".show", name="show_" +
-                                         camel_case_class_name))
-        else:
-            self.url_patterns.append(url(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
-                                         "samples.views.main.show_process", {"process_name": class_name},
-                                         name="show_" + camel_case_class_name))
-        if "lab_notebook" in views:
-            self.url_patterns.extend([url(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
-                                          "samples.views.lab_notebook.export", {"process_name": class_name},
-                                          "export_lab_notebook_" + camel_case_class_name),
-                                      url(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
-                                          "samples.views.lab_notebook.show", {"process_name": class_name},
-                                          "lab_notebook_" + camel_case_class_name)])
+from django.conf.urls import url
+from samples.url_utils import pattern_generator
 
 
 urlpatterns = []
