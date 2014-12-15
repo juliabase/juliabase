@@ -16,7 +16,7 @@
 """View for the lab notebooks for physical processes.  This is a generic view.
 The concrete data extraction work is done in the ``get_lab_notebook_context``
 methods of physical process models, and the layout work is done in the
-``lab_notebook_<class_name_of_process>.html`` templates.
+``lab_notebook_<camel_case_class_name_of_process>.html`` templates.
 
 Furthermore, if you'd like to add a lab notebook function, you must add its URL
 explicitly to ``urls.py``.  Look at the large-area deposition entry as an
@@ -89,8 +89,8 @@ def get_previous_next_urls(process_name, year, month):
     notebook view as the starting point.
 
     :Parameters:
-      - `process_name`: the class name of the model of the physical process,
-        e.g. ``"LargeAreaDeposition"``
+      - `process_name`: the class name of the model of the physical process in
+        camel case, e.g. ``"large_area_deposition"``
       - `year`: year of the current view
       - `month`: month of the current view
 
@@ -127,7 +127,7 @@ def get_previous_next_urls(process_name, year, month):
 def show(request, process_name, year_and_month):
     """View for showing one month of the lab notebook for a particular
     physical process.  In ``urls.py``, you must give the entry for this view
-    the name ``"lab_notebook_<process_name>"``.
+    the name ``"lab_notebook_<camel_case_process_name>"``.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -146,6 +146,7 @@ def show(request, process_name, year_and_month):
     :rtype: ``HttpResponse``
     """
     process_class = get_all_models()[process_name]
+    process_name = utils.camel_case_to_underscores(process_name)
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     if not year_and_month:
         try:
@@ -162,7 +163,7 @@ def show(request, process_name, year_and_month):
                     kwargs={"year_and_month": "{year}/{month}".format(**year_month_form.cleaned_data)}))
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
-    template = loader.get_template("samples/lab_notebook_" + utils.camel_case_to_underscores(process_name) + ".html")
+    template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
     template_context = RequestContext(request, process_class.get_lab_notebook_context(year, month))
     html_body = template.render(template_context)
     previous_url, next_url = get_previous_next_urls(process_name, year, month)

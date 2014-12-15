@@ -107,7 +107,8 @@ def main_menu(request):
     lab_notebooks = []
     for process_class, process in permissions.get_all_addable_physical_process_models().items():
         try:
-            url = django.core.urlresolvers.reverse("lab_notebook_" + process["type"], kwargs={"year_and_month": ""})
+            url = django.core.urlresolvers.reverse("lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                                                   kwargs={"year_and_month": ""})
         except django.core.urlresolvers.NoReverseMatch:
             pass
         else:
