@@ -193,7 +193,7 @@ class Process(PolymorphicModel):
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
-        the webpage.
+        the webpage.  Usually, you will not override this method.
 
         :Parameters:
           - `plot_id`: the unique ID of the image.  This is mostly ``""``
