@@ -67,13 +67,13 @@ class PatternGenerator(object):
 urlpatterns = []
 
 pattern_generator = PatternGenerator(urlpatterns, "inm.views.samples")
-pattern_generator.physical_process("cluster_tool_deposition", "number")
-pattern_generator.physical_process("five_chamber_deposition", "number", "5-chamber_depositions",
+pattern_generator.physical_process("ClusterToolDeposition", "number")
+pattern_generator.physical_process("FiveChamberDeposition", "number", "5-chamber_depositions",
                                    {"add", "edit", "lab_notebook"})
-pattern_generator.physical_process("pds_measurement", "number")
-pattern_generator.physical_process("substrate", views={"edit"})
-pattern_generator.physical_process("structuring", views={"edit"})
-pattern_generator.physical_process("solarsimulator_measurement")
+pattern_generator.physical_process("PDSMeasurement", "number")
+pattern_generator.physical_process("Substrate", views={"edit"})
+pattern_generator.physical_process("Structuring", views={"edit"})
+pattern_generator.physical_process("SolarsimulatorMeasurement")
 
 
 urlpatterns += [
