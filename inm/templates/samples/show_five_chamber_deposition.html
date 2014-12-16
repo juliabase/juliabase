@@ -38,11 +38,11 @@ copyright holder, you must destroy it immediately and completely.
         <tr>
           <td class="label">{% verbose_name FiveChamberLayer.number %}:</td>
           <td class="value">{{ layer.number|three_digits }}</td>
-          {% value_field layer.sih4 "sccm" %}
+          {% value_field layer.sih4 %}
         </tr>
         <tr>
           {% value_field layer.layer_type %}
-          {% value_field layer.h2 "sccm" %}
+          {% value_field layer.h2 %}
         </tr>
         <tr>
           <td class="label">{% verbose_name FiveChamberLayer.chamber %}:</td>
@@ -51,7 +51,7 @@ copyright holder, you must destroy it immediately and completely.
           <td class="value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
         </tr>
         <tr>
-          {% value_split_field layer.temperature_1 layer.temperature_2 "℃" %}
+          {% value_split_field layer.temperature_1 layer.temperature_2 %}
         </tr>
         </tbody>
       </table>

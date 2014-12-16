@@ -80,7 +80,7 @@ function showCellData{{ process.id }}(process_id, position) {
       <td class="value">{{ process.get_irradiation_display }}</td>
     </tr>
     <tr>
-        {% value_field process.temperature "℃" %}
+        {% value_field process.temperature %}
     </tr>
   </tbody>
 </table>
@@ -90,9 +90,9 @@ function showCellData{{ process.id }}(process_id, position) {
          id="cell_table_{{ process.id }}_{{ cell.position }}">
     <tbody>
     <tr>{% value_field cell.position %}</tr>
-    <tr>{% value_field cell.area "cm²" 3 %}</tr>
-    <tr>{% value_field cell.eta "%" 3 %}</tr>
-    <tr>{% value_field cell.isc "mA/cm²" 3 %}</tr>
+    <tr>{% value_field cell.area "" 3 %}</tr>
+    <tr>{% value_field cell.eta "" 3 %}</tr>
+    <tr>{% value_field cell.isc "" 3 %}</tr>
     <tr>
       <td class="label" style="font-weight: normal">
           {% verbose_name SolarsimulatorCellMeasurement.data_file %}:

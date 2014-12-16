@@ -25,16 +25,15 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote_plus
 from django.db import models
-from jb_common.utils import in_
 import samples.models.depositions
 from samples import permissions
 from samples.data_tree import DataItem
-from jb_common import models as jb_common_models
+from jb_common import models as jb_common_models, model_fields
 
 
 class ClusterToolHotWireAndPECVDGases(models.Model):
-    h2 = models.DecimalField("H₂", max_digits=5, decimal_places=2, null=True, blank=True, help_text=in_("sccm"))
-    sih4 = models.DecimalField("SiH₄", max_digits=5, decimal_places=2, null=True, blank=True, help_text=in_("sccm"))
+    h2 = model_fields.DecimalQuantityField("H₂", max_digits=5, decimal_places=2, null=True, blank=True, unit="sccm")
+    sih4 = model_fields.DecimalQuantityField("SiH₄", max_digits=5, decimal_places=2, null=True, blank=True, unit="sccm")
 
     class Meta:
         abstract = True
@@ -109,13 +108,6 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
             context["duplicate_url"] = None
         return super(ClusterToolDeposition, self).get_context_for_user(user, context)
 
-    def get_data_for_table_export(self):
-        _ = ugettext
-        data_node = super(ClusterToolDeposition, self).get_data_for_table_export()
-        data_node.items.append(DataItem(_("carrier"), self.carrier))
-        data_node.children = [layer.actual_instance.get_data_for_table_export() for layer in self.layers.all()]
-        return data_node
-
     @classmethod
     def get_search_tree_node(cls):
         """Class method for generating the search tree node for this model
@@ -189,7 +181,7 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
     wire_material = models.CharField(_("wire material"), max_length=20, choices=cluster_tool_wire_material_choices)
-    base_pressure = models.FloatField(_("base pressure"), help_text=in_("mbar"), null=True, blank=True)
+    base_pressure = model_fields.FloatQuantityField(_("base pressure"), unit="mbar", null=True, blank=True)
 
     class Meta(ClusterToolLayer.Meta):
         verbose_name = _("cluster tool hot-wire layer")
@@ -199,17 +191,6 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     def natural_key(self):
         return self.deposition.natural_key() + (self.number,)
     natural_key.dependencies = ["samples.Deposition"]
-
-    def get_data_for_table_export(self):
-        # See `Layer.get_data_for_table_export` for the documentation.
-        _ = ugettext
-        data_node = samples.models.depositions.Layer.get_data_for_table_export(self)
-        data_node.items = [DataItem(_("time"), self.time),
-                            DataItem(_("comments"), self.comments),
-                            DataItem(_("wire material"), self.get_wire_material_display()),
-                            DataItem(_("base pressure") + "/mbar", self.base_pressure)]
-        data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items_for_table_export(self))
-        return data_node
 
 
 class ClusterToolPECVDLayerManager(models.Manager):
@@ -231,8 +212,8 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
     plasma_start_with_shutter = models.BooleanField(_("plasma start with shutter"), default=False)
-    deposition_power = models.DecimalField(_("deposition power"), max_digits=6, decimal_places=2, null=True, blank=True,
-                                           help_text=in_("W"))
+    deposition_power = model_fields.DecimalQuantityField(_("deposition power"), max_digits=6, decimal_places=2,
+                                                         null=True, blank=True, unit="W")
 
 
     class Meta(ClusterToolLayer.Meta):
@@ -243,19 +224,6 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     def natural_key(self):
         return self.deposition.natural_key() + (self.number,)
     natural_key.dependencies = ["samples.Deposition"]
-
-    def get_data_for_table_export(self):
-        _ = ugettext
-        # See `Layer.get_data_for_table_export` for the documentation.
-        data_node = samples.models.depositions.Layer.get_data_for_table_export(self)
-        data_node.items = [DataItem(_("chamber"), self.get_chamber_display()),
-                            DataItem(_("time"), self.time),
-                            DataItem(_("comments"), self.comments),
-                            DataItem(_("plasma start with shutter"), _("yes") if self.plasma_start_with_shutter else _("no")),
-                            DataItem(_("deposition power") + "/W", self.deposition_power), ]
-        data_node.items.extend(ClusterToolHotWireAndPECVDGases.get_data_items_for_table_export(self))
-        return data_node
-
 
 
 class FiveChamberDeposition(samples.models.depositions.Deposition):
@@ -335,10 +303,12 @@ class FiveChamberLayer(samples.models.depositions.Layer):
     deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
     layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
     chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
-    sih4 = models.DecimalField("SiH₄", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
-    h2 = models.DecimalField("H₂", max_digits=7, decimal_places=3, help_text=in_("sccm"), null=True, blank=True)
-    temperature_1 = models.DecimalField(_("temperature 1"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
-    temperature_2 = models.DecimalField(_("temperature 2"), max_digits=7, decimal_places=3, help_text=in_("℃"), null=True, blank=True)
+    sih4 = model_fields.DecimalQuantityField("SiH₄", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
+    h2 = model_fields.DecimalQuantityField("H₂", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
+    temperature_1 = model_fields.DecimalQuantityField(_("temperature 1"), max_digits=7, decimal_places=3, unit="℃",
+                                                      null=True, blank=True)
+    temperature_2 = model_fields.DecimalQuantityField(_("temperature 2"), max_digits=7, decimal_places=3, unit="℃",
+                                                      null=True, blank=True)
 
     class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")
@@ -354,7 +324,9 @@ class FiveChamberLayer(samples.models.depositions.Layer):
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 
     def get_data_for_table_export(self):
-        # See `Layer.get_data_for_table_export` for the documentation.
+        # See `Layer.get_data_for_table_export` for the documentation.  This is
+        # a good example for adding an additional field to the table output
+        # which is not a field but calculated from fields.
         _ = ugettext
         data_node = super(FiveChamberLayer, self).get_data_for_table_export()
         if self.sih4 and self.h2:
@@ -362,11 +334,5 @@ class FiveChamberLayer(samples.models.depositions.Layer):
             silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100
         else:
             silane_concentration = 0
-        data_node.items.extend([DataItem(_("layer type"), self.get_layer_type_display()),
-                                DataItem(_("chamber"), self.get_chamber_display()),
-                                DataItem("SiH₄/sccm", self.sih4),
-                                DataItem("H₂/sccm", self.h2),
-                                DataItem("SC/%", "{0:5.2f}".format(silane_concentration)),
-                                DataItem("T/℃ (1)", self.temperature_1),
-                                DataItem("T/℃ (2)", self.temperature_2)])
+        data_node.items.append(DataItem("SC/%", "{0:5.2f}".format(silane_concentration)))
         return data_node

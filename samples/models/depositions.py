@@ -26,7 +26,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.db import models
-from samples.models.common import PhysicalProcess
+from samples.models.common import PhysicalProcess, fields_to_data_items, remove_data_item
 from samples.data_tree import DataNode, DataItem
 from jb_common import search
 
@@ -76,6 +76,31 @@ class Deposition(PhysicalProcess):
     def natural_key(self):
         return (self.number,)
 
+    def _get_layers(self):
+        """Retrieves all layers of this deposition.  This function can deal with
+        polymorphic layer classes as well as with the possibility that the
+        deposition class doesn't have an associated layer class at all.
+
+        :Return:
+          all layers of this deposition
+
+        :rtype: list of `Layer`.
+        """
+        layers = []
+        try:
+            all_layers = self.layers.all()
+        except AttributeError:
+            pass
+        else:
+            for layer in all_layers:
+                try:
+                    # For deposition systems with polymorphic layers
+                    layer = layer.actual_instance
+                except AttributeError:
+                    pass
+                layers.append(layer)
+        return layers
+
     def get_data(self):
         """Extract the data of the deposition as a dictionary, ready to be used for
         general data export.  In contrast to `get_data_for_table_export`, I
@@ -93,12 +118,7 @@ class Deposition(PhysicalProcess):
         """
         data = super(Deposition, self).get_data()
         del data["deposition_ptr"]
-        for layer in self.layers.all():
-            try:
-                # For deposition systems with polymorphic layers
-                layer = layer.actual_instance
-            except AttributeError:
-                pass
+        for layer in self._get_layers():
             layer_data = layer.get_data()
             for key in list(layer_data):
                 if key in {"deposition", "actual_object_id"} or key.endswith("_ptr"):
@@ -108,10 +128,10 @@ class Deposition(PhysicalProcess):
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
         data_node = super(Deposition, self).get_data_for_table_export()
-        data_node.items.append(DataItem(_("number"), self.number, "deposition"))
-        data_node.children = [layer.get_data_for_table_export() for layer in self.layers.all()]
+        remove_data_item(self, data_node, "split_done")
+        for layer in self._get_layers():
+            data_node.children.append(layer.get_data_for_table_export())
         return data_node
 
     @classmethod
@@ -187,7 +207,7 @@ class Layer(models.Model):
         # See `Process.get_data_for_table_export` for the documentation.
         _ = ugettext
         data_node = DataNode(self, _("layer {number}").format(number=self.number))
-        data_node.items = [DataItem(_("number"), self.number, "layer")]
+        fields_to_data_items(self, data_node, {"deposition"})
         return data_node
 
     @classmethod

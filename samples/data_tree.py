@@ -21,6 +21,9 @@ used e.g. for the CSV export of model instances.
 from __future__ import unicode_literals
 import django.utils.six as six
 
+from django.utils.functional import Promise
+
+
 class DataNode(object):
     """Class for a node in a data tree intended to hold instance data.
 
@@ -194,9 +197,9 @@ class DataItem(object):
           - `origin`: an optional name of the class from where this data item
             comes from.
 
-        :type key: unicode
+        :type key: unicode or `Promise`
         :type value: object
         :type origin: unicode or ``NoneType``
         """
-        assert isinstance(key, six.string_types)
+        assert isinstance(key, (six.string_types, Promise))
         self.key, self.value, self.origin = key, value, origin

@@ -206,8 +206,14 @@ def input_field(field):
     """
     result = """<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
         html_name=field.html_name, label=field.label)
-    help_text = """ <span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
-    result += """<td class="input">{field}{help_text}</td>""".format(field=field, help_text=help_text)
+    help_text = """<span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
+    try:
+        unit = field.field.unit
+    except AttributeError:
+        unit = ""
+    else:
+        unit = """<span class="unit-of-measurement">{unit}</span>""".format(unit=unit)
+    result += """<td class="input">{field}{unit}{help_text}</td>""".format(field=field, unit=unit, help_text=help_text)
     return result
 
 

@@ -381,7 +381,13 @@ class ValueFieldNode(template.Node):
         else:
             instance, field_name = self.field_name.rsplit(".", 1)
             model = context[instance].__class__
-            verbose_name = six.text_type(model._meta.get_field(field_name).verbose_name)
+            model_field = model._meta.get_field(field_name)
+            verbose_name = six.text_type(model_field.verbose_name)
+            if self.unit is None:
+                try:
+                    self.unit = model_field.unit
+                except AttributeError:
+                    pass
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
             field = jb_common.templatetags.juliabase.fancy_bool(field)
@@ -416,7 +422,9 @@ def value_field(parser, token):
     The unit (``"W"`` for “Watt”) is optional.  If you have a boolean field,
     you can give ``"yes/no"`` as the unit, which converts the boolean value to
     a yes/no string (in the current language).  For gas flow fields that should
-    collapse if the gas wasn't used, use ``"sccm_collapse"``.
+    collapse if the gas wasn't used, use ``"sccm_collapse"``.  If not given but
+    the model field has a unit set (i.e. ``...QuantityField``), that unit is
+    used.
 
     The number 3 is also optional.  However, if it is set, the unit must be at
     least ``""``.  With this option you can set the number of significant
@@ -491,7 +499,13 @@ class ValueSplitFieldNode(template.Node):
         else:
             instance, __, field_name = self.field_name.rpartition(".")
             model = context[instance].__class__
-            verbose_name = six.text_type(model._meta.get_field(field_name).verbose_name)
+            model_field = model._meta.get_field(field_name)
+            verbose_name = six.text_type(model_field.verbose_name)
+            if self.unit is None:
+                try:
+                    self.unit = model_field.unit
+                except AttributeError:
+                    pass
         verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if all(field is None for field in fields):
@@ -538,7 +552,9 @@ def value_split_field(parser, token):
     The unit (``"V"`` for “Volt”) is optional.  If you have a boolean field,
     you can give ``"yes/no"`` as the unit, which converts the boolean value to
     a yes/no string (in the current language).  For gas flow fields that should
-    collapse if the gas wasn't used, use ``"sccm_collapse"``.
+    collapse if the gas wasn't used, use ``"sccm_collapse"``.  If not given but
+    the model field has a unit set (i.e. ``...QuantityField``), that unit is
+    used.
     """
     tokens = token.split_contents()
     fields = []
