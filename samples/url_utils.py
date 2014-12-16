@@ -55,7 +55,8 @@ class PatternGenerator(object):
             used.
         :param url_name: The URL path component to be used for this process.  By
             default, this is the class name converted to underscores notation,
-            with an “s” appended, e.g. ``"thickness_measurements"``.
+            with an “s” appended, e.g. ``"thickness_measurements"``.  It may
+            contain slashs.
         :param views: The view functions for which URLs should be generated.
             You may choose from ``"add"``, ``"edit"``, ``"custom_show"``, and
             ``"lab_notebook"``.
