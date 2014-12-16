@@ -31,6 +31,7 @@ import sys, os
 # is relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 sys.path.append(os.path.abspath('..'))
+os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 #import settings
 
 # General configuration
