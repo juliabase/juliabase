@@ -141,6 +141,7 @@ class Deposition(PhysicalProcess):
         return model_field
 
 
+@python_2_unicode_compatible
 class Layer(models.Model):
     """This is an abstract base model for deposition layers.  Now, this is the
     first *real* abstract model here.  It is abstract because it can never
@@ -174,6 +175,10 @@ class Layer(models.Model):
         ordering = ["number"]
         verbose_name = _("layer")
         verbose_name_plural = _("layers")
+
+    def __str__(self):
+        _ = ugettext
+        return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 
     def get_data(self):
         """Extract the data of this layer as a dictionary, ready to be used for general
