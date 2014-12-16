@@ -205,7 +205,7 @@ def show_deposition(request, deposition_number):
 
 
 @login_required
-def show_process(request, process_id, process_name=None):
+def show_process(request, process_id, process_name="Process"):
     """Show an existing physical process.  This is some sort of fallback view in
     case a process doesn't provide its own show view (which is mostly the
     case).
@@ -234,7 +234,7 @@ def show_process(request, process_id, process_name=None):
         identifying_field = process_class.JBMeta.identifying_field
     except AttributeError:
         identifying_field = "id"
-    process = get_object_or_404(process_class, **{identifying_field: process_id})
+    process = get_object_or_404(process_class, **{identifying_field: process_id}).actual_instance
     if not isinstance(process, models.PhysicalProcess):
         raise Http404("No physical process with that ID was found.")
     permissions.assert_can_view_physical_process(request.user, process)
