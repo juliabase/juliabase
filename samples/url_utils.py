@@ -41,11 +41,12 @@ class PatternGenerator(object):
         """Add URLs for the views of the physical process `class_name`.  For the “add”
         and the “edit” view, an :samp:`edit(request, {process_class_name}_id)`
         function must exist.  In case of “add”, ``None`` is passed as the
-        second parameter.  For the “show” view, a :samp:`show(request,
+        second parameter.  For the “custom show” view, a :samp:`show(request,
         {process_class_name}_id)` function must exist.  If there is an
         `identifying_field`, this is used for the second parameter name
-        instead.  If no URL for a show view is requested, a default one is
-        generated using a generic view function (which is mostly sufficient).
+        instead.  If no URL for a custom show view is requested, a default one
+        is generated using a generic view function (which is mostly
+        sufficient).
 
         :param class_name: Name of the physical process class,
             e.g. ``"ThicknessMeasurement"``.
@@ -56,7 +57,7 @@ class PatternGenerator(object):
             default, this is the class name converted to underscores notation,
             with an “s” appended, e.g. ``"thickness_measurements"``.
         :param views: The view functions for which URLs should be generated.
-            You may choose from ``"add"``, ``"edit"``, ``"show"``, and
+            You may choose from ``"add"``, ``"edit"``, ``"custom_show"``, and
             ``"lab_notebook"``.
 
         :type class_name: unicode
@@ -66,7 +67,7 @@ class PatternGenerator(object):
         """
         camel_case_class_name = camel_case_to_underscores(class_name)
         url_name = url_name or camel_case_class_name + "s"
-        assert not views - {"add", "edit", "show", "lab_notebook"}
+        assert not views - {"add", "edit", "custom_show", "lab_notebook"}
         normalized_id_field = identifying_field or camel_case_class_name + "_id"
         if "add" in views:
             self.url_patterns.append(url(r"^{}/add/$".format(url_name), self.views_prefix + camel_case_class_name + ".edit",
@@ -75,7 +76,7 @@ class PatternGenerator(object):
             self.url_patterns.append(url(r"^{}/(?P<{}>.+)/edit/$".format(url_name, normalized_id_field),
                                          self.views_prefix + camel_case_class_name + ".edit", name="edit_" +
                                          camel_case_class_name))
-        if "show" in views:
+        if "custom_show" in views:
             self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field),
                                          self.views_prefix + camel_case_class_name + ".show", name="show_" +
                                          camel_case_class_name))
@@ -90,3 +91,24 @@ class PatternGenerator(object):
                                       url(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
                                           "samples.views.lab_notebook.show", {"process_name": class_name},
                                           "lab_notebook_" + camel_case_class_name)])
+
+    def deposition(self, class_name, url_name=None, views={"add", "edit", "lab_notebook"}):
+        """Add URLs for the views of the deposition process `class_name`.  This is a
+        shorthand for `physical_process` with defaults optimized for
+        depositions: ``identifying_field`` is ``"number"``, and the views
+        include a lab notebook.
+
+        :param class_name: Name of the deposition class,
+            e.g. ``"FiveChamberDeposition"``.
+        :param url_name: The URL path component to be used for this deposition.
+            By default, this is the class name converted to underscores
+            notation, with an “s” appended, e.g. ``"thickness_measurements"``.
+        :param views: The view functions for which URLs should be generated.
+            You may choose from ``"add"``, ``"edit"``, ``"custom_show"``, and
+            ``"lab_notebook"``.
+
+        :type class_name: unicode
+        :type url_name: unicode
+        :type views: set of unicode
+        """
+        self.physical_process(class_name, "number", url_name, views)
