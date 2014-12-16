@@ -60,23 +60,6 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
                        ("view_every_cluster_tool_deposition", _("Can view all cluster tool depositions")),
                        ("edit_every_cluster_tool_deposition", _("Can edit all cluster tool depositions")))
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ("inm.views.samples.cluster_tool_deposition.show", [self.number])
-
-    @classmethod
-    def get_add_link(cls):
-        """Return all you need to generate a link to the “add” view for this
-        process.
-
-        :Return:
-          the full URL to the add page for this process
-
-        :rtype: str
-        """
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_cluster_tool_deposition")
-
     def get_context_for_user(self, user, old_context):
         """
         Additionally, because this is a cluster tool and thus has different
@@ -96,11 +79,6 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
                 layer.type = "PECVD"
             layers.append(layer)
         context["layers"] = layers
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = django.core.urlresolvers.reverse("edit_cluster_tool_deposition",
-                                                                   kwargs={"deposition_number": self.number})
-        else:
-            context["edit_url"] = None
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
                 django.core.urlresolvers.reverse("add_cluster_tool_deposition"), urlquote_plus(self.number))
@@ -129,11 +107,6 @@ samples.models.depositions.default_location_of_deposited_samples[ClusterToolDepo
     _("cluster tool deposition lab")
 
 
-class ClusterToolLayerManager(models.Manager):
-    def get_by_natural_key(self, deposition_number, layer_number):
-        return self.get(deposition__number=deposition__number, number=layer_number)
-
-
 @python_2_unicode_compatible
 class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.PolymorphicModel):
     """Model for a layer of the “cluster tool”.  Note that this is the common
@@ -143,13 +116,7 @@ class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.Polymo
     polymorphism here because cluster tools may have layers with very different
     fields.
     """
-    objects = ClusterToolLayerManager()
-
     deposition = models.ForeignKey(ClusterToolDeposition, related_name="layers", verbose_name=_("deposition"))
-
-    def natural_key(self):
-        return self.deposition.natural_key() + (self.number,)
-    natural_key.dependencies = ["samples.Deposition"]
 
     class Meta(samples.models.depositions.Layer.Meta):
         unique_together = ("deposition", "number")
@@ -159,11 +126,6 @@ class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.Polymo
     def __str__(self):
         _ = ugettext
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
-
-
-class ClusterToolHotWireLayerManager(models.Manager):
-    def get_by_natural_key(self, deposition_number, layer_number):
-        return self.get(deposition__number=deposition__number, number=layer_number)
 
 
 cluster_tool_wire_material_choices = (
@@ -176,8 +138,6 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     """Model for a hot-wire layer in the cluster tool.  We have no
     “chamber” field here because there is only one hot-wire chamber anyway.
     """
-    objects = ClusterToolHotWireLayerManager()
-
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
     wire_material = models.CharField(_("wire material"), max_length=20, choices=cluster_tool_wire_material_choices)
@@ -188,16 +148,6 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         verbose_name_plural = _("cluster tool hot-wire layers")
 
 
-    def natural_key(self):
-        return self.deposition.natural_key() + (self.number,)
-    natural_key.dependencies = ["samples.Deposition"]
-
-
-class ClusterToolPECVDLayerManager(models.Manager):
-    def get_by_natural_key(self, deposition_number, layer_number):
-        return self.get(deposition__number=deposition__number, number=layer_number)
-
-
 cluster_tool_pecvd_chamber_choices = (
     ("#1", "#1"),
     ("#2", "#2"),
@@ -206,8 +156,6 @@ cluster_tool_pecvd_chamber_choices = (
 class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     """Model for a PECDV layer in the cluster tool.
     """
-    objects = ClusterToolPECVDLayerManager()
-
     chamber = models.CharField(_("chamber"), max_length=5, choices=cluster_tool_pecvd_chamber_choices)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
@@ -219,11 +167,6 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     class Meta(ClusterToolLayer.Meta):
         verbose_name = _("cluster tool PECVD layer")
         verbose_name_plural = _("cluster tool PECVD layers")
-
-
-    def natural_key(self):
-        return self.deposition.natural_key() + (self.number,)
-    natural_key.dependencies = ["samples.Deposition"]
 
 
 class FiveChamberDeposition(samples.models.depositions.Deposition):
@@ -240,41 +183,14 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
                        ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
                        ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ("inm.views.samples.five_chamber_deposition.show", [self.number])
-
-    @classmethod
-    def get_add_link(cls):
-        """Return all you need to generate a link to the “add” view for this
-        process.
-
-        :Return:
-          the full URL to the add page for this process
-
-        :rtype: str
-        """
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_5-chamber_deposition")
-
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_5-chamber_deposition", kwargs={"deposition_number": self.number})
-        else:
-            context["edit_url"] = None
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.core.urlresolvers.reverse("add_5-chamber_deposition"), urlquote_plus(self.number))
+                django.core.urlresolvers.reverse("add_five_chamber_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
-
-
-class FiveChamberLayerManager(models.Manager):
-    def get_by_natural_key(self, deposition_number, layer_number):
-        return self.get(deposition__number=deposition__number, number=layer_number)
 
 
 samples.models.depositions.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
@@ -298,8 +214,6 @@ five_chamber_layer_type_choices = (
 class FiveChamberLayer(samples.models.depositions.Layer):
     """One layer in a 5-chamber deposition.
     """
-    objects = FiveChamberLayerManager()
-
     deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
     layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
     chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
@@ -314,10 +228,6 @@ class FiveChamberLayer(samples.models.depositions.Layer):
         unique_together = ("deposition", "number")
         verbose_name = _("5-chamber layer")
         verbose_name_plural = _("5-chamber layers")
-
-    def natural_key(self):
-        return self.deposition.natural_key() + (self.number,)
-    natural_key.dependencies = ["samples.Deposition"]
 
     def __str__(self):
         _ = ugettext

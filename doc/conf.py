@@ -41,6 +41,8 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = ["sphinx.ext.mathjax", "sphinx.ext.autodoc"]#, "sphinx.ext.mathjax"]
 
+autoclass_content = 'both'
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 

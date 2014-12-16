@@ -537,8 +537,8 @@ def digest_process(process, user, local_context={}):
     if cached_context is None:
         process_context = process.get_context_for_user(user, local_context)
         if cache_key:
-            keys_list_key = "process-keys:{0}".format(process.pk)
-            with jb_common.utils.cache_key_locked("process-lock:{0}".format(process.pk)):
+            keys_list_key = "process-keys:{0}".format(process.id)
+            with jb_common.utils.cache_key_locked("process-lock:{0}".format(process.id)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)

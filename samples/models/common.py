@@ -106,19 +106,12 @@ def remove_data_item(instance, data_node, field_name):
     data_node.items = [item for item in data_node.items if item.key != key]
 
 
-class ExternalOperatorManager(models.Manager):
-    def get_by_natural_key(self, name):
-        return self.get(name=name)
-
-
 @python_2_unicode_compatible
 class ExternalOperator(models.Model):
     """Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
     field, which in turn contains `ExternalOperator`.
     """
-    objects = ExternalOperatorManager()
-
     name = models.CharField(_("name"), max_length=30, unique=True)
     institution = models.CharField(_("institution"), max_length=255)
     email = models.EmailField(_("email"))
@@ -141,15 +134,11 @@ class ExternalOperator(models.Model):
         for process in self.processes.all():
             process.actual_instance.save()
 
-    def natural_key(self):
-        return (self.name,)
-
     def __str__(self):
         return self.name
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.external_operator.show", [self.pk])
+        return django.core.urlresolvers.reverse("samples.views.external_operator.show", args=(self.pk,))
 
 
 timestamp_inaccuracy_choices = (
@@ -170,6 +159,11 @@ class Process(PolymorphicModel):
     that are *just* processes.  However, it is not marked as ``abstract=True``
     in the ``Meta`` subclass because I must be able to link to it with
     ``ForeignKey``.
+
+    Note that derived processes might set their own primary key.  So if you
+    need the process as such to identify uniquely within the set of all
+    processes, you must use the ``id`` attribute rather than the ``pk``
+    attribute.
 
     If you retrieve a `Process`, you may read (inherited) field
     `actual_instance` to get the actual object, e.g. a `SixChamberDeposition`::
@@ -211,8 +205,8 @@ class Process(PolymorphicModel):
 
         :type with_relations: bool
         """
-        keys_list_key = "process-keys:{0}".format(self.pk)
-        with cache_key_locked("process-lock:{0}".format(self.pk)):
+        keys_list_key = "process-keys:{0}".format(self.id)
+        with cache_key_locked("process-lock:{0}".format(self.id)):
             keys = cache.get(keys_list_key)
             if keys:
                 cache.delete_many(keys)
@@ -241,7 +235,17 @@ class Process(PolymorphicModel):
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=self.id)
 
-    @models.permalink
+    def _urlresolve(self, prefix):
+        class_name = shared_utils.camel_case_to_underscores(self.__class__.__name__)
+        try:
+            field_name = parameter_name = self.JBMeta.identifying_field
+        except AttributeError:
+            field_name, parameter_name = "id", class_name + "_id"
+        try:
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: getattr(self, field_name)})
+        except django.core.urlresolvers.NoReverseMatch:
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={"process_id": getattr(self, field_name)})
+
     def get_absolute_url(self):
         """Returns the relative URL (ie, without the domain name) of the
         database object.  Django calls this method ``get_absolute_url`` to make
@@ -258,11 +262,14 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return ("samples.views.main.show_process", [str(self.pk)])
+        try:
+            return self._urlresolve("show_")
+        except django.core.urlresolvers.NoReverseMatch:
+            return django.core.urlresolvers.reverse("samples.views.main.show_process", args=(str(self.id),))
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
-        the webpage.
+        the webpage.  Usually, you will not override this method.
 
         :Parameters:
           - `plot_id`: the unique ID of the image.  This is mostly ``""``
@@ -287,16 +294,16 @@ class Process(PolymorphicModel):
         """
         if not plot_id:
             # We give this a nicer URL because this case is so common
-            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.pk)})
+            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.id)})
             thumbnail_url = django.core.urlresolvers.reverse("default_process_plot_thumbnail",
-                                                             kwargs={"process_id": str(self.pk)})
+                                                             kwargs={"process_id": str(self.id)})
         else:
             plot_url = django.core.urlresolvers.reverse("process_plot",
-                                                        kwargs={"process_id": str(self.pk), "plot_id": plot_id})
+                                                        kwargs={"process_id": str(self.id), "plot_id": plot_id})
             thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
-                                                             kwargs={"process_id": str(self.pk), "plot_id": plot_id})
+                                                             kwargs={"process_id": str(self.id), "plot_id": plot_id})
         basename = "{0}-{1}-{2}-{3}-{4}".format(
-            self.content_type.app_label, self.content_type.model, get_language(), self.pk, plot_id)
+            self.content_type.app_label, self.content_type.model, get_language(), self.id, plot_id)
         return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".pdf"),
                 "plot_url": plot_url,
                 "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".png"),
@@ -383,7 +390,7 @@ class Process(PolymorphicModel):
 
         :rtype: unicode
         """
-        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.pk)
+        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.id)
         if plot_id:
             basename += "_" + plot_id
         return basename
@@ -463,7 +470,7 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        return "process:{0}-{1}".format(self.pk, user_settings_hash)
+        return "process:{0}-{1}".format(self.id, user_settings_hash)
 
     def get_context_for_user(self, user, old_context):
         """Create the context dict for this process, or fill missing fields,
@@ -541,6 +548,13 @@ class Process(PolymorphicModel):
             context["timestamp"] = self.timestamp
         if "timestamp_inaccuracy" not in context:
             context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
+        if samples.permissions.has_permission_to_edit_physical_process(user, self):
+            try:
+                context["edit_url"] = self._urlresolve("edit_")
+            except django.core.urlresolvers.NoReverseMatch:
+                context["edit_url"] = None
+        else:
+            context["edit_url"] = None
         return context
 
     @classmethod
@@ -602,17 +616,20 @@ class PhysicalProcess(Process):
 
     @classmethod
     def get_add_link(cls):
-        """Returns the URL to the “add” view for this process.  This should be
-        implemented in derived model classes which is actually instantiated
-        unless this process class should not be explicitly added by users (but
-        is created by the program somehow).
+        """Returns the URL to the “add” view for this process.  A physical process
+        should define a named URL called ``"add_process_class_name"`` unless
+        this process class should not be explicitly added by users (but is
+        created by the program somehow).
 
         :Return:
           the full URL to the add page for this process
 
         :rtype: str
         """
-        raise NotImplementedError
+        try:
+            return django.core.urlresolvers.reverse("add_" + shared_utils.camel_case_to_underscores(cls.__name__))
+        except django.core.urlresolvers.NoReverseMatch:
+            return None
 
     @classmethod
     def get_lab_notebook_data(cls, year, month):
@@ -643,17 +660,10 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
-class SampleManager(models.Manager):
-    def get_by_natural_key(self, name):
-        return self.get(name=name)
-
-
 @python_2_unicode_compatible
 class Sample(models.Model):
     """The model for samples.
     """
-    objects = SampleManager()
-
     name = models.CharField(_("name"), max_length=30, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_("watchers"))
@@ -726,9 +736,6 @@ class Sample(models.Model):
             self.split_origin.save(with_relations=False)
             self.split_origin.parent.save(with_relations=False)
 
-    def natural_key(self):
-        return (self.name,)
-
     def __str__(self):
         """Here, I realise the peculiar naming scheme of provisional sample
         names.  Provisional samples names always start with ``"*"``, followed
@@ -789,12 +796,11 @@ class Sample(models.Model):
         """
         return six.text_type(self) + self.tags_suffix(user)
 
-    @models.permalink
     def get_absolute_url(self):
         if self.name.startswith("*"):
-            return ("show_sample_by_id", (), {"sample_id": str(self.pk), "path_suffix": ""})
+            return django.core.urlresolvers.reverse("show_sample_by_id", kwargs={"sample_id": str(self.pk), "path_suffix": ""})
         else:
-            return ("show_sample_by_name", [self.name])
+            return django.core.urlresolvers.reverse("show_sample_by_name", args=(self.name,))
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
@@ -885,7 +891,7 @@ class Sample(models.Model):
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
             data.update(ancestor_data)
-        data.update(("process #{}".format(process.pk), process.actual_instance.get_data())
+        data.update(("process #{}".format(process.id), process.actual_instance.get_data())
                     for process in self.processes.all())
         return data
 
@@ -1006,7 +1012,7 @@ class SampleSplit(Process):
         hash_.update("\x04{0}\x04{1}\x04{2}".format(local_context.get("original_sample", ""),
                                                     local_context.get("latest_descendant", ""),
                                                     local_context.get("sample", "")).encode("utf-8"))
-        return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
+        return "process:{0}-{1}".format(self.id, hash_.hexdigest())
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -1017,7 +1023,7 @@ class SampleSplit(Process):
         if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
             context["resplit_url"] = django.core.urlresolvers.reverse(
-                "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.pk})
+                "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.id})
         else:
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)
@@ -1025,11 +1031,6 @@ class SampleSplit(Process):
     @classmethod
     def get_search_tree_node(cls):
         raise NotImplementedError
-
-
-class ClearanceManager(models.Manager):
-    def get_by_natural_key(self, username, sample_name):
-        return self.get(user__username=username, sample__name=sample_name)
 
 
 @python_2_unicode_compatible
@@ -1041,8 +1042,6 @@ class Clearance(models.Model):
     Note that the processes needn't be processes connected with the sample.
     They may also belong to one of its ancestors.
     """
-    objects = ClearanceManager()
-
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("user"), related_name="clearances")
     sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
@@ -1052,10 +1051,6 @@ class Clearance(models.Model):
         unique_together = ("user", "sample")
         verbose_name = _("clearance")
         verbose_name_plural = _("clearances")
-
-    def natural_key(self):
-        return self.user.natural_key() + self.sample.natural_key()
-    natural_key.dependencies = ["auth.User", "samples.Sample"]
 
     def __str__(self):
         _ = ugettext
@@ -1080,9 +1075,8 @@ class SampleClaim(models.Model):
         _ = ugettext
         return _("sample claim #{number}").format(number=self.pk)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.claim.show", (self.pk,))
+        return django.core.urlresolvers.reverse("samples.views.claim.show", args=(self.pk,))
 
 
 sample_death_reasons = (
@@ -1167,9 +1161,8 @@ class Result(Process):
                 # Translators: experimental result
                 return _("result #{number}").format(number=self.pk)
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.result.show", (self.pk,))
+        return django.core.urlresolvers.reverse("samples.views.result.show", args=(self.pk,))
 
     def get_image_locations(self):
         """Get the location of the image in the local filesystem as well
@@ -1228,11 +1221,6 @@ class Result(Process):
                                 "image_url": image_locations["image_url"]})
             else:
                 context["thumbnail_url"] = context["image_url"] = None
-        if samples.permissions.has_permission_to_edit_result_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
-        else:
-            context["edit_url"] = None
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
@@ -1327,9 +1315,8 @@ class SampleSeries(models.Model):
     def __str__(self):
         return self.name
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.sample_series.show", [self.name])
+        return django.core.urlresolvers.reverse("samples.views.sample_series.show", args=(self.name,))
 
     def get_data(self):
         """Extract the data of this sample series as a dictionary, ready to be used for
@@ -1445,7 +1432,7 @@ class UserDetails(models.Model):
     my_layers = models.TextField(_("my layers"), blank=True, help_text=_("in JSON format"))
     """This string is the JSON serialisation of the list with contains
     3-tuples of the the form ``(nickname, deposition, layer)``, where
-    “deposition” is the *process id* (``Process.pk``, not the deposition
+    “deposition” is the *process id* (``Process.id``, not the deposition
     number!) of the deposition, and “layer” is the layer number
     (`models.depositions.Layer.number`).
     """
@@ -1644,4 +1631,4 @@ class ProcessWithSamplePositions(models.Model):
         hash_ = hashlib.sha1()
         hash_.update(user_settings_hash.encode("utf-8"))
         hash_.update("\x04{0}".format(local_context.get("sample", "")).encode("utf-8"))
-        return "process:{0}-{1}".format(self.pk, hash_.hexdigest())
+        return "process:{0}-{1}".format(self.id, hash_.hexdigest())

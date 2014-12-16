@@ -60,10 +60,6 @@ class Substrate(PhysicalProcess):
 
     Note that it doesn't define permissions because everyone can create
     substrates.
-
-    Additionally, we don't implement ``get_add_link`` because a substrate
-    cannot be added by users.  Instead, it is created implicitly whenever new
-    samples are created.
     """
     material = models.CharField(_("substrate material"), max_length=30, choices=substrate_materials)
 
@@ -74,20 +70,6 @@ class Substrate(PhysicalProcess):
     def __str__(self):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
-    def get_context_for_user(self, user, old_context):
-        context = old_context.copy()
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_substrate", kwargs={"substrate_id": self.id})
-        else:
-            context["edit_url"] = None
-        return super(Substrate, self).get_context_for_user(user, context)
-
-
-class PDSMeasurementManager(models.Manager):
-    def get_by_natural_key(self, number):
-        return self.get(number=number)
-
 
 pds_apparatus_choices = (
     ("pds1", _("PDS #1")),
@@ -97,8 +79,6 @@ pds_apparatus_choices = (
 class PDSMeasurement(PhysicalProcess):
     """Model for PDS measurements.
     """
-    objects = PDSMeasurementManager()
-
     number = models.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_("raw data file"), max_length=200,
                                     help_text=format_lazy(_('only the relative path below "{path}"'), path="pds_raw_data/"))
@@ -115,8 +95,8 @@ class PDSMeasurement(PhysicalProcess):
                        ("view_every_pds_measurement", _("Can view all PDS measurements")))
         ordering = ["number"]
 
-    def natural_key(self):
-        return (self.number,)
+    class JBMeta:
+        identifying_field = "number"
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
@@ -131,24 +111,10 @@ class PDSMeasurement(PhysicalProcess):
     def get_plotfile_basename(self, plot_id):
         return "pds_{0}".format(self.samples.get()).replace("*", "")
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ("inm.views.samples.pds_measurement.show", (), {"pds_number": self.number})
-
-    @classmethod
-    def get_add_link(cls):
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_pds_measurement")
-
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         plot_locations = self.calculate_plot_locations()
         context["thumbnail"], context["figure"] = plot_locations["thumbnail_url"], plot_locations["plot_url"]
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_pds_measurement", kwargs={"pds_number": self.number})
-        else:
-            context["edit_url"] = None
         return super(PDSMeasurement, self).get_context_for_user(user, context)
 
 
@@ -173,11 +139,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if permissions.has_permission_to_edit_physical_process(user, self):
-            context["edit_url"] = \
-                django.core.urlresolvers.reverse("edit_solarsimulator_measurement", kwargs={"process_id": self.id})
-        else:
-            context["edit_url"] = None
         sample = self.samples.get()
         if "shapes" not in context:
             layout = layouts.get_layout(sample, self)
@@ -199,11 +160,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
                 default_cell = sorted([(cell.isc, cell.position) for cell in context["cells"]], reverse=True)[0][1]
             context["default_cell"] = (default_cell,) + context["image_urls"][default_cell]
         return super(SolarsimulatorMeasurement, self).get_context_for_user(user, context)
-
-    @classmethod
-    def get_add_link(cls):
-        _ = ugettext
-        return django.core.urlresolvers.reverse("add_solarsimulator_measurement")
 
     def get_data(self):
         # See `Process.get_data` for documentation of this method.

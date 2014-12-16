@@ -85,7 +85,7 @@ urlpatterns = [
 
     url(r"^resplit/(?P<old_split_id>.+)", "samples.views.split_and_rename.split_and_rename"),
 
-    url(r"^processes/(?P<process_id>\d+)", "samples.views.main.show_process"),
+    url(r"^processes/(?P<process_id>\d+)$", "samples.views.main.show_process"),
 
     url(r"^sample_series/add/$", "samples.views.sample_series.new"),
     url(r"^sample_series/(?P<name>.+)-/edit/$", "samples.views.sample_series.edit"),

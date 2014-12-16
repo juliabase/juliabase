@@ -111,15 +111,15 @@ class TaskForm(forms.ModelForm):
             permissions.get_all_addable_physical_process_models())
         self.fields["finished_process"].choices = [("", "---------")]
         if self.task:
-            old_finished_process_pk = self.task.finished_process.pk if self.task.finished_process else None
+            old_finished_process_id = self.task.finished_process.id if self.task.finished_process else None
             if self.user == self.task.operator:
                 self.fields["finished_process"].choices.extend(
-                    [(process.pk, process.actual_instance)
+                    [(process.id, process.actual_instance)
                      for process in Process.objects.filter(
                             Q(operator=self.user, content_type=self.task.process_class) |
-                            Q(pk=old_finished_process_pk)).filter(finished=True).order_by("-timestamp")[:10]])
-            elif old_finished_process_pk:
-                self.fields["finished_process"].choices.append((old_finished_process_pk, self.task.finished_process))
+                            Q(id=old_finished_process_id)).filter(finished=True).order_by("-timestamp")[:10]])
+            elif old_finished_process_id:
+                self.fields["finished_process"].choices.append((old_finished_process_id, self.task.finished_process))
         self.fields["comments"].widget.attrs["cols"] = 30
         self.fields["comments"].widget.attrs["rows"] = 5
         for field_name in self.fixed_fields:

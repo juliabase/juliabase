@@ -160,13 +160,11 @@ def get_all_addable_physical_process_models():
         all_addable_physical_process_models = {}
         for process_class in jb_common_utils.get_all_models().values():
             if issubclass(process_class, samples.models.PhysicalProcess):
-                try:
-                    url = process_class.get_add_link()
-                except (NotImplementedError, AttributeError):
-                    continue
-                all_addable_physical_process_models[process_class] = {
-                    "url": url, "label": process_class._meta.verbose_name,
-                    "label_plural": process_class._meta.verbose_name_plural, "type": process_class.__name__}
+                url = process_class.get_add_link()
+                if url:
+                    all_addable_physical_process_models[process_class] = {
+                        "url": url, "label": process_class._meta.verbose_name,
+                        "label_plural": process_class._meta.verbose_name_plural, "type": process_class.__name__}
     return all_addable_physical_process_models
 
 

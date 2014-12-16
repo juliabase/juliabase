@@ -62,7 +62,7 @@ class FeedEntry(PolymorphicModel):
 
     def __str__(self):
         _ = ugettext
-        return _("feed entry #{number}").format(number=self.pk)
+        return _("feed entry #{number}").format(number=self.id)
 
     def save(self, *args, **kwargs):
         """Before saving the feed entry, I calculate an unsalted SHA-1 from
@@ -79,7 +79,7 @@ class FeedEntry(PolymorphicModel):
         entry_hash = hashlib.sha1()
         entry_hash.update(repr(self.timestamp).encode("utf-8"))
         entry_hash.update(repr(self.originator).encode("utf-8"))
-        entry_hash.update(repr(self.pk).encode("utf-8"))
+        entry_hash.update(repr(self.id).encode("utf-8"))
         self.sha1_hash = entry_hash.hexdigest()
         super(FeedEntry, self).save()
 

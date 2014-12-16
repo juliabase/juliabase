@@ -30,6 +30,7 @@ from samples.models.common import PhysicalProcess, fields_to_data_items, remove_
 from samples.data_tree import DataNode, DataItem
 from jb_common import search
 
+
 default_location_of_deposited_samples = {}
 """Dictionary mapping process classes to strings which contain the default
 location where samples can be found after this process has been performed.
@@ -38,16 +39,10 @@ This is used in
 """
 
 
-class DepositionManager(models.Manager):
-    def get_by_natural_key(self, number):
-        return self.get(number=number)
-
-
 class Deposition(PhysicalProcess):
     """The base class for deposition processes.  Note that, like `Process`,
     this must never be instantiated.  Instead, derive the concrete deposition
-    class from it.  (By the way, this is the reason why this class needn't
-    define a ``get_add_link`` method.)
+    class from it.
 
     It is only sensible to use this class if your institution has
     institution-wide unique deposition numbers.  Else, make distict model
@@ -60,8 +55,6 @@ class Deposition(PhysicalProcess):
     words, ``instance.layers.all()`` must work if ``instance`` is an instance
     of your deposition class.
     """
-    objects = DepositionManager()
-
     number = models.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
     split_done = models.BooleanField(_("split after deposition done"), default=False)
 
@@ -69,12 +62,8 @@ class Deposition(PhysicalProcess):
         verbose_name = _("deposition")
         verbose_name_plural = _("depositions")
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ("samples.views.main.show_deposition", [self.number])
-
-    def natural_key(self):
-        return (self.number,)
+    class JBMeta:
+        identifying_field = "number"
 
     def _get_layers(self):
         """Retrieves all layers of this deposition.  This function can deal with

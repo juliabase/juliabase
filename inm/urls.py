@@ -28,71 +28,42 @@ root URL module.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url, patterns
+from django.conf.urls import url
+from samples.url_utils import pattern_generator
 
 
-urlpatterns = patterns("samples.views.lab_notebook",
-                        url(r"^5-chamber_depositions/lab_notebook/(?P<year_and_month>.*)/export/",
-                            "export", {"process_name": "FiveChamberDeposition"}, "export_lab_notebook_FiveChamberDeposition"),
-                        url(r"^5-chamber_depositions/lab_notebook/(?P<year_and_month>.*)",
-                            "show", {"process_name": "FiveChamberDeposition"}, "lab_notebook_FiveChamberDeposition"),
-                        )
+urlpatterns = []
 
-urlpatterns += patterns("inm.views.samples",
-                        (r"^samples/add/$", "sample.add"),
-                        (r"^samples/(?P<sample_name>.+)-/copy_informal_stack/$", "sample.copy_informal_stack"),
+pattern_generator = PatternGenerator(urlpatterns, "inm.views.samples")
+pattern_generator.physical_process("ClusterToolDeposition", "number")
+pattern_generator.physical_process("FiveChamberDeposition", "number", "5-chamber_depositions",
+                                   {"add", "edit", "lab_notebook"})
+pattern_generator.physical_process("PDSMeasurement", "number")
+pattern_generator.physical_process("Substrate", views={"edit"})
+pattern_generator.physical_process("Structuring", views={"edit"})
+pattern_generator.physical_process("SolarsimulatorMeasurement")
 
-                        url(r"^cluster_tool_depositions/add/$", "cluster_tool_deposition.edit",
-                            {"deposition_number": None}, "add_cluster_tool_deposition"),
-                        url(r"^cluster_tool_depositions/(?P<deposition_number>.+)/edit/$",
-                            "cluster_tool_deposition.edit", name="edit_cluster_tool_deposition"),
-                        (r"^cluster_tool_depositions/(?P<deposition_number>.+)",
-                         "cluster_tool_deposition.show"),
 
-                        url(r"^pds_measurements/add/$", "pds_measurement.edit", {"pds_number": None}, "add_pds_measurement"),
-                        url(r"^pds_measurements/(?P<pds_number>\d+)/edit/$", "pds_measurement.edit",
-                            name="edit_pds_measurement"),
-                        (r"^pds_measurements/(?P<pds_number>.+)", "pds_measurement.show"),
+urlpatterns += [
+    url(r"^samples/add/$", "inm.views.samples.sample.add"),
+    url(r"^samples/(?P<sample_name>.+)-/copy_informal_stack/$", "inm.views.samples.sample.copy_informal_stack"),
 
-                        url(r"^5-chamber_depositions/add/$", "five_chamber_deposition.edit",
-                            {"deposition_number": None}, "add_5-chamber_deposition"),
-                        url(r"^5-chamber_depositions/(?P<deposition_number>.+)/edit/$",
-                            "five_chamber_deposition.edit", name="edit_5-chamber_deposition"),
-                        (r"^5-chamber_depositions/(?P<deposition_number>.+)", "five_chamber_deposition.show"),
+    url(r"^add_sample$", "inm.views.samples.json_client.add_sample"),
+    url(r"^substrates_by_sample/(?P<sample_id>.+)", "inm.views.samples.json_client.substrate_by_sample"),
+    url(r"^next_deposition_number/(?P<letter>.+)", "inm.views.samples.json_client.next_deposition_number"),
+    url(r"^solarsimulator_measurements/by_filepath", "inm.views.samples.json_client.get_maike_by_filepath"),
+    url(r"^structurings/by_sample/(?P<sample_id>.+)", "inm.views.samples.json_client.get_current_structuring"),
+    url(r"^solarsimulator_measurements/matching/(?P<irradiation>[A-Za-z0-9.]+)/(?P<sample_id>\d+)/"
+        r"(?P<cell_position>[^/]+)/(?P<date>\d{4}-\d\d-\d\d)/",
+        "inm.views.samples.json_client.get_matching_solarsimulator_measurement"),
 
-                        url(r"^substrates/add/$", "substrate.edit", {"substrate_id": None}, "add_substrate"),
-                        url(r"^substrates/(?P<substrate_id>.+)/edit/$", "substrate.edit",
-                            name="edit_substrate"),
+    url(r"^claims/(?P<username>.+)/add_oldstyle/$", "inm.views.samples.claim.add_oldstyle"),
 
-                        url(r"^solarsimulator_measurements/add/$", "solarsimulator_measurement.edit",
-                            {"process_id": None}, "add_solarsimulator_measurement"),
-                        url(r"^solarsimulator_measurements/(?P<process_id>\d+)/edit/$",
-                            "solarsimulator_measurement.edit", name="edit_solarsimulator_measurement"),
-                        url(r"solarsimulator_measurements/(?P<process_id>\d+)$",
-                            "solarsimulator_measurement.show", name="show_solarsimulator_measurement"),
+    url(r"^stacks/(?P<sample_id>\d+)", "inm.views.samples.stack.show_stack", {"thumbnail": False}, "stack_diagram"),
+    url(r"^stacks/thumbnails/(?P<sample_id>\d+)", "inm.views.samples.stack.show_stack", {"thumbnail": True},
+        "stack_diagram_thumbnail"),
 
-                        url(r"^structuring_process/add/$", "structuring.edit", {"process_id": None},
-                            "add_sructuring_process"),
-                        url(r"^structuring_process/(?P<process_id>.+)/edit/$", "structuring.edit",
-                            name="edit_structuring_process"),
+    url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)", "inm.views.samples.layout.show_layout"),
 
-                        (r"^add_sample$", "json_client.add_sample"),
-                        (r"^substrates_by_sample/(?P<sample_id>.+)", "json_client.substrate_by_sample"),
-                        (r"^next_deposition_number/(?P<letter>.+)", "json_client.next_deposition_number"),
-                        (r"^solarsimulator_measurements/by_filepath", "json_client.get_maike_by_filepath"),
-                        (r"^structurings/by_sample/(?P<sample_id>.+)", "json_client.get_current_structuring"),
-                        (r"^solarsimulator_measurements/matching/(?P<irradiation>[A-Za-z0-9.]+)/(?P<sample_id>\d+)/"
-                         r"(?P<cell_position>[^/]+)/(?P<date>\d{4}-\d\d-\d\d)/",
-                         "json_client.get_matching_solarsimulator_measurement"),
-
-                        (r"^claims/(?P<username>.+)/add_oldstyle/$", "claim.add_oldstyle"),
-
-                        url(r"^stacks/(?P<sample_id>\d+)", "stack.show_stack", {"thumbnail": False}, "stack_diagram"),
-                        url(r"^stacks/thumbnails/(?P<sample_id>\d+)", "stack.show_stack", {"thumbnail": True},
-                            "stack_diagram_thumbnail"),
-
-                        url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)", "layout.show_layout"),
-
-                        (r"^printer_label/(?P<sample_id>\d+)$", "sample.printer_label"),
-
-                        )
+    url(r"^printer_label/(?P<sample_id>\d+)$", "inm.views.samples.sample.printer_label"),
+]

@@ -424,10 +424,9 @@ the pattern ``add_process_name_with_underscores``.
 
 Then, we need two methods to get URLs for a depositions::
 
-    @models.permalink
     def get_absolute_url(self):
-        return ("samples.views.small_cluster_tool_deposition.show",
-                [urlquote(self.number, safe="")])
+        return django.core.urlresolvers.reverse("samples.views.small_cluster_tool_deposition.show",
+                args=(urlquote(self.number, safe=""),))
 
     @classmethod
     def get_add_link(cls):

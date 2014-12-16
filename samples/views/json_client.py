@@ -126,10 +126,7 @@ def primary_keys(request):
     return respond_in_json(result_dict)
 
 
-# FixMe: This should be merged into `primary_keys`, and instead of the dict in
-# ``id_field``, the ``natural_key`` method as described in
-# http://docs.djangoproject.com/en/dev/topics/serialization/#serialization-of-natural-keys
-# should be used.
+# FixMe: This should be merged into `primary_keys`.
 
 @login_required
 @never_cache
@@ -138,8 +135,8 @@ def available_items(request, model_name):
     """Returns the unique ids of all items that are already in the database for
     this model.  The point is that it will return primary keys only as a
     fallback.  Instead, it returns the “official” id of the respective model,
-    represented by the result of the `natural_key` method.  This may be the
-    number of a deposition, or the name of the sample, etc.
+    represented by the `JBMeta.identifying_field` attribute, if given.  This
+    may be the number of a deposition, or the number of a measurement run, etc.
 
     :Parameters:
       - `request`: the current HTTP Request object
@@ -166,14 +163,10 @@ def available_items(request, model_name):
     else:
         raise Http404("Model name not found.")
     try:
-        # Instead of natural keys – which we don't need in JuliaBase in other
-        # places BTW – one should use values_list with a "primary_field", which
-        # defaults to "pk".  Unfortunately, Django doesn't allow to set such a
-        # primary_field for a class so far.  See
-        # <https://code.djangoproject.com/ticket/5793>.
-        return respond_in_json([instance.natural_key()[0] for instance in model.objects.iterator()])
+        pk = model.JBMeta.identifying_field
     except AttributeError:
-        return respond_in_json(list(model.objects.values_list("pk", flat=True)))
+        pk = "pk"
+    return respond_in_json(list(model.objects.values_list(pk, flat=True)))
 
 
 # FixMe: The following two functions must go to jb_common.

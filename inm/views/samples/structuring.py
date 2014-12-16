@@ -129,25 +129,25 @@ def is_referentially_valid(structuring_form, sample_form):
     return referentially_valid
 
 @login_required
-def edit(request, process_id):
+def edit(request, structuring_id):
     """Edit and create view for structuring processes.
 
     :Parameters:
       - `request`: the current HTTP Request object
-      - `process_id`: The process id of the structuring form process to
+      - `structuring_id`: The process id of the structuring form process to
         be edited.  If it is ``None``, a new structuring is added to the
         database.
 
     :type request: ``HttpRequest``
-    :type process_id: unicode
+    :type structuring_id: unicode
 
     :Returns:
       the HTTP response object
 
     :rtype: ``HttpResponse``
     """
-    structuring = get_object_or_404(institute_models.Structuring, id=process_id) \
-        if process_id is not None else None
+    structuring = get_object_or_404(institute_models.Structuring, id=structuring_id) \
+        if structuring_id is not None else None
     preset_sample = utils.extract_preset_sample(request) if not structuring else None
     if request.method == "POST":
         structuring_form = StructuringForm(request.user, request.POST, instance=structuring)
@@ -164,7 +164,7 @@ def edit(request, process_id):
             structuring.samples = samples
             if remove_from_my_samples_form and remove_from_my_samples_form.cleaned_data["remove_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, request.user)
-            if process_id:
+            if structuring_id:
                 return utils.successful_response(
                     request, _("Structuring process was successfully changed in the database."))
             else:
@@ -181,7 +181,7 @@ def edit(request, process_id):
         sample_form = form_utils.SampleForm(request.user, structuring, preset_sample, initial=initial)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not structuring else None
         edit_description_form = form_utils.EditDescriptionForm() if structuring else None
-    title = _("Edit structuring process") if process_id else _("Add structuring process")
+    title = _("Edit structuring process") if structuring_id else _("Add structuring process")
     return render(request, "samples/edit_structuring.html", {"title": title,
                                                              "process": structuring_form,
                                                              "sample": sample_form,
