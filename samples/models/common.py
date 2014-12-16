@@ -43,14 +43,21 @@ from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType
 import collections
 
+if six.PY2:
+    import HTMLParser
+    html = HTMLParser.HTMLParser()
+else:
+    import html
 
-table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
+
+_table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
 """Set of field names that should never be included by `fields_to_data_items`."""
 
 def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
     """Adds all fields of a model instance to the items of a data node.  This
-    function is called inside `get_data_for_table_export` in order to
-    conveniently fill the `DataNode` with the fields.
+    function is called inside :py:meth:`Process.get_data_for_table_export` in
+    order to conveniently fill the :py:class:`~samples.data_tree.DataNode` with
+    the fields.
 
     :Parameters:
       - `instance`: model field instance from which this is called
@@ -62,7 +69,7 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
     :type data_node: `DataNode`
     :type additional_blacklist: set of str
     """
-    blacklist = table_export_blacklist | additional_blacklist
+    blacklist = _table_export_blacklist | additional_blacklist
     for field in instance._meta.fields:
         if field.name not in blacklist and not field.name.endswith("_ptr"):
             if field.choices:
@@ -75,7 +82,7 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
                 unit = "/" + field.unit
             except AttributeError:
                 unit = ""
-            data_node.items.append(DataItem(field.verbose_name + unit, value, field.model.__name__.lower()))
+            data_node.items.append(DataItem(html.unescape(field.verbose_name + unit), value, field.model.__name__.lower()))
 
 
 def remove_data_item(instance, data_node, field_name):
