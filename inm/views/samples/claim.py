@@ -105,11 +105,31 @@ class SubstrateForm(forms.ModelForm):
 
 @login_required
 def add_oldstyle(request, username):
-    """View for adding a new claim to old-style sample names.  The
-    ``username`` parameter is actually superfluous because it must be the
-    currently logged-in user anyway.  But this way, we don't get into trouble
-    if a user happens to be called ``"add"``.  Additionally, the URLs become
-    RESTful.
+    """View for adding a new claim to old-style sample names.  This is a nice
+    example of a view of the app “samples” which is *extended* in the institute
+    app.  The template – in this case,
+    :file:`inm/templates/samples/list_claims.html` – overrides and extends the
+    default one, and adds a link to a URL listed in inm's URLconf and pointing
+    to this view function.
+
+    The important step is the template.  This is the hook for your extensions.
+    You override the template from “samples” by creating a file called the same
+    in :file:`inm/templates/samples/`.  Because ``TEMPLATE_DIRS`` and
+    ``TEMPLATE_LOADERS`` are defined as recommended in
+    :doc:`/programming/settings`, it shadows its counterpart.  By giving the
+    full path, you can still access the original.  Thus, you may start your
+    template with
+
+    ::
+
+        {% extends "samples/templates/samples/list_claims.html" %}
+
+    in order to extend it.
+
+    The ``username`` parameter of this view function is actually superfluous
+    because it must be the currently logged-in user anyway.  But this way, we
+    don't get into trouble if a user happens to be called ``"add"``.
+    Additionally, the URLs become RESTful.
 
     :Parameters:
       - `request`: the current HTTP Request object
