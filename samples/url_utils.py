@@ -66,32 +66,37 @@ class PatternGenerator(object):
         :type url_name: unicode
         :type views: set of unicode
         """
-        camel_case_class_name = camel_case_to_underscores(class_name)
-        url_name = url_name or camel_case_class_name + "s"
+        class_name_with_underscores = camel_case_to_underscores(class_name)
+        if not url_name:
+            if class_name_with_underscores.endswith(("s", "x", "z")):
+                url_name = class_name_with_underscores + "es"
+            else:
+                url_name = class_name_with_underscores + "s"
         assert not views - {"add", "edit", "custom_show", "lab_notebook"}
-        normalized_id_field = identifying_field or camel_case_class_name + "_id"
+        normalized_id_field = identifying_field or class_name_with_underscores + "_id"
         if "add" in views:
-            self.url_patterns.append(url(r"^{}/add/$".format(url_name), self.views_prefix + camel_case_class_name + ".edit",
-                                         {normalized_id_field: None}, "add_" + camel_case_class_name))
+            self.url_patterns.append(url(r"^{}/add/$".format(url_name),
+                                         self.views_prefix + class_name_with_underscores + ".edit",
+                                         {normalized_id_field: None}, "add_" + class_name_with_underscores))
         if "edit" in views:
             self.url_patterns.append(url(r"^{}/(?P<{}>.+)/edit/$".format(url_name, normalized_id_field),
-                                         self.views_prefix + camel_case_class_name + ".edit", name="edit_" +
-                                         camel_case_class_name))
+                                         self.views_prefix + class_name_with_underscores + ".edit", name="edit_" +
+                                         class_name_with_underscores))
         if "custom_show" in views:
             self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field),
-                                         self.views_prefix + camel_case_class_name + ".show", name="show_" +
-                                         camel_case_class_name))
+                                         self.views_prefix + class_name_with_underscores + ".show", name="show_" +
+                                         class_name_with_underscores))
         else:
             self.url_patterns.append(url(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
                                          "samples.views.main.show_process", {"process_name": class_name},
-                                         name="show_" + camel_case_class_name))
+                                         name="show_" + class_name_with_underscores))
         if "lab_notebook" in views:
             self.url_patterns.extend([url(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
                                           "samples.views.lab_notebook.export", {"process_name": class_name},
-                                          "export_lab_notebook_" + camel_case_class_name),
+                                          "export_lab_notebook_" + class_name_with_underscores),
                                       url(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
                                           "samples.views.lab_notebook.show", {"process_name": class_name},
-                                          "lab_notebook_" + camel_case_class_name)])
+                                          "lab_notebook_" + class_name_with_underscores)])
 
     def deposition(self, class_name, url_name=None, views={"add", "edit", "lab_notebook"}):
         """Add URLs for the views of the deposition process `class_name`.  This is a
