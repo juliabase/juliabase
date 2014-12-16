@@ -35,9 +35,8 @@ from samples.url_utils import PatternGenerator
 urlpatterns = []
 
 pattern_generator = PatternGenerator(urlpatterns, "inm.views.samples")
-pattern_generator.physical_process("ClusterToolDeposition", "number")
-pattern_generator.physical_process("FiveChamberDeposition", "number", "5-chamber_depositions",
-                                   {"add", "edit", "lab_notebook"})
+pattern_generator.deposition("ClusterToolDeposition", views={"add", "edit"})
+pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")
 pattern_generator.physical_process("PDSMeasurement", "number")
 pattern_generator.physical_process("Substrate", views={"edit"})
 pattern_generator.physical_process("Structuring", views={"edit"})
