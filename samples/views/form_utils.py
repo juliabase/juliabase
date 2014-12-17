@@ -81,33 +81,6 @@ class ProcessForm(ModelForm):
         return True
 
 
-class DataModelForm(ModelForm):
-    _ = ugettext_lazy
-    """Model form class for accessing the data fields of a bound form, whether
-    it is valid or not.  This is sometimes useful if you want to do structural
-    changes to the forms in a view, and you don't want to do that only if the
-    data the user has given is totally valid.
-
-    Actually, using this class is bad style nevertheless.  It is used in the
-    module `six_chamber_deposition`, however, for upcoming processes, it should
-    be avoided and extra forms used instead.
-    """
-
-    def uncleaned_data(self, fieldname):
-        """Get the field value of a *bound* form, even if it is invalid.
-
-        :param fieldname: name (=key) of the field
-
-        :type fieldname: str
-
-        :return:
-          the value of the field
-
-        :rtype: unicode
-        """
-        return self.data.get(self.prefix + "-" + fieldname)
-
-
 def get_my_layers(user_details, deposition_model):
     """Parse the ``my_layers`` string of a user and convert it to valid input
     for a form selection field (``ChoiceField``).  Notethat the user is not
