@@ -23,7 +23,7 @@ or::
 
 and change the settings like this::
 
-    settings.ROOT_URL = "https://juliabase.ipv.kfa-juelich.de/"
+    settings.ROOT_URL = "https://my-juliabase-server.example.com/"
 
 It is important to change the settings before the login into JuliaBase takes
 place.

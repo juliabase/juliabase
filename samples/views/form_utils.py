@@ -542,8 +542,8 @@ class OperatorField(forms.ChoiceField):
     was not given.
 
     It is senseful to show this field only to non-staff, and staff gets the
-    usual operator/external operator fields.  In the IEF-5 implementations we
-    even allow all three fields for staff users as long as there no
+    usual operator/external operator fields.  In the IEK-5/FZJ implementation,
+    we even allow all three fields for staff users as long as there no
     contradicting values are given.
 
     FixMe: This is the new variant of py:class:`FixedOperatorField`.  It makes
