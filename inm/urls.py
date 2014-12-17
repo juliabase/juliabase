@@ -45,7 +45,7 @@ pattern_generator.physical_process("SolarsimulatorMeasurement")
 
 urlpatterns += [
     url(r"^samples/add/$", "inm.views.samples.sample.add"),
-    url(r"^samples/(?P<sample_name>.+)-/copy_informal_stack/$", "inm.views.samples.sample.copy_informal_stack"),
+    url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", "inm.views.samples.sample.copy_informal_stack"),
 
     url(r"^add_sample$", "inm.views.samples.json_client.add_sample"),
     url(r"^substrates_by_sample/(?P<sample_id>.+)", "inm.views.samples.json_client.substrate_by_sample"),

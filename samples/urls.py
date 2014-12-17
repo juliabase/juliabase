@@ -74,14 +74,11 @@ urlpatterns = [
     url(r"^advanced_search$", "samples.views.sample.advanced_search"),
     # FixMe: Must be regenerated with a minimal add-sample form
  #   url(r"^samples/add/$", "samples.views.sample.add"),
-
-    # The extra dash is for avoiding that the web server collapses consecutive
-    # slashs
-    url(r"^samples/(?P<parent_name>.+)-/split/$", "samples.views.split_and_rename.split_and_rename"),
-    url(r"^samples/(?P<sample_name>.+)-/kill/$", "samples.views.sample_death.new"),
-    url(r"^samples/(?P<sample_name>.+)-/add_process/$", "samples.views.sample.add_process"),
-    url(r"^samples/(?P<sample_name>.+)-/edit/$", "samples.views.sample.edit"),
-    url(r"^samples/(?P<sample_name>.+)-/export/$", "samples.views.sample.export"),
+    url(r"^samples/(?P<parent_name>.+)/split/$", "samples.views.split_and_rename.split_and_rename"),
+    url(r"^samples/(?P<sample_name>.+)/kill/$", "samples.views.sample_death.new"),
+    url(r"^samples/(?P<sample_name>.+)/add_process/$", "samples.views.sample.add_process"),
+    url(r"^samples/(?P<sample_name>.+)/edit/$", "samples.views.sample.edit"),
+    url(r"^samples/(?P<sample_name>.+)/export/$", "samples.views.sample.export"),
     url(r"^samples/rename/$", "samples.views.sample.rename_sample"),
     url(r"^samples/(?P<sample_name>.+)$", "samples.views.sample.show", name="show_sample_by_name"),
     url(r"^bulk_rename$", "samples.views.bulk_rename.bulk_rename"),
@@ -91,8 +88,8 @@ urlpatterns = [
     url(r"^processes/(?P<process_id>\d+)$", "samples.views.main.show_process"),
 
     url(r"^sample_series/add/$", "samples.views.sample_series.new"),
-    url(r"^sample_series/(?P<name>.+)-/edit/$", "samples.views.sample_series.edit"),
-    url(r"^sample_series/(?P<name>.+)-/export/$", "samples.views.sample_series.export"),
+    url(r"^sample_series/(?P<name>.+)/edit/$", "samples.views.sample_series.edit"),
+    url(r"^sample_series/(?P<name>.+)/export/$", "samples.views.sample_series.export"),
     url(r"^sample_series/(?P<name>.+)", "samples.views.sample_series.show"),
 
     url(r"^results/add/$", "samples.views.result.edit", {"process_id": None}, "add_result"),

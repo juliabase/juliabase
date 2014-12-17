@@ -194,9 +194,9 @@ def get_allowed_processes(user, sample):
     """
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
-        sample_processes.append({"label": _("split"), "url": sample.get_absolute_url() + "-/split/", "type": "split"})
+        sample_processes.append({"label": _("split"), "url": sample.get_absolute_url() + "/split/", "type": "split"})
         # Translators: Of a sample
-        sample_processes.append({"label": _("cease of existence"), "url": sample.get_absolute_url() + "-/kill/",
+        sample_processes.append({"label": _("cease of existence"), "url": sample.get_absolute_url() + "/kill/",
                                  "type": "death"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
