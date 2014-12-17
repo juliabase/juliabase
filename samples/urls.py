@@ -74,6 +74,9 @@ urlpatterns = [
     url(r"^advanced_search$", "samples.views.sample.advanced_search"),
     # FixMe: Must be regenerated with a minimal add-sample form
  #   url(r"^samples/add/$", "samples.views.sample.add"),
+
+    # The extra dash is for avoiding that the web server collapses consecutive
+    # slashs
     url(r"^samples/(?P<parent_name>.+)-/split/$", "samples.views.split_and_rename.split_and_rename"),
     url(r"^samples/(?P<sample_name>.+)-/kill/$", "samples.views.sample_death.new"),
     url(r"^samples/(?P<sample_name>.+)-/add_process/$", "samples.views.sample.add_process"),
