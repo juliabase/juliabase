@@ -32,7 +32,7 @@ from samples.data_tree import DataNode, DataItem
 from jb_common import search, model_fields
 from jb_common.utils import format_lazy
 from samples.views import utils
-from inm import layouts
+import inm.layouts
 import inm.views.shared_utils as institute_utils
 
 
@@ -141,7 +141,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         context = old_context.copy()
         sample = self.samples.get()
         if "shapes" not in context:
-            layout = layouts.get_layout(sample, self)
+            layout = inm.layouts.get_layout(sample, self)
             context["shapes"] = layout.get_map_shapes() if layout else {}
         context["thumbnail_layout"] = django.core.urlresolvers.reverse(
             "inm.views.samples.layout.show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
