@@ -447,9 +447,9 @@ class Structuring(object):
                 "edit_description-important": self.edit_important}
         with TemporaryMySamples(self.sample_id):
             if self.process_id:
-                connection.open("structuring_process/{0}/edit/".format(self.process_id), data)
+                connection.open("structurings/{0}/edit/".format(self.process_id), data)
             else:
-                self.process_id = connection.open("structuring_process/add/", data)
+                self.process_id = connection.open("structurings/add/", data)
                 logging.info("Successfully added structuring {0}.".format(self.process_id))
                 return self.process_id
 
