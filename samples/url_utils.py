@@ -74,6 +74,13 @@ class PatternGenerator(object):
                 url_name = class_name_with_underscores + "s"
         assert not views - {"add", "edit", "custom_show", "lab_notebook"}
         normalized_id_field = identifying_field or class_name_with_underscores + "_id"
+        if "lab_notebook" in views:
+            self.url_patterns.extend([url(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
+                                          "samples.views.lab_notebook.export", {"process_name": class_name},
+                                          "export_lab_notebook_" + class_name_with_underscores),
+                                      url(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
+                                          "samples.views.lab_notebook.show", {"process_name": class_name},
+                                          "lab_notebook_" + class_name_with_underscores)])
         if "add" in views:
             self.url_patterns.append(url(r"^{}/add/$".format(url_name),
                                          self.views_prefix + class_name_with_underscores + ".edit",
@@ -90,13 +97,6 @@ class PatternGenerator(object):
             self.url_patterns.append(url(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
                                          "samples.views.main.show_process", {"process_name": class_name},
                                          name="show_" + class_name_with_underscores))
-        if "lab_notebook" in views:
-            self.url_patterns.extend([url(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
-                                          "samples.views.lab_notebook.export", {"process_name": class_name},
-                                          "export_lab_notebook_" + class_name_with_underscores),
-                                      url(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
-                                          "samples.views.lab_notebook.show", {"process_name": class_name},
-                                          "lab_notebook_" + class_name_with_underscores)])
 
     def deposition(self, class_name, url_name=None, views={"add", "edit", "lab_notebook"}):
         """Add URLs for the views of the deposition process `class_name`.  This is a
