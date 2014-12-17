@@ -150,8 +150,8 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
 
     FixMe: It does not check for the case that the same datapath is used in two
     different solarsimulator measurements.  This should be added.  One may call
-    :py:func:`inm.views.samples.json_client._get_maike_by_filepath` and catch
-    an exception about multiple search results for checking this.
+    :py:func:`inm.views.samples.json_client._get_solarsimulator_measurement_by_filepath`
+    and catch an exception about multiple search results for checking this.
 
     :return:
       whether the forms are consistent with each other and the database
@@ -189,9 +189,9 @@ def edit(request, solarsimulator_measurement_id):
 
     If you pass ``only_single_cell_added=true`` in the query string *and* you
     have a staff account, no feed entries are generated.  This is to make the
-    MAIKE crawler less noisy if non-standard-Jülich cell layout is used and a
-    whole substrate is split over many single files which have to be imported
-    one by one.
+    solarsimulator crawler less noisy if non-standard-Jülich cell layout is
+    used and a whole substrate is split over many single files which have to be
+    imported one by one.
 
     :param request: the current HTTP Request object
     :param solarsimulator_measurement_id: the id of the solarsimulator

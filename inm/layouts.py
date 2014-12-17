@@ -44,9 +44,9 @@ class NoStructuringFound(Exception):
 
 
 def get_current_structuring(sample, timestamp=None):
-    """Returns the most recent structuring process of the given sample,
-    optionally before a timestamp.  This timestamp typically is the timestamp
-    of the process that needs the structuring, e.g. a MAIKE measurement.
+    """Returns the most recent structuring process of the given sample, optionally
+    before a timestamp.  This timestamp typically is the timestamp of the
+    process that needs the structuring, e.g. a solarsimulator measurement.
 
     :param sample: the sample whose last structuring should be found
     :param timestamp: the found structuring is the latest structuring before or

@@ -173,7 +173,7 @@ def next_deposition_number(request, letter):
     return respond_in_json(shared_utils.get_next_deposition_number(letter))
 
 
-def _get_maike_by_filepath(filepath, user):
+def _get_solarsimulator_measurement_by_filepath(filepath, user):
     """Returns the ID of a solarsimulator measurement with the given filepath.
     Every solarsimulator measurement consists of single measurements which are
     associated with a data filepath each.  This function finds the measurement
@@ -208,9 +208,9 @@ def _get_maike_by_filepath(filepath, user):
 @login_required
 @never_cache
 @require_http_methods(["GET"])
-def get_maike_by_filepath(request):
+def get_solarsimulator_measurement_by_filepath(request):
     """Returns the measurement ID of the solarsimulator measurement which
-    contains the given filepath.  See `_get_maike_by_filepath`.  The filepath
+    contains the given filepath.  See `_get_solarsimulator_measurement_by_filepath`.  The filepath
     is given in the query string parameter “``filepath``”.
 
     :param request: the HTTP request object
@@ -226,7 +226,7 @@ def get_maike_by_filepath(request):
         filepath = request.GET["filepath"]
     except KeyError:
         raise JSONRequestException(3, '"filepath" missing')
-    return respond_in_json(_get_maike_by_filepath(filepath, request.user))
+    return respond_in_json(_get_solarsimulator_measurement_by_filepath(filepath, request.user))
 
 
 @login_required
@@ -246,8 +246,8 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cel
     :param sample_id: the ID of the sample which was measured
     :param irradiation: the irradiation (AM1.5, BG7 etc) which was used
     :param cell_position: the position of the cell on the layout; don't mix it
-        up with the *index* of the cell, which is the number used in the MAIKE
-        datafile in the first column
+        up with the *index* of the cell, which is the number used in the
+        Solarsimulator datafile in the first column
     :param date: the day (not the time) of the measurement in YYYY-MM-DD format
 
     :type request: HttpRequest
@@ -266,7 +266,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cel
     except KeyError:
         raise JSONRequestException(3, '"filepath" missing')
     try:
-        return respond_in_json(_get_maike_by_filepath(filepath, request.user))
+        return respond_in_json(_get_solarsimulator_measurement_by_filepath(filepath, request.user))
     except Http404:
         sample = get_object_or_404(models.Sample, id=sample_id)
         start_date = datetime.datetime.strptime(date, "%Y-%m-%d")
