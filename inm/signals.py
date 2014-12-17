@@ -184,33 +184,3 @@ def clear_structuring_processes(sender, **kwargs):
         structurings = inm_app.Structuring.objects.filter(samples=sample).order_by("timestamp")
         if len(structurings) > 1:
             structurings[1].delete()
-
-
-@receiver(signals.m2m_changed, sender=Sample.processes.through)
-def extend_alias_names(sender, instance, action, reverse, **kwargs):
-    """Function to extend the alias name of a sample when the attend-tag was found in the comments
-    field of the result process.
-    This function is needed for the NADNuM project.
-
-    FixMe: This function should be an own signal which is triggered by the result process and not
-    by changing the many-to-many relationship between samples and processes.
-    """
-    if isinstance(instance, Result) and action == "post_add":
-        comments = instance.comments
-        match = re.search(r"append-tag:\s*\w+", comments)
-        samples = instance.samples.all()
-        if match and samples:
-            # Strip all possible leading underscores,
-            # because we want to make sure that we have only one underscore.
-            extend_alias = comments[match.start() + len("append-tag:"):match.end()].strip().lstrip("_")
-            extend_alias = "".join(["_", extend_alias])
-            sample = samples[0]
-            sample_aliases = sample.aliases.filter(name__contains=sample.name)
-            if sample_aliases:
-                sample_alias = sample_aliases[0]
-                sample_alias.name += extend_alias
-                sample_alias.save()
-            else:
-                sample_alias = SampleAlias.objects.create(name="".join([sample.name, extend_alias]), sample=sample)
-            instance.comments = re.sub(r"append-tag:\s*\w+", "*{0}*".format(sample_alias.name), comments)
-            instance.save()
