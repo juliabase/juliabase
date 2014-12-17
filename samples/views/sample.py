@@ -43,7 +43,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
 import jb_common.search
-from jb_common.utils import format_enumeration
+from jb_common.utils import format_enumeration, unquote_view_parameters
 from samples import models, permissions, data_tree
 from samples.views import utils, form_utils, feed_utils
 from django.forms.util import ValidationError
@@ -108,6 +108,7 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
 
 
 @login_required
+@unquote_view_parameters
 def edit(request, sample_name):
     """View for editing existing samples.  You can't use it to add new
     samples.
@@ -625,6 +626,7 @@ def sample_etag(request, sample_name):
 
 
 @login_required
+@unquote_view_parameters
 @condition(sample_etag, sample_timestamp)
 def show(request, sample_name):
     """A view for showing existing samples.
@@ -710,6 +712,7 @@ def by_id(request, sample_id, path_suffix):
 
 
 @login_required
+@unquote_view_parameters
 def add_process(request, sample_name):
     """View for appending a new process to the process list of a sample.
 
@@ -896,6 +899,7 @@ def advanced_search(request):
 
 
 @login_required
+@unquote_view_parameters
 def export(request, sample_name):
     """View for exporting sample data in CSV or JSON format.  Thus, the return
     value is not an HTML response.

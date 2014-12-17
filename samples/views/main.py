@@ -29,7 +29,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils
-from jb_common.utils import help_link, is_json_requested, respond_in_json, get_all_models
+from jb_common.utils import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters
 from jb_common.models import Topic
 
 
@@ -178,6 +178,7 @@ def deposition_search(request):
 
 
 @login_required
+@unquote_view_parameters
 def show_deposition(request, deposition_number):
     """View for showing depositions by deposition number, no matter which type
     of deposition they are.  It is some sort of dispatch view, which
@@ -201,6 +202,7 @@ def show_deposition(request, deposition_number):
 
 
 @login_required
+@unquote_view_parameters
 def show_process(request, process_id, process_name="Process"):
     """Show an existing physical process.  This is some sort of fallback view in
     case a process doesn't provide its own show view (which is mostly the

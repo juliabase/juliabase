@@ -15,6 +15,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import django.utils.six as six
+from django.utils.six.moves import urllib_parse
 
 import codecs, re, os, os.path, time, json, datetime, copy, mimetypes
 from contextlib import contextmanager
@@ -774,3 +775,20 @@ def format_enumeration(items):
         return _(" and ").join(items)
     else:
         return "".join(items)
+
+
+def unquote_view_parameters(view):
+    """Decorator for view functions with URL-quoted parameters.  Using this
+    decorator unquotes the values of all but the ``request`` parameter.  Mind
+    the ordering: All decorators *after* this one in the source get the
+    unquoted parameters.
+
+    :param view: the view function
+
+    :type view: function
+    """
+    def unquoting_view(request, *args, **kwargs):
+        return view(request,
+                    *[urllib_parse.unquote(value) for value in args],
+                    **dict((key, urllib_parse.unquote(value)) for key, value in kwargs.items()))
+    return unquoting_view

@@ -73,6 +73,17 @@ def comma_separated_ids(ids):
     return ",".join(str(id_) for id_ in ids)
 
 
+def double_urlquote(string):
+    """Returns a double-percent-quoted string.  This mimics the behaviour of
+    Django, which quotes every URL retrieved by
+    ``django.core.urlresolvers.resolve``.  Because it does not quote the slash
+    “/” for obvious reasons, I have to quote sample names, sample series names,
+    deposition numbers, and non-int process “identifying fields” *before* they
+    are fed into ``resolve`` (and quoted again).
+    """
+    return urllib.parse.quote(urllib.parse.quote(string, safe=""))
+
+
 def parse_timestamp(timestamp):
     """Convert a timestamp coming from the server to a Python `datetime` object.
     The server serialises with the `DjangoJSONEncoder`, which in turn uses the

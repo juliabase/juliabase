@@ -48,7 +48,7 @@ urlpatterns += [
     url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", "inm.views.samples.sample.copy_informal_stack"),
 
     url(r"^add_sample$", "inm.views.samples.json_client.add_sample"),
-    url(r"^substrates_by_sample/(?P<sample_id>.+)", "inm.views.samples.json_client.substrate_by_sample"),
+    url(r"^substrates_by_sample/(?P<sample_id>\d+)$", "inm.views.samples.json_client.substrate_by_sample"),
     url(r"^next_deposition_number/(?P<letter>.+)", "inm.views.samples.json_client.next_deposition_number"),
     url(r"^solarsimulator_measurements/by_filepath",
         "inm.views.samples.json_client.get_solarsimulator_measurement_by_filepath"),

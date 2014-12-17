@@ -25,6 +25,7 @@ from django.forms.util import ValidationError
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
+from jb_common.utils import unquote_view_parameters
 from samples import models, permissions
 from samples.views import utils
 
@@ -59,6 +60,7 @@ class SampleDeathForm(forms.ModelForm):
 
 
 @login_required
+@unquote_view_parameters
 def new(request, sample_name):
     """View for killing samples.  Note that it is not possible to re-kill an
     already dead sample.  Furthermore, you must be the currently responsible

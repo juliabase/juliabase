@@ -29,7 +29,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from jb_common.utils import is_json_requested
+from jb_common.utils import is_json_requested, unquote_view_parameters
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from django.contrib.contenttypes.models import ContentType
@@ -446,6 +446,7 @@ def forms_from_database(user, deposition, remote_client, new_names):
 
 
 @login_required
+@unquote_view_parameters
 def split_and_rename_after_deposition(request, deposition_number):
     """View for renaming and/or splitting samples immediately after they have
     been deposited in the same run.

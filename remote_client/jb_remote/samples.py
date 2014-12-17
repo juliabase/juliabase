@@ -13,10 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import absolute_import, unicode_literals, division
-from .six.moves import urllib
 
 import json
-from .common import connection, primary_keys, comma_separated_ids, format_timestamp, parse_timestamp, logging
+from .common import connection, primary_keys, comma_separated_ids, double_urlquote, format_timestamp, parse_timestamp, logging
 
 
 primary_keys.components.add("external_operators=*")
@@ -124,7 +123,7 @@ class Sample(object):
         """
         if name or id_:
             data = connection.open("samples/by_id/{0}".format(id_)) if id_ else \
-                connection.open("samples/{0}".format(urllib.parse.quote(name)))
+                connection.open("samples/{0}".format(double_urlquote(name)))
             self.id = data["id"]
             self.name = data["name"]
             self.current_location = data["current_location"]

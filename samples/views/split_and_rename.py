@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
 from samples import models, permissions
-from jb_common.utils import respond_in_json, format_enumeration
+from jb_common.utils import respond_in_json, format_enumeration, unquote_view_parameters
 from samples.views import utils, feed_utils, form_utils
 
 
@@ -277,6 +277,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
 
 
 @login_required
+@unquote_view_parameters
 def split_and_rename(request, parent_name=None, old_split_id=None):
     """Both splitting of a sample and re-split of an already existing split
     are handled here.  *Either* ``parent_name`` *or* ``old_split`` are unequal
@@ -334,6 +335,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
 
 
 @login_required
+@unquote_view_parameters
 def latest_split(request, sample_name):
     """Get the database ID of the latest split of a sample, if it is also the
     very latest process for that sample.  In all other cases, return ``None``

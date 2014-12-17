@@ -35,6 +35,7 @@ from django.views.decorators.http import condition
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 import jb_common.utils
+from jb_common.utils import unquote_view_parameters
 import datetime
 import django.contrib.auth.models
 import hashlib
@@ -171,6 +172,7 @@ def sample_series_etag(request, name):
 
 
 @login_required
+@unquote_view_parameters
 @condition(sample_series_etag, sample_series_timestamp)
 def show(request, name):
     """View for showing a sample series.  You can see a sample series if
@@ -231,6 +233,7 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
 
 
 @login_required
+@unquote_view_parameters
 def edit(request, name):
     """View for editing an existing sample series.  Only the currently
     responsible person can edit a sample series.
@@ -327,6 +330,7 @@ def new(request):
 
 
 @login_required
+@unquote_view_parameters
 def export(request, name):
     """View for exporting sample series data in CSV or JSON format.  Thus, the
     return value is not an HTML response.  Note that you must also be allowed

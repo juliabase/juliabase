@@ -24,11 +24,13 @@ the ``from`` keyword.
 
 from __future__ import absolute_import, division, unicode_literals
 import django.utils.six as six
+
 from django.utils.encoding import python_2_unicode_compatible
 
 import hashlib, os.path, datetime, json
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
+from django.utils.http import urlquote
 from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
 import django.core.urlresolvers
@@ -247,10 +249,12 @@ class Process(PolymorphicModel):
             field_name = parameter_name = self.JBMeta.identifying_field
         except AttributeError:
             field_name, parameter_name = "id", class_name + "_id"
+        # Quote it in order to allow slashs in values.
+        field_value = urlquote(getattr(self, field_name), safe="")
         try:
-            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: getattr(self, field_name)})
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: field_value})
         except django.core.urlresolvers.NoReverseMatch:
-            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={"process_id": getattr(self, field_name)})
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={"process_id": field_value})
 
     def get_absolute_url(self):
         """Returns the relative URL (ie, without the domain name) of the
@@ -796,9 +800,10 @@ class Sample(models.Model):
 
     def get_absolute_url(self):
         if self.name.startswith("*"):
-            return django.core.urlresolvers.reverse("show_sample_by_id", kwargs={"sample_id": str(self.pk), "path_suffix": ""})
+            return django.core.urlresolvers.reverse("show_sample_by_id",
+                                                    kwargs={"sample_id": str(self.pk), "path_suffix": ""})
         else:
-            return django.core.urlresolvers.reverse("show_sample_by_name", args=(self.name,))
+            return django.core.urlresolvers.reverse("show_sample_by_name", args=(urlquote(self.name, safe=""),))
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
@@ -1312,7 +1317,7 @@ class SampleSeries(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.sample_series.show", args=(self.name,))
+        return django.core.urlresolvers.reverse("samples.views.sample_series.show", args=(urlquote(self.name, safe=""),))
 
     def get_data(self):
         """Extract the data of this sample series as a dictionary, ready to be used for
