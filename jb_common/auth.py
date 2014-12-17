@@ -22,7 +22,8 @@ set somewhere else because they are not stored in the AD.
 
 Every night the maintenance routine checks which active users cannot be found
 anymore in the AD, sets them to inactive and removes all their groups, topics,
-and permissions.  See the `synchronize_with_ad` function.
+and permissions.  See the :py:meth:`~LDAPConnection.synchronize_with_ad`
+function.
 
 A seldom but possible problem is if someone tries to login, he is known in the
 AD, but it also known in JuliaBase as “inactive”.  This can mean one of two
@@ -110,14 +111,13 @@ class LDAPConnection(object):
         """Returns whether the username/password combination is known in the AD, and
         whether the user is a current member of one of the eligible departments.
 
-        :Parameters:
-          - `username`: the login name of the user
-          - `password`: the cleartext password that the user has given
+        :param username: the login name of the user
+        :param password: the cleartext password that the user has given
 
         :type username: unicode
         :type password: unicode
 
-        :Return:
+        :return:
           whether the username/password combination is known in the AD, and
           the user is a member of one of the eligible departments.
 
@@ -144,12 +144,11 @@ class LDAPConnection(object):
     def get_ad_data(self, username):
         """Returns the dataset of the given user from the Active Directory.
 
-        :Parameters:
-          - `username`: the login name of the user
+        :param username: the login name of the user
 
         :type username: unicode
 
-        :Return:
+        :return:
           the dataset of the user as found in the AD; ``None`` if the user was
           not found
 
@@ -184,12 +183,11 @@ class LDAPConnection(object):
         method even works if the user cannot be found in the AD at all (it
         returns ``False`` then, of course).
 
-        :Parameters:
-          - `username`: the login name of the user
+        :param username: the login name of the user
 
         :type username: unicode
 
-        :Return:
+        :return:
           whether the user is in one of the JuliaBase departments, or a
           specially authorised LDAP member
 
@@ -208,13 +206,12 @@ class LDAPConnection(object):
         been fetched elsewhere.  Only the so-called “common names” of the
         groups (i.e. with the ``"CN"`` prefix in the LDAP path) are returned.
 
-        :Parameters:
-          - `attributes`: attributes of a specific user in the Active
+        :param attributes: attributes of a specific user in the Active
             Directory
 
         :type attributes: dict mapping str to list
 
-        :Return:
+        :return:
           the common names of all groups the user is a member of
 
         :rtype: set of str
@@ -235,7 +232,8 @@ class LDAPConnection(object):
 
         If the user is not found in the AD anymore, they are set to inactive,
         all groups, topic memberships, and permissions cleared, and their
-        sessions purged.  (This way, we don't need the `ActiveUserMiddleware`.)
+        sessions purged.  (This way, we don't need the
+        :py:class:`jb_common.middleware.ActiveUserMiddleware`.)
 
         Note that we don't map any AD data to Django *groups*.  Instead,
         everything is mapped to *permissions*.  The reason is that it doesn't
@@ -245,10 +243,9 @@ class LDAPConnection(object):
         groups can not be revoked by the Active Directory because we simply
         don't touch groups here.
 
-        :Parameters:
-          - `user`: the user whose data should be updated
+        :param user: the user whose data should be updated
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
         """
         user.set_unusable_password()
         if self.is_eligible_ldap_member(user.username):

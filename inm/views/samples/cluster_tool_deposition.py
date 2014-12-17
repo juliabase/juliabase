@@ -93,8 +93,8 @@ class DepositionForm(form_utils.ProcessForm):
     operator = form_utils.FixedOperatorField(label=_("Operator"))
 
     def __init__(self, user, data=None, **kwargs):
-        """Form constructor.  I have to initialise a couple of things here,
-        especially ``operator`` because I overrode it.
+        """I have to initialise a couple of things here, especially ``operator``
+        because I overrode it.
         """
         deposition = kwargs.get("instance")
         super(DepositionForm, self).__init__(data, **kwargs)
@@ -135,8 +135,8 @@ class HotWireLayerForm(forms.ModelForm):
     by the user, however, it is given by the remote client."""
 
     def __init__(self, user, data=None, **kwargs):
-        """Model form constructor.  I do additional initialisation here, but
-        very harmless: It's only about visual appearance and numerical limits.
+        """I do additional initialisation here, but very harmless: It's only about
+        visual appearance and numerical limits.
         """
         super(HotWireLayerForm, self).__init__(data, **kwargs)
         self.type = "hot-wire"
@@ -187,11 +187,11 @@ class PECVDLayerForm(forms.ModelForm):
     by the user, however, it is given by the remote client."""
 
     def __init__(self, user, data=None, **kwargs):
-        """Model form constructor.  I do additional initialisation here, but
-        very harmless: It's only about visual appearance and numerical limits.
+        """I do additional initialisation here, but very harmless: It's only about
+        visual appearance and numerical limits.
 
-        Note that the ``user`` parameter is not used here but this constructor
-        must share its signature with that of `HotWireLayerForm`.
+        Note that the `user` parameter is not used here but this constructor
+        must share its signature with that of :py:class:`HotWireLayerForm`.
         """
         super(PECVDLayerForm, self).__init__(data, **kwargs)
         self.type = "PECVD"
@@ -267,7 +267,7 @@ class FormSet(object):
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `institute_models.ClusterToolDeposition` or ``NoneType``
+    :type deposition: `inm.models.ClusterToolDeposition` or NoneType
     """
 
     class LayerForm(forms.Form):
@@ -276,15 +276,14 @@ class FormSet(object):
         layer_type = forms.CharField()
 
     def __init__(self, request, deposition_number):
-        """Class constructor.  Note that I don't create the forms here – this
-        is done later in `from_post_data` and in `from_database`.
+        """Note that I don't create the forms here – this is done later in
+        `from_post_data` and in `from_database`.
 
-        :Parameters:
-          - `request`: the current HTTP Request object
-          - `deposition_number`: number of the deposition to be edited/created.
+        :param request: the current HTTP Request object
+        :param deposition_number: number of the deposition to be edited/created.
             If this number already exists, *edit* it, if not, *create* it.
 
-        :type request: ``HttpRequest``
+        :type request: HttpRequest
         :type deposition_number: unicode
         """
         self.user = request.user
@@ -302,10 +301,9 @@ class FormSet(object):
     def from_post_data(self, post_data):
         """Interpret the POST data and create bound forms for the layers.
 
-        :Parameters:
-          - `post_data`: the result from ``request.POST``
+        :param post_data: the result from ``request.POST``
 
-        :type post_data: ``QueryDict``
+        :type post_data: QueryDict
         """
         def get_layer_form(index):
             prefix = str(index)
@@ -338,8 +336,7 @@ class FormSet(object):
         I have to distinguish all three cases in this method: editing, copying,
         and duplication.
 
-        :Parameters:
-          - `query_dict`: dictionary with all given URL query string parameters
+        :param query_dict: dictionary with all given URL query string parameters
 
         :type query_dict: dict mapping unicode to unicode
         """
@@ -348,11 +345,10 @@ class FormSet(object):
             the data currently stored in the database.  Note that this method
             writes its products directly into the instance.
 
-            :Parameters:
-              - `deposition`: the cluster tool deposition for which the
+            :param deposition: the cluster tool deposition for which the
                 layer and channel forms should be generated
 
-            :type deposition: `institute_models.ClusterToolDeposition`
+            :type deposition: `inm.models.ClusterToolDeposition`
             """
             self.layer_forms = []
             for index, layer in enumerate(deposition.layers.all()):
@@ -418,7 +414,7 @@ class FormSet(object):
         `form_utils.normalize_prefixes`), not even across many “post cycles”.
         Only the layer numbers are used for determining the order of layers.
 
-        :Return:
+        :return:
           whether the structure was changed in any way.
 
         :rtype: bool
@@ -539,7 +535,7 @@ class FormSet(object):
         function calls the ``is_valid()`` method of all forms, even if one of them
         returns ``False`` (and makes the return value clear prematurely).
 
-        :Return:
+        :return:
           whether all forms are valid, i.e. their ``is_valid`` method returns
           ``True``.
 
@@ -560,7 +556,7 @@ class FormSet(object):
         """Test whether all forms are consistent with each other and with the
         database.
 
-        :Return:
+        :return:
           whether all forms are consistent with each other and the database
 
         :rtype: bool
@@ -589,10 +585,10 @@ class FormSet(object):
         Additionally, this method removed deposited samples from „My Samples“
         if appropriate, and it generates the feed entries.
 
-        :Return:
+        :return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `institute_models.ClusterToolDeposition` or ``NoneType``
+        :rtype: `inm.models.ClusterToolDeposition` or NoneType
         """
         database_ready = not self._change_structure() if not self.json_client else True
         database_ready = self._is_all_valid() and database_ready
@@ -618,7 +614,7 @@ class FormSet(object):
         context dictionary contains all forms in an easy-to-use format for the
         template code.
 
-        :Return:
+        :return:
           context dictionary
 
         :rtype: dict mapping str to various types
@@ -635,17 +631,16 @@ def edit(request, number):
     depositions.  If ``number`` is ``None``, a new depositon is
     created (possibly by duplicating another one).
 
-    :Parameters:
-      - `request`: the HTTP request object
-      - `number`: the number (=name) or the deposition
+    :param request: the HTTP request object
+    :param number: the number (=name) or the deposition
 
-    :type request: ``QueryDict``
-    :type number: unicode or ``NoneType``
+    :type request: QueryDict
+    :type number: unicode or NoneType
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     return form_utils.edit_depositions(request, number, FormSet(request, number), institute_models.ClusterToolDeposition,
                                        "samples/edit_cluster_tool_deposition.html")

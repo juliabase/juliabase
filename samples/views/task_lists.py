@@ -12,6 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+
 from __future__ import absolute_import, unicode_literals
 
 import copy, datetime
@@ -223,18 +224,17 @@ def save_to_database(task_form, samples_form, old_task):
     """Saves the data for a task into the database.  All validation checks
     must have done before calling this function.
 
-    :Parameters:
-      - `task_form`: a bound and valid task form
-      - `samples_form`: a bound and valid samples form iff we create a new
+    :param task_form: a bound and valid task form
+    :param samples_form: a bound and valid samples form iff we create a new
         task, or an unbound samples form
-      - `old_task`: the old task instance, which is ``None`` if we newly create
+    :param old_task: the old task instance, which is ``None`` if we newly create
         one
 
     :type task_form: `TaskForm`
     :type samples_form: `SamplesForm`
-    :type old_task: `Task`
+    :type old_task: `samples.models.Task`
 
-    :Returns:
+    :return:
      the saved task database object.
 
     :rtype: `samples.models.Task`
@@ -251,18 +251,17 @@ def save_to_database(task_form, samples_form, old_task):
 def edit(request, task_id):
     """Edit or create a task.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `task_id`: number of the task to be edited.  If this is
+    :param request: the current HTTP Request object
+    :param task_id: number of the task to be edited.  If this is
         ``None``, create a new one.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type task_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id else None
     user = request.user
@@ -318,12 +317,12 @@ def show(request):
     for the user.
 
     :Paramerters:
-     - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if request.method == "POST":
         choose_task_lists_form = ChooseTaskListsForm(request.user, request.POST)
@@ -361,13 +360,13 @@ def remove(request, task_id):
     """Deletes a task from the database.
 
     :Paramerters:
-     - `request`: the current HTTP Request object
-     - `task_id`: the id from the task, which has to be deleted
+    :param request: the current HTTP Request object
+    :param task_id: the id from the task, which has to be deleted
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id))
     if task.customer != request.user:

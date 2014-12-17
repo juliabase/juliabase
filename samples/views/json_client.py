@@ -67,15 +67,14 @@ def primary_keys(request):
 
     The result is the JSON representation of the resulting nested dictionary.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     result_dict = {}
     if "topics" in request.GET:
@@ -138,18 +137,17 @@ def available_items(request, model_name):
     represented by the `JBMeta.identifying_field` attribute, if given.  This
     may be the number of a deposition, or the number of a measurement run, etc.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `model_name`: the name of the database model
+    :param request: the current HTTP Request object
+    :param model_name: the name of the database model
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type model_name: unicode
 
-    :Returns:
+    :return:
       The HTTP response object.  It is a JSON list object with all the ids of
       the objects in the database for the model.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if not request.user.is_staff:
         raise permissions.PermissionError(request.user, _("Only the administrator can access this resource."))
@@ -179,16 +177,15 @@ def login_remote_client(request):
     already.  An HTTP GET request yields nothing – this can be used to get the
     CSRF cookie.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object.  It is a JSON boolean object, whether the login
       was successful or not.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if request.method == "POST":
         try:
@@ -211,16 +208,15 @@ def logout_remote_client(request):
     """By requesting this view, the JuliaBase Remote Client can log out.  This
     view can never fail.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object.  It is a JSON boolean object and always
       ``True``.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     django.contrib.auth.logout(request)
     return respond_in_json(True)
@@ -233,17 +229,16 @@ def add_alias(request):
     """Adds a new sample alias name to the database.  This view can only be
     used by admin accounts.
 
-    :Parameters:
-      - `request`: the current HTTP Request object; it must contain the
+    :param request: the current HTTP Request object; it must contain the
         sample's primary key and the alias name in the POST data.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       ``True`` if it worked, ``False`` if something went wrong.  It returns a
       404 if the sample wasn't found.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if not request.user.is_staff:
         return respond_in_json(False)
@@ -267,21 +262,20 @@ def add_alias(request):
 def change_my_samples(request):
     """Adds or remove samples from “My Samples”.
 
-    :Parameters:
-      - `request`: The current HTTP Request object.  It must contain the sample
+    :param request: The current HTTP Request object.  It must contain the sample
         IDs of the to-be-removed samples comma-separated list in ``"remove"``
         and the to-be-added sample IDs in ``"add"``.  Both can be empty.
         Moreover, it may contain the ID of the user whose “My Samples” should
         be changed in ``"user"``.  If not given, the logged-in user is used.
         If given, the currently logged-in user must be admin.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       The IDs of the samples for which the change had to be actually made.  It
       returns a 404 if one sample wasn't found.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
         sample_ids_to_remove = {int(id_) for id_ in request.POST.get("remove", "").split(",") if id_}
@@ -317,11 +311,10 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
     """Helper routine to determine whether the process is folded or not. Is the switch
     parameter is ``True``, the new status is saved.
 
-    :Parameters:
-     - `process_id`: The process ID from the process, which should be checked.
-     - `folded_process_classes`: The content types from the process classes, which are folded by default.
-     - `exceptional_processes`: The process IDs from the processes that do not follow the default settings.
-     - `switch`: It says whether the new status should be saved or not.
+    :param process_id: The process ID from the process, which should be checked.
+    :param folded_process_classes: The content types from the process classes, which are folded by default.
+    :param exceptional_processes: The process IDs from the processes that do not follow the default settings.
+    :param switch: It says whether the new status should be saved or not.
 
     :type process_id: int
     :type folded_process_classes: list
@@ -352,18 +345,17 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
 def fold_process(request, sample_id):
     """Fold a single process in one sample data sheet. The new behavior is also saved.
 
-    :Parameters:
-     - `request`: The current HTTP Request object.  It must contain the process
+    :param request: The current HTTP Request object.  It must contain the process
         ID of the process which behavior should be changed.
-     - `sample_id`: The sample ID represent the data sheet where the process has to be changed.
+    :param sample_id: The sample ID represent the data sheet where the process has to be changed.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_id: unicode
 
-    :Returns:
+    :return:
       True when the process is now folded else False.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     process_id = utils.int_or_zero(request.POST["process_id"])
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
@@ -381,18 +373,17 @@ def fold_process(request, sample_id):
 def get_folded_processes(request, sample_id):
     """Get all the IDs from the processes, who have to be folded.
 
-    :Parameters:
-     - `request`: The current HTTP Request object.  It must contain all the process
+    :param request: The current HTTP Request object.  It must contain all the process
         IDs of the processes from the selected sample.
-     - `sample_id`: The sample ID represent the data sheet the user wants to see.
+    :param sample_id: The sample ID represent the data sheet the user wants to see.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_id: unicode
 
-    :Returns:
+    :return:
      The process IDs of the processes, who have to be folded on the samples data sheet.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
         process_ids = [utils.convert_id_to_int(id_) for id_ in request.GET["process_ids"].split(",")]
@@ -415,17 +406,16 @@ def get_folded_processes(request, sample_id):
 def fold_main_menu_element(request):
     """Fold a single topic or sample series from the main menu.
 
-    :Parameters:
-     - `request`: The current HTTP Request object.  It must contain the the topic ID or
+    :param request: The current HTTP Request object.  It must contain the the topic ID or
         sample series name.
-    - `element_id`: The id from the topic or sample series
+    :param element_id: The id from the topic or sample series
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
      True when the topic or sample series is now folded else False
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     def fold_element(element_id, folded_elements):
         folded_elements = json.loads(folded_elements)
@@ -457,15 +447,14 @@ def fold_main_menu_element(request):
 def get_folded_main_menu_elements(request):
     """Get all IDs or names from the folded topics or sample series.
 
-    :Parameters:
-     - `request`: The current HTTP Request object.
+    :param request: The current HTTP Request object.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
      The topic IDs and sample series names, who have to be folded on the main menu.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     folded_elements = (json.loads(request.user.samples_user_details.folded_topics),
                        json.loads(request.user.samples_user_details.folded_series))

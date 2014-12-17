@@ -13,8 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Models for the institute-specific physical processes except depositions.  This
-includes measurements, etching processes, clean room work etc.
+"""Models for the INM-specific physical processes except depositions.  This
+includes substrates and measurements.  For other institutions, etching
+processes, clean room work etc. will go here, too.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -214,10 +215,10 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         model_field = super(SolarsimulatorMeasurement, cls).get_search_tree_node()
         model_field.search_fields = [search.TextSearchField(cls, "operator", "username"),
@@ -255,10 +256,10 @@ class SolarsimulatorCellMeasurement(models.Model):
         """Extract the data of this single cell measurement as a dictionary.  It is
         called only from `SolarsimulatorMeasurement.get_data`.
 
-        :Return:
+        :return:
           the content of all fields of this cell measurement
 
-        :rtype: `dict`
+        :rtype: dict
         """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
@@ -267,10 +268,10 @@ class SolarsimulatorCellMeasurement(models.Model):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)

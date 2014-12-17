@@ -13,9 +13,8 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Models for IEF-5-specific depositions.  This includes the deposition models
-themselves as well as models for layers.  Additionally, there are miscellaneous
-models like the one to 6-chamber deposition channels.
+"""Models for INM-specific depositions.  This includes the deposition models
+themselves as well as models for layers.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -93,7 +92,7 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
         the layer models directly instead of the proxy class
         `OldClusterToolLayer`.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
         :rtype: ``jb_common.search.SearchTreeNode``

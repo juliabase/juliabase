@@ -57,14 +57,12 @@ class NewNameForm(forms.Form):
     name = forms.CharField(label=_("New name"), max_length=22)
 
     def __init__(self, user, prefix_, sample, *args, **kwargs):
-        """Class constructor.
-
-        :Parameters:
-          - user: The user that requests the renaming.
-          - `prefix_`: The prefix to be used.  If, for some reason, there is no
+        """
+        :param user: The user that requests the renaming.
+        :param prefix_: The prefix to be used.  If, for some reason, there is no
             prefix available, give an empty string.  Validation will then fail,
             however, it would fail for the whole page anyway without a prefix.
-          - `sample`: The sample to be renamed.
+        :param sample: The sample to be renamed.
 
         :type user: django.contrib.auth.models.User
         :type prefix_: str
@@ -100,14 +98,13 @@ def is_referentially_valid(samples, new_name_forms):
     check here wheter samples with these names already exist in the database.
     This is done in the form itself.
 
-    :Parameters:
-      - `samples`: the samples to be re-named
-      - `new_name_forms`: all forms with the new names
+    :param samples: the samples to be re-named
+    :param new_name_forms: all forms with the new names
 
-    :type samples: list of `models.Sample`
+    :type samples: list of `samples.models.Sample`
     :type new_name_forms: list of `NewNameForm`
 
-    :Return:
+    :return:
       whether there were no duplicates on the page, and whether no old-style
       names are renamed to external names
 
@@ -128,16 +125,15 @@ def is_referentially_valid(samples, new_name_forms):
 
 def find_prefixes(user):
     """Generates all possible sample name prefixes for the user.  The templates for
-    this are taken from `settings.NAME_PREFIX_TEMPLATES`.  Note that it makes
+    this are taken from ``settings.NAME_PREFIX_TEMPLATES``.  Note that it makes
     sense to define such prefixes only if you allow sample name formats that
     also contain these prefixes.
 
-    :Parameters:
-      - `user`: the currently logged-in user
+    :param user: the currently logged-in user
 
     :type user: django.contrib.auth.models.User
 
-    :Returns:
+    :return:
       all possible sample name prefixes for this user
 
     :rtype: list of str
@@ -177,15 +173,14 @@ def bulk_rename(request):
     the user doesn't have initials yet, he is redirected to his preferences
     page.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     # FixMe: Get rid of the "numbers" parameter.  I think it is only used in
     # the remote client.

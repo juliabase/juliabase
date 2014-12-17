@@ -126,23 +126,22 @@ def add_oldstyle(request, username):
 
     in order to extend it.
 
-    The ``username`` parameter of this view function is actually superfluous
+    The `username` parameter of this view function is actually superfluous
     because it must be the currently logged-in user anyway.  But this way, we
     don't get into trouble if a user happens to be called ``"add"``.
     Additionally, the URLs become RESTful.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `username`: the name of the user whose claim this will be; it must be
+    :param request: the current HTTP Request object
+    :param username: the name of the user whose claim this will be; it must be
         the currently logged-in user
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type username: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     _ = ugettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)

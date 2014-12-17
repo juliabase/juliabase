@@ -14,7 +14,8 @@
 
 
 """View for editing the “My Layers” structure.  See
-``models.UserDetails.my_layers`` for the syntax of the “My Layers” field.
+:py:attr:`samples.models.UserDetails.my_layers` for the syntax of the “My
+Layers” field.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -68,12 +69,11 @@ def forms_from_database(user):
     notation ``<deposition ID>-<layer number>`` of the database to
     ``<deposition number>-<layer number>``.
 
-    :Parameters:
-      - `user`: the current user
+    :param user: the current user
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the “My Layers” forms
 
     :rtype: list of `MyLayerForm`
@@ -93,12 +93,11 @@ def forms_from_post_data(post_data):
     from it.  This also includes the functionality of the ``change_structure``
     function found in other modules.
 
-    :Parameters:
-      - `post_data`: the result from ``request.POST``
+    :param post_data: the result from ``request.POST``
 
-    :type post_data: ``QueryDict``
+    :type post_data: QueryDict
 
-    :Return:
+    :return:
       list of “My Layers” forms, whether the structure was changed (i.e. a
       layer was deleted or added)
 
@@ -125,7 +124,7 @@ def forms_from_post_data(post_data):
 def is_referentially_valid(my_layer_forms):
     """Test whether no nickname occurs twice.
 
-    :Return:
+    :return:
       whether all nicknames are unique
 
     :rtype: bool
@@ -161,18 +160,17 @@ def save_to_database(my_layer_forms, user):
 def edit(request, login_name):
     """View for editing the “My Layers”.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `login_name`: the login name of the user whose “My Layers” should be
+    :param request: the current HTTP Request object
+    :param login_name: the login name of the user whose “My Layers” should be
         changed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type login_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_staff and request.user != user:

@@ -48,13 +48,12 @@ from samples.views import shared_utils
 def translate_permission(permission_codename):
     """Translates a permission description to the user's language.
 
-    :Parameters:
-      - `permission_codename`: the codename of the permission, *with* the
+    :param permission_codename: the codename of the permission, *with* the
         ``"all_label."`` prefix
 
     :type permission_codename: str
 
-    :Return:
+    :return:
       The name (aka short description) of the permission, translated to the
       current langauge.  It starts with a capital letter but doesn't end in a
       full stop.
@@ -73,12 +72,11 @@ def get_user_permissions(user):
     permissions and looks whether the user has them or not, and returns its
     findings.
 
-    :Parameters:
-      - `user`: the user for which the permissions should be determined
+    :param user: the user for which the permissions should be determined
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       A list with all permissions the user has got, a list with all permissions
       that the user doesn't have got.  Both lists contain translated
       descriptions.
@@ -107,12 +105,11 @@ def get_user_hash(user):
     Technically, it is the first 10 characters of a salted SHA-1 hash of the
     user's name.
 
-    :Parameters:
-      - `user`: the current user
+    :param user: the current user
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       The user's secret hash
 
     :rtype: str
@@ -127,15 +124,14 @@ def get_editable_sample_series(user):
     """Return a query set with all sample series that the user can edit.  So
     far, it is only used in `split_and_rename.GlobalDataForm`.
 
-    :Parameters:
-      - `user`: the user which has too few permissions
+    :param user: the user which has too few permissions
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       a query set with all sample series that the user can edit
 
-    :rtype: ``QuerySet``
+    :rtype: QuerySet
     """
     return samples.models.SampleSeries.objects.filter(currently_responsible_person=user)
 
@@ -146,7 +142,7 @@ def get_all_addable_physical_process_models():
     splits) that one can add or edit.  Never call this routine from top-level
     module code because it may cause cyclic imports.
 
-    :Return:
+    :return:
       Dictionary mapping all physical processes one can to add.  Every process
       class is mapped to a dictionary with three keys, namely ``"url"`` with
       the url to the “add” view for the process, ``"label"`` with the name of
@@ -175,12 +171,11 @@ def get_allowed_physical_processes(user):
     *add* is to be build, on the main menu page and the “add process to sample”
     page.
 
-    :Parameters:
-      - `user`: the user whose allowed physical processes should be collected
+    :param user: the user whose allowed physical processes should be collected
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       List of all physical processes the user is allowed to add to the
       database.  Every process is represented by a dictionary with three keys,
       namely ``"url"`` with the url to the “add” view for the process,
@@ -204,18 +199,17 @@ def get_all_adders(process_class):
     add such processes, this routine returns none.  This may sound strange but
     it is very helpful in most cases.
 
-    :Parameters:
-      - `process_class`: the process class for which the operators should be
+    :param process_class: the process class for which the operators should be
         found
 
-    :type process_class: ``type`` (class ``models.Process``)
+    :type process_class: ``type`` (class ``samples.models.Process``)
 
-    :Return:
+    :return:
       all active users that are allowed to add processes for this class; if the
       process class is not resticted to certain users, this function returns an
       empty query set
 
-    :rtype: ``QuerySet``
+    :rtype: QuerySet
     """
     permission_codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     try:
@@ -245,14 +239,13 @@ class PermissionError(Exception):
     def __init__(self, user, description, new_topic_would_help=False):
         """Class constructor.
 
-        :Parameters:
-          - `user`: the user which has too few permissions
-          - `description`: a sentence describing the denied action and what
+        :param user: the user which has too few permissions
+        :param description: a sentence describing the denied action and what
             could be done about it
-          - `new_topic_would_help`: if ``True``, adding the user to a certain
+        :param new_topic_would_help: if ``True``, adding the user to a certain
             topic would grant him the permission for the action
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
         :type description: unicode
         :type new_topic_would_help: bool
         """
@@ -283,15 +276,13 @@ def assert_can_fully_view_sample(user, sample):
     """Tests whether the user can view the sample fully, i.e. without needing
     a clearance.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `sample`: the sample to be shown
+    :param user: the user whose permission should be checked
+    :param sample: the sample to be shown
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample: `models.Sample`
+    :type user: django.contrib.auth.models.User
+    :type sample: `samples.models.Sample`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to fully view the
+    :raises PermissionError: if the user is not allowed to fully view the
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
@@ -319,18 +310,17 @@ def assert_can_fully_view_sample(user, sample):
 
 
 def assert_can_rename_sample(user, sample):
-    """Tests whether the user can rename all samples from his/her department.
-    It is recommended that only a few administrative users should get this permission.
+    """Tests whether the user can rename all samples from his/her department.  It
+    is recommended that only a few administrative users should get this
+    permission.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `sample`: the sample to be renamed
+    :param user: the user whose permission should be checked
+    :param sample: the sample to be renamed
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample: `models.Sample`
+    :type user: django.contrib.auth.models.User
+    :type sample: `samples.models.Sample`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to rename the
+    :raises PermissionError: if the user is not allowed to rename the
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
@@ -346,21 +336,19 @@ def get_sample_clearance(user, sample):
     """Returns the clearance a user needs to visit a sample, if he needs one
     at all.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `sample`: the sample to be shown
+    :param user: the user whose permission should be checked
+    :param sample: the sample to be shown
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample: `models.Sample`
+    :type user: django.contrib.auth.models.User
+    :type sample: `samples.models.Sample`
 
-    :Return:
+    :return:
       the clearance for the user and sample, or ``None`` if the user doesn't
       need a clearance to visit the sample
 
-    :rtype: `samples.models.Clearance` or ``NoneType``
+    :rtype: `samples.models.Clearance` or NoneType
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to view the
+    :raises PermissionError: if the user is not allowed to view the
         sample.
     """
     from samples.views.utils import enforce_clearance
@@ -388,16 +376,14 @@ def assert_can_add_physical_process(user, process_class):
     """Tests whether the user can create a new physical process
     (i.e. deposition, measurement, etching process, clean room work etc).
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `process_class`: the type of physical process that the user asks
+    :param user: the user whose permission should be checked
+    :param process_class: the type of physical process that the user asks
         permission for
 
-    :type user: ``django.contrib.auth.models.User``
-    :type process_class: ``class`` (derived from `models.Process`)
+    :type user: django.contrib.auth.models.User
+    :type process_class: ``class`` (derived from `samples.models.Process`)
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to add a process.
+    :raises PermissionError: if the user is not allowed to add a process.
     """
     codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
     if Permission.objects.filter(codename=codename).exists():
@@ -416,15 +402,13 @@ def assert_can_edit_physical_process(user, process):
     of this kind.  Alternatively, he must have the “edit all” permission for
     the process class.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `process`: The process to edit.  This neend't be the actual instance.
+    :param user: the user whose permission should be checked
+    :param process: The process to edit.  This neend't be the actual instance.
 
-    :type user: ``django.contrib.auth.models.User``
-    :type process: `models.Process`
+    :type user: django.contrib.auth.models.User
+    :type process: `samples.models.Process`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit the
+    :raises PermissionError: if the user is not allowed to edit the
         process.
     """
     process_class = process.content_type.model_class()
@@ -451,20 +435,18 @@ def assert_can_add_edit_physical_process(user, process, process_class=None):
     and `assert_can_edit_physical_process`.  It is used in the combined
     add/edit views of physical processes.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `process`: The concrete process to edit.  If ``None``, a new process is
+    :param user: the user whose permission should be checked
+    :param process: The concrete process to edit.  If ``None``, a new process is
         about to be created.
-      - `process_class`: the type of physical process that the user asks
+    :param process_class: the type of physical process that the user asks
         permission for
 
-    :type user: ``django.contrib.auth.models.User``
-    :type process: `models.Process`
-    :type process_class: ``class`` (derived from `models.Process`) or
-      ``NoneType``
+    :type user: django.contrib.auth.models.User
+    :type process: `samples.models.Process`
+    :type process_class: ``class`` (derived from `samples.models.Process`) or
+      NoneType
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to create or edit
+    :raises PermissionError: if the user is not allowed to create or edit
         the process.
     """
     if process:
@@ -478,16 +460,14 @@ def assert_can_view_lab_notebook(user, process_class):
     """Tests whether the user can view the lab notebook for a physical process
     class (i.e. deposition, measurement, etching process, clean room work etc).
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `process_class`: the type of physical process that the user asks
+    :param user: the user whose permission should be checked
+    :param process_class: the type of physical process that the user asks
         permission for
 
-    :type user: ``django.contrib.auth.models.User``
-    :type process_class: ``class`` (derived from `models.Process`)
+    :type user: django.contrib.auth.models.User
+    :type process_class: ``class`` (derived from `samples.models.Process`)
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to view the lab
+    :raises PermissionError: if the user is not allowed to view the lab
         notebook for this process class.
     """
     codename = "view_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
@@ -511,16 +491,15 @@ def assert_can_view_physical_process(user, process):
     process, if you have a clearance for this process, or if you can see at
     least one of the processed samples.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `process`: The concrete process to view.  It it not necessary that it
-        is the actual instance, i.e. it may also be a ``Process`` instance.
+    :param user: the user whose permission should be checked
+    :param process: The concrete process to view.  It it not necessary that it
+        is the actual instance, i.e. it may also be a
+        :py:class:`~samples.models.Process` instance.
 
-    :type user: ``django.contrib.auth.models.User``
-    :type process: `models.Process`
+    :type user: django.contrib.auth.models.User
+    :type process: `samples.models.Process`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to view the
+    :raises PermissionError: if the user is not allowed to view the
         process.
     """
     process_class = process.content_type.model_class()
@@ -543,15 +522,13 @@ def assert_can_view_physical_process(user, process):
 def assert_can_edit_result_process(user, result_process):
     """Tests whether the user can edit a result process.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `result_process`: The result process to edit.
+    :param user: the user whose permission should be checked
+    :param result_process: The result process to edit.
 
-    :type user: ``django.contrib.auth.models.User``
-    :type result_process: `models.Result`
+    :type user: django.contrib.auth.models.User
+    :type result_process: `samples.models.Result`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit the result
+    :raises PermissionError: if the user is not allowed to edit the result
         process.
     """
     if result_process.operator != user and not user.is_superuser:
@@ -563,15 +540,13 @@ def assert_can_edit_result_process(user, result_process):
 def assert_can_view_result_process(user, result_process):
     """Tests whether the user can view a result process.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `result_process`: The result process to edit.
+    :param user: the user whose permission should be checked
+    :param result_process: The result process to edit.
 
-    :type user: ``django.contrib.auth.models.User``
-    :type result_process: `models.Result`
+    :type user: django.contrib.auth.models.User
+    :type result_process: `samples.models.Result`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to view the result
+    :raises PermissionError: if the user is not allowed to view the result
         process.
     """
     if result_process.operator != user and \
@@ -588,16 +563,15 @@ def assert_can_view_result_process(user, result_process):
 def assert_can_add_result_process(user, sample_or_series):
     """Tests whether the user can add a result process.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `sample_or_series`: the sample (series) the user wants to add a result
+    :param user: the user whose permission should be checked
+    :param sample_or_series: the sample (series) the user wants to add a result
         to
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample_or_series: `models.Sample` or `models.SampleSeries`
+    :type user: django.contrib.auth.models.User
+    :type sample_or_series: `samples.models.Sample` or
+        `samples.models.SampleSeries`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to add the result
+    :raises PermissionError: if the user is not allowed to add the result
         process to the sample or series
     """
     if sample_or_series.currently_responsible_person != user and sample_or_series.topic and \
@@ -616,15 +590,13 @@ def assert_can_add_result_process(user, sample_or_series):
 def assert_can_edit_sample(user, sample):
     """Tests whether the user can edit, split, and kill a sample.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `sample`: the sample to be changed
+    :param user: the user whose permission should be checked
+    :param sample: the sample to be changed
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample: `models.Sample`
+    :type user: django.contrib.auth.models.User
+    :type sample: `samples.models.Sample`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit the sample
+    :raises PermissionError: if the user is not allowed to edit the sample
     """
     from samples.views.permissions import PermissionsPhysicalProcess
     currently_responsible_person = sample.currently_responsible_person
@@ -645,15 +617,13 @@ def assert_can_edit_sample_series(user, sample_series):
     """Tests whether the user can edit a sample series, including adding or
     removing samples.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `sample_series`: the sample series to be changed
+    :param user: the user whose permission should be checked
+    :param sample_series: the sample series to be changed
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample_series: `models.SampleSeries`
+    :type user: django.contrib.auth.models.User
+    :type sample_series: `samples.models.SampleSeries`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit the sample
+    :raises PermissionError: if the user is not allowed to edit the sample
         series
     """
     if sample_series.currently_responsible_person != user and not user.is_superuser:
@@ -665,15 +635,13 @@ def assert_can_edit_sample_series(user, sample_series):
 def assert_can_view_sample_series(user, sample_series):
     """Tests whether the user can view a sample series.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `sample_series`: the sample series to be shown
+    :param user: the user whose permission should be checked
+    :param sample_series: the sample series to be shown
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample_series: `models.SampleSeries`
+    :type user: django.contrib.auth.models.User
+    :type sample_series: `samples.models.SampleSeries`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to view the sample
+    :raises PermissionError: if the user is not allowed to view the sample
         series
     """
     if sample_series.currently_responsible_person != user and  user not in sample_series.topic.members.all()and \
@@ -686,13 +654,11 @@ def assert_can_view_sample_series(user, sample_series):
 def assert_can_add_external_operator(user):
     """Tests whether the user can add an external operator.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
+    :param user: the user whose permission should be checked
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to add an external
+    :raises PermissionError: if the user is not allowed to add an external
         operator.
     """
     permission = "samples.add_external_operator"
@@ -705,15 +671,13 @@ def assert_can_add_external_operator(user):
 def assert_can_edit_external_operator(user, external_operator):
     """Tests whether the user can edit an external operator.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `external_operator`: the external operator to be edited
+    :param user: the user whose permission should be checked
+    :param external_operator: the external operator to be edited
 
-    :type user: ``django.contrib.auth.models.User``
-    :type external_operator: `models.ExternalOperator`
+    :type user: django.contrib.auth.models.User
+    :type external_operator: `samples.models.ExternalOperator`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit an
+    :raises PermissionError: if the user is not allowed to edit an
         external operator.
     """
     if user not in external_operator.contact_persons.all() and not user.is_superuser:
@@ -725,15 +689,13 @@ def assert_can_edit_external_operator(user, external_operator):
 def assert_can_view_external_operator(user, external_operator):
     """Tests whether the user can view an external operator.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `external_operator`: the external operator to be shown
+    :param user: the user whose permission should be checked
+    :param external_operator: the external operator to be shown
 
-    :type user: ``django.contrib.auth.models.User``
-    :type external_operator: `models.ExternalOperator`
+    :type user: django.contrib.auth.models.User
+    :type external_operator: `samples.models.ExternalOperator`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to view an
+    :raises PermissionError: if the user is not allowed to view an
         external operator.
     """
     if user not in external_operator.contact_persons.all() and not user.is_superuser:
@@ -752,16 +714,14 @@ def assert_can_edit_topic(user, topic=None):
     set the topic's restriction status, and add new topics.  This typically
     is a priviledge of heads of institute groups.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `topic`: the topic whose members are about to be edited; ``None``
+    :param user: the user whose permission should be checked
+    :param topic: the topic whose members are about to be edited; ``None``
         if we create a new one
 
-    :type user: ``django.contrib.auth.models.User``
-    :type topic: ``jb_common.models.Topic`` or ``NoneType``
+    :type user: django.contrib.auth.models.User
+    :type topic: `jb_common.models.Topic` or NoneType
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit topics,
+    :raises PermissionError: if the user is not allowed to edit topics,
         or to add new topics.
     """
     if not topic:
@@ -794,13 +754,11 @@ def assert_can_edit_users_topics(user):
     set the topic's restriction status, and add new sub topics where the
     user is member off. This is a priviledge of topic managers.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
+    :param user: the user whose permission should be checked
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to edit his/ her
+    :raises PermissionError: if the user is not allowed to edit his/ her
         topics, or to add new sub topics.
     """
     if not user.has_perm("jb_common.can_edit_their_topics") and \
@@ -821,15 +779,13 @@ def assert_can_view_feed(hash_value, user):
     use any ``has_perm`` method call here (which would yield ``False`` for
     inactive users).
 
-    :Parameters:
-      - `hash_value`: the hash value given by the requester
-      - `user`: the user whose news feed is requested
+    :param hash_value: the hash value given by the requester
+    :param user: the user whose news feed is requested
 
     :type hash_value: str
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Exceptions:
-      - `PermissionError`: Raised if the requester is not allowed to view the
+    :raises PermissionError: if the requester is not allowed to view the
         user's news feed.  It's ``user`` parameter is always ``None`` because
         we don't know the user who is currently accessing JuliaBase.
     """

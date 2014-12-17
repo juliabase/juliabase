@@ -54,7 +54,8 @@ class UserDetailsForm(forms.ModelForm):
                     and process_class not in [models.Process, models.Deposition]]
         for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = set(process for process in processes
-                                          if process._meta.app_label == settings.DEPARTMENTS_TO_APP_LABELS.get(department.name))
+                                          if process._meta.app_label ==
+                                          settings.DEPARTMENTS_TO_APP_LABELS.get(department.name))
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
         if not choices:
             choices = (("", 9 * "-"),)
@@ -67,8 +68,8 @@ class UserDetailsForm(forms.ModelForm):
         self.fields["subscribed_feeds"].widget.attrs["size"] = "15"
         self.fields["show_users_from_departments"].choices = [(department.pk, department.name)
                                                             for department in Department.objects.iterator()]
-        self.fields["show_users_from_departments"].initial = user.samples_user_details.show_users_from_departments.values_list("id",
-                                                                                                                             flat=True)
+        self.fields["show_users_from_departments"].initial = \
+                    user.samples_user_details.show_users_from_departments.values_list("id", flat=True)
 
     class Meta:
         model = models.UserDetails
@@ -89,18 +90,17 @@ def edit_preferences(request, login_name):
     taken automatically from the domain database through LDAP.  I want to give
     as few options as possible in order to avoid misbehaviour.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `login_name`: the login name of the user who's preferences should be
+    :param request: the current HTTP Request object
+    :param login_name: the login name of the user who's preferences should be
         edited.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type login_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     def __change_folded_processes(default_folded_process_classes, user):
         """Creates the new exceptional processes dictionary and saves it into the user details.

@@ -34,23 +34,22 @@ from inm import models, informal_stacks
 
 @login_required
 def show_stack(request, sample_id, thumbnail):
-    """Shows a particular informal layer stack.  Although its response is a
-    bitmap rather than an HTML file, it is served by Django in order to enforce
-    user permissions.
+    """Shows a particular informal layer stack.  Although its response is a bitmap
+    rather than an HTML file, it is served by Django in order to enforce user
+    permissions.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_id`: the database ID of the sample
-      - `thumbnail`: whether we should deliver a thumbnail version
+    :param request: the current HTTP Request object
+    :param sample_id: the database ID of the sample
+    :param thumbnail: whether we should deliver a thumbnail version
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: unicode
     :type thumbnail: bool
 
-    :Returns:
+    :return:
       the HTTP response object with the image
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample_details = get_object_or_404(models.SampleDetails, pk=utils.convert_id_to_int(sample_id))
     sample = sample_details.sample

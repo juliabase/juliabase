@@ -43,17 +43,16 @@ def get_data_from_file(number):
     it looks for the sample that was measured in the database, and if it finds
     it, returns it, too.
 
-    :Parameters:
-      - `number`: the PDS number of the PDS measurement
+    :param number: the PDS number of the PDS measurement
 
     :type number: int
 
-    :Return:
+    :return:
       a dictionary with all data found in the datafile including the filenames
       for this measurement, and the sample connected with deposition if any.
       If no sample in the database fits, ``None`` is returned as the sample.
 
-    :rtype: dict mapping str to ``object``, `models.Sample`
+    :rtype: dict mapping str to ``object``, `samples.models.Sample`
     """
     result = {"number": six.text_type(number)}
     sample = None
@@ -129,21 +128,20 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
 
-    :Parameters:
-      - `pds_measurement_form`: a bound PDS measurement form
-      - `sample_form`: a bound sample selection form
-      - `overwrite_form`: a bound overwrite data form
-      - `remove_from_my_samples_form`: a bound remove-from-my-samples form
-      - `edit_description_form`: a bound edit-description form
+    :param pds_measurement_form: a bound PDS measurement form
+    :param sample_form: a bound sample selection form
+    :param overwrite_form: a bound overwrite data form
+    :param remove_from_my_samples_form: a bound remove-from-my-samples form
+    :param edit_description_form: a bound edit-description form
 
     :type pds_measurement_form: `PDSMeasurementForm`
-    :type sample_form: `SampleForm`
+    :type sample_form: `inm.views.form_utils.SampleForm`
     :type overwrite_form: `OverwriteForm`
     :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or
-      ``NoneType``
+      NoneType
     :type edit_description_form: `form_utils.EditDescriptionForm`
 
-    :Return:
+    :return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
       ``True``.
 
@@ -164,17 +162,16 @@ def is_referentially_valid(pds_measurement_form, sample_form, number):
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement.
 
-    :Parameters:
-      - `pds_measurement_form`: a bound PDS measurement form
-      - `sample_form`: a bound sample selection form
-      - `number`: The PDS number of the PDS measurement to be edited.  If it is
+    :param pds_measurement_form: a bound PDS measurement form
+    :param sample_form: a bound sample selection form
+    :param number: The PDS number of the PDS measurement to be edited.  If it is
         ``None``, a new measurement is added to the database.
 
     :type pds_measurement_form: `PDSMeasurementForm`
-    :type sample_form: `SampleForm`
+    :type sample_form: `inm.views.form_utils.SampleForm`
     :type number: unicode
 
-    :Return:
+    :return:
       whether the forms are consistent with each other and the database
 
     :rtype: bool
@@ -185,18 +182,17 @@ def is_referentially_valid(pds_measurement_form, sample_form, number):
 def edit(request, number):
     """Edit and create view for PDS measurements.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `number`: The PDS number of the PDS measurement to be edited.  If it is
+    :param request: the current HTTP Request object
+    :param number: The PDS number of the PDS measurement to be edited.  If it is
         ``None``, a new measurement is added to the database.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type number: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     pds_measurement = get_object_or_404(institute_models.PDSMeasurement, number=utils.convert_id_to_int(number)) \
         if number is not None else None

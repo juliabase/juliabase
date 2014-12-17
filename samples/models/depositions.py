@@ -35,19 +35,19 @@ default_location_of_deposited_samples = {}
 """Dictionary mapping process classes to strings which contain the default
 location where samples can be found after this process has been performed.
 This is used in
-`samples.views.split_after_deposition.GlobalNewDataForm.__init__`.
+:py:meth:`samples.views.split_after_deposition.GlobalNewDataForm.__init__`.
 """
 
 
 class Deposition(PhysicalProcess):
-    """The base class for deposition processes.  Note that, like `Process`,
-    this must never be instantiated.  Instead, derive the concrete deposition
-    class from it.
+    """The base class for deposition processes.  Note that, like
+    `~samples.models.Process`, this must never be instantiated.  Instead,
+    derive the concrete deposition class from it.
 
     It is only sensible to use this class if your institution has
     institution-wide unique deposition numbers.  Else, make distict model
-    classes for each deposition system which are not derived from `Deposition`,
-    and don't use the `Layer` class below then either.
+    classes for each deposition system which are not derived from
+    ``Deposition``, and don't use the `Layer` class below then either.
 
     Every derived class, if it has sub-objects which resemble layers, must
     implement them as a class derived from `Layer`, with a ``ForeignKey`` field
@@ -70,7 +70,7 @@ class Deposition(PhysicalProcess):
         polymorphic layer classes as well as with the possibility that the
         deposition class doesn't have an associated layer class at all.
 
-        :Return:
+        :return:
           all layers of this deposition
 
         :rtype: list of `Layer`.
@@ -100,7 +100,7 @@ class Deposition(PhysicalProcess):
 
         You will rarely need to override this method.
 
-        :Return:
+        :return:
           the content of all fields of this deposition
 
         :rtype: `dict`
@@ -128,10 +128,10 @@ class Deposition(PhysicalProcess):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         if cls == Deposition:
             # So that only derived classes get included into the searchable
@@ -147,19 +147,13 @@ class Layer(models.Model):
     first *real* abstract model here.  It is abstract because it can never
     occur in a model relationship.  It just ensures that every layer has a
     number, because at least the MyLayers infrastructure relies on this.  (See
-    for example `views.six_chamber_deposition.FormSet.__change_structure`,
+    for example
+    :py:meth:`inm.views.five_chamber_deposition.FormSet.__change_structure`,
     after ``if my_layer:``.)
 
     Note that the above is slightly untrue for cluster tool layers because they
     must be polymorphic.  There, I need a *concret* base class for all layer
-    models, derived from this one.  However, I consider this a rim case.  But
-    this is debatable: Maybe it's cleaner to make this class concrete.  The
-    only drawback would be that in order to access the layer attributes, one
-    would have to visit the layer instance explicitly with e.g.
-
-    ::
-
-        six_chamber_deposition.layers.all()[0].six_chamber_layer.temperature
+    models, derived from this one.
 
     Every class derived from this model must point to their deposition with
     ``related_name="layers"``.  See also `Deposition`.  Additionally, the
@@ -186,11 +180,11 @@ class Layer(models.Model):
         fields automatically of the layer, including foreign keys.  It does
         not, however, include reverse relations.  This method is only called
         from the ``get_data()`` method of the respective deposition, which in
-        turn mostly is `Deposition.get_data` (i.e., not overridden).
+        turn mostly is :py:meth:`Deposition.get_data` (i.e., not overridden).
 
         You will rarely need to override this method in derived layer classes.
 
-        :Return:
+        :return:
           the content of all fields of this layer
 
         :rtype: `dict`
@@ -209,10 +203,10 @@ class Layer(models.Model):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)

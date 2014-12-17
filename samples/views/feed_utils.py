@@ -64,19 +64,18 @@ class Reporter(object):
     :ivar originator: the user responsible for the databse change reported by
       the feed entry of this instance of ``Reporter``.
 
-    :type interested_users: set of `django.contrib.auth.models.User`
-    :type already_informed_users: set of `django.contrib.auth.models.User`
-    :type originator: ``django.contrib.auth.models.User``
+    :type interested_users: set of django.contrib.auth.models.User
+    :type already_informed_users: set of django.contrib.auth.models.User
+    :type originator: django.contrib.auth.models.User
     """
 
     def __init__(self, originator):
         """Class constructor.
 
-        :Parameters:
-          - `originator`: the user who did the database change to be reported;
+        :param originator: the user who did the database change to be reported;
             almost always, this is the currently logged-in user
 
-        :type originator: ``django.contrib.auth.models.User``
+        :type originator: django.contrib.auth.models.User
         """
         self.interested_users = set()
         self.already_informed_users = set()
@@ -91,12 +90,11 @@ class Reporter(object):
         If the entry would be connected with no interested users, it is
         deleted.
 
-        :Parameters:
-          - `entry`: the feed entry that should be connected with users that
+        :param entry: the feed entry that should be connected with users that
             should receive it
-          - `sending_model`: the model which is the origin of the news
+        :param sending_model: the model which is the origin of the news
 
-        :type entry: `models.FeedEntry`
+        :type entry: `samples.models.FeedEntry`
         :type sending_model: class, descendant of ``models.Model``
         """
         self.interested_users -= self.already_informed_users
@@ -117,12 +115,11 @@ class Reporter(object):
         *and* the level of importance is enough.  They are added to the set of
         users connected with the next generated feed entry by `__connect_with_users`.
 
-        :Parameters:
-          - `samples`: the samples involved in the database change
-          - `important`: whether the news is marked as being important;
+        :param samples: the samples involved in the database change
+        :param important: whether the news is marked as being important;
             defaults to ``True``
 
-        :type samples: list of `models.Sample`
+        :type samples: list of `samples.models.Sample`
         :type important: bool
         """
         for sample in samples:
@@ -139,14 +136,13 @@ class Reporter(object):
         attribute ``samples`` as a many-to-many relationship.  Thus, I use
         duck-typing here.
 
-        :Parameters:
-          - `process_or_sample_series`: the process or sample_series involved
+        :param process_or_sample_series: the process or sample_series involved
             in the database change
-          - `important`: whether the news is marked as being important;
+        :param important: whether the news is marked as being important;
             defaults to ``True``
 
-        :type process_or_sample_series: `models.Process` or
-          `models.SampleSeries`
+        :type process_or_sample_series: `samples.models.Process` or
+          `samples.models.SampleSeries`
         :type important: bool
         """
         self.__add_interested_users(process_or_sample_series.samples.all(), important)
@@ -157,24 +153,22 @@ class Reporter(object):
         only those members are added who wish to receive also non-important
         news.
 
-        :Parameters:
-          - `topic`: the topic whose members should be informed with the next
+        :param topic: the topic whose members should be informed with the next
             feed entry
 
-        :type topic: ``jb_common.models.Topic``
+        :type topic: `jb_common.models.Topic`
         """
         self.interested_users.update(user for user in topic.members.iterator()
                                      if not user.samples_user_details.only_important_news)
 
     def __get_subscribers(self, sample_series):
         """
-        :Parameters:
-          - `sample_series`: the sample series whose subscribers should be
+        :param sample_series: the sample series whose subscribers should be
             determined
 
-        :type sample_series: `models.SampleSeries`
+        :type sample_series: `samples.models.SampleSeries`
 
-        :Return:
+        :return:
           all user who watch a sample in this sample series, and therefore, the
           sample series itself, too
 
@@ -197,10 +191,9 @@ class Reporter(object):
         If the sample or samples are not in a topic, no feed entry is generated
         (because nobody listens).
 
-        :Parameters:
-          - `samples`: the samples that were added
+        :param samples: the samples that were added
 
-        :type samples: list of `models.Sample`
+        :type samples: list of `samples.models.Sample`
         """
         topic = samples[0].topic
         if topic:
@@ -216,14 +209,13 @@ class Reporter(object):
         measurement, etching etc) which was recently edited or created.  If the
         process is still unfinished, nothing is done.
 
-        :Parameters:
-          - `process`: the process which was added/edited recently
-          - `edit_description`: The dictionary containing data about what was
+        :param process: the process which was added/edited recently
+        :param edit_description: The dictionary containing data about what was
             edited in the process.  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.  ``None`` if the process was
             newly created.
 
-        :type process: `models.Process`
+        :type process: `samples.models.Process`
         :type edit_description: dict mapping str to ``object``
         """
         if process.finished:
@@ -241,14 +233,13 @@ class Reporter(object):
         """Generate a feed entry for a result process which was recently
         edited or created.
 
-        :Parameters:
-          - `result`: the result process which was added/edited recently
-          - `edit_description`: The dictionary containing data about what was
+        :param result: the result process which was added/edited recently
+        :param edit_description: The dictionary containing data about what was
             edited in the result.  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.  ``None`` if the process was
             newly created.
 
-        :type result: `models.Result`
+        :type result: `samples.models.Result`
         :type edit_description: dict mapping str to ``object``
         """
         if edit_description:
@@ -267,13 +258,12 @@ class Reporter(object):
         """Generate a feed entry for sample that one user has copied to
         another user's “My Samples” list.
 
-        :Parameters:
-          - `samples`: the samples that were copied to another user
-          - `recipient`: the other user who got the samples
-          - `comments`: a message from the sender to the recipient
+        :param samples: the samples that were copied to another user
+        :param recipient: the other user who got the samples
+        :param comments: a message from the sender to the recipient
 
-        :type samples: list of `models.Sample`
-        :type recipient: ``django.contrib.auth.models.User``
+        :type samples: list of `samples.models.Sample`
+        :type recipient: django.contrib.auth.models.User
         :type comments: unicode
         """
         entry = models.FeedCopiedMySamples.objects.create(originator=self.originator, comments=comments)
@@ -289,14 +279,13 @@ class Reporter(object):
         should be mentioned in the description by the formerly responsible
         person.
 
-        :Parameters:
-          - `samples`: the samples that got a new responsible person
-          - `edit_description`: Dictionary containing data about what was
+        :param samples: the samples that got a new responsible person
+        :param edit_description: Dictionary containing data about what was
             edited in the samples (besides the change of the responsible
             person).  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.
 
-        :type samples: list of `models.Sample`
+        :type samples: list of `samples.models.Sample`
         :type edit_description: dict mapping str to ``object``
         """
         entry = models.FeedEditedSamples.objects.create(
@@ -313,16 +302,15 @@ class Reporter(object):
         sample(s) at the same time (reponsible person, purpose …).  They should
         be mentioned in the description by the one who changed it.
 
-        :Parameters:
-          - `samples`: the samples that went into a new topic
-          - `old_topic`: the old topic of the samples; may be ``None`` if
+        :param samples: the samples that went into a new topic
+        :param old_topic: the old topic of the samples; may be ``None`` if
             they weren't in any topic before
-          - `edit_description`: The dictionary containing data about what was
+        :param edit_description: The dictionary containing data about what was
             edited in the samples (besides the change of the topic).  Its
             keys correspond to the fields of `form_utils.EditDescriptionForm`.
 
-        :type samples: list of `models.Sample`
-        :type old_topic: ``jb_common.models.Topic``
+        :type samples: list of `samples.models.Sample`
+        :type old_topic: `jb_common.models.Topic`
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
@@ -342,13 +330,12 @@ class Reporter(object):
         who are allowed to see the sample and who have the sample on their “My
         Samples” list are informed.
 
-        :Parameters:
-          - `samples`: the samples that was edited
-          - `edit_description`: The dictionary containing data about what was
+        :param samples: the samples that was edited
+        :param edit_description: The dictionary containing data about what was
             edited in the samples.  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.
 
-        :type samples: list of `models.Sample`
+        :type samples: list of `samples.models.Sample`
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
@@ -361,12 +348,11 @@ class Reporter(object):
     def report_sample_split(self, sample_split, sample_completely_split):
         """Generate a feed entry for a sample split.
 
-        :Parameters:
-          - `sample_split`: sample split that is to be reported
-          - `sample_completely_split`: whether the sample was completely split,
+        :param sample_split: sample split that is to be reported
+        :param sample_completely_split: whether the sample was completely split,
             i.e. no piece of the parent sample is left
 
-        :type sample_split: `models.SampleSplit`
+        :type sample_split: `samples.models.SampleSplit`
         :type sample_completely_split: bool
         """
         entry = models.FeedSampleSplit.objects.create(originator=self.originator, sample_split=sample_split,
@@ -381,13 +367,12 @@ class Reporter(object):
         who have watches samples in this series are informed, including the
         currently responsible person (in case that it is not the originator).
 
-        :Parameters:
-          - `sample_series`: the sample series that was edited
-          - `edit_description`: The dictionary containing data about what was
+        :param sample_series: the sample series that was edited
+        :param edit_description: The dictionary containing data about what was
             edited in the sample series.  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.
 
-        :type sample_series: list of `models.SampleSeries`
+        :type sample_series: list of `samples.models.SampleSeries`
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
@@ -405,15 +390,14 @@ class Reporter(object):
         They should be mentioned in the description by the formerly responsible
         person.
 
-        :Parameters:
-          - `sample_series`: the sample series that got a new responsible
+        :param sample_series: the sample series that got a new responsible
             person
-          - `edit_description`: Dictionary containing data about what was
+        :param edit_description: Dictionary containing data about what was
             edited in the sample series (besides the change of the responsible
             person).  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.
 
-        :type sample_series: list of `models.SampleSeries`
+        :type sample_series: list of `samples.models.SampleSeries`
         :type edit_description: dict mapping str to ``object``
         """
         entry = models.FeedEditedSampleSeries.objects.create(
@@ -429,17 +413,16 @@ class Reporter(object):
         series at the same time (reponsible person, samples …).  They should be
         mentioned in the description by the one who changed it.
 
-        :Parameters:
-          - `sample_series`: the sample series that went into a new topic
-          - `old_topic`: the old topic of the samples; may be ``None`` if
+        :param sample_series: the sample series that went into a new topic
+        :param old_topic: the old topic of the samples; may be ``None`` if
             they weren't in any topic before
-          - `edit_description`: The dictionary containing data about what was
+        :param edit_description: The dictionary containing data about what was
             edited in the sample series (besides the change of the topic).
             Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`.
 
-        :type sample_series: list of `models.SampleSeries`
-        :type old_topic: ``jb_common.models.Topic``
+        :type sample_series: list of `samples.models.SampleSeries`
+        :type old_topic: `jb_common.models.Topic`
         :type edit_description: dict mapping str to ``object``
         """
         important = edit_description["important"]
@@ -455,10 +438,9 @@ class Reporter(object):
     def report_new_sample_series(self, sample_series):
         """Generate one feed entry for a new sample series.
 
-        :Parameters:
-          - `sample_series`: the sample series that was added
+        :param sample_series: the sample series that was added
 
-        :type sample_series: `models.SampleSeries`
+        :type sample_series: `samples.models.SampleSeries`
         """
         topic = sample_series.topic
         entry = models.FeedNewSampleSeries.objects.create(
@@ -471,14 +453,13 @@ class Reporter(object):
         """Generate one feed entry for changed topic memberships, i.e. added
         or removed users in a topic.
 
-        :Parameters:
-          - `users`: the affected users
-          - `topic`: the topic whose memberships have changed
-          - `action`: what was done; ``"added"`` for added users, ``"removed"``
+        :param users: the affected users
+        :param topic: the topic whose memberships have changed
+        :param action: what was done; ``"added"`` for added users, ``"removed"``
             for removed users
 
-        :type users: iterable of ``django.contrib.auth.models.User``
-        :type topic: ``jb_common.models.Topic``
+        :type users: iterable of django.contrib.auth.models.User
+        :type topic: `jb_common.models.Topic`
         :type action: str
         """
         entry = models.FeedChangedTopic.objects.create(originator=self.originator, topic=topic, action=action)
@@ -489,13 +470,12 @@ class Reporter(object):
         """Generate one feed entry for new status messages for physical
         processes.
 
-        :Parameters:
-          - `process_class`: the content type of the physical process whose
+        :param process_class: the content type of the physical process whose
             status has changed
-          - `status_message`: the status message for the physical process
+        :param status_message: the status message for the physical process
 
-        :type process_class: ``django.contrib.contenttypes.models.ContentType``
-        :type status_message: ``samples.models.common.StatusMessage``
+        :type process_class: django.contrib.contenttypes.models.ContentType
+        :type status_message: `samples.models.StatusMessage`
         """
         entry = models.FeedStatusMessage.objects.create(originator=self.originator, process_class=process_class,
                                                         status=status_message)
@@ -506,13 +486,12 @@ class Reporter(object):
         """Generate one feed entry for a withdrawn status message for physical
         processes.
 
-        :Parameters:
-          - `process_class`: the content type of the physical process one of
+        :param process_class: the content type of the physical process one of
             whose statuses was withdrawn
-          - `status_message`: the status message for the physical process
+        :param status_message: the status message for the physical process
 
-        :type process_class: ``django.contrib.contenttypes.models.ContentType``
-        :type status_message: ``samples.models.common.StatusMessage``
+        :type process_class: django.contrib.contenttypes.models.ContentType
+        :type status_message: `samples.models.StatusMessage`
         """
         entry = models.FeedWithdrawnStatusMessage.objects.create(
             originator=self.originator, process_class=process_class, status=status_message)
@@ -522,9 +501,8 @@ class Reporter(object):
     def report_task(self, task, edit_description=None):
         """Generate one feed entry for a new task or an edited task.
 
-        :Parameters:
-          - `task`: the task that was created or edited
-          - `edit_description`: The dictionary containing data about what was
+        :param task: the task that was created or edited
+        :param edit_description: The dictionary containing data about what was
             edited in the task.  Its keys correspond to the fields of
             `form_utils.EditDescriptionForm`. ``None`` if the task was newly
             created.
@@ -547,8 +525,7 @@ class Reporter(object):
         """Generate one feed for a removed task.  It is called immediately
         before the task is actually deleted.
 
-        :Parameters:
-          - `task`: the to-be-deleted task
+        :param task: the to-be-deleted task
 
         :type task: `models.Task`
         """

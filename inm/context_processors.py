@@ -28,12 +28,11 @@ def default(request):
     """Injects an amended salutation string into the request context.  This
     realises a T–V distinction for some fixed users.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the (additional) context dictionary
 
     :rtype: dict mapping str to session data

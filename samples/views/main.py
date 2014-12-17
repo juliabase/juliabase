@@ -50,10 +50,10 @@ class MySeries(object):
       on “My Samples”.  In other words, the user deliberately gets an
       incomplete list of samples and should be informed about it.
 
-    :type sample_series: `models.SampleSeries`
+    :type sample_series: `samples.models.SampleSeries`
     :type name: unicode
-    :type timestamp: ``datetime.datetime``
-    :type samples: list of `models.Sample`
+    :type timestamp: datetime.datetime
+    :type samples: list of `samples.models.Sample`
     :type is_complete: bool
     """
 
@@ -67,10 +67,9 @@ class MySeries(object):
     def append(self, sample):
         """Adds a sample to this sample series view.
 
-        :Parameters:
-          - `sample`: the sample
+        :param sample: the sample
 
-        :type sample: `models.Sample`
+        :type sample: `samples.models.Sample`
         """
         assert self.__is_complete is None
         self.samples.append(sample)
@@ -92,15 +91,14 @@ def main_menu(request):
     and the actions that depend on the specific permissions a user has.  The
     rest is served static.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user.my_samples.all(), request.user)
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
@@ -153,15 +151,14 @@ def deposition_search(request):
     Note this this view is used for both getting the search request from the
     user *and* displaying the search results.  It supports only the GET method.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     found_depositions = []
     too_many_results = False
@@ -188,17 +185,16 @@ def show_deposition(request, deposition_number):
     superfluous, or at least only sensible to users who enter URL addresses
     directly.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `deposition_number`: the number of the deposition to be displayed
+    :param request: the current HTTP Request object
+    :param deposition_number: the number of the deposition to be displayed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type deposition_number: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number).actual_instance
     return HttpResponsePermanentRedirect(deposition.get_absolute_url())
@@ -210,24 +206,23 @@ def show_process(request, process_id, process_name="Process"):
     case a process doesn't provide its own show view (which is mostly the
     case).
 
-    The `process_id` needn't be the ``"id"`` field: If `process_name` is not
+    The ``process_id`` needn't be the ``"id"`` field: If `process_name` is not
     ``None``, its ``JBMeta.identifying_field``, it given, is used instead for
     the lookup.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_id`: the ID or the process
-      - `process_name`: the class name of the process; if ``None``, ``Process``
+    :param request: the current HTTP Request object
+    :param process_id: the ID or the process
+    :param process_name: the class name of the process; if ``None``, ``Process``
         is assumed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: unicode
     :type process_name: unicode
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     process_class = get_all_models()[process_name]
     try:

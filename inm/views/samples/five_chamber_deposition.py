@@ -13,9 +13,6 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""
-"""
-
 from __future__ import absolute_import, unicode_literals
 
 import re, datetime
@@ -79,7 +76,7 @@ class LayerForm(forms.ModelForm):
     """Model form for a single layer.
     """
     def __init__(self, *args, **kwargs):
-        """Form constructor.  I only tweak the HTML layout slightly.
+        """I only tweak the HTML layout slightly.
         """
         super(LayerForm, self).__init__(*args, **kwargs)
         self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
@@ -125,20 +122,19 @@ class FormSet(object):
       create a new one.  This is very important because testing ``deposition``
       is the only way to distinguish between editing or creating.
 
-    :type deposition: `institute_models.FiveChamberDeposition` or ``NoneType``
+    :type deposition: `inm.models.FiveChamberDeposition` or NoneType
     """
     deposition_number_pattern = re.compile(r"(?P<prefix>\d\dS-)(?P<number>\d+)$")
 
     def __init__(self, request, deposition_number):
-        """Class constructor.  Note that I don't create the forms here – this
-        is done later in `from_post_data` and in `from_database`.
+        """Note that I don't create the forms here – this is done later in
+        `from_post_data` and in `from_database`.
 
-        :Parameters:
-          - `request`: the current HTTP Request object
-          - `deposition_number`: number of the deposition to be edited.  If
+        :param request: the current HTTP Request object
+        :param deposition_number: number of the deposition to be edited.  If
             this is ``None``, create a new one.
 
-        :type request: ``HttpRequest``
+        :type request: HttpRequest
         :type deposition_number: unicode
         """
         self.user = request.user
@@ -154,14 +150,14 @@ class FormSet(object):
     def from_post_data(self, post_data):
         """Generate all forms from the post data submitted by the user.
 
-        :Parameters:
-          - `post_data`: the result from ``request.POST``
+        :param post_data: the result from ``request.POST``
 
-        :type post_data: ``QueryDict``
+        :type post_data: QueryDict
         """
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition, self.post_data)
+        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition,
+                                                        self.post_data)
         if not self.deposition:
             self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
@@ -181,8 +177,7 @@ class FormSet(object):
         I have to distinguish all three cases in this method: editing, copying,
         and duplication.
 
-        :Parameters:
-          - `query_dict`: dictionary with all given URL query string parameters
+        :param query_dict: dictionary with all given URL query string parameters
 
         :type query_dict: dict mapping unicode to unicode
         """
@@ -191,13 +186,12 @@ class FormSet(object):
             layers are not returned – instead, they are written directly into
             ``self.layer_forms``.
 
-            :Parameters:
-              - `source_deposition`: the deposition from which the layers should be
+            :param source_deposition: the deposition from which the layers should be
                 taken.  Note that this may be the deposition which is currently
                 edited, or the deposition which is duplicated to create a new
                 deposition.
 
-            :type source_deposition: `institute_models.FiveChamberDeposition`
+            :type source_deposition: `inm.models.FiveChamberDeposition`
             :type destination_deposition_number: unicode
             """
             self.layer_forms = [LayerForm(prefix=str(layer_index), instance=layer,
@@ -257,10 +251,11 @@ class FormSet(object):
         *number*, whereas the internal numbers used as prefixes in the HTML
         names are called *indices*.  The index (and thus prefix) of a layer
         form does never change (in contrast to the 6-chamber deposition, see
-        `form_utils.normalize_prefixes`), not even across many “post cycles”.
-        Only the layer numbers are used for determining the order of layers.
+        :py:func:`samples.views.form_utils.normalize_prefixes`), not even
+        across many “post cycles”.  Only the layer numbers are used for
+        determining the order of layers.
 
-        :Return:
+        :return:
           whether the structure was changed in any way.
 
         :rtype: bool
@@ -350,12 +345,11 @@ class FormSet(object):
         return structure_changed
 
     def __is_all_valid(self):
-        """Tests the “inner” validity of all forms belonging to this view.
-        This function calls the ``is_valid()`` method of all forms, even if one
-        of them returns ``False`` (and makes the return value clear
-        prematurely).
+        """Tests the “inner” validity of all forms belonging to this view.  This
+        function calls the ``is_valid()`` method of all forms, even if one of
+        them returns ``False`` (and makes the return value clear prematurely).
 
-        :Return:
+        :return:
           whether all forms are valid.
 
         :rtype: bool
@@ -383,7 +377,7 @@ class FormSet(object):
         manipulated HTTP client) may be used in a malicious way, thus I have to
         test for *all* cases.
 
-        :Return:
+        :return:
           whether all forms are consistent with each other and the database
 
         :rtype: bool
@@ -411,10 +405,10 @@ class FormSet(object):
         it already existed.  However, the layers are completely deleted and
         re-constructed from scratch.
 
-        :Return:
+        :return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `institute_models.FiveChamberDeposition` or ``NoneType``
+        :rtype: `inm.models.FiveChamberDeposition` or NoneType
         """
         database_ready = not self.__change_structure() if not self.json_client else True
         database_ready = self.__is_all_valid() and database_ready
@@ -438,7 +432,7 @@ class FormSet(object):
         context dictionary contains all forms in an easy-to-use format for the
         template code.
 
-        :Return:
+        :return:
           context dictionary
 
         :rtype: dict mapping str to various types
@@ -455,18 +449,17 @@ def edit(request, number):
     with a duplicate of another deposition is also possible if a ``copy-from``
     query string parameter is present (as for the other depositions).
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `number`: number of the deposition to be edited.  If this is ``None``,
+    :param request: the current HTTP Request object
+    :param number: number of the deposition to be edited.  If this is ``None``,
         create a new one.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type number: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     return form_utils.edit_depositions(request, number, FormSet(request, number), institute_models.FiveChamberDeposition,
                                        "samples/edit_five_chamber_deposition.html")

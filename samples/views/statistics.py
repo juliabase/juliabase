@@ -14,8 +14,8 @@
 
 
 """Views with statistical data visualisation, and the “about” view.  So far, I
-have only one comprehensive statistics page.  However, I need many helper
-functions for it.
+have only one statistics page with cache status data.  However, one can extend
+this in the institution's app.
 """
 
 from __future__ import absolute_import, division, unicode_literals
@@ -37,7 +37,7 @@ def get_cache_connections():
     """Returns the connections statistics of the memcached servers in the
     cluster.
 
-    :Return:
+    :return:
       the total number of current memcached connections, the maximal number of
       current memcached connections, or ``(0, 0)`` if memcached is not used
 
@@ -69,15 +69,14 @@ def statistics(request):
     """View for various internal server statistics and plots.  Note that you
     needn't be logged in for accessing this.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     return render(request, "samples/statistics.html",
                   {"title": _("JuliaBase server statistics"),
@@ -92,15 +91,14 @@ def about(request):
 
     Note that you needn't be logged in for accessing this.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     return render(request, "samples/about.html", {"title": _("With kind support of …"),
                                                   "language_version": sys.version.split()[0],

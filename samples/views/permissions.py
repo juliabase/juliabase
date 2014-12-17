@@ -74,15 +74,15 @@ class PermissionsPhysicalProcess(object):
 
     :type name: unicode
     :type codename: str
-    :type edit_permissions_permission: ``django.contrib.auth.models.Permission``
-    :type add_permission: ``django.contrib.auth.models.Permission``
-    :type view_all_permission: ``django.contrib.auth.models.Permission``
-    :type permission_editors: ``QuerySet``
-    :type adders: ``QuerySet``
-    :type full_viewers: ``QuerySet``
-    :type full_editors: ``QuerySet``
-    :type all_users: ``QuerySet``
-    :type topic_manager_permission: ``django.contrib.auth.models.Permission``
+    :type edit_permissions_permission: django.contrib.auth.models.Permission
+    :type add_permission: django.contrib.auth.models.Permission
+    :type view_all_permission: django.contrib.auth.models.Permission
+    :type permission_editors: QuerySet
+    :type adders: QuerySet
+    :type full_viewers: QuerySet
+    :type full_editors: QuerySet
+    :type all_users: QuerySet
+    :type topic_manager_permission: django.contrib.auth.models.Permission
     """
 
     topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics")
@@ -90,8 +90,7 @@ class PermissionsPhysicalProcess(object):
 
     def __init__(self, physical_process_class):
         """
-        :Parameters:
-          - `physical_process_class`: the physical process class to which this
+        :param physical_process_class: the physical process class to which this
             instance belongs
 
         :type physical_process_class: ``class`` (derived from
@@ -159,16 +158,15 @@ def get_physical_processes(user):
     The result is used to build the list of apparatuses for which one can set
     permissions.
 
-    :Parameters:
-      - `user`:  The user for which the classes are returned that he is allowed
+    :param user:  The user for which the classes are returned that he is allowed
         to see.
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       all physical processes for the user
 
-    :rtype: list of `PhysicalProcess`
+    :rtype: list of `samples.models.PhysicalProcess`
     """
     all_physical_processes = [process for process in get_all_models().values()
                               if issubclass(process, models.PhysicalProcess) and not process._meta.abstract
@@ -201,15 +199,14 @@ def list_(request):
     the team leaders of the institution), can see who's a “topic manager”
     (i.e., someone who can change memberships in their topics).
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     user = request.user
     physical_processes = get_physical_processes(user)
@@ -280,18 +277,17 @@ def edit(request, username):
     permissions, as well as whether the user is a so-called “topic manager”.
     See `list_` for further information.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `username`: the username of the user whose permissions should be
+    :param request: the current HTTP Request object
+    :param username: the username of the user whose permissions should be
         changed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type username: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     edited_user = get_object_or_404(User, username=username)
     user = request.user

@@ -51,13 +51,12 @@ def get_secret_key_from_file(filepath):
     of your revisioned source code repository.  Besides, this function
     simplifies bootstrapping.
 
-    :Parameters:
-      - `filepath`: path to the file that stores the secret key.  It may
+    :param filepath: path to the file that stores the secret key.  It may
         contain a tilde ``~``.
 
     :type filepath: str
 
-    :Return:
+    :return:
       The secret key.
 
     :rtype: str

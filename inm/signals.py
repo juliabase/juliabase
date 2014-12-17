@@ -13,13 +13,10 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Special IEK-PV app with institute-specific code.  In this module, we have
-rsync calls to keep the media files synchronised on mandy and olga.
-Eventually, this must be solved with a network filesystem like GlusterFS.  But
-for now, we use this quick-and-dirty solution.
+"""Signal handlers special to the INM.
 
-Additionally, this module contains the signal listener for maintenance work,
-which is called nightly.
+Among other things, this module contains the signal listener for maintenance
+work, which is called nightly.
 """
 
 from __future__ import absolute_import, unicode_literals

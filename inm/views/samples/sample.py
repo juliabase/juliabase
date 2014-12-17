@@ -52,15 +52,13 @@ rename_choices = (("", _("no names")),
                 ("cleaning", _("cleaning number")))
 
 class AddSamplesForm(forms.Form):
-    """Form for adding new samples.
-
-    FixMe: Although this form can never represent *one* sample but allows the
-    user to add arbitrary samples with the same properties (except for the name
-    of course), this should be converted to a *model* form in order to satisfy
-    the dont-repeat-yourself principle.
-
-    Besides, we have massive code duplication to substrate.SubstrateForm.
-    """
+    """Form for adding new samples."""
+    # FixMe: Although this form can never represent *one* sample but allows the
+    # user to add arbitrary samples with the same properties (except for the
+    # name of course), this should be converted to a *model* form in order to
+    # satisfy the dont-repeat-yourself principle.
+    #
+    # Besides, we have massive code duplication to substrate.SubstrateForm.
     number_of_samples = forms.IntegerField(label=_("Number of samples"), min_value=1, max_value=100)
     substrate = forms.ChoiceField(label=_("Substrate"), choices=institute_models.substrate_materials, required=True)
     substrate_comments = forms.CharField(label=_("Substrate comments"), required=False)
@@ -124,19 +122,18 @@ class AddSamplesForm(forms.Form):
 
 
 def add_samples_to_database(add_samples_form, user):
-    """Create the new samples and add them to the database.  This routine
-    consists of two parts: First, it tries to find a consecutive block of
-    provisional sample names.  Then, in actuall creates the samples.
+    """Create the new samples and add them to the database.  This routine consists
+    of two parts: First, it tries to find a consecutive block of provisional
+    sample names.  Then, in actuall creates the samples.
 
-    :Parameters:
-      - `add_samples_form`: the form with the samples' common data, including
+    :param add_samples_form: the form with the samples' common data, including
         the substrate
-      - `user`: the current user
+    :param user: the current user
 
     :type add_samples_form: `AddSamplesForm`
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the names of the new samples
 
     :rtype: list of unicode
@@ -194,15 +191,14 @@ def add_samples_to_database(add_samples_form, user):
 def add(request):
     """View for adding new samples.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     _ = ugettext
     user = request.user
@@ -265,17 +261,16 @@ class DestinationSamplesForm(forms.Form):
 def copy_informal_stack(request, sample_name):
     """View for copying the informal stack of a sample to other samples.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     _ = ugettext
     sample, __ = utils.lookup_sample(sample_name, request.user, with_clearance=True)
@@ -310,17 +305,16 @@ def printer_label(request, sample_id):
     """Generates a PDF for the label printer in 9×45 mm² format.  It contains
     the name and the QR code of a sample.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_id`: the ID of the sample
+    :param request: the current HTTP Request object
+    :param sample_id: the ID of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     permissions.get_sample_clearance(request.user, sample)

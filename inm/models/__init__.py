@@ -13,27 +13,6 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""This module is the connection to the database.  It contains the *models*,
-i.e. Python classes which represent the tables in the relational database.
-Every class which inherits from ``models.Model`` is a PostgreSQL table at the
-same time, unless it has ``abstract = True`` set in their ``Meta`` subclass.
-
-If you add fields to models, and you have a PostgreSQL database running which
-contains already valuable data, you have to add the fields manually with SQL
-commands to the database, too, or use Django-South.
-
-However, if you add new *classes*, you can just run ``./manage.py syncdb`` and
-the new tables are automatically created.
-
-Note that this module doesn't define any models itself.  It is only the
-container where all models are finally brought together by module inclusion.
-The number and complexity of JuliaBase's models is too big for one file.
-Therefore, we have a few model modules, all starting with ``models_...`` and
-residing in this directory.  With ``from samples.models_... import *`` I can
-give the rest of JuliaBase's modules the illusion that all models are actually
-here.
-"""
-
 from __future__ import absolute_import, unicode_literals
 
 from .physical_processes import *

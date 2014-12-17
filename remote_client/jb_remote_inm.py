@@ -20,7 +20,7 @@
     logout()
 
 This module writes a log file.  On Windows, it is in the current directory.  On
-Unix-like systems, it is in /tmp.
+Unix-like systems, it is in :file:`/tmp`.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -96,7 +96,7 @@ class ClusterToolDeposition(object):
         """Returns the already available deposition numbers.  You must be an
         administrator to use this function.
 
-        :Return:
+        :return:
           all already available deposition numbers
 
         :rtype: set of unicode
@@ -170,7 +170,6 @@ def rename_after_deposition(deposition_number, new_names):
     samples the name of the deposition after the deposition.  This is realised
     here.
 
-    :Parameters:
       `deposition_number`: the number of the deposition
       `new_names`: the new names of the samples.  The keys of this dictionary
         are the sample IDs.  The values are the new names.  Note that they must
@@ -241,7 +240,7 @@ class PDSMeasurement(object):
         """Returns the already available PDS numbers.  You must be an
         administrator to use this function.
 
-        :Return:
+        :return:
           all already available PDS numbers
 
         :rtype: set of unicode
@@ -254,7 +253,7 @@ class Substrate(object):
     """
 
     def __init__(self, initial_data=None):
-        """Class constructor.  Note that in contrast to the processes, you
+        """Note that in contrast to the processes, you
         currently can't retrieve an existing substrate from the database
         (except by retrieving its respective sample).
         """
@@ -289,10 +288,10 @@ class SampleNotFound(Exception):
     exception, you have to fill in the missing attributes of the sample and
     submit it.
 
-    :ivar sample: a newly created `Sample` instance with only the name set, and
-      not yet sumbitted to the database.
+    :ivar sample: a newly created `jb_remote.Sample` instance with only the
+      name set, and not yet sumbitted to the database.
 
-    :type sample: `Sample`
+    :type sample: `jb_remote.Sample`
     """
     def __init__(self, sample):
         super(SampleNotFound, self).__init__()
@@ -312,18 +311,16 @@ def get_sample(sample_name):
     If the sample name doesn't fit into the naming scheme, a legacy sample name
     accoring to ``{short_year}-LGCY-...`` is generated.
 
-    :Parameters:
-      - `sample_name`: the name of the sample
+    :param sample_name: the name of the sample
 
     :type sample_name: unicode
 
-    :Return:
+    :return:
       the ID of the sample
 
     :rtype: int
 
-    :Exceptions:
-      - `SampleNotFound`: Raised if the sample was not found.  It contains a
+    :raises SampleNotFound: if the sample was not found.  It contains a
         newly created sample and substrate for your convenience.  See the
         documentation of this exception class for more information.
     """
@@ -460,8 +457,7 @@ class FiveChamberDeposition(object):
     def __init__(self, number=None):
         """Class constructor.
 
-        :Parameters:
-          - `number`: if given, the instance represents an existing deposition
+        :param number: if given, the instance represents an existing deposition
             of the database.  Note that this triggers an exception if the
             deposition number is not found in the database.
 
@@ -494,7 +490,7 @@ class FiveChamberDeposition(object):
     def submit(self):
         """Submit the depositon to the database.
 
-        :Return:
+        :return:
           the deposition number if succeeded.
 
         :rtype: unicode
@@ -527,7 +523,7 @@ class FiveChamberDeposition(object):
         """Returns the already available deposition numbers.  You must be an
         administrator to use this function.
 
-        :Return:
+        :return:
           all already available deposition numbers
 
         :rtype: set of unicode

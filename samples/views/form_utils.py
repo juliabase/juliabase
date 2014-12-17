@@ -96,12 +96,11 @@ class DataModelForm(ModelForm):
     def uncleaned_data(self, fieldname):
         """Get the field value of a *bound* form, even if it is invalid.
 
-        :Parameters:
-          - `fieldname`: name (=key) of the field
+        :param fieldname: name (=key) of the field
 
         :type fieldname: str
 
-        :Return:
+        :return:
           the value of the field
 
         :rtype: unicode
@@ -115,15 +114,14 @@ def get_my_layers(user_details, deposition_model):
     forced to select a layer.  Instead, the result always includes a “nothing
     selected” option.
 
-    :Parameters:
-      - `user_details`: the details of the current user
-      - `deposition_model`: the model class for which “MyLayers” should be
+    :param user_details: the details of the current user
+    :param deposition_model: the model class for which “MyLayers” should be
         generated
 
-    :type user_details: `models.UserDetails`
-    :type deposition_model: class, descendent of `models.Deposition`
+    :type user_details: `samples.models.UserDetails`
+    :type deposition_model: class, descendent of `samples.models.Deposition`
 
-    :Return:
+    :return:
       a list ready-for-use as the ``choices`` attribute of a ``ChoiceField``.
       The MyLayer IDs are given as strings in the form “<deposition id>-<layer
       number>”.
@@ -265,17 +263,16 @@ class GeneralSampleField(object):
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.
 
-        :Parameters:
-          - `samples`: Samples to be included into the list.  Typically, these
+        :param samples: Samples to be included into the list.  Typically, these
             are the current user's “My Samples”, plus the samples that were
             already connected with the deposition or measurement when you edit
             it.
-          - `user`: the user for which this field is generated; he may not be
+        :param user: the user for which this field is generated; he may not be
             allowed to see all topic names, therefore it is necessary to know
             who it is
 
-        :type samples: iterable of `models.Sample`
-        :type user: ``django.contrib.auth.models.User``
+        :type samples: iterable of `samples.models.Sample`
+        :type user: django.contrib.auth.models.User
         """
         def get_samples_from_topic(topic, folded_topics_and_sample_series):
             if not topic.topic.id in folded_topics_and_sample_series:
@@ -332,16 +329,15 @@ def _user_choices_by_department(user, include=(), exclude=()):
     that no entry for “empty choice” is added.  This must be done by the
     caller, if necessary.
 
-    :Parameters:
-      - `user`: the currently logged-in user
-      - `include`: list of users to be included additionally
-      - `exclude`: list of users to be excluded
+    :param user: the currently logged-in user
+    :param include: list of users to be included additionally
+    :param exclude: list of users to be excluded
 
-    :type user: `django.contrib.auth.models.User`
-    :type include: list of `django.contrib.auth.models.User`
-    :type exclude: list of `django.contrib.auth.models.User`
+    :type user: django.contrib.auth.models.User
+    :type include: list of django.contrib.auth.models.User
+    :type exclude: list of django.contrib.auth.models.User
 
-    :Return:
+    :return:
       list of choices, ready to be used in a `ChoiceField` or
       `MultipleChoiceField`
 
@@ -380,13 +376,12 @@ class UserField(forms.ChoiceField):
         selection list will consist of all currently active users, plus the
         given additional user if any.
 
-        :Parameters:
-          - `user`: Thr user who wants to see the user list
-          - `additional_user`: Optional additional user to be included into the
+        :param user: Thr user who wants to see the user list
+        :param additional_user: Optional additional user to be included into the
             list.  Typically, it is the current user for the process to be
             edited.
 
-        :type additional_user: ``django.contrib.auth.models.User``
+        :type additional_user: django.contrib.auth.models.User
         """
         self.choices = [("", 9 * "-")] + \
                        _user_choices_by_department(user, include=[additional_user] if additional_user else [])
@@ -398,12 +393,11 @@ class UserField(forms.ChoiceField):
         field, otherwise the selection box will remain emtpy.  The selection
         list will consist of all currently active users, minus the given user.
 
-        :Parameters:
-          - `user`: Thr user who wants to see the user list
-          - `excluded_user`: User to be excluded from the list.  Typically, it
+        :param user: Thr user who wants to see the user list
+        :param excluded_user: User to be excluded from the list.  Typically, it
             is the currently logged-in user.
 
-        :type excluded_user: ``django.contrib.auth.models.User``
+        :type excluded_user: django.contrib.auth.models.User
         """
         self.choices = [("", 9 * "-")] + \
                        _user_choices_by_department(user, exclude=[excluded_user] if excluded_user else [])
@@ -429,13 +423,12 @@ class MultipleUsersField(forms.MultipleChoiceField):
         the selection box will remain emtpy.  The selection list will consist
         of all currently active users, plus the given additional users if any.
 
-        :Parameters:
-          - `user`: Thr user who wants to see the user list
-          - `additional_users`: Optional additional users to be included into
+        :param user: Thr user who wants to see the user list
+        :param additional_users: Optional additional users to be included into
             the list.  Typically, it is the current users for the topic whose
             memberships are to be changed.
 
-        :type additional_users: iterable of ``django.contrib.auth.models.User``
+        :type additional_users: iterable of django.contrib.auth.models.User
         """
         self.choices = _user_choices_by_department(user, include=additional_users)
         if not self.choices:
@@ -461,14 +454,13 @@ class TopicField(forms.ChoiceField):
         topic if any.  The “currently active topics” are all topics with
         at least one active user amongst its members.
 
-        :Parameters:
-          - `user`: the currently logged-in user
-          - `additional_topic`: Optional additional topic to be included
+        :param user: the currently logged-in user
+        :param additional_topic: Optional additional topic to be included
             into the list.  Typically, it is the current topic of the sample,
             for example.
 
-        :type user: ``django.contrib.auth.models.User``
-        :type additional_topic: ``jb_common.models.Topic``
+        :type user: django.contrib.auth.models.User
+        :type additional_topic: `jb_common.models.Topic`
         """
         def topics_and_sub_topics(parent_topics):
             for topic in parent_topics:
@@ -520,13 +512,12 @@ class FixedOperatorField(forms.ChoiceField):
         only of the given operator, with no other choice (not even the empty
         field).
 
-        :Parameters:
-          - `operator`: operator to be included into the list.  Typically, it
+        :param operator: operator to be included into the list.  Typically, it
             is the current user.
-          - `is_staff`: whether the currently logged-in user is an
+        :param is_staff: whether the currently logged-in user is an
             administrator
 
-        :type operator: ``django.contrib.auth.models.User``
+        :type operator: django.contrib.auth.models.User
         :type is_staff: bool
         """
         if not is_staff:
@@ -555,8 +546,8 @@ class OperatorField(forms.ChoiceField):
     even allow all three fields for staff users as long as there no
     contradicting values are given.
 
-    FixMe: This is the new variant of `FixedOperatorField`.  It makes
-    `FixedOperatorField` obsolete.
+    FixMe: This is the new variant of py:class:`FixedOperatorField`.  It makes
+    py:class:`FixedOperatorField` obsolete.
 
     If you want to use this field for non-staff, do the following things::
 
@@ -567,14 +558,14 @@ class OperatorField(forms.ChoiceField):
 
         3. Assure in your ``clean()`` method that non-staff doesn't submit an
            external operator.  Since the operator is required in
-           ``models.Process``, you must provide a senseful default for the
+           ``samples.models.Process``, you must provide a senseful default for the
            operator if none was returned (because an external operator was
            selected).  I recommend to use the currently logged-in user in this
            case.
 
-    Good examples are in ``substrate.py`` and ``cleaning_process.py`` of the
-    IPV adaption of JuliaBase.  There, you can also see how one can deal with
-    staff users (especially interesting for the remote client).
+    A good example is in :py:mod:`inm.views.samples.substrate` of the INM
+    adaption of JuliaBase.  There, you can also see how one can deal with staff
+    users (especially interesting for the remote client).
     """
 
     def set_choices(self, user, old_process):
@@ -585,13 +576,12 @@ class OperatorField(forms.ChoiceField):
         can choose from *all* users and external operators (including inactive
         users such as “nobody”).
 
-        :Parameters:
-          - `user`: the currently logged-in user.
-          - `old_process`: if the process is to be edited, the former instance
+        :param user: the currently logged-in user.
+        :param old_process: if the process is to be edited, the former instance
             of the process; otherwise, ``None``
 
-        :type operator: ``django.contrib.auth.models.User``
-        :type old_process: `models.Process`
+        :type operator: django.contrib.auth.models.User
+        :type old_process: `samples.models.Process`
         """
         self.user = user
         if user.is_staff:
@@ -625,11 +615,11 @@ class OperatorField(forms.ChoiceField):
         values evaluate to ``False``).  Otherwise, it returns a tupe with
         exactly one non-``False`` value.
 
-        :Return:
+        :return:
           the selected operator, the selected external operator
 
-        :rtype: ``django.contrib.auth.models.User``,
-          ``django.contrib.auth.models.User``
+        :rtype: django.contrib.auth.models.User,
+          django.contrib.auth.models.User
         """
         value = super(OperatorField, self).clean(value)
         if value.startswith("extern-"):
@@ -652,7 +642,7 @@ class DepositionSamplesForm(forms.Form):
     sample_list = MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, preset_sample, deposition, data=None, **kwargs):
-        """Class constructor.  Note that I have to distinguish clearly here
+        """Note that I have to distinguish clearly here
         between new and existing depositions.
         """
         samples = list(user.my_samples.all())
@@ -686,16 +676,14 @@ class SamplePositionForm(forms.Form):
     position = forms.CharField(label=capfirst(_("sample position")), required=False)
 
     def __init__(self, user, preset_sample, preset_sample_position, *args, **kwargs):
-        """Form constructor.
-
-        :Parameters:
-          - `user`: the current user
-          - `preset_sample`: the selected sample to which the sample position should be
+        """
+        :param user: the current user
+        :param preset_sample: the selected sample to which the sample position should be
             appended when creating a new process
-          - `preset_sample_position`: the place from the selected sample in the apparatus
+        :param preset_sample_position: the place from the selected sample in the apparatus
 
-        :type user: `django.contrib.auth.models.User`
-        :type preset_sample: `models.Sample`
+        :type user: django.contrib.auth.models.User
+        :type preset_sample: `samples.models.Sample`
         :type preset_sample_position: str
         """
         super(SamplePositionForm, self).__init__(*args, **kwargs)
@@ -740,19 +728,17 @@ def clean_time_field(value):
     that minutes and seconds are 2-digit, and leading zeros are eliminated from
     the hours.
 
-    :Parameters:
-      - `value`: the value input by the user.  Usually this is the result of a
+    :param value: the value input by the user.  Usually this is the result of a
         ``cleaned_data[...]`` call.
 
     :type value: str
 
-    :Return:
+    :return:
       the normalised time
 
     :rtype: str
 
-    :Exceptions:
-      - `ValidationError`: if the value given was not a valid duration time.
+    :raises ValidationError: if the value given was not a valid duration time.
     """
     if not value:
         return ""
@@ -776,20 +762,18 @@ def clean_timestamp_field(value):
 
     The test of correct input is performed by the field class itself.
 
-    :Parameter:
-        - `value`: the value input by the user.  Usually this is the result of a
+    :param value: the value input by the user.  Usually this is the result of a
         ``cleaned_data[...]`` call.
 
     :type value: datetime.date or datetime.datetime
 
-    :Return:
+    :return:
         the original ``value`` (unchanged)
 
     :rtype: datetime.date or datetime.datetime
 
-    :Exception:
-        -`ValidationError`: if the specified timestamp lies in the future or to
-        far in the past.
+    :raises ValidationError: if the specified timestamp lies in the future or
+        to far in the past.
     """
     if isinstance(value, datetime.datetime):
         # Allow mis-sychronisation of clocks of up to one minute.
@@ -811,19 +795,17 @@ def clean_quantity_field(value, units):
     normalises it so that it only contains decimal points (no commas), a proper
     »µ«, and exactly one space sign between value and unit.
 
-    :Parameters:
-      - `value`: the value input by the user.  Usually this is the result of a
+    :param value: the value input by the user.  Usually this is the result of a
         ``cleaned_data[...]`` call.
 
     :type value: str
 
-    :Return:
+    :return:
       the normalised physical quantity
 
     :rtype: str
 
-    :Exceptions:
-      - `ValidationError`: if the value given was not a valid physical
+    :raises ValidationError: if the value given was not a valid physical
         quantity.
     """
     if not value:
@@ -849,16 +831,15 @@ def collect_subform_indices(post_data, subform_key="number", prefix=""):
     duplicated, or deleted.  By using this function, the view has the chance to
     have everything in proper order nevertheless.
 
-    :Parameters:
-      - `post_data`: the result from ``request.POST``
-      - `subform_key`: the fieldname in the forms that is used for ordering.
+    :param post_data: the result from ``request.POST``
+    :param subform_key: the fieldname in the forms that is used for ordering.
         Defaults to ``number``.
-      - `prefix`: an additional prefix to prepend to every form field name
+    :param prefix: an additional prefix to prepend to every form field name
         (even before the index).  (Is almost never used.)
 
-    :type post_data: ``QueryDict``
+    :type post_data: QueryDict
 
-    :Return:
+    :return:
       list with all found indices having this form prefix and key.
       Their order is so that the respective values for that key are ascending.
 
@@ -898,16 +879,15 @@ def normalize_prefixes(post_data):
     By deleting layers or channels, the indeces might be sparse, so this
     routine re-indexes everything so that the gaps are filled.
 
-    :Parameters:
-      - `post_data`: the POST data as returned by ``request.POST``.
+    :param post_data: the POST data as returned by ``request.POST``.
 
-    :type post_data: ``QueryDict``
+    :type post_data: QueryDict
 
-    :Return:
+    :return:
       the normalised POST data, the number of top-level prefixes, and a list
       with the number of all second-level prefixes.
 
-    :rtype: ``QueryDict``, int, list of int
+    :rtype: QueryDict, int, list of int
     """
     level0_indices = set()
     level1_indices = {}
@@ -954,17 +934,16 @@ def dead_samples(samples, timestamp):
     """Determine all samples from ``samples`` which are already dead at the
     given ``timestamp``.
 
-    :Parameters:
-      - `samples`: the samples to be tested
-      - `timestamp`: the timestamp for which the dead samples should be found
+    :param samples: the samples to be tested
+    :param timestamp: the timestamp for which the dead samples should be found
 
-    :type samples: list of `models.Sample`
-    :type timestamp: ``datetime.datetime``
+    :type samples: list of `samples.models.Sample`
+    :type timestamp: datetime.datetime
 
-    :Return:
+    :return:
       set of all samples which are dead at ``timestamp``
 
-    :rtype: set of `models.Sample`
+    :rtype: set of `samples.models.Sample`
     """
     result = set()
     for sample in samples:
@@ -989,12 +968,11 @@ def choices_of_content_types(classes):
     FixMe: The translation thing may become superfluous if Django Ticket #16803
     is fixed.
 
-    :Parameters:
-      - `classes`: the classes which should be included into the selection box
+    :param classes: the classes which should be included into the selection box
 
     :type classes: list of class
 
-    :Return:
+    :return:
       the choices, ready to be used for a ``MultipleChoiceField``
 
     :rtype: list of (int, unicode)
@@ -1013,10 +991,9 @@ def check_sample_name(match, user, is_new=True):
     This is done here.  If anything fails, a `ValidationError` is raised.  This
     way, it can be called conveniently from ``Form`` methods.
 
-    :Parameters:
-      - `match`: the match object as returned by `utils.sample_name_format`.
-      - `user`: the currently logged-in user
-      - `is_new`: whether the sample name is created right in this moment; if
+    :param match: the match object as returned by `utils.sample_name_format`.
+    :param user: the currently logged-in user
+    :param is_new: whether the sample name is created right in this moment; if
         ``False``, we are checking old sample names, which results in _much_
         lesser checks
 
@@ -1024,8 +1001,7 @@ def check_sample_name(match, user, is_new=True):
     :type user: django.contrib.auth.models.User
     :type is_new: bool
 
-    :Exceptions:
-      - `ValidationError`: if the sample name (represented by the match object)
+    :raises ValidationError: if the sample name (represented by the match object)
         contained invalid fields.
     """
     groups = {key: value for key, value in match.groupdict().items() if value is not None}

@@ -12,7 +12,7 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-"""Add and show status messages for the physical processes
+"""Add and show status messages for the apparatuses.
 """
 
 
@@ -109,18 +109,17 @@ class StatusForm(forms.ModelForm):
 
 @login_required
 def add(request):
-    """With this function, the messages are stored into the database.  It also
-    gets the information for displaying the "add_status_message" template.
+    """With this function, the messages are stored into the database.  It also gets
+    the information for displaying the "add_status_message" template.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if request.method == "POST":
         status_form = StatusForm(request.user, request.POST)
@@ -137,18 +136,17 @@ def add(request):
 
 @login_required
 def show(request):
-    """This function shows the current status messages for the physical
-    process classes.
+    """This function shows the current status messages for the physical process
+    classes.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     now = datetime.datetime.now()
     eligible_status_messages = models.StatusMessage.objects.filter(withdrawn=False, begin__lt=now, end__gt=now)
@@ -178,17 +176,16 @@ def withdraw(request, id_):
     """This function withdraws a status message for good.  Note that it
     withdraws it for all its connected process types.  It is idempotent.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `id_`: the id of the message to be withdrawn
+    :param request: the current HTTP Request object
+    :param id_: the id of the message to be withdrawn
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type id_: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     status_message = get_object_or_404(models.StatusMessage, withdrawn=False, pk=utils.convert_id_to_int(id_))
     if request.user != status_message.operator:

@@ -37,22 +37,21 @@ def show_plot(request, process_id, plot_id, thumbnail):
     """Shows a particular plot.  Although its response is a bitmap rather than
     an HTML file, it is served by Django in order to enforce user permissions.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_id`: the database ID of the process to show
-      - `plot_id`: the plot_id of the image.  This is mostly ``u""`` because
+    :param request: the current HTTP Request object
+    :param process_id: the database ID of the process to show
+    :param plot_id: the plot_id of the image.  This is mostly ``u""`` because
         most measurement models have only one graphics.
-      - `thumbnail`: whether we serve a thumbnail instead of a real PDF plot
+    :param thumbnail: whether we serve a thumbnail instead of a real PDF plot
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: unicode
     :type plot_id: unicode
     :type thumbnail: bool
 
-    :Returns:
+    :return:
       the HTTP response object with the image
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
     process = process.actual_instance

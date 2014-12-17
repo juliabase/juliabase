@@ -14,13 +14,12 @@
 
 
 """Functions and classes for the advanced search.
-
-FixMe: For some reason now obscure to me, ``.values("pk")`` is used throughout
-this module although
-https://docs.djangoproject.com/en/1.3/ref/models/querysets/#in suggests that it
-is superfluous.  It doesn't have any bad functionality/performance impact
-though.
 """
+# FixMe: For some reason now obscure to me, ``.values("pk")`` is used throughout
+# this module although
+# https://docs.djangoproject.com/en/1.3/ref/models/querysets/#in suggests that it
+# is superfluous.  It doesn't have any bad functionality/performance impact
+# though.
 
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
@@ -46,17 +45,16 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
     Consider this routine a quick-and-dirty helper.  Sometimes it may be
     enough, sometimes you may have to refine its result afterwards.
 
-    :Parameters:
-      - `cls`: model class the fields of which should be converted to search
+    :param cls: model class the fields of which should be converted to search
         field objects
-      - `excluded_fieldnames`: fields with these names are not included into
+    :param excluded_fieldnames: fields with these names are not included into
         the list of search fields; ``"id"`` and ``"actual_object_id"`` are
         implicitly excluded
 
-    :type cls: class (decendant of ``Model``)
+    :type cls: class (decendant of models.Model)
     :type excluded_fieldnames: list of str
 
-    :Return:
+    :return:
       the resulting search fields
 
     :rtype: list of `SearchField`
@@ -100,27 +98,25 @@ class SearchField(object):
       ``None``, the field name is used instead, but see the ``query_paths``
       parameter in `get_values`.
 
-    :type form: ``forms.Form``
-    :type field: ``models.Field``
+    :type form: forms.Form
+    :type field: models.Field
     :type query_path: str
     """
 
     def __init__(self, cls, field_or_field_name, additional_query_path=""):
-        """Class constructor.
-
-        :Parameters:
-          - `cls`: model class to which the original model field belongs to;
+        """
+        :param cls: model class to which the original model field belongs to;
             actually, it is only needed if `field_or_field_name` is a field
             name
-          - `field_or_field_name`: the field to be represented as this seach
+        :param field_or_field_name: the field to be represented as this seach
             field; you can call it by name, or pass the field itself
-          - `additional_query_path`: if the model field is a related model,
+        :param additional_query_path: if the model field is a related model,
             this parameter denotes the field within that model to be queried;
             for example, the currently responsible person for a sample needs
             ``"username"`` here
 
-        :type cls: class (decendant of ``Model``)
-        :type field_or_field_name: ``models.Field`` or str
+        :type cls: class (decendant of models.Model)
+        :type field_or_field_name: models.Field or str
         :type additional_query_path: str
         """
         self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, six.string_types) \
@@ -134,31 +130,29 @@ class SearchField(object):
         """Create the web form representing this search field.  If ``data`` is
         not ``None``, it will be a bound form.
 
-        :Parameters:
-          - `data`: the GET parameters of the HTTP request; may be ``None`` if
+        :param data: the GET parameters of the HTTP request; may be ``None`` if
             the form of this instance should be unbound
-          - `prefix`: the prefix for the form
+        :param prefix: the prefix for the form
 
-        :type data: ``QueryDict``
+        :type data: QueryDict
         :type prefix: str
         """
         raise NotImplementedError
 
     def get_query_path(self, query_paths):
         """Returns the query path for the ``filter`` method call of a
-        ``QuerySet`` for the model field of this `SearchField`.  Normally, the
+        QuerySet for the model field of this `SearchField`.  Normally, the
         query path is simply the field name, possibly extended by the
         ``additional_query_path`` parameter of ``__init__``.  However, if the
         `query_path` parameter contains the fieldname as a key, the
         corresponding value is used instead.
 
-        :Parameters:
-          - `query_paths`: dictionary mapping field names to query paths ready
-            to be used in a ``filter`` method call of a ``QuerySet``.
+        :param query_paths: dictionary mapping field names to query paths ready
+            to be used in a ``filter`` method call of a QuerySet.
 
         :type: dict mapping str to str
 
-        :Return:
+        :return:
           the query path snippet
 
         :rtype: str
@@ -166,13 +160,12 @@ class SearchField(object):
         return query_paths.get(self.field.name) or self.query_path or self.field.name
 
     def get_values(self, query_paths={}):
-        """Returns keyword arguments for a ``filter`` call on a ``QuerySet``.
+        """Returns keyword arguments for a ``filter`` call on a QuerySet.
         Note that this implies that all keyword arguments returned here are
         “anded”.
 
-        :Parameters:
-          - `query_paths`: dictionary mapping field names to query paths ready
-            to be used in a ``filter`` method call of a ``QuerySet``.
+        :param query_paths: dictionary mapping field names to query paths ready
+            to be used in a ``filter`` method call of a QuerySet.
 
             This parameter is not used in JuliaBase-samples but it may be
             interesting for institute-specific code if some models should be
@@ -182,7 +175,7 @@ class SearchField(object):
 
         :type: dict mapping str to str
 
-        :Return:
+        :return:
           the keyword argument(s) for the ``filter`` call
 
         :rtype: dict mapping str to object
@@ -194,7 +187,7 @@ class SearchField(object):
         """Retuns whether the form within this search field is bound and
         valid.
 
-        :Return:
+        :return:
           whether the form is valid
 
         :rtype: bool
@@ -245,9 +238,9 @@ class TextSearchField(SearchField):
 
 
 class TextNullSearchField(SearchField):
-    """Class for search fields containing text.  The match is
-    case-insensitive, and partial matches are allowed, too.  Additionally, you
-    may search for explicitly empty fields.
+    """Class for search fields containing text.  The match is case-insensitive, and
+    partial matches are allowed, too.  Additionally, you may search for
+    explicitly empty fields.
     """
 
     class TextNullForm(forms.Form):
@@ -456,7 +449,7 @@ all_searchable_models = None
 def get_all_searchable_models():
     """Returns all model classes which have a ``get_search_tree_node`` method.
 
-    :Return:
+    :return:
       all searchable model classes
 
     :rtype: frozenset of ``class``
@@ -492,19 +485,18 @@ def get_search_results(search_tree, max_results, base_query=None):
         3. If the top-level node is abstract, it finds the actual instance for
            each found object.
 
-    :Parameters:
-      - `search_tree`: the complete search tree of the search
-      - `max_results`: the maximal number of results to be returned
-      - `base_query`: the query set to be used as the starting point of the
+    :param search_tree: the complete search tree of the search
+    :param max_results: the maximal number of results to be returned
+    :param base_query: the query set to be used as the starting point of the
         query; it is used to restrict the found items to what the user is
         allowed to see
 
     :type search_tree: `SearchTreeNode`
     :type max_results: int
-    :type base_query: ``QuerySet``
+    :type base_query: QuerySet
 
-    :Return:
-      the found objects, whether more than `max_results` were found
+    :return:
+      the found objects, whether more than ``max_results`` were found
 
     :rtype: list of model instances, bool
     """
@@ -542,8 +534,8 @@ class SearchTreeNode(object):
     :ivar search_fields: the search fields for this node, generated for the
       fields of the associated model class
 
-    :type related_models: dict mapping class (decendant of ``Model``) to str
-    :type model_class: class (decendant of ``Model``)
+    :type related_models: dict mapping class (decendant of models.Model) to str
+    :type model_class: class (decendant of models.Model)
     :type children: list of (`SearchModelForm`, `SearchTreeNode`)
     :type search_fields: list of `SearchField`
     """
@@ -551,16 +543,15 @@ class SearchTreeNode(object):
     def __init__(self, model_class, related_models, search_fields):
         """Class constructor.
 
-        :Parameters:
-          - `model_class`: the model class associated with this node
-          - `related_models`: see the description of the instance variable of
+        :param model_class: the model class associated with this node
+        :param related_models: see the description of the instance variable of
             the same name
-          - `search_fields`: see the description of the instance variable of
+        :param search_fields: see the description of the instance variable of
             the same name; they don't contain a form because their `parse_data`
             method has not been called yet
 
-        :type model_class: class (decendant of ``Model``)
-        :type related_models: dict mapping class (decendant of ``Model``) to
+        :type model_class: class (decendant of models.Model)
+        :type related_models: dict mapping class (decendant of models.Model) to
           str
         :type search_fields: list of `SearchField`
         """
@@ -574,11 +565,10 @@ class SearchTreeNode(object):
         and the `SearchModelForm` for all children), and create recursively the
         tree by creating the children.
 
-        :Parameters:
-          - `data`: the GET dictionary of the request; may be ``None`` if the
+        :param data: the GET dictionary of the request; may be ``None`` if the
             forms of this node are supposed to be unbound (because it was newly
             created and there's nothing to be parsed into them)
-          - `prefix`: The prefix for the forms.  Note that the form to select a
+        :param prefix: The prefix for the forms.  Note that the form to select a
             model does not belong to the model to be selected but to its parent
             model.  This is also true for the prefixes: The top-level selection
             form (called ``root_form`` in
@@ -588,7 +578,7 @@ class SearchTreeNode(object):
             `SearchModelForm` in which they were selected.  The starting number
             of prefixes is 1, and the nesting levels are separated by dashs.
 
-        :type data: ``QueryDict`` or ``NoneType``
+        :type data: QueryDict or NoneType
         :type prefix: str
         """
         for search_field in self.search_fields:
@@ -620,18 +610,17 @@ class SearchTreeNode(object):
     def get_query_set(self, base_query=None):
         """Returns all model instances matching the search.
 
-        :Parameters:
-          - `base_query`: the query set to be used as the starting point of the
+        :param base_query: the query set to be used as the starting point of the
             query; it is only given at top level, and even then, it is
             optional; it is used to restrict the found items to what the user
             is allowed to see
 
-        :type base_query: ``QuerySet``
+        :type base_query: QuerySet
 
-        :Return:
+        :return:
           the search results
 
-        :rtype: ``QuerySet``
+        :rtype: QuerySet
         """
         result = base_query if base_query is not None else self.model_class.objects
         kwargs = {}
@@ -652,7 +641,7 @@ class SearchTreeNode(object):
         the one without a `SearchTreeNode` in the tuple – is excluded from the
         test because it is always unbound.
 
-        :Return:
+        :return:
           whether the whole tree contains only valid forms
 
         :rtype: bool
@@ -685,7 +674,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
     though, and these fields must have the same names in the models.  If you
     need more flexibility, you can make your own derived class from
     `SearchTreeNode`.  See the ``query_paths`` parameter of
-    `SearchField.get_values` for more information.
+    :py:meth:`SearchField.get_values` for more information.
 
     An abstract node has a list of *derivatives*.  Derivatives are ordinary
     search tree nodes, typically representing non-abstrict model classes, to
@@ -695,13 +684,14 @@ class AbstractSearchTreeNode(SearchTreeNode):
     it *any* of the derivatives returns a match, it is included into the search
     results (which may be filtered further, of course).
 
-    For example, we have three Raman apparatuses in IEK-5.  All three share
-    exactly the same model fields.  Therefore, there is an abstract model class
-    that all three concrete models are derived from.  However, if you look for
-    a certain Raman measurement, you don't know a priori in which if the three
-    apparatuses it was measured.  Hence, there is only *one* Raman selection in
-    the advanced view, which looks for results in all three models.  Note that
-    it is still possible to focus a search to one particular Raman model.
+    For example, we have three Raman apparatuses in our institute IEK-5/FZJ.
+    All three share exactly the same model fields.  Therefore, there is an
+    abstract model class that all three concrete models are derived from.
+    However, if you look for a certain Raman measurement, you don't know a
+    priori in which if the three apparatuses it was measured.  Hence, there is
+    only *one* Raman selection in the advanced view, which looks for results in
+    all three models.  Note that it is still possible to focus a search to one
+    particular Raman model.
 
     In case of Raman, the non-abstract models doesn't occur in the search form.
     However, it is also possible to have both the abstract node and all
@@ -736,26 +726,25 @@ class AbstractSearchTreeNode(SearchTreeNode):
                  choice_field_label=None, choice_field_help_text=None):
         """Class constructor.
 
-        :Parameters:
-          - `common_base_class`: the model which is a common base class for all
+        :param common_base_class: the model which is a common base class for all
             derivatives; this is necessary so that the returned pk values in
             `get_query_set` refer to one particular database table
-          - `related_models`: see the description of the instance variable of
+        :param related_models: see the description of the instance variable of
             the same name in `SearchTreeNode`
-          - `search_fields`: see the description of the instance variable of
+        :param search_fields: see the description of the instance variable of
             the same name in `SearchTreeNode`; they don't contain a form
             because their `parse_data` method has not been called yet
-          - `derivatives`: the models that are combined in this abstract node
-          - `choice_field_label`: Label for the choice form field for selecting
+        :param derivatives: the models that are combined in this abstract node
+        :param choice_field_label: Label for the choice form field for selecting
             a derivative.  By default, the label reads “restricted to”.
-          - `choice_field_help_text`: help text for the form field for
+        :param choice_field_help_text: help text for the form field for
             selecting a derivative
 
-        :type common_base_class: class (decendant of ``Model``)
-        :type related_models: dict mapping class (decendant of ``Model``) to
+        :type common_base_class: class (decendant of models.Model)
+        :type related_models: dict mapping class (decendant of models.Model) to
           str
         :type search_fields: list of `SearchField`
-        :type derivatives: list of class (decendant of ``Model``)
+        :type derivatives: list of class (decendant of models.Model)
         :type choice_field_label: unicode
         :type choice_field_help_text: unicode
         """
@@ -772,20 +761,19 @@ class AbstractSearchTreeNode(SearchTreeNode):
         self.search_fields.append(self.derivative_choice)
 
     def get_query_set(self, base_query=None):
-        """Returns all model instances matching the search.  This is heavily
-        changed from `SearchTreeNode.get_query_set`.  By and large it only
+        """Returns all model instances matching the search.  This is heavily changed
+        from :py:meth:`SearchTreeNode.get_query_set`.  By and large it only
         “or”s the returned search results from the derivatives.
 
-        :Parameters:
-          - `base_query`: the query set to be used as the starting point of the
-            query, see `SearchTreeNode.get_query_set`
+        :param base_query: the query set to be used as the starting point of the
+            query, see :py:meth:`SearchTreeNode.get_query_set`
 
-        :type base_query: ``QuerySet``
+        :type base_query: QuerySet
 
-        :Return:
+        :return:
           the search results
 
-        :rtype: ``QuerySet``
+        :rtype: QuerySet
         """
         result = base_query if base_query is not None else self.model_class.objects
         selected_derivative = self.derivative_choice.form.cleaned_data["derivative"]
@@ -825,18 +813,17 @@ class DetailsSearchTreeNode(SearchTreeNode):
     def __init__(self, model_class, related_models, search_fields, details_model_attribute):
         """Class constructor.
 
-        :Parameters:
-          - `model_class`: the model class associated with this node
-          - `related_models`: see the description of the instance variable of
+        :param model_class: the model class associated with this node
+        :param related_models: see the description of the instance variable of
             the same name
-          - `search_fields`: see the description of the instance variable of
+        :param search_fields: see the description of the instance variable of
             the same name; they don't contain a form because their `parse_data`
             method has not been called yet
-          - `details_model_attribute`: attribute name which represents the O2O
+        :param details_model_attribute: attribute name which represents the O2O
             relationship to the details model
 
-        :type model_class: class (decendant of ``Model``)
-        :type related_models: dict mapping class (decendant of ``Model``) to
+        :type model_class: class (decendant of models.Model)
+        :type related_models: dict mapping class (decendant of models.Model) to
           str
         :type search_fields: list of `SearchField`
         :type details_model_attribute: str

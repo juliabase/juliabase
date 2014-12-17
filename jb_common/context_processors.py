@@ -14,7 +14,7 @@
 
 
 """Additional context processors for JuliaBase.  These functions must be added
-to `settings.TEMPLATE_CONTEXT_PROCESSORS`.  They add further data to the
+to ``settings.TEMPLATE_CONTEXT_PROCESSORS``.  They add further data to the
 dictionary passed to the templates.
 """
 
@@ -35,12 +35,11 @@ def default(request):
     flags on the top left for language switching.  These flags don't occur if
     it was a POST request, or if the user isn't logged-in.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the (additional) context dictionary
 
     :rtype: dict mapping str to session data

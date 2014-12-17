@@ -48,32 +48,30 @@ fontsize_half = height / 2 - 2 * vertical_margin
 class ExcessException(Exception):
     """Raised if a single line becomes too long for the label.  While some
     horizontal compression of the glyphs is allowed, it may become too much.
-    In this case, `ExcessException` is thrown.
+    In this case, ``ExcessException`` is thrown.
     """
     pass
 
 def print_line(canvas, y, fontsize, line, force=False):
     """Prints one line of text on the left-hand side of the label.
 
-    :Parameters:
-      - `canvas`: ReportLab canvas object
-      - `y`: vertical coordinate of the lower left corner of the printed text.
+    :param canvas: ReportLab canvas object
+    :param y: vertical coordinate of the lower left corner of the printed text.
         Note that the origin of the coordinate system is the lower left of the
         paper.
-      - `fontsize`: font size of the text
-      - `line`: the text to be printed; it must not contain line breaks
-      - `force`: whether `ExcessException` should be raised if the text has to
+    :param fontsize: font size of the text
+    :param line: the text to be printed; it must not contain line breaks
+    :param force: whether `ExcessException` should be raised if the text has to
         be compressed too much; if ``True``, the text may be compressed as much
         as necessary
 
-    :type canvas: ``reportlab.pdfgen.canvas.Canvas``
+    :type canvas: canvas.Canvas
     :type y: float
     :type fontsize: float
     :type line: unicode
     :type force: bool
 
-    :Exceptions:
-      - `ExcessException`: if the line is too long and `force` is ``False``
+    :raises ExcessException: if the line is too long and `force` is ``False``
     """
     textobject = canvas.beginText()
     textobject.setFont(inm.reportlab_config.default_fontname, fontsize)
@@ -96,12 +94,11 @@ def best_split(text):
     position, e.g. after a hyphen.  But if the is not possible, it is split in
     the middle.
 
-    :Parameters:
-      `text`: the text to be split
+    :param text: the text to be split
 
     :type text: unicode
 
-    :Return:
+    :return:
       The first and the second part of `text` into which it was split.
 
     :rtype: unicode, unicode
@@ -120,12 +117,11 @@ def best_split(text):
 def printer_label(sample):
     """Generate the PDF of a sample for the label printer.
 
-    :Parameters:
-      - `sample`: the sample the label of which should be generated
+    :param sample: the sample the label of which should be generated
 
-    :type sample: ``samples.models.Sample``
+    :type sample: `samples.models.Sample`
 
-    :Return:
+    :return:
       the PDF as a byte stream
 
     :rtype: str

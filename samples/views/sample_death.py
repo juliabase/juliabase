@@ -64,17 +64,16 @@ def new(request, sample_name):
     already dead sample.  Furthermore, you must be the currently responsible
     person to be able to kill a sample.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: name of the sample to be killed
+    :param request: the current HTTP Request object
+    :param sample_name: name of the sample to be killed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = utils.lookup_sample(sample_name, request.user)
     permissions.assert_can_edit_sample(request.user, sample)

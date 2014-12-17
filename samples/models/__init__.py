@@ -13,30 +13,6 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""This module is the connection to the database.  It contains the *models*,
-i.e. Python classes which represent the tables in the relational database.
-Every class which inherits from ``models.Model`` is a PostgreSQL table at the
-same time, unless it has ``abstract = True`` set in their ``Meta`` subclass.
-
-If you add fields to models, and you have a PostgreSQL database running which
-contains already valuable data, you have to add the fields manually with SQL
-commands to the database, too.  (There is a project called `“Django
-Evolution”`_ that tries to improve this situation.)
-
-.. _“Django Evolution”: http://code.google.com/p/django-evolution/
-
-However, if you add new *classes*, you can just run ``./manage.py syncdb`` and
-the new tables are automatically created.
-
-Note that this module doesn't define any models itself.  It is only the
-container where all models are finally brought together by module inclusion.
-The number and complexity of JuliaBase's models is too big for one file.
-Therefore, we have a few model modules, all starting with ``models_...`` and
-residing in this directory.  With ``from samples.models_... import *`` I can
-give the rest of JuliaBase's modules the illusion that all models are actually
-here.
-"""
-
 from __future__ import absolute_import, unicode_literals
 
 from django.conf import settings
@@ -46,13 +22,15 @@ from .feeds import *
 
 """
 
-:var clearance_sets: Dictionary of tupels mapping a ``Process`` subclass to tuples of
-  ``Process`` subclasses.  This dictionary is used in the “get_sample_clearance“ method
-  in the “Permissions“ modul to set the specific clearances for the operators
-  who must allowed to see some informations about the sample.  The dictionary may be left empty.
-  Otherwise, it may be injected here from the ``models.py`` of another app.
+:var clearance_sets: Dictionary of tupels mapping a `~samples.models.Process`
+  subclass to tuples of `~samples.models.Process` subclasses.  This dictionary
+  is used in :py:func:`samples.permissions.get_sample_clearance` to set the
+  specific clearances for the operators who must allowed to see some
+  informations about the sample.  The dictionary may be left empty. Otherwise,
+  it may be injected here from the models module of another app.
 
-:type clearance_sets: dict mapping `Process` to tuple of `Process`
+:type clearance_sets: dict mapping `samples.models.Process` to tuple of
+  `samples.models.Process`
 """
 
 

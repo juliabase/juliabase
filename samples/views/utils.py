@@ -41,17 +41,16 @@ def sample_name_format(name, with_match_object=False):
     """Determines which sample name format the given name has.  It doesn't test
     whether the sample name is existing, nor if the initials are valid.
 
-    :Parameters:
-      - `name`: the sample name
+    :param name: the sample name
 
     :type name: unicode
 
-    :Return:
+    :return:
       The name of the sample name format and the respective match object.  The
       latter can be used to extract groups, for exampe.  ``None`` if the name
       had no valid format.
 
-    :rtype: (unicode, re.MatchObject) or ``NoneType``.
+    :rtype: (unicode, re.MatchObject) or NoneType.
     """
     for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
         match = properties["regex"].match(name)
@@ -75,12 +74,11 @@ def verbose_sample_name_format(name_format):
     non-English language, you should choose something equivalent for the
     translation.
 
-    :Parameters:
-      - `name_format`: The name format
+    :param name_format: The name format
 
     :type name_format: unicode
 
-    :Return:
+    :return:
       The verbose human-friendly name of this sample name format.
 
     :rtype: unicode
@@ -93,16 +91,16 @@ def get_sample(sample_name):
     sample is found (can only happen via aliases), it returns a list.  Matching
     is exact.
 
-    :Parameters:
-      - `sample_name`: the name or alias of the sample
+    :param sample_name: the name or alias of the sample
 
     :type sample_name: unicode
 
-    :Return:
+    :return:
       the found sample.  If more than one sample was found, a list of them.  If
       none was found, ``None``.
 
-    :rtype: `models.Sample`, list of `models.Sample`, or ``NoneType``
+    :rtype: `samples.models.Sample`, list of `samples.models.Sample`, or
+      NoneType
     """
     try:
         sample = models.Sample.objects.get(name=sample_name)
@@ -118,12 +116,11 @@ def get_sample(sample_name):
 def does_sample_exist(sample_name):
     """Returns ``True`` if the sample name exists in the database.
 
-    :Parameters:
-      - `sample_name`: the name or alias of the sample
+    :param sample_name: the name or alias of the sample
 
     :type sample_name: unicode
 
-    :Return:
+    :return:
       whether a sample with this name exists
 
     :rtype: bool
@@ -135,12 +132,11 @@ def does_sample_exist(sample_name):
 def normalize_sample_name(sample_name):
     """Returns the current name of the sample.
 
-    :Parameters:
-      - `sample_name`: the name or alias of the sample
+    :param sample_name: the name or alias of the sample
 
     :type sample_name: unicode
 
-    :Return:
+    :return:
       The current name of the sample.  This is only different from the input if
       you gave an alias.
 
@@ -173,27 +169,26 @@ def lookup_sample(sample_name, user, with_clearance=False):
     nothing is found or the permissions are not sufficient, it raises an
     exception.
 
-    :Parameters:
-      - `sample_name`: name of the sample
-      - `user`: the currently logged-in user
-      - `with_clearance`: whether also clearances should be serached for and
+    :param sample_name: name of the sample
+    :param user: the currently logged-in user
+    :param with_clearance: whether also clearances should be serached for and
         returned
 
     :type sample_name: unicode
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
     :type with_clearance: bool
 
-    :Return:
+    :return:
       the single found sample; or the sample and the clearance instance if this
       is necessary to view the sample and ``with_clearance=True``
 
-    :rtype: `models.Sample` or `models.Sample`, `models.Clearance`
+    :rtype: `samples.models.Sample` or `samples.models.Sample`,
+      `samples.models.Clearance`
 
-    :Exceptions:
-      - `Http404`: if the sample name could not be found
-      - `AmbiguityException`: if more than one matching alias was found
-      - `permissions.PermissionError`: if the user is not allowed to view the
-        sample
+    :raises Http404: if the sample name could not be found
+    :raises AmbiguityException: if more than one matching alias was found
+    :raises samples.permissions.PermissionError: if the user is not allowed to
+      view the sample
     """
     name_format, match = sample_name_format(sample_name, with_match_object=True)
     if name_format == "provisional":
@@ -223,18 +218,16 @@ def convert_id_to_int(process_id):
     lines of ``get_object_or_404``.  Then, it should also allow for ``None`` as
     the `process_id`.
 
-    :Parameters:
-      - `process_id`: the pristine process ID as given via the URL by the user
+    :param process_id: the pristine process ID as given via the URL by the user
 
     :type process_id: str
 
-    :Return:
+    :return:
       the process ID as an integer number
 
     :rtype: int
 
-    :Exceptions:
-      - `Http404`: if the process_id didn't represent an integer number.
+    :raises Http404: if the process_id didn't represent an integer number.
     """
     try:
         return int(process_id)
@@ -253,28 +246,27 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
         /juliabase/6-chamber_deposition/08B410/edit/?next=/juliabase/samples/08B410a
 
-    This routine generated the proper ``HttpResponse`` object that contains the
+    This routine generated the proper HttpResponse object that contains the
     redirection.  It always has HTTP status code 303 (“see other”).
 
     If the request came from the JuliaBase Remote Client, the response is a
     pickled ``json_response``.  (Normally, a simple ``True``.)
 
-    :Parameters:
-      - `request`: the current HTTP request
-      - `success_report`: an optional short success message reported to the
+    :param request: the current HTTP request
+    :param success_report: an optional short success message reported to the
         user on the next view
-      - `view`: the view name/function to redirect to; defaults to the main
+    :param view: the view name/function to redirect to; defaults to the main
         menu page (same when ``None`` is given)
-      - `kwargs`: group parameters in the URL pattern that have to be filled
-      - `query_string`: the *quoted* query string to be appended, without the
+    :param kwargs: group parameters in the URL pattern that have to be filled
+    :param query_string: the *quoted* query string to be appended, without the
         leading ``"?"``
-      - `forced`: If ``True``, go to ``view`` even if a “next” URL is
+    :param forced: If ``True``, go to ``view`` even if a “next” URL is
         available.  Defaults to ``False``.  See `bulk_rename.bulk_rename` for
         using this option to generate some sort of nested forwarding.
-      - `json_response`: object which is to be sent as a pickled response to
+    :param json_response: object which is to be sent as a pickled response to
         the remote client; defaults to ``True``.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type success_report: unicode
     :type view: str or function
     :type kwargs: dict
@@ -282,10 +274,10 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :type forced: bool
     :type json_response: ``object``
 
-    :Return:
+    :return:
       the HTTP response object to be returned to the view's caller
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if jb_common.utils.is_json_requested(request):
         return jb_common.utils.respond_in_json(json_response)
@@ -297,13 +289,12 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 def remove_samples_from_my_samples(samples, user):
     """Remove the given samples from the user's MySamples list
 
-    :Parameters:
-      - `samples`: the samples to be removed.  FixMe: How does it react if a
+    :param samples: the samples to be removed.  FixMe: How does it react if a
         sample hasn't been in ``my_samples``?
-      - `user`: the user whose MySamples list is affected
+    :param user: the user whose MySamples list is affected
 
-    :type samples: list of `models.Sample`
-    :type user: ``django.contrib.auth.models.User``
+    :type samples: list of `samples.models.Sample`
+    :type user: django.contrib.auth.models.User
     """
     for sample in samples:
         sample.watchers.remove(user)
@@ -326,10 +317,10 @@ class StructuredSeries(object):
       on “My Samples”.  In other words, the user deliberately gets an
       incomplete list of samples and should be informed about it.
 
-    :type sample_series: `models.SampleSeries`
+    :type sample_series: `samples.models.SampleSeries`
     :type name: unicode
-    :type timestamp: ``datetime.datetime``
-    :type samples: list of `models.Sample`
+    :type timestamp: datetime.datetime
+    :type samples: list of `samples.models.Sample`
     :type is_complete: bool
     """
 
@@ -343,10 +334,9 @@ class StructuredSeries(object):
     def append(self, sample):
         """Adds a sample to this sample series view.
 
-        :Parameters:
-          - `sample`: the sample
+        :param sample: the sample
 
-        :type sample: `models.Sample`
+        :type sample: `samples.models.Sample`
         """
         assert self.__is_complete is None
         self.samples.append(sample)
@@ -378,8 +368,8 @@ class StructuredTopic(object):
       which contain “My Samples” of the user.  They themselves contain a list
       of their samples.  See `StructuredSeries` for further information.
 
-    :type topic: ``jb_common.models.Topic``
-    :type samples: list of `models.Sample`
+    :type topic: `jb_common.models.Topic`
+    :type samples: list of `samples.models.Sample`
     :type sample_series: list of `StructuredSeries`
     """
 
@@ -411,19 +401,18 @@ def build_structured_sample_list(samples, user):
     As far as sorting is concerned, all topics are sorted by alphabet, all
     sample series by reverse timestamp of origin, and all samples by name.
 
-    :Parameters:
-      - `samples`: the samples to be processed; it doesn't matter if a sample
+    :param samples: the samples to be processed; it doesn't matter if a sample
         occurs twice because this list is made unique first
-      - `user`: the user which sees the sample list eventually
+    :param user: the user which sees the sample list eventually
 
-    :type samples: list of `models.Sample`
-    :type user: ``django.contrib.auth.models.User``
+    :type samples: list of `samples.models.Sample`
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       all topics of the user with his series and samples in them, all
       topicless samples; both is sorted
 
-    :rtype: list of `StructuredTopic`, list of `models.Sample`
+    :rtype: list of `StructuredTopic`, list of `samples.models.Sample`
     """
     def create_topic_tree(structured_topics):
         """Goes through all given topics and makes sure that all parent
@@ -494,15 +483,14 @@ def extract_preset_sample(request):
     sample.  If nothing was given or the sample non-existing, it returns
     ``None``.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the sample given in the query string, if any
 
-    :rtype: `models.Sample` or ``NoneType``
+    :rtype: `samples.models.Sample` or NoneType
     """
     if "sample" in request.GET:
         try:
@@ -516,17 +504,17 @@ def digest_process(process, user, local_context={}):
     relevant information of the process and saves it in a form which can easily
     be processed in a template.
 
-    :Parameters:
-      - `process`: the process to be digest
-      - `user`: current user
-      - `local_context`: the local sample context; for example, this is
-        relevant to ``SampleSplit``, see ``SampleSplit.get_cache_key``.
+    :param process: the process to be digest
+    :param user: current user
+    :param local_context: the local sample context; for example, this is
+      relevant to ``SampleSplit``, see
+      :py:meth:`samples.models.SampleSplit.get_cache_key`. 
 
-    :type process: `models.Process`
-    :type user: ``django.contrib.auth.models.User``
+    :type process: `samples.models.Process`
+    :type user: django.contrib.auth.models.User
     :type local_context: dict mapping str to ``object``
 
-    :Return:
+    :return:
       the process context of the given process
 
     :rtype: dict mapping str to ``object``
@@ -550,10 +538,11 @@ def digest_process(process, user, local_context={}):
 
 
 def restricted_samples_query(user):
-    """Returns a ``QuerySet`` which is restricted to samples the names of
-    which the given user is allowed to see.  Note that this doesn't mean that
-    the user is allowed to see all of the samples themselves necessarily.  It
-    is only about the names.  See the `search` view for further information.
+    """Returns a QuerySet which is restricted to samples the names of which the
+    given user is allowed to see.  Note that this doesn't mean that the user is
+    allowed to see all of the samples themselves necessarily.  It is only about
+    the names.  See the :py:func:`samples.views.sample.search` view for further
+    information.
     """
     if user.is_staff:
         return models.Sample.objects.all().order_by("name")
@@ -566,17 +555,16 @@ def round(value, digits):
     """Method for rounding a numeric value to a fixed number of significant
     digits.
 
-    :Parameters:
-      - `value`: the numeric value
-      - `digit`: number of significant digits
+    :param value: the numeric value
+    :param digit: number of significant digits
 
-    :type value: `float`
-    :type digits: `int`
+    :type value: float
+    :type digits: int
 
-    :Return:
+    :return:
         rounded value
 
-    :rtype: `str`
+    :rtype: str
     """
     try:
         value = float(value)
@@ -594,27 +582,26 @@ def round(value, digits):
 def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
     """Unblocks specified processes of a sample for a given user.
 
-    :Parameters:
-      - `user`: the user who unblocks the processes
-      - `clearance_processes`: all process classes that the destination user
+    :param user: the user who unblocks the processes
+    :param clearance_processes: all process classes that the destination user
         should be able to see; ``"all"`` means all processes
-      - `destination_user`: the user for whom the sample should be unblocked
-      - `sample`: the sample to be unblocked
-      - `clearance`: The current clearance to which further unblocked processes
+    :param destination_user: the user for whom the sample should be unblocked
+    :param sample: the sample to be unblocked
+    :param clearance: The current clearance to which further unblocked processes
         should be added.  This is only used in the internal recursion of this
         routine in order to traverse through sample splits upwards.
-      - `cutoff_timestamp`: The timestamp after which no processes in the
+    :param cutoff_timestamp: The timestamp after which no processes in the
         sample should be unblocked.  This is only used in the internal
         recursion of this routine in order to traverse through sample splits
         upwards.  It is a similar algorithm as the one used in
         `samples.views.sample.SamplesAndProcesses`.
 
-    :type user: ``django.contrib.auth.models.User``
-    :type clearance_processes: tuple of `models.Process`, or str
-    :type destination_user: ``django.contrib.auth.models.User``
-    :type sample: `models.Sample`
-    :type clearance: `models.Clearance`
-    :type cutoff_timestamp: ``datetime.datetime``
+    :type user: django.contrib.auth.models.User
+    :type clearance_processes: tuple of `samples.models.Process`, or str
+    :type destination_user: django.contrib.auth.models.User
+    :type sample: `samples.models.Sample`
+    :type clearance: `samples.models.Clearance`
+    :type cutoff_timestamp: datetime.datetime
     """
     if not clearance:
         clearance, __ = models.Clearance.objects.get_or_create(user=destination_user, sample=sample)
@@ -638,15 +625,14 @@ def sorted_users(users):
     """Return a list of users sorted by family name.  In particular, it sorts
     case-insensitively.
 
-    :Parameters:
-      - `users`: the users to be sorted; it may also be a ``QuerySet``
+    :param users: the users to be sorted; it may also be a QuerySet
 
-    :type users: an iterable of ``django.contrib.auth.models.User``
+    :type users: an iterable of django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the sorted users
 
-    :rtype: list of ``django.contrib.auth.models.User``
+    :rtype: list of django.contrib.auth.models.User
     """
     return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
 
@@ -655,15 +641,14 @@ def sorted_users_by_first_name(users):
     """Return a list of users sorted by first name.  In particular, it sorts
     case-insensitively.
 
-    :Parameters:
-      - `users`: the users to be sorted; it may also be a ``QuerySet``
+    :param users: the users to be sorted; it may also be a QuerySet
 
-    :type users: an iterable of ``django.contrib.auth.models.User``
+    :type users: an iterable of django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the sorted users
 
-    :rtype: list of ``django.contrib.auth.models.User``
+    :rtype: list of django.contrib.auth.models.User
     """
     return sorted(users, key=lambda user: user.first_name.lower() if user.first_name else user.username)
 
@@ -677,20 +662,19 @@ def table_export(request, data, label_column_heading):
     This function return the data in JSON format if this is requested by the
     ``Accept`` header field in the HTTP request.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `data`: the root node of the data tree
-      - `label_column_heading`: Description of the very first column with the
+    :param request: the current HTTP Request object
+    :param data: the root node of the data tree
+    :param label_column_heading: Description of the very first column with the
         table row headings, see `generate_table_rows`.
 
-    :type request: ``HttpRequest``
-    :type data: `DataNode`
+    :type request: HttpRequest
+    :type data: `samples.data_tree.DataNode`
     :type label_column_heading: unicode
 
-    :Returns:
+    :return:
       the HTTP response object or a tuple with all needed forms to create the export view
 
-    :rtype: ``HttpResponse`` or tuple of ``django.forms.Form``
+    :rtype: HttpResponse or tuple of django.forms.Form
     """
     if not data.children:
         # We have no rows (e.g. a result process with only one row), so let's
@@ -751,16 +735,14 @@ def table_export(request, data, label_column_heading):
 
 
 def median(numeric_values):
-    """Calculates the median from
-    a list of numeric values.
+    """Calculates the median from a list of numeric values.
 
-    :Parameters:
-     - `numeric_values`: a list with numeric values
+    :param numeric_values: a list with numeric values
 
-    :type numeric_values:  list
+    :type numeric_values: list
 
-    :Retrun:
-     The median of the given values
+    :retrun:
+      The median of the given values
 
     :rtype: int or float
     """
@@ -775,16 +757,14 @@ def median(numeric_values):
 
 
 def average(numeric_values):
-    """Calculates the average value from
-    a list of numeric values.
+    """Calculates the average value from a list of numeric values.
 
-    :Parameters:
-     - `numeric_values`: a list with numeric values
+    :param numeric_values: a list with numeric values
 
-    :type numeric_values:  list
+    :type numeric_values: list
 
-    :Retrun:
-     The average value of the given values
+    :retrun:
+      The average value of the given values
 
     :rtype: float
     """

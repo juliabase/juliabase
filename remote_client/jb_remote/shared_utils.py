@@ -34,12 +34,11 @@ import re, string, codecs, os, os.path
 def int_or_zero(number):
     """Converts ``number`` to an integer.  If this doesn't work, return ``0``.
 
-    :Parameters:
-      - `number`: a string that is supposed to contain an integer number
+    :param number: a string that is supposed to contain an integer number
 
-    :type number: str or unicode or ``NoneType``
+    :type number: str or unicode or NoneType
 
-    :Return:
+    :return:
       the ``int`` representation of ``number``, or 0 if it didn't represent a
       valid integer number
 
@@ -56,12 +55,11 @@ def camel_case_to_underscores(name):
     ``"MySamples"`` is converted to ``"my_samples"``, and ``"PDSMeasurement"``
     to ``"pds_measurement"``.
 
-    :Parameters:
-      - `name`: the camel-cased identifier
+    :param name: the camel-cased identifier
 
     :type name: str
 
-    :Return:
+    :return:
       the identifier in underscore notation
 
     :rtype: str
@@ -78,8 +76,9 @@ def camel_case_to_underscores(name):
 
 
 class PlotError(Exception):
-    """Raised if an error occurs while generating a plot.  Usually, it is
-    raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
+    """Raised if an error occurs while generating a plot.  Usually, it is raised in
+    :py:meth:`samples.models.Process.draw_plot` and caught in
+    :py:func:`samples.views.plots.show_plot`.
     """
     pass
 
@@ -88,22 +87,20 @@ def read_techplot_file(filename, columns=(0, 1)):
     """Read a datafile in TechPlot format and return the content of selected
     columns.
 
-    :Parameters:
-      - `filename`: full path to the Techplot data file
-      - `columns`: the columns that should be read.  Defaults to the first two,
+    :param filename: full path to the Techplot data file
+    :param columns: the columns that should be read.  Defaults to the first two,
         i.e., ``(0, 1)``.  Note that the column numbering starts with zero.
 
     :type filename: str
     :type columns: list of int
 
-    :Return:
+    :return:
       List of all columns.  Every column is represented as a list of floating
       point values.
 
     :rtype: list of list of float
 
-    :Exceptions:
-      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+    :raises PlotError: if something wents wrong with interpreting the file (I/O,
         unparseble data)
     """
     start_values = False
@@ -137,8 +134,7 @@ def mkdirs(path):
     If the directory already exists, nothing is done.  (In particular, no
     exception is raised.)
 
-    :Parameters:
-      - `path`: absolute path which should be created
+    :param path: absolute path which should be created
 
     :type path: str
     """
@@ -151,12 +147,11 @@ def mkdirs(path):
 def capitalize_first_letter(text):
     """Capitalise the first letter of the given string.
 
-    :Parameters:
-      - `text`: text whose first letter should be capitalised
+    :param text: text whose first letter should be capitalised
 
     :type text: unicode
 
-    :Return:
+    :return:
       the text with capitalised first letter
 
     :rtype: unicode
@@ -172,12 +167,11 @@ def sanitize_for_markdown(text):
     (legacy) strings are imported.  For example, comments found in data files
     must be sent through this function before being stored in the database.
 
-    :Parameters:
-      - `text`: the original string
+    :param text: the original string
 
     :type text: unicode
 
-    :Return:
+    :return:
       the Markdown-ready string
 
     :rtype: unicode
@@ -201,12 +195,11 @@ def python_escape(text):
     """Escapes a string so that it can be used as a Python string literal.
     For example, it replaces all ``"`` with ``\\"``.
 
-    :Parameters:
-      - `text`: the original string
+    :param text: the original string
 
     :type text: unicode
 
-    :Return:
+    :return:
       the Python-ready string
 
     :rtype: unicode

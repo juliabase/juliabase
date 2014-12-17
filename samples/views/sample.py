@@ -59,7 +59,7 @@ class IsMySampleForm(forms.Form):
 
 class SampleForm(forms.ModelForm):
     """Model form class for a sample.  All unusual I do here is overwriting
-    `models.Sample.currently_responsible_person` in oder to be able to see
+    `samples.models.Sample.currently_responsible_person` in oder to be able to see
     *full* person names (not just the login name).
     """
     _ = ugettext_lazy
@@ -81,16 +81,16 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
     """Checks that the “important” checkbox is marked if the topic or the
     currently responsible person were changed.
 
-    :Parameters:
-      - `sample`: the currently edited sample
-      - `sample_form`: the bound sample form
-      - `edit_description_form`: a bound form with description of edit changes
+    :param sample: the currently edited sample
+    :param sample_form: the bound sample form
+    :param edit_description_form: a bound form with description of edit changes
 
-    :type sample: `models.Sample`
+    :type sample: `samples.models.Sample`
     :type sample_form: `SampleForm`
-    :type edit_description_form: `form_utils.EditDescriptionForm` or ``NoneType``
+    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+        or NoneType
 
-    :Return:
+    :return:
       whether the “important” tickbox was really marked in case of significant
       changes
 
@@ -112,17 +112,16 @@ def edit(request, sample_name):
     """View for editing existing samples.  You can't use it to add new
     samples.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = utils.lookup_sample(sample_name, request.user)
     permissions.assert_can_edit_sample(request.user, sample)
@@ -169,14 +168,13 @@ def edit(request, sample_name):
 def get_allowed_processes(user, sample):
     """Return all processes the user is allowed to add to the sample.
 
-    :Parameters:
-      - `user`: the current user
-      - `sample`: the sample to be edit or displayed
+    :param user: the current user
+    :param sample: the sample to be edit or displayed
 
-    :type user: ``django.contrib.auth.models.User``
-    :type sample: `models.Sample`
+    :type user: django.contrib.auth.models.User
+    :type sample: `samples.models.Sample`
 
-    :Return:
+    :return:
       two lists with the allowed processes.  Every process is returned as a
       dict with three keys: ``"label"``, ``"url"``, and ``"type"``.
       ``"label"`` is the human-friendly descriptive name of the process,
@@ -191,8 +189,7 @@ def get_allowed_processes(user, sample):
     :rtype: list of dict mapping str to unicode/str, list of dict mapping str
       to unicode/str
 
-    :Exceptions:
-      - `permissions.PermissionError`: if the user is not allowed to add any
+    :raises permissions.PermissionError: if the user is not allowed to add any
         process to the sample
     """
     sample_processes = []
@@ -253,17 +250,16 @@ class SamplesAndProcesses(object):
         """Returns the data structure used in the template to display the
         sample with all its processes.
 
-        :Parameters:
-          - `sample_name`: the sample or alias of the sample to display
-          - `user`: the currently logged-in user
-          - `post_data`: the POST dictionary if it was an HTTP POST request, or
+        :param sample_name: the sample or alias of the sample to display
+        :param user: the currently logged-in user
+        :param post_data: the POST dictionary if it was an HTTP POST request, or
             ``None`` otherwise
 
         :type sample_name: unicode
-        :type user: ``django.contrib.auth.models.User``
-        :type post_data: ``QueryDict``
+        :type user: django.contrib.auth.models.User
+        :type post_data: QueryDict
 
-        :Return:
+        :return:
           a list with all result processes of this sample in chronological
           order.
 
@@ -299,18 +295,17 @@ class SamplesAndProcesses(object):
 
     def __init__(self, sample, clearance, user, post_data):
         """
-        :Parameters:
-          - `sample`: the sample to which the processes belong
-          - `clearance`: the clearance object that was used to show the sample,
+        :param sample: the sample to which the processes belong
+        :param clearance: the clearance object that was used to show the sample,
             or ``None`` if no clearance was necessary (though maybe existing)
-          - `user`: the currently logged-in user
-          - `post_data`: the POST data if it was an HTTP POST request, and
+        :param user: the currently logged-in user
+        :param post_data: the POST data if it was an HTTP POST request, and
             ``None`` otherwise
 
-        :type sample: `models.Sample`
-        :type clearance: `models.Clearance`
-        :type user: ``django.contrib.auth.models.User``
-        :type post_data: ``QueryDict`` or ``NoneType``
+        :type sample: `samples.models.Sample`
+        :type clearance: `samples.models.Clearance`
+        :type user: django.contrib.auth.models.User
+        :type post_data: QueryDict or NoneType
         """
         # This will be filled with more, once child samples are displayed, too.
         self.sample_context = {"sample": sample}
@@ -323,13 +318,12 @@ class SamplesAndProcesses(object):
             ``self.process_contexts``.  It consists of three parts: First, we
             ascend through the ancestors of the sample to the first parent.
             Then, for every ancestor and for the sample itself, the relevant
-            processes are found in form of a ``QuerySet``, paying attention to
+            processes are found in form of a QuerySet, paying attention to
             a possible clearance and to the so-called “cutoff timestamps”.  And
-            finally, we iterate over the ``QuerySet`` and get the process
+            finally, we iterate over the QuerySet and get the process
             context dictionary, possibly from the cache.
 
-            :Parameters:
-              - `local_context`: Information about the current sample to
+            :param local_context: Information about the current sample to
                 process.  This is important when we walk through the ancestors
                 and need to keep track of where we are currently.  In
                 particular, this is used for sample splits because they must
@@ -368,19 +362,18 @@ class SamplesAndProcesses(object):
         are generated here, as well as the icons to edit the sample or to add
         processes.
 
-        This method is also called if the ``SamplesAndProcesses`` object is
+        This method is also called if the `SamplesAndProcesses` object is
         constructed from scratch.
 
-        :Parameters:
-          - `user`: the currently logged-in user
-          - `clearance`: the clearance object that was used to show the sample,
+        :param user: the currently logged-in user
+        :param clearance: the clearance object that was used to show the sample,
             or ``None`` if no clearance was necessary (though maybe existing)
-          - `post_data`: the POST data if it was an HTTP POST request, and
+        :param post_data: the POST data if it was an HTTP POST request, and
             ``None`` otherwise
 
-        :type user: ``django.contrib.auth.models.User``
-        :type clearance: `models.Clearance`
-        :type post_data: ``QueryDict`` or ``NoneType``
+        :type user: django.contrib.auth.models.User
+        :type clearance: `samples.models.Clearance`
+        :type post_data: QueryDict or NoneType
         """
         self.user = user
         self.user_details = user.samples_user_details
@@ -413,13 +406,12 @@ class SamplesAndProcesses(object):
         is not allowed to see due to the `clearance`.  Obviously, this routine
         is a no-op if `clearance` is ``None``.
 
-        :Parameters:
-          - `user`: the currently logged-in user
-          - `clearance`: the clearance object that was used to show the sample,
+        :param user: the currently logged-in user
+        :param clearance: the clearance object that was used to show the sample,
             or ``None`` if no clearance was necessary (though maybe existing)
 
-        :type user: ``django.contrib.auth.models.User``
-        :type clearance: `models.Clearance`
+        :type user: django.contrib.auth.models.User
+        :type clearance: `samples.models.Clearance`
         """
         if clearance:
             viewable_process_contexts = []
@@ -440,16 +432,15 @@ class SamplesAndProcesses(object):
         walk through all processes to change them.  In particular, the
         edit/duplicate/resplit icons are corrected.
 
-        :Parameters:
-          - `user`: the currently logged-in user
-          - `clearance`: the clearance object that was used to show the sample,
+        :param user: the currently logged-in user
+        :param clearance: the clearance object that was used to show the sample,
             or ``None`` if no clearance was necessary (though maybe existing)
-          - `post_data`: the POST data if it was an HTTP POST request, and
+        :param post_data: the POST data if it was an HTTP POST request, and
             ``None`` otherwise
 
-        :type user: ``django.contrib.auth.models.User``
-        :type clearance: `models.Clearance`
-        :type post_data: ``QueryDict`` or ``NoneType``
+        :type user: django.contrib.auth.models.User
+        :type clearance: `samples.models.Clearance`
+        :type post_data: QueryDict or NoneType
         """
         self.update_sample_context_for_user(user, clearance, post_data)
         self.remove_noncleared_process_contexts(user, clearance)
@@ -477,7 +468,7 @@ class SamplesAndProcesses(object):
         particular, the actual sample instance is ``sample["sample"]`` or, in
         template code syntax, ``sample.sample``.
 
-        :Return:
+        :return:
           Generator for iterating over all samples and processes.  It returns a
           tuple with three values, ``sample_start``, ``sample`` and
           ``process``.  Either one or none of ``sample`` and ``process`` may be
@@ -501,7 +492,7 @@ class SamplesAndProcesses(object):
         consist only of checkboxes and they can never be invalid.  But sticking
         to rituals reduces errors …
 
-        :Return:
+        :return:
           whether all forms are valid
 
         :rtype: bool
@@ -514,7 +505,7 @@ class SamplesAndProcesses(object):
         """Changes the members of the “My Samples” list according to what the
         user selected.
 
-        :Return:
+        :return:
           names of added samples, names of removed samples
 
         :rtype: set of unicode, set of unicode
@@ -539,7 +530,7 @@ class SamplesAndProcesses(object):
         shown on the sample's data sheet, too, also their process IDs are
         included.
 
-        :Return:
+        :return:
           all process ids of the sample data sheet
 
         :rtype: set of int
@@ -556,11 +547,10 @@ def embed_timestamp(request, sample_name):
     give *one* function for returning both with Django's API for conditional
     view processing.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
     """
     if not hasattr(request, "_sample_timestamp"):
@@ -590,17 +580,16 @@ def sample_timestamp(request, sample_name):
     influence the sample datasheet (language, “My Samples”).  The latest
     timestamp is chosen and returned.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the timestamp of the last modification of the sample's datasheet
 
-    :rtype: ``datetime.datetime``
+    :rtype: datetime.datetime
     """
     embed_timestamp(request, sample_name)
     return request._sample_timestamp
@@ -616,14 +605,13 @@ def sample_etag(request, sample_name):
     user who used the same browser instance before (e.g. in a lab), I must
     create an ETag.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the ETag of the sample's datasheet
 
     :rtype: str
@@ -641,17 +629,16 @@ def sample_etag(request, sample_name):
 def show(request, sample_name):
     """A view for showing existing samples.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     start = time.time()
     if request.method == "POST":
@@ -692,20 +679,19 @@ def by_id(request, sample_id, path_suffix):
     name.  It redirects to the URL with the name.  The query string, if given,
     is passed, too.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_id`: the numeric ID of the sample
-      - `path_suffix`: the trailing path, e.g. ``"/split/"``; if you just view
+    :param request: the current HTTP Request object
+    :param sample_id: the numeric ID of the sample
+    :param path_suffix: the trailing path, e.g. ``"/split/"``; if you just view
         a sample, it is empty (or only the query string)
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_id: unicode
     :type path_suffix: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     if is_json_requested(request):
@@ -727,17 +713,16 @@ def by_id(request, sample_id, path_suffix):
 def add_process(request, sample_name):
     """View for appending a new process to the process list of a sample.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = utils.lookup_sample(sample_name, request.user)
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
@@ -775,15 +760,14 @@ def search(request):
     search, this is a GET requets.  Therefore, this view has two submit
     buttons.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     too_many_results = False
     base_query = utils.restricted_samples_query(request.user)
@@ -825,15 +809,14 @@ def advanced_search(request):
     search, this is a GET requets.  Therefore, this view has two submit
     buttons.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     model_list = [model for model in jb_common.search.get_all_searchable_models() if hasattr(model, "get_absolute_url")]
     search_tree = None
@@ -917,17 +900,16 @@ def export(request, sample_name):
     """View for exporting sample data in CSV or JSON format.  Thus, the return
     value is not an HTML response.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = utils.lookup_sample(sample_name, request.user)
     data = sample.get_data_for_table_export()
@@ -948,15 +930,14 @@ def qr_code(request):
     """Generates the QR representation of the given data.  The data is given
     in the ``data`` query string parameter.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
         data = request.GET["data"]
@@ -969,15 +950,14 @@ def data_matrix_code(request):
     """Generates the Data Matrix representation of the given data.  The data
     is given in the ``data`` query string parameter.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
         data = request.GET["data"]
@@ -1045,20 +1025,18 @@ class SampleRenameForm(forms.Form):
 
 @login_required
 def rename_sample(request):
-    """Rename a sample given by its id.
-    This view should only be available for adminstative users.
-    For normal users use
+    """Rename a sample given by its id.  This view should only be available for
+    adminstative users.  For normal users use
     ``samples.views.bulk_rename.bulk_rename``
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample_id = request.GET.get("sample_id")
     if sample_id:
@@ -1078,7 +1056,8 @@ def rename_sample(request):
                 models.SampleAlias.objects.create(name=old_name, sample=sample)
             feed_reporter = feed_utils.Reporter(request.user)
             feed_reporter.report_edited_samples([sample], {"important": True,
-               "description": _("Sample {old_name} was renamed to {new_name}").format(new_name=sample.name, old_name=old_name)})
+               "description": _("Sample {old_name} was renamed to {new_name}").
+                                                           format(new_name=sample.name, old_name=old_name)})
             return utils.successful_response(
                 request, _("Sample {sample} was successfully changed in the database.").format(sample=sample))
     else:

@@ -20,13 +20,12 @@ from inm.views.samples import json_client
 def clean_up_after_merging(from_sample, to_sample):
     """Deletes the duplicate substrate process after merging two samples.
 
-    :Parameters:
-     - `from_sample`: The sample which is merged into the other sample
-     - `to_sample`: The sample which should contain the processes from the
+    :param from_sample: The sample which is merged into the other sample
+    :param to_sample: The sample which should contain the processes from the
        other sample
 
-    :type from_sample: `models.Sample`
-    :type to_sample: `models.Sample`
+    :type from_sample: `samples.models.Sample`
+    :type to_sample: `samples.models.Sample`
     """
     substrates_to_sample = json_client.get_substrates(to_sample)
     substrate_from_sample = json_client.get_substrate(from_sample)

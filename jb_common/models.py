@@ -56,7 +56,7 @@ languages = (
 @python_2_unicode_compatible
 class UserDetails(models.Model):
     """Model for further details about a user, beyond
-    ``django.contrib.auth.models.User``.  Here, you have all data about a
+    django.contrib.auth.models.User.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
@@ -97,7 +97,7 @@ class UserDetails(models.Model):
         whether a cached sample instance of another user can be used for this
         one.
 
-        :Return:
+        :return:
           the data hash value
 
         :rtype: str
@@ -148,10 +148,10 @@ class Topic(models.Model):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         search_fields = [jb_common.search.TextSearchField(cls, "name")]
         related_models = {}
@@ -164,10 +164,9 @@ class Topic(models.Model):
         generated.  This is used e.g. for the “My Samples” list on the main
         menu page.
 
-        :Parameters:
-          - `user`: the user for which the name should be displayed
+        :param user: the user for which the name should be displayed
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
         """
         if self.confidential and not self.members.filter(pk=user.pk).exists():
             return _("topic #{number} (confidential)").format(number=self.id)
@@ -177,7 +176,7 @@ class Topic(models.Model):
     def has_parent(self):
         """Looks if the topic has a superordinate topic.
 
-        :Return:
+        :return:
           ``True`` if the topic has a superordinate topic and ``False`` if not.
 
         :rtype: bool
@@ -196,10 +195,10 @@ class Topic(models.Model):
 
     def get_top_level_topic(self):
         """
-        :Returns:
+        :return:
           the most upper topic from this topic.
 
-        :rtype: ``Topic``
+        :rtype: `Topic`
         """
         if self.parent_topic:
             return self.parent_topic.get_top_level_topic()
@@ -208,12 +207,15 @@ class Topic(models.Model):
 
 
 class PolymorphicModel(models.Model):
-    """Abstract model class, which provides the attribute ``actual_instance``.
-    This solves the problem that Django's ORM does not implement automatic
-    resolution of polymorphy.  For example, if you get a list of Toppings,
-    they're just Toppings.  However sometimes, you must have the actual object,
-    i.e. CheeseTopping, SalamiTopping etc.  Then, ``topping.actual_instance``
-    will give just that.
+    """Abstract model class, which provides the attribute
+    :py:attr:`actual_instance`.  This solves the problem that Django's ORM does
+    not implement automatic resolution of polymorphy.  For example, if you get
+    a list of Toppings, they're just Toppings.  However sometimes, you must
+    have the actual object, i.e. CheeseTopping, SalamiTopping etc.  Then,
+    ``topping.actual_instance`` will give just that.
+
+    FixMe: One could replace this with
+    <https://django-model-utils.readthedocs.org/en/latest/managers.html#inheritancemanager>.
 
     Simply derive the top-level model class from this one, and then you can
     easily resolve polymorphy in it and its derived classes.

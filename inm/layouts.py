@@ -37,8 +37,6 @@ import samples.views.utils
 
 
 class NoStructuringFound(Exception):
-    """
-    """
     def __init__(self, sample, timestamp):
         message = "No structuring process before {0} for sample {1} found.".format(timestamp, sample) if timestamp else \
             "No structuring process for sample {0} found.".format(sample)
@@ -50,23 +48,21 @@ def get_current_structuring(sample, timestamp=None):
     optionally before a timestamp.  This timestamp typically is the timestamp
     of the process that needs the structuring, e.g. a MAIKE measurement.
 
-    :Parameters:
-      - `sample`: the sample whose last structuring should be found
-      - `timestamp`: the found structuring is the latest structuring before or
+    :param sample: the sample whose last structuring should be found
+    :param timestamp: the found structuring is the latest structuring before or
         on this timestamp
 
-    :type sample: `samples.Sample`
-    :type timestamp: ``datetime.datetime``
+    :type sample: `samples.models.Sample`
+    :type timestamp: datetime.datetime
 
-    :Return:
+    :return:
       The last structuring object of the sample.  Note that it is not the
       actual instance of that structuring but an instance of the common base
       class.
 
     :rtype: `inm.models.Structuring`
 
-    :Exceptions:
-      - `NoStructuringFound`: if no matching structuring was found
+    :raises NoStructuringFound: if no matching structuring was found
     """
     query_set = inm.models.Structuring.objects.filter(samples=sample)
     if timestamp:
@@ -89,21 +85,20 @@ def get_layout(sample, process):
     they need its interface.  Alternatively, this function does the limiting
     itself basing on the type of `process`.  However, this may be too implicit.
 
-    :Parameters:
-      - `sample`: the sample whose last structuring should be found
-      - `process`: the process for which the structuring should be found,
+    :param sample: the sample whose last structuring should be found
+    :param process: the process for which the structuring should be found,
         e.g. a solarsimulator measurement
 
     :type sample: `samples.Sample`
     :type process: `samples.Process`
 
-    :Return:
+    :return:
       The layout object suitable for the given sample and process.  ``None`` if
       no layout layout could be determined, either because there is no
       ``Structuring`` process, or because it doesn't contain a layout for which
       there is a layout class.
 
-    :rtype: `Layout` or ``NoneType``
+    :rtype: `Layout` or NoneType
     """
     try:
         current_structuring = get_current_structuring(sample, process.timestamp)
@@ -122,22 +117,21 @@ def _draw_constrained_text(canvas, text, x, y, fontsize, width, graylevel, backg
     fontsize can only be of certain values so that only a few fontsizes are on
     use on the image (which pleases the eye).
 
-    :Parameters:
-      - `canvas`: the ReportLab convas to draw on
-      - `text`: the text to be printed
-      - `x`: the x coordinate of the centre of the printed text
-      - `y`: the y coordinate of the centre of the printed text (not the y
+    :param canvas: the ReportLab convas to draw on
+    :param text: the text to be printed
+    :param x: the x coordinate of the centre of the printed text
+    :param y: the y coordinate of the centre of the printed text (not the y
         coordinate of the baseline!)
-      - `fontsize`: the desired fontsize; the font may be scaled down if there
+    :param fontsize: the desired fontsize; the font may be scaled down if there
         is not enough space
-      - `width`: the available width for the text
-      - `graylevel`: brightness of the text; ``0`` means black and ``1`` means
+    :param width: the available width for the text
+    :param graylevel: brightness of the text; ``0`` means black and ``1`` means
         white
-      - `background_color`: the colour of the background to print on as an
+    :param background_color: the colour of the background to print on as an
         (red, green, blue) tuple; this is only used if the text is too wide and
         needs to be supported by a background rectangle
 
-    :type canvas: `reportlab.pdfgen.canvas.Canvas`
+    :type canvas: canvas.Canvas
     :type text: unicode
     :type x: float
     :type y: float
@@ -181,8 +175,8 @@ class Layout(object):
 
     :type height: float
     :type width: float
-    :type sample: ``samples.models.Sample``
-    :type process: ``samples.models.Process``
+    :type sample: `samples.models.Sample`
+    :type process: `samples.models.Process`
     :type structuring: `inm.models.Structuring`
     """
     width = 80 * mm
@@ -197,23 +191,21 @@ class Layout(object):
         """Draws the layout on the given canvas.  You must override this
         method.
 
-        :Parameters:
-          - `canvas`: the ReportLab canvas
+        :param canvas: the ReportLab canvas
 
-        :type filename: ``reportlab.pdfgen.canvas.Canvas``
+        :type filename: canvas.Canvas
 
-        :Return:
+        :return:
           the canvas object
 
-        :rtype: ``reportlab.pdfgen.canvas.Canvas``
+        :rtype: canvas.Canvas
         """
         raise NotImplementedError
 
     def generate_pdf(self, filename):
         """Draws the layout and writes it to a PDF file.
 
-        :Parameters:
-          - `filename`: the full path to the PDF that should be created
+        :param filename: the full path to the PDF that should be created
 
         :type filename: unicode
         """
@@ -245,7 +237,7 @@ class CellsLayout(Layout):
         """Returns the data needed to build an HTML image map for the cell
         layout.
 
-        :Return:
+        :return:
           the shapes for the image map, mapping the cell position to a
           dictionary containing two keys: ``"type"`` maps to the HTML area type
           (mostly ``"rect"``) and ``"coords"`` maps to the HTML area
@@ -278,14 +270,13 @@ class CellsLayout(Layout):
         solarsimulator measurement.  This is a helper routine for
         `draw_layout`.
 
-        :Parameters:
-          - `solarsimulator_measurement`: the solarsimulator measurement for
+        :param solarsimulator_measurement: the solarsimulator measurement for
             which the colouring should be determined
 
         :type solarsimulator_measurement:
           `inm.models.SolarsimulatorMeasurement`
 
-        :Return:
+        :return:
           the colours and labels as a dictionary mapping the cell position to a
           tuple (colour, label), where “colour” is given as a (red, green,
           blue) tuple.

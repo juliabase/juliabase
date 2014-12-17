@@ -124,18 +124,17 @@ class UnicodeWriter(object):
     """
 
     def __init__(self, stream=None, dialect=csv.excel_tab, encoding="utf-8", **kwargs):
-        """Class constructor.  Additional keyword arguments are passed to the
+        """Additional keyword arguments are passed to the
         ``csv.writer`` factory function in Python's ``csv`` module.  After
         having instantiated this class, you can use `writerow` and `writerows`
         to add data to it, and then extract it in the CSV format using
         `getvalue`.
 
-        :Parameters:
-          - `stream`: the writable file-like object where the output should be
+        :param stream: the writable file-like object where the output should be
             sent; if ``None``, you must get the outout with `getvalue`.
-          - `dialect`: the CSV format; it defaults to Excel's TAB format
+        :param dialect: the CSV format; it defaults to Excel's TAB format
             (TAB-separated, double-quotes)
-          - `encoding`: name of the output encoding to be used; defaults to
+        :param encoding: name of the output encoding to be used; defaults to
             UTF-8
 
         :type stream: file
@@ -150,8 +149,7 @@ class UnicodeWriter(object):
     def writerow(self, row):
         """Add the given row to the output.
 
-        :Parameters:
-          - `row`: list of the table cells
+        :param row: list of the table cells
 
         :type row: list of object
         """
@@ -171,8 +169,7 @@ class UnicodeWriter(object):
     def writerows(self, rows):
         """Add the given rows to the output.
 
-        :Parameters:
-          - `rows`: list of rows; each row is a list of table cells
+        :param rows: list of rows; each row is a list of table cells
 
         :type rows: list of list of object
         """
@@ -184,7 +181,7 @@ class UnicodeWriter(object):
         the instance was filled with all data.  Thus, after called this method,
         the instance of ``UnicodeWriter`` is no longer used.
 
-        :Return:
+        :return:
           the table in CSV format, as an encoded octet string
 
         :rtype: str
@@ -220,8 +217,7 @@ class ColumnGroup(object):
     def __init__(self, name):
         """Class constructor.
 
-        :Parameters:
-          - `name`: the name of the `DataNode` this column group represents
+        :param name: the name of the `DataNode` this column group represents
 
         :type name: unicode
         """
@@ -236,12 +232,11 @@ class ColumnGroup(object):
         `build_column_group_list`, I must be able to test easily whether a
         given column group is contained in a given list.
 
-        :Parameters:
-          - `other`: the instance to compare with
+        :param other: the instance to compare with
 
         :type other: `ColumnGroup`
 
-        :Return:
+        :return:
           whether ``other`` is equal to the current instance
 
         :rtype: bool
@@ -263,7 +258,7 @@ class Column(object):
       case of “shared columns”, this is not so simple anymore.  Then, the value
       is in exactly one of the shared columns, so we have to check all of them
       until we find something.  For more information about shared columns, see
-      `data_tree.DataItem.__init__`.
+      :py:class:`samples.data_tree.DataItem`.
 
     :ivar key: the pristine name of the key this column points to, i.e. it
       doesn't contain any affixes to make it unambiguous
@@ -277,10 +272,9 @@ class Column(object):
     def __init__(self, column_group_name, key):
         """Class constructor.
 
-        :Parameters:
-          - `column_group_name`: the name of the column group this column is
+        :param column_group_name: the name of the column group this column is
             part of
-          - `key`: the pristine key name this column corresponds to
+        :param key: the pristine key name this column corresponds to
 
         :type column_group_name: unicode
         :type key: unicode
@@ -294,10 +288,9 @@ class Column(object):
         method for each other column group which contains this shared key
         (instead of appending a new key to the ``columns`` list in
         `build_column_group_list`).  For more information about shared columns,
-        see `data_tree.DataItem.__init__`.
+        see :py:class:`data_tree.DataItem`.
 
-        :Parameters:
-          - `column_group_name`: the name of the column group this column is
+        :param column_group_name: the name of the column group this column is
             found in as a shared key
 
         :type column_group_name: unicode
@@ -315,13 +308,12 @@ class Column(object):
     def get_value(self, row):
         """Return the value of this column in the given row.
 
-        :Parameters:
-          - `row`: the row for which the value in this column should be
+        :param row: the row for which the value in this column should be
             determined
 
         :type row: dict mapping unicode to dict mapping unicode to object
 
-        :Return:
+        :return:
           the cell value of this column in the given row; ``None`` if the
           respective column group is not available for the given row
 
@@ -339,15 +331,14 @@ def build_column_group_list(root):
     structured form, and to export the data in ODF or Excel format.  The
     columns are used for any export, ODF, Excel, and CSV.
 
-    :Parameters:
-      - `root`: The root node of the ``DataNode`` tree.  It must be a complete
+    :param root: The root node of the ``DataNode`` tree.  It must be a complete
         tree, i.e. the top-level children are considered the row tree.  The
         node names must have been made unambiguous within a row tree already
-        using `DataNode.find_unambiguous_names`.
+        using :py:meth:`samples.data_tree.DataNode.find_unambiguous_names`.
 
     :type root: `DataNode`
 
-    :Return:
+    :return:
       the column groups, the column list
 
     :rtype: list of `ColumnGroup`, list of `Column`
@@ -359,12 +350,11 @@ def build_column_group_list(root):
         of the nodes (e.g. the chronological order of processes) is preserved
         by this method.
 
-        :Parameters:
-          - `node`: the root node of the (sub-)tree to be analysed
+        :param node: the root node of the (sub-)tree to be analysed
 
         :type node: `DataNode`
 
-        :Return:
+        :return:
           all node names
 
         :rtype: list of unicode
@@ -387,8 +377,7 @@ def build_column_group_list(root):
         etc).  So for ODF and Excel export, the ``heading`` attribute is not
         needed but the pristine ``key`` attribute.
 
-        :Parameters:
-          - `columns`: the complete list of columns
+        :param columns: the complete list of columns
 
         :type columns: list of `Column`
         """
@@ -436,17 +425,16 @@ def build_column_group_list(root):
 def flatten_tree(root):
     """Walk through a ``DataNode`` tree and convert it to a list of nested
     dictionaries for easy cell value lookup.  The resulting data structure is
-    used in `Column.get_value`.
+    used in :py:meth:`Column.get_value`.
 
-    :Parameters:
-      - `root`: The root node of the ``DataNode`` tree.  It must be a complete
+    :param root: The root node of the ``DataNode`` tree.  It must be a complete
         tree, i.e. the top-level children are considered the row tree.  The
         node names must have been made unambiguous within a row tree already
         using `DataNode.find_unambiguous_names`.
 
-    :type root: `DataNode`
+    :type root: `samples.data_tree.DataNode`
 
-    :Return:
+    :return:
       list of all rows containg a dictionary mapping node names (loosely
       corresponding to column group names) to dictionaries mapping key names to
       cell values
@@ -469,13 +457,12 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
     that for ODF or Excel output, you should also take the column group list
     into account for better formatting.
 
-    :Parameters:
-      - `flattened_tree`: the transformed tree as constructed by
+    :param flattened_tree: the transformed tree as constructed by
         `flatten_tree`.
-      - `columns`: list of columns as constructed by `build_column_group_list`
-      - `selected_key_indices`: list of the column indices which the user
+    :param columns: list of columns as constructed by `build_column_group_list`
+    :param selected_key_indices: list of the column indices which the user
         selected for output
-      - `label_column`: The values of the first column, which is supposed to
+    :param label_column: The values of the first column, which is supposed to
         contain some sort of heading of the respective row.  For example, for a
         sample series table, the rows are the samples of the series, and their
         names are printed in the first column.  Therefore, the length of this
@@ -483,7 +470,7 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
 
         If all elements are empty, no label column is generated.  This is
         interesting for lab notebooks
-      - `label_column_heading`: Description of the very first column with the
+    :param label_column_heading: Description of the very first column with the
         table row headings.  This is the contents of the top left cell.  For
         example, for a sample series table, it may be ``"sample"`` because the
         rows are the samples of the series, and their names are printed in the
@@ -496,7 +483,7 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
     :type label_column: list of unicode
     :type label_column_heading: unicode
 
-    :Return:
+    :return:
       The table as a nested list.  The outer list are the rows, the inner the
       columns.  Each cell is a unicode string.
 

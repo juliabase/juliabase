@@ -93,15 +93,14 @@ def add(request):
     """View for adding a new topic.  This action is only allowed to the heads
     of institute groups.  The name of topics may contain arbitrary characters.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     permissions.assert_can_edit_users_topics(request.user)
     if request.method == "POST":
@@ -139,15 +138,14 @@ def list_(request):
     user may select one, which leads him to the membership view for this topic.
     If the user can't edit any topic, a 404 is raised.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     user = request.user
     editable_topics = [topic for topic in Topic.objects.filter(parent_topic=None).all()
@@ -192,17 +190,16 @@ def edit(request, id):
     restriction status.  This is only allowed to heads of institute groups and
     topic managers.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `id`: the id of the topic
+    :param request: the current HTTP Request object
+    :param id: the id of the topic
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     topic = get_object_or_404(Topic, id=utils.int_or_zero(id), parent_topic=None)
     permissions.assert_can_edit_topic(request.user, topic)

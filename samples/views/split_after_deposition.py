@@ -127,7 +127,7 @@ class GlobalNewDataForm(Form):
                                    help_text=_("(for all samples; leave empty for no change)"))
 
     def __init__(self, data=None, **kwargs):
-        """Form constructor.  I have to initialise the field here, both their
+        """I have to initialise the field here, both their
         value and their layout.
         """
         deposition_instance = kwargs.pop("deposition_instance")
@@ -142,16 +142,15 @@ def is_all_valid(original_data_forms, new_name_form_lists, global_new_data_form)
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
 
-    :Parameters:
-      - `original_data_forms`: all old samples and pieces numbers
-      - `new_name_form_lists`: new names for all pieces
-      - `global_new_data_form`: the global, overriding settings
+    :param original_data_forms: all old samples and pieces numbers
+    :param new_name_form_lists: new names for all pieces
+    :param global_new_data_form: the global, overriding settings
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_name_form_lists: list of list of `NewNameForm`
     :type global_new_data_form: `GlobalNewDataForm`
 
-    :Return:
+    :return:
       whether all forms are valid according to their ``is_valid()`` method
 
     :rtype: bool
@@ -169,16 +168,15 @@ def change_structure(user, original_data_forms, new_name_form_lists):
     objects themselves, they can't change the *structure* of the view.  This is
     performed here.
 
-    :Parameters:
-      - `user`: the current user
-      - `original_data_forms`: all old samples and pieces numbers
-      - `new_name_form_lists`: new names for all pieces
+    :param user: the current user
+    :param original_data_forms: all old samples and pieces numbers
+    :param new_name_form_lists: new names for all pieces
 
-    :type user: `django.contrib.auth.models.User`
+    :type user: django.contrib.auth.models.User
     :type original_data_forms: list of `OriginalDataForm`
     :type new_name_form_lists: list of list of `NewNameForm`
 
-    :Return:
+    :return:
       whether the structure was changed, i.e. whether the number of pieces of
       one sample has been changed by the user
 
@@ -205,22 +203,21 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
     """Performs all splits – if any – and renames the samples according to
     what was input by the user.
 
-    :Parameters:
-      - `original_data_forms`: all old samples and pieces numbers
-      - `new_name_form_lists`: new names for all pieces
-      - `global_new_data_form`: the global, overriding settings
-      - `deposition`: the deposition after which the splits took place
+    :param original_data_forms: all old samples and pieces numbers
+    :param new_name_form_lists: new names for all pieces
+    :param global_new_data_form: the global, overriding settings
+    :param deposition: the deposition after which the splits took place
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_name_form_lists: list of list of `NewNameForm`
     :type global_new_data_form: `GlobalNewDataForm`
-    :type deposition: `models.Deposition`
+    :type deposition: `samples.models.Deposition`
 
-    :Return:
+    :return:
       all sample splits that were performed; note that they are always
       complete, i.e. a sample death objects is always created, too
 
-    :rtype: list of `models.SampleSplit`
+    :rtype: list of `samples.models.SampleSplit`
     """
     global_new_location = global_new_data_form.cleaned_data["new_location"]
     sample_splits = []
@@ -270,16 +267,15 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
     database.  For example, no sample name must occur twice, and the sample
     names must not exist within the database already.
 
-    :Parameters:
-      - `original_data_forms`: all old samples and pieces numbers
-      - `new_name_form_lists`: new names for all pieces
-      - `deposition`: the deposition after which the split takes place
+    :param original_data_forms: all old samples and pieces numbers
+    :param new_name_form_lists: new names for all pieces
+    :param deposition: the deposition after which the split takes place
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_name_form_lists: list of `NewNameForm`
-    :type deposition: `models.Deposition`
+    :type deposition: `samples.models.Deposition`
 
-    :Return:
+    :return:
       whether all forms are consistent with each other and the database
 
     :rtype: bool
@@ -318,7 +314,8 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
     for new_name_forms, original_data_form in zip(new_name_form_lists, original_data_forms):
         if original_data_form.is_valid():
             original_sample = original_data_form.cleaned_data["sample"]
-            if deposition != original_sample.processes.exclude(content_type=ContentType.objects.get_for_model(models.Result)) \
+            if deposition != original_sample.processes.exclude(content_type=ContentType.objects.
+                                                               get_for_model(models.Result)) \
                 .order_by("-timestamp")[0].actual_instance and original_data_form.cleaned_data["number_of_pieces"] > 1:
                 original_data_form.add_error("sample",
                      _("The sample can't be split, because the deposition is not the latest process."))
@@ -354,19 +351,18 @@ def forms_from_post_data(user, post_data, deposition, remote_client):
     the global data.  The top-level new-data list has the same number of
     elements as the original-data list because they correspond to each other.
 
-    :Parameters:
-      - `user`: the current user
-      - `post_data`: the result from ``request.POST``
-      - `deposition`: the deposition after which this split takes place
-      - `remote_client`: whether the request was sent from the JuliaBase remote
+    :param user: the current user
+    :param post_data: the result from ``request.POST``
+    :param deposition: the deposition after which this split takes place
+    :param remote_client: whether the request was sent from the JuliaBase remote
         client
 
-    :type user: `django.contrib.auth.models.User`
-    :type post_data: ``QueryDict``
-    :type deposition: `models.Deposition`
+    :type user: django.contrib.auth.models.User
+    :type post_data: QueryDict
+    :type deposition: `samples.models.Deposition`
     :type remote_client: bool
 
-    :Return:
+    :return:
       list of original data (i.e. old names) of every sample, list of lists of
       the new data (i.e. piece names), global new data
 
@@ -400,22 +396,21 @@ def forms_from_database(user, deposition, remote_client, new_names):
     new data.  The top-level new data list has the same number of elements as
     the old data list because they correspond to each other.
 
-    :Parameters:
-      - `user`: the current user
-      - `deposition`: the deposition to be converted to forms.
-      - `remote_client`: whether the request was sent from the JuliaBase remote
+    :param user: the current user
+    :param deposition: the deposition to be converted to forms.
+    :param remote_client: whether the request was sent from the JuliaBase remote
         client
-      - `new_names`: dictionary which maps sample IDs to suggested new names of
+    :param new_names: dictionary which maps sample IDs to suggested new names of
         this sample; by default (i.e., if the sample ID doesn't occur in
         ``new_names``), the suggested new name is the deposition number, or the
         old name iff it is a new-style name
 
-    :type user: `django.contrib.auth.models.User`
-    :type deposition: `models.Deposition`
+    :type user: django.contrib.auth.models.User
+    :type deposition: `samples.models.Deposition`
     :type remote_client: bool
     :type new_names: dict mapping int to unicode
 
-    :Return:
+    :return:
       list of original data (i.e. old names) of every sample, list of lists of
       the new data (i.e. piece names), global new data
 
@@ -459,18 +454,17 @@ def split_and_rename_after_deposition(request, deposition_number):
     ``new-name-21=super`` where 21 is the sample ID and “super” is the
     suggested new name of this sample.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `deposition_number`: the number of the deposition after which samples
+    :param request: the current HTTP Request object
+    :param deposition_number: the number of the deposition after which samples
         should be split and/or renamed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type deposition_number: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     deposition = get_object_or_404(models.Deposition, number=deposition_number).actual_instance
     permissions.assert_can_edit_physical_process(request.user, deposition)

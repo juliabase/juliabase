@@ -52,18 +52,17 @@ def read_crawler_log(filepath):
 def view(request, process_class_name):
     """View for log files of crawlers.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_class_name`: the name of the crawler whose log file is about to be
+    :param request: the current HTTP Request object
+    :param process_class_name: the name of the crawler whose log file is about to be
         shown
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_class_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     for process_class in permissions.get_all_addable_physical_process_models().keys():
         if camel_case_to_underscores(process_class.__name__) == process_class_name:
@@ -90,15 +89,14 @@ def view(request, process_class_name):
 def list(request):
     """List all crawlers and link to their log files.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
         logs_whitelist = settings.CRAWLER_LOGS_WHITELIST

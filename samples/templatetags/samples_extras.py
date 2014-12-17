@@ -47,16 +47,16 @@ register = template.Library()
 
 @register.filter
 def round(value, digits):
-    """Filter for rounding a numeric value to a fixed number of significant
-    digits.  The result may be used for the `quantity` filter below.
+    """Filter for rounding a numeric value to a fixed number of significant digits.
+    The result may be used for the :py:func:`quantity` filter below.
     """
     return samples.views.utils.round(value, digits)
 
 
 @register.filter(needs_autoescape=True)
 def quantity(value, unit=None, autoescape=False):
-    """Filter for pretty-printing a physical quantity.  It converts 3.4e-3
-    into 3.4·10⁻³.  The number is the part that is actually filtered, while the
+    """Filter for pretty-printing a physical quantity.  It converts ``3.4e-3`` into
+    ``3.4·10⁻³``.  The number is the part that is actually filtered, while the
     unit is the optional argument of this filter.  So, you may write::
 
         {{ deposition.pressure|quantity:"mbar" }}
@@ -160,10 +160,10 @@ def verbose_name(parser, token):
 
 @register.filter(needs_autoescape=True)
 def get_really_full_name(user, anchor_type="http", autoescape=False):
-    """Unfortunately, Django's get_full_name method for users returns the
-    empty string if the user has no first and surname set. However, it'd be
-    sensible to use the login name as a fallback then. This is realised here.
-    See also `samples.views.utils.get_really_full_name`.
+    """Unfortunately, Django's get_full_name method for users returns the empty
+    string if the user has no first and surname set. However, it'd be sensible
+    to use the login name as a fallback then. This is realised here.  See also
+    :py:func:`samples.views.utils.get_really_full_name`.
 
     The optional parameter to this filter determines whether the name should be
     linked or not, and if so, how.  There are three possible parameter values:
@@ -177,7 +177,6 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     ``"plain"``
         There should be no link, the name is just printed as plain unformatted
         text.
-
     """
     if isinstance(user, django.contrib.auth.models.User):
         return jb_common.templatetags.juliabase.get_really_full_name(user, anchor_type, autoescape)
@@ -228,12 +227,11 @@ def timestamp(value, minimal_inaccuracy=0):
     """Filter for formatting the timestamp of a process properly to reflect
     the inaccuracy connected with this timestamp.
 
-    :Parameters:
-      - `value`: the process whose timestamp should be formatted
+    :param value: the process whose timestamp should be formatted
 
-    :type value: `models.Process` or dict mapping str to object
+    :type value: `samples.models.Process` or dict mapping str to object
 
-    :Return:
+    :return:
       the rendered timestamp
 
     :rtype: unicode
@@ -253,14 +251,13 @@ def status_timestamp(value, type_):
     """Filter for formatting the timestamp of a status message properly to
     reflect the inaccuracy connected with this timestamp.
 
-    :Parameters:
-      - `value`: the status message timestamp should be formatted
-      - `type_`: either ``"begin"`` or ``"end"``
+    :param value: the status message timestamp should be formatted
+    :param type_: either ``"begin"`` or ``"end"``
 
     :type value: ``samples.views.status.Status``
     :type type_: str
 
-    :Return:
+    :return:
       the rendered timestamp
 
     :rtype: unicode
@@ -637,12 +634,11 @@ def lab_notebook_comments(process, position):
     The argument ``position`` must be ``before`` or ``after`` to specify the position
     related to the process.
 
-    :Parameters:
-     -`process`: the actual process instance
-     -`position`: the argument to specify whether the comment is set
-     before or after the process.
+    :param process: the actual process instance
+    :param position: the argument to specify whether the comment is set
+        before or after the process.
 
-    :type process: ``models.Process``
+    :type process: `samples.models.Process`
     :type position: str
     """
     if position.lower() == "before":

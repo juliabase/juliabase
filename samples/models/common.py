@@ -13,12 +13,13 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""The most basic models like ``Sample``, ``SampleSeries``, ``UserDetails``
-etc.  It is important to see that this module is imported by almost all other
-models modules.  Therefore, you *must* *not* import any JuliaBase models module
-here, in particular not ``models.py``.  Otherwise, you'd end up with
-irresolvable cyclic imports.  For the same reason, it is sometimes (e.g. for
-`samples.permissions`) necessary to avoid the ``from`` keyword.
+"""The most basic models like `Sample`, `Process`, `SampleSeries`,
+`UserDetails` etc.  It is important to see that this module is imported by
+almost all other models modules.  Therefore, you *must* *not* import any
+JuliaBase models module here, in particular not ``models.py``.  Otherwise,
+you'd end up with irresolvable cyclic imports.  In order to avoid cyclic
+import, it is sometimes (e.g. for ``samples.permissions``) necessary to avoid
+the ``from`` keyword.
 """
 
 from __future__ import absolute_import, division, unicode_literals
@@ -59,14 +60,13 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
     order to conveniently fill the :py:class:`~samples.data_tree.DataNode` with
     the fields.
 
-    :Parameters:
-      - `instance`: model field instance from which this is called
-      - `data_node`: the data node the items of which the fields should be
+    :param instance: model field instance from which this is called
+    :param data_node: the data node the items of which the fields should be
         added; this means, it is changed in place
-      - `additional_blacklist`: field names that should not be added
+    :param additional_blacklist: field names that should not be added
 
-    :type instance: `model.Model`
-    :type data_node: `DataNode`
+    :type instance: model.Model
+    :type data_node: `samples.data_tree.DataNode`
     :type additional_blacklist: set of str
     """
     blacklist = _table_export_blacklist | additional_blacklist
@@ -86,20 +86,20 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
 
 
 def remove_data_item(instance, data_node, field_name):
-    """Remove an item from a `DataNode` with a certain key.  This is called
-    from a `get_data_for_table_export` method for refine the `DataNode`.
-    Typically, the items of the `DataNode` have been populated by an inherited
+    """Remove an item from a `~samples.data_tree.DataNode` with a certain key.
+    This is called from a `get_data_for_table_export` method for refine the
+    `~samples.data_tree.DataNode`.  Typically, the items of the
+    `~samples.data_tree.DataNode` have been populated by an inherited
     `fields_to_data_items`, and in this step, too many fields were added.  This
     can be corrected by call this function.
 
-    :Parameters:
-      - `instance`: model field instance from which this is called
-      - `data_node`: the data node the items of which should be filtered; this
+    :param instance: model field instance from which this is called
+    :param data_node: the data node the items of which should be filtered; this
         means that this variable is changed in place
-      - `field_name`: name of the field to be removed, if available
+    :param field_name: name of the field to be removed, if available
 
-    :type instance: `model.Model`
-    :type data_node: `DataNode`
+    :type instance: model.Model
+    :type data_node: `samples.data_tree.DataNode`
     :type field_name: str
     """
     key = instance._meta.get_field(field_name).verbose_name
@@ -198,8 +198,7 @@ class Process(PolymorphicModel):
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
 
-        :Parameters:
-          - `with_relations`: If ``True`` (default), also touch the related
+        :param with_relations: If ``True`` (default), also touch the related
             samples.  Should be set to ``False`` if called from another
             ``save`` method in order to avoid endless recursion.
 
@@ -256,7 +255,7 @@ class Process(PolymorphicModel):
         framework.  However currently, JuliaBase uses it only explicitly in
         re-directions and links in templates.
 
-        :Return:
+        :return:
           Relative URL, however, starting with a “/”, to the page where one can
           view the object.
 
@@ -271,13 +270,12 @@ class Process(PolymorphicModel):
         """Get the location of a plot in the local filesystem as well as on
         the webpage.  Usually, you will not override this method.
 
-        :Parameters:
-          - `plot_id`: the unique ID of the image.  This is mostly ``""``
+        :param plot_id: the unique ID of the image.  This is mostly ``""``
             because most measurement models have only one graphics.
 
         :type plot_id: unicode
 
-        :Return:
+        :return:
           a dictionary containing the following keys:
 
           =========================  =========================================
@@ -318,25 +316,23 @@ class Process(PolymorphicModel):
         This method must be overridden in derived classes that wish to offer
         plots.
 
-        :Parameters:
-          - `axes`: The Matplotlib axes to which the plot must be drawn.  You
+        :param axes: The Matplotlib axes to which the plot must be drawn.  You
             call methods of this parameter to draw the plot,
             e.g. ``axes.plot(x_values, y_values)``.
-          - `plot_id`: The ID of the plot.  For most models offering plots,
+        :param plot_id: The ID of the plot.  For most models offering plots,
             this can only be the empty string and as such is not used it all in
             this method.
-          - `filename`: the filename of the original data file; it may also be
+        :param filename: the filename of the original data file; it may also be
             a list of filenames if more than one file lead to the plot
-          - `for_thumbnail`: whether we do a plot for the thumbnail bitmap; for
+        :param for_thumbnail: whether we do a plot for the thumbnail bitmap; for
             simple plots, this can be ignored
 
-        :type axes: ``matplotlib.axes.Axes``
+        :type axes: matplotlib.axes.Axes
         :type plot_id: unicode
         :type filename: str or list of str
         :type for_thumbnail: bool
 
-        :Exceptions:
-          - `PlotError`: if anything went wrong during the generation of the
+        :raises PlotError: if anything went wrong during the generation of the
             plot
         """
         raise NotImplementedError
@@ -349,21 +345,20 @@ class Process(PolymorphicModel):
         This method must be overridden in derived classes that wish to offer
         plots.
 
-        :Parameters:
-          - `plot_id`: the ID of the plot.  For most models offering plots,
+        :param plot_id: the ID of the plot.  For most models offering plots,
             this can only be the empty string and as such is not used it all in
             this method.  Note that you must not assume that its value is
             valid.
 
         :type plot_id: unicode
 
-        :Return:
+        :return:
           The absolute path of the file(s) with the original data for this plot
           in the local filesystem.  It's ``None`` if there is no plot available
           for this process.  If there are no raw datafile but you want to draw
           a plot nevertheless (e.g. from process data), return an empty list.
 
-        :rtype: list of str, str, or ``NoneType``
+        :rtype: list of str, str, or NoneType
         """
         raise NotImplementedError
 
@@ -378,14 +373,13 @@ class Process(PolymorphicModel):
         The default behaviour is a basename which consists of the process class
         name, the process ID, and – if given – the plot ID.
 
-        :Parameters:
-          - `plot_id`: the ID of the plot.  For most models offering plots,
+        :param plot_id: the ID of the plot.  For most models offering plots,
             this can only be the empty string and as such is not used it all in
             this method then.
 
         :type plot_id: unicode
 
-        :Return:
+        :return:
           the base name for the plot files, without directories or extension
 
         :rtype: unicode
@@ -408,7 +402,7 @@ class Process(PolymorphicModel):
         You will rarely need to override this method.  One case is if you need
         to include reverse relation fields, e.g. of sub-measurements.
 
-        :Return:
+        :return:
           the content of all fields of this process
 
         :rtype: `dict`
@@ -429,10 +423,11 @@ class Process(PolymorphicModel):
         If you're lucky, you don't need to override this method in derived
         processes.  You may need to do this in case of sub-models contained in
         a reverse foreign key.  Note that the `Deposition` class can handle
-        layers already.  Moreover, you may wish to refine the `DataNode` by
-        adding further fields and by using `remove_data_item`.
+        layers already.  Moreover, you may wish to refine the
+        `~samples.data_tree.DataNode` by adding further fields and by using
+        `remove_data_item`.
 
-        :Return:
+        :return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
@@ -456,16 +451,16 @@ class Process(PolymorphicModel):
         calculated for another user and simply adapt it to the current one.
         This is important because this is a frequent use case.
 
-        :Parameters:
-          - `user_settings_hash`: hash over all settings which affect the
+        :param user_settings_hash: hash over all settings which affect the
             rendering of processes, e. g. language
-          - `local_context`: the local sample context; currently, this is only
-            relevant to `SampleSplit`, see `SampleSplit.get_cache_key`.
+        :param local_context: the local sample context; currently, this is only
+            relevant to `SampleSplit`, see
+            :py:meth:`SampleSplit.get_cache_key`.
 
         :type user_settings_hash: str
         :type local_context: dict mapping str to ``object``
 
-        :Return:
+        :return:
           the cache key for this process instance
 
         :rtype: str
@@ -497,19 +492,18 @@ class Process(PolymorphicModel):
         Note that it is necessary that ``self`` is the actual instance and not
         a parent class.
 
-        :Parameters:
-          - `user`: the current user
-          - `old_context`: The present context for the process.  This may be
+        :param user: the current user
+        :param old_context: The present context for the process.  This may be
              only the sample context (i. e. ``sample``, ``original_sample``
              etc) if the process hasn't been found in the cache. Otherwise, it
              is the full process context, although (possibly) for another user,
              so it needs to be adapted.  This dictionary will not be touched in
              this method.
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
         :type old_context: dict mapping str to ``object``
 
-        :Return:
+        :return:
           the adapted full context for the process
 
         :rtype: dict mapping str to ``object``
@@ -562,13 +556,13 @@ class Process(PolymorphicModel):
         """Class method for generating the search tree node for this model
         instance.  This particular method is an example for generating this
         node automatically for this and all derived models.  If it raises a
-        `NotImplementedError` or if the method doesn't exist at all, the
+        ``NotImplementedError`` or if the method doesn't exist at all, the
         respective model cannot be searched for.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         if cls == Process:
             raise NotImplementedError
@@ -621,7 +615,7 @@ class PhysicalProcess(Process):
         this process class should not be explicitly added by users (but is
         created by the program somehow).
 
-        :Return:
+        :return:
           the full URL to the add page for this process
 
         :rtype: str
@@ -648,7 +642,7 @@ def get_all_searchable_physical_processes():
     """Returns all physical processes which have a ``get_search_tree_node``
     method.
 
-    :Return:
+    :return:
       all physical process classes that are searchable
 
     :rtype: tuple of ``class``
@@ -696,11 +690,10 @@ class Sample(models.Model):
         It also touches all ancestors and children and the associated split
         processes.
 
-        :Parameters:
-          - `with_relations`: If ``True`` (default), also touch the related
+        :param with_relations: If ``True`` (default), also touch the related
             samples.  Should be set to ``False`` if called from another
             ``save`` method in order to avoid endless recursion.
-          - `from_split`: When walking through the decendents, this is set to
+        :param from_split: When walking through the decendents, this is set to
             the originating split so that the child sample knows which of its
             splits should be followed, too.  Thus, only the timestamp of
             ``from_split`` is actually used.  It must be ``None`` (default)
@@ -708,7 +701,7 @@ class Sample(models.Model):
             walking through the ancestors.
 
         :type with_relations: bool
-        :type from_split: `SampleSplit` or ``NoneType``
+        :type from_split: `SampleSplit` or NoneType
         """
         keys_list_key = "sample-keys:{0}".format(self.pk)
         with cache_key_locked("sample-lock:{0}".format(self.pk)):
@@ -760,14 +753,13 @@ class Sample(models.Model):
         non-breaking space before, of the empty string if the sample doesn't
         have tags.  The tags are pruned to 10 characters if necessary.
 
-        :Parameters:
-          - `user`: The user for which the tags should be displayed.  If the
+        :param user: The user for which the tags should be displayed.  If the
             user is not allowed to view the sample fully, no tags are
             returned.
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
 
-        :Return:
+        :return:
           the shortened tags in parentheses
 
         :rtype: unicode
@@ -782,14 +774,13 @@ class Sample(models.Model):
         """Returns the sample's name with possible tags attached.  This is a
         convenience method which simply combines `__str__` and `tags_suffix`.
 
-        :Parameters:
-          - `user`: The user for which the tags should be displayed.  If the
+        :param user: The user for which the tags should be displayed.  If the
             user is not allowed to view the sample fully, no tags are
             returned.
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
 
-        :Return:
+        :return:
           the name of the sample, possibly with shortened tags
 
         :rtype: unicode
@@ -804,10 +795,10 @@ class Sample(models.Model):
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
-        the current one.  Note that the `processes` field is not set because
+        the current one.  Note that the ``processes`` field is not set because
         many-to-many fields can only be set after the object was saved.
 
-        :Return:
+        :return:
           A new sample with the same data as the current.
 
         :rtype: `Sample`
@@ -823,10 +814,10 @@ class Sample(models.Model):
         """Test whether the most recent process applied to the sample – except
         for result processes – was a split.
 
-        :Return:
+        :return:
           the split, if it is the most recent process, else ``None``
 
-        :rtype: `models.SampleSplit` or ``NoneType``
+        :rtype: `SampleSplit` or NoneType
         """
         for process in self.processes.order_by("-timestamp"):
             process = process.actual_instance
@@ -850,11 +841,11 @@ class Sample(models.Model):
         This in turn can then be used in the overriden ``show_sample.html``
         template in the ``sample_details`` block.
 
-        :Return:
+        :return:
           the sample details object, or ``None`` if there aren't any (because
           there is no model at all or no particular details for *this* sample)
 
-        :rtype: ``SampleDetails`` or ``NoneType``
+        :rtype: ``SampleDetails`` or NoneType
         """
         try:
             return self.sample_details
@@ -869,14 +860,13 @@ class Sample(models.Model):
         this data is used when a non-browser client retrieves a single resource
         and expects JSON output.
 
-        :Parameters:
-          - `only_processes`: Whether only processes should be included.  It is
+        :param only_processes: Whether only processes should be included.  It is
             not part of the official `get_data` API.  I use it only to avoid
             having a special inner function in this method.
 
         :type only_processes: bool
 
-        :Return:
+        :return:
           the content of all fields of this process
 
         :rtype: `dict`
@@ -902,7 +892,7 @@ class Sample(models.Model):
         top-level node is a process of the sample.  See the
         `samples.views.table_export` module for all the glory details.
 
-        :Return:
+        :return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
@@ -927,10 +917,10 @@ class Sample(models.Model):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         search_fields = [search.TextSearchField(cls, "name"),
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
@@ -1084,14 +1074,14 @@ sample_death_reasons = (
     ("lost", _("lost and unfindable")),
     ("destroyed", _("completely destroyed")),
     )
-"""Contains all possible choices for `SampleDeath.reason`.
+"""Contains all possible choices for :py:attr:`SampleDeath.reason`.
 """
 
 class SampleDeath(Process):
     """This special process marks the end of the sample.  It can have various
-    reasons accoring to `sample_death_reasons`.  It is impossible to add
-    processes to a sample if it has a `SampleDeath` process, and its timestamp
-    must be the last.
+    reasons according to :py:var:`sample_death_reasons`.  It is impossible to
+    add processes to a sample if it has a `SampleDeath` process, and its
+    timestamp must be the last.
     """
         # Translators: Of a sample
     reason = models.CharField(_("cause of death"), max_length=50, choices=sample_death_reasons)
@@ -1139,7 +1129,7 @@ class Result(Process):
         verbose_name_plural = _("results")
 
     def save(self, *args, **kwargs):
-        """Do everything in `Process.save`, plus touching all samples in all
+        """Do everything in :py:meth:`Process.save`, plus touching all samples in all
         connected sample series and the series themselves.
         """
         with_relations = kwargs.get("with_relations", True)
@@ -1179,7 +1169,7 @@ class Result(Process):
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
         on the original file type, and stored in ``settings.MEDIA_ROOT``.
 
-        :Return:
+        :return:
           a dictionary containing the following keys:
 
           =========================  =========================================
@@ -1225,12 +1215,12 @@ class Result(Process):
 
     def get_data(self):
         """Extract the data of this result process as a dictionary.  See
-        `Process.get_data` for more information.
+        :py:meth:`Process.get_data` for more information.
 
-        :Return:
+        :return:
           the content of all fields of this process
 
-        :rtype: `dict`
+        :rtype: dict
         """
         data = super(Result, self).get_data()
         data["sample_series"] = self.sample_series.values_list("pk", flat=True)
@@ -1239,8 +1229,8 @@ class Result(Process):
     def get_data_for_table_export(self):
         """Extract the data of this result process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the table
-        data export.  See the `samples.views.table_export` module for all the
-        glory details.
+        data export.  See the :py:mod:`samples.views.table_export` module for
+        all the glory details.
 
         However, I should point out the peculiarities of result processes in
         this respect.  Result comments are exported by the parent class, here
@@ -1251,7 +1241,7 @@ class Result(Process):
         If the result table has more than one row, for each row, a sub-node is
         generated, which contains the row columns in its key–value list.
 
-        :Return:
+        :return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
@@ -1298,8 +1288,7 @@ class SampleSeries(models.Model):
     def save(self, *args, **kwargs):
         """Saves the instance.
 
-        :Parameters:
-          - `touch_samples`: If ``True``, also touch all samples in this
+        :param touch_samples: If ``True``, also touch all samples in this
             series.  ``False`` is default because samples don't store
             information about the sample series that may change (note that the
             sample series' name never changes).
@@ -1325,7 +1314,7 @@ class SampleSeries(models.Model):
         is used when a non-browser client retrieves a single resource and
         expects JSON output.
 
-        :Return:
+        :return:
           the content of all fields of this sample series
 
         :rtype: `dict`
@@ -1340,7 +1329,7 @@ class SampleSeries(models.Model):
         the top-level node is a sample of the sample series.  See the
         `samples.views.table_export` module for all the glory details.
 
-        :Return:
+        :return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
@@ -1366,10 +1355,10 @@ class SampleSeries(models.Model):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         search_fields = [search.TextSearchField(cls, "name"),
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
@@ -1379,10 +1368,10 @@ class SampleSeries(models.Model):
         return search.SearchTreeNode(cls, related_models, search_fields)
 
     def get_hash_value(self):
-        """Calculates a sha1 hash value out of the sample series name
+        """Calculates a SHA-1 hash value out of the sample series name
 
-        :Return:
-         sha1 hash hex value
+        :return:
+          sha1 hash hex value
 
         :rtype: str
         """
@@ -1391,10 +1380,10 @@ class SampleSeries(models.Model):
 
 @python_2_unicode_compatible
 class Initials(models.Model):
-    """Model for initials of people or external operators.  They are used to
-    build namespaces for sample names and sample series names.  They must match
-    the regular expression ``"[A-Z]{2,4}[0-9]*"`` with the additional
-    constraint to be no longer than 4 characters.
+    """Model for initials of people or external operators.  They are used to build
+    namespaces for sample names and sample series names.  They must match the
+    regular expression ``"[A-Z]{2,4}[0-9]*"`` with the additional constraint to
+    be no longer than 4 characters.
 
     You should not delete an entry in this table, and you must never have an
     entry where ``user`` and ``external_operator`` are both set.  It is,
@@ -1420,7 +1409,7 @@ class Initials(models.Model):
 @python_2_unicode_compatible
 class UserDetails(models.Model):
     """Model for further details about a user, beyond
-    ``django.contrib.auth.models.User``.  Here, you have all data about a
+    django.contrib.auth.models.User.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
     user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
@@ -1482,12 +1471,12 @@ class UserDetails(models.Model):
         return six.text_type(self.user)
 
     def touch_display_settings(self):
-        """Set the last modifications of sample settings to the current time.
-        This method must be called every time when something was changed which
+        """Set the last modifications of sample settings to the current time.  This
+        method must be called every time when something was changed which
         influences the display of a sample datasheet (and is not covered by
         other timestamps (``my_samples_timestamp``,
-        `jb_common.models.UserDetails.layout_last_modified`), e. g. topic
-        memberships.  It is used for efficient caching.
+        :py:attr:`jb_common.models.UserDetails.layout_last_modified`),
+        e.g. topic memberships.  It is used for efficient caching.
         """
         self.display_settings_timestamp = datetime.datetime.now()
         self.save()
@@ -1621,12 +1610,11 @@ class ProcessWithSamplePositions(models.Model):
 
     def get_cache_key(self, user_settings_hash, local_context):
         """Generates an own cache key for every instance of this process.  If a process
-        inherits from both ``Process`` class and ``ProcessWithSamplePositions``
+        inherits from both `Process` class and ``ProcessWithSamplePositions``
         class, you have to make sure that the process uses this method for the
-        cache key and not the method from the ``Process`` class.
+        cache key and not the method from the `Process` class.
 
-        For the parameter description see
-            ``samples.models.common.Process.get_cache_key()``
+        For the parameter description see :py:meth:`Process.get_cache_key`.
         """
         hash_ = hashlib.sha1()
         hash_.update(user_settings_hash.encode("utf-8"))

@@ -29,8 +29,6 @@ class StructuringForm(form_utils.ProcessForm):
     combined_operator = form_utils.OperatorField(label=_("Operator"))
 
     def __init__(self, user, *args, **kwargs):
-        """Form constructor.
-        """
         super(StructuringForm, self).__init__(*args, **kwargs)
         old_instance = kwargs.get("instance")
         self.user = user
@@ -76,20 +74,19 @@ def is_all_valid(structuring_form, sample_form, remove_from_my_samples_form, edi
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
 
-    :Parameters:
-      - `structuring_form`: a bound structuring form
-      - `sample_form`: a bound sample selection form
-      - `overwrite_form`: a bound overwrite data form
-      - `remove_from_my_samples_form`: a bound remove-from-my-samples form
-      - `edit_description_form`: a bound edit-description form
+    :param structuring_form: a bound structuring form
+    :param sample_form: a bound sample selection form
+    :param overwrite_form: a bound overwrite data form
+    :param remove_from_my_samples_form: a bound remove-from-my-samples form
+    :param edit_description_form: a bound edit-description form
 
     :type structuring_form: `StructuringForm`
-    :type sample_form: `SampleForm`
-    :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or
-      ``NoneType``
-    :type edit_description_form: `form_utils.EditDescriptionForm`
+    :type sample_form: `inm.views.form_utils.SampleForm`
+    :type remove_from_my_samples_form:
+        `samples.views.form_utils.RemoveFromMySamplesForm` or NoneType
+    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
 
-    :Return:
+    :return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
       ``True``.
 
@@ -108,14 +105,13 @@ def is_referentially_valid(structuring_form, sample_form):
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the structuring process.
 
-    :Parameters:
-      - `structuring_form`: a bound StructuringForm
-      - `sample_form`: a bound sample selection form
+    :param structuring_form: a bound StructuringForm
+    :param sample_form: a bound sample selection form
 
     :type structuring_form: `StructuringForm`
-    :type sample_form: `SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleForm`
 
-    :Return:
+    :return:
       whether the forms are consistent with each other and the database
 
     :rtype: bool
@@ -132,19 +128,18 @@ def is_referentially_valid(structuring_form, sample_form):
 def edit(request, structuring_id):
     """Edit and create view for structuring processes.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `structuring_id`: The process id of the structuring form process to
+    :param request: the current HTTP Request object
+    :param structuring_id: The process id of the structuring form process to
         be edited.  If it is ``None``, a new structuring is added to the
         database.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type structuring_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     structuring = get_object_or_404(institute_models.Structuring, id=structuring_id) \
         if structuring_id is not None else None

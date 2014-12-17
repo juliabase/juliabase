@@ -47,12 +47,11 @@ class DataNode(object):
     def __init__(self, instance, descriptive_name=""):
         """Class constructor.
 
-        :Parameters:
-          - `instance`: The model instance whose data is extracted, or the name
+        :param instance: The model instance whose data is extracted, or the name
             that should be used for this node.  If you pass an instance, the
-            name is the *type* of the instance, e.g. “6-chamber deposition” or
+            name is the *type* of the instance, e.g. “5-chamber deposition” or
             “sample”.
-          - `descriptive_name`: The “first column” name of the node.  It should
+        :param descriptive_name: The “first column” name of the node.  It should
             be more concrete than just the type but it depends.  For samples
             for example, it is the sample's name.  By default, it is the type
             of the instance or the string you gave as ``instance``.
@@ -75,11 +74,10 @@ class DataNode(object):
         1. If two sister nodes share the same name, a number like ``" #1"`` is
            appended.
 
-        2. The names of the ancestor nodes are prepended, e.g. ``"6-chamber
+        2. The names of the ancestor nodes are prepended, e.g. ``"5-chamber
            deposition, layer #2"``
 
-        :Parameters:
-          - `renaming_offset`: number of the nesting levels still to be stepped
+        :param renaming_offset: number of the nesting levels still to be stepped
             down before disambiguation of the node names takes place.
 
         :type renaming_offset: int
@@ -115,16 +113,15 @@ class DataNode(object):
         same item keys, this is unimportant.  But if ``Nice result #2`` of two
         samples in the exported series didn't share the same item keys, this
         would result in a ``KeyError`` exception in
-        ``cvs_export.Column.get_value``.
+        :py:meth:`samples.views.table_export.Column.get_value`.
 
         This is not optimal for performance reasons.  But it is much easier
-        than to train ``build_column_group_list`` to handle it.
+        than to train `build_column_group_list` to handle it.
 
-        :Parameters:
-          - `key_sets`: The item keys for all node names.  It is only used in
+        :param key_sets: The item keys for all node names.  It is only used in
             the recursion.  If you call this method, you never give this
             parameter.
-          - `item_cache`: The key names of the items for a given node.  Note
+        :param item_cache: The key names of the items for a given node.  Note
             that in contrast to `key_sets`, the keys of this are the nodes
             themselves rather than the disambiguated node names.  It is used
             for performance's sake.  If you call this method, you never give
@@ -169,10 +166,10 @@ class DataItem(object):
     :ivar origin: an optional name of the class from where this data item comes
       from.  Its necessity is not easy to explain.  The problem is that we have
       inheritance in the models, for example, a deposition is derived from
-      `models.Process`.  When calling the ``get_data`` method of a deposition,
-      it first calls the ``get_data`` method of ``models.Process``, which adds
-      operator, timestamp, and comments to the items list.  However, the same
-      is true for all other processes.
+      `samples.models.Process`.  When calling the ``get_data`` method of a
+      deposition, it first calls the ``get_data`` method of
+      ``samples.models.Process``, which adds operator, timestamp, and comments
+      to the items list.  However, the same is true for all other processes.
 
       But this means that e.g. the “timestamp” column ends up in different
       column groups when exporting the processes as rows in a table.  That's
@@ -181,25 +178,24 @@ class DataItem(object):
       Thus, in order to preserve inheritance, such inherited attributes are
       called “shared columns” in JuliaBase's CSV export.  They are marked with
       a non-``None`` ``origin`` parameter which just contains a symbol for the
-      model class, e.g. ``"process"`` for ``models.Process``.
+      model class, e.g. ``"process"`` for ``samples.models.Process``.
 
     :type key: unicode
     :type value: object
-    :type origin: unicode or ``NoneType``
+    :type origin: unicode or NoneType
     """
 
     def __init__(self, key, value, origin=None):
         """Class constructor.
 
-        :Parameters:
-          - `key`: the key name of the data item
-          - `value`: the value of the data item
-          - `origin`: an optional name of the class from where this data item
+        :param key: the key name of the data item
+        :param value: the value of the data item
+        :param origin: an optional name of the class from where this data item
             comes from.
 
-        :type key: unicode or `Promise`
+        :type key: unicode or Promise (Django lazy string object)
         :type value: object
-        :type origin: unicode or ``NoneType``
+        :type origin: unicode or NoneType
         """
         assert isinstance(key, (six.string_types, Promise))
         self.key, self.value, self.origin = key, value, origin

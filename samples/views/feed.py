@@ -40,15 +40,14 @@ def indent(elem, level=0):
     routine may be embedded directly into ElementTree in a future version of
     it.
 
-    :Parameters:
-      - `elem`: the root element of an ElementTree tree
-      - `level`: the indentation level of the root element, in numbers of space
+    :param elem: the root element of an ElementTree tree
+    :param level: the indentation level of the root element, in numbers of space
         characters.
 
     :type elem: xml.etree.ElementTree.Element
     :type level: int
 
-    :Return:
+    :return:
       The same tree but with added whitespace in its ``text`` and ``tail``
       attributes.
 
@@ -78,13 +77,12 @@ def get_timezone_string(timestamp=None):
     ``"+02:00"`` or ``"Z"``.  It can also deal with timezones with a difference
     to GMT which is not only whole hours.
 
-    :Parameters:
-      - `timestamp`: the point in time for which the timezome should be
+    :param timestamp: the point in time for which the timezome should be
         calculated
 
-    :type timestamp: ``datetime.datetime`` or ``NoneType``
+    :type timestamp: datetime.datetime or NoneType
 
-    :Return:
+    :return:
       the timezone information string, ready for being appended to a timestamp
       string
 
@@ -108,12 +106,11 @@ def get_timezone_string(timestamp=None):
 def format_timestamp(timestamp):
     """Convert a timestamp to an Atom-1.0-compatible string.
 
-    :Parameters:
-      - `timestamp`: the timestamp to be converted
+    :param timestamp: the timestamp to be converted
 
-    :type timestamp: ``datetime.datetime``
+    :type timestamp: datetime.datetime
 
-    :Return:
+    :return:
       the timestamp string, ready for use in an Atom feed
 
     :rtype: str
@@ -133,21 +130,20 @@ def show(request, username, user_hash):
     to the URL in the query string.  This should be enough security for this
     purpose.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `username`: the login name of the user for whic the news should be
+    :param request: the current HTTP Request object
+    :param username: the login name of the user for whic the news should be
         delivered
-      - `user_hash`: the secret user hash, which works as an ersatz password
+    :param user_hash: the secret user hash, which works as an ersatz password
         because the feed clients can't login.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type username: str
     :type user_hash: str
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     permissions.assert_can_view_feed(user_hash, user)
@@ -182,8 +178,8 @@ def show(request, username, user_hash):
                 continue
         entry_element = ElementTree.SubElement(feed, "entry")
         ElementTree.SubElement(entry_element, "id").text = \
-            "tag:{0},{1}:{2}".format(request.build_absolute_uri("/").partition("//")[2][:-1], entry.timestamp.strftime("%Y-%m-%d"),
-                                     entry.sha1_hash)
+            "tag:{0},{1}:{2}".format(request.build_absolute_uri("/").partition("//")[2][:-1],
+                                     entry.timestamp.strftime("%Y-%m-%d"), entry.sha1_hash)
         metadata = entry.get_metadata()
         ElementTree.SubElement(entry_element, "title").text = metadata["title"]
         ElementTree.SubElement(entry_element, "updated").text = format_timestamp(entry.timestamp)
@@ -202,6 +198,7 @@ def show(request, username, user_hash):
         content.text = template.render(Context(context_dict))
         content.attrib["type"] = "html"
 #    indent(feed)
-    return HttpResponse("""<?xml version="1.0"?>\n<?xml-stylesheet type="text/xsl" href="/media/samples/xslt/atom2html.xslt"?>\n"""
+    return HttpResponse("""<?xml version="1.0"?>\n"""
+                        """<?xml-stylesheet type="text/xsl" href="/media/samples/xslt/atom2html.xslt"?>\n"""
                         + ElementTree.tostring(feed, "utf-8").decode("utf-8"),
                         content_type="application/xml; charset=utf-8")

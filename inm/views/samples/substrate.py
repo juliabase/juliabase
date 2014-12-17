@@ -95,17 +95,16 @@ def is_referentially_valid(substrate_form, samples_form, edit_description_form):
     """Test whether all forms are consistent with each other and with the
     database.  For example, no sample must get more than one substrate.
 
-    :Parameters:
-      - `substrate_form`: form with the substrate core data
-      - `samples_form`: form with the sample selection
-      - `edit_description_form`: form with the description of the changes
+    :param substrate_form: form with the substrate core data
+    :param samples_form: form with the sample selection
+    :param edit_description_form: form with the description of the changes
 
     :type substrate_form: `SubstrateForm`
-    :type samples_form: `form_utils.DepositionSamplesForm`
-    :type edit_description_form: `form_utils.EditDescriptionForm` or
-        ``NoneType``
+    :type samples_form: `samples.views.form_utils.DepositionSamplesForm`
+    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+        or NoneType
 
-    :Return:
+    :return:
       whether all forms are consistent with each other and the database
 
     :rtype: bool
@@ -130,20 +129,19 @@ def is_referentially_valid(substrate_form, samples_form, edit_description_form):
 
 @login_required
 def edit(request, substrate_id):
-    """Central view for editing and creating substrates.  If ``substrate_id``
-    is ``None``, a new substrate is created.
+    """Central view for editing and creating substrates.  If ``substrate_id`` is
+    ``None``, a new substrate is created.
 
-    :Parameters:
-      - `request`: the HTTP request object
-      - `substrate_id`: the id of the subtrate
+    :param request: the HTTP request object
+    :param substrate_id: the id of the subtrate
 
-    :type request: ``QueryDict``
-    :type deposition_number: unicode or ``NoneType``
+    :type request: QueryDict
+    :type deposition_number: unicode or NoneType
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     substrate = get_object_or_404(institute_models.Substrate, pk=utils.convert_id_to_int(substrate_id)) if substrate_id else None
     permissions.assert_can_add_edit_physical_process(request.user, substrate, institute_models.Substrate)

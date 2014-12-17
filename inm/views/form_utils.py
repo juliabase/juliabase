@@ -14,8 +14,8 @@
 
 
 """Helper classes and function for the views that are used for the institute.
-It extends the samples.views.form_utils with institute specific classes and
-functions.
+It extends :py:mod:`samples.views.form_utils` (in includes all names from it)
+with institute specific classes and functions.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -32,35 +32,34 @@ from samples import permissions
 
 
 def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):
-    """This function is the central view for editing, creating, and duplicating for any deposition.
-    The edit functions in the deposition views are wrapper functions who provides this function
-    with the specific informations.
-    If ``deposition_number`` is ``None``, a new depositon is
-    created (possibly by duplicating another one).
+    """This function is the central view for editing, creating, and duplicating for
+    any deposition.  The edit functions in the deposition views are wrapper
+    functions who provides this function with the specific informations.  If
+    `deposition_number` is ``None``, a new depositon is created (possibly by
+    duplicating another one).
 
-    :Parameters:
-      - `request`: the HTTP request object
-      - `deposition_number`: the number (=name) or the deposition
-      - `form_set`: the related formset object for the deposition
-      - `institute_model`: the related Database model
-      - `edit_url`: the location of the edit template
-      - `rename_conservatively`: If ``True``, rename only provisional and
+    :param request: the HTTP request object
+    :param deposition_number: the number (=name) or the deposition
+    :param form_set: the related formset object for the deposition
+    :param institute_model: the related Database model
+    :param edit_url: the location of the edit template
+    :param rename_conservatively: If ``True``, rename only provisional and
         cleaning process names.  This is used by the Large Sputter deposition.
         See the ``new_names`` parameter in
         `samples.views.split_after_deposition.forms_from_database` for how this
         is achieved
 
-    :type request: ``QueryDict``
-    :type deposition_number: unicode or ``NoneType``
-    :type form_set: ``FormSet`` object
-    :type institute_model: ``samples.models.depositions.Deposition``
+    :type request: QueryDict
+    :type deposition_number: unicode or NoneType
+    :type form_set: FormSet
+    :type institute_model: `samples.models.depositions.Deposition`
     :type edit_url: unicode
     :type rename_conservatively: bool
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     permissions.assert_can_add_edit_physical_process(request.user, form_set.deposition, institute_model)
     if request.method == "POST":
@@ -117,28 +116,28 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
 
 def show_depositions(request, deposition_number, institute_model):
     """Show an existing new deposision.  You must be an operator of the deposition
-    *or* be able to view one of the samples
-    affected by this deposition in order to be allowed to view it.
+    *or* be able to view one of the samples affected by this deposition in order to
+    be allowed to view it.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `deposition_number`: the number (=name) or the deposition
-      - `institute_model`: the related Database model
+    :param request: the current HTTP Request object
+    :param deposition_number: the number (=name) or the deposition
+    :param institute_model: the related Database model
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type deposition_number: unicode
-    :type institute_model: ``samples.models.depositions.Deposition``
+    :type institute_model: `samples.models.depositions.Deposition`
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     deposition = get_object_or_404(institute_model, number=deposition_number)
     permissions.assert_can_view_physical_process(request.user, deposition)
     if is_json_requested(request):
         return respond_in_json(deposition.get_data())
-    template_context = {"title": _("{name} “{number}”").format(name=institute_model._meta.verbose_name, number=deposition.number),
+    template_context = {"title": _("{name} “{number}”").format(name=institute_model._meta.verbose_name,
+                                                               number=deposition.number),
                         "samples": deposition.samples.all(),
                         "process": deposition}
     template_context.update(utils.digest_process(deposition, request.user))
@@ -150,19 +149,18 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement.
 
-    :Parameters:
-      - `measurement_form`: a bound measurement form
-      - `sample_form`: a bound sample selection form
-      - `measurement_number`: The number of the measurement to be edited.  If
+    :param measurement_form: a bound measurement form
+    :param sample_form: a bound sample selection form
+    :param measurement_number: The number of the measurement to be edited.  If
         it is ``None``, a new measurement is added to the database.
-      - `institute_model`: the related Database model
+    :param institute_model: the related Database model
 
-    :type measurement_form: `form_utils.ProcessForm`
+    :type measurement_form: `samples.views.form_utils.ProcessForm`
     :type sample_form: `SampleForm`
     :type measurement_number: unicode
-    :type institute_model: ``samples.models.common.Process``
+    :type institute_model: `samples.models.common.Process`
 
-    :Return:
+    :return:
       whether the forms are consistent with each other and the database
 
     :rtype: bool
@@ -186,13 +184,12 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
 
 def three_digits(number):
     """
-    :Parameters:
-      - `number`: the number of the deposition (only the number after the
+    :param number: the number of the deposition (only the number after the
         deposition system letter)
 
     :type number: int
 
-    :Return:
+    :return:
       The number filled with leading zeros so that it has at least three
       digits.
 
@@ -209,20 +206,19 @@ class SampleForm(forms.Form):
     sample = SampleField(label=capfirst(_("sample")))
 
     def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
-        """Form constructor.  I only set the selection of samples to the
+        """I only set the selection of samples to the
         current user's “My Samples”.
 
-        :Parameters:
-          - `user`: the current user
-          - `process_instance`: the process instance to be edited, or ``None`` if
+        :param user: the current user
+        :param process_instance: the process instance to be edited, or ``None`` if
             a new is about to be created
-          - `preset_sample`: the sample to which the process should be
+        :param preset_sample: the sample to which the process should be
             appended when creating a new process; see
             `utils.extract_preset_sample`
 
-        :type user: `django.contrib.auth.models.User`
+        :type user: django.contrib.auth.models.User
         :type process_instance: `samples.models.common.Process`
-        :type preset_sample: `models.Sample`
+        :type preset_sample: `samples.models.Sample`
         """
         super(SampleForm, self).__init__(*args, **kwargs)
         samples = list(user.my_samples.all())
@@ -243,21 +239,19 @@ def clean_deposition_number_field(value, letter):
     number already exists in the database.  It just checks the syntax of the
     number.
 
-    :Parameters:
-      - `value`: the deposition number entered by the user
-      - `letter`: the single uppercase letter denoting the deposition system;
+    :param value: the deposition number entered by the user
+    :param letter: the single uppercase letter denoting the deposition system;
         it may also be a list containing multiple possibily letters
 
     :type value: unicode
     :type letter: unicode or list of unicode
 
-    :Return:
-      the original ``value`` (unchanged)
+    :return:
+      the original `value` (unchanged)
 
     :rtype: unicode
 
-    :Exceptions:
-      - `ValidationError`: if the deposition number was not a valid deposition
+    :raises ValidationError: if the deposition number was not a valid deposition
         number
     """
     if not deposition_number_pattern.match(value):

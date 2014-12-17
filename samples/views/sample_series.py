@@ -51,7 +51,7 @@ class SampleSeriesForm(forms.ModelForm):
     samples = form_utils.MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, data=None, **kwargs):
-        """Form constructor.  I have to initialise the form here, especially
+        """I have to initialise the form here, especially
         because the sample set to choose from must be found and the name of an
         existing series must not be changed.
         """
@@ -102,21 +102,20 @@ class SampleSeriesForm(forms.ModelForm):
 
 def embed_timestamp(request, name):
     """Put a timestamp field in the request object that is used by both
-    `sample_series_timestamp` and `sample_series_etag`.  It's really a pity
-    that you can't give *one* function for returning both with Django's API for
-    conditional view processing.
+    :py:func:`sample_series_timestamp` and :py:func:`sample_series_etag`.  It's
+    really a pity that you can't give *one* function for returning both with
+    Django's API for conditional view processing.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `name`: the name of the sample series
+    :param request: the current HTTP Request object
+    :param name: the name of the sample series
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type name: unicode
 
-    :Returns:
+    :return:
       the timestamp of the last modification of the sample's datasheet
 
-    :rtype: ``datetime.datetime``
+    :rtype: datetime.datetime
     """
     if not hasattr(request, "_sample_series_timestamp"):
         try:
@@ -131,19 +130,18 @@ def embed_timestamp(request, name):
 
 def sample_series_timestamp(request, name):
     """Calculate the timestamp of a sample series.  See
-    `sample.sample_timestamp` for further information.
+    `samples.views.sample.sample_timestamp` for further information.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `name`: the name of the sample series
+    :param request: the current HTTP Request object
+    :param name: the name of the sample series
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type name: unicode
 
-    :Returns:
+    :return:
       the timestamp of the last modification of the sample series' datasheet
 
-    :rtype: ``datetime.datetime``
+    :rtype: datetime.datetime
     """
     embed_timestamp(request, name)
     return request._sample_series_timestamp
@@ -151,16 +149,15 @@ def sample_series_timestamp(request, name):
 
 def sample_series_etag(request, name):
     """Calculate an ETag for the sample series page.  See
-    `sample.sample_timestamp` for further information.
+    `samples.views.sample.sample_timestamp` for further information.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `name`: the name of the sample series
+    :param request: the current HTTP Request object
+    :param name: the name of the sample series
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type name: unicode
 
-    :Returns:
+    :return:
       the ETag of the sample series' page
 
     :rtype: str
@@ -180,17 +177,16 @@ def show(request, name):
     you're in its topic, or you're the currently responsible person for it,
     or if you can view all samples anyway.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `name`: name of the sample series
+    :param request: the current HTTP Request object
+    :param name: name of the sample series
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)
@@ -208,16 +204,15 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
     """Checks that the “important” checkbox is marked if the topic or the
     currently responsible person were changed.
 
-    :Parameters:
-      - `sample_series`: the currently edited sample series
-      - `sample_series_form`: the bound sample series form
-      - `edit_description_form`: a bound form with description of edit changes
+    :param sample_series: the currently edited sample series
+    :param sample_series_form: the bound sample series form
+    :param edit_description_form: a bound form with description of edit changes
 
-    :type sample_series: `models.SampleSeries`
+    :type sample_series: `samples.models.SampleSeries`
     :type sample_series_form: `SampleSeriesForm`
-    :type edit_description_form: `form_utils.EditDescriptionForm`
+    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
 
-    :Return:
+    :return:
       whether the “important” tickbox was really marked in case of significant
       changes
 
@@ -240,17 +235,16 @@ def edit(request, name):
     """View for editing an existing sample series.  Only the currently
     responsible person can edit a sample series.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `name`: name of the sample series
+    :param request: the current HTTP Request object
+    :param name: name of the sample series
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_edit_sample_series(request.user, sample_series)
@@ -292,15 +286,14 @@ def new(request):
     """View for creating a new sample series.  Note that you can add arbitrary
     samples to a sample series, even those you can't see.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(request.user, request.POST)
@@ -339,17 +332,16 @@ def export(request, name):
     return value is not an HTML response.  Note that you must also be allowed
     to see all *samples* in this sample series for the export.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `name`: the name of the sample series
+    :param request: the current HTTP Request object
+    :param name: the name of the sample series
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample_series = get_object_or_404(models.SampleSeries, name=name)
     permissions.assert_can_view_sample_series(request.user, sample_series)

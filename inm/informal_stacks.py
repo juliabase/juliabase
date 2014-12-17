@@ -21,7 +21,7 @@ to measure them.
 
 Moreover, labels may have to be relocated to the left-hand side of the stack or
 to the lagend below because they are too big, which also means that the
-`Paragraph` objects need to be re-created with different parameters.
+``Paragraph`` objects need to be re-created with different parameters.
 
 Roughly speaking, we first measure all sizes and try to find the best positions
 for then, *then* we create the PDF canvas and actually print them on it.
@@ -47,22 +47,22 @@ dimensions = {"stack_width": 3 * cm, "label_width": 3 * cm, "margin": 0.2 * cm, 
               "scale_label_skip": 0.2 * cm}
 """Dictionary with all skips and lengths that can be changed even at runtime.
 
-``stack_width``: the width of the stack diagram without any labels
-``label_width``: the width of the labels at both sides of the stack
-``margin``: the margin at a for edges around the whole diagram, excluding a
-  possible red rim
-``red_line_width``: the width of the red rim
-``red_line_skip``: the distance between the red rim and the border of the PDF
-``label_skip``: the distance of the labels and the stack
-``scale_skip``: the vertical distance between the scale and the stack below
-``legend_skip: the vertical distance between the legend and the stack above
-``scale_label_skip``: the distance between the scale bar and the scale label
+    - ``stack_width``: the width of the stack diagram without any labels
+    - ``label_width``: the width of the labels at both sides of the stack
+    - ``margin``: the margin at a for edges around the whole diagram, excluding a
+        possible red rim
+    - ``red_line_width``: the width of the red rim
+    - ``red_line_skip``: the distance between the red rim and the border of the PDF
+    - ``label_skip``: the distance of the labels and the stack
+    - ``scale_skip``: the vertical distance between the scale and the stack below
+    - ``legend_skip``: the vertical distance between the legend and the stack above
+    - ``scale_label_skip``: the distance between the scale bar and the scale label
 """
 parameters = {"roughness": 3, "grid_points": 24}
 """Dictionary with further parameters that can be changed even at runtime.
 
-``roughness``: the roughness of the textured lines in bp
-``grid_points``: number of grid points used for the textured line
+    - ``roughness``: the roughness of the textured lines in bp
+    - ``grid_points``: number of grid points used for the textured line
 """
 
 single_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu")
@@ -79,14 +79,13 @@ def get_circled_number(number, largest_number):
     numbers ≤ 10 occur in the diagram, the circled unicode numbers like “➉” are
     used.  Otherwise, a layout like “(10)” is used as a fallback.
 
-    :Parameters:
-      - `number`: the number to be converted
-      - `largest_number`: the largest number which occurs in the diagram
+    :param number: the number to be converted
+    :param largest_number: the largest number which occurs in the diagram
 
     :type number: int
     :type largest_number: int
 
-    :Return:
+    :return:
       a nice-looking string representation of the number
 
     :rtype: unicode
@@ -124,22 +123,20 @@ class Path(object):
     """
 
     def __init__(self, canvas, segment, height, accumulated_height, textured, bottom_layer, fill_color=None):
-        """Class constructor.
-
-        :Parameters:
-          - `canvas`: the PDF canvas object
-          - `segment`: The layer segment to be drawn.  It may be ``"whole"``,
+        """
+        :param canvas: the PDF canvas object
+        :param segment: The layer segment to be drawn.  It may be ``"whole"``,
             ``"left"``, or ``"right"``.  The latter two are used for structured
             samples to draw the two columns they consist of.
-          - `height`: height of the layer
-          - `accumulated_height`: height of the layer measured from the very
+        :param height: height of the layer
+        :param accumulated_height: height of the layer measured from the very
             bottom of the stack
-          - `textured`: whether the layer is textured
-          - `bottom_layer`: the next non-structured layer below the current one
-          - `fill_color`: the color of the filling; if not given, just the outline
+        :param textured: whether the layer is textured
+        :param bottom_layer: the next non-structured layer below the current one
+        :param fill_color: the color of the filling; if not given, just the outline
             is drawn
 
-        :type canvas: `canvas.Canvas`
+        :type canvas: canvas.Canvas
         :type segment: str
         :type height: float
         :type accumulated_height: float
@@ -189,8 +186,7 @@ class Path(object):
     def draw_vertical_line(self, direction):
         """Draws a vertical line of the layer (segment).
 
-        :Parameters:
-          - `direction`: the direction the line should be drawn; may be
+        :param direction: the direction the line should be drawn; may be
             ``"up"`` or ``"down"``
 
         :type direction: str
@@ -203,8 +199,7 @@ class Path(object):
     def draw_horizontal_line(self, direction):
         """Draws a straight horizontal line of the layer (segment).
 
-        :Parameters:
-          - `direction`: the direction the line should be drawn; may be
+        :param direction: the direction the line should be drawn; may be
             ``"right"`` or ``"left"``
 
         :type direction: str
@@ -217,8 +212,7 @@ class Path(object):
     def draw_textured_line(self, direction):
         """Draws a textured (= jagged) horizontal line of the layer (segment).
 
-        :Parameters:
-          - `direction`: the direction the line should be drawn; may be
+        :param direction: the direction the line should be drawn; may be
             ``"right"`` or ``"left"``
 
         :type direction: str
@@ -248,8 +242,7 @@ class Path(object):
         """Draws an interrupted vertical line of the layer (segment) in order
         to denote a collapsed layer.
 
-        :Parameters:
-          - `direction`: the direction the line should be drawn; may be
+        :param direction: the direction the line should be drawn; may be
             ``"up"`` or ``"down"``
 
         :type direction: str
@@ -330,7 +323,7 @@ class Layer(object):
 
     :ivar bottom_layer: the next layer below this one which is not structured,
       i.e. covers the whole width; this is the layer the current one grows on;
-      if it is ``None``, the current layer „grows“ on the very bottom of the
+      if it is ``None``, the current layer “grows” on the very bottom of the
       stack.
 
     :type name: unicode
@@ -339,22 +332,20 @@ class Layer(object):
     :type structured: bool
     :type textured: bool
     :type verified: bool
-    :type label: `Paragraph`
+    :type label: Paragraph
     :type label_height: float
     :type one_liner: bool
     :type collapsed: bool
     :type height: float
     :type accumulated_height: float
-    :type bottom_layer: `layer`
+    :type bottom_layer: `Layer`
     """
 
     def __init__(self, informal_layer):
-        """Class constructor.
+        """
+        :param informal_layer: the informal layer object from the database
 
-        :Parameters:
-          - `informal_layer`: the informal layer object from the database
-
-        :type informal_layer: ``models.InformalLayer``
+        :type informal_layer: `inm.models.InformalLayer`
         """
         self.nm, self.color, self.structured, self.textured, self.verified, self.collapsed = \
             float(informal_layer.thickness), informal_layer.color, informal_layer.structured, \
@@ -380,14 +371,13 @@ class Layer(object):
         """Create a pretty-printed version of the thickness value including a
         unit of measument.
 
-        :Parameters:
-          - `nm`: The thickness of the layer in nm.  This should be negative
+        :param nm: The thickness of the layer in nm.  This should be negative
             (e.g. −1) for mere treatments like an HF dip.  Note that it is not
             a float but a decimal value.
 
-        :type nm: `decimal.Decimal`
+        :type nm: decimal.Decimal
 
-        :Return:
+        :return:
           the pretty-printed version of the thickness including the unit
 
         :rtype: unicode
@@ -412,10 +402,9 @@ class Layer(object):
         """Draw this layer on the PDF canvas.  It draws both the outline and
         the filling.
 
-        :Parameters:
-          - `canvas`: the PDF canvas object
+        :param canvas: the PDF canvas object
 
-        :type canvas: `Canvas`
+        :type canvas: canvas.Canvas
         """
         def draw_column(column):
             path = Path(canvas, column, self.height, self.accumulated_height, self.textured, self.bottom_layer, self.color)
@@ -465,9 +454,9 @@ class Scale(object):
     :ivar factor: the factor of the scale bar.  The height of the scale bar in
       nm is
 
-      ::
+      .. math::
 
-          factor * 10 ** magnitude
+          \\text{factor} \\cdot 10^{\\text{magnitude}}
 
     :ivar scale_height: the height of the scale bar in bp
 
@@ -480,18 +469,17 @@ class Scale(object):
     def __init__(self, layers):
         """Find the optimal scaling for the diagram.
 
-        :Parameters:
-          - `layers`: all layers of the stack
+        :param layers: all layers of the stack
 
         :type layers: list of `Layer`
 
-        :Return:
+        :return:
           The scaling in bp/nm, the height of the scale bar in bp, the factor of
           the scale bar, and its magnitude.  The height of the scale bar in nm is
 
-          ::
+          .. math::
 
-              factor * 10 ** magnitude
+              \\text{factor} \\cdot 10^{\\text{magnitude}}
 
         :rtype: float, float, int, int
         """
@@ -520,10 +508,9 @@ class Scale(object):
         must select the position of the scale by calling ``canvas.translate``
         before.
 
-        :Parameters:
-          - `canvas`: the PDF canvas to be used
+        :param canvas: the PDF canvas to be used
 
-        :type canvas: `Canvas`
+        :type canvas: canvas.Canvas
         """
         protusion = 2
         canvas.line(0, 0, 0, self.scale_height)
@@ -536,12 +523,11 @@ class Scale(object):
     def __call__(self, length):
         """Converts from nm to bp.
 
-        :Parameters:
-          - `length`: the length in nm
+        :param length: the length in nm
 
         :type nm: float
 
-        :Return:
+        :return:
           the length in bp
 
         :rtype: float
@@ -557,15 +543,14 @@ def build_stack(layers, scale):
     possible to actuall create the ``Canvas`` object and to draw on it.  But
     this is not done here.)
 
-    :Parameters:
-      - `layers`: the layers to be drawn, in the chronological order of their
+    :param layers: the layers to be drawn, in the chronological order of their
         making
-      - `scale`: the scale of the diagram
+    :param scale: the scale of the diagram
 
     :type layers: list of `Layer`
     :type scale: `Scale`
 
-    :Return:
+    :return:
       the height of the printed stack
 
     :rtype: float
@@ -620,11 +605,9 @@ class Label(object):
     needs_left_row = False
 
     def __init__(self, layer, right_row):
-        """Class constructor.
-
-        :Parameters:
-          - `layer`: the layer of this label
-          - `right_row`: whether the label should be placed to the right of the
+        """
+        :param layer: the layer of this label
+        :param right_row: whether the label should be placed to the right of the
             stack; if ``False``, it is positioned to the left
 
         :type layer: `Layer`
@@ -637,8 +620,7 @@ class Label(object):
     def print_label(self, canvas):
         """Draws the label on the canvas.
 
-        :Parameters:
-          - `canvas`: the PDF canvas to be used
+        :param canvas: the PDF canvas to be used
 
         :type canvas: `Canvas`
         """
@@ -681,15 +663,13 @@ class NumberedLabel(Label):
     largest_number = None
 
     def __init__(self, lower, upper, voffset, right_row):
-        """Class constructor.
-
-        :Parameters:
-          - `lower`: the lower boundary of the numbers interval
-          - `upper`: the upper boundary of the numbers interval; thus, if this
+        """
+        :param lower: the lower boundary of the numbers interval
+        :param upper: the upper boundary of the numbers interval; thus, if this
             label contains only one number, ``upper`` − ``lower`` = 1
-          - `voffset`: the vertical distance between the bottom of the stack
+        :param voffset: the vertical distance between the bottom of the stack
             diagram and the centre of the label
-          - `right_row`: whether the label should be placed to the right of the
+        :param right_row: whether the label should be placed to the right of the
             stack; if ``False``, it is positioned to the left
 
         :type lower: int
@@ -718,12 +698,11 @@ def place_labels(layers):
     """Finds the best places for all labels.  Additionally, move labels for
     which there is not enough free space to the legend.
 
-    :Parameters:
-      - `layers`: the layers to be drawn
+    :param layers: the layers to be drawn
 
     :type layers: list of `Layer`
 
-    :Return:
+    :return:
       all labels, all labels intended to be displaced to the legend
 
     :rtype: list of `Label`, list of unicode
@@ -758,18 +737,17 @@ def place_labels(layers):
 def build_legend(displaced_labels, width):
     """Creates the legend without actually drawing it.
 
-    :Parameters:
-      - `displaced_labels`: all labels intended to be displaced to the legend
-      - `width`: the width of the printed legend
+    :param displaced_labels: all labels intended to be displaced to the legend
+    :param width: the width of the printed legend
 
     :type displaced_labels: list of unicode
     :type width: float
 
-    :Return:
+    :return:
       All items of the legend as ReportLab paragraphs, the height of the
       printed legend
 
-    :rtype: list of `Paragraph`, float
+    :rtype: list of Paragraph, float
     """
     legend = []
     for i, label in enumerate(displaced_labels):
@@ -788,11 +766,10 @@ def build_legend(displaced_labels, width):
 def generate_diagram(filepath, layers, title, subject):
     """Generates the stack diagram and writes it to a PDF file.
 
-    :Parameters:
-      - `filepath`: the path to the PDF file that should be written
-      - `layers`: the layers of the stack in chronological order
-      - `title`: the title of the PDF file
-      - `subject`: the subject of the PDF file
+    :param filepath: the path to the PDF file that should be written
+    :param layers: the layers of the stack in chronological order
+    :param title: the title of the PDF file
+    :param subject: the subject of the PDF file
 
     :type filepath: str
     :type layers: list of `Layer`

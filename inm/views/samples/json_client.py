@@ -45,16 +45,15 @@ def add_sample(request):
     """Adds a new sample to the database.  It is added without processes.  This
     view can only be used by admin accounts.
 
-    :Parameters:
-      - `request`: the current HTTP Request object; it must contain the sample
+    :param request: the current HTTP Request object; it must contain the sample
         data in the POST data.
 
-    :Returns:
+    :return:
       The primary key of the created sample.  ``False`` if something went
       wrong.  It may return a 404 if the topic or the currently responsible
       person wasn't found.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if not request.user.is_staff:
         raise JSONRequestException(6, "Only admins can access this ressource.")
@@ -95,15 +94,14 @@ def get_substrates(sample):
     """Returns the substrate processes of a sample.  Of course normally, this
     should be exactly one.  They are returned in chronological order.
 
-    :Parameters:
-      - `sample`: the sample whose substrate should be returned.
+    :param sample: the sample whose substrate should be returned.
 
-    :type sample: `models.Sample`
+    :type sample: `samples.models.Sample`
 
-    :Return:
+    :return:
       the substrate processes of the sample
 
-    :rtype: list of `institute_models.Substrate`
+    :rtype: list of `inm.models.Substrate`
     """
     substrates = list(institute_models.Substrate.objects.filter(samples=sample))
     if sample.split_origin:
@@ -116,15 +114,14 @@ def get_substrate(sample):
     performs no checks it all.  It will fail loudly if the sample and its
     ancestors all don't have a substrate.  This is an interal error anyway.
 
-    :Parameters:
-      - `sample`: the sample whose substrate should be returned.
+    :param sample: the sample whose substrate should be returned.
 
-    :type sample: `models.Sample`
+    :type sample: `samples.models.Sample`
 
-    :Return:
+    :return:
       the substrate process of the sample
 
-    :rtype: `institute_models.Substrate`
+    :rtype: `inm.models.Substrate`
     """
     return get_substrates(sample)[0]
 
@@ -138,17 +135,16 @@ def substrate_by_sample(request, sample_id):
     something else went wrong (in particular, no substrate was found),
     ``False`` is returned.
 
-    :Parameters:
-      - `request`: the HTTP request object
-      - `sample_id`: the primary key of the sample
+    :param request: the HTTP request object
+    :param sample_id: the primary key of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_id: unicode
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if not request.user.is_staff:
         return respond_in_json(False)
@@ -162,18 +158,17 @@ def substrate_by_sample(request, sample_id):
 def next_deposition_number(request, letter):
     """Send the next free deposition number to a JSON client.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `letter`: the letter of the deposition system, see
+    :param request: the current HTTP Request object
+    :param letter: the letter of the deposition system, see
         `utils.get_next_deposition_number`.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type letter: str
 
-    :Returns:
+    :return:
       the next free deposition number for the given apparatus.
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     return respond_in_json(shared_utils.get_next_deposition_number(letter))
 
@@ -184,24 +179,22 @@ def _get_maike_by_filepath(filepath, user):
     associated with a data filepath each.  This function finds the measurement
     which contains a single (“cell”) measurement with the filepath.
 
-    :Parameters:
-      - `filepath`: the path of the measurement file, as it is stored in the
+    :param filepath: the path of the measurement file, as it is stored in the
         database
-      - `user`: the logged-in user
+    :param user: the logged-in user
 
     :type filepath: unicode
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the ID of the solarsimulator measurement which contains results from the
       given data file
 
     :rtype: int
 
-    :Exceptions:
-      - `permissions.PermissionError`: if the user is not allowed to see the
+    :raises permissions.PermissionError: if the user is not allowed to see the
         solarsimulator measurement
-      - `Http404`: if the filepath was not found in the database
+    :raises Http404: if the filepath was not found in the database
     """
     cells = institute_models.SolarsimulatorCellMeasurement.objects.filter(data_file=filepath)
     if cells.exists():
@@ -220,15 +213,14 @@ def get_maike_by_filepath(request):
     contains the given filepath.  See `_get_maike_by_filepath`.  The filepath
     is given in the query string parameter “``filepath``”.
 
-    :Parameters:
-      - `request`: the HTTP request object
+    :param request: the HTTP request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
         filepath = request.GET["filepath"]
@@ -250,25 +242,24 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cel
 
     It returns the ID of the measurement, or ``None`` if none was found.
 
-    :Parameters:
-      - `request`: the HTTP request object
-      - `sample_id`: the ID of the sample which was measured
-      - `irradiation`: the irradiation (AM1.5, BG7 etc) which was used
-      - `cell_position`: the position of the cell on the layout; don't mix it
+    :param request: the HTTP request object
+    :param sample_id: the ID of the sample which was measured
+    :param irradiation: the irradiation (AM1.5, BG7 etc) which was used
+    :param cell_position: the position of the cell on the layout; don't mix it
         up with the *index* of the cell, which is the number used in the MAIKE
         datafile in the first column
-      - `date`: the day (not the time) of the measurement in YYYY-MM-DD format
+    :param date: the day (not the time) of the measurement in YYYY-MM-DD format
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_id: unicode
     :type irradiation: unicode
     :type cell_position: unicode
     :type date: unicode
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
         filepath = request.GET["filepath"]
@@ -306,17 +297,16 @@ def get_current_structuring(request, sample_id):
     It returns the ID of the structuring process, or ``None`` if none was
     found.
 
-    :Parameters:
-      - `request`: the HTTP request object
-      - `sample_id`: the ID of the sample
+    :param request: the HTTP request object
+    :param sample_id: the ID of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_id: unicode
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = get_object_or_404(models.Sample, id=sample_id)
     try:

@@ -28,8 +28,8 @@
 
 
 :ivar storage_changed: This is sent if the files on harddisk were changed.  In
-  the reference deployment at IEK-5, this signal is used for triggering
-  sychronisation of both nodes.
+  a former version of the deployment at IEK-5/FZJ, this signal is used for
+  triggering sychronisation of both nodes.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -54,13 +54,12 @@ def add_user_details(sender, instance, created=True, **kwargs):
     If there is only one department, this is default for new users.  Otherwise,
     no department is set here.
 
-    :Parameters:
-      - `sender`: the sender of the signal; will always be the ``User`` model
-      - `instance`: the newly-added user
-      - `created`: whether the user was newly created.
+    :param sender: the sender of the signal; will always be the ``User`` model
+    :param instance: the newly-added user
+    :param created: whether the user was newly created.
 
     :type sender: model class
-    :type instance: ``django.contrib.auth.models.User``
+    :type instance: django.contrib.auth.models.User
     :type created: bool
     """
     if created:
@@ -71,8 +70,9 @@ def add_user_details(sender, instance, created=True, **kwargs):
 
 @receiver(signals.post_migrate)
 def add_all_user_details(**kwargs):
-    """Create ``UserDetails`` for all users where necessary.  This is needed
-    because during data migrations, no signals are sent.
+    """Create :py:class:`jb_common.models.UserDetails` for all users where
+    necessary.  This is needed because during data migrations, no signals are
+    sent.
     """
     for user in User.objects.filter(jb_user_details=None):
         add_user_details(User, user, created=True)

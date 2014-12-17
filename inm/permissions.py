@@ -13,8 +13,8 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Permission checking for special IEF-5 extensions.  It is an extension to
-`samples.permissions`.  See there for further information.
+"""Permission checking for special INM extensions.  It is an extension to
+:py:mod:`samples.permissions`.  See there for further information.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -28,19 +28,17 @@ def assert_can_add_edit_substrate(user, substrate=None, affected_samples=None):
     existing* samples.  This is not used if samples and substrate process are
     created in the same request.
 
-    :Parameters:
-      - `user`: the user whose permission should be checked
-      - `substrate`: the substrate process to be edited; ``None`` if the user
+    :param user: the user whose permission should be checked
+    :param substrate: the substrate process to be edited; ``None`` if the user
         wants to create one
-      - `affected_samples`: the samples that belong to the newly created
+    :param affected_samples: the samples that belong to the newly created
         substrate process; ``None`` if the user wants to edit one
 
-    :type user: ``django.contrib.auth.models.User``
-    :type substrate: `models.Substrate`
-    :type affected_samples: list of `models.Sample`
+    :type user: django.contrib.auth.models.User
+    :type substrate: `inm.models.Substrate`
+    :type affected_samples: list of `samples.models.Sample`
 
-    :Exceptions:
-      - `PermissionError`: raised if the user is not allowed to add or edit the
+    :raises PermissionError: if the user is not allowed to add or edit the
         substrate process for those samples
     """
     assert (substrate and affected_samples is None) or (substrate is None and affected_samples is not None)

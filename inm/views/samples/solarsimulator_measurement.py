@@ -12,8 +12,6 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-"""
-"""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -94,13 +92,13 @@ def solarsimulator_cell_forms_from_post(post, form_cls):
     """This function initializes the solarsimulator cell forms from the post data.
     It also decides which kind of cell forms is needed.
 
-    :Parameters:
-      - `post`: the post dictionary
+    :param post: the post dictionary
 
-    :type post: `request.POST`
+    :type post: QueryDict
 
-    :Return:
-     a list of bound solarsimulator cell forms or solarsimulator dark cell forms
+    :return:
+      a list of bound solarsimulator cell forms or solarsimulator dark cell
+      forms
 
     :rtype: list
     """
@@ -114,22 +112,20 @@ def is_all_valid(solarsimulator_measurement_form, sample_form, remove_from_my_sa
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
 
-    :Parameters:
-      - `solarsimulator_measurement_form`: a bound solarsimulator measurement form
-      - `sample_form`: a bound sample selection form
-      - `remove_from_my_samples_form`: a bound remove-from-my-samples form
-      - `edit_description_form`: a bound edit-description form
-      - `solarsimulator_cell_forms`: a list of bound solarsimulator cell forms
+    :param solarsimulator_measurement_form: a bound solarsimulator measurement form
+    :param sample_form: a bound sample selection form
+    :param remove_from_my_samples_form: a bound remove-from-my-samples form
+    :param edit_description_form: a bound edit-description form
+    :param solarsimulator_cell_forms: a list of bound solarsimulator cell forms
 
-    :type solarsimulator_measurement_form: `solarsimulator_utils.SolarsimulatorMeasurementForm`
-    :type sample_form: `SampleForm`
-    :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or
-      ``NoneType``
-    :type edit_description_form: `form_utils.EditDescriptionForm`
-    :type solarsimulator_cell_forms: `SolarsimulatorCellForm` or
-        `SolarsimulatorDarkCellForm`
+    :type solarsimulator_measurement_form: `SolarsimulatorMeasurementForm`
+    :type sample_form: `inm.views.form_utils.SampleForm`
+    :type remove_from_my_samples_form:
+        `samples.views.form_utils.RemoveFromMySamplesForm` or NoneType
+    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+    :type solarsimulator_cell_forms: `SolarsimulatorCellForm`
 
-    :Return:
+    :return:
       whether all forms are valid, i.e. their ``is_valid`` method returns
       ``True``.
 
@@ -154,10 +150,10 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
 
     FixMe: It does not check for the case that the same datapath is used in two
     different solarsimulator measurements.  This should be added.  One may call
-    `json_client._get_maike_by_filepath` and catch an exception about multiple
-    search results for checking this.
+    :py:func:`inm.views.samples.json_client._get_maike_by_filepath` and catch
+    an exception about multiple search results for checking this.
 
-    :Return:
+    :return:
       whether the forms are consistent with each other and the database
 
     :rtype: bool
@@ -191,24 +187,23 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
 def edit(request, solarsimulator_measurement_id):
     """Create or edit an existing solarsimulator measurement.
 
-    If you pass "only_single_cell_added=true" in the query string *and* you
+    If you pass ``only_single_cell_added=true`` in the query string *and* you
     have a staff account, no feed entries are generated.  This is to make the
     MAIKE crawler less noisy if non-standard-Jülich cell layout is used and a
     whole substrate is split over many single files which have to be imported
     one by one.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `solarsimulator_measurement_id`: the id of the solarsimulator
+    :param request: the current HTTP Request object
+    :param solarsimulator_measurement_id: the id of the solarsimulator
         measurement; if ``None``, a new measurement is created
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type solarsimulator_measurement_id: unicode
 
-    :Return:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     solarsimulator_measurement = get_object_or_404(SolarsimulatorMeasurement, id=solarsimulator_measurement_id)\
         if solarsimulator_measurement_id is not None else None

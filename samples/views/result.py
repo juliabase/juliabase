@@ -14,12 +14,11 @@
 
 
 """Views for editing and creating results (aka result processes).
-
-FixMe: The save_to_database function triggers a signal in inm when a new result
-process is connected to a sample.  If you want to change the behavior of this
-function, keep in mind that you have to check the signal for modification
-purposes.
 """
+# FixMe: The save_to_database function triggers a signal in inm when a new result
+# process is connected to a sample.  If you want to change the behavior of this
+# function, keep in mind that you have to check the signal for modification
+# purposes.
 
 from __future__ import absolute_import, unicode_literals
 
@@ -41,18 +40,17 @@ import django.forms as forms
 
 def save_image_file(image_data, result, related_data_form):
     """Saves an uploaded image file stream to its final destination in
-    `settings.MEDIA_ROOT`.  If the given result has already an image connected
+    ``settings.MEDIA_ROOT``.  If the given result has already an image connected
     with it, it is removed first.
 
-    :Parameters:
-      - `image_data`: the file-like object which contains the uploaded data
+    :param image_data: the file-like object which contains the uploaded data
         stream
-      - `result`: The result object for which the image was uploaded.  It is
+    :param result: The result object for which the image was uploaded.  It is
         not necessary that all its fields are already there.  But it must have
         been written already to the database because the only necessary field
         is the primary key, which I need for the hash digest for generating the
         file names.
-      - `related_data_form`: A bound form with the image filename that was
+    :param related_data_form: A bound form with the image filename that was
         uploaded.  This is only needed for dumping error messages into it if
         something went wrong.
 
@@ -149,7 +147,7 @@ class RelatedDataForm(forms.Form):
     image_file = forms.FileField(label=_("Image file"), required=False)
 
     def __init__(self, user, query_string_dict, old_result, data=None, files=None, **kwargs):
-        """Form constructor.  I have to initialise a couple of things here in
+        """I have to initialise a couple of things here in
         a non-trivial way.
 
         The most complicated thing is to find all sample series electable for
@@ -300,27 +298,26 @@ class FormSet(object):
     :ivar edit_description_form: the bound form with the edit description if
       we're editing an existing result, and ``None`` otherwise
 
-    :type result: `models.Result` or ``NoneType``
+    :type result: `samples.models.Result` or NoneType
     :type result_form: `ResultForm`
     :type related_data_form: `RelatedDataForm`
     :type dimensions_form: `DimensionsForm`
     :type previous_dimensions_form: `DimensionsForm`
     :type quantity_forms: list of `QuantityForm`
     :type value_form_lists: list of list of `ValueForm`
-    :type edit_description_form: `form_utils.EditDescriptionForm` or
-      ``NoneType``
+    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+        or NoneType
     """
 
     def __init__(self, request, process_id):
         """Class constructor.
 
-        :Parameters:
-          - `request`: the current HTTP Request object
-          - `process_id`: the ID of the result to be edited; ``None`` if we
+        :param request: the current HTTP Request object
+        :param process_id: the ID of the result to be edited; ``None`` if we
             create a new one
 
-        :type request: ``HttpRequest``
-        :type process_id: unicode or ``NoneType``
+        :type request: HttpRequest
+        :type process_id: unicode or NoneType
         """
         self.result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
         self.user = request.user
@@ -350,14 +347,13 @@ class FormSet(object):
         """Generate all forms from the database.  This is called when the HTTP
         POST method was sent with the request.
 
-        :Parameters:
-          - `post_data`:  The post data submitted via HTTP.  It is the result
+        :param post_data:  The post data submitted via HTTP.  It is the result
             of ``request.POST``.
-          - `post_files`: The file data submitted via HTTP.  It is the result
+        :param post_files: The file data submitted via HTTP.  It is the result
             of ``request.FILES``.
 
-        :type post_data: ``django.http.QueryDict``
-        :type post_files: ``django.utils.datastructures.MultiValueDict``
+        :type post_data: QueryDict
+        :type post_files: django.utils.datastructures.MultiValueDict
         """
         self.result_form = ResultForm(self.user, post_data, instance=self.result)
         self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result, post_data, post_files)
@@ -395,7 +391,7 @@ class FormSet(object):
         all ``is_valid()`` methods are called, even if the first tested form is
         already invalid.
 
-        :Return:
+        :return:
           whether all forms are valid
 
         :rtype: bool
@@ -417,7 +413,7 @@ class FormSet(object):
         result.  I also assure that no two quantities in the result table
         (i.e., the column headings) are the same.
 
-        :Return:
+        :return:
           whether all forms are consistent with each other and the database
 
         :rtype: bool
@@ -428,7 +424,8 @@ class FormSet(object):
             new_related_objects = set(self.related_data_form.cleaned_data["samples"]) | \
                 set(self.related_data_form.cleaned_data["sample_series"])
             if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
-                self.edit_description_form.add_error("important", _("Adding samples or sample series must be marked as important."))
+                self.edit_description_form.add_error("important",
+                                                     _("Adding samples or sample series must be marked as important."))
                 referentially_valid = False
         quantities = set()
         for quantity_form in self.quantity_forms:
@@ -445,7 +442,7 @@ class FormSet(object):
         the table dimensions were changed.  (In this case, the view has to be
         re-displayed instead of being written to the database.)
 
-        :Return:
+        :return:
           whether the dimensions of the result values table were changed
 
         :rtype: bool
@@ -466,7 +463,7 @@ class FormSet(object):
         ``quantities_and_values`` attribute of `samples.models.Result` for
         further information.
 
-        :Return:
+        :return:
           the serialised result values table, as an ASCII-only JSON string
 
         :rtype: str
@@ -483,18 +480,17 @@ class FormSet(object):
         check all other types of validity, and whether the structure was
         changed (i.e., the dimensions of the result values table were changed).
 
-        :Parameters:
-          - `post_files`: The file data submitted via HTTP.  It is the result
+        :param post_files: The file data submitted via HTTP.  It is the result
             of ``request.FILES``.
 
-        :type post_files: ``django.utils.datastructures.MultiValueDict``
+        :type post_files: django.utils.datastructures.MultiValueDict
 
-        :Return:
+        :return:
           the created or updated result instance, or ``None`` if the data
           couldn't yet be written to the database, but the view has to be
           re-displayed
 
-        :rtype: `models.Result` or ``NoneType``
+        :rtype: `models.Result` or NoneType
         """
         all_valid = self._is_all_valid()
         referentially_valid = self._is_referentially_valid()
@@ -528,7 +524,7 @@ class FormSet(object):
         context dictionary contains all forms in an easy-to-use format for the
         template code.
 
-        :Return:
+        :return:
           context dictionary
 
         :rtype: dict mapping str to various types
@@ -543,18 +539,17 @@ class FormSet(object):
 def edit(request, process_id):
     """View for editing existing results, and for creating new ones.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_id`: the ID of the result process; ``None`` if we're creating
+    :param request: the current HTTP Request object
+    :param process_id: the ID of the result process; ``None`` if we're creating
         a new one
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: str
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     form_set = FormSet(request, process_id)
     if form_set.result:
@@ -581,17 +576,16 @@ def show(request, process_id):
     be able to visit a result directly from a feed entry about a new/edited
     result.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_id`: the database ID of the result to show
+    :param request: the current HTTP Request object
+    :param process_id: the database ID of the result to show
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
@@ -609,17 +603,16 @@ def show_image(request, process_id):
     rather than an HTML file, it is served by Django in order to enforce user
     permissions.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_id`: the database ID of the result to show
+    :param request: the current HTTP Request object
+    :param process_id: the database ID of the result to show
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object with the image
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
@@ -633,17 +626,16 @@ def show_thumbnail(request, process_id):
     is an image rather than an HTML file, it is served by Django in order to
     enforce user permissions.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_id`: the database ID of the result to show
+    :param request: the current HTTP Request object
+    :param process_id: the database ID of the result to show
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object with the thumbnail image
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
@@ -663,17 +655,16 @@ def export(request, process_id):
     """View for exporting result process data in CSV or JSON format.  Thus,
     the return value is not an HTML response.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_id`: the database ID of the result to show
+    :param request: the current HTTP Request object
+    :param process_id: the database ID of the result to show
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)

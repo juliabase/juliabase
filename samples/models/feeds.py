@@ -41,10 +41,11 @@ import hashlib
 
 @python_2_unicode_compatible
 class FeedEntry(PolymorphicModel):
-    """Abstract base model for newsfeed entries.  This is also not really
-    abstract as it has a table in the database, however, it is never
-    instantiated itself.  Instead, see `PolymorphicModel.actual_instance` which
-    is inherited by this class.
+    """Abstract base model for newsfeed entries.  This is also not really abstract
+    as it has a table in the database, however, it is never instantiated
+    itself.  Instead, see
+    :py:meth:`samples.models.PolymorphicModel.actual_instance` which is
+    inherited by this class.
     """
     originator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("originator"))
     users = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("users"), related_name="feed_entries",
@@ -72,7 +73,7 @@ class FeedEntry(PolymorphicModel):
         Note that I have to call the parent's ``save()`` method twice and I
         pass the parameter only to the first call.
 
-        :Return:
+        :return:
           ``None``
         """
         super(FeedEntry, self).save(*args, **kwargs)
@@ -89,7 +90,7 @@ class FeedEntry(PolymorphicModel):
         section 4.2.2).  It also returns a link if approriate (without domain
         but with the leading ``/``).
 
-        :Return:
+        :return:
           a dictionary with the keys ``"title"``, ``"category term"``,
           ``"link"``, and ``"category label"``.  ``"link"`` is optional.
 
@@ -98,21 +99,20 @@ class FeedEntry(PolymorphicModel):
         raise NotImplementedError
 
     def get_additional_template_context(self, user):
-        """Return a dictionary with additional context that should be
-        available in the template.  It is similar to
-        `models.depositions.SixChamberDeposition.get_additional_template_context`.
+        """Return a dictionary with additional context that should be available in the
+        template.  It is similar to
+        :py:meth:`inm.models.FiveChamberDeposition.get_additional_template_context`.
         However, in contrast to this other method, the feed version is
         implemented in the abstract base class, so it is defined in all feed
         models.  The rationale for this is that it is used in almost every feed
         model anyway.  If not overridden, this method returns an empty
         dictionary.
 
-        :Parameters:
-          - `user`: the user fetching the feed
+        :param user: the user fetching the feed
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
 
-        :Return:
+        :return:
           dict with additional fields that are supposed to be given to the
           templates.
 
@@ -279,9 +279,9 @@ class FeedCopiedMySamples(FeedEntry):
 
 
 class FeedEditedSamples(FeedEntry):
-    """Model for feed entries for edited samples.  This includes changed
-    currently responsible persons.  The respective view generates three entries
-    for that, however, see `samples.views.sample.edit`.
+    """Model for feed entries for edited samples.  This includes changed currently
+    responsible persons.  The respective view generates three entries for that,
+    however, see :py:func:`samples.views.sample.edit`.
 
     FixMe: This should also include sample deaths.
     """
@@ -329,7 +329,7 @@ class FeedSampleSplit(FeedEntry):
 class FeedEditedSampleSeries(FeedEntry):
     """Model for feed entries for edited sample series.  This includes changed
     currently responsible persons.  The respective view generates two entries
-    for that, however, see `samples.views.sample_series.edit`.
+    for that, however, see :py:func:`samples.views.sample_series.edit`.
     """
     sample_series = models.ForeignKey(SampleSeries, verbose_name=_("sample series"))
     description = models.TextField(_("description"))

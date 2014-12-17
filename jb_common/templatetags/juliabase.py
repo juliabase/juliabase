@@ -82,12 +82,11 @@ def substitute_formulae(string):
     Note that any HTML-like material which is found along the way is escaped.
     Thus, this routine returns a safe string.
 
-    :Parameters:
-      - `string`: raw text from the user or the database
+    :param string: raw text from the user or the database
 
     :type string: unicode
 
-    :Return:
+    :return:
       The escaped string, marked as safe and ready to be used in the output
       HTML.  Any LaTeX formulae are replaced by Google images.
 
@@ -130,7 +129,7 @@ def markdown(value, margins="default"):
     1.7 or later so that this works.
 
     FixMe: Before Markdown sees the text, all named entities are replaced, see
-    `jb_common.utils.substitute_html_entities`.  This creates a mild
+    :py:func:`jb_common.utils.substitute_html_entities`.  This creates a mild
     escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
@@ -223,21 +222,20 @@ def error_list(form, form_error_title, outest_tag="<table>", colspan=1):
     page.  It is an HTML table, so take care that the tags are nested
     properly.  Its template can be found in the file ``"error_list.html"``.
 
-    :Parameters:
-      - `form`: the bound form whose errors should be displayed; if ``None``,
+    :param form: the bound form whose errors should be displayed; if ``None``,
         nothing is generated
-      - `form_error_title`: The title used for general error messages.  These
+    :param form_error_title: The title used for general error messages.  These
         are not connected to one particular field but the form as a
         whole. Typically, they are generated in the ``is_referentially_valid``
         functions.
-      - `outest_tag`: May be ``"<table>"`` or ``"<tr>"``, with ``"<table>"`` as
+    :param outest_tag: May be ``"<table>"`` or ``"<tr>"``, with ``"<table>"`` as
         the default.  It is the outmost HTML tag which is generated for the
         error list.
-      - `colspan`: the width of the table in the number of columns; necessary
+    :param colspan: the width of the table in the number of columns; necessary
         because those &%$# guys of WHATWG have dropped colspan="0"; see
         http://www.w3.org/Bugs/Public/show_bug.cgi?id=13770
 
-    :type form: ``forms.Form``
+    :type form: forms.Form
     :type form_error_title: unicode
     :type outest_tag: unicode
     :type colspan: int

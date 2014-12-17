@@ -96,16 +96,15 @@ def forms_from_post_data(post_data, parent, user):
     be used by the user to add a new piece.  On the contrary, it ignores it in
     the POST data if the user didn't make use of it.
 
-    :Parameters:
-      - `post_data`: the value of ``request.POST``
-      - `parent`: the parent sample which is split
-      - `user`: the current user
+    :param post_data: the value of ``request.POST``
+    :param parent: the parent sample which is split
+    :param user: the current user
 
-    :type post_data: ``QueryDict``
-    :type parent: `models.Sample`
-    :type user: `django.contrib.auth.models.User`
+    :type post_data: QueryDict
+    :type parent: `samples.models.Sample`
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       The list of the pieces forms, the global data form, and whether the
       structure was changed by the user, the prefix suitable for the
       “add-new-name” form
@@ -141,14 +140,13 @@ def forms_from_database(parent, user):
     """Generate pristine forms for the given parent.  In particular, this
     returns an empty list of ``new_name_forms``.
 
-    :Parameters:
-      - `parent`: the sample to be split
-      - `user`: the current user
+    :param parent: the sample to be split
+    :param user: the current user
 
-    :type parent: `models.Sample`
-    :type user: `django.contrib.auth.models.User`
+    :type parent: `samples.models.Sample`
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the initial ``new_name_forms``, the initial ``global_data_form``
 
     :rtype: list of `NewNameForm`, list of `GlobalDataForm`
@@ -163,15 +161,14 @@ def is_all_valid(new_name_forms, global_data_form):
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
 
-    :Parameters:
-      - `new_name_forms`: all “new name forms”, but not the dummy one for new
+    :param new_name_forms: all “new name forms”, but not the dummy one for new
         pieces (the one in darker grey).
-      - `global_data_form`: the global data form
+    :param global_data_form: the global data form
 
     :type new_name_forms: list of `NewNameForm`
     :type global_data_form: `GlobalDataForm`
 
-    :Return:
+    :return:
       whether all forms are valid
 
     :rtype: bool
@@ -186,18 +183,17 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
     database.  For example, no piece name must occur twice, and the piece names
     must not exist within the database.
 
-    :Parameters:
-      - `new_name_forms`: all “new name forms”, but not the dummy one for new
+    :param new_name_forms: all “new name forms”, but not the dummy one for new
         pieces (the one in darker grey).
-      - `global_data_form`: the global data form
-      - `number_of_old_pieces`: The number of pieces the split has already had,
+    :param global_data_form: the global data form
+    :param number_of_old_pieces: The number of pieces the split has already had,
         if it is a re-split.  It's 0 if we are creating a new split.
 
     :type new_name_forms: list of `NewNameForm`
     :type global_data_form: `GlobalDataForm`
     :type number_of_old_pieces: int
 
-    :Return:
+    :return:
       whether all forms are consistent with each other and the database
 
     :rtype: bool
@@ -227,26 +223,25 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
     process must be the last process at all for the parental sample!  This must
     be checked before this routine is called.
 
-    :Parameters:
-      - `new_name_forms`: all “new name forms”, but not the dummy one for new
+    :param new_name_forms: all “new name forms”, but not the dummy one for new
         pieces (the one in darker grey).
-      - `global_data_form`: the global data form
-      - `parent`: the sample to be split
-      - `sample_split`: the already existing sample split process that is to be
+    :param global_data_form: the global data form
+    :param parent: the sample to be split
+    :param sample_split: the already existing sample split process that is to be
         modified.  If this is ``None``, create a new one.
-      - `user`: the current user
+    :param user: the current user
 
     :type new_name_forms: list of `NewNameForm`
     :type global_data_form: `GlobalDataForm`
-    :type parent: `models.Sample`
-    :type sample_split: `models.SampleSplit`
-    :type user: ``django.contrib.auth.models.User``
+    :type parent: `samples.models.Sample`
+    :type sample_split: `samples.models.SampleSplit`
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the sample split instance, new pieces as a dictionary mapping the new
       names to the sample IDs
 
-    :rtype: `models.SampleSplit`, dict mapping unicode to int
+    :rtype: `samples.models.SampleSplit`, dict mapping unicode to int
     """
     now = datetime.datetime.now()
     if not sample_split:
@@ -287,19 +282,18 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     are handled here.  *Either* ``parent_name`` *or* ``old_split`` are unequal
     to ``None``.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `parent_name`: if given, the name of the sample to be split
-      - `old_split_id`: if given the process ID of the split to be modified
+    :param request: the current HTTP Request object
+    :param parent_name: if given, the name of the sample to be split
+    :param old_split_id: if given the process ID of the split to be modified
 
-    :type request: ``HttpRequest``
-    :type parent_name: unicode or ``NoneType``
-    :type old_split_id: int or ``NoneType``
+    :type request: HttpRequest
+    :type parent_name: unicode or NoneType
+    :type old_split_id: int or NoneType
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     assert (parent_name or old_split_id) and not (parent_name and old_split_id)
     if parent_name:
@@ -345,17 +339,16 @@ def latest_split(request, sample_name):
     very latest process for that sample.  In all other cases, return ``None``
     (or an error HTML page if the sample didn't exist).
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `sample_name`: the name of the sample
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type sample_name: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     sample = utils.lookup_sample(sample_name, request.user)
     split = sample.last_process_if_split()

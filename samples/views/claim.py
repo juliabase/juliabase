@@ -73,18 +73,17 @@ def add(request, username):
     this way, we don't get into trouble if a user happens to be called
     ``"add"``.  Additionally, the URLs become RESTful.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `username`: the name of the user whose claim this will be; it must be
+    :param request: the current HTTP Request object
+    :param username: the name of the user whose claim this will be; it must be
         the currently logged-in user
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type username: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     _ = ugettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
@@ -133,18 +132,17 @@ def list_(request, username):
     must be the currently logged-in user anyway.  But this way, it is more
     consistent and more RESTful.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `username`: the name of the user whose claims will be listed; it must
+    :param request: the current HTTP Request object
+    :param username: the name of the user whose claims will be listed; it must
         be the currently logged-in user
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type username: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user and not user.is_staff:
@@ -170,7 +168,7 @@ def is_referentially_valid(withdraw_form, approve_form):
     if requester and reviewer are the same person (i.e., the user wants to aopt
     the samples himself).
 
-    :Return:
+    :return:
       whether all forms are consistent with each other
 
     :rtype: bool
@@ -191,17 +189,16 @@ def is_referentially_valid(withdraw_form, approve_form):
 def show(request, claim_id):
     """View for reviewing a claim.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `claim_id`: the primary key of the claim to be viewed
+    :param request: the current HTTP Request object
+    :param claim_id: the primary key of the claim to be viewed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type claim_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     _ = ugettext
     claim = get_object_or_404(models.SampleClaim, pk=utils.convert_id_to_int(claim_id))

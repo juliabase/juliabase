@@ -31,20 +31,20 @@ def show_user(request, login_name):
     This could be fleshed out with phone number, picture, position, and field
     of interest by overriding this view in the institute app.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `login_name`: the login name of the user to be shown
+    :param request: the current HTTP Request object
+    :param login_name: the login name of the user to be shown
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type login_name: str
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     try:
-        user = django.contrib.auth.models.User.objects.filter(username=login_name).exclude(jb_user_details__department=None)[0]
+        user = django.contrib.auth.models.User.objects.filter(username=login_name). \
+               exclude(jb_user_details__department=None)[0]
     except IndexError:
         raise Http404('No User matches the given query.')
     department = user.jb_user_details.department
@@ -72,15 +72,14 @@ def markdown_sandbox(request):
     not to *explain* Markdown on this page.  Rather, I recommend the help page
     in the Wiki.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     extracted_content = None
     if request.method == "POST":
@@ -100,15 +99,14 @@ def switch_language(request):
     then goes back to the last URL.  This is used for realising the language
     switching by the flags on the top left.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     language = request.GET.get("lang")
     if language in dict(models.languages):
@@ -119,19 +117,19 @@ def switch_language(request):
 
 
 def show_error_page(request, hash_value):
-    """Shows an error page.  See `models.ErrorPage` for further information.
+    """Shows an error page.  See :py:class:`jb_common.models.ErrorPage` for further
+    information.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `hash_value`: the hash value (primary key) of the error page
+    :param request: the current HTTP Request object
+    :param hash_value: the hash value (primary key) of the error page
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type hash_value: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     html = get_object_or_404(models.ErrorPage, hash_value=hash_value).html
     return HttpResponse(html)

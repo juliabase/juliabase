@@ -106,19 +106,18 @@ def find_changed_files(root, diff_file, pattern=""):
     modification status of the last run only refers to file paths relative to
     ``root``.
 
-    :Parameters:
-      - `root`: absolute root path of the files to be scanned
-      - `diff_file`: path to a writable pickle file which contains the
+    :param root: absolute root path of the files to be scanned
+    :param diff_file: path to a writable pickle file which contains the
         modification status of all files of the last run; it is created if it
         doesn't exist yet
-      - `pattern`: Regular expression for filenames (without path) that should
+    :param pattern: Regular expression for filenames (without path) that should
         be scanned.  By default, all files are scanned.
 
     :type root: str
     :type diff_file: str
     :type pattern: unicode
 
-    :Return:
+    :return:
       files changed, files removed
 
     :rtype: list of str, list of str
@@ -181,11 +180,10 @@ def defer_files(diff_file, filepaths):
 
     If a filepath is not found in the diff file, this is ignored.
 
-    :Parameters:
-      - `diff_file`: path to a writable pickle file which contains the
+    :param diff_file: path to a writable pickle file which contains the
         modification status of all files of the last run; it is created if it
         doesn't exist yet
-      - `filepaths`: all relative paths that should be removed from the diff
+    :param filepaths: all relative paths that should be removed from the diff
         file; they are relative to the root that was used when creating the
         diff file;  see `find_changed_files`
 
@@ -204,12 +202,11 @@ def send_error_mail(from_, subject, text, html=None):
     """Sends an email to JuliaBase's administrators.  Normally, it is about an
     error condition but it may be anything.
 
-    :Parameters:
-      - `from_`: name (and only the name, not an email address) of the sender;
+    :param from_: name (and only the name, not an email address) of the sender;
         this typically is the name of the currently running program
-      - `subject`: the subject of the message
-      - `text`: text body of the message
-      - `html`: optional HTML attachment
+    :param subject: the subject of the message
+    :param text: text body of the message
+    :param html: optional HTML attachment
 
     :type from_: unicode
     :type subject: unicode

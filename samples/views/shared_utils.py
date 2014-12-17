@@ -34,12 +34,11 @@ import re, string, codecs, os, os.path
 def int_or_zero(number):
     """Converts ``number`` to an integer.  If this doesn't work, return ``0``.
 
-    :Parameters:
-      - `number`: a string that is supposed to contain an integer number
+    :param number: a string that is supposed to contain an integer number
 
-    :type number: str or unicode or ``NoneType``
+    :type number: str or unicode or NoneType
 
-    :Return:
+    :return:
       the ``int`` representation of ``number``, or 0 if it didn't represent a
       valid integer number
 
@@ -56,12 +55,11 @@ def camel_case_to_underscores(name):
     ``"MySamples"`` is converted to ``"my_samples"``, and ``"PDSMeasurement"``
     to ``"pds_measurement"``.
 
-    :Parameters:
-      - `name`: the camel-cased identifier
+    :param name: the camel-cased identifier
 
     :type name: str
 
-    :Return:
+    :return:
       the identifier in underscore notation
 
     :rtype: str
@@ -81,12 +79,11 @@ def camel_case_to_human_text(name):
     For example, ``"MySamples"`` is converted to ``"my samples"``, and
     ``"PDSMeasurement"`` to ``"PDS measurement"``.
 
-    :Parameters:
-      - `name`: the camel-cased identifier
+    :param name: the camel-cased identifier
 
     :type name: str
 
-    :Return:
+    :return:
       the pretty-printed identifier
 
     :rtype: str
@@ -102,23 +99,24 @@ def camel_case_to_human_text(name):
 
 
 class PlotError(Exception):
-    """Raised if an error occurs while generating a plot.  Usually, it is
-    raised in `Process.pylab_commands` and caught in `Process.generate_plot`.
+    """Raised if an error occurs while generating a plot.  Usually, it is raised in
+    :py:meth:`samples.models.Process.draw_plot` and caught in
+    :py:func:`samples.views.plots.show_plot`.
     """
     pass
 
 
 def _read_plot_file_beginning_at_line_number(filename, columns, start_line_number, end_line_number=None, separator=None):
-    """Read a datafile and returns the content of selected columns beginning at start_line_number.
-    You shouldn't use this function directly. Use the specific functions instead.
+    """Read a datafile and returns the content of selected columns beginning at
+    start_line_number.  You shouldn't use this function directly. Use the
+    specific functions instead.
 
-    :Parameters:
-      - `filename`: full path to the data file
-      - `columns`: the columns that should be read.
-      - `start_line_number`: the line number where the data starts
-      - `end_line_number`: the line number where the record should end.
+    :param filename: full path to the data file
+    :param columns: the columns that should be read.
+    :param start_line_number: the line number where the data starts
+    :param end_line_number: the line number where the record should end.
          The default is ``None``, means till end of file.
-      - `separator`: the separator which separates the values from each other.
+    :param separator: the separator which separates the values from each other.
         Default is ``None``
 
     :type filename: str
@@ -127,14 +125,13 @@ def _read_plot_file_beginning_at_line_number(filename, columns, start_line_numbe
     :type end_line_number: int or None
     :type separator: str or None
 
-    :Return:
+    :return:
       List of all columns.  Every column is represented as a list of floating
       point values.
 
     :rtype: list of list of float
 
-    :Exceptions:
-      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+    :raises PlotError: if something wents wrong with interpreting the file (I/O,
         unparseble data)
     """
     start_values = False
@@ -165,17 +162,18 @@ def _read_plot_file_beginning_at_line_number(filename, columns, start_line_numbe
 
 
 def _read_plot_file_beginning_after_start_value(filename, columns, start_value, end_value="", separator=None):
-    """Read a datafile and return the content of selected columns after the start_value was detected.
-    You shouldn't use this function directly. Use the specific functions instead.
+    """Read a datafile and return the content of selected columns after the
+    start_value was detected.  You shouldn't use this function directly. Use
+    the specific functions instead.
 
-    :Parameters:
-      - `filename`: full path to the data file
-      - `columns`: the columns that should be read.
-      - `start_value`: the start_value indicates the line after the data should be read
-      - `end_value`: the end_value marks the line where the record should end.
-         The default is the empty string
-      - `separator`: the separator which separates the values from each other.
-        Default is ``None``
+    :param filename: full path to the data file
+    :param columns: the columns that should be read.
+    :param start_value: the start_value indicates the line after the data
+        should be read
+    :param end_value: the end_value marks the line where the record should
+        end.  The default is the empty string
+    :param separator: the separator which separates the values from each
+        other.  Default is ``None``
 
     :type filename: str
     :type columns: list of int
@@ -183,14 +181,13 @@ def _read_plot_file_beginning_after_start_value(filename, columns, start_value, 
     :type end_value: str
     :type separator: str or None
 
-    :Return:
+    :return:
       List of all columns.  Every column is represented as a list of floating
       point values.
 
     :rtype: list of list of float
 
-    :Exceptions:
-      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+    :raises PlotError: if something wents wrong with interpreting the file (I/O,
         unparseble data)
     """
     start_values = False
@@ -224,22 +221,20 @@ def read_techplot_file(filename, columns=(0, 1)):
     """Read a datafile in TechPlot format and return the content of selected
     columns.
 
-    :Parameters:
-      - `filename`: full path to the Techplot data file
-      - `columns`: the columns that should be read.  Defaults to the first two,
+    :param filename: full path to the Techplot data file
+    :param columns: the columns that should be read.  Defaults to the first two,
         i.e., ``(0, 1)``.  Note that the column numbering starts with zero.
 
     :type filename: str
     :type columns: list of int
 
-    :Return:
+    :return:
       List of all columns.  Every column is represented as a list of floating
       point values.
 
     :rtype: list of list of float
 
-    :Exceptions:
-      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+    :raises PlotError: if something wents wrong with interpreting the file (I/O,
         unparseble data)
     """
     return _read_plot_file_beginning_after_start_value(filename, columns, start_value="begin", end_value="end")
@@ -251,8 +246,7 @@ def mkdirs(path):
     If the directory already exists, nothing is done.  (In particular, no
     exception is raised.)
 
-    :Parameters:
-      - `path`: absolute path which should be created
+    :param path: absolute path which should be created
 
     :type path: str
     """
@@ -265,12 +259,11 @@ def mkdirs(path):
 def remove_file(path):
     """Removes the file.  If the file didn't exist, this is a no-op.
 
-    :Parameters:
-      - `path`: absolute path to the file to be removed
+    :param path: absolute path to the file to be removed
 
     :type path: str
 
-    :Return:
+    :return:
       whether the file was removed; if ``False``, it hadn't existed
 
     :rtype: bool
@@ -286,12 +279,11 @@ def remove_file(path):
 def capitalize_first_letter(text):
     """Capitalise the first letter of the given string.
 
-    :Parameters:
-      - `text`: text whose first letter should be capitalised
+    :param text: text whose first letter should be capitalised
 
     :type text: unicode
 
-    :Return:
+    :return:
       the text with capitalised first letter
 
     :rtype: unicode
@@ -307,12 +299,11 @@ def sanitize_for_markdown(text):
     (legacy) strings are imported.  For example, comments found in data files
     must be sent through this function before being stored in the database.
 
-    :Parameters:
-      - `text`: the original string
+    :param text: the original string
 
     :type text: unicode
 
-    :Return:
+    :return:
       the Markdown-ready string
 
     :rtype: unicode

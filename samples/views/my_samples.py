@@ -57,12 +57,10 @@ class ActionForm(forms.Form):
     remove_from_my_samples = forms.BooleanField(label=_("Remove from “My Samples”"), required=False)
 
     def __init__(self, user, *args, **kwargs):
-        """Form constructor.
+        """
+        :param user: the user whose “My Samples” list should be generated
 
-        :Parameters:
-          - `user`: the user whose “My Samples” list should be generated
-
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
         """
         super(ActionForm, self).__init__(*args, **kwargs)
         self.fields["new_currently_responsible_person"].set_users(user, user)
@@ -111,17 +109,16 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
     database.  For example, you must not change data for samples for which
     you're not the currently responsible person.
 
-    :Parameters:
-      - `current_user`: the currently logged-in user
-      - `my_samples_form`: the form with the selected “My Samples”
-      - `action_form`: the form with the things to be done with the selected
+    :param current_user: the currently logged-in user
+    :param my_samples_form: the form with the selected “My Samples”
+    :param action_form: the form with the things to be done with the selected
         samples.
 
-    :type current_user: ``django.contrib.auth.models.User``
+    :type current_user: django.contrib.auth.models.User
     :type my_samples_form: `MySamplesForm`
     :type action_form: `ActionForm`
 
-    :Return:
+    :return:
       whether all forms are consistent with each other and the database
 
     :rtype: bool
@@ -171,13 +168,12 @@ def save_to_database(user, my_samples_form, action_form):
     """Execute the things that should be done with the selected “My Samples”.
     I do also the feed generation here.
 
-    :Parameters:
-      - `user`: the user whose “My Samples” should be edited
-      - `my_samples_form`: the form with the selected “My Samples”
-      - `action_form`: the form with the things to be done with the selected
+    :param user: the user whose “My Samples” should be edited
+    :param my_samples_form: the form with the selected “My Samples”
+    :param action_form: the form with the things to be done with the selected
         samples.
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
     :type my_samples_form: `MySamplesForm`
     :type action_form: `ActionForm`
     """
@@ -245,18 +241,17 @@ def edit(request, username):
     another user.  However, staff users *are* allowed to change them, so then
     both are different.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `username`: the login name of the user whose “My Samples” should be
+    :param request: the current HTTP Request object
+    :param username: the login name of the user whose “My Samples” should be
         changed
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type username: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if not request.user.is_staff and request.user != user:

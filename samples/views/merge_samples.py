@@ -97,12 +97,12 @@ def merge_samples(from_sample, to_sample):
     """Copies all processes from one sample to another sample.
     The fist sample will be erased afterwards.
 
-    :Parameters:
-     - `from_sample`: The sample, who is merged into the other sample
-     - `to_sample`: The sample, who should contains the processes from the other sample
+    :param from_sample: The sample, who is merged into the other sample
+    :param to_sample: The sample, who should contains the processes from the
+        other sample
 
-    :type from_sample: `models.Sample`
-    :type to_sample: `models.Sample`
+    :type from_sample: `samples.models.Sample`
+    :type to_sample: `samples.models.Sample`
     """
     current_sample = to_sample
     for process in from_sample.processes.order_by("-timestamp"):
@@ -122,12 +122,11 @@ def merge_samples(from_sample, to_sample):
 def is_referentially_valid(merge_samples_forms):
     """Test whether all forms are consistent with each other.
 
-    :Parameters:
-      - `merge_samples_forms`: all “merge samples forms”
+    :param merge_samples_forms: all “merge samples forms”
 
     :type new_name_forms: list of `MergeSamplesForm`
 
-    :Return:
+    :return:
       whether all forms are consistent with each other
 
     :rtype: bool
@@ -163,17 +162,16 @@ number_of_pairs = 6
 def merge(request):
     """The merging of the samples is handled in this function.
     It creates the necessary forms, initiates the merging
-    and returns the ``HttpResponse`` to the web browser.
+    and returns the HttpResponse to the web browser.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     my_samples = list(request.user.my_samples.all())
     if request.method == "POST":

@@ -79,16 +79,15 @@ def parse_timestamp(timestamp):
     ``.isoformat()`` method.  As long as the server does not handle
     timezone-aware timestamps (i.e., ``USE_TZ=False``), this works.
 
-    :Parameters:
-      - `timestamp`: the timestamp to parse, coming from the server.  It must
+    :param timestamp: the timestamp to parse, coming from the server.  It must
         have ISO 8601 format format without timezone information.
 
     :type timestamp: str
 
-    :Return:
+    :return:
       the timestamp as a Python datetime object
 
-    :rtype: `datetime.datetime`
+    :rtype: datetime.datetime
     """
     return datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S" + (".%f" if "." in timestamp else ""))
 
@@ -99,12 +98,11 @@ def format_timestamp(timestamp):
     (with the ``"T"`` inbetween).  The reason is that Django's `DateTimeField`
     would not be able to parse it.
 
-    :Parameters:
-      - `timestamp`: the timestamp to format
+    :param timestamp: the timestamp to format
 
-    :type timestamp: `datetime.datetime`
+    :type timestamp: datetime.datetime
 
-    :Return:
+    :return:
       the timestamp in the format “YYYY-MM-DD HH:MM:SS”.
 
     :rtype: str
@@ -187,13 +185,12 @@ def encode_multipart_formdata(data):
     handle file uploads: For them, the value of the item in ``data`` is an open
     file object.  Taken from <http://code.activestate.com/recipes/146306/#c5>.
 
-    :Parameters:
-      - `data`: the POST data; it must not be ``None``
+    :param data: the POST data; it must not be ``None``
 
     :type data: dict mapping unicode to unicode, int, float, bool, file, or
       list
 
-    :Return:
+    :return:
       the content type, the HTTP body
 
     :rtype: str, str
@@ -245,7 +242,7 @@ def encode_multipart_formdata(data):
 class JuliaBaseError(Exception):
     """Exception class for high-level JuliaBase errors.
 
-    :ivar error_code: The numerical error code.  See ``jb_common.utils``
+    :ivar error_code: The numerical error code.  See :py:mod:`jb_common.utils`
       for further information, and the root ``__init__.py`` file of the various
       JuliaBase apps for the tables with the error codes.
 
@@ -311,13 +308,12 @@ class JuliaBaseConnection(object):
         """Do an HTTP request with the JuliaBase server.  If ``data`` is not
         ``None``, its a POST request, and GET otherwise.
 
-        :Parameters:
-          - `relative_url`: the non-domain part of the URL, for example
+        :param relative_url: the non-domain part of the URL, for example
             ``"/samples/10-TB-1"``.  “Relative” may be misguiding here: only
             the domain is omitted.
-          - `data`: the POST data, or ``None`` if it's supposed to be a GET
+        :param data: the POST data, or ``None`` if it's supposed to be a GET
             request.
-          - `response_is_json`: whether the content type of the response must
+        :param response_is_json: whether the content type of the response must
             be JSON
 
         :type relative_url: str
@@ -325,17 +321,16 @@ class JuliaBaseConnection(object):
           list
         :type response_is_json: bool
 
-        :Return:
+        :return:
           the response to the request
 
         :rtype: ``object``
 
-        :Exceptions:
-          - `JuliaBaseError`: raised if JuliaBase couldn't fulfill the request
+        :raises JuliaBaseError: if JuliaBase couldn't fulfill the request
             because it contained errors.  For example, you requested a sample
             that doesn't exist, or the transmitted measurement data was
             incomplete.
-          - `urllib.error.URLError`: raise if a lower-level error occured, e.g. the
+        :raises urllib.error.URLError: if a lower-level error occured, e.g. the
             HTTP connection couldn't be established.
         """
         if not self.root_url:
@@ -389,10 +384,9 @@ connection = JuliaBaseConnection()
 def login(username, password, testserver=False):
     """Logins to JuliaBase.
 
-    :Parameters:
-      - `username`: the username used to log in
-      - `password`: the user's password
-      - `testserver`: whether the testserver should be user.  If ``False``, the
+    :param username: the username used to log in
+    :param password: the user's password
+    :param testserver: whether the testserver should be user.  If ``False``, the
         production server is used.
 
     :type username: unicode

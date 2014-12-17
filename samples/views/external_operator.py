@@ -55,15 +55,14 @@ class AddExternalOperatorForm(forms.ModelForm):
 def new(request):
     """View for adding a new external operator.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     permissions.assert_can_add_external_operator(request.user)
     if request.method == "POST":
@@ -108,17 +107,16 @@ def edit(request, external_operator_id):
     """View for editing existing external operators.  You can also give the
     operator initials here.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `external_operator_id`: the database ID for the external operator
+    :param request: the current HTTP Request object
+    :param external_operator_id: the database ID for the external operator
 
-    :type request: ``HttpRequest``
-    :type `external_operator_id`: unicode
+    :type request: HttpRequest
+    :type external_operator_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     external_operator = get_object_or_404(models.ExternalOperator, pk=utils.convert_id_to_int(external_operator_id))
     permissions.assert_can_edit_external_operator(request.user, external_operator)
@@ -144,17 +142,16 @@ def show(request, external_operator_id):
     allowed to see all samples, and the current contact person are allowed to
     see it.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `external_operator_id`: the database ID for the external operator
+    :param request: the current HTTP Request object
+    :param external_operator_id: the database ID for the external operator
 
-    :type request: ``HttpRequest``
-    :type `external_operator_id`: unicode
+    :type request: HttpRequest
+    :type external_operator_id: unicode
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     external_operator = get_object_or_404(models.ExternalOperator, pk=utils.convert_id_to_int(external_operator_id))
     contact_persons = external_operator.contact_persons.all()
@@ -181,15 +178,14 @@ def list_(request):
     for selecting one to edit it.  If you have no external contacts, a 404 is
     generated.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if request.user.is_superuser:
         external_operators = list(models.ExternalOperator.objects.all())

@@ -38,11 +38,11 @@ import samples.models, samples.views.shared_utils
 @python_2_unicode_compatible
 class SampleDetails(models.Model):
     """Model for sample details.  It extends the ``Sample`` model as
-    ``UserDetails`` extend ``User``, i.e. through a one-to-one relationship.
-    Apart form this, it must contain a `get_context_for_user` method.  The rest
-    is optional, however, you must take care of proper cache invalidation so
-    that the user doesn't get an outdated sample data sheet when this model or
-    depending models are updated.
+    ``UserDetails`` extends ``User``, i.e. through a one-to-one relationship.
+    Apart form this, it must contain a `get_context_for_user` method.  The
+    rest is optional, however, you must take care of proper cache invalidation
+    so that the user doesn't get an outdated sample data sheet when this model
+    or depending models are updated.
     """
     sample = models.OneToOneField(samples.models.Sample, verbose_name=_("sample"), related_name="sample_details",
                                   primary_key=True)
@@ -65,11 +65,11 @@ class SampleDetails(models.Model):
         samples.models.Sample.objects.get(id=self.sample.id).save(with_relations=False)
 
     def get_stack_diagram_locations(self):
-        """Returns the locations of the stack diagram files.  This is also
-        needed in ``stack.py``, therefore, it is not part of
+        """Returns the locations of the stack diagram files.  This is also needed in
+        :py:mod:`inm.views.samples.stack`, therefore, it is not part of
         `get_context_for_user`.
 
-        :Return:
+        :return:
           a dictionary containing the following keys:
 
           =========================  =========================================
@@ -96,7 +96,7 @@ class SampleDetails(models.Model):
         verified by a user.  Note that this method hits the database, so cache
         its result if applicable.
 
-        :Return:
+        :return:
           whether a stack diagram should be printed for this sample.
 
         :rtype: bool
@@ -117,15 +117,14 @@ class SampleDetails(models.Model):
         ``can_edit``, ``id_for_rename``.  See ``sample.py`` in
         JuliaBase-samples for the related code.
 
-        :Parameters:
-          - `user`: the currently logged-in user
-          - `old_context`: the sample context as it was in the cache or newly
+        :param user: the currently logged-in user
+        :param old_context: the sample context as it was in the cache or newly
             build.  This dictionary will not be touched in this method.
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
         :type old_context: dict mapping str to ``object``
 
-        :Return:
+        :return:
           the adapted full context for the sample
 
         :rtype: dict mapping str to ``object``
@@ -152,12 +151,11 @@ class SampleDetails(models.Model):
         The data returned here is used in the ``sample_details`` block in the
         template, which is overridden in a derived template.
 
-        :Parameters:
-          - `user`: the currently logged-in user
+        :param user: the currently logged-in user
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
 
-        :Return:
+        :return:
           additional context dictionary for the template
 
         :rtype: dict mapping str to object
@@ -176,19 +174,18 @@ class SampleDetails(models.Model):
         returned here is used in the ``sample_details`` block in the template,
         which is overridden in a derived template.
 
-        :Parameters:
-          - `user`: the currently logged-in user
-          - `post_data`: the HTTP POST data
-          - `sample_form`: the bound sample form
-          - `edit_description_form`: a bound form with description of edit
+        :param user: the currently logged-in user
+        :param post_data: the HTTP POST data
+        :param sample_form: the bound sample form
+        :param edit_description_form: a bound form with description of edit
             changes
 
-        :type user: ``django.contrib.auth.models.User``
+        :type user: django.contrib.auth.models.User
         :type sample_form: `samples.views.sample.SampleForm`
-        :type edit_description_form: `form_utils.EditDescriptionForm` or
-          ``NoneType``
+        :type edit_description_form:
+          `samples.views.form_utils.EditDescriptionForm` or NoneType
 
-        :Return:
+        :return:
           additional context dictionary for the template, whether the sample
           details data is valid
 
@@ -200,8 +197,7 @@ class SampleDetails(models.Model):
     def save_form_data(self, sample_details_context):
         """Saves the POST data related to sample details to the database.
 
-        :Parameters:
-          - `sample_details_context`: the additional context which was
+        :param sample_details_context: the additional context which was
             generated in `process_get` or `process_post`
 
         :type sample_details_context: dict mapping str to object
@@ -219,10 +215,10 @@ class SampleDetails(models.Model):
         data in nested dictionaries.  Typically, this data is used when a
         non-browser client retrieves a single resource and expects JSON output.
 
-        :Return:
+        :return:
           the content of all fields of these sample details
 
-        :rtype: `dict`
+        :rtype: dict
         """
         data = {field.name: getattr(self, field.name) for field in self._meta.fields}
         data.update(("informal layer #{}".format(layer.index), layer.get_data()) for layer in self.informal_layers.all())
@@ -232,9 +228,9 @@ class SampleDetails(models.Model):
         """Extract the data of these sample details as a set of nodes with lists of
         key–value pairs, ready to be used for the table data export.  Informal
         layers are added as children to the node.  See the
-        `samples.views.table_export` module for all the glory details.
+        :py:mod:`samples.views.table_export` module for all the glory details.
 
-        :Return:
+        :return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
@@ -253,10 +249,10 @@ class SampleDetails(models.Model):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         related_models = {InformalLayer: "informal_layers"}
         return search.SearchTreeNode(cls, related_models, search_fields=search.convert_fields_to_search_fields(cls))
@@ -315,8 +311,7 @@ class InformalLayer(models.Model):
         layer the sample is touched.  Then, you must take care of touching the
         sample once yourself, of course.
 
-        :Parameters:
-          - `with_relations`: If ``True`` (default), also touch the related
+        :param with_relations: If ``True`` (default), also touch the related
             sample details (and with it, the sample).
 
         :type with_relations: bool
@@ -328,21 +323,23 @@ class InformalLayer(models.Model):
 
     def get_data(self):
         """Extract the data of this process as a dictionary, ready to be used for
-        general data export.  It is only used in `SampleDetails.get_data`.
+        general data export.  It is only used in
+        :py:meth:`SampleDetails.get_data`.
 
-        :Return:
+        :return:
           the content of all fields of this informal layer
 
-        :rtype: `dict`
+        :rtype: dict
         """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
     def get_data_for_table_export(self):
-        """Extract the data of this informal layer as a `DataNode` with lists of
-        key–value pairs, ready to be used for the table data export.  See the
+        """Extract the data of this informal layer as a
+        :py:class:`~samples.data_tree.DataNode` with lists of key–value pairs,
+        ready to be used for the table data export.  See the
         `samples.views.table_export` module for all the glory details.
 
-        :Return:
+        :return:
           a node for building a data tree
 
         :rtype: `samples.data_tree.DataNode`
@@ -357,10 +354,10 @@ class InformalLayer(models.Model):
         """Class method for generating the search tree node for this model
         instance.
 
-        :Return:
+        :return:
           the tree node for this model instance
 
-        :rtype: ``jb_common.search.SearchTreeNode``
+        :rtype: `jb_common.search.SearchTreeNode`
         """
         search_fields = search.convert_fields_to_search_fields(
             cls, excluded_fieldnames=["additional_process_data", "color", "always_collapsed"])

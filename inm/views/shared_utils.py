@@ -25,20 +25,18 @@ def read_solarsimulator_plot_file(filename, position):
     """Read a datafile from a solarsimulator measurement and return the content of
     the voltage column and the selected current column.
 
-    :Parameters:
-      - `filename`: full path to the solarsimulator measurement data file
-      - `position`: the position of the cell the currents of which should be read.
+    :param filename: full path to the solarsimulator measurement data file
+    :param position: the position of the cell the currents of which should be read.
 
     :type filename: str
     :type position: str
 
-    :Return:
+    :return:
       all voltages in Volt, then all currents in Ampere
 
     :rtype: list of float, list of float
 
-    :Exceptions:
-      - `PlotError`: if something wents wrong with interpreting the file (I/O,
+    :raises PlotError: if something wents wrong with interpreting the file (I/O,
         unparseble data)
     """
     try:
@@ -69,13 +67,12 @@ def get_next_deposition_number(letter):
     called “08B-045”, this routine yields “08B-046” (unless the new year has
     begun).
 
-    :Parameters:
-      - `letter`: the indentifying letter of the deposition apparatus.  For
+    :param letter: the indentifying letter of the deposition apparatus.  For
         example, it is ``"B"`` for the 6-chamber deposition.
 
     :type letter: str
 
-    :Return:
+    :return:
       A so-far unused deposition number for the current calendar year for the
       given deposition apparatus.
     """
@@ -91,30 +88,31 @@ def get_next_deposition_number(letter):
 
 
 def get_next_deposition_or_process_number(letter, process_cls):
-    """This function works like the `get_next_deposition_number` from `samples.utils`,
-    but it also searches throught a given process that is using the same pool of
-    numbers such as the deposition.
+    """This function works like the `get_next_deposition_number` from
+    `samples.utils`, but it also searches throught a given process that is
+    using the same pool of numbers such as the deposition.
 
     For example see the FiveChamberDeposition and the FiveChamberEtching.
     There are two different processes that are made on the same apparatus and
     therefore have the same numbers.
 
-    :Parameters:
-      - `letter`: the indentifying letter of the deposition apparatus.  For
+    :param letter: the indentifying letter of the deposition apparatus.  For
         example, it is ``"B"`` for the 6-chamber deposition.
-      - `process_cls`: the model class from the process who has the same
+    :param process_cls: the model class from the process who has the same
       type of numbers such as the deposition.
 
     :type letter: str
     :type process_cls: `samples.models.PhysicalProcess`
 
-    :Return:
+    :return:
       A so-far unused deposition number for the current calendar year for the
       given deposition apparatus.
     """
     prefix = "{year}{letter}-".format(year=datetime.date.today().strftime("%y"), letter=letter)
     numbers = map(int, map(lambda string: string[len(prefix):],
-                           set(models.Deposition.objects.filter(number__startswith=prefix).values_list('number', flat=True).iterator()) |
-                           set(process_cls.objects.filter(number__startswith=prefix).values_list('number', flat=True).iterator())))
+                           set(models.Deposition.objects.filter(number__startswith=prefix).values_list('number', flat=True). \
+                               iterator()) |
+                           set(process_cls.objects.filter(number__startswith=prefix).values_list('number', flat=True). \
+                               iterator())))
     next_number = max(numbers) + 1 if numbers else 1
     return prefix + "{0:03}".format(next_number)

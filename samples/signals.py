@@ -42,11 +42,11 @@ main menu page.  We implement a three-level cache:
 
 2. The samples cache.  This is only used for the samples view.  Whole samples
    are stored in the cache as a special data structure called
-   ``SamplesAndProcesses``.  In order to increase cache efficiency, this data
-   structure can be re-used for different users.  Additionally, it is stored
-   multiple times in the cache, for different “layout settings” (language,
-   skin).  However, it becomes invalid if the sample or some of the displayed
-   information is changed.
+   :py:class:`~samples.views.sample.SamplesAndProcesses`.  In order to increase
+   cache efficiency, this data structure can be re-used for different users.
+   Additionally, it is stored multiple times in the cache, for different
+   “layout settings” (language, skin).  However, it becomes invalid if the
+   sample or some of the displayed information is changed.
 
 3. The processes cache.  Every process may be cached so that a sample or sample
    series view may be built from cached items.
@@ -190,7 +190,7 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
         user_details.my_samples_timestamp = datetime.datetime.now()
         user_details.save()
     if reverse:
-        # `instance` is ``django.contrib.auth.models.User``
+        # `instance` is django.contrib.auth.models.User
         if action in ["post_add", "post_remove", "post_clear"]:
             touch_my_samples(instance)
     else:
@@ -206,14 +206,14 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
 
 def get_identifying_data_hash(user):
     """Return the hash of username, firstname, and lastname.  See the
-    ``idenfifying_data_hash`` field in ``UserDetails`` for further information.
+    :py:attr:`samples.models.UserDetails.identifying_data_hash` field for
+    further information.
 
-    :Parameters:
-      - `user`: the user
+    :param user: the user
 
-    :type user: ``django.contrib.auth.models.User``
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       the SHA1 hash of the identifying data of the user
 
     :rtype: str

@@ -16,11 +16,11 @@
 """View for the lab notebooks for physical processes.  This is a generic view.
 The concrete data extraction work is done in the ``get_lab_notebook_context``
 methods of physical process models, and the layout work is done in the
-``lab_notebook_<camel_case_class_name_of_process>.html`` templates.
+:file:`lab_notebook_{camel_case_class_name_of_process}.html` templates.
 
 Furthermore, if you'd like to add a lab notebook function, you must add its URL
-explicitly to ``urls.py``.  Look at the large-area deposition entry as an
-example.
+explicitly to ``urls.py``.  See :py:mod:`samples.url_utils` for further
+information.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -58,19 +58,17 @@ def parse_year_and_month(year_and_month):
     """Parse the URL suffix in the lab notebook URL which is supposed to
     contain year and month.
 
-    :Parameters:
-      - `year_and_month`: the year-and-month part of the URL given in the
+    :param year_and_month: the year-and-month part of the URL given in the
         request, i.e. of the form ``"YYYY/MM"`` (the month may be single-digit)
 
     :type year_and_month: unicode
 
-    :Return:
+    :return:
       year found in the URL, month found in the URL
 
     :rtype: int, int
 
-    :Exceptions:
-      - `Http404`: if the year-and-month string has an invalid format or was
+    :raises Http404: if the year-and-month string has an invalid format or was
         empty, or month and year refer to an invalid date, or the year precedes
         1990.
     """
@@ -88,17 +86,16 @@ def get_previous_next_urls(process_name, year, month):
     the previous and next month in the lab notebook, taking the current lab
     notebook view as the starting point.
 
-    :Parameters:
-      - `process_name`: the class name of the model of the physical process in
+    :param process_name: the class name of the model of the physical process in
         camel case, e.g. ``"large_area_deposition"``
-      - `year`: year of the current view
-      - `month`: month of the current view
+    :param year: year of the current view
+    :param month: month of the current view
 
     :type process_name: str
     :type year: int
     :type month: int
 
-    :Return:
+    :return:
       the full relative URL to the previous month, the full relative URL to the
       next month
 
@@ -129,21 +126,20 @@ def show(request, process_name, year_and_month):
     physical process.  In ``urls.py``, you must give the entry for this view
     the name ``"lab_notebook_<camel_case_process_name>"``.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_name`: the class name of the model of the physical process,
+    :param request: the current HTTP Request object
+    :param process_name: the class name of the model of the physical process,
         e.g. ``"LargeAreaDeposition"``
-      - `year_and_month`: the year and month to be displayed in the format
+    :param year_and_month: the year and month to be displayed in the format
         ``YYYY/MM`` (the month may be single-digit)
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_name: str
     :type year_and_month: str
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     process_class = get_all_models()[process_name]
     process_name = utils.camel_case_to_underscores(process_name)
@@ -188,21 +184,20 @@ def export(request, process_name, year_and_month):
     ``urls.py``, you must give the entry for this view the name
     ``"export_lab_notebook_<process_name>"``.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
-      - `process_name`: the class name of the model of the physical process,
+    :param request: the current HTTP Request object
+    :param process_name: the class name of the model of the physical process,
         e.g. ``"LargeAreaDeposition"``
-      - `year_and_month`: the year and month to be displayed in the format
+    :param year_and_month: the year and month to be displayed in the format
         ``YYYY/MM`` (the month may be single-digit)
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type process_name: str
     :type year_and_month: str
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     process_class = get_all_models()[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)

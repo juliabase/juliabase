@@ -42,7 +42,6 @@ class TemporaryMySamples(object):
     def __init__(self, sample_ids):
         """Class constructor.
 
-        :Parameters:
           `sample_ids`: the IDs of the samples that must be on the “My Samples”
             list; it my also be a single ID
 
@@ -63,20 +62,19 @@ def new_samples(number_of_samples, current_location, substrate="asahi-u", timest
     """Creates new samples in the database.  All parameters except the number
     of samples and the current location are optional.
 
-    :Parameters:
-      - `number_of_samples`: the number of samples to be created.  It must not
+    :param number_of_samples: the number of samples to be created.  It must not
         be greater than 100.
-      - `current_location`: the current location of the samples
-      - `substrate`: the substrate of the samples.  You find possible values in
+    :param current_location: the current location of the samples
+    :param substrate: the substrate of the samples.  You find possible values in
         `models.physical_processes`.
-      - `timestamp`: the timestamp of the substrate process; defaults to the
+    :param timestamp: the timestamp of the substrate process; defaults to the
         current time
-      - `timestamp_inaccuracy`: the timestamp inaccuracy of the substrate
+    :param timestamp_inaccuracy: the timestamp inaccuracy of the substrate
         process.  See ``samples.models.common`` for details.
-      - `purpose`: the purpose of the samples
-      - `tags`: the tags of the samples
-      - `topic`: the name of the topic of the samples
-      - `substrate_comments`: Further comments on the substrate process
+    :param purpose: the purpose of the samples
+    :param tags: the tags of the samples
+    :param topic: the name of the topic of the samples
+    :param substrate_comments: Further comments on the substrate process
 
     :type number_of_samples: int
     :type current_location: unicode
@@ -88,7 +86,7 @@ def new_samples(number_of_samples, current_location, substrate="asahi-u", timest
     :type topic: unicode
     :type substrate_comments: unicode
 
-    :Return:
+    :return:
       the IDs of the generated samples
 
     :rtype: list of int
@@ -117,10 +115,9 @@ class Sample(object):
     def __init__(self, name=None, id_=None):
         """Class constructor.
 
-        :Parameters:
-          - `name`: the name of an existing sample; it is ignored if `id_` is
+        :param name: the name of an existing sample; it is ignored if `id_` is
             given
-          - `id_`: the ID of an existing sample
+        :param id_: the ID of an existing sample
 
         :type name: unicode
         :type id_: int
@@ -174,11 +171,10 @@ class Result(object):
     def __init__(self, id_=None, with_image=True):
         """Class constructor.
 
-        :Parameters:
-          - `id_`: if given, the instance represents an existing result process
+        :param id_: if given, the instance represents an existing result process
             of the database.  Note that this triggers an exception if the
             result ID is not found in the database.
-          - `with_image`: whether the image data should be loaded, too
+        :param with_image: whether the image data should be loaded, too
 
         :type id_: int or unicode
         :type with_image: bool
@@ -216,7 +212,7 @@ class Result(object):
     def submit(self):
         """Submit the result to the database.
 
-        :Return:
+        :return:
           the result process ID if succeeded.
 
         :rtype: unicode

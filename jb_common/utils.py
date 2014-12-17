@@ -70,10 +70,14 @@ class JSONRequestException(Exception):
 
     The ranges for the error codes are:
 
-    0–999: special codes, codes common to all applications, and JuliaBase-common
-    1000–1999: JuliaBase-samples
-    2000–2999: institute-specific extensions to JuliaBase-samples
-    3000–3999: JuliaBase-kicker
+    0–999
+        special codes, codes common to all applications, and JuliaBase-common
+    1000–1999
+        JuliaBase-samples
+    2000–2999
+        institute-specific extensions to JuliaBase-samples
+    3000–3999
+        JuliaBase-kicker
 
     The complete table with the error codes is in the main ``__init__.py`` of
     the respective app.
@@ -100,12 +104,11 @@ def substitute_html_entities(text):
     a character that is later removed.  But this routine doesn't have an
     escaping mechanism.
 
-    :Parameters:
-      - `text`: the user's input to be processed
+    :param text: the user's input to be processed
 
     :type text: unicode
 
-    :Return:
+    :return:
       ``text`` with all named entities replaced by single unicode characters
 
     :rtype: unicode
@@ -130,11 +133,10 @@ def get_really_full_name(user):
     empty string if the user has no first and surname set.  However, it'd be
     sensible to use the login name as a fallback then.  This is realised here.
 
-    :Parameters:
-      - `user`: the user instance
-    :type user: ``django.contrib.auth.models.User``
+    :param user: the user instance
+    :type user: django.contrib.auth.models.User
 
-    :Return:
+    :return:
       The full, human-friendly name of the user
 
     :rtype: unicode
@@ -147,11 +149,9 @@ def check_markdown(text):
     """Checks whether the Markdown input by the user contains only permitted
     syntax elements.  I forbid images and headings so far.
 
-    :Parameters:
-      - `text`: the Markdown input to be checked
+    :param text: the Markdown input to be checked
 
-    :Exceptions:
-      - `ValidationError`: if the ``text`` contained forbidden syntax
+    :raises ValidationError: if the ``text`` contained forbidden syntax
         elements.
     """
     if dangerous_markup_pattern.search(text):
@@ -161,27 +161,25 @@ def check_markdown(text):
 def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_directory=False):
     """Test whether a certain file is openable by JuliaBase.
 
-    :Parameters:
-    - `filepath`: Path to the file to be tested.  This may be absolute or
+    :param filepath: Path to the file to be tested.  This may be absolute or
       relative.  If empty, this function does nothing.
-    - `default_root`: If ``filepath`` is relative, this path is prepended to
+    :param default_root: If ``filepath`` is relative, this path is prepended to
       it.
-    - `allowed_roots`: All absolute root paths where ``filepath`` is allowed.
+    :param allowed_roots: All absolute root paths where ``filepath`` is allowed.
       ``default_root`` is implicitly added to it.
-    - `may_be_directory`: if ``True``, ``filepath`` may be a readable directory
+    :param may_be_directory: if ``True``, ``filepath`` may be a readable directory
 
     :type filepath: str
     :type default_root: str
     :type allowed_roots: iterable of str
     :type may_be_directory: bool
 
-    :Return:
+    :return:
       the normalised ``filepath``
 
     :rtype: str
 
-    :Exceptions:
-      - `ValidationError`: if the ``text`` contained forbidden syntax
+    :raises ValidationError: if the ``text`` contained forbidden syntax
         elements.
     """
     if filepath:
@@ -216,19 +214,18 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
 def find_file_in_directory(filename, path, max_depth=float("inf")):
     """Searches for a file in a directory recursively to a given depth.
 
-    :Parameters:
-     - `filename`: the file to be searched for. only the basename is
-     required.
-     - `path`: the path from the top level directory where the searching
-     starts.
-     - `max_depth`: the maximum recursion depth.
+    :param filename: the file to be searched for. only the basename is
+        required.
+    :param path: the path from the top level directory where the searching
+        starts.
+    :param max_depth: the maximum recursion depth.
 
     :type filename: str
     :type path: str
     :type max_depth: int
 
-    :Return:
-     the relative path to the searched file or ``None`` if not found.
+    :return:
+        the relative path to the searched file or ``None`` if not found.
 
     :rtype: str
     """
@@ -264,8 +261,7 @@ def help_link(link):
     The help link is embedded into the top line in the layout, see the template
     ``base.html``.  Currently, it is prepended with ``"/trac/juliabase/wiki/"``.
 
-    :Parameters:
-      - `link`: the relative URL to the help page.
+    :param link: the relative URL to the help page.
 
     :type link: str
     """
@@ -284,35 +280,34 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     The latter is appended to the URL as a query string with the ``next`` key,
     e.g.::
 
-        /juliabase/6-chamber_deposition/08B410/edit/?next=/juliabase/samples/08B410a
+        /juliabase/5-chamber_deposition/08B410/edit/?next=/juliabase/samples/08B410a
 
-    This routine generated the proper ``HttpResponse`` object that contains the
+    This routine generated the proper HttpResponse object that contains the
     redirection.  It always has HTTP status code 303 (“see other”).
 
-    :Parameters:
-      - `request`: the current HTTP request
-      - `success_report`: an optional short success message reported to the
+    :param request: the current HTTP request
+    :param success_report: an optional short success message reported to the
         user on the next view
-      - `view`: the view name/function to redirect to; defaults to the main
+    :param view: the view name/function to redirect to; defaults to the main
         menu page (same when ``None`` is given)
-      - `kwargs`: group parameters in the URL pattern that have to be filled
-      - `query_string`: the *quoted* query string to be appended, without the
+    :param kwargs: group parameters in the URL pattern that have to be filled
+    :param query_string: the *quoted* query string to be appended, without the
         leading ``"?"``
-      - `forced`: If ``True``, go to ``view`` even if a “next” URL is
+    :param forced: If ``True``, go to ``view`` even if a “next” URL is
         available.  Defaults to ``False``.  See `bulk_rename.bulk_rename` for
         using this option to generate some sort of nested forwarding.
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
     :type success_report: unicode
     :type view: str or function
     :type kwargs: dict
     :type query_string: unicode
     :type forced: bool
 
-    :Return:
+    :return:
       the HTTP response object to be returned to the view's caller
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     if success_report:
         messages.success(request, success_report)
@@ -339,21 +334,20 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
 def unicode_strftime(timestamp, format_string):
     """Formats a timestamp to a string.  Unfortunately, the built-in method
-    ``strftime`` of ``datetime.datetime`` objects is not unicode-safe.
+    ``strftime`` of datetime.datetime objects is not unicode-safe.
     Therefore, I have to do a conversion into an UTF-8 intermediate
     representation.  In Python 3.0, this problem is gone.
 
-    :Parameters:
-      - `timestamp`: the timestamp to be converted
-      - `format_string`: The format string that contains the pattern (i.e. all
+    :param timestamp: the timestamp to be converted
+    :param format_string: The format string that contains the pattern (i.e. all
         the ``"%..."`` sequences) according to which the timestamp should be
         formatted.  Note that if it should be translatable, you mast do this in
         the calling context.
 
-    :type timestamp: ``datetime.datetime``
+    :type timestamp: datetime.datetime
     :type format_string: unicode
 
-    :Return:
+    :return:
       the formatted timestamp, as a Unicode string
 
     :rtype: unicode
@@ -372,15 +366,14 @@ def adjust_timezone_information(timestamp):
 
     FixMe: This is not tested with another database backend except PostgreSQL.
 
-    :Parameters:
-      - `timestamp`: the timestamp whose ``tzinfo`` should be modified
+    :param timestamp: the timestamp whose ``tzinfo`` should be modified
 
-    :type timestamp: ``datetime.datetime``
+    :type timestamp: datetime.datetime
 
-    :Return:
+    :return:
       the timestamp with the correct timezone setting
 
-    :rtype: ``datetime.datetime``
+    :rtype: datetime.datetime
     """
     return timestamp.replace(tzinfo=dateutil.tz.tzlocal())
 
@@ -403,17 +396,16 @@ def send_email(subject, content, recipients, format_dict=None):
     you must pass a dictionary like ``{"name": user.name}`` to this function.
     String formatting must be done here, otherwise, translating wouldn't work.
 
-    :Parameters:
-      - `subject`: the subject of the email
-      - `content`: the content of the email; it may contain substitution tags
-      - `recipients`: the recipients of the email
-      - `format_dict`: the substitions used for the ``format`` string method
+    :param subject: the subject of the email
+    :param content: the content of the email; it may contain substitution tags
+    :param recipients: the recipients of the email
+    :param format_dict: the substitions used for the ``format`` string method
         for both the subject and the content
 
     :type subject: unicode
     :type content: unicode
-    :type recipient: ``django.contrib.auth.models.User`` or list of
-      ``django.contrib.auth.models.User``
+    :type recipient: django.contrib.auth.models.User or list of
+      django.contrib.auth.models.User
     :type format_dict: dict mapping unicode to unicode
     """
     current_language = translation.get_language()
@@ -444,12 +436,11 @@ def is_json_requested(request):
     instead of HTML.  Typically this means that the request was made by the
     JuliaBase Remote Client or by JavaScript code.
 
-    :Parameters:
-      - `request`: the current HTTP Request object
+    :param request: the current HTTP Request object
 
-    :type request: ``HttpRequest``
+    :type request: HttpRequest
 
-    :Returns:
+    :return:
       whether the request should be answered in JSON
 
     :rtype: bool
@@ -482,15 +473,14 @@ def respond_in_json(value):
     The views that can be accessed by the Remote Client/AJAX as well as normal
     browsers should distinguish between both by using `is_json_requested`.
 
-    :Parameters:
-      - `value`: the data to be sent back to the client that requested JSON.
+    :param value: the data to be sent back to the client that requested JSON.
 
     :type value: ``object`` (an arbitrary Python object)
 
-    :Returns:
+    :return:
       the HTTP response object
 
-    :rtype: ``HttpResponse``
+    :rtype: HttpResponse
     """
     return django.http.JsonResponse(value, JSONEncoder, safe=False)
 
@@ -502,12 +492,11 @@ def get_all_models(app_label=None):
     names to the model classes.  Note that every app must have a ``models.py``
     module.  This ``models.py`` may be empty, though.
 
-    :Parameters:
-      - `app_label`: the name of the app whose models should be returned
+    :param app_label: the name of the app whose models should be returned
 
     :type app_label: unicode
 
-    :Return:
+    :return:
       all models of all apps
 
     :rtype: dict mapping str to ``class``
@@ -530,8 +519,7 @@ def register_abstract_model(abstract_model):
     `get_all_models`.  In particular, it means that the model can be search for
     in the advanced search.
 
-    :Parameters:
-      - `abstract_model`: the abstract model class to be registered
+    :param abstract_model: the abstract model class to be registered
 
     :type abstract_model: ``class```
     """
@@ -544,11 +532,10 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
     union of `source_files` and `timestamps` is empty, the function returns
     ``False``.
 
-    :Parameters:
-      - `destination`: the path to the destination file
-      - `source_files`: the paths of the source files
-      - `timestamps`: timestamps of non-file source objects
-      - `additional_inaccuracy`: When comparing file timestamps across
+    :param destination: the path to the destination file
+    :param source_files: the paths of the source files
+    :param timestamps: timestamps of non-file source objects
+    :param additional_inaccuracy: When comparing file timestamps across
         computers, there may be trouble due to inaccurate clocks or filesystems
         where the modification timestamps have an accuracy of only 2 seconds
         (some Windows FS'es).  Set this parameter to a positive number to avoid
@@ -557,16 +544,15 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
 
     :type destination: unicode
     :type source_files: list of unicode
-    :type timestamps: list of ``datetime.datetime``
+    :type timestamps: list of datetime.datetime
     :type additional_inaccuracy: int or float
 
-    :Return:
+    :return:
       whether the destination file needs to be updated
 
     :rtype: bool
 
-    :Exceptions:
-      - `OSError`: raised if one of the source paths is not found
+    :raises OSError: if one of the source paths is not found
     """
     all_timestamps = copy.copy(timestamps)
     all_timestamps.extend(datetime.datetime.fromtimestamp(os.path.getmtime(filename)) for filename in source_files)
@@ -593,12 +579,11 @@ format_lazy = allow_lazy(format_lazy, six.text_type)
 def static_file_response(filepath, served_filename=None):
     """Serves a file of the local file system.
 
-    :Parameters:
-      - `filepath`: the absolute path to the file to be served
-      - `served_filename`: the filename the should be transmitted; if given,
+    :param filepath: the absolute path to the file to be served
+    :param served_filename: the filename the should be transmitted; if given,
         the response will be an "attachment"
 
-    :Return:
+    :return:
       the HTTP response with the static file
 
     :rype: ``django.http.HttpResponse``
@@ -620,8 +605,7 @@ def mkdirs(path):
     If the directory already exists, nothing is done.  (In particular, no
     exception is raised.)
 
-    :Parameters:
-      - `path`: absolute path which should be created
+    :param path: absolute path which should be created
 
     :type path: str
     """
@@ -701,10 +685,10 @@ def cache_hit_rate():
     """Returns the current cache hit rate.  This value is between 0 and 1.  It
     returns ``None`` is no such value could be calculated.
 
-    :Return:
+    :return:
       the hit rate, or ``None`` if neither hits nor misses have been recorded
 
-    :rtype: float or ``NoneType``
+    :rtype: float or NoneType
     """
     hits = cache.get("samples-cache-hits", 0)
     misses = cache.get("samples-cache-misses", 0)
@@ -719,12 +703,11 @@ def unlazy_object(lazy_object):
     lazy object may be changed by this function: Afterwards, it definitely
     contains the wrapped instance.
 
-    :Parameters:
-      - `lazy_object`: the lazy object
+    :param lazy_object: the lazy object
 
-    :type lazy_object: ``django.utils.functional.LazyObject``
+    :type lazy_object: django.utils.functional.LazyObject
 
-    :Return:
+    :return:
       the actual object
 
     :rtype: object
@@ -738,15 +721,14 @@ def convert_bytes_to_str(byte_array):
     """Converts an array of bytes representing the string literals as decimal
     integers to unicode letters.
 
-    :Parameters:
-     - `byte_array`: list of integers representing unicode codes.
+    :param byte_array: list of integers representing unicode codes.
 
-    :type byte_array: `list` of `int`
+    :type byte_array: list of int
 
-    :Return:
-     the unicode string
+    :return:
+        the unicode string
 
-    :rtype: ``unicode``
+    :rtype: unicode
     """
     try:
         return "".join(map(unichr, byte_array)).strip()
@@ -757,15 +739,14 @@ def convert_bytes_to_str(byte_array):
 def convert_bytes_to_bool(byte_array):
     """Converts an array of bytes to  booleans.
 
-    :Parameters:
-     - `byte_array`: list of integers (1 or 0).
+    :param byte_array: list of integers (1 or 0).
 
-    :type byte_array: `list` of `int`
+    :type byte_array: list of int
 
-    :Return:
+    :return:
      a tuple with True or False values
 
-    :rtype: ``tuple`` of ``boolean``
+    :rtype: tuple of boolean
     """
     return tuple(True if byte else False for byte in byte_array)
 
@@ -775,12 +756,11 @@ def format_enumeration(items):
     example, if the list contains ``["a", "b", "c"]``, it yields ``"a, b, and
     c"``.
 
-    :Parameters:
-      - `items`: iterable of names to be put into the enumeration
+    :param items: iterable of names to be put into the enumeration
 
     :type items: iterable of unicode
 
-    :Return:
+    :return:
       human-friendly enumeration of all names
 
     :rtype: unicode
