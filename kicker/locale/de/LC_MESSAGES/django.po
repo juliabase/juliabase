@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-03 11:08+0100\n"
+"POT-Creation-Date: 2014-12-17 13:19+0100\n"
 "PO-Revision-Date: 2014-11-24 16:01+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -141,10 +141,6 @@ msgstr "Tastenkürzel"
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: kicker/templates/kicker/base.html:21
-msgid "IEF-5 logo"
-msgstr "IEF-5-Logo"
-
 #: kicker/views.py:356
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
@@ -165,3 +161,6 @@ msgstr "Die Einstellungen wurden erfolgreich geändert."
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"
+
+#~ msgid "IEF-5 logo"
+#~ msgstr "IEF-5-Logo"

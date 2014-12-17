@@ -225,12 +225,19 @@ class Process(PolymorphicModel):
         except AttributeError:
             field_name = None
         if field_name:
+            # Translators: Label for a process instance, e.g. “thickness
+            # measurement 26”.
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=getattr(self, field_name))
         elif samples:
+            # Translators: Label for a process instance, e.g. a measurement,
+            # e.g. “thickness measurement of 01B-410”.  Singular/plural refers
+            # to {samples}.
             return ungettext("{process_class_name} of {samples}", "{process_class_name} of {samples}", len(samples)). \
                 format(process_class_name=self._meta.verbose_name, samples=format_enumeration(samples))
         else:
+            # Translators: Label for a process instance, e.g. “thickness
+            # measurement 26”.
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=self.id)
 

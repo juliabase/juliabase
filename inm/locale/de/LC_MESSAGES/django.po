@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-03 11:08+0100\n"
+"POT-Creation-Date: 2014-12-17 13:19+0100\n"
 "PO-Revision-Date: 2014-12-06 06:16+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -28,610 +28,513 @@ msgstr ""
 msgid "Institute"
 msgstr "Institut"
 
-#: inm/context_processors.py:44
+#: inm/context_processors.py:43
 #, python-brace-format
 msgid "Mr {lastname}"
 msgstr "Herr {lastname}"
 
-#: inm/models/depositions.py:54
-#: inm/models/depositions.py:125
+#: inm/models/depositions.py:48
 msgid "carrier"
 msgstr "Carrier"
 
-#: inm/models/depositions.py:57
+#: inm/models/depositions.py:51
 msgid "cluster tool deposition"
 msgstr "Cluster-Tool-Deposition"
 
-#: inm/models/depositions.py:58
+#: inm/models/depositions.py:52
 msgid "cluster tool depositions"
 msgstr "Cluster-Tool-Depositionen"
 
-#: inm/models/depositions.py:60
+#: inm/models/depositions.py:54
 msgid "Can add cluster tool depositions"
 msgstr "Darf Cluster-Tool-Depositionen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: inm/models/depositions.py:64
+#: inm/models/depositions.py:58
 msgid "Can edit perms for cluster tool I depositions"
 msgstr "Darf die Berechtigungen für Cluster-Tool-I-Depositionen ändern"
 
-#: inm/models/depositions.py:65
+#: inm/models/depositions.py:59
 msgid "Can view all cluster tool depositions"
 msgstr "Darf alle Cluster-Tool-Depositionen sehen"
 
-#: inm/models/depositions.py:66
+#: inm/models/depositions.py:60
 msgid "Can edit all cluster tool depositions"
 msgstr "Darf alle Cluster-Tool-Depositionen ändern"
 
-#: inm/models/depositions.py:147
+#: inm/models/depositions.py:106
 msgid "cluster tool deposition lab"
 msgstr "Labor des Cluster-Tools"
 
-#: inm/models/depositions.py:166
-#: inm/models/depositions.py:370
+#: inm/models/depositions.py:118 inm/models/depositions.py:216
 msgid "deposition"
 msgstr "Deposition"
 
-#: inm/models/depositions.py:174
+#: inm/models/depositions.py:122
 msgid "cluster tool layer"
 msgstr "Schicht des Cluster-Tools"
 
-#: inm/models/depositions.py:175
+#: inm/models/depositions.py:123
 msgid "cluster tool layers"
 msgstr "Schichten des Cluster-Tools"
 
-#: inm/models/depositions.py:179
-#: inm/models/depositions.py:389
+#: inm/models/depositions.py:127 inm/models/depositions.py:233
 #, python-brace-format
 msgid "layer {number} of {deposition}"
 msgstr "Schicht {number} von {deposition}"
 
-#: inm/models/depositions.py:188
+#: inm/models/depositions.py:131
 msgid "unknown"
 msgstr "unbekannt"
 
-#: inm/models/depositions.py:189
+#: inm/models/depositions.py:132
 msgid "rhenium"
 msgstr "Rhenium"
 
-#: inm/models/depositions.py:190
+#: inm/models/depositions.py:133
 msgid "tantalum"
 msgstr "Tantal"
 
-#: inm/models/depositions.py:191
+#: inm/models/depositions.py:134
 msgid "tungsten"
 msgstr "Wolfram"
 
-#: inm/models/depositions.py:199
-#: inm/models/depositions.py:253
+#: inm/models/depositions.py:140 inm/models/depositions.py:159
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: inm/models/depositions.py:199
-#: inm/models/depositions.py:253
+#: inm/models/depositions.py:140 inm/models/depositions.py:159
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
-#: inm/models/depositions.py:200
-#: inm/models/depositions.py:230
-#: inm/models/depositions.py:254
-#: inm/models/depositions.py:288
-#: inm/models/sample_details.py:273
-#: inm/models/sample_details.py:339
+#: inm/models/depositions.py:141 inm/models/depositions.py:160
+#: inm/models/sample_details.py:282
 #: inm/templates/samples/lab_notebook_five_chamber_deposition.html:33
 msgid "comments"
 msgstr "Kommentare"
 
-#: inm/models/depositions.py:201
-#: inm/models/depositions.py:231
+#: inm/models/depositions.py:142
 msgid "wire material"
 msgstr "Drahtmaterial"
 
-#: inm/models/depositions.py:202
-#: inm/models/depositions.py:232
+#: inm/models/depositions.py:143
 msgid "base pressure"
 msgstr "Basisdruck"
 
-#: inm/models/depositions.py:205
+#: inm/models/depositions.py:146
 msgid "cluster tool hot-wire layer"
 msgstr "Hot-Wire-Schicht im Cluster-Tool"
 
-#: inm/models/depositions.py:206
+#: inm/models/depositions.py:147
 msgid "cluster tool hot-wire layers"
 msgstr "Hot-Wire-Schichten im Cluster-Tool"
 
-#: inm/models/depositions.py:229
-#: inm/models/depositions.py:287
-msgid "time"
-msgstr "Zeit"
-
-#: inm/models/depositions.py:252
-#: inm/models/depositions.py:286
-#: inm/models/depositions.py:373
-#: inm/models/depositions.py:420
+#: inm/models/depositions.py:158 inm/models/depositions.py:218
 #: inm/templates/samples/lab_notebook_five_chamber_deposition.html:28
 msgid "chamber"
 msgstr "Kammer"
 
-#: inm/models/depositions.py:255
-#: inm/models/depositions.py:289
+#: inm/models/depositions.py:161
 msgid "plasma start with shutter"
 msgstr "Plasma startet mit Shutter"
 
-#: inm/models/depositions.py:256
-#: inm/models/depositions.py:290
+#: inm/models/depositions.py:162
 msgid "deposition power"
 msgstr "Depositionsleistung"
 
-#: inm/models/depositions.py:261
+#: inm/models/depositions.py:167
 msgid "cluster tool PECVD layer"
 msgstr "PECVD-Schicht im Cluster-Tool"
 
-#: inm/models/depositions.py:262
+#: inm/models/depositions.py:168
 msgid "cluster tool PECVD layers"
 msgstr "PECVD-Schichten im Cluster-Tool"
 
-#: inm/models/depositions.py:289
-msgid "yes"
-msgstr "ja"
-
-#: inm/models/depositions.py:289
-msgid "no"
-msgstr "nein"
-
-#: inm/models/depositions.py:300
+#: inm/models/depositions.py:175
 msgid "5-chamber deposition"
 msgstr "5-Kammer-Deposition"
 
-#: inm/models/depositions.py:301
+#: inm/models/depositions.py:176
 msgid "5-chamber depositions"
 msgstr "5-Kammer-Depositionen"
 
-#: inm/models/depositions.py:303
+#: inm/models/depositions.py:178
 msgid "Can add 5-chamber depositions"
 msgstr "Darf 5-Kammer-Depositionen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: inm/models/depositions.py:306
+#: inm/models/depositions.py:181
 msgid "Can edit perms for 5-chamber depositions"
 msgstr "Darf die Berechtigungen für 5-Kammer-Depositionen ändern"
 
-#: inm/models/depositions.py:307
+#: inm/models/depositions.py:182
 msgid "Can view all 5-chamber depositions"
 msgstr "Darf alle 5-Kammer-Depositionen sehen"
 
-#: inm/models/depositions.py:308
+#: inm/models/depositions.py:183
 msgid "Can edit all 5-chamber depositions"
 msgstr "Darf alle 5-Kammer-Depositionen ändern"
 
-#: inm/models/depositions.py:347
+#: inm/models/depositions.py:195
 msgid "5-chamber deposition lab"
 msgstr "5-Kammer-Depositionslabor"
 
-#: inm/models/depositions.py:371
-#: inm/models/depositions.py:418
-msgid "date"
-msgstr "Datum"
-
-#: inm/models/depositions.py:372
-#: inm/models/depositions.py:419
+#: inm/models/depositions.py:217
 msgid "layer type"
 msgstr "Schichttyp"
 
-#: inm/models/depositions.py:376
+#: inm/models/depositions.py:221
 msgid "temperature 1"
 msgstr "Temperatur 1"
 
-#: inm/models/depositions.py:377
+#: inm/models/depositions.py:223
 msgid "temperature 2"
 msgstr "Temperatur 2"
 
-#: inm/models/depositions.py:380
+#: inm/models/depositions.py:228
 msgid "5-chamber layer"
 msgstr "5-Kammer-Schicht"
 
-#: inm/models/depositions.py:381
+#: inm/models/depositions.py:229
 msgid "5-chamber layers"
 msgstr "5-Kammer-Schichten"
 
 #. Translators: sample substrate type
-#: inm/models/physical_processes.py:41
-#: inm/models/physical_processes.py:374
+#: inm/models/physical_processes.py:42 inm/models/physical_processes.py:282
 msgid "custom"
 msgstr "speziell"
 
-#: inm/models/physical_processes.py:44
+#: inm/models/physical_processes.py:45
 msgid "Corning glass"
 msgstr "Corning-Glas"
 
-#: inm/models/physical_processes.py:45
-#: inm/models/sample_details.py:257
+#: inm/models/physical_processes.py:46 inm/models/sample_details.py:268
 msgid "glass"
 msgstr "Glas"
 
-#: inm/models/physical_processes.py:46
-#: inm/models/sample_details.py:256
+#: inm/models/physical_processes.py:47 inm/models/sample_details.py:267
 msgid "silicon wafer"
 msgstr "Silizium-Wafer"
 
-#: inm/models/physical_processes.py:47
+#: inm/models/physical_processes.py:48
 msgid "quartz"
 msgstr "Quarz"
 
-#: inm/models/physical_processes.py:48
+#: inm/models/physical_processes.py:49
 msgid "sapphire"
 msgstr "Saphir"
 
-#: inm/models/physical_processes.py:49
+#: inm/models/physical_processes.py:50
 msgid "aluminium foil"
 msgstr "Alufolie"
 
-#: inm/models/physical_processes.py:68
+#: inm/models/physical_processes.py:65
 msgid "substrate material"
 msgstr "Substratmaterial"
 
-#: inm/models/physical_processes.py:71
+#: inm/models/physical_processes.py:68
 msgid "substrate"
 msgstr "Substrat"
 
-#: inm/models/physical_processes.py:72
+#: inm/models/physical_processes.py:69
 msgid "substrates"
 msgstr "Substrate"
 
-#: inm/models/physical_processes.py:75
+#: inm/models/physical_processes.py:72
 #, python-brace-format
 msgid "{material} substrate #{number}"
 msgstr "{material}-Substrat Nr. {number}"
 
-#: inm/models/physical_processes.py:88
-msgid "material"
-msgstr "Material"
-
-#: inm/models/physical_processes.py:107
+#: inm/models/physical_processes.py:76
 msgid "PDS #1"
 msgstr "PDS 1"
 
-#: inm/models/physical_processes.py:108
+#: inm/models/physical_processes.py:77
 msgid "PDS #2"
 msgstr "PDS 2"
 
-#: inm/models/physical_processes.py:117
-#: inm/models/physical_processes.py:188
+#: inm/models/physical_processes.py:83
 msgid "PDS number"
 msgstr "PDS-Nummer"
 
-#: inm/models/physical_processes.py:118
-#: inm/models/physical_processes.py:190
+#: inm/models/physical_processes.py:84
 msgid "raw data file"
 msgstr "Rohdaten-Datei"
 
-#: inm/models/physical_processes.py:119
-#: inm/models/physical_processes.py:330
+#: inm/models/physical_processes.py:85 inm/models/physical_processes.py:239
 #, python-brace-format
 msgid "only the relative path below \"{path}\""
 msgstr "nur der relative Pfad unterhalb von \"{path}\""
 
-#: inm/models/physical_processes.py:120
-#: inm/models/physical_processes.py:189
+#: inm/models/physical_processes.py:86
 msgid "apparatus"
 msgstr "Anlage"
 
-#: inm/models/physical_processes.py:123
+#: inm/models/physical_processes.py:89
 msgid "PDS measurement"
 msgstr "PDS-Messung"
 
-#: inm/models/physical_processes.py:124
+#: inm/models/physical_processes.py:90
 msgid "PDS measurements"
 msgstr "PDS-Messungen"
 
-#: inm/models/physical_processes.py:126
+#: inm/models/physical_processes.py:92
 msgid "Can add PDS measurements"
 msgstr "Darf PDS-Messungen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: inm/models/physical_processes.py:129
+#: inm/models/physical_processes.py:95
 msgid "Can edit perms for PDS measurements"
 msgstr "Darf die Berechtigungen für PDS-Messungen ändern"
 
-#: inm/models/physical_processes.py:130
+#: inm/models/physical_processes.py:96
 msgid "Can view all PDS measurements"
 msgstr "Darf alle PDS-Messungen sehen"
 
-#: inm/models/physical_processes.py:139
-#, python-brace-format
-msgid "PDS measurement of {sample}"
-msgstr "PDS-Messung von {sample}"
-
-#: inm/models/physical_processes.py:141
-#, python-brace-format
-msgid "PDS measurement #{number}"
-msgstr "PDS-Messung Nr. {number}"
-
-#: inm/models/physical_processes.py:147
+#: inm/models/physical_processes.py:106
 msgid "energy in eV"
 msgstr "Energie in eV"
 
-#: inm/models/physical_processes.py:148
+#: inm/models/physical_processes.py:107
 msgid "α in cm⁻¹"
 msgstr "α in cm⁻¹"
 
-#: inm/models/physical_processes.py:200
-#: inm/models/physical_processes.py:268
+#: inm/models/physical_processes.py:127
 msgid "irradiation"
 msgstr "Beleuchtung"
 
-#: inm/models/physical_processes.py:201
-#: inm/models/physical_processes.py:269
+#: inm/models/physical_processes.py:128
 msgid "temperature"
 msgstr "Temperatur"
 
-#: inm/models/physical_processes.py:201
-msgid "in ℃"
-msgstr "in ℃"
-
-#: inm/models/physical_processes.py:205
-#: inm/models/physical_processes.py:220
-#: inm/models/physical_processes.py:327
+#: inm/models/physical_processes.py:131 inm/models/physical_processes.py:236
 msgid "solarsimulator measurement"
 msgstr "Sonnensimulator-Messung"
 
-#: inm/models/physical_processes.py:206
+#: inm/models/physical_processes.py:132
 msgid "solarsimulator measurements"
 msgstr "Sonnensimulator-Messungen"
 
-#: inm/models/physical_processes.py:208
+#: inm/models/physical_processes.py:134
 msgid "Can add solarsimulator measurements"
 msgstr "Darf Sonnensimulator-Messungen hinzufügen"
 
-#: inm/models/physical_processes.py:212
+#: inm/models/physical_processes.py:138
 msgid "Can edit perms for solarsimulator measurements"
 msgstr "Darf die Berechtigungen für Sonnensimlulator-Messungen ändern"
 
-#: inm/models/physical_processes.py:213
+#: inm/models/physical_processes.py:139
 msgid "Can view all solarsimulator measurements"
 msgstr "Darf alle Sonnensimlulator-Messungen sehen"
 
-#: inm/models/physical_processes.py:218
-#, python-brace-format
-msgid "solarsimulator measurement of {sample}"
-msgstr "Sonnensimlulator-Messung von {sample}"
-
-#: inm/models/physical_processes.py:270
+#: inm/models/physical_processes.py:179
 msgid "η of best cell"
 msgstr "η der besten Zelle"
 
-#: inm/models/physical_processes.py:287
+#: inm/models/physical_processes.py:196
 msgid "voltage in V"
 msgstr "Spannung in V"
 
-#: inm/models/physical_processes.py:288
+#: inm/models/physical_processes.py:197
 msgid "current density in mA/cm²"
 msgstr "Stromdichte in mA/cm²"
 
-#: inm/models/physical_processes.py:328
+#: inm/models/physical_processes.py:237
 msgid "cell position"
 msgstr "Zellposition"
 
-#: inm/models/physical_processes.py:329
+#: inm/models/physical_processes.py:238
 msgid "data file"
 msgstr "Datendatei"
 
-#: inm/models/physical_processes.py:331
+#: inm/models/physical_processes.py:241
 msgid "area"
 msgstr "Fläche"
 
-#: inm/models/physical_processes.py:331
-msgid "in cm²"
-msgstr "in cm²"
-
-#: inm/models/physical_processes.py:332
+#: inm/models/physical_processes.py:242
 msgid "efficiency η"
 msgstr "Effizienz η"
 
-#: inm/models/physical_processes.py:332
-msgid "in %"
-msgstr "in %"
-
-#: inm/models/physical_processes.py:333
+#: inm/models/physical_processes.py:243
 msgid "short-circuit current density"
 msgstr "Kurzschluss­strom­dichte"
 
-#: inm/models/physical_processes.py:333
-msgid "in mA/cm²"
-msgstr "in mA/cm²"
-
-#: inm/models/physical_processes.py:336
+#: inm/models/physical_processes.py:246
 msgid "solarsimulator cell measurement"
 msgstr "Sonnensimulator-Zellmessung"
 
-#: inm/models/physical_processes.py:337
+#: inm/models/physical_processes.py:247
 msgid "solarsimulator cell measurements"
 msgstr "Sonnensimulator-Zellmessungen"
 
-#: inm/models/physical_processes.py:342
+#: inm/models/physical_processes.py:252
 #, python-brace-format
 msgid "cell {position} of {solarsimulator_measurement}"
 msgstr "Zelle {position} von {solarsimulator_measurement}"
 
-#: inm/models/physical_processes.py:399
+#: inm/models/physical_processes.py:306
 msgid "layout"
 msgstr "Layout"
 
-#: inm/models/physical_processes.py:400
+#: inm/models/physical_processes.py:307
 msgid "length"
 msgstr "Länge"
 
-#: inm/models/physical_processes.py:401
+#: inm/models/physical_processes.py:308
 msgid "width"
 msgstr "Breite"
 
-#: inm/models/physical_processes.py:402
+#: inm/models/physical_processes.py:309
 msgid "parameters"
 msgstr "Parameter"
 
-#: inm/models/physical_processes.py:405
-#: inm/models/physical_processes.py:413
+#: inm/models/physical_processes.py:312
 msgid "structuring"
 msgstr "Strukturierung"
 
-#: inm/models/physical_processes.py:406
+#: inm/models/physical_processes.py:313
 msgid "structurings"
 msgstr "Strukturierungen"
 
-#: inm/models/physical_processes.py:411
-#, python-brace-format
-msgid "structuring of {sample}"
-msgstr "Strukturierung von {sample}"
-
-#: inm/models/sample_details.py:48
-#: inm/views/form_utils.py:209
+#: inm/models/sample_details.py:47 inm/views/form_utils.py:206
 msgid "sample"
 msgstr "Probe"
 
-#: inm/models/sample_details.py:52
-#: inm/models/sample_details.py:269
+#: inm/models/sample_details.py:51 inm/models/sample_details.py:278
 msgid "sample details"
 msgstr "Probendetails"
 
-#: inm/models/sample_details.py:53
+#: inm/models/sample_details.py:52
 msgctxt "plural"
 msgid "sample details"
 msgstr "Probendetails"
 
-#: inm/models/sample_details.py:250
+#: inm/models/sample_details.py:261
 msgid "black"
 msgstr "schwarz"
 
-#: inm/models/sample_details.py:250
+#: inm/models/sample_details.py:261
 msgid "blue"
 msgstr "blau"
 
-#: inm/models/sample_details.py:250
+#: inm/models/sample_details.py:261
 msgid "brown"
 msgstr "braun"
 
-#: inm/models/sample_details.py:250
+#: inm/models/sample_details.py:261
 msgid "darkgray"
 msgstr "dunkelgrau"
 
-#: inm/models/sample_details.py:251
+#: inm/models/sample_details.py:262
 msgid "green"
 msgstr "grün"
 
-#: inm/models/sample_details.py:251
+#: inm/models/sample_details.py:262
 msgid "lightblue"
 msgstr "hellblau"
 
-#: inm/models/sample_details.py:252
+#: inm/models/sample_details.py:263
 msgid "lightgreen"
 msgstr "hellgrün"
 
-#: inm/models/sample_details.py:252
+#: inm/models/sample_details.py:263
 msgid "magenta"
 msgstr "magenta"
 
-#: inm/models/sample_details.py:253
+#: inm/models/sample_details.py:264
 msgid "orange"
 msgstr "orange"
 
-#: inm/models/sample_details.py:253
+#: inm/models/sample_details.py:264
 msgid "red"
 msgstr "rot"
 
-#: inm/models/sample_details.py:253
+#: inm/models/sample_details.py:264
 msgctxt "color"
 msgid "silver"
 msgstr "silbern"
 
-#: inm/models/sample_details.py:254
+#: inm/models/sample_details.py:265
 msgid "white"
 msgstr "weiß"
 
-#: inm/models/sample_details.py:254
+#: inm/models/sample_details.py:265
 msgid "yellow"
 msgstr "gelb"
 
-#: inm/models/sample_details.py:257
+#: inm/models/sample_details.py:268
 msgctxt "metall"
 msgid "silver"
 msgstr "Silber"
 
-#: inm/models/sample_details.py:258
+#: inm/models/sample_details.py:269
 msgid "HF dip"
 msgstr "HF-Dipp"
 
-#: inm/models/sample_details.py:268
-#: inm/models/sample_details.py:336
+#: inm/models/sample_details.py:277
 msgid "index"
 msgstr "Index"
 
-#: inm/models/sample_details.py:270
-#: inm/models/sample_details.py:337
+#: inm/models/sample_details.py:279
 msgid "doping"
 msgstr "Dotierung"
 
-#: inm/models/sample_details.py:271
-#: inm/models/sample_details.py:338
+#: inm/models/sample_details.py:280
 msgid "classification"
 msgstr "Klassifikation"
 
-#: inm/models/sample_details.py:274
+#: inm/models/sample_details.py:283
 msgid "color"
 msgstr "Farbe"
 
-#: inm/models/sample_details.py:275
-#: inm/models/sample_details.py:340
+#: inm/models/sample_details.py:284
 msgid "thickness"
 msgstr "Dicke"
 
-#: inm/models/sample_details.py:276
-#: inm/models/sample_details.py:341
+#: inm/models/sample_details.py:285
 msgid "thickness reliable"
 msgstr "Dicke zuverlässig"
 
-#: inm/models/sample_details.py:277
-#: inm/models/sample_details.py:342
+#: inm/models/sample_details.py:286
 msgid "structured"
 msgstr "strukturiert"
 
-#: inm/models/sample_details.py:278
-#: inm/models/sample_details.py:343
+#: inm/models/sample_details.py:287
 msgid "textured"
 msgstr "texturiert"
 
-#: inm/models/sample_details.py:279
+#: inm/models/sample_details.py:288
 msgid "always collapsed"
 msgstr "immer verkürzt"
 
-#: inm/models/sample_details.py:280
+#: inm/models/sample_details.py:289
 msgid "process"
 msgstr "Prozess"
 
-#: inm/models/sample_details.py:282
+#: inm/models/sample_details.py:291
 msgid "additional process data"
 msgstr "zuzätzliche Prozessdaten"
 
-#: inm/models/sample_details.py:283
-#: inm/models/sample_details.py:344
+#: inm/models/sample_details.py:292
 msgid "verified"
 msgstr "überprüft"
 
-#: inm/models/sample_details.py:288
+#: inm/models/sample_details.py:297
 msgid "informal layer"
 msgstr "informelle Schicht"
 
-#: inm/models/sample_details.py:289
+#: inm/models/sample_details.py:298
 msgid "informal layers"
 msgstr "informelle Schichten"
 
-#: inm/models/sample_details.py:366
+#: inm/models/sample_details.py:371
 msgid "You must give a classification or comments or both."
 msgstr "Sie müssen eine Klassifikation oder Kommentare angeben, oder beides."
 
-#: inm/permissions.py:52
+#: inm/permissions.py:50
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the substrate #{number} because you are not "
@@ -640,7 +543,7 @@ msgstr ""
 "Sie dürfen das Substrat Nr. {number} nicht ändern, weil Sie nicht alle "
 "beteiligten Proben ändern dürfen."
 
-#: inm/permissions.py:55
+#: inm/permissions.py:53
 msgid ""
 "You are not allowed to add a substrate because you are not allowed to edit "
 "all affected samples."
@@ -725,7 +628,7 @@ msgid "General error"
 msgstr "Allgemeiner Fehler"
 
 #: inm/templates/samples/add_claim_oldstyle.html:25
-#: inm/views/samples/sample.py:65
+#: inm/views/samples/sample.py:63
 msgid "Substrate"
 msgstr "Substrat"
 
@@ -771,11 +674,11 @@ msgstr "Schichtnummer"
 msgid "Gas flows in sccm"
 msgstr "Gasflüsse in sccm"
 
-#: inm/templates/samples/edit_five_chamber_deposition.html:104
+#: inm/templates/samples/edit_five_chamber_deposition.html:100
 msgid "Error with adding layers"
 msgstr "Fehler beim hinzufügen von Schichten"
 
-#: inm/templates/samples/edit_five_chamber_deposition.html:105
+#: inm/templates/samples/edit_five_chamber_deposition.html:101
 msgid "Error with removing from My Samples"
 msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 
@@ -910,54 +813,54 @@ msgstr "Material"
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
-#: inm/views/form_utils.py:97
+#: inm/views/form_utils.py:96
 #, python-brace-format
 msgid "Deposition {number} was successfully changed in the database."
 msgstr "Die Deposition {number} wurde erfolgreich in der Datenbank geändert."
 
-#: inm/views/form_utils.py:101
+#: inm/views/form_utils.py:100
 #, python-brace-format
 msgid "Deposition {number} was successfully added to the database."
 msgstr "Die Deposition {number} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: inm/views/form_utils.py:106
+#: inm/views/form_utils.py:105
 msgid "The deposition was not saved due to incorrect or missing data."
 msgstr ""
 "Die Deposition wurde nicht gespeichert, weil noch Angaben fehlen oder "
 "inkorrekt sind."
 
-#: inm/views/form_utils.py:110
+#: inm/views/form_utils.py:109
 #, python-brace-format
 msgid "Edit {name} “{number}”"
 msgstr "{name} „{number}“ ändern"
 
-#: inm/views/form_utils.py:111
-#: inm/views/samples/solarsimulator_measurement.py:272
+#: inm/views/form_utils.py:110
+#: inm/views/samples/solarsimulator_measurement.py:264
 #, python-brace-format
 msgid "Add {name}"
 msgstr "{name} hinzufügen"
 
-#: inm/views/form_utils.py:141
+#: inm/views/form_utils.py:139
 #, python-brace-format
 msgid "{name} “{number}”"
 msgstr "{name} „{number}“"
 
-#: inm/views/form_utils.py:176
+#: inm/views/form_utils.py:174
 msgid "This number is already in use."
 msgstr "Diese Nummer ist schon vergeben."
 
-#: inm/views/form_utils.py:180
-#: inm/views/samples/solarsimulator_measurement.py:176
-#: inm/views/samples/structuring.py:128
+#: inm/views/form_utils.py:178
+#: inm/views/samples/solarsimulator_measurement.py:169
+#: inm/views/samples/structuring.py:123
 msgid "Sample is already dead at this time."
 msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
 
 #. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: inm/views/form_utils.py:265
+#: inm/views/form_utils.py:259
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr "Ungültige Depositionsnummer.  Sie muss von der Form JJB-NNN sein."
 
-#: inm/views/form_utils.py:268 inm/views/form_utils.py:272
+#: inm/views/form_utils.py:262 inm/views/form_utils.py:266
 #, python-brace-format
 msgid "The deposition letter must be an uppercase “{letter}”."
 msgstr "Der Anlangen-Buchstabe muss ein großes „{letter}“ sein."
@@ -989,26 +892,25 @@ msgid_plural "The names {existing_names} are already existing."
 msgstr[0] "Der Name {existing_names} existiert schon."
 msgstr[1] "Die Namen {existing_names} existieren schon."
 
-#: inm/views/samples/claim.py:98
-#: inm/views/samples/sample.py:119
+#: inm/views/samples/claim.py:98 inm/views/samples/sample.py:117
 #: inm/views/samples/substrate.py:69
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: inm/views/samples/claim.py:130
+#: inm/views/samples/claim.py:149
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: inm/views/samples/claim.py:140
+#: inm/views/samples/claim.py:159
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: inm/views/samples/claim.py:141
+#: inm/views/samples/claim.py:160
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -1037,12 +939,12 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: inm/views/samples/claim.py:171
+#: inm/views/samples/claim.py:190
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: inm/views/samples/claim.py:177
+#: inm/views/samples/claim.py:196
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
@@ -1063,103 +965,97 @@ msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
 #: inm/views/samples/cluster_tool_deposition.py:93
-#: inm/views/samples/five_chamber_deposition.py:39
-#: inm/views/samples/pds_measurement.py:89
-#: inm/views/samples/solarsimulator_measurement.py:38
-#: inm/views/samples/structuring.py:30
-#: inm/views/samples/substrate.py:33
+#: inm/views/samples/five_chamber_deposition.py:36
+#: inm/views/samples/pds_measurement.py:88
+#: inm/views/samples/solarsimulator_measurement.py:33
+#: inm/views/samples/structuring.py:29 inm/views/samples/substrate.py:33
 msgid "Operator"
 msgstr "Operateur"
 
 #: inm/views/samples/cluster_tool_deposition.py:111
-#: inm/views/samples/five_chamber_deposition.py:59
+#: inm/views/samples/five_chamber_deposition.py:56
 msgid "The deposition number must not be changed."
 msgstr "Die Depositionsnummer darf nicht verändert werden."
 
 #: inm/views/samples/cluster_tool_deposition.py:115
-#: inm/views/samples/five_chamber_deposition.py:63
+#: inm/views/samples/five_chamber_deposition.py:60
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer ist schon vergeben."
 
 #: inm/views/samples/cluster_tool_deposition.py:122
-#: inm/views/samples/five_chamber_deposition.py:70
+#: inm/views/samples/five_chamber_deposition.py:67
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
 #: inm/views/samples/cluster_tool_deposition.py:243
-#: inm/views/samples/five_chamber_deposition.py:111
+#: inm/views/samples/five_chamber_deposition.py:98
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
 #: inm/views/samples/cluster_tool_deposition.py:244
-#: inm/views/samples/five_chamber_deposition.py:112
+#: inm/views/samples/five_chamber_deposition.py:99
 msgid "remove this layer"
 msgstr "diese Schicht löschen"
 
 #: inm/views/samples/cluster_tool_deposition.py:245
-#: inm/views/samples/five_chamber_deposition.py:113
+#: inm/views/samples/five_chamber_deposition.py:100
 msgid "move this layer"
 msgstr "diese Schicht verschieben"
 
 #: inm/views/samples/cluster_tool_deposition.py:246
-#: inm/views/samples/five_chamber_deposition.py:114
+#: inm/views/samples/five_chamber_deposition.py:101
 msgid "up"
 msgstr "hoch"
 
 #: inm/views/samples/cluster_tool_deposition.py:246
-#: inm/views/samples/five_chamber_deposition.py:114
+#: inm/views/samples/five_chamber_deposition.py:101
 msgid "down"
 msgstr "runter"
 
 #: inm/views/samples/cluster_tool_deposition.py:258
-#: inm/views/samples/five_chamber_deposition.py:126
+#: inm/views/samples/five_chamber_deposition.py:113
 msgid "You can't duplicate, move, or remove a layer at the same time."
 msgstr ""
 "Sie können nicht gleichzeitig dieselbe Schicht duplizieren, entfernen oder "
 "verschieben."
 
-#: inm/views/samples/cluster_tool_deposition.py:574
-#: inm/views/samples/five_chamber_deposition.py:411
+#: inm/views/samples/cluster_tool_deposition.py:570
+#: inm/views/samples/five_chamber_deposition.py:395
 #, python-brace-format
 msgid "The sample {samples} is already dead at this time."
 msgid_plural "The samples {samples} are already dead at this time."
 msgstr[0] "Die Probe {samples} ist zu diesem Zeitpunkt schon tot."
 msgstr[1] "Die Proben {samples} sind zu diesem Zeitpunkt schon tot."
 
-#: inm/views/samples/cluster_tool_deposition.py:580
-#: inm/views/samples/five_chamber_deposition.py:403
+#: inm/views/samples/cluster_tool_deposition.py:576
+#: inm/views/samples/five_chamber_deposition.py:387
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: inm/views/samples/pds_measurement.py:124
+#: inm/views/samples/pds_measurement.py:123
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
-#: inm/views/samples/pds_measurement.py:238
-#: inm/views/samples/solarsimulator_measurement.py:251
+#: inm/views/samples/pds_measurement.py:233
+#: inm/views/samples/solarsimulator_measurement.py:243
 #, python-brace-format
 msgid "{process} was successfully changed in the database."
 msgstr "{process} wurde erfolgreich in der Datenbank geändert."
 
-#: inm/views/samples/pds_measurement.py:239
-#: inm/views/samples/solarsimulator_measurement.py:253
+#: inm/views/samples/pds_measurement.py:234
+#: inm/views/samples/solarsimulator_measurement.py:245
 #, python-brace-format
 msgid "{process} was successfully added to the database."
 msgstr "{process} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: inm/views/samples/pds_measurement.py:255
+#: inm/views/samples/pds_measurement.py:250
 #, python-brace-format
 msgid "Edit PDS measurement of {sample}"
 msgstr "Ändern der PDS-Messung von {sample}"
 
-#: inm/views/samples/pds_measurement.py:255
+#: inm/views/samples/pds_measurement.py:250
 msgid "Add PDS measurement"
 msgstr "PDS-Messung hinzufügen"
-
-#: inm/views/samples/pds_measurement.py:282
-#, python-brace-format
-msgid "PDS measurement #{pds_number}"
-msgstr "PDS-Messung Nr. {pds_number}"
 
 #: inm/views/samples/sample.py:49
 msgid "no names"
@@ -1174,66 +1070,66 @@ msgstr "neue Art"
 msgid "cleaning number"
 msgstr "Reinigungsnummer"
 
-#: inm/views/samples/sample.py:64
+#: inm/views/samples/sample.py:62
 msgid "Number of samples"
 msgstr "Anzahl der Proben"
 
-#: inm/views/samples/sample.py:66
+#: inm/views/samples/sample.py:64
 msgid "Substrate comments"
 msgstr "Substrat-Kommentare"
 
-#: inm/views/samples/sample.py:67
+#: inm/views/samples/sample.py:65
 msgid "Substrate originator"
 msgstr "Substrat-Urheber"
 
-#: inm/views/samples/sample.py:68
+#: inm/views/samples/sample.py:66
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: inm/views/samples/sample.py:70
+#: inm/views/samples/sample.py:68
 msgid "Current location"
 msgstr "Aktueller Probenort"
 
-#: inm/views/samples/sample.py:71
+#: inm/views/samples/sample.py:69
 msgid "Purpose"
 msgstr "Zweck"
 
-#: inm/views/samples/sample.py:72
+#: inm/views/samples/sample.py:70
 msgid "Tags"
 msgstr "Tags"
 
-#: inm/views/samples/sample.py:73
+#: inm/views/samples/sample.py:71
 msgid "separated with commas, no whitespace"
 msgstr "getrennt durch Kommas, keine Leerzeichen"
 
-#: inm/views/samples/sample.py:74
+#: inm/views/samples/sample.py:72
 msgid "Topic"
 msgstr "Thema"
 
-#: inm/views/samples/sample.py:75
+#: inm/views/samples/sample.py:73
 msgid "Rename"
 msgstr "Namen vergeben"
 
-#: inm/views/samples/sample.py:77
+#: inm/views/samples/sample.py:75
 msgid "Cleaning number"
 msgstr "Reinigungsnummer"
 
-#: inm/views/samples/sample.py:85
+#: inm/views/samples/sample.py:83
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: inm/views/samples/sample.py:102
+#: inm/views/samples/sample.py:100
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: inm/views/samples/sample.py:122
+#: inm/views/samples/sample.py:120
 msgid "You must provide a cleaning number if you want to use it for the names."
 msgstr ""
 "Sie müssen eine Renigungsnummer angeben, wenn Sie diese für die Namen "
 "verwenden wollen."
 
-#: inm/views/samples/sample.py:235
+#: inm/views/samples/sample.py:231
 #, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
@@ -1242,75 +1138,70 @@ msgstr ""
 "Ihre Proben haben die Namen {first_name} bis {last_name}.  Sie wurden zu "
 "„Meine Proben“ hinzugefügt."
 
-#: inm/views/samples/sample.py:238
+#: inm/views/samples/sample.py:234
 #, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den Namen {name}.  Sie wurde zu „Meine Proben“ hinzugefügt."
 
-#: inm/views/samples/sample.py:248
+#: inm/views/samples/sample.py:244
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: inm/views/samples/sample.py:254
+#: inm/views/samples/sample.py:250
 msgid "Destination samples"
 msgstr "Zielproben"
 
-#: inm/views/samples/sample.py:294
+#: inm/views/samples/sample.py:289
 #, python-brace-format
 msgid "Informal stack was copied from sample {sample}."
 msgstr "Der informelle Stapel von Probe {sample} wurde übernommen."
 
-#: inm/views/samples/sample.py:298
+#: inm/views/samples/sample.py:293
 #, python-brace-format
 msgid "Informal stack of {sample} was successfully copied."
 msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 
-#: inm/views/samples/sample.py:302
+#: inm/views/samples/sample.py:297
 #, python-brace-format
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
 
-#: inm/views/samples/solarsimulator_measurement.py:170
+#: inm/views/samples/solarsimulator_measurement.py:163
 msgid "No measurenents given."
 msgstr "Keine Messungen angebeben."
 
-#: inm/views/samples/solarsimulator_measurement.py:184
+#: inm/views/samples/solarsimulator_measurement.py:177
 msgid "This cell position is already given."
 msgstr "Diese Zellposition ist schon vergeben."
 
-#: inm/views/samples/solarsimulator_measurement.py:270
+#: inm/views/samples/solarsimulator_measurement.py:262
 #, python-brace-format
 msgid "{name} of {sample}"
 msgstr "{name} von {sample}"
 
-#: inm/views/samples/solarsimulator_measurement.py:316
-#, python-brace-format
-msgid "Solarsimulator measurement #{number}"
-msgstr "Sonnensimlulatormessung Nr. {number}"
-
-#: inm/views/samples/stack.py:69
+#: inm/views/samples/stack.py:68
 #, python-brace-format
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: inm/views/samples/structuring.py:170
+#: inm/views/samples/structuring.py:164
 msgid "Structuring process was successfully changed in the database."
 msgstr "Strukturierungsprozess wurde erfolgreich in der Datenbank geändert."
 
-#: inm/views/samples/structuring.py:173
+#: inm/views/samples/structuring.py:167
 msgid "Structuring process was successfully added to the database."
 msgstr "Strukturierungsprozess wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: inm/views/samples/structuring.py:185
+#: inm/views/samples/structuring.py:179
 msgid "Edit structuring process"
 msgstr "Strukturierungsprozess ändern"
 
-#: inm/views/samples/structuring.py:185
+#: inm/views/samples/structuring.py:179
 msgid "Add structuring process"
 msgstr "Strukturierungsprozess hinzufügen"
 
-#: inm/views/samples/substrate.py:121
+#: inm/views/samples/substrate.py:120
 #, python-brace-format
 msgid ""
 "Sample {0} has already processes before the timestamp of this substrate, "
@@ -1319,29 +1210,74 @@ msgstr ""
 "Probe {0} hat bereits Prozesse vor dem Zeitstempel dieses Substrates, "
 "nämlich von {1}."
 
-#: inm/views/samples/substrate.py:125
+#: inm/views/samples/substrate.py:124
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
 
-#: inm/views/samples/substrate.py:167
+#: inm/views/samples/substrate.py:165
 #, python-brace-format
 msgid "Substrate {0} was successfully changed in the database."
 msgstr "Substrat {0} wurde erfolgreich in der Datenbank geändert."
 
-#: inm/views/samples/substrate.py:172
+#: inm/views/samples/substrate.py:170
 #, python-brace-format
 msgid "Substrate {0} was successfully added to the database."
 msgstr "Substrat {0} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: inm/views/samples/substrate.py:178
+#: inm/views/samples/substrate.py:176
 #, python-brace-format
 msgid "Edit substrate “{0}”"
 msgstr "Ändern des Substrates „{0}“"
 
-#: inm/views/samples/substrate.py:178
+#: inm/views/samples/substrate.py:176
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
+
+#~ msgid "time"
+#~ msgstr "Zeit"
+
+#~ msgid "yes"
+#~ msgstr "ja"
+
+#~ msgid "no"
+#~ msgstr "nein"
+
+#~ msgid "date"
+#~ msgstr "Datum"
+
+#~ msgid "material"
+#~ msgstr "Material"
+
+#~ msgid "PDS measurement of {sample}"
+#~ msgstr "PDS-Messung von {sample}"
+
+#~ msgid "PDS measurement #{number}"
+#~ msgstr "PDS-Messung Nr. {number}"
+
+#~ msgid "in ℃"
+#~ msgstr "in ℃"
+
+#~ msgid "solarsimulator measurement of {sample}"
+#~ msgstr "Sonnensimlulator-Messung von {sample}"
+
+#~ msgid "in cm²"
+#~ msgstr "in cm²"
+
+#~ msgid "in %"
+#~ msgstr "in %"
+
+#~ msgid "in mA/cm²"
+#~ msgstr "in mA/cm²"
+
+#~ msgid "structuring of {sample}"
+#~ msgstr "Strukturierung von {sample}"
+
+#~ msgid "PDS measurement #{pds_number}"
+#~ msgstr "PDS-Messung Nr. {pds_number}"
+
+#~ msgid "Solarsimulator measurement #{number}"
+#~ msgstr "Sonnensimlulatormessung Nr. {number}"
 
 #~ msgid "in sccm"
 #~ msgstr "in sccm"
