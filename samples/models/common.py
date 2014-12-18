@@ -1446,7 +1446,7 @@ class UserDetails(models.Model):
     """This timestamp denotes when My Samples were changed most recently.  It
     is used for expiring sample datasheet caching.
     """
-    idenfifying_data_hash = models.CharField(_("identifying data hash"), max_length=40)
+    identifying_data_hash = models.CharField(_("identifying data hash"), max_length=40)
     """Contains the SHA1 hash of the username, first name, and family name of
     the user.  It is used for efficient caching.  If the name of the user
     changes, all connected processes, samples, and sample series must be

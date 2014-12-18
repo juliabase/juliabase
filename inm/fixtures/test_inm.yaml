@@ -169,7 +169,7 @@
 - fields:
     auto_addition_topics: []
     display_settings_timestamp: 2010-12-02 11:00:16.637389
-    idenfifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
+    identifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
     my_layers: ''
     my_samples_timestamp: 2010-12-02 11:09:38.992000
     only_important_news: false
@@ -178,7 +178,7 @@
 - fields:
     auto_addition_topics: [2, 3]
     display_settings_timestamp: 2010-12-02 11:00:16.637389
-    idenfifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
+    identifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
     my_layers: ''
     my_samples_timestamp: 2010-12-02 11:09:38.992000
     only_important_news: false
@@ -187,7 +187,7 @@
 - fields:
     auto_addition_topics: []
     display_settings_timestamp: 2010-12-02 11:00:16.637389
-    idenfifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
+    identifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
     my_layers: ''
     my_samples_timestamp: 2010-12-02 11:09:38.992000
     only_important_news: false

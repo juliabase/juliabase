@@ -486,7 +486,7 @@ class Migration(migrations.Migration):
                 ('my_layers', models.TextField(help_text='in JSON format', verbose_name='my layers', blank=True)),
                 ('display_settings_timestamp', models.DateTimeField(auto_now_add=True, verbose_name='display settings last modified')),
                 ('my_samples_timestamp', models.DateTimeField(auto_now_add=True, verbose_name='My Samples last modified')),
-                ('idenfifying_data_hash', models.CharField(max_length=40, verbose_name='identifying data hash')),
+                ('identifying_data_hash', models.CharField(max_length=40, verbose_name='identifying data hash')),
                 ('folded_processes', models.TextField(default='{}', help_text='in JSON format', verbose_name='folded processes', blank=True)),
                 ('folded_topics', models.TextField(default='[]', help_text='in JSON format', verbose_name='folded topics', blank=True)),
                 ('folded_series', models.TextField(default='[]', help_text='in JSON format', verbose_name='folded sample series', blank=True)),

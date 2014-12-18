@@ -241,7 +241,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
                                          ContentType.objects.get(app_label="jb_common", model="topic")]
     if created:
         user_details = samples_app.UserDetails.objects.create(
-            user=instance, idenfifying_data_hash=get_identifying_data_hash(instance))
+            user=instance, identifying_data_hash=get_identifying_data_hash(instance))
         try:
             set_subscribed_feeds(user_details)
         except ContentType.DoesNotExist:
@@ -276,8 +276,8 @@ def touch_user_samples_and_processes(sender, instance, created, **kwargs):
     changed.
     """
     former_identifying_data_hash = get_identifying_data_hash(instance)
-    if former_identifying_data_hash != instance.samples_user_details.idenfifying_data_hash:
-        instance.samples_user_details.idenfifying_data_hash = former_identifying_data_hash
+    if former_identifying_data_hash != instance.samples_user_details.identifying_data_hash:
+        instance.samples_user_details.identifying_data_hash = former_identifying_data_hash
         instance.samples_user_details.save()
         for sample in instance.samples.all():
             sample.save(with_relations=False)
