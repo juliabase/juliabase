@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-18 09:06+0100\n"
-"PO-Revision-Date: 2014-12-18 09:09+0100\n"
+"POT-Creation-Date: 2014-12-18 09:34+0100\n"
+"PO-Revision-Date: 2014-12-18 09:36+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -28,10 +28,15 @@ msgstr ""
 msgid "Institute"
 msgstr "Institut"
 
-#: inm/context_processors.py:43
+#: inm/context_processors.py:28
 #, python-brace-format
-msgid "Mr {lastname}"
-msgstr "Herr {lastname}"
+msgid "Mrs {user.last_name}"
+msgstr "Frau {user.last_name}"
+
+#: inm/context_processors.py:28
+#, python-brace-format
+msgid "Mr. {user.last_name}"
+msgstr "Herr {user.last_name}"
 
 #: inm/models/depositions.py:48
 msgid "carrier"
@@ -625,9 +630,12 @@ msgid ""
 "\">Trac</a>\n"
 "or <a href=\"http://www.redmine.org/\">Redmine</a> for this.  "
 msgstr ""
-"Normalerweise führt ein Klick auf das grüne Käfer-Icon auf eine Seite, auf der\n"
-"man einen neuen Bug eintragen kann.  Auf diese Weise wird ein solcher an den\n"
-"lokalen Web-Entwickler gemeldet.  Diese Demo-Site hat allerdings (noch) keinen\n"
+"Normalerweise führt ein Klick auf das grüne Käfer-Icon auf eine Seite, auf "
+"der\n"
+"man einen neuen Bug eintragen kann.  Auf diese Weise wird ein solcher an "
+"den\n"
+"lokalen Web-Entwickler gemeldet.  Diese Demo-Site hat allerdings (noch) "
+"keinen\n"
 "Bug-Tracker installiert.  Man könnte dafür einfach <a\n"
 "href=\"http://trac.edgewall.org/\">Trac</a> oder <a\n"
 "href=\"http://www.redmine.org/\">Redmine</a> benutzen.  "
