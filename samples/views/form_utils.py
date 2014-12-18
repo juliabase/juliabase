@@ -536,7 +536,7 @@ class OperatorField(forms.ChoiceField):
            selected).  I recommend to use the currently logged-in user in this
            case.
 
-    A good example is in :py:mod:`inm.views.samples.substrate` of the INM
+    A good example is in :py:mod:`institute.views.samples.substrate` of the INM
     adaption of JuliaBase.  There, you can also see how one can deal with staff
     users (especially interesting for the remote client).
     """
@@ -602,7 +602,7 @@ class OperatorField(forms.ChoiceField):
             return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
 
 
-# FixMe: This should be moved to inm, because this special case is only
+# FixMe: This should be moved to institute, because this special case is only
 # necessary because samples may get renamed after depositions.  Maybe
 # refactoring should be done because it is used for substrates, too.
 

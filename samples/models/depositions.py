@@ -148,7 +148,7 @@ class Layer(models.Model):
     occur in a model relationship.  It just ensures that every layer has a
     number, because at least the MyLayers infrastructure relies on this.  (See
     for example
-    :py:meth:`inm.views.five_chamber_deposition.FormSet.__change_structure`,
+    :py:meth:`institute.views.five_chamber_deposition.FormSet.__change_structure`,
     after ``if my_layer:``.)
 
     Note that the above is slightly untrue for cluster tool layers because they

@@ -14,7 +14,7 @@
 
 
 """Custom logging class which doesn't send HTML emails.  This module must
-reside on top-level because in inm, the settings would be implicitly imported,
+reside on top-level because in institute, the settings would be implicitly imported,
 which leads to a cyclic import.
 """
 

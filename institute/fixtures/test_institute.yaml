@@ -1,0 +1,195 @@
+# This file is part of JuliaBase, the samples database.
+#
+# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+#                       Marvin Goblet <m.goblet@fz-juelich.de>,
+#                       Torsten Bronger <t.bronger@fz-juelich.de>
+#
+# You must not use, install, pass on, offer, sell, analyse, modify, or
+# distribute this software without explicit permission of the copyright holder.
+# If you have received a copy of this software without the explicit permission
+# of the copyright holder, you must destroy it immediately and completely.
+
+
+# auth
+
+- fields:
+    first_name: "Julia"
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    is_superuser: true
+    is_staff: true
+    username: juliabase
+  model: auth.user
+  pk: 1
+- fields:
+    first_name: "Testuser"
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    username: testuser
+  model: auth.user
+  pk: 3
+- fields:
+    first_name: "Testuser2"
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    username: testuser2
+  model: auth.user
+  pk: 4
+
+
+# jb_common
+
+- fields:
+    browser_system: windows
+    language: en
+    layout_last_modified: 2010-12-02 10:58:14.147042
+  model: jb_common.userdetails
+  pk: 1
+- fields:
+    browser_system: windows
+    language: en
+    layout_last_modified: 2010-12-02 10:58:14.147042
+  model: jb_common.userdetails
+  pk: 3
+- fields:
+    browser_system: windows
+    language: en
+    layout_last_modified: 2010-12-02 10:58:14.147042
+  model: jb_common.userdetails
+  pk: 4
+- fields:
+    confidential: true
+    members: [3]
+    name: restricted topic
+    department: 1
+    manager: 1
+  model: jb_common.topic
+  pk: 2
+- fields:
+    confidential: false
+    members: [3]
+    name: non-restricted topic
+    department: 1
+    manager: 1
+  model: jb_common.topic
+  pk: 3
+
+- fields:
+    name: INM
+  model: jb_common.department
+  pk: 1
+
+
+# samples
+
+# Processes
+
+- fields:
+    actual_object_id: 1
+    content_type: [institute, substrate]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-02 11:07:36
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 1
+- fields:
+    actual_object_id: 1
+    content_type: [institute, substrate]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-02 11:07:36
+    timestamp_inaccuracy: 0
+    material: corning
+  model: institute.substrate
+  pk: 1
+
+- fields:
+    actual_object_id: 2
+    content_type: [institute, pdsmeasurement]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-02 12:07:36
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 2
+- fields:
+    actual_object_id: 2
+    content_type: [institute, pdsmeasurement]
+    comments: ''
+    external_operator: null
+    finished: true
+    last_modified: 2010-12-02 11:09:39.027813
+    operator: 3
+    timestamp: 2010-12-02 12:07:36
+    timestamp_inaccuracy: 0
+    number: 1
+    raw_datafile: T:/Daten/pds/p4600-/pd4636.dat
+    apparatus: pds1
+  model: institute.pdsmeasurement
+  pk: 2
+
+# Samples
+
+- fields:
+    current_location: Torsten's office
+    currently_responsible_person: 3
+    last_modified: 2010-12-02 11:09:34.883238
+    name: 10-TB-first
+    processes: [1]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: null
+    watchers: [3]
+  model: samples.sample
+  pk: 1
+- fields:
+    current_location: Torsten's office
+    currently_responsible_person: 3
+    last_modified: 2010-12-02 11:09:34.883238
+    name: 10-TB-second
+    processes: [1,2]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: null
+    watchers: [3]
+  model: samples.sample
+  pk: 2
+- fields: {external_operator: null, user: 3}
+  model: samples.initials
+  pk: TU
+- fields:
+    auto_addition_topics: []
+    display_settings_timestamp: 2010-12-02 11:00:16.637389
+    identifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
+    my_layers: ''
+    my_samples_timestamp: 2010-12-02 11:09:38.992000
+    only_important_news: false
+  model: samples.userdetails
+  pk: 1
+- fields:
+    auto_addition_topics: [2, 3]
+    display_settings_timestamp: 2010-12-02 11:00:16.637389
+    identifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
+    my_layers: ''
+    my_samples_timestamp: 2010-12-02 11:09:38.992000
+    only_important_news: false
+  model: samples.userdetails
+  pk: 3
+- fields:
+    auto_addition_topics: []
+    display_settings_timestamp: 2010-12-02 11:00:16.637389
+    identifying_data_hash: 5a89e1b06f6b4032f7ba80da95c2ec8985833f05
+    my_layers: ''
+    my_samples_timestamp: 2010-12-02 11:09:38.992000
+    only_important_news: false
+  model: samples.userdetails
+  pk: 4

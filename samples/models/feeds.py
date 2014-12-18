@@ -101,7 +101,7 @@ class FeedEntry(PolymorphicModel):
     def get_additional_template_context(self, user):
         """Return a dictionary with additional context that should be available in the
         template.  It is similar to
-        :py:meth:`inm.models.FiveChamberDeposition.get_additional_template_context`.
+        :py:meth:`institute.models.FiveChamberDeposition.get_additional_template_context`.
         However, in contrast to this other method, the feed version is
         implemented in the abstract base class, so it is defined in all feed
         models.  The rationale for this is that it is used in almost every feed

@@ -78,7 +78,7 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
-# template.  This is used in inm's "sample claim" views, for example.
+# template.  This is used in institute's "sample claim" views, for example.
 TEMPLATE_DIRS = (BASE_DIR,)
 TEMPLATE_LOADERS = (
     ("django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
@@ -105,7 +105,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "inm",
+    "institute",
     "samples",
     "jb_common"
 )
@@ -118,9 +118,9 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
                                "django.core.context_processors.tz",
                                "django.contrib.messages.context_processors.messages",
                                "jb_common.context_processors.default",
-                               "inm.context_processors.default")
+                               "institute.context_processors.default")
 
-JAVASCRIPT_I18N_APPS += ("inm",)
+JAVASCRIPT_I18N_APPS += ("institute",)
 
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
@@ -140,16 +140,16 @@ CACHES = {
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-DEPARTMENTS_TO_APP_LABELS = {"INM": "inm"}
+DEPARTMENTS_TO_APP_LABELS = {"INM": "institute"}
 
-ADD_SAMPLES_VIEW = "inm.views.samples.sample.add"
+ADD_SAMPLES_VIEW = "institute.views.samples.sample.add"
 
 MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, str("remote_client"), str("examples"))
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds_raw_data"))
 SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("solarsimulator_raw_data"))
 
-PHYSICAL_PROCESSES_BLACKLIST = [("inm", "substrate")]
-MERGE_CLEANUP_FUNCTION = "inm.utils.clean_up_after_merging"
+PHYSICAL_PROCESSES_BLACKLIST = [("institute", "substrate")]
+MERGE_CLEANUP_FUNCTION = "institute.utils.clean_up_after_merging"
 
 SAMPLE_NAME_FORMATS = {
     "provisional": {"possible renames": {"new"}},

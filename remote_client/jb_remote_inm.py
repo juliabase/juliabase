@@ -14,7 +14,7 @@
 
 """Library for communicating with JuliaBase through HTTP.  Typical usage is::
 
-    from jb_remote_inm import *
+    from jb_remote_institute import *
     login("r.miller", "mysecurepassword")
     new_samples(10, "PECVD lab")
     logout()

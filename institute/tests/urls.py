@@ -11,34 +11,28 @@
 # distribute this software without explicit permission of the copyright holder.
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
+# Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>
 
 
-"""Root URL dispach for the JuliaBase installation.  Mapping URL patterns to
-function calls.  This is the local URL dispatch of the Django application
-“jb_common”, which provides core functionality and core views for all JuliaBase
-apps.
-
-:var urlpatterns: the actual mapping.  See the `Django documentation`_ for
-  details.
-
-.. _Django documentation:
-    http://docs.djangoproject.com/en/dev/topics/http/urls/
+"""Root URL dispach for testing the “institute” app.
 """
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url, include
+from django.conf.urls.defaults import *
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
 
 
-urlpatterns = [
-    url(r"", include("institute.urls")),
-    url(r"", include("jb_common.urls")),
-    url(r"", include("samples.urls")),
+urlpatterns = patterns("",
+                       (r"", include("jb_common.urls")),
+                       (r"", include("samples.urls")),
+                       (r"", include("institute.urls")),
+                       )
 
-    url(r"^admin/$", include(admin.site.urls)),
-]
+urlpatterns += patterns("",
+    (r"^admin/", include(admin.site.urls)),
+)
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

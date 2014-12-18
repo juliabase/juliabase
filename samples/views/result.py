@@ -15,7 +15,7 @@
 
 """Views for editing and creating results (aka result processes).
 """
-# FixMe: The save_to_database function triggers a signal in inm when a new result
+# FixMe: The save_to_database function triggers a signal in institute when a new result
 # process is connected to a sample.  If you want to change the behavior of this
 # function, keep in mind that you have to check the signal for modification
 # purposes.
