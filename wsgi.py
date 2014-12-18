@@ -5,7 +5,6 @@ import sys
 
 sys.path.append("/home/username/myproject")
 sys.path.append("/home/username/myproject/juliabase")
-sys.stdout = sys.stderr
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"
 
