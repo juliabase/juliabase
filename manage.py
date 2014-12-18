@@ -21,10 +21,10 @@ from django.core.management import execute_from_command_line
 
 root = os.path.dirname(os.path.abspath(__file__))
 if os.path.isdir(os.path.join(root, "mysite")):
-    os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
     sys.path.append(os.path.join(root, "juliabase"))
 else:
-    os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 
 import django.contrib.auth.management
