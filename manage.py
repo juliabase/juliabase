@@ -14,14 +14,18 @@
 
 
 from __future__ import absolute_import, unicode_literals
-import sys, os, socket
+
+import sys, os
 from django.core.management import execute_from_command_line
 
-hostname = socket.gethostname()
-if hostname == "my_server":
-    os.environ["DJANGO_SETTINGS_MODULE"] = "other_settings.my_settings"
+
+root = os.path.dirname(os.path.abspath(__file__))
+if os.path.isdir(os.path.join(root, "mysite")):
+    os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"
+    sys.path.append(os.path.join(root, "juliabase"))
 else:
     os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
+
 
 import django.contrib.auth.management
 def _get_only_custom_permissions(opts, ctype):
