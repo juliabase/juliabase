@@ -38,7 +38,7 @@ urlpatterns = [
     url(r"", include("jb_common.urls")),
     url(r"", include("samples.urls")),
 
-    url(r"^admin/", include(admin.site.urls)),
+    url(r"^admin/$", include(admin.site.urls)),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

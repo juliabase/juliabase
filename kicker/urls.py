@@ -27,7 +27,7 @@ urlpatterns = [
     url(r"^matches/add/$", "kicker.views.edit_match", {"id_": None}),
     url(r"^matches/(?P<id_>\d+)/cancel/$", "kicker.views.cancel_match"),
     url(r"^starting_numbers/(?P<username>.+)/add/$", "kicker.views.set_start_kicker_number"),
-    url(r"^details/(?P<username>.+)", "kicker.views.edit_user_details"),
-    url(r"^player", "kicker.views.get_player"),
+    url(r"^details/(?P<username>[^/]+)$", "kicker.views.edit_user_details"),
+    url(r"^player$", "kicker.views.get_player"),
     url(r"^$", "kicker.views.summary"),
 ]
