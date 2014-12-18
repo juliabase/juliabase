@@ -787,6 +787,7 @@ def unquote_view_parameters(view):
 
     :type view: function
     """
+    # FixMe: Actually, percent-encoding "/" and "%" is enough.
     def unquoting_view(request, *args, **kwargs):
         return view(request,
                     *[urllib_parse.unquote(value) for value in args],
