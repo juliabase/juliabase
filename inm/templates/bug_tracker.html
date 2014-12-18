@@ -1,0 +1,39 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "jb_base.html" %}
+{% comment %}
+This file is part of JuliaBase, the samples database.
+
+Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+                      Marvin Goblet <m.goblet@fz-juelich.de>,
+                      Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+
+{% block css %}
+  <style type="text/css">
+    em { color: maroon }
+  </style>
+{% endblock %}
+
+
+{% block app_title %}<a style="color: inherit; text-decoration: inherit" href="{{ default_home_url }}"
+                        >JuliaBase</a>{% endblock %}
+
+{% block title %}{% trans 'No bug tracker here' %}{% endblock %}
+{% block content_title %}<h1>{% trans 'No bug tracker here' %}</h1>{% endblock %}
+
+{% block frame_content %}
+<p>{% blocktrans %} Normally, clicking on the green bug icon would lead to a
+page where one could enter a new bug.  This way, users can report issues to the
+local web developer.  However, this demo site doesn't have a bug tracker
+installed (yet).  You may simply use <a href="http://trac.edgewall.org/">Trac</a>
+or <a href="http://www.redmine.org/">Redmine</a> for this.  {% endblocktrans %}</p>
+<p style="margin: 0pt"> </p> <!-- IE7 quirk -->
+<div style="clear: both"></div>
+{% endblock %}

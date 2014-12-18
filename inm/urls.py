@@ -30,6 +30,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 from samples.url_utils import PatternGenerator
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
@@ -43,6 +44,7 @@ urlpatterns = [
         "stack_diagram_thumbnail"),
     url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)", "inm.views.samples.layout.show_layout"),
     url(r"^printer_label/(?P<sample_id>\d+)$", "inm.views.samples.sample.printer_label"),
+    url(r"^trac/", TemplateView.as_view(template_name="bug_tracker.html")),
 
     # Remote client
 
