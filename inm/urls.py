@@ -33,8 +33,18 @@ from samples.url_utils import PatternGenerator
 
 
 urlpatterns = [
+    # General additions
+
     url(r"^samples/add/$", "inm.views.samples.sample.add"),
     url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", "inm.views.samples.sample.copy_informal_stack"),
+    url(r"^claims/(?P<username>.+)/add_oldstyle/$", "inm.views.samples.claim.add_oldstyle"),
+    url(r"^stacks/(?P<sample_id>\d+)", "inm.views.samples.stack.show_stack", {"thumbnail": False}, "stack_diagram"),
+    url(r"^stacks/thumbnails/(?P<sample_id>\d+)", "inm.views.samples.stack.show_stack", {"thumbnail": True},
+        "stack_diagram_thumbnail"),
+    url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)", "inm.views.samples.layout.show_layout"),
+    url(r"^printer_label/(?P<sample_id>\d+)$", "inm.views.samples.sample.printer_label"),
+
+    # Remote client
 
     url(r"^add_sample$", "inm.views.samples.json_client.add_sample"),
     url(r"^substrates_by_sample/(?P<sample_id>\d+)$", "inm.views.samples.json_client.substrate_by_sample"),
@@ -45,23 +55,15 @@ urlpatterns = [
     url(r"^solarsimulator_measurements/matching/(?P<irradiation>[A-Za-z0-9.]+)/(?P<sample_id>\d+)/"
         r"(?P<cell_position>[^/]+)/(?P<date>\d{4}-\d\d-\d\d)/",
         "inm.views.samples.json_client.get_matching_solarsimulator_measurement"),
-
-    url(r"^claims/(?P<username>.+)/add_oldstyle/$", "inm.views.samples.claim.add_oldstyle"),
-
-    url(r"^stacks/(?P<sample_id>\d+)", "inm.views.samples.stack.show_stack", {"thumbnail": False}, "stack_diagram"),
-    url(r"^stacks/thumbnails/(?P<sample_id>\d+)", "inm.views.samples.stack.show_stack", {"thumbnail": True},
-        "stack_diagram_thumbnail"),
-
-    url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)", "inm.views.samples.layout.show_layout"),
-
-    url(r"^printer_label/(?P<sample_id>\d+)$", "inm.views.samples.sample.printer_label"),
-
     # I don't add the following two with the pattern generator in order to
-    # prevent an “add” link on the main menu page; they are only for the remote
-    # client.
+    # prevent an “add” link on the main menu page; they are used only by the
+    # remote client.
     url(r"^substrates/add/$", "inm.views.samples.substrate.edit", {"substrate_id": None}),
     url(r"^structurings/add/$", "inm.views.samples.structuring.edit", {"structuring_id": None}),
 ]
+
+
+# Physical processes
 
 pattern_generator = PatternGenerator(urlpatterns, "inm.views.samples")
 pattern_generator.deposition("ClusterToolDeposition", views={"add", "edit"})
