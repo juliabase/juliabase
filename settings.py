@@ -78,7 +78,7 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
 # template.  This is used in inm's "sample claim" views, for example.
-TEMPLATE_DIRS = (os.path.dirname(os.path.abspath(__file__)),)
+TEMPLATE_DIRS = (BASE_DIR,)
 TEMPLATE_LOADERS = (
     ("django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
                                                "django.template.loaders.filesystem.Loader")),)
@@ -143,7 +143,7 @@ DEPARTMENTS_TO_APP_LABELS = {"INM": "inm"}
 
 ADD_SAMPLES_VIEW = "inm.views.samples.sample.add"
 
-MEASUREMENT_DATA_ROOT_DIR = os.path.join(os.path.abspath(os.path.dirname(__file__)), str("remote_client"), str("examples"))
+MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, str("remote_client"), str("examples"))
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds_raw_data"))
 SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("solarsimulator_raw_data"))
 
