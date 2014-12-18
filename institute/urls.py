@@ -37,20 +37,20 @@ urlpatterns = [
     # General additions
 
     url(r"^samples/add/$", "institute.views.samples.sample.add"),
-    url(r"^samples/(?P<sample_name>[^/]+)/copy_informal_stack/$", "institute.views.samples.sample.copy_informal_stack"),
-    url(r"^claims/(?P<username>[^/]+)/add_oldstyle/$", "institute.views.samples.claim.add_oldstyle"),
+    url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", "institute.views.samples.sample.copy_informal_stack"),
+    url(r"^claims/(?P<username>.+)/add_oldstyle/$", "institute.views.samples.claim.add_oldstyle"),
     url(r"^stacks/(?P<sample_id>\d+)$", "institute.views.samples.stack.show_stack", {"thumbnail": False}, "stack_diagram"),
     url(r"^stacks/thumbnails/(?P<sample_id>\d+)$", "institute.views.samples.stack.show_stack", {"thumbnail": True},
         "stack_diagram_thumbnail"),
     url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)$", "institute.views.samples.layout.show_layout"),
     url(r"^printer_label/(?P<sample_id>\d+)$", "institute.views.samples.sample.printer_label"),
-    url(r"^trac/$", TemplateView.as_view(template_name="bug_tracker.html")),
+    url(r"^trac/", TemplateView.as_view(template_name="bug_tracker.html")),
 
     # Remote client
 
     url(r"^add_sample$", "institute.views.samples.json_client.add_sample"),
     url(r"^substrates_by_sample/(?P<sample_id>\d+)$", "institute.views.samples.json_client.substrate_by_sample"),
-    url(r"^next_deposition_number/(?P<letter>[^/]+)$", "institute.views.samples.json_client.next_deposition_number"),
+    url(r"^next_deposition_number/(?P<letter>.+)", "institute.views.samples.json_client.next_deposition_number"),
     url(r"^solarsimulator_measurements/by_filepath",
         "institute.views.samples.json_client.get_solarsimulator_measurement_by_filepath"),
     url(r"^structurings/by_sample/(?P<sample_id>\d+)$", "institute.views.samples.json_client.get_current_structuring"),

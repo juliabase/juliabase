@@ -39,10 +39,10 @@ urlpatterns = [
     url(r"^login$", "django.contrib.auth.views.login", {"template_name": "jb_common/login.html"}, name="login"),
     url(r"^logout$", "django.contrib.auth.views.logout", {"template_name": "jb_common/logout.html"}, name="logout"),
 
-    url(r"^users/(?P<login_name>[^/]+)$", "jb_common.views.show_user"),
+    url(r"^users/(?P<login_name>.+)", "jb_common.views.show_user"),
     url(r"^markdown$", "jb_common.views.markdown_sandbox"),
     url(r"^switch_language$", "jb_common.views.switch_language"),
-    url(r"^error_pages/(?P<hash_value>[^/]+)$", "jb_common.views.show_error_page"),
+    url(r"^error_pages/(?P<hash_value>.+)", "jb_common.views.show_error_page"),
 
     url(r"^jsi18n/$", "django.views.i18n.javascript_catalog", {"packages": settings.JAVASCRIPT_I18N_APPS}),
 ]
