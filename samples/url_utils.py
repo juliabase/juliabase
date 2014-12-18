@@ -90,11 +90,11 @@ class PatternGenerator(object):
                                          self.views_prefix + class_name_with_underscores + ".edit", name="edit_" +
                                          class_name_with_underscores))
         if "custom_show" in views:
-            self.url_patterns.append(url(r"^{}/(?P<{}>[^/]+)/$".format(url_name, normalized_id_field),
+            self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field),
                                          self.views_prefix + class_name_with_underscores + ".show", name="show_" +
                                          class_name_with_underscores))
         else:
-            self.url_patterns.append(url(r"^{}/(?P<process_id>[^/]+)/$".format(url_name, normalized_id_field),
+            self.url_patterns.append(url(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
                                          "samples.views.main.show_process", {"process_name": class_name},
                                          name="show_" + class_name_with_underscores))
 
