@@ -55,12 +55,18 @@ urlpatterns = [
     url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)", "inm.views.samples.layout.show_layout"),
 
     url(r"^printer_label/(?P<sample_id>\d+)$", "inm.views.samples.sample.printer_label"),
+
+    # I don't add the following two with the pattern generator in order to
+    # prevent an “add” link on the main menu page; they are only for the remote
+    # client.
+    url(r"^substrates/add/$", "inm.views.samples.substrate.edit", {"substrate_id": None}),
+    url(r"^structurings/add/$", "inm.views.samples.structuring.edit", {"structuring_id": None}),
 ]
 
 pattern_generator = PatternGenerator(urlpatterns, "inm.views.samples")
 pattern_generator.deposition("ClusterToolDeposition", views={"add", "edit"})
 pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")
 pattern_generator.physical_process("PDSMeasurement", "number")
-pattern_generator.physical_process("Substrate")
-pattern_generator.physical_process("Structuring")
+pattern_generator.physical_process("Substrate", views={"edit"})
+pattern_generator.physical_process("Structuring", views={"edit"})
 pattern_generator.physical_process("SolarsimulatorMeasurement")
