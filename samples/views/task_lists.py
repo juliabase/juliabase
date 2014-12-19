@@ -29,7 +29,7 @@ from jb_common import utils as common_utils
 from samples.models import Process, Task
 from samples.views import utils, feed_utils, form_utils
 from samples import permissions
-from django.conf import settings
+from jb_common.models import Department
 from django.apps import apps
 
 
@@ -190,8 +190,7 @@ class ChooseTaskListsForm(forms.Form):
         choices = []
         for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().keys()
-                                          if process._meta.app_label ==
-                                          settings.DEPARTMENTS_TO_APP_LABELS.get(department.name))
+                                          if process._meta.app_label == department.app_label)
             choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
         if len(choices) == 1:
             choices = choices[0][1]
@@ -344,7 +343,7 @@ def show(request):
     for process_content_type, tasks in task_lists.items():
         # FixMe: it is possible that some processes are in more then one department available
         # maybe we need a better way to determine the department
-        department_names = {name for name, app_label in settings.DEPARTMENTS_TO_APP_LABELS.items()
+        department_names = {name for name, app_label in Department.objects.values_list("name", "app_label")
                            if app_label == process_content_type.model_class()._meta.app_label}
         assert len(department_names) == 1
         department_name = department_names.pop()

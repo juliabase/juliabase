@@ -176,7 +176,7 @@ def get_physical_processes(user):
         user_department = user.jb_user_details.department
         if user_department:
             all_physical_processes = [process for process in all_physical_processes
-                                      if process._meta.app_label in settings.DEPARTMENTS_TO_APP_LABELS[user_department.name]]
+                                      if process._meta.app_label == user_department.app_label]
         else:
             all_physical_processes = []
     all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())

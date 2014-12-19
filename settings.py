@@ -140,8 +140,6 @@ CACHES = {
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-DEPARTMENTS_TO_APP_LABELS = {"INM": "institute"}
-
 ADD_SAMPLES_VIEW = "institute.views.samples.sample.add"
 
 MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, str("remote_client"), str("examples"))

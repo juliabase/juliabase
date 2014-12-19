@@ -36,6 +36,7 @@ class Department(models.Model):
     able to see the processes of their department.
     """
     name = models.CharField(_("name"), max_length=30, unique=True)
+    app_label = models.CharField(_("app label"), max_length=30)
 
     class Meta:
         ordering = ["name"]

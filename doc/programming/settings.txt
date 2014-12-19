@@ -89,16 +89,6 @@ no emails are sent at all in debugging mode.  This prevents embarrassment
 caused by emails sent to other people while merely debugging your code.
 
 
-DEPARTMENTS_TO_APP_LABELS
------------------------------
-
-Default: ``{}`` (Empty dict)
-
-Dictionary mapping department names to Django app names.  In some places,
-JuliaBase needs to retrieve the app name using this dictionary.  It must
-contain all departments that are in the database.
-
-
 .. _INITIALS_FORMATS:
 
 INITIALS_FORMATS

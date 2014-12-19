@@ -23,7 +23,6 @@ ADD_SAMPLES_VIEW = ""
 CACHE_ROOT = str("/tmp/juliabase_cache")
 CRAWLER_LOGS_ROOT = ""
 CRAWLER_LOGS_WHITELIST = ()
-DEPARTMENTS_TO_APP_LABELS = {}
 INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}",
                              "description": _("The initials start with two uppercase letters.  "
                                               "They contain uppercase letters and digits only.  Digits are at the end.")},
