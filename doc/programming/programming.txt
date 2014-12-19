@@ -54,7 +54,7 @@ changes.  Instead, you make a structure according to this::
             settings.py
             urls.py
             wsgi.py
-        my_institute/
+        institute/
             __init__.py
             admin.py
             urls.py
@@ -65,25 +65,25 @@ changes.  Instead, you make a structure according to this::
             views/
             ...
 
+Thus, follow these steps:
 
-Note that the subdirectory :file:`juliabase/` must be in your python path for
-this to work.  You may add something like
-
-::
-
-     import sys
-     sys.path.append("/home/chantal/myproject/juliabase")
-
-to your :file:`wsgi.py` and :file:`manage.py`, or alternatively, your main
-:file:`settings.py`.
+#. Create the directory :file:`myproject/`
+#. Copy a JuliaBase release to :file:`myproject/juliabase`
+#. Copy the file :file:`myproject/juliabase/manage.py` to :file:`myproject/`.
+#. Create :file:`myproject/mysite/`
+#. Copy the files :file:`settings.py`, :file:`urls.py`, and :file:`wsgi.py`
+   from :file:`myproject/juliabase/` to :file:`myproject/mysite/`
+#. Create an empty file :file:`myproject/mysite/__init__.py`
+#. Copy recursively the directory :file:`myproject/juliabase/institute` to
+   :file:`myproject/`.
 
 
 Git subtree
 -----------
 
-If you're using Git, you may consider using the ``subtree`` command: You
-structure your repository like above but without the :file:`juliabase`
-subdirectory.  Then, you say::
+If you're using Git, you may consider using the ``subtree`` command to get
+JuliaBase in your repo: You structure your repository like above but without
+the :file:`juliabase` subdirectory.  Then, you say::
 
     git subtree add --prefix juliabase --squash git@bob.ipv.kfa-juelich.de:juliabase v1.0
 
@@ -98,14 +98,93 @@ Creating a new Django app
 Okay, now let's dive into the serious stuff.
 
 You created your Django project, you added JuliaBase to it as explained in
-`Organizing your source code`_.  You copied JuliaBase's :file:`settings.py` and
-modified it for you, in order to get the demo app ``inm`` working.
+`Organizing your source code`_.  Furthermore, you set up everything as
+explained in :doc:`installation` (Apache is not yet needed).  Let's
+try to get it running with
 
-.. todo: Explain the steps necessary to adapt settings.py.
+.. code-block:: shell-session
 
-Then, you create a new app ``my_institute``, and you replace ``inm`` with
-``my_institute`` in ``INSTALLED_APPS`` in your :file:`settings.py`.  Nothing is
-working anymore …
+    username@server:~/mysite$ ./manage.py migrate
+    username@server:~/mysite$ ./manage.py loaddata demo
+    username@server:~/mysite$ ./manage.py collectstatic
+    username@server:~/mysite$ ./manage.py runserver
+
+This should make the site accessible locally at the URL http://127.0.0.1:8000.
+
+
+The institute app that is used is :file:`myproject/institute`.  For far, it is
+a 1:1 copy of the JuliaBase app of the same name.  The plan is to transform it
+into what *you* need by pruning and modifying it.  The primary tasks when
+adapting the app to your group or institution are:
+
+1. Branding.
+2. Adapting the “add new samples” page.
+3. Manage the physical processes.
+
+
+Branding
+--------
+
+For the time being, we will stay with the app name “institute” to keep the
+number of changes small.  Remember that it is only the app name; you may
+rebrand the wabpages to whatever you like.  The central point of doing so is
+:file:`institute/templates/jb_base.html`.  There, you may change the name of
+the institution as well as its logo.  The logo file should be placed in
+:file:`institute/static/institute/`.
+
+Moreover, every JuliaBase installation must have at least one department.  It
+needs to be created only once and should be named appropriately.
+
+
+The “add new samples” view
+--------------------------
+
+JuliaBase respects that creating new samples is a rather institute-specific
+procedure and therefore does not include a view for this.  Instead, you must
+create one, but you may use the INM's view in
+:file:`institute/views/samples/sample.py` as a comprehensive starting point (in
+particular, the function :py:func:`institute.views.samples.sample.add`).
+
+In the INM, every sample starts its life with a *substrate*.  This is a
+physical process that is always the very first one in the sample's history.
+Therefore, the web page where you can add new samples also asks for the
+substrate data, and creates the samples together with their substrates.  You
+may or may not wish to have substrates, too.
+
+The second big issue is sample names.  Most institutions have quite
+ideosycratic ideas about the sample naming policy.  But JuliaBase is very
+flexible regarding this, see :doc:`sample_names`.  In the “add new samples”
+view, you may let the user input (a pattern for) the new samples right away, or
+you may give the names totally automatically.  Or, you may do it similarly to
+the INM: Let the user decide between some options, and possibly redirect to a
+bulk-rename view after having added the samples with provisional names.
+
+
+Physical processes
+------------------
+
+Physical processes are the thing that a JuliaBase programmer will spend most of
+its time on.  They represent everything physically available in your
+institution: Measurement setups, deposition setups, clean room processes,
+chemical treatment, etc.
+
+The INM app “institute” ships with some examples.  You may convert them to what
+you need, but you can also remove them.  For the latter, visit
+:file:`institute/urls.py` and have a look at the following part (at the
+bottom)::
+
+    pattern_generator = PatternGenerator(urlpatterns, "institute.views.samples")
+    pattern_generator.deposition("ClusterToolDeposition", views={"add", "edit"})
+    pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")
+    pattern_generator.physical_process("PDSMeasurement", "number")
+    pattern_generator.physical_process("Substrate", views={"edit"})
+    pattern_generator.physical_process("Structuring", views={"edit"})
+    pattern_generator.physical_process("SolarsimulatorMeasurement")
+
+Here, you can simply remove a line and the process is gone.  Well, not
+entirely: You still need to remove its views module, templates, and models in
+order to have everything neat and clean.  But removing the URL is enough for
+the moment.
 
 
 Adding a new process module
@@ -113,7 +192,7 @@ Adding a new process module
 
 So you want to add a new measurement device or manufacturing process to your
 JuliaBase installation.  You do so by adding new models, views, URLs, and
-possibly an electronic lab notebook to your app “my_institute”.
+possibly an electronic lab notebook to your app “institute”.
 
 I will show how to do that step-by-step.  In this example case, we write the
 module for layer thickness measurements.
@@ -123,27 +202,19 @@ Overview
 
 The following steps are necessary for creating a process module:
 
-1. Create a database model in ``my_institute/models.py``.
-
-2. Create links in ``urls.py``.
-
-3. Create a view module in ``samples/views/``.  This is called *the* process
-   module.
-
-4. Fill the view module with an “edit” and a “show” function.
-
-5. Create an “edit” and a “show” template in ``templates/``.
-
-6. Create support for the new process in the Remote Client.
-
-7. Create an electronic lab notebook.
-
-8. Import legacy data.
+#. Create a database model in ``institute/models.py``.
+#. Create links in ``urls.py``.
+#. Create a view module in ``samples/views/``.  Fill the view module with an
+   “edit” and a “show” function.
+#. Create an “edit” and a “show” template in ``templates/``.
+#. *(Optional)* Create an electronic lab notebook.
+#. *(Optional)* Create support for the new process in the Remote Client.
+#. *(Optional)* Import legacy data.
 
 In general, you will not do all of this from scratch.  Instead, you will
 copy-and-paste from an already existing process which is as similar to the new
-one as possible.  There are so many processes already existing in JuliaBase that
-this makes creating a new one relatively simple.
+one as possible.  (By the way, a little bit of code duplication in this area is
+not really bad.)
 
 
 Creating the database models
@@ -196,10 +267,10 @@ It is a good idea to test a schema migration first on a test server.
 
 The schema migration is created and applied by saying::
 
-    ./manage.py makemigrations my_institute
-    ./manage.py migrate my_institute
+    ./manage.py makemigrations institute
+    ./manage.py migrate institute
 
-The first line will create a new file in :file:`my_institute/migrations/`.  It
+The first line will create a new file in :file:`institute/migrations/`.  It
 should be added to your repository.
 
 Creating the URLs

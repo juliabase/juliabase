@@ -63,6 +63,7 @@ operating system by default anyway, you must install:
 - reportlab
 - Dejavu fonts
 
+
 PostgreSQL
 ==============
 
