@@ -29,7 +29,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
-from samples.data_tree import DataNode, DataItem
+from samples.data_tree import DataItem
 from jb_common import search, model_fields
 from jb_common.utils import format_lazy
 from samples.views import utils
