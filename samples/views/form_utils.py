@@ -99,7 +99,7 @@ class OperatorField(forms.ChoiceField):
             if old_process:
                 if old_process.operator.pk != user.pk:
                     self.choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
-                external_operators = set([old_process.external_operator]) if old_process.external_operator else set()
+                external_operators = {old_process.external_operator} if old_process.external_operator else set()
             else:
                 external_operators = set()
             self.choices.append((user.pk, get_really_full_name(user)))
