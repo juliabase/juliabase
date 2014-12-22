@@ -59,6 +59,7 @@ copyright holder, you must destroy it immediately and completely.
   {% include "samples/edit_description.html" %}
 
   <div style="display: none">
+    {# Hidden so that it's only set/changed by the remote client. #}
     {{ measurement.timestamp_inaccuracy }}
   </div>
 
