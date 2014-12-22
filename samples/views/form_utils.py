@@ -43,10 +43,11 @@ class OperatorField(forms.ChoiceField):
     logged-in user, an external contact of that user, or the previous
     (external) operator.  It can be used in model forms.
 
+    Normally, you use this field through :py:class:`ProcessForm`.
+
     The result of this field (if there was no validation error) is a tuple of
     two values, namely the operator and the external operator.  Exactly one of
-    both has a boolean value of ``False`` if the respective type of operator
-    was not given.
+    both is ``None`` if the respective type of operator was not given.
 
     It is senseful to show this field only to non-staff, and staff gets the
     usual operator/external operator fields.  In the IEK-5/FZJ implementation,
@@ -56,17 +57,17 @@ class OperatorField(forms.ChoiceField):
     FixMe: This is the new variant of py:class:`FixedOperatorField`.  It makes
     py:class:`FixedOperatorField` obsolete.
 
-    If you want to use this field for non-staff, do the following things::
+    If you want to use this field for *non-staff*, do the following things::
 
         1. This field must be made required
 
         2. Make the possible choices of the operator and the external operator
            fields empty.  Exclude those fields from the HTML.
 
-        3. Assure in your ``clean()`` method that non-staff doesn't submit an
-           external operator.  Since the operator is required in
-           ``samples.models.Process``, you must provide a senseful default for the
-           operator if none was returned (because an external operator was
+        3. Check in your ``clean()`` method whether non-staff submits an
+           operator.  Since the operator is required in
+           ``samples.models.Process``, you must provide a senseful default for
+           the operator if none was returned (because an external operator was
            selected).  I recommend to use the currently logged-in user in this
            case.
 
@@ -76,12 +77,18 @@ class OperatorField(forms.ChoiceField):
     """
 
     def set_choices(self, user, old_process):
-        """Set the operator list shown in the widget.  It combines selectable
-        users and external operators.  You *must* call this method in the
-        constructor of the form in which you use this field, otherwise the
-        selection box will remain emtpy.  It works even for staff users, which
-        can choose from *all* users and external operators (including inactive
-        users such as “nobody”).
+        """Set the operator list shown in the widget.  It combines selectable users and
+        external operators.  You must call this method in the constructor of
+        the form in which you use this field, otherwise the selection box will
+        remain emtpy.  The selectable operators are:
+
+        - the former operator of the process (if any)
+        - the current user
+        - the former external operator (if any)
+        - all external operators for which the current user is the contact person.
+
+        It works also for staff users, which can choose from *all* users and
+        external operators (including inactive users such as “nobody”).
 
         :param user: the currently logged-in user.
         :param old_process: if the process is to be edited, the former instance
@@ -97,7 +104,7 @@ class OperatorField(forms.ChoiceField):
         else:
             self.choices = []
             if old_process:
-                if old_process.operator.pk != user.pk:
+                if old_process.operator != user:
                     self.choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
                 external_operators = {old_process.external_operator} if old_process.external_operator else set()
             else:
@@ -140,10 +147,9 @@ class ProcessForm(ModelForm):
     """Abstract model form class for processes.  It ensures that timestamps are not
     in the future, and that comments contain only allowed Markdown syntax.
 
-    Moreover, it defines a field “combined_operator” which contains the
-    currently logged-in user, the current operator of the process (unless it is
-    a new process), and the external oprtators available to the currently
-    logged-in user.
+    Moreover, it defines a field “combined_operator” of the type
+    :py:class:`OperatorField`.  In the HTML template, you should offer this
+    field to non-staff, and the usual operator/external operator to staff.
     """
     combined_operator = OperatorField(label=_("Operator"))
 
