@@ -191,7 +191,7 @@ class ProcessForm(ModelForm):
 
     def clean(self):
         _ = ugettext
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(ProcessForm, self).clean()
         final_operator = cleaned_data.get("operator")
         final_external_operator = cleaned_data.get("external_operator")
         if cleaned_data.get("combined_operator"):
@@ -726,7 +726,7 @@ class SamplePositionForm(forms.Form):
 
     def clean(self):
         _ = ugettext
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(SamplePositionForm, self).clean()
         sample = cleaned_data.get("sample")
         place = cleaned_data.get("position")
         if sample and not place:

@@ -57,7 +57,7 @@ class MergeSamplesForm(forms.Form):
             except IndexError:
                 return None
 
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(MergeSamplesForm, self).clean()
         from_sample = cleaned_data.get("from_sample")
         to_sample = cleaned_data.get("to_sample")
         if from_sample and not to_sample:

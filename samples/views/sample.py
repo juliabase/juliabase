@@ -1018,7 +1018,7 @@ class SampleRenameForm(forms.Form):
         return new_name
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(SampleRenameForm, self).clean()
         old_name = cleaned_data.get("old_name", "").strip()
         new_name = cleaned_data.get("new_name", "").strip()
         if new_name and new_name == old_name:

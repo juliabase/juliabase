@@ -366,10 +366,13 @@ class InformalLayer(models.Model):
 
 
 class InformalLayerForm(forms.ModelForm):
+
     def clean(self):
-        if not self.cleaned_data.get("classification") and not self.cleaned_data.get("comments"):
+        cleaned_data = super(InformalLayerForm, self).clean()
+        if not cleaned_data.get("classification") and not cleaned_data.get("comments"):
             raise ValidationError(_("You must give a classification or comments or both."))
-        return self.cleaned_data
+        return cleaned_data
+
     class Meta:
         widgets = {
             "index": forms.TextInput(attrs={"size": 5}),

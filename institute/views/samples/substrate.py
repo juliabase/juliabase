@@ -38,6 +38,7 @@ class SubstrateForm(form_utils.ProcessForm):
         cleaned_data = super(SubstrateForm, self).clean()
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
             self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
+        return cleaned_data
 
 
 def is_referentially_valid(substrate_form, samples_form, edit_description_form):

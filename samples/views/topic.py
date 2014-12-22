@@ -77,7 +77,7 @@ class NewTopicForm(forms.Form):
             raise ValidationError(_("You are only allowed to create sub topics. You have to select an upper topic."))
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(NewTopicForm, self).clean()
         topic_name = cleaned_data["new_topic_name"]
         parent_topic = self.cleaned_data.get("parent_topic", None)
         if Topic.objects.filter(name=topic_name, department=self.user.jb_user_details.department,
@@ -175,7 +175,7 @@ class EditTopicForm(forms.Form):
         self.fields["topic_manager"].set_users(user, topic.manager)
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(EditTopicForm, self).clean()
         if "members" in cleaned_data and "confidential" in cleaned_data:
             if cleaned_data["confidential"] and \
                     not any(permissions.has_permission_to_edit_topic(user, self.topic) for user in cleaned_data["members"]):

@@ -91,7 +91,7 @@ class ActionForm(forms.Form):
         return tags
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(ActionForm, self).clean()
         if cleaned_data["copy_to_user"]:
             if not cleaned_data["comment"]:
                 self.add_error("comment", _("If you copy samples over to another person, you must enter a short comment."))

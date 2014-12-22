@@ -150,15 +150,16 @@ class RelatedDataForm(forms.Form):
         one sample or sample series was selected, and whether the user is
         allowed to add results to the selected objects.
         """
-        samples = self.cleaned_data.get("samples")
-        sample_series = self.cleaned_data.get("sample_series")
+        cleaned_data = super(RelatedDataForm, self).clean()
+        samples = cleaned_data.get("samples")
+        sample_series = cleaned_data.get("sample_series")
         if samples is not None and sample_series is not None:
             for sample_or_series in set(samples + list(sample_series)) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
                     self.add_error(None, _("You don't have the permission to add the result to all selected samples/series."))
             if not samples and not sample_series:
                 self.add_error(None, _("You must select at least one samples/series."))
-        return self.cleaned_data
+        return cleaned_data
 
 
 class DimensionsForm(forms.Form):
@@ -186,7 +187,7 @@ class DimensionsForm(forms.Form):
         """If one of the two dimensions is set to zero, the other is set to
         zero, too.
         """
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(DimensionsForm, self).clean()
         if "number_of_quantities" in cleaned_data and "number_of_values" in cleaned_data:
             if cleaned_data["number_of_quantities"] == 0 or cleaned_data["number_of_values"] == 0:
                 cleaned_data["number_of_quantities"] = cleaned_data["number_of_values"] = 0

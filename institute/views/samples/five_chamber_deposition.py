@@ -31,6 +31,10 @@ import institute.models as institute_models
 class DepositionForm(form_utils.DepositionForm):
     """Model form for the basic deposition data.
     """
+    class Meta:
+        model = institute_models.FiveChamberDeposition
+        fields = "__all__"
+
     def __init__(self, user, data=None, **kwargs):
         super(DepositionForm, self).__init__(user, data, **kwargs)
 
@@ -44,15 +48,16 @@ class DepositionForm(form_utils.DepositionForm):
         if "number" in cleaned_data and "timestamp" in cleaned_data:
             if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
                 self.add_error("number", _("The first two digits must match the year of the deposition."))
-
-    class Meta:
-        model = institute_models.FiveChamberDeposition
-        fields = "__all__"
+        return cleaned_data
 
 
 class LayerForm(forms.ModelForm):
     """Model form for a single layer.
     """
+    class Meta:
+        model = institute_models.FiveChamberLayer
+        exclude = ("deposition",)
+
     def __init__(self, *args, **kwargs):
         """I only tweak the HTML layout slightly.
         """
@@ -62,10 +67,6 @@ class LayerForm(forms.ModelForm):
             self.fields[fieldname].widget.attrs["size"] = "10"
         self.fields["temperature_1"].widget.attrs["size"] = "5"
         self.fields["temperature_2"].widget.attrs["size"] = "5"
-
-    class Meta:
-        model = institute_models.FiveChamberLayer
-        exclude = ("deposition",)
 
 
 class ChangeLayerForm(forms.Form):
@@ -80,16 +81,17 @@ class ChangeLayerForm(forms.Form):
 
     def clean(self):
         _ = ugettext
+        cleaned_data = super(ChangeLayerForm, self).clean()
         operations = 0
-        if self.cleaned_data["duplicate_this_layer"]:
+        if cleaned_data["duplicate_this_layer"]:
             operations += 1
-        if self.cleaned_data["remove_this_layer"]:
+        if cleaned_data["remove_this_layer"]:
             operations += 1
-        if self.cleaned_data.get("move_this_layer"):
+        if cleaned_data.get("move_this_layer"):
             operations += 1
         if operations > 1:
             raise ValidationError(_("You can't duplicate, move, or remove a layer at the same time."))
-        return self.cleaned_data
+        return cleaned_data
 
 
 class FormSet(object):

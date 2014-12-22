@@ -245,11 +245,12 @@ class TextNullSearchField(SearchField):
 
     class TextNullForm(forms.Form):
         def clean(self):
+            cleaned_data = super(TextNullForm, self).clean()
             text = [value for key, value in self.cleaned_data.items() if key.endswith("_main")][0]
             explicitly_empty = [value for key, value in self.cleaned_data.items() if key.endswith("_null")][0]
             if explicitly_empty and text:
                 raise forms.ValidationError(_("You can't search for empty values while giving a non-empty value."))
-            return self.cleaned_data
+            return cleaned_data
 
     def parse_data(self, data, prefix):
         self.form = self.TextNullForm(data, prefix=prefix)

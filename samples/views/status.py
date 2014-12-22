@@ -85,7 +85,7 @@ class StatusForm(forms.ModelForm):
         return timestamp
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(StatusForm, self).clean()
         begin, end = cleaned_data.get("begin"), cleaned_data.get("end")
         if begin:
             cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = cleaned_data["begin"]
