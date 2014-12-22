@@ -168,6 +168,10 @@ class PECVDLayerForm(forms.ModelForm):
     """This is for being able to distinguish the form types; it is not given
     by the user, however, it is given by the remote client."""
 
+    class Meta:
+        model = institute_models.ClusterToolPECVDLayer
+        exclude = ("deposition",)
+
     def __init__(self, user, data=None, **kwargs):
         """I do additional initialisation here, but very harmless: It's only about
         visual appearance and numerical limits.
@@ -211,10 +215,6 @@ class PECVDLayerForm(forms.ModelForm):
         if self.cleaned_data["layer_type"] != "PECVD":
             raise ValidationError("Layer type must be “PECVD”.")
         return self.cleaned_data["layer_type"]
-
-    class Meta:
-        model = institute_models.ClusterToolPECVDLayer
-        exclude = ("deposition",)
 
 
 class ChangeLayerForm(forms.Form):

@@ -66,15 +66,15 @@ class SampleForm(forms.ModelForm):
     currently_responsible_person = form_utils.UserField(label=_("Currently responsible person"))
     topic = form_utils.TopicField(label=_("Topic"), required=False)
 
+    class Meta:
+        model = models.Sample
+        exclude = ("name", "split_origin", "processes", "watchers")
+
     def __init__(self, user, *args, **kwargs):
         super(SampleForm, self).__init__(*args, **kwargs)
         self.fields["topic"].set_topics(user, kwargs["instance"].topic if kwargs.get("instance") else None)
         self.fields["currently_responsible_person"].set_users(user,
             kwargs["instance"].currently_responsible_person if kwargs.get("instance") else None)
-
-    class Meta:
-        model = models.Sample
-        exclude = ("name", "split_origin", "processes", "watchers")
 
 
 def is_referentially_valid(sample, sample_form, edit_description_form):

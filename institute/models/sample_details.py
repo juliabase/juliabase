@@ -367,18 +367,18 @@ class InformalLayer(models.Model):
 
 class InformalLayerForm(forms.ModelForm):
 
-    def clean(self):
-        cleaned_data = super(InformalLayerForm, self).clean()
-        if not cleaned_data.get("classification") and not cleaned_data.get("comments"):
-            raise ValidationError(_("You must give a classification or comments or both."))
-        return cleaned_data
-
     class Meta:
         widgets = {
             "index": forms.TextInput(attrs={"size": 5}),
             "comments": forms.TextInput(attrs={"size": 10}),
             "thickness": forms.TextInput(attrs={"size": 10}),
             }
+
+    def clean(self):
+        cleaned_data = super(InformalLayerForm, self).clean()
+        if not cleaned_data.get("classification") and not cleaned_data.get("comments"):
+            raise ValidationError(_("You must give a classification or comments or both."))
+        return cleaned_data
 
 InformalLayerFormSet = inlineformset_factory(SampleDetails, InformalLayer, extra=8, form=InformalLayerForm,
                                              exclude=("process", "additional_process_data"))

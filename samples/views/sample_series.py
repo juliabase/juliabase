@@ -41,7 +41,6 @@ import django.contrib.auth.models
 import hashlib
 
 
-
 class SampleSeriesForm(forms.ModelForm):
     """Form for editing and creating sample series.
     """
@@ -50,6 +49,10 @@ class SampleSeriesForm(forms.ModelForm):
     currently_responsible_person = form_utils.UserField(label=_("Currently responsible person"))
     topic = form_utils.TopicField(label=_("Topic"))
     samples = form_utils.MultipleSamplesField(label=_("Samples"))
+
+    class Meta:
+        model = models.SampleSeries
+        exclude = ("timestamp", "results", "name", "id")
 
     def __init__(self, user, data=None, **kwargs):
         """I have to initialise the form here, especially
@@ -95,10 +98,6 @@ class SampleSeriesForm(forms.ModelForm):
         German (difficult to fix, even for the Django guys).
         """
         pass
-
-    class Meta:
-        model = models.SampleSeries
-        exclude = ("timestamp", "results", "name", "id")
 
 
 def embed_timestamp(request, name):

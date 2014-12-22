@@ -41,15 +41,15 @@ class SolarsimulatorMeasurementForm(form_utils.ProcessForm):
 
 class SolarsimulatorCellForm(forms.ModelForm):
 
+    class Meta:
+        model = SolarsimulatorCellMeasurement
+        exclude = ("measurement",)
+
     def __init__(self, *args, **kwargs):
         super(SolarsimulatorCellForm, self).__init__(*args, **kwargs)
 
     def validate_unique(self):
         pass
-
-    class Meta:
-        model = SolarsimulatorCellMeasurement
-        exclude = ("measurement",)
 
 
 def solarsimulator_cell_forms_from_post(post, form_cls):
