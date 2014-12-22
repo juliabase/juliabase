@@ -23,7 +23,7 @@ import django.utils.six as six
 from django.utils.six.moves import urllib
 
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core.urlresolvers
 from django.contrib import messages
 from jb_common.utils import is_json_requested, respond_in_json

@@ -85,54 +85,14 @@ class ResultForm(form_utils.ProcessForm):
     """Model form for a result process.  Note that I exclude many fields
     because they are not used in results or explicitly set.
     """
-    _ = ugettext_lazy
-    combined_operator = form_utils.OperatorField(label=_("Operator"))
-
-    def __init__(self, user, *args, **kwargs):
-        super(ResultForm, self).__init__(*args, **kwargs)
-        self.fields["comments"].required = True
-        self.fields["title"].widget.attrs["size"] = 40
-        self.old_result = kwargs.get("instance")
-        self.user = user
-        self.fields["combined_operator"].set_choices(user, self.old_result)
-        if not user.is_staff:
-            self.fields["external_operator"].choices = []
-            self.fields["operator"].choices = []
-            self.fields["operator"].required = False
-        else:
-            self.fields["combined_operator"].required = False
-        self.fields["timestamp"].initial = datetime.datetime.now()
-
-
-    def clean(self):
-        _ = ugettext
-        cleaned_data = self.cleaned_data
-        # FixMe: The following could be done in ProcessForm.clean().
-        final_operator = self.cleaned_data.get("operator")
-        final_external_operator = self.cleaned_data.get("external_operator")
-        if self.cleaned_data.get("combined_operator"):
-            operator, external_operator = self.cleaned_data["combined_operator"]
-            if operator:
-                if final_operator and final_operator != operator:
-                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
-                else:
-                    final_operator = operator
-            if external_operator:
-                if final_external_operator and final_external_operator != external_operator:
-                    self.add_error("combined_external_operator",
-                                   "Your external operator and combined external operator didn't match.")
-                else:
-                    final_external_operator = external_operator
-        if not final_operator:
-            # Can only happen for non-staff.  I deliberately overwrite a
-            # previous operator because this way, we can log who changed it.
-            final_operator = self.user
-        self.cleaned_data["operator"], self.cleaned_data["external_operator"] = final_operator, final_external_operator
-        return cleaned_data
-
     class Meta:
         model = models.Result
         exclude = ("image_type", "quantities_and_values")
+
+    def __init__(self, user, *args, **kwargs):
+        super(ResultForm, self).__init__(user, *args, **kwargs)
+        self.fields["comments"].required = True
+        self.fields["title"].widget.attrs["size"] = 40
 
 
 class RelatedDataForm(forms.Form):

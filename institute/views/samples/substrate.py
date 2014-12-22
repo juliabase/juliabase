@@ -29,66 +29,15 @@ from samples.views import utils, feed_utils, form_utils
 class SubstrateForm(form_utils.ProcessForm):
     """Model form class for a substrate.
     """
-    _ = ugettext_lazy
-    combined_operator = form_utils.OperatorField(label=_("Operator"))
-
     class Meta:
         model = institute_models.Substrate
         fields = "__all__"
 
-    def __init__(self, user, *args, **kwargs):
-        super(SubstrateForm, self).__init__(*args, **kwargs)
-        self.old_substrate = kwargs.get("instance")
-        self.user = user
-        self.fields["combined_operator"].set_choices(user, self.old_substrate)
-        if not user.is_staff:
-            self.fields["external_operator"].choices = []
-            self.fields["operator"].choices = []
-            self.fields["operator"].required = False
-        else:
-            self.fields["combined_operator"].required = False
-        if self.old_substrate:
-            if not user.is_staff:
-                self.fields["timestamp"].widget.attrs["readonly"] = "readonly"
-        self.fields["timestamp"].initial = datetime.datetime.now()
-
-    def clean_timestamp(self):
-        if not self.user.is_staff and self.old_substrate:
-            return self.old_substrate.timestamp
-        return self.cleaned_data["timestamp"]
-
-    def clean_timestamp_inaccuracy(self):
-        if not self.user.is_staff and self.old_substrate:
-            return self.old_substrate.timestamp_inaccuracy
-        return self.cleaned_data["timestamp_inaccuracy"]
-
     def clean(self):
         _ = ugettext
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(SubstrateForm, self).clean()
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
             self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
-        # FixMe: The following could be done in ProcessForm.clean().
-        final_operator = self.cleaned_data.get("operator")
-        final_external_operator = self.cleaned_data.get("external_operator")
-        if self.cleaned_data.get("combined_operator"):
-            operator, external_operator = self.cleaned_data["combined_operator"]
-            if operator:
-                if final_operator and final_operator != operator:
-                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
-                else:
-                    final_operator = operator
-            if external_operator:
-                if final_external_operator and final_external_operator != external_operator:
-                    self.add_error("combined_external_operator",
-                                   "Your external operator and combined external operator didn't match.")
-                else:
-                    final_external_operator = external_operator
-        if not final_operator:
-            # Can only happen for non-staff.  I deliberately overwrite a
-            # previous operator because this way, we can log who changed it.
-            final_operator = self.user
-        self.cleaned_data["operator"], self.cleaned_data["external_operator"] = final_operator, final_external_operator
-        return cleaned_data
 
 
 def is_referentially_valid(substrate_form, samples_form, edit_description_form):
