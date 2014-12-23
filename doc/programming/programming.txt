@@ -195,12 +195,12 @@ JuliaBase installation.  You do so by adding new models, views, URLs, and
 possibly an electronic lab notebook to your app “institute”.
 
 I will show how to do that step-by-step.  In this example case, we write the
-module for layer thickness measurements.
+code for layer thickness measurements.
 
 Overview
 ------------
 
-The following steps are necessary for creating a process module:
+The following steps are necessary for creating a physical process:
 
 #. Create a database model in ``institute/models.py``.
 #. Create links in ``urls.py``.
@@ -256,6 +256,7 @@ minimal and maximal values for numeric fields where applicable, and restrict
 the number of digits for decimal fields.  This not only forces users to enter
 plausible values, it also helps debugging.
 
+
 Schema migration
 ................
 
@@ -273,35 +274,90 @@ The schema migration is created and applied by saying::
 The first line will create a new file in :file:`institute/migrations/`.  It
 should be added to your repository.
 
+
 Creating the URLs
 ---------------------
 
-The following work is done in ``urls.py``.  This step is fairly simple.  You
-just have to copy-n-paste the URLs from an apparatus which is sufficiently
-closely retated to yours and substitute the names.  For the thickness
-measurement, we get::
+The following work is done in :file:`institute/urls.py`.  This step is fairly
+simple.  For the thickness measurement, you add::
 
-    url(r"^layer_thickness/add/$", "layer_thickness.edit", {"process_id": None}, "add_layer_thickness"),
-    url(r"^layer_thickness/(?P<process_id>.+)/edit/$", "layer_thickness.edit",
-	name="edit_layer_thickness"),
-
-You also want to provide a lab notebook, so we append::
-
-    url(r"^layer_thickness/lab_notebook/(?P<year_and_month>.*)/export/",
-	"samples.views.lab_notebook.export", {"process_name": "LayerThicknessMeasurement"},
-	"export_lab_notebook_LayerThicknessMeasurement"),
-    url(r"^layer_thickness/lab_notebook/(?P<year_and_month>.*)",
-	"samples.views.lab_notebook.show", {"process_name": "LayerThicknessMeasurement"},
-	"lab_notebook_LayerThicknessMeasurement"),
+    pattern_generator.physical_process("LayerThicknessMeasurement")
 
 
-Creating the views
----------------------
+Creating the view
+-----------------
 
-Take another view module as a guide for the new one.
+Typically, the view is the most complex task when creating a new kind of
+process.  The Python file containing it must be called
+:file:`{process_class}.py`, thus in the current example,
+:file:`layer_thickness_measurement.py`.  It contains three parts:
 
-Try to keep the imports at the top of the file minimal.  It's best to start
-with an empty imports list and add them as needed.
+#. The form(s).
+#. The validation routines.
+#. The ``def edit(request, ...)`` function.  This is mandatory.
+
+
+The form
+........
+
+For such a simple process class, this is simple::
+
+    class LayerThicknessForm(form_utils.ProcessForm):
+        class Meta:
+            model = LayerThicknessMeasurement
+            fields = "__all__"
+
+
+Validation
+..........
+
+The valdation function have turned out to be a practical approach to structure
+the view module, but you may do it completely differently.  We usually define
+two functions.  This first one,
+
+::
+
+    def is_all_valid(sample_form, layer_thickness_form, edit_description_form):
+        all_valid = layer_thickness_form.is_valid()
+        all_valid = sample_form.is_valid() and all_valid
+        if edit_description_form:
+            all_valid = edit_description_form.is_valid() and all_valid
+        return all_valid
+
+returns ``True`` if all forms validate.  For some processes, there is a lot of
+forms, however for thickness measurements, ``is_all_valid`` is pretty
+tractable.
+
+The second function,
+
+::
+
+    def is_referentially_valid(layer_thickness_form, sample_form, process_id):
+        return form_utils.measurement_is_referentially_valid(
+            layer_thickness_form, sample_form, process_id, LayerThicknessMeasurement)
+
+
+View function
+.............
+
+You only need to create a view function for *editing*, which can also be used
+to *adding*.  (The *display* of an existing process is handled by JuliaBase.)
+This view function must be defined like this::
+
+    def edit(request, layer_thickness_measurement_id):
+        ...
+
+The name of the second parameter must be adapted to the respective process, and
+in general takes the form :samp:`{process_class}_id`.  If the process class
+defines an “identifying field”, the second parameter must be called like it.
+See the PDS measurement as an example for the latter.
+
+
+.. note:: Django discourages conventions, and instead has “explicit is better
+   than implicit” as its mantra.  JuliaBase respects this, however for views of
+   processes, it introduces the naming conventions explained here.  Processes
+   are similar enough to each other that one would get too much redundancy
+   otherwise.
 
 
 The forms
