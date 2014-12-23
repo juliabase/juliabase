@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# This file is part of JuliaBase-Kicker
+# This file is part of JuliaBase, the samples database.
 #
 # Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
 #                       Marvin Goblet <m.goblet@fz-juelich.de>,
