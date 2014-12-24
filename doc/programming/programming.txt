@@ -336,6 +336,10 @@ The second function,
         return form_utils.measurement_is_referentially_valid(
             layer_thickness_form, sample_form, process_id, LayerThicknessMeasurement)
 
+returns ``True`` if the data of all forms is valid in relation to each other
+(for example, the deposition has at least one layer).  Here, we can rely solely
+on :py:func:`~institute.views.form_utils.measurement_is_referentially_valid`.
+
 
 View function
 .............
@@ -359,139 +363,33 @@ See the PDS measurement as an example for the latter.
    are similar enough to each other that one would get too much redundancy
    otherwise.
 
+The general outline of a view function is:
 
-The forms
-.........
+#. Look up process in the DB
+#. Check for sufficient permissions
+#. If HTTP method is POST:
+    #. Build forms from POST data
+    #. If forms are valid:
+        #. Save everything
+        #. Generate feed notification
+        #. Return by calling :py:func:`~samples.views.utils.successful_response`
+#. If HTTP method is GET:
+    #. Build forms, maybe with initial values
+#. Return by calling :py:func:`django.shortcuts.render`
 
-In contrast to non-cluster-tool modules, I need to add a custom
-``AddMyLayerForm`` class because adding a new layer is different from other
-deposition systems since you have to give the *type* of the new layer.  Thus::
-
-    new_layer_choices = (
-	("hotwire", _(u"hotwire")),
-	("PECVD", _(u"PECVD")),
-	("none", _(u"none")),
-	)
-
-    class AddLayersForm(forms.Form):
-	_ = ugettext_lazy
-	layer_to_be_added = forms.ChoiceField(
-                label=_(u"Layer to be added"), required=False, widget=forms.RadioSelect,
-		choices=new_layer_choices)
-	my_layer_to_be_added = forms.ChoiceField(
-                label=_(u"Nickname of My Layer to be added"), required=False)
-
-        ...
-
-This is not more than a modified version of the class of the same name from
-``form_utils.py``.
-
-The deposition form can largely be copied from the 6-chamber deposition.  In
-principle, this is also true for the two layer models, however, the attributes
-and validation conditions must be carefully adapted of course.  Moreover, I add
-an extra, hidden ``TextInput`` field called ``layer_type`` which saves the
-layer type when creating the HTML form, so that it can be re-constructed when
-scanning POST data::
-
-    class HotwireLayerForm(forms.ModelForm):
-	layer_type = forms.CharField(widget=forms.HiddenInput, initial=u"hotwire")
-	...
-
-Then, I need a ``ChangeLayerForm`` which contains the controls for duplicating
-or removing a layer::
-
-    class ChangeLayerForm(forms.Form):
-	_ = ugettext_lazy
-	duplicate_this_layer = forms.BooleanField(label=_(u"duplicate this layer"), required=False)
-	remove_this_layer = forms.BooleanField(label=_(u"remove this layer"), required=False)
-	move_this_layer = forms.ChoiceField(label=_(u"move this layer"), required=False,
-					    choices=(("", _(9*u"-")), ("up", _(u"up")), ("down", _(u"down"))))
-
-	def clean(self):
-	    _ = ugettext
-	    operations = 0
-	    if self.cleaned_data["duplicate_this_layer"]:
-		operations += 1
-	    if self.cleaned_data["remove_this_layer"]:
-		operations += 1
-	    if self.cleaned_data.get("move_this_layer"):
-		operations += 1
-	    if operations > 1:
-		raise ValidationError(_(u"You can't duplicate, move, or remove a layer at the same time."))
-	    return self.cleaned_data
-
-
-The FormSet
-...............
-
-Now we're ready to create the ``FormSet`` class which is basically a container
-for methods that are used to manage the forms.  In order to avoid being forced
-to pass all the forms and form lists to all of these routines, they are not
-functions but methods, and the forms and form lists are instance variables of
-the ``FormSet``.
-
-By and large, also the ``FormSet`` can be copied from another deposition system
-and carefully adopted.  In the case of the small cluster tool, most
-modifications are due to the prlymorphic layers.
-
-The first peculiarity is a dummy ``LayerForm`` class which is only to detect
-the layer type when constructing forms from POST data, using the above
-mentioned ``layer_type``::
-
-    class LayerForm(forms.ModelForm):
-        layer_type = forms.CharField()
-
-I cannot explain all modification that are necessary but exemplarily, have a
-look at the auxiliary routine ``build_layer_and_channel_forms``::
-
-    def build_layer_and_channel_forms(deposition):
-	self.layer_forms = []
-	for index, layer in enumerate(deposition.layers.all()):
-	    if hasattr(layer, "smallclustertoolhotwirelayer"):
-		self.layer_forms.append(HotwireLayerForm(prefix=str(index),
-                                        instance=layer.smallclustertoolhotwirelayer))
-	    else:
-		self.layer_forms.append(PECVDLayerForm(prefix=str(index),
-                                        instance=layer.smallclustertoolpecvdlayer))
-
-Here, you can see how I distinguish between the two layer types.
-
-Furthermore, it's important that I don't let the user enter a layer number.
-The ordering of the layers is simply determined by their ordering in the
-webpage's form set.  I add the layer number in the ``save_to_database`` method.
-
-
-The view functions
-......................
-
-You need an ``edit`` and a ``show`` view function.  They are really
-straightforward.  Just copy them from another deposition module and modify them
-slightly.  (Actually, this code duplication is a candidate for a common base
-function but I'd like to implement more deposition systems just to be sure.)
+You can see this outline in action in
+:py:func:`institute.views.samples.layer_thickness_measurement.edit`.
 
 
 Creating the templates
----------------------------
+----------------------
 
 You need two templates per process, one that is called
-``edit_process_name.html`` and the other that is called
-``show_process_name.html``.  Copy them from the process which is most closely
-related to the one you're editing and apply the necessary modifications.
-
-Remember that the contents of the dictionary returned by
-``get_additional_template_context`` contains a ``layers`` list in which each
-layer also bears a ``type`` attribute, which can be used to render some parts
-of the layers depending on whether they are hotwire or PECVD layers.  For
-non-cluster-tool depositions however, you can use ``process.layers.all()`` in
-the template code instead.
-
-Read the docstrings in ``samples_extras.py`` for getting used to the filters
-and tags special to JuliaBase.
-
-
-Update for the Remote Client
------------------------------------
-
+:file:`edit_{process_name}.html` and the other that is called
+:file:`show_{process_name}.html`.  Copy them from the process which is most
+closely related to the one you're editing and apply the necessary
+modifications.  Put them into the directory
+:file:`institute/templates/samples/`.
 
 
 A more complex example: Writing a deposition module
