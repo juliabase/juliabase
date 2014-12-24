@@ -17,11 +17,10 @@ from __future__ import unicode_literals
 from os import path
 import datetime
 from django import forms
-from django.template import RequestContext
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from samples.views import utils, feed_utils
 from institute.views import form_utils
 from samples import permissions
@@ -144,9 +143,6 @@ def edit(request, layer_thickness_measurement_id):
         sample_form = form_utils.SampleForm(request.user, layer_thickness_measurement, preset_sample, initial=initial)
         edit_description_form = form_utils.EditDescriptionForm() if layer_thickness_measurement else None
     title = _("Thickness of {sample}").format(sample=old_sample) if layer_thickness_measurement else _("Add thickness")
-    return render_to_response("samples/edit_layer_thickness_measurement.html",
-                              {"title": title,
-                               "measurement": layer_thickness_form,
-                               "sample": sample_form,
-                               "edit_description": edit_description_form},
-                              context_instance=RequestContext(request))
+    return render(request, "samples/edit_layer_thickness_measurement.html",
+                  {"title": title, "measurement": layer_thickness_form, "sample": sample_form,
+                   "edit_description": edit_description_form})
