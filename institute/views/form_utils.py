@@ -114,36 +114,6 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
     return render(request, edit_url, context_dict)
 
 
-def show_depositions(request, deposition_number, institute_model):
-    """Show an existing new deposision.  You must be an operator of the deposition
-    *or* be able to view one of the samples affected by this deposition in order to
-    be allowed to view it.
-
-    :param request: the current HTTP Request object
-    :param deposition_number: the number (=name) or the deposition
-    :param institute_model: the related Database model
-
-    :type request: HttpRequest
-    :type deposition_number: unicode
-    :type institute_model: `samples.models.depositions.Deposition`
-
-    :return:
-      the HTTP response object
-
-    :rtype: HttpResponse
-    """
-    deposition = get_object_or_404(institute_model, number=deposition_number)
-    permissions.assert_can_view_physical_process(request.user, deposition)
-    if is_json_requested(request):
-        return respond_in_json(deposition.get_data())
-    template_context = {"title": _("{name} “{number}”").format(name=institute_model._meta.verbose_name,
-                                                               number=deposition.number),
-                        "samples": deposition.samples.all(),
-                        "process": deposition}
-    template_context.update(utils.digest_process(deposition, request.user))
-    return render(request, "samples/show_process.html", template_context)
-
-
 def measurement_is_referentially_valid(measurement_form, sample_form, measurement_number, institute_model):
     """Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
