@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-18 23:30+0100\n"
-"PO-Revision-Date: 2014-12-17 13:13+0100\n"
+"POT-Creation-Date: 2014-12-25 19:10+0100\n"
+"PO-Revision-Date: 2014-12-25 19:15+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -38,133 +38,137 @@ msgstr "Festkommazahl in Einheiten von %(unit)s"
 msgid "Floating-Point number in the unit of %(unit)s"
 msgstr "Gleitkommazahl in Einheiten von %(unit)s"
 
-#: jb_common/models.py:38 jb_common/models.py:124
+#: jb_common/models.py:38 jb_common/models.py:125
 msgid "name"
 msgstr "Name"
 
-#: jb_common/models.py:42 jb_common/models.py:64 jb_common/models.py:128
+#: jb_common/models.py:39
+msgid "app label"
+msgstr "App-Label"
+
+#: jb_common/models.py:43 jb_common/models.py:65 jb_common/models.py:129
 msgid "department"
 msgstr "Abteilung"
 
-#: jb_common/models.py:43
+#: jb_common/models.py:44
 msgid "departments"
 msgstr "Abteilungen"
 
-#: jb_common/models.py:62 jb_common/models.py:246
+#: jb_common/models.py:63 jb_common/models.py:247
 msgid "user"
 msgstr "Benutzer"
 
-#: jb_common/models.py:72
+#: jb_common/models.py:73
 msgid "language"
 msgstr "Sprache"
 
-#: jb_common/models.py:73
+#: jb_common/models.py:74
 msgid "operating system"
 msgstr "Betriebssystem"
 
-#: jb_common/models.py:74
+#: jb_common/models.py:75
 msgid "layout last modified"
 msgstr "letzte Änderung des Layouts"
 
-#: jb_common/models.py:79 jb_common/models.py:80
+#: jb_common/models.py:80 jb_common/models.py:81
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: jb_common/models.py:125
+#: jb_common/models.py:126
 msgid "members"
 msgstr "Mitglieder"
 
-#: jb_common/models.py:127
+#: jb_common/models.py:128
 msgid "confidential"
 msgstr "vertraulich"
 
-#: jb_common/models.py:129
+#: jb_common/models.py:130
 msgid "parent topic"
 msgstr "Überthema"
 
-#: jb_common/models.py:131
+#: jb_common/models.py:132
 msgid "topic manager"
 msgstr "Themenmanager"
 
-#: jb_common/models.py:136
+#: jb_common/models.py:137
 msgid "topic"
 msgstr "Thema"
 
-#: jb_common/models.py:137
+#: jb_common/models.py:138
 msgid "topics"
 msgstr "Themen"
 
-#: jb_common/models.py:140
+#: jb_common/models.py:141
 msgid "Can edit all topics, and can add new topics"
 msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
 
-#: jb_common/models.py:141
+#: jb_common/models.py:142
 msgid "Can edit topics that he/she is a manager of"
 msgstr "Darf Themen ändern, für die er/sie Manager ist"
 
-#: jb_common/models.py:172
+#: jb_common/models.py:173
 #, python-brace-format
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: jb_common/models.py:245
+#: jb_common/models.py:246
 msgid "hash value"
 msgstr "Hashwert"
 
-#: jb_common/models.py:248
+#: jb_common/models.py:249
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: jb_common/models.py:250
+#: jb_common/models.py:251
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: jb_common/models.py:253
+#: jb_common/models.py:254
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: jb_common/models.py:254
+#: jb_common/models.py:255
 msgid "error pages"
 msgstr "Fehlerseiten"
 
-#: jb_common/search.py:251
+#: jb_common/search.py:252
 msgid "You can't search for empty values while giving a non-empty value."
 msgstr ""
 "Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen "
 "nicht-leeren Wert angeben."
 
-#: jb_common/search.py:258
+#: jb_common/search.py:259
 msgid "explicitly empty"
 msgstr "explizit leer"
 
-#: jb_common/search.py:340
+#: jb_common/search.py:341
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 "Der Zeitstempel passte nicht in das Muster JJJJ-MM-TT HH:MM:SS oder einem "
 "vorderen Teil davon."
 
-#: jb_common/search.py:368
+#: jb_common/search.py:369
 msgid "Invalid date or time."
 msgstr "Ungültiges Datum oder ungültige Zeit."
 
-#: jb_common/search.py:402
+#: jb_common/search.py:403
 msgid "doesn't matter"
 msgstr "egal"
 
-#: jb_common/search.py:402
+#: jb_common/search.py:403
 msgid "yes"
 msgstr "ja"
 
-#: jb_common/search.py:402
+#: jb_common/search.py:403
 msgid "no"
 msgstr "nein"
 
-#: jb_common/search.py:424
+#: jb_common/search.py:425
 msgid "containing"
 msgstr "enthaltend"
 
-#: jb_common/search.py:758
+#: jb_common/search.py:759
 msgid "restrict to"
 msgstr "beschränken auf"
 

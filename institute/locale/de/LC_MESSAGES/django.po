@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-18 23:30+0100\n"
-"PO-Revision-Date: 2014-12-18 09:36+0100\n"
+"POT-Creation-Date: 2014-12-25 19:10+0100\n"
+"PO-Revision-Date: 2014-12-25 19:13+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -409,6 +409,42 @@ msgstr "Strukturierung"
 msgid "structurings"
 msgstr "Strukturierungen"
 
+#: institute/models/physical_processes.py:318
+msgid "profilometer + edge"
+msgstr "Profilometer + Kante"
+
+#: institute/models/physical_processes.py:319
+msgid "ellipsometer"
+msgstr "Ellipsometer"
+
+#: institute/models/physical_processes.py:320
+msgid "calculated from deposition parameters"
+msgstr "berechnet aus Depo-Parametern."
+
+#: institute/models/physical_processes.py:321
+msgid "estimate"
+msgstr "Schätzung"
+
+#: institute/models/physical_processes.py:322
+msgid "other"
+msgstr "anderes"
+
+#: institute/models/physical_processes.py:329
+msgid "layer thickness"
+msgstr "Schichtdicke"
+
+#: institute/models/physical_processes.py:330
+msgid "measurement method"
+msgstr "Messmethode"
+
+#: institute/models/physical_processes.py:333
+msgid "layer thickness measurement"
+msgstr "Schichtdickenmessung"
+
+#: institute/models/physical_processes.py:334
+msgid "layer thickness measurements"
+msgstr "Schichtdickenmessungen"
+
 #: institute/models/sample_details.py:47 institute/views/form_utils.py:206
 msgid "sample"
 msgstr "Probe"
@@ -541,7 +577,7 @@ msgstr "informelle Schicht"
 msgid "informal layers"
 msgstr "informelle Schichten"
 
-#: institute/models/sample_details.py:371
+#: institute/models/sample_details.py:380
 msgid "You must give a classification or comments or both."
 msgstr "Sie müssen eine Klassifikation oder Kommentare angeben, oder beides."
 
@@ -692,31 +728,36 @@ msgstr "Fehler in der Deposition"
 
 #: institute/templates/samples/edit_cluster_tool_deposition.html:30
 #: institute/templates/samples/edit_five_chamber_deposition.html:23
+#: institute/templates/samples/edit_layer_thickness_measurement.html:23
 msgid "Error in sample list"
 msgstr "Fehler in Probenliste"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:66
-#: institute/templates/samples/edit_five_chamber_deposition.html:58
-#: institute/templates/samples/edit_five_chamber_deposition.html:59
+#: institute/templates/samples/edit_cluster_tool_deposition.html:77
+#: institute/templates/samples/edit_five_chamber_deposition.html:69
+#: institute/templates/samples/edit_five_chamber_deposition.html:70
 #: institute/templates/samples/edit_sample.html:53
 msgid "Error in layer"
 msgstr "Fehler in der Schicht"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:78
+#: institute/templates/samples/edit_cluster_tool_deposition.html:89
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:145
+#: institute/templates/samples/edit_cluster_tool_deposition.html:156
 msgid "Gas flows in sccm"
 msgstr "Gasflüsse in sccm"
 
-#: institute/templates/samples/edit_five_chamber_deposition.html:100
+#: institute/templates/samples/edit_five_chamber_deposition.html:111
 msgid "Error with adding layers"
 msgstr "Fehler beim hinzufügen von Schichten"
 
-#: institute/templates/samples/edit_five_chamber_deposition.html:101
+#: institute/templates/samples/edit_five_chamber_deposition.html:112
 msgid "Error with removing from My Samples"
 msgstr "Fehler beim Entfernen von „Meinen Schichten“"
+
+#: institute/templates/samples/edit_layer_thickness_measurement.html:22
+msgid "Error in measurement"
+msgstr "Fehler in der Messung"
 
 #: institute/templates/samples/edit_pds_measurement.html:22
 msgid "Error in PDS data"
@@ -750,7 +791,7 @@ msgstr "löschen"
 msgid "Error in solarsimulator measurements"
 msgstr "Fehler in Sonnensimulator-Messungen"
 
-#: institute/templates/samples/edit_solarsimulator_measurement.html:59
+#: institute/templates/samples/edit_solarsimulator_measurement.html:65
 msgid "Error in solarsimulator measurement"
 msgstr "Fehler in der Sonnensimulator-Messung"
 
@@ -871,7 +912,7 @@ msgid "Edit {name} “{number}”"
 msgstr "{name} „{number}“ ändern"
 
 #: institute/views/form_utils.py:110
-#: institute/views/samples/solarsimulator_measurement.py:264
+#: institute/views/samples/solarsimulator_measurement.py:228
 #, python-brace-format
 msgid "Add {name}"
 msgstr "{name} hinzufügen"
@@ -886,8 +927,8 @@ msgid "This number is already in use."
 msgstr "Diese Nummer ist schon vergeben."
 
 #: institute/views/form_utils.py:178
-#: institute/views/samples/solarsimulator_measurement.py:169
-#: institute/views/samples/structuring.py:123
+#: institute/views/samples/solarsimulator_measurement.py:133
+#: institute/views/samples/structuring.py:85
 msgid "Sample is already dead at this time."
 msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
 
@@ -928,8 +969,8 @@ msgid_plural "The names {existing_names} are already existing."
 msgstr[0] "Der Name {existing_names} existiert schon."
 msgstr[1] "Die Namen {existing_names} existieren schon."
 
-#: institute/views/samples/claim.py:98 institute/views/samples/sample.py:117
-#: institute/views/samples/substrate.py:69
+#: institute/views/samples/claim.py:102 institute/views/samples/sample.py:116
+#: institute/views/samples/substrate.py:40
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
@@ -1000,97 +1041,97 @@ msgstr "Schicht, die hinzugefügt werden soll"
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: institute/views/samples/cluster_tool_deposition.py:93
-#: institute/views/samples/five_chamber_deposition.py:36
-#: institute/views/samples/pds_measurement.py:88
-#: institute/views/samples/solarsimulator_measurement.py:33
-#: institute/views/samples/structuring.py:29
-#: institute/views/samples/substrate.py:33
-msgid "Operator"
-msgstr "Operateur"
-
-#: institute/views/samples/cluster_tool_deposition.py:111
-#: institute/views/samples/five_chamber_deposition.py:56
-msgid "The deposition number must not be changed."
-msgstr "Die Depositionsnummer darf nicht verändert werden."
-
-#: institute/views/samples/cluster_tool_deposition.py:115
-#: institute/views/samples/five_chamber_deposition.py:60
-msgid "This deposition number exists already."
-msgstr "Diese Depositionsnummer ist schon vergeben."
-
-#: institute/views/samples/cluster_tool_deposition.py:122
-#: institute/views/samples/five_chamber_deposition.py:67
+#: institute/views/samples/cluster_tool_deposition.py:108
+#: institute/views/samples/five_chamber_deposition.py:50
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
-#: institute/views/samples/cluster_tool_deposition.py:243
-#: institute/views/samples/five_chamber_deposition.py:98
+#: institute/views/samples/cluster_tool_deposition.py:225
+#: institute/views/samples/five_chamber_deposition.py:77
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: institute/views/samples/cluster_tool_deposition.py:244
-#: institute/views/samples/five_chamber_deposition.py:99
+#: institute/views/samples/cluster_tool_deposition.py:226
+#: institute/views/samples/five_chamber_deposition.py:78
 msgid "remove this layer"
 msgstr "diese Schicht löschen"
 
-#: institute/views/samples/cluster_tool_deposition.py:245
-#: institute/views/samples/five_chamber_deposition.py:100
+#: institute/views/samples/cluster_tool_deposition.py:227
+#: institute/views/samples/five_chamber_deposition.py:79
 msgid "move this layer"
 msgstr "diese Schicht verschieben"
 
-#: institute/views/samples/cluster_tool_deposition.py:246
-#: institute/views/samples/five_chamber_deposition.py:101
+#: institute/views/samples/cluster_tool_deposition.py:228
+#: institute/views/samples/five_chamber_deposition.py:80
 msgid "up"
 msgstr "hoch"
 
-#: institute/views/samples/cluster_tool_deposition.py:246
-#: institute/views/samples/five_chamber_deposition.py:101
+#: institute/views/samples/cluster_tool_deposition.py:228
+#: institute/views/samples/five_chamber_deposition.py:80
 msgid "down"
 msgstr "runter"
 
-#: institute/views/samples/cluster_tool_deposition.py:258
-#: institute/views/samples/five_chamber_deposition.py:113
+#: institute/views/samples/cluster_tool_deposition.py:241
+#: institute/views/samples/five_chamber_deposition.py:93
 msgid "You can't duplicate, move, or remove a layer at the same time."
 msgstr ""
 "Sie können nicht gleichzeitig dieselbe Schicht duplizieren, entfernen oder "
 "verschieben."
 
-#: institute/views/samples/cluster_tool_deposition.py:570
-#: institute/views/samples/five_chamber_deposition.py:395
+#: institute/views/samples/cluster_tool_deposition.py:553
+#: institute/views/samples/five_chamber_deposition.py:375
 #, python-brace-format
 msgid "The sample {samples} is already dead at this time."
 msgid_plural "The samples {samples} are already dead at this time."
 msgstr[0] "Die Probe {samples} ist zu diesem Zeitpunkt schon tot."
 msgstr[1] "Die Proben {samples} sind zu diesem Zeitpunkt schon tot."
 
-#: institute/views/samples/cluster_tool_deposition.py:576
-#: institute/views/samples/five_chamber_deposition.py:387
+#: institute/views/samples/cluster_tool_deposition.py:559
+#: institute/views/samples/five_chamber_deposition.py:367
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: institute/views/samples/pds_measurement.py:123
+#: institute/views/samples/layer_thickness_measurement.py:128
+#, python-brace-format
+msgid "{measurement} was successfully changed in the database."
+msgstr "{measurement} wurde erfolgreich in der Datenbank geändert."
+
+#: institute/views/samples/layer_thickness_measurement.py:130
+#, python-brace-format
+msgid "{measurement} was successfully added to the database."
+msgstr "{measurement} wurde erfolgreich zur Datenbank hinzugefügt."
+
+#: institute/views/samples/layer_thickness_measurement.py:145
+#, python-brace-format
+msgid "Thickness of {sample}"
+msgstr "Dicke von {sample}"
+
+#: institute/views/samples/layer_thickness_measurement.py:145
+msgid "Add thickness"
+msgstr "Dicke hinzufügen"
+
+#: institute/views/samples/pds_measurement.py:126
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
-#: institute/views/samples/pds_measurement.py:233
-#: institute/views/samples/solarsimulator_measurement.py:243
+#: institute/views/samples/pds_measurement.py:236
+#: institute/views/samples/solarsimulator_measurement.py:207
 #, python-brace-format
 msgid "{process} was successfully changed in the database."
 msgstr "{process} wurde erfolgreich in der Datenbank geändert."
 
-#: institute/views/samples/pds_measurement.py:234
-#: institute/views/samples/solarsimulator_measurement.py:245
+#: institute/views/samples/pds_measurement.py:237
+#: institute/views/samples/solarsimulator_measurement.py:209
 #, python-brace-format
 msgid "{process} was successfully added to the database."
 msgstr "{process} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: institute/views/samples/pds_measurement.py:250
+#: institute/views/samples/pds_measurement.py:253
 #, python-brace-format
 msgid "Edit PDS measurement of {sample}"
 msgstr "Ändern der PDS-Messung von {sample}"
 
-#: institute/views/samples/pds_measurement.py:250
+#: institute/views/samples/pds_measurement.py:253
 msgid "Add PDS measurement"
 msgstr "PDS-Messung hinzufügen"
 
@@ -1160,13 +1201,13 @@ msgstr "mit {markdown_link}-Syntax"
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: institute/views/samples/sample.py:120
+#: institute/views/samples/sample.py:118
 msgid "You must provide a cleaning number if you want to use it for the names."
 msgstr ""
 "Sie müssen eine Renigungsnummer angeben, wenn Sie diese für die Namen "
 "verwenden wollen."
 
-#: institute/views/samples/sample.py:231
+#: institute/views/samples/sample.py:229
 #, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
@@ -1175,44 +1216,44 @@ msgstr ""
 "Ihre Proben haben die Namen {first_name} bis {last_name}.  Sie wurden zu "
 "„Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:234
+#: institute/views/samples/sample.py:232
 #, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den Namen {name}.  Sie wurde zu „Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:244
+#: institute/views/samples/sample.py:242
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: institute/views/samples/sample.py:250
+#: institute/views/samples/sample.py:248
 msgid "Destination samples"
 msgstr "Zielproben"
 
-#: institute/views/samples/sample.py:289
+#: institute/views/samples/sample.py:287
 #, python-brace-format
 msgid "Informal stack was copied from sample {sample}."
 msgstr "Der informelle Stapel von Probe {sample} wurde übernommen."
 
-#: institute/views/samples/sample.py:293
+#: institute/views/samples/sample.py:291
 #, python-brace-format
 msgid "Informal stack of {sample} was successfully copied."
 msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 
-#: institute/views/samples/sample.py:297
+#: institute/views/samples/sample.py:295
 #, python-brace-format
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
 
-#: institute/views/samples/solarsimulator_measurement.py:163
+#: institute/views/samples/solarsimulator_measurement.py:127
 msgid "No measurenents given."
 msgstr "Keine Messungen angebeben."
 
-#: institute/views/samples/solarsimulator_measurement.py:177
+#: institute/views/samples/solarsimulator_measurement.py:141
 msgid "This cell position is already given."
 msgstr "Diese Zellposition ist schon vergeben."
 
-#: institute/views/samples/solarsimulator_measurement.py:262
+#: institute/views/samples/solarsimulator_measurement.py:226
 #, python-brace-format
 msgid "{name} of {sample}"
 msgstr "{name} von {sample}"
@@ -1222,23 +1263,23 @@ msgstr "{name} von {sample}"
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: institute/views/samples/structuring.py:164
+#: institute/views/samples/structuring.py:126
 msgid "Structuring process was successfully changed in the database."
 msgstr "Strukturierungsprozess wurde erfolgreich in der Datenbank geändert."
 
-#: institute/views/samples/structuring.py:167
+#: institute/views/samples/structuring.py:129
 msgid "Structuring process was successfully added to the database."
 msgstr "Strukturierungsprozess wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: institute/views/samples/structuring.py:179
+#: institute/views/samples/structuring.py:141
 msgid "Edit structuring process"
 msgstr "Strukturierungsprozess ändern"
 
-#: institute/views/samples/structuring.py:179
+#: institute/views/samples/structuring.py:141
 msgid "Add structuring process"
 msgstr "Strukturierungsprozess hinzufügen"
 
-#: institute/views/samples/substrate.py:120
+#: institute/views/samples/substrate.py:70
 #, python-brace-format
 msgid ""
 "Sample {0} has already processes before the timestamp of this substrate, "
@@ -1247,29 +1288,38 @@ msgstr ""
 "Probe {0} hat bereits Prozesse vor dem Zeitstempel dieses Substrates, "
 "nämlich von {1}."
 
-#: institute/views/samples/substrate.py:124
+#: institute/views/samples/substrate.py:74
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
 
-#: institute/views/samples/substrate.py:165
+#: institute/views/samples/substrate.py:115
 #, python-brace-format
 msgid "Substrate {0} was successfully changed in the database."
 msgstr "Substrat {0} wurde erfolgreich in der Datenbank geändert."
 
-#: institute/views/samples/substrate.py:170
+#: institute/views/samples/substrate.py:120
 #, python-brace-format
 msgid "Substrate {0} was successfully added to the database."
 msgstr "Substrat {0} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: institute/views/samples/substrate.py:176
+#: institute/views/samples/substrate.py:126
 #, python-brace-format
 msgid "Edit substrate “{0}”"
 msgstr "Ändern des Substrates „{0}“"
 
-#: institute/views/samples/substrate.py:176
+#: institute/views/samples/substrate.py:126
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
+
+#~ msgid "Operator"
+#~ msgstr "Operateur"
+
+#~ msgid "The deposition number must not be changed."
+#~ msgstr "Die Depositionsnummer darf nicht verändert werden."
+
+#~ msgid "This deposition number exists already."
+#~ msgstr "Diese Depositionsnummer ist schon vergeben."
 
 #~ msgid "time"
 #~ msgstr "Zeit"

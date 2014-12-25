@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-18 23:30+0100\n"
+"POT-Creation-Date: 2014-12-25 19:10+0100\n"
 "PO-Revision-Date: 2014-11-24 16:01+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -145,11 +145,11 @@ msgstr "Benutzerdetails"
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:371
+#: kicker/views.py:375
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:377
+#: kicker/views.py:381
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
