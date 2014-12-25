@@ -28,53 +28,36 @@ from institute.views import form_utils, shared_utils
 import institute.models as institute_models
 
 
-class DepositionForm(form_utils.ProcessForm):
-    """Model form for the deposition main data.  I only overwrite ``operator``
-    in order to have full real names.
+class DepositionForm(form_utils.DepositionForm):
+    """Model form for the basic deposition data.
     """
-    _ = ugettext_lazy
-    operator = form_utils.FixedOperatorField(label=_("Operator"))
+    class Meta:
+        model = institute_models.FiveChamberDeposition
+        fields = "__all__"
 
     def __init__(self, user, data=None, **kwargs):
-        """Class constructor just for changing the appearance of the number
-        field."""
-        super(DepositionForm, self).__init__(data, **kwargs)
-        self.fields["number"].widget.attrs.update({"style": "font-size: large", "size": "8"})
-        deposition = kwargs.get("instance")
-        self.fields["operator"].set_operator(deposition.operator if deposition else user, user.is_staff)
-        self.fields["operator"].initial = deposition.operator.pk if deposition else user.pk
-        self.already_finished = deposition and deposition.finished
-        if self.already_finished:
-            self.fixed_previous_deposition_number = deposition.number
-            self.fields["number"].widget.attrs.update({"readonly": "readonly"})
-        else:
-            self.fixed_previous_deposition_number = None
+        super(DepositionForm, self).__init__(user, data, **kwargs)
 
     def clean_number(self):
-        number = self.cleaned_data["number"]
-        if self.fixed_previous_deposition_number and self.fixed_previous_deposition_number != number:
-            raise ValidationError(_("The deposition number must not be changed."))
-        number = form_utils.clean_deposition_number_field(number, "S")
-        if (not self.fixed_previous_deposition_number or self.fixed_previous_deposition_number != number) and \
-                models.Deposition.objects.filter(number=number).exists():
-            raise ValidationError(_("This deposition number exists already."))
-        return number
+        number = super(DepositionForm, self).clean_number()
+        return form_utils.clean_deposition_number_field(number, "S")
 
     def clean(self):
         _ = ugettext
-        if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
-            if int(self.cleaned_data["number"][:2]) != self.cleaned_data["timestamp"].year % 100:
+        cleaned_data = super(DepositionForm, self).clean()
+        if "number" in cleaned_data and "timestamp" in cleaned_data:
+            if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
                 self.add_error("number", _("The first two digits must match the year of the deposition."))
-        return self.cleaned_data
-
-    class Meta:
-        model = institute_models.FiveChamberDeposition
-        exclude = ("external_operator",)
+        return cleaned_data
 
 
 class LayerForm(forms.ModelForm):
     """Model form for a single layer.
     """
+    class Meta:
+        model = institute_models.FiveChamberLayer
+        exclude = ("deposition",)
+
     def __init__(self, *args, **kwargs):
         """I only tweak the HTML layout slightly.
         """
@@ -84,10 +67,6 @@ class LayerForm(forms.ModelForm):
             self.fields[fieldname].widget.attrs["size"] = "10"
         self.fields["temperature_1"].widget.attrs["size"] = "5"
         self.fields["temperature_2"].widget.attrs["size"] = "5"
-
-    class Meta:
-        model = institute_models.FiveChamberLayer
-        exclude = ("deposition",)
 
 
 class ChangeLayerForm(forms.Form):
@@ -102,16 +81,17 @@ class ChangeLayerForm(forms.Form):
 
     def clean(self):
         _ = ugettext
+        cleaned_data = super(ChangeLayerForm, self).clean()
         operations = 0
-        if self.cleaned_data["duplicate_this_layer"]:
+        if cleaned_data["duplicate_this_layer"]:
             operations += 1
-        if self.cleaned_data["remove_this_layer"]:
+        if cleaned_data["remove_this_layer"]:
             operations += 1
-        if self.cleaned_data.get("move_this_layer"):
+        if cleaned_data.get("move_this_layer"):
             operations += 1
         if operations > 1:
             raise ValidationError(_("You can't duplicate, move, or remove a layer at the same time."))
-        return self.cleaned_data
+        return cleaned_data
 
 
 class FormSet(object):

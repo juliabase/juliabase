@@ -57,6 +57,10 @@ class StatusForm(forms.ModelForm):
                         help_text=_("YYYY-MM-DD HH:MM:SS"))
     process_classes = forms.MultipleChoiceField(label=capfirst(_("processes")))
 
+    class Meta:
+        model = models.StatusMessage
+        fields = "__all__"
+
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
         self.user = user
@@ -85,7 +89,7 @@ class StatusForm(forms.ModelForm):
         return timestamp
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(StatusForm, self).clean()
         begin, end = cleaned_data.get("begin"), cleaned_data.get("end")
         if begin:
             cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = cleaned_data["begin"]
@@ -101,10 +105,6 @@ class StatusForm(forms.ModelForm):
         if cleaned_data["status_level"] in ["red", "yellow"] and not cleaned_data.get("message"):
             self.add_error("message", _("A message must be given when the status level is red or yellow."))
         return cleaned_data
-
-    class Meta:
-        model = models.StatusMessage
-        fields = "__all__"
 
 
 @login_required

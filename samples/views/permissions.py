@@ -265,9 +265,10 @@ class PermissionsForm(forms.Form):
         function anyway.  Moreover, superfluous values in the POST request are
         always ignored.
         """
-        if self.cleaned_data["can_edit_permissions"]:
-            self.cleaned_data["can_add"] = self.cleaned_data["can_view_all"] = self.cleaned_data["can_edit_all"] = True
-        return self.cleaned_data
+        cleaned_data = super(PermissionsForm, self).clean()
+        if cleaned_data["can_edit_permissions"]:
+            cleaned_data["can_add"] = cleaned_data["can_view_all"] = cleaned_data["can_edit_all"] = True
+        return cleaned_data
 
 
 @login_required

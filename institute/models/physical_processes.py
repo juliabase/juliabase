@@ -311,3 +311,24 @@ class Structuring(PhysicalProcess):
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("structuring")
         verbose_name_plural = _("structurings")
+
+
+
+
+method_choices = (("profilers&edge", _("profilometer + edge")),
+                  ("ellipsometer", _("ellipsometer")),
+                  ("calculated", _("calculated from deposition parameters")),
+                  ("estimate", _("estimate")),
+                  ("other", _("other")))
+
+class LayerThicknessMeasurement(PhysicalProcess):
+    """Database model for the layer thickness measurement.
+
+    Note that it doesn't define permissions because everyone can create them.
+    """
+    thickness = model_fields.FloatQuantityField(_("layer thickness"), unit="nm")
+    method = models.CharField(_("measurement method"), max_length=30, choices=method_choices, default="profilers&edge")
+
+    class Meta(PhysicalProcess.Meta):
+        verbose_name = _("layer thickness measurement")
+        verbose_name_plural = _("layer thickness measurements")

@@ -86,45 +86,27 @@ class AddLayersForm(forms.Form):
                     return result
 
 
-class DepositionForm(form_utils.ProcessForm):
+class DepositionForm(form_utils.DepositionForm):
     """Model form for the basic deposition data.
     """
-    _ = ugettext_lazy
-    operator = form_utils.FixedOperatorField(label=_("Operator"))
-
-    def __init__(self, user, data=None, **kwargs):
-        """I have to initialise a couple of things here, especially ``operator``
-        because I overrode it.
-        """
-        deposition = kwargs.get("instance")
-        super(DepositionForm, self).__init__(data, **kwargs)
-        self.fields["operator"].set_operator(user if not deposition else deposition.operator, user.is_staff)
-        self.fields["operator"].initial = deposition.operator.pk if deposition else user.pk
-        self.already_finished = deposition and deposition.finished
-        self.previous_deposition_number = deposition.number if deposition else None
-        if self.already_finished:
-            self.fields["number"].widget.attrs.update({"readonly": "readonly"})
-
-    def clean_number(self):
-        number = self.cleaned_data["number"]
-        if self.already_finished and self.previous_deposition_number != number:
-            raise ValidationError(_("The deposition number must not be changed."))
-        number = form_utils.clean_deposition_number_field(number, "C")
-        if (not self.previous_deposition_number or self.previous_deposition_number != number) and \
-                models.Deposition.objects.filter(number=number).exists():
-            raise ValidationError(_("This deposition number exists already."))
-        return number
-
-    def clean(self):
-        _ = ugettext
-        if "number" in self.cleaned_data and "timestamp" in self.cleaned_data:
-            if self.cleaned_data["number"][:2] != self.cleaned_data["timestamp"].strftime("%y"):
-                self.add_error("number", _("The first two digits must match the year of the deposition."),)
-        return self.cleaned_data
-
     class Meta:
         model = institute_models.ClusterToolDeposition
         fields = "__all__"
+
+    def __init__(self, user, data=None, **kwargs):
+        super(DepositionForm, self).__init__(user, data, **kwargs)
+
+    def clean_number(self):
+        number = super(DepositionForm, self).clean_number()
+        return form_utils.clean_deposition_number_field(number, "C")
+
+    def clean(self):
+        _ = ugettext
+        cleaned_data = super(DepositionForm, self).clean()
+        if "number" in cleaned_data and "timestamp" in cleaned_data:
+            if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
+                self.add_error("number", _("The first two digits must match the year of the deposition."))
+        return cleaned_data
 
 
 class HotWireLayerForm(forms.ModelForm):
@@ -133,6 +115,10 @@ class HotWireLayerForm(forms.ModelForm):
     layer_type = forms.CharField(widget=forms.HiddenInput, initial="hot-wire")
     """This is for being able to distinguish the form types; it is not given
     by the user, however, it is given by the remote client."""
+
+    class Meta:
+        model = institute_models.ClusterToolHotWireLayer
+        exclude = ("deposition",)
 
     def __init__(self, user, data=None, **kwargs):
         """I do additional initialisation here, but very harmless: It's only about
@@ -174,10 +160,6 @@ class HotWireLayerForm(forms.ModelForm):
             raise ValidationError("Layer type must be “hot-wire”.")
         return self.cleaned_data["layer_type"]
 
-    class Meta:
-        model = institute_models.ClusterToolHotWireLayer
-        exclude = ("deposition",)
-
 
 class PECVDLayerForm(forms.ModelForm):
     """Model form for a PECVD layer in a cluster tool deposition."""
@@ -185,6 +167,10 @@ class PECVDLayerForm(forms.ModelForm):
     layer_type = forms.CharField(widget=forms.HiddenInput, initial="PECVD")
     """This is for being able to distinguish the form types; it is not given
     by the user, however, it is given by the remote client."""
+
+    class Meta:
+        model = institute_models.ClusterToolPECVDLayer
+        exclude = ("deposition",)
 
     def __init__(self, user, data=None, **kwargs):
         """I do additional initialisation here, but very harmless: It's only about
@@ -230,10 +216,6 @@ class PECVDLayerForm(forms.ModelForm):
             raise ValidationError("Layer type must be “PECVD”.")
         return self.cleaned_data["layer_type"]
 
-    class Meta:
-        model = institute_models.ClusterToolPECVDLayer
-        exclude = ("deposition",)
-
 
 class ChangeLayerForm(forms.Form):
     """Form for manipulating a layer.  Duplicating it (appending the
@@ -247,16 +229,17 @@ class ChangeLayerForm(forms.Form):
 
     def clean(self):
         _ = ugettext
+        cleaned_data = super(ChangeLayerForm, self).clean()
         operations = 0
-        if self.cleaned_data["duplicate_this_layer"]:
+        if cleaned_data["duplicate_this_layer"]:
             operations += 1
-        if self.cleaned_data["remove_this_layer"]:
+        if cleaned_data["remove_this_layer"]:
             operations += 1
-        if self.cleaned_data.get("move_this_layer"):
+        if cleaned_data.get("move_this_layer"):
             operations += 1
         if operations > 1:
             raise ValidationError(_("You can't duplicate, move, or remove a layer at the same time."))
-        return self.cleaned_data
+        return cleaned_data
 
 
 class FormSet(object):

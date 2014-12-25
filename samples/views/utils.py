@@ -688,9 +688,9 @@ def table_export(request, data, label_column_heading):
     data.find_unambiguous_names()
     data.complete_items_in_children()
     column_groups, columns = build_column_group_list(data)
-    single_column_group = set([column_groups[0].name]) if len(column_groups) == 1 else []
+    single_column_group = {column_groups[0].name} if len(column_groups) == 1 else set()
     table = switch_row_forms = None
-    selected_column_groups = set(single_column_group)
+    selected_column_groups = single_column_group
     selected_columns = set()
     column_groups_form = ColumnGroupsForm(column_groups, get_data) if not single_column_group else None
     previous_data_form = OldDataForm(get_data)

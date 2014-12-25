@@ -29,63 +29,27 @@ from institute.views import form_utils
 
 
 class SolarsimulatorMeasurementForm(form_utils.ProcessForm):
-    _ = ugettext_lazy
-    combined_operator = form_utils.OperatorField(label=_(u"Operator"))
-
-    def __init__(self, user, *args, **kwargs):
-        super(SolarsimulatorMeasurementForm, self).__init__(*args, **kwargs)
-        old_instance = kwargs.get("instance")
-        self.user = user
-        self.fields["combined_operator"].set_choices(user, old_instance)
-        if not user.is_staff:
-            self.fields["external_operator"].choices = []
-            self.fields["operator"].choices = []
-            self.fields["operator"].required = False
-        else:
-            self.fields["combined_operator"].required = False
-        self.fields["timestamp"].initial = datetime.datetime.now()
-        self.fields["temperature"].widget.attrs.update({"size": "5"})
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        final_operator = cleaned_data.get("operator")
-        final_external_operator = cleaned_data.get("external_operator")
-        if cleaned_data.get("combined_operator"):
-            operator, external_operator = cleaned_data["combined_operator"]
-            if operator:
-                if final_operator and final_operator != operator:
-                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
-                else:
-                    final_operator = operator
-            if external_operator:
-                if final_external_operator and final_external_operator != external_operator:
-                    self.add_error("combined_external_operator",
-                                   "Your external operator and combined external operator didn't match.")
-                else:
-                    final_external_operator = external_operator
-        if not final_operator:
-            # Can only happen for non-staff.  I deliberately overwrite a
-            # previous operator because this way, we can log who changed it.
-            final_operator = self.user
-        cleaned_data["operator"], cleaned_data["external_operator"] = final_operator, final_external_operator
-        return cleaned_data
 
     class Meta:
         model = SolarsimulatorMeasurement
         fields = "__all__"
 
+    def __init__(self, user, *args, **kwargs):
+        super(SolarsimulatorMeasurementForm, self).__init__(user, *args, **kwargs)
+        self.fields["temperature"].widget.attrs.update({"size": "5"})
+
 
 class SolarsimulatorCellForm(forms.ModelForm):
+
+    class Meta:
+        model = SolarsimulatorCellMeasurement
+        exclude = ("measurement",)
 
     def __init__(self, *args, **kwargs):
         super(SolarsimulatorCellForm, self).__init__(*args, **kwargs)
 
     def validate_unique(self):
         pass
-
-    class Meta:
-        model = SolarsimulatorCellMeasurement
-        exclude = ("measurement",)
 
 
 def solarsimulator_cell_forms_from_post(post, form_cls):

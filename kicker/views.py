@@ -361,6 +361,10 @@ class UserDetailsForm(forms.ModelForm):
     """Model form for user preferences.  I exhibit only two fields here, namely
     the nickname and the shortkey.
     """
+    class Meta:
+        model = models.UserDetails
+        fields = ("nickname", "shortkey")
+
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.user = user
@@ -376,10 +380,6 @@ class UserDetailsForm(forms.ModelForm):
         if shortkey and models.UserDetails.objects.exclude(user=self.user).filter(shortkey=shortkey).exists():
             raise ValidationError(_("This shortkey is already given."))
         return shortkey
-
-    class Meta:
-        model = models.UserDetails
-        fields = ("nickname", "shortkey")
 
 
 @login_required

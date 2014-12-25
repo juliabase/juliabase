@@ -25,7 +25,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.forms.util import ValidationError
 from django.http import QueryDict
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
@@ -37,15 +37,124 @@ from samples.views import utils
 from django.utils.text import capfirst
 
 
-# FixMe: Should this also contain "operator = OperatorField"?
+class OperatorField(forms.ChoiceField):
+    """Form field class for the selection of a single operator.  This is
+    intended for edit-process views when the operator must be the currently
+    logged-in user, an external contact of that user, or the previous
+    (external) operator.  It can be used in model forms.
 
-class ProcessForm(ModelForm):
-    """Abstract model form class for processes.  It ensures that timestamps
-    are not in the future, and that comments contain only allowed Markdown
-    syntax.
+    Normally, you use this field through :py:class:`ProcessForm`.
+
+    The result of this field (if there was no validation error) is a tuple of
+    two values, namely the operator and the external operator.  Exactly one of
+    both is ``None`` if the respective type of operator was not given.
+
+    It is senseful to show this field only to non-staff, and staff gets the
+    usual operator/external operator fields.  In the IEK-5/FZJ implementation,
+    we even allow all three fields for staff users as long as there no
+    contradicting values are given.
+
+    FixMe: This is the new variant of py:class:`FixedOperatorField`.  It makes
+    py:class:`FixedOperatorField` obsolete.
+
+    If you want to use this field for *non-staff*, do the following things::
+
+        1. This field must be made required
+
+        2. Make the possible choices of the operator and the external operator
+           fields empty.  Exclude those fields from the HTML.
+
+        3. Check in your ``clean()`` method whether non-staff submits an
+           operator.  Since the operator is required in
+           ``samples.models.Process``, you must provide a senseful default for
+           the operator if none was returned (because an external operator was
+           selected).  I recommend to use the currently logged-in user in this
+           case.
+
+    A good example is in :py:mod:`institute.views.samples.substrate` of the INM
+    adaption of JuliaBase.  There, you can also see how one can deal with staff
+    users (especially interesting for the remote client).
     """
 
-    def __init__(self, *args, **kwargs):
+    def set_choices(self, user, old_process):
+        """Set the operator list shown in the widget.  It combines selectable users and
+        external operators.  You must call this method in the constructor of
+        the form in which you use this field, otherwise the selection box will
+        remain emtpy.  The selectable operators are:
+
+        - the former operator of the process (if any)
+        - the current user
+        - the former external operator (if any)
+        - all external operators for which the current user is the contact person.
+
+        It works also for staff users, which can choose from *all* users and
+        external operators (including inactive users such as “nobody”).
+
+        :param user: the currently logged-in user.
+        :param old_process: if the process is to be edited, the former instance
+            of the process; otherwise, ``None``
+
+        :type operator: django.contrib.auth.models.User
+        :type old_process: `samples.models.Process`
+        """
+        self.user = user
+        if user.is_staff:
+            self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
+            external_operators = set(models.ExternalOperator.objects.all())
+        else:
+            self.choices = []
+            if old_process:
+                if old_process.operator != user:
+                    self.choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
+                external_operators = {old_process.external_operator} if old_process.external_operator else set()
+            else:
+                external_operators = set()
+            self.choices.append((user.pk, get_really_full_name(user)))
+            external_operators |= set(user.external_contacts.all())
+        if old_process:
+            self.initial = "extern-{0}".format(old_process.external_operator.pk) if old_process.external_operator else \
+                old_process.operator.pk
+        else:
+            self.initial = user.pk
+        for external_operator in sorted(external_operators, key=lambda external_operator: external_operator.name):
+            self.choices.append(("extern-{0}".format(external_operator.pk), external_operator.name))
+
+    def clean(self, value):
+        """Return the selected operator.  Additionally, it sets the attribute
+        `external_operator` if the user selected one (it sets it to ``None``
+        otherwise).  If an external operator was selected, this routine returns
+        the currently logged-in user.
+
+        If there was an error, this method returns ``("", None)`` (i.e., both
+        values evaluate to ``False``).  Otherwise, it returns a tupe with
+        exactly one non-``False`` value.
+
+        :return:
+          the selected operator, the selected external operator
+
+        :rtype: django.contrib.auth.models.User,
+          django.contrib.auth.models.User
+        """
+        value = super(OperatorField, self).clean(value)
+        if value.startswith("extern-"):
+            external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
+            return None, external_operator
+        else:
+            return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
+
+
+class ProcessForm(ModelForm):
+    """Abstract model form class for processes.  It ensures that timestamps are not
+    in the future, and that comments contain only allowed Markdown syntax.
+
+    Moreover, it defines a field “combined_operator” of the type
+    :py:class:`OperatorField`.  In the HTML template, you should offer this
+    field to non-staff, and the usual operator/external operator to staff.
+    """
+    combined_operator = OperatorField(label=_("Operator"))
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
         if self.unfinished:
@@ -53,6 +162,13 @@ class ProcessForm(ModelForm):
         super(ProcessForm, self).__init__(*args, **kwargs)
         if self.process and self.process.finished:
             self.fields["finished"].widget.attrs["disabled"] = "disabled"
+        self.fields["combined_operator"].set_choices(user, self.process)
+        if not user.is_staff:
+            self.fields["external_operator"].choices = []
+            self.fields["operator"].choices = []
+            self.fields["operator"].required = False
+        else:
+            self.fields["combined_operator"].required = False
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
@@ -64,10 +180,9 @@ class ProcessForm(ModelForm):
     def clean_timestamp(self):
         """Forbid timestamps that are in the future.
         """
+        _ = ugettext
         timestamp = clean_timestamp_field(self.cleaned_data["timestamp"])
-        if self.unfinished and self.process.timestamp > timestamp:
-            self.data = self.data.copy()
-            self.data["timestamp"] = datetime.datetime.now()
+        if self.process and self.process.timestamp > timestamp:
             raise ValidationError(_("The timestamp was older than the one in the database.  Probably someone else has "
                                     "edited the process by now.  If so, open the process in another tab and combine the "
                                     "changes."))
@@ -79,6 +194,51 @@ class ProcessForm(ModelForm):
         override this method.
         """
         return True
+
+    def clean(self):
+        _ = ugettext
+        cleaned_data = super(ProcessForm, self).clean()
+        final_operator = cleaned_data.get("operator")
+        final_external_operator = cleaned_data.get("external_operator")
+        if cleaned_data.get("combined_operator"):
+            operator, external_operator = cleaned_data["combined_operator"]
+            if operator:
+                if final_operator and final_operator != operator:
+                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
+                else:
+                    final_operator = operator
+            if external_operator:
+                if final_external_operator and final_external_operator != external_operator:
+                    self.add_error("combined_external_operator",
+                                   "Your external operator and combined external operator didn't match.")
+                else:
+                    final_external_operator = external_operator
+        if not final_operator:
+            # Can only happen for non-staff.  I deliberately overwrite a
+            # previous operator because this way, we can log who changed it.
+            final_operator = self.user
+        cleaned_data["operator"], cleaned_data["external_operator"] = final_operator, final_external_operator
+        return cleaned_data
+
+
+class DepositionForm(ProcessForm):
+    """Model form for depositions (not their layers).
+    """
+    def __init__(self, user, data=None, **kwargs):
+        super(DepositionForm, self).__init__(user, data, **kwargs)
+        if self.process and self.process.finished:
+            self.fields["number"].widget.attrs.update({"readonly": "readonly"})
+
+    def clean_number(self):
+        _ = ugettext
+        number = self.cleaned_data["number"]
+        if self.process and self.process.finished:
+            if self.process.number != number:
+                raise ValidationError(_("The deposition number must not be changed."))
+        else:
+            if models.Deposition.objects.filter(number=number).exists():
+                raise ValidationError(_("This deposition number exists already."))
+        return number
 
 
 def get_my_layers(user_details, deposition_model):
@@ -121,7 +281,6 @@ def get_my_layers(user_details, deposition_model):
 
 
 class AddLayersForm(forms.Form):
-    _ = ugettext_lazy
     number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
                                                  required=False)
     my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
@@ -155,7 +314,6 @@ class InitialsForm(forms.Form):
     operator, or `None`.  Initials are optional, however, if you choose them, you cannot
     change (or delete) them anymore.
     """
-    _ = ugettext_lazy
     initials = forms.CharField(label=capfirst(_("initials")), max_length=4, required=False)
 
     def __init__(self, person, initials_mandatory, *args, **kwargs):
@@ -175,6 +333,7 @@ class InitialsForm(forms.Form):
             self.fields["initials"].initial = initials
 
     def clean_initials(self):
+        _ = ugettext
         initials = self.cleaned_data["initials"]
         if not initials or self.readonly:
             return initials
@@ -204,7 +363,6 @@ class InitialsForm(forms.Form):
 
 
 class EditDescriptionForm(forms.Form):
-    _ = ugettext_lazy
     description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea)
     important = forms.BooleanField(label=_("Important edit"), required=False)
 
@@ -503,105 +661,6 @@ class FixedOperatorField(forms.ChoiceField):
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
 
-class OperatorField(forms.ChoiceField):
-    """Form field class for the selection of a single operator.  This is
-    intended for edit-process views when the operator must be the currently
-    logged-in user, an external contact of that user, or the previous
-    (external) operator.  It can be used in model forms.
-
-    The result of this field (if there was no validation error) is a tuple of
-    two values, namely the operator and the external operator.  Exactly one of
-    both has a boolean value of ``False`` if the respective type of operator
-    was not given.
-
-    It is senseful to show this field only to non-staff, and staff gets the
-    usual operator/external operator fields.  In the IEK-5/FZJ implementation,
-    we even allow all three fields for staff users as long as there no
-    contradicting values are given.
-
-    FixMe: This is the new variant of py:class:`FixedOperatorField`.  It makes
-    py:class:`FixedOperatorField` obsolete.
-
-    If you want to use this field for non-staff, do the following things::
-
-        1. This field must be made required
-
-        2. Make the possible choices of the operator and the external operator
-           fields empty.  Exclude those fields from the HTML.
-
-        3. Assure in your ``clean()`` method that non-staff doesn't submit an
-           external operator.  Since the operator is required in
-           ``samples.models.Process``, you must provide a senseful default for the
-           operator if none was returned (because an external operator was
-           selected).  I recommend to use the currently logged-in user in this
-           case.
-
-    A good example is in :py:mod:`institute.views.samples.substrate` of the INM
-    adaption of JuliaBase.  There, you can also see how one can deal with staff
-    users (especially interesting for the remote client).
-    """
-
-    def set_choices(self, user, old_process):
-        """Set the operator list shown in the widget.  It combines selectable
-        users and external operators.  You *must* call this method in the
-        constructor of the form in which you use this field, otherwise the
-        selection box will remain emtpy.  It works even for staff users, which
-        can choose from *all* users and external operators (including inactive
-        users such as “nobody”).
-
-        :param user: the currently logged-in user.
-        :param old_process: if the process is to be edited, the former instance
-            of the process; otherwise, ``None``
-
-        :type operator: django.contrib.auth.models.User
-        :type old_process: `samples.models.Process`
-        """
-        self.user = user
-        if user.is_staff:
-            self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
-            external_operators = set(models.ExternalOperator.objects.all())
-        else:
-            self.choices = []
-            if old_process:
-                if old_process.operator.pk != user.pk:
-                    self.choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
-                external_operators = set([old_process.external_operator]) if old_process.external_operator else set()
-            else:
-                external_operators = set()
-            self.choices.append((user.pk, get_really_full_name(user)))
-            external_operators |= set(user.external_contacts.all())
-        if old_process:
-            self.initial = "extern-{0}".format(old_process.external_operator.pk) if old_process.external_operator else \
-                old_process.operator.pk
-        else:
-            self.initial = user.pk
-        for external_operator in sorted(external_operators, key=lambda external_operator: external_operator.name):
-            self.choices.append(("extern-{0}".format(external_operator.pk), external_operator.name))
-
-    def clean(self, value):
-        """Return the selected operator.  Additionally, it sets the attribute
-        `external_operator` if the user selected one (it sets it to ``None``
-        otherwise).  If an external operator was selected, this routine returns
-        the currently logged-in user.
-
-        If there was an error, this method returns ``("", None)`` (i.e., both
-        values evaluate to ``False``).  Otherwise, it returns a tupe with
-        exactly one non-``False`` value.
-
-        :return:
-          the selected operator, the selected external operator
-
-        :rtype: django.contrib.auth.models.User,
-          django.contrib.auth.models.User
-        """
-        value = super(OperatorField, self).clean(value)
-        if value.startswith("extern-"):
-            external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
-            return None, external_operator
-        else:
-            return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
-
-
 # FixMe: This should be moved to institute, because this special case is only
 # necessary because samples may get renamed after depositions.  Maybe
 # refactoring should be done because it is used for substrates, too.
@@ -611,7 +670,6 @@ class DepositionSamplesForm(forms.Form):
     deposition.  Depositions need a special form class for this because it must
     be disabled when editing an *existing* deposition.
     """
-    _ = ugettext_lazy
     sample_list = MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, preset_sample, deposition, data=None, **kwargs):
@@ -644,7 +702,6 @@ class DepositionSamplesForm(forms.Form):
 
 
 class SamplePositionForm(forms.Form):
-    _ = ugettext_lazy
     sample = forms.CharField(label=capfirst(_("sample")))
     position = forms.CharField(label=capfirst(_("sample position")), required=False)
 
@@ -674,7 +731,8 @@ class SamplePositionForm(forms.Form):
             return models.Sample.objects.get(name=sample_name)
 
     def clean(self):
-        cleaned_data = self.cleaned_data
+        _ = ugettext
+        cleaned_data = super(SamplePositionForm, self).clean()
         sample = cleaned_data.get("sample")
         place = cleaned_data.get("position")
         if sample and not place:
@@ -687,7 +745,6 @@ class RemoveFromMySamplesForm(forms.Form):
     """Form for the question whether the user wants to remove the samples
     from the “My Samples” list after the process.
     """
-    _ = ugettext_lazy
     remove_from_my_samples = forms.BooleanField(label=_("Remove processed sample(s) from My Samples"),
                                                 required=False, initial=False)
 
@@ -713,6 +770,7 @@ def clean_time_field(value):
 
     :raises ValidationError: if the value given was not a valid duration time.
     """
+    _ = ugettext
     if not value:
         return ""
     match = time_pattern.match(value)
@@ -748,6 +806,7 @@ def clean_timestamp_field(value):
     :raises ValidationError: if the specified timestamp lies in the future or
         to far in the past.
     """
+    _ = ugettext
     if isinstance(value, datetime.datetime):
         # Allow mis-sychronisation of clocks of up to one minute.
         if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
@@ -781,6 +840,7 @@ def clean_quantity_field(value, units):
     :raises ValidationError: if the value given was not a valid physical
         quantity.
     """
+    _ = ugettext
     if not value:
         return ""
     value = six.text_type(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
@@ -977,6 +1037,7 @@ def check_sample_name(match, user, is_new=True):
     :raises ValidationError: if the sample name (represented by the match object)
         contained invalid fields.
     """
+    _ = ugettext
     groups = {key: value for key, value in match.groupdict().items() if value is not None}
     if "year" in groups:
         if int(groups["year"]) != datetime.datetime.now().year:

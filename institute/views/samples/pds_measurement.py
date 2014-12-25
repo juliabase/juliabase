@@ -81,19 +81,16 @@ def get_data_from_file(number):
 
 
 class PDSMeasurementForm(form_utils.ProcessForm):
-    """Model form for the core PDS measurement data.  I only redefine the
-    ``operator`` field here in order to have the full names of the users.
+    """Model form for the core PDS measurement data.
     """
-    _ = ugettext_lazy
-    operator = form_utils.FixedOperatorField(label=_("Operator"))
+    class Meta:
+        model = institute_models.PDSMeasurement
+        fields = "__all__"
 
     def __init__(self, user, *args, **kwargs):
-        super(PDSMeasurementForm, self).__init__(*args, **kwargs)
+        super(PDSMeasurementForm, self).__init__(user, *args, **kwargs)
         self.fields["raw_datafile"].widget.attrs["size"] = "50"
         self.fields["number"].widget.attrs["size"] = "10"
-        measurement = kwargs.get("instance")
-        self.fields["operator"].set_operator(measurement.operator if measurement else user, user.is_staff)
-        self.fields["operator"].initial = measurement.operator.pk if measurement else user.pk
 
     def clean_raw_datafile(self):
         """Check whether the raw datafile name points to a readable file.
@@ -108,11 +105,9 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         because it leads to an error message in wrong German (difficult to fix,
         even for the Django guys).
         """
+        # FixMe: See
+        # https://docs.djangoproject.com/en/1.7/topics/forms/modelforms/#considerations-regarding-model-s-error-messages
         pass
-
-    class Meta:
-        model = institute_models.PDSMeasurement
-        exclude = ("external_operator",)
 
 
 class OverwriteForm(forms.Form):

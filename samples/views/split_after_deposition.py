@@ -83,9 +83,10 @@ class OriginalDataForm(Form):
         return self.cleaned_data["number_of_pieces"]
 
     def clean(self):
-        if "new_name" in self.cleaned_data:
-            new_name = self.cleaned_data["new_name"]
-            sample = self.cleaned_data.get("sample")
+        cleaned_data = super(OriginalDataForm, self).clean()
+        if "new_name" in cleaned_data:
+            new_name = cleaned_data["new_name"]
+            sample = cleaned_data.get("sample")
             if sample:
                 old_sample_name_format = utils.sample_name_format(sample.name)
                 if old_sample_name_format not in utils.get_renamable_name_formats():
@@ -94,7 +95,7 @@ class OriginalDataForm(Form):
                 elif sample and sample.name != new_name:
                     if not new_name.startswith(self.deposition_number):
                         self.add_error("new_name", _("The new name must begin with the deposition number."))
-        return self.cleaned_data
+        return cleaned_data
 
 
 class NewNameForm(Form):

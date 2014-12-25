@@ -15,7 +15,7 @@
 from __future__ import absolute_import, unicode_literals, division
 
 from django.db import models, migrations
-from jb_common import model_fields
+import jb_common.model_fields
 
 
 class Migration(migrations.Migration):
@@ -61,12 +61,12 @@ class Migration(migrations.Migration):
             name='ClusterToolHotWireLayer',
             fields=[
                 ('clustertoollayer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='institute.ClusterToolLayer')),
-                ('h2', model_fields.DecimalQuantityField(decimal_places=2, max_digits=5, blank=True, unit='sccm', null=True, verbose_name='H\u2082')),
-                ('sih4', model_fields.DecimalQuantityField(decimal_places=2, max_digits=5, blank=True, unit='sccm', null=True, verbose_name='SiH\u2084')),
+                ('h2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='H\u2082', max_digits=5, decimal_places=2, blank=True)),
+                ('sih4', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='SiH\u2084', max_digits=5, decimal_places=2, blank=True)),
                 ('time', models.CharField(help_text='format HH:MM:SS', max_length=9, verbose_name='deposition time', blank=True)),
                 ('comments', models.TextField(verbose_name='comments', blank=True)),
                 ('wire_material', models.CharField(max_length=20, verbose_name='wire material', choices=[('unknown', 'unknown'), ('rhenium', 'rhenium'), ('tantalum', 'tantalum'), ('tungsten', 'tungsten')])),
-                ('base_pressure', model_fields.FloatQuantityField(unit='mbar', null=True, verbose_name='base pressure', blank=True)),
+                ('base_pressure', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='base pressure', blank=True)),
             ],
             options={
                 'ordering': ['number'],
@@ -80,13 +80,13 @@ class Migration(migrations.Migration):
             name='ClusterToolPECVDLayer',
             fields=[
                 ('clustertoollayer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='institute.ClusterToolLayer')),
-                ('h2', model_fields.DecimalQuantityField(decimal_places=2, max_digits=5, blank=True, unit='sccm', null=True, verbose_name='H\u2082')),
-                ('sih4', model_fields.DecimalQuantityField(decimal_places=2, max_digits=5, blank=True, unit='sccm', null=True, verbose_name='SiH\u2084')),
+                ('h2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='H\u2082', max_digits=5, decimal_places=2, blank=True)),
+                ('sih4', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='SiH\u2084', max_digits=5, decimal_places=2, blank=True)),
                 ('chamber', models.CharField(max_length=5, verbose_name='chamber', choices=[('#1', '#1'), ('#2', '#2'), ('#3', '#3')])),
                 ('time', models.CharField(help_text='format HH:MM:SS', max_length=9, verbose_name='deposition time', blank=True)),
                 ('comments', models.TextField(verbose_name='comments', blank=True)),
                 ('plasma_start_with_shutter', models.BooleanField(default=False, verbose_name='plasma start with shutter')),
-                ('deposition_power', model_fields.DecimalQuantityField(decimal_places=2, max_digits=6, blank=True, unit='W', null=True, verbose_name='deposition power')),
+                ('deposition_power', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='deposition power', max_digits=6, decimal_places=2, blank=True)),
             ],
             options={
                 'ordering': ['number'],
@@ -118,10 +118,10 @@ class Migration(migrations.Migration):
                 ('number', models.PositiveIntegerField(verbose_name='layer number')),
                 ('layer_type', models.CharField(blank=True, max_length=2, verbose_name='layer type', choices=[('p', 'p'), ('i', 'i'), ('n', 'n')])),
                 ('chamber', models.CharField(max_length=2, verbose_name='chamber', choices=[('i1', 'i1'), ('i2', 'i2'), ('i3', 'i3'), ('p', 'p'), ('n', 'n')])),
-                ('sih4', model_fields.DecimalQuantityField(decimal_places=3, max_digits=7, blank=True, unit='sccm', null=True, verbose_name='SiH\u2084')),
-                ('h2', model_fields.DecimalQuantityField(decimal_places=3, max_digits=7, blank=True, unit='sccm', null=True, verbose_name='H\u2082')),
-                ('temperature_1', model_fields.DecimalQuantityField(decimal_places=3, max_digits=7, blank=True, unit='\u2103', null=True, verbose_name='temperature 1')),
-                ('temperature_2', model_fields.DecimalQuantityField(decimal_places=3, max_digits=7, blank=True, unit='\u2103', null=True, verbose_name='temperature 2')),
+                ('sih4', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='SiH\u2084', max_digits=7, decimal_places=3, blank=True)),
+                ('h2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='H\u2082', max_digits=7, decimal_places=3, blank=True)),
+                ('temperature_1', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='temperature 1', max_digits=7, decimal_places=3, blank=True)),
+                ('temperature_2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='temperature 2', max_digits=7, decimal_places=3, blank=True)),
                 ('deposition', models.ForeignKey(related_name='layers', verbose_name='deposition', to='institute.FiveChamberDeposition')),
             ],
             options={
@@ -141,7 +141,7 @@ class Migration(migrations.Migration):
                 ('classification', models.CharField(blank=True, max_length=30, null=True, verbose_name='classification', choices=[('a-Si:H', 'a-Si:H'), ('muc-Si:H', '\xb5c-Si:H'), ('si-wafer', 'silicon wafer'), ('SiC', 'SiC'), ('glass', 'glass'), ('silver', 'silver'), ('ZnO', 'ZnO'), ('HF dip', 'HF dip'), ('SiO2', 'SiO\u2082')])),
                 ('comments', models.CharField(max_length=100, null=True, verbose_name='comments', blank=True)),
                 ('color', models.CharField(max_length=30, verbose_name='color', choices=[('black', 'black'), ('blue', 'blue'), ('brown', 'brown'), ('darkgray', 'darkgray'), ('green', 'green'), ('lightblue', 'lightblue'), ('lightgreen', 'lightgreen'), ('magenta', 'magenta'), ('orange', 'orange'), ('red', 'red'), ('silver', 'silver'), ('white', 'white'), ('yellow', 'yellow')])),
-                ('thickness', model_fields.DecimalQuantityField(unit='nm', verbose_name='thickness', max_digits=8, decimal_places=1)),
+                ('thickness', jb_common.model_fields.DecimalQuantityField(verbose_name='thickness', max_digits=8, decimal_places=1)),
                 ('thickness_reliable', models.BooleanField(default=False, verbose_name='thickness reliable')),
                 ('structured', models.BooleanField(default=False, verbose_name='structured')),
                 ('textured', models.BooleanField(default=False, verbose_name='textured')),
@@ -155,6 +155,22 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'informal layers',
             },
             bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='LayerThicknessMeasurement',
+            fields=[
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('thickness', jb_common.model_fields.FloatQuantityField(verbose_name='layer thickness')),
+                ('method', models.CharField(default='profilers&edge', max_length=30, verbose_name='measurement method', choices=[('profilers&edge', 'profilometer + edge'), ('ellipsometer', 'ellipsometer'), ('calculated', 'calculated from deposition parameters'), ('estimate', 'estimate'), ('other', 'other')])),
+            ],
+            options={
+                'ordering': ['timestamp'],
+                'abstract': False,
+                'get_latest_by': 'timestamp',
+                'verbose_name': 'layer thickness measurement',
+                'verbose_name_plural': 'layer thickness measurements',
+            },
+            bases=('samples.process',),
         ),
         migrations.CreateModel(
             name='PDSMeasurement',
@@ -191,9 +207,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('position', models.CharField(max_length=5, verbose_name='cell position')),
                 ('data_file', models.CharField(help_text='only the relative path below "solarsimulator_raw_data/"', max_length=200, verbose_name='data file', db_index=True)),
-                ('area', model_fields.FloatQuantityField(help_text='in cm\xb2', null=True, verbose_name='area', blank=True)),
-                ('eta', model_fields.FloatQuantityField(help_text='in %', null=True, verbose_name='efficiency \u03b7', blank=True)),
-                ('isc', model_fields.FloatQuantityField(help_text='in mA/cm\xb2', null=True, verbose_name='short-circuit current density', blank=True)),
+                ('area', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='area', blank=True)),
+                ('eta', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='efficiency \u03b7', blank=True)),
+                ('isc', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='short-circuit current density', blank=True)),
             ],
             options={
                 'verbose_name': 'solarsimulator cell measurement',
@@ -206,7 +222,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
                 ('irradiation', models.CharField(max_length=10, verbose_name='irradiation', choices=[('AM1.5', 'AM1.5'), ('OG590', 'OG590'), ('BG7', 'BG7')])),
-                ('temperature', model_fields.DecimalQuantityField(default=25.0, help_text='in \u2103', verbose_name='temperature', max_digits=3, decimal_places=1)),
+                ('temperature', jb_common.model_fields.DecimalQuantityField(default=25.0, verbose_name='temperature', max_digits=3, decimal_places=1)),
             ],
             options={
                 'get_latest_by': 'timestamp',
@@ -223,8 +239,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
                 ('layout', models.CharField(max_length=30, verbose_name='layout', choices=[('inm standard', 'INM Standard'), ('acme1', 'ACME 1'), ('custom', 'custom')])),
-                ('length', model_fields.FloatQuantityField(unit='mm', null=True, verbose_name='length', blank=True)),
-                ('width', model_fields.FloatQuantityField(unit='mm', null=True, verbose_name='width', blank=True)),
+                ('length', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='length', blank=True)),
+                ('width', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='width', blank=True)),
                 ('parameters', models.TextField(verbose_name='parameters', blank=True)),
             ],
             options={

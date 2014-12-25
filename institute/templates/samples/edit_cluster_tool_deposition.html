@@ -30,22 +30,33 @@ copyright holder, you must destroy it immediately and completely.
   {% error_list samples _("Error in sample list") %}
   <table class="padding5">
     <tbody>
-    <tr style="display: none">
-      {% input_field deposition.operator %}
-      <td></td>
-    </tr>
-    <tr>
-      {% input_field deposition.number %}
-      <td rowspan="3" style="padding-left: 2em">
-        <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
-                             >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
-    </tr>
-    <tr>
-      {% input_field deposition.carrier %}
-    </tr>
-    <tr>
-      {% input_field deposition.timestamp %}
-    </tr>
+      <tr>
+        {% input_field deposition.number %}
+        <td rowspan="4" style="padding-left: 2em">
+          <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
+                               >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
+      </tr>
+      {% if deposition.user.is_staff %}
+        <tr>
+          {% input_field deposition.operator %}
+          <td></td>
+        </tr>
+        <tr>
+          {% input_field deposition.external_operator %}
+          <td></td>
+        </tr>
+      {% else %}
+        <tr>
+          {% input_field deposition.combined_operator %}
+          <td></td>
+        </tr>
+      {% endif %}
+      <tr>
+        {% input_field deposition.carrier %}
+      </tr>
+      <tr>
+        {% input_field deposition.timestamp %}
+      </tr>
     </tbody>
   </table>
 
@@ -191,6 +202,7 @@ copyright holder, you must destroy it immediately and completely.
   {% endif %}
 
   <div style="display: none">
+    {# Hidden so that it's only set/changed by the remote client. #}
     {{ deposition.timestamp_inaccuracy }}
   </div>
 

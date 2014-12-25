@@ -32,7 +32,9 @@ class AddExternalOperatorForm(forms.ModelForm):
     """Model form for creating a new external operator.  The
     ``contact_persons`` is implicitly the currently logged-in user.
     """
-    _ = ugettext_lazy
+    class Meta:
+        model = models.ExternalOperator
+        exclude = ("contact_persons",)
 
     def __init__(self, user, *args, **kwargs):
         super(AddExternalOperatorForm, self).__init__(*args, **kwargs)
@@ -45,10 +47,6 @@ class AddExternalOperatorForm(forms.ModelForm):
         external_operator = super(AddExternalOperatorForm, self).save()
         external_operator.contact_persons.add(self.user)
         return external_operator
-
-    class Meta:
-        model = models.ExternalOperator
-        exclude = ("contact_persons",)
 
 
 @login_required
@@ -89,6 +87,10 @@ class EditExternalOperatorForm(forms.ModelForm):
     _ = ugettext_lazy
     contact_persons = form_utils.MultipleUsersField(label=_("Contact persons"))
 
+    class Meta:
+        model = models.ExternalOperator
+        fields = "__all__"
+
     def __init__(self, user, *args, **kwargs):
         super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
         self.external_operator = kwargs.get("instance")
@@ -96,10 +98,6 @@ class EditExternalOperatorForm(forms.ModelForm):
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"
         self.fields["contact_persons"].set_users(user, self.external_operator.contact_persons.all())
-
-    class Meta:
-        model = models.ExternalOperator
-        fields = "__all__"
 
 
 @login_required

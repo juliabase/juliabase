@@ -45,6 +45,10 @@ class UserDetailsForm(forms.ModelForm):
     default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_("folded processes")), required=False)
     show_users_from_departments = forms.MultipleChoiceField(label=capfirst(_("show users from department")), required=False)
 
+    class Meta:
+        model = models.UserDetails
+        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds",)
+
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
@@ -69,10 +73,6 @@ class UserDetailsForm(forms.ModelForm):
                                                             for department in Department.objects.iterator()]
         self.fields["show_users_from_departments"].initial = \
                     user.samples_user_details.show_users_from_departments.values_list("id", flat=True)
-
-    class Meta:
-        model = models.UserDetails
-        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds",)
 
 
 @login_required

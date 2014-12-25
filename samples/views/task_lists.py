@@ -68,6 +68,10 @@ class TaskForm(forms.ModelForm):
     process_class = forms.ChoiceField(label=capfirst(_("process class")))
     finished_process = forms.ChoiceField(label=capfirst(_("finished process")), required=False)
 
+    class Meta:
+        model = Task
+        exclude = ("samples",)
+
     def __init__(self, user, data=None, **kwargs):
         self.task = kwargs.get("instance")
         self.user = user
@@ -173,10 +177,6 @@ class TaskForm(forms.ModelForm):
             if not cleaned_data.get("operator"):
                 self.add_error("operator", _("With this status, you must set an operator."))
         return cleaned_data
-
-    class Meta:
-        model = Task
-        exclude = ("samples",)
 
 
 class ChooseTaskListsForm(forms.Form):

@@ -36,7 +36,10 @@ class SampleDeathForm(forms.ModelForm):
     sample) here because the sample is already determinded by the URL of the
     request.
     """
-    _ = ugettext_lazy
+    class Meta:
+        model = models.SampleDeath
+        fields = ("reason",)
+
     def __init__(self, sample, *args, **kwargs):
         super(SampleDeathForm, self).__init__(*args, **kwargs)
         self.sample = sample
@@ -46,6 +49,7 @@ class SampleDeathForm(forms.ModelForm):
                 if choice[0] != "split":
                     new_choices.append(choice)
             self.fields["reason"].choices = new_choices
+
     def clean_reason(self):
         """Assure that if a sample was completely split, the most recent
         process was indeed a split.
@@ -54,9 +58,6 @@ class SampleDeathForm(forms.ModelForm):
         if reason == "split" and not self.sample.last_process_if_split():
             raise ValidationError(_("Last process wasn't a split."))
         return reason
-    class Meta:
-        model = models.SampleDeath
-        fields = ("reason",)
 
 
 @login_required

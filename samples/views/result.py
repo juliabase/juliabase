@@ -85,54 +85,14 @@ class ResultForm(form_utils.ProcessForm):
     """Model form for a result process.  Note that I exclude many fields
     because they are not used in results or explicitly set.
     """
-    _ = ugettext_lazy
-    combined_operator = form_utils.OperatorField(label=_("Operator"))
-
-    def __init__(self, user, *args, **kwargs):
-        super(ResultForm, self).__init__(*args, **kwargs)
-        self.fields["comments"].required = True
-        self.fields["title"].widget.attrs["size"] = 40
-        self.old_result = kwargs.get("instance")
-        self.user = user
-        self.fields["combined_operator"].set_choices(user, self.old_result)
-        if not user.is_staff:
-            self.fields["external_operator"].choices = []
-            self.fields["operator"].choices = []
-            self.fields["operator"].required = False
-        else:
-            self.fields["combined_operator"].required = False
-        self.fields["timestamp"].initial = datetime.datetime.now()
-
-
-    def clean(self):
-        _ = ugettext
-        cleaned_data = self.cleaned_data
-        # FixMe: The following could be done in ProcessForm.clean().
-        final_operator = self.cleaned_data.get("operator")
-        final_external_operator = self.cleaned_data.get("external_operator")
-        if self.cleaned_data.get("combined_operator"):
-            operator, external_operator = self.cleaned_data["combined_operator"]
-            if operator:
-                if final_operator and final_operator != operator:
-                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
-                else:
-                    final_operator = operator
-            if external_operator:
-                if final_external_operator and final_external_operator != external_operator:
-                    self.add_error("combined_external_operator",
-                                   "Your external operator and combined external operator didn't match.")
-                else:
-                    final_external_operator = external_operator
-        if not final_operator:
-            # Can only happen for non-staff.  I deliberately overwrite a
-            # previous operator because this way, we can log who changed it.
-            final_operator = self.user
-        self.cleaned_data["operator"], self.cleaned_data["external_operator"] = final_operator, final_external_operator
-        return cleaned_data
-
     class Meta:
         model = models.Result
         exclude = ("image_type", "quantities_and_values")
+
+    def __init__(self, user, *args, **kwargs):
+        super(ResultForm, self).__init__(user, *args, **kwargs)
+        self.fields["comments"].required = True
+        self.fields["title"].widget.attrs["size"] = 40
 
 
 class RelatedDataForm(forms.Form):
@@ -190,15 +150,16 @@ class RelatedDataForm(forms.Form):
         one sample or sample series was selected, and whether the user is
         allowed to add results to the selected objects.
         """
-        samples = self.cleaned_data.get("samples")
-        sample_series = self.cleaned_data.get("sample_series")
+        cleaned_data = super(RelatedDataForm, self).clean()
+        samples = cleaned_data.get("samples")
+        sample_series = cleaned_data.get("sample_series")
         if samples is not None and sample_series is not None:
             for sample_or_series in set(samples + list(sample_series)) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
                     self.add_error(None, _("You don't have the permission to add the result to all selected samples/series."))
             if not samples and not sample_series:
                 self.add_error(None, _("You must select at least one samples/series."))
-        return self.cleaned_data
+        return cleaned_data
 
 
 class DimensionsForm(forms.Form):
@@ -226,7 +187,7 @@ class DimensionsForm(forms.Form):
         """If one of the two dimensions is set to zero, the other is set to
         zero, too.
         """
-        cleaned_data = self.cleaned_data
+        cleaned_data = super(DimensionsForm, self).clean()
         if "number_of_quantities" in cleaned_data and "number_of_values" in cleaned_data:
             if cleaned_data["number_of_quantities"] == 0 or cleaned_data["number_of_values"] == 0:
                 cleaned_data["number_of_quantities"] = cleaned_data["number_of_values"] = 0
