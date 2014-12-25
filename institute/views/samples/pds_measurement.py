@@ -92,8 +92,14 @@ class PDSMeasurementForm(form_utils.ProcessForm):
     """Model form for the core PDS measurement data.
     """
     class Meta:
+        _ = ugettext_lazy
         model = institute_models.PDSMeasurement
         fields = "__all__"
+        error_messages = {
+            "number": {
+                "unique": _("This PDS number exists already.")
+                }
+            }
 
     def __init__(self, user, *args, **kwargs):
         super(PDSMeasurementForm, self).__init__(user, *args, **kwargs)
@@ -105,17 +111,6 @@ class PDSMeasurementForm(form_utils.ProcessForm):
         """
         filename = self.cleaned_data["raw_datafile"]
         return check_filepath(filename, settings.PDS_ROOT_DIR)
-
-    def validate_unique(self):
-        """Overridden to disable Django's intrinsic test for uniqueness.  I
-        simply disable this inherited method completely because I do my own
-        uniqueness test in `edit`.  I cannot use Django's built-in test anyway
-        because it leads to an error message in wrong German (difficult to fix,
-        even for the Django guys).
-        """
-        # FixMe: See
-        # https://docs.djangoproject.com/en/1.7/topics/forms/modelforms/#considerations-regarding-model-s-error-messages
-        pass
 
 
 class OverwriteForm(forms.Form):
@@ -160,7 +155,7 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     return all_valid
 
 
-def is_referentially_valid(pds_measurement_form, sample_form, number):
+def is_referentially_valid(pds_measurement_form, sample_form):
     """Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement.
@@ -179,7 +174,8 @@ def is_referentially_valid(pds_measurement_form, sample_form, number):
 
     :rtype: bool
     """
-    return form_utils.measurement_is_referentially_valid(pds_measurement_form, sample_form, number, institute_models.PDSMeasurement)
+    return pds_measurement_form.is_referentially_valid(sample_form)
+
 
 @login_required
 def edit(request, number):
@@ -223,7 +219,7 @@ def edit(request, number):
             pds_measurement_form = PDSMeasurementForm(request.user, request.POST, instance=pds_measurement)
         all_valid = is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_my_samples_form,
                                  edit_description_form)
-        referentially_valid = is_referentially_valid(pds_measurement_form, sample_form, number)
+        referentially_valid = is_referentially_valid(pds_measurement_form, sample_form)
         if all_valid and referentially_valid:
             pds_measurement = pds_measurement_form.save()
             samples = [sample_form.cleaned_data["sample"]]

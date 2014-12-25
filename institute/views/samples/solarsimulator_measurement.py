@@ -107,7 +107,7 @@ def is_all_valid(solarsimulator_measurement_form, sample_form, remove_from_my_sa
     return all_valid
 
 
-def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_forms, samples_form, process_id=None):
+def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_forms, sample_form, process_id=None):
     """Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement and whether the related data file exists.
@@ -122,16 +122,11 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
 
     :rtype: bool
     """
-    referentially_valid = True
+    referentially_valid = solarsimulator_measurement_form.is_referentially_valid(sample_form)
     if not solarsimulator_cell_forms:
         solarsimulator_measurement_form.add_error(None, _("No measurenents given."))
         referentially_valid = False
     if solarsimulator_measurement_form.is_valid():
-        if samples_form.is_valid() and referentially_valid:
-            sample = samples_form.cleaned_data["sample"]
-            if form_utils.dead_samples([sample], solarsimulator_measurement_form.cleaned_data.get("timestamp")):
-                solarsimulator_measurement_form.add_error("timestamp", _("Sample is already dead at this time."))
-                referentially_valid = False
         positions = set()
         for measurement_form in solarsimulator_cell_forms:
             if measurement_form.is_valid():

@@ -332,13 +332,12 @@ The second function,
 
 ::
 
-    def is_referentially_valid(layer_thickness_form, sample_form, process_id):
-        return form_utils.measurement_is_referentially_valid(
-            layer_thickness_form, sample_form, process_id, LayerThicknessMeasurement)
+    def is_referentially_valid(layer_thickness_form, sample_form):
+        return layer_thickness_form.is_referentially_valid(sample_form)
 
 returns ``True`` if the data of all forms is valid in relation to each other
 (for example, the deposition has at least one layer).  Here, we can rely solely
-on :py:func:`~institute.views.form_utils.measurement_is_referentially_valid`.
+on :py:meth:`~samples.views.form_utils.ProcessForm.is_referentially_valid`.
 
 
 View function

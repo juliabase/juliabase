@@ -114,44 +114,6 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
     return render(request, edit_url, context_dict)
 
 
-def measurement_is_referentially_valid(measurement_form, sample_form, measurement_number, institute_model):
-    """Test whether the forms are consistent with each other and with the
-    database.  In particular, it tests whether the sample is still “alive” at
-    the time of the measurement.
-
-    :param measurement_form: a bound measurement form
-    :param sample_form: a bound sample selection form
-    :param measurement_number: The number of the measurement to be edited.  If
-        it is ``None``, a new measurement is added to the database.
-    :param institute_model: the related Database model
-
-    :type measurement_form: `samples.views.form_utils.ProcessForm`
-    :type sample_form: `samples.views.form_utils.SampleForm`
-    :type measurement_number: unicode
-    :type institute_model: `samples.models.common.Process`
-
-    :return:
-      whether the forms are consistent with each other and the database
-
-    :rtype: bool
-    """
-    referentially_valid = True
-    if measurement_form.is_valid():
-        number = measurement_form.cleaned_data.get("number")
-        number = number and six.text_type(number)
-        if number is not None and (measurement_number is None or number != measurement_number) and \
-                institute_model.objects.filter(number=number).exists():
-            measurement_form.add_error("number", _("This number is already in use."))
-            referentially_valid = False
-        if sample_form.is_valid() and dead_samples([sample_form.cleaned_data["sample"]],
-                                                    measurement_form.cleaned_data["timestamp"]):
-            measurement_form.add_error("timestamp", _("Sample is already dead at this time."))
-            referentially_valid = False
-    else:
-        referentially_valid = False
-    return referentially_valid
-
-
 def three_digits(number):
     """
     :param number: the number of the deposition (only the number after the

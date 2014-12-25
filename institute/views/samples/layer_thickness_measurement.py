@@ -64,7 +64,7 @@ def is_all_valid(sample_form, layer_thickness_form, edit_description_form):
     return all_valid
 
 
-def is_referentially_valid(layer_thickness_form, sample_form, process_id):
+def is_referentially_valid(layer_thickness_form, sample_form):
     """Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement.
@@ -72,21 +72,16 @@ def is_referentially_valid(layer_thickness_form, sample_form, process_id):
     :Parameters:
       - `layer_thickness_form`: a bound layer thickness form
       - `sample_form`: a bound sample selection form
-      - `process_id`: The number of the Layer Thickness Measurement to
-        be edited.  If it is ``None``, a new measurement is added to the
-        database.
 
     :type layer_thickness_form: `LayerThicknessForm`
     :type sample_form: `samples.views.form_utils.SampleSelectForm`
-    :type process_id: unicode
 
     :Return:
       whether the forms are consistent with each other and the database
 
     :rtype: bool
     """
-    return form_utils.measurement_is_referentially_valid(layer_thickness_form, sample_form, process_id,
-                                                         LayerThicknessMeasurement)
+    return layer_thickness_form.measurement_is_referentially_valid(sample_form)
 
 
 @login_required
@@ -119,7 +114,7 @@ def edit(request, layer_thickness_measurement_id):
         sample_form = form_utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, request.POST)
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if layer_thickness_measurement else None
         all_valid = is_all_valid(sample_form, layer_thickness_form, edit_description_form)
-        referentially_valid = is_referentially_valid(layer_thickness_form, sample_form, layer_thickness_measurement_id)
+        referentially_valid = is_referentially_valid(layer_thickness_form, sample_form)
         if all_valid and referentially_valid:
             layer_thickness_measurement = layer_thickness_form.save()
             layer_thickness_measurement.samples = [sample_form.cleaned_data["sample"]]

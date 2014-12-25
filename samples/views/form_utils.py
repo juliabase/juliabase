@@ -220,6 +220,27 @@ class ProcessForm(ModelForm):
         cleaned_data["operator"], cleaned_data["external_operator"] = final_operator, final_external_operator
         return cleaned_data
 
+    def is_referentially_valid(self, sample_form):
+        """Test whether the forms are consistent with each other and with the database.
+        In its current form, it only checks whether the sample is still “alive”
+        at the time of the measurement.
+
+        :param sample_form: a bound sample selection form
+
+        :type sample_form: `SampleForm`
+
+        :return:
+          whether the forms are consistent with each other and the database
+
+        :rtype: bool
+        """
+        referentially_valid = True
+        if self.is_valid() and sample_form.is_valid() and \
+           dead_samples([sample_form.cleaned_data["sample"]], self.cleaned_data["timestamp"]):
+            self.add_error("timestamp", _("Sample is already dead at this time."))
+            referentially_valid = False
+        return referentially_valid
+
 
 class DepositionForm(ProcessForm):
     """Model form for depositions (not their layers).
