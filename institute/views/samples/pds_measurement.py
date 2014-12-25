@@ -138,7 +138,7 @@ def is_all_valid(pds_measurement_form, sample_form, overwrite_form, remove_from_
     :param edit_description_form: a bound edit-description form
 
     :type pds_measurement_form: `PDSMeasurementForm`
-    :type sample_form: `institute.views.form_utils.SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleSelectForm`
     :type overwrite_form: `OverwriteForm`
     :type remove_from_my_samples_form: `RemoveFromMySamplesForm` or
       NoneType
@@ -171,7 +171,7 @@ def is_referentially_valid(pds_measurement_form, sample_form, number):
         ``None``, a new measurement is added to the database.
 
     :type pds_measurement_form: `PDSMeasurementForm`
-    :type sample_form: `institute.views.form_utils.SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleSelectForm`
     :type number: unicode
 
     :return:
@@ -204,7 +204,7 @@ def edit(request, number):
     preset_sample = utils.extract_preset_sample(request) if not pds_measurement else None
     if request.method == "POST":
         pds_measurement_form = None
-        sample_form = form_utils.SampleForm(request.user, pds_measurement, preset_sample, request.POST)
+        sample_form = form_utils.SampleSelectForm(request.user, pds_measurement, preset_sample, request.POST)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(request.POST) if not pds_measurement else None
         overwrite_form = OverwriteForm(request.POST)
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if pds_measurement else None
@@ -246,7 +246,7 @@ def edit(request, number):
         initial = {}
         if old_sample:
             initial["sample"] = old_sample.pk
-        sample_form = form_utils.SampleForm(request.user, pds_measurement, preset_sample, initial=initial)
+        sample_form = form_utils.SampleSelectForm(request.user, pds_measurement, preset_sample, initial=initial)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not pds_measurement else None
         overwrite_form = OverwriteForm()
         edit_description_form = form_utils.EditDescriptionForm() if pds_measurement else None

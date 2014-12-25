@@ -83,7 +83,7 @@ def is_all_valid(solarsimulator_measurement_form, sample_form, remove_from_my_sa
     :param solarsimulator_cell_forms: a list of bound solarsimulator cell forms
 
     :type solarsimulator_measurement_form: `SolarsimulatorMeasurementForm`
-    :type sample_form: `institute.views.form_utils.SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleSelectForm`
     :type remove_from_my_samples_form:
         `samples.views.form_utils.RemoveFromMySamplesForm` or NoneType
     :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
@@ -175,7 +175,7 @@ def edit(request, solarsimulator_measurement_id):
                                                      SolarsimulatorMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not solarsimulator_measurement else None
     if request.method == "POST":
-        sample_form = form_utils.SampleForm(request.user, solarsimulator_measurement, preset_sample, request.POST)
+        sample_form = form_utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample, request.POST)
         samples = solarsimulator_measurement.samples.all() if solarsimulator_measurement else None
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(request.POST) if not solarsimulator_measurement \
             else None
@@ -220,7 +220,7 @@ def edit(request, solarsimulator_measurement_id):
             solarsimulator_cell_forms = \
                 [SolarsimulatorCellForm(prefix=str(index), instance=solarsimulator_cell)
                  for index, solarsimulator_cell in enumerate(solarsimulator_measurement.cells.all())]
-        sample_form = form_utils.SampleForm(request.user, solarsimulator_measurement, preset_sample, initial=initial)
+        sample_form = form_utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample, initial=initial)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not solarsimulator_measurement else None
         edit_description_form = form_utils.EditDescriptionForm() if solarsimulator_measurement else None
     title = _(u"{name} of {sample}").format(name=SolarsimulatorMeasurement._meta.verbose_name,

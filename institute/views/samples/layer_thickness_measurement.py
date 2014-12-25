@@ -46,7 +46,7 @@ def is_all_valid(sample_form, layer_thickness_form, edit_description_form):
       - `layer_thickness_form`: a bound layer thickness form
       - `edit_description_form`: a bound edit-description form
 
-    :type sample_form: `SampleForm`
+    :type sample_form: `samples.view.form_utils.SampleSelectForm`
     :type layer_thickness_form: `LayerThicknessForm`
     :type edit_description_form: `form_utils.EditDescriptionForm`
 
@@ -77,7 +77,7 @@ def is_referentially_valid(layer_thickness_form, sample_form, process_id):
         database.
 
     :type layer_thickness_form: `LayerThicknessForm`
-    :type sample_form: `SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleSelectForm`
     :type process_id: unicode
 
     :Return:
@@ -116,7 +116,7 @@ def edit(request, layer_thickness_measurement_id):
     preset_sample = utils.extract_preset_sample(request) if not layer_thickness_measurement else None
     if request.method == "POST":
         layer_thickness_form = LayerThicknessForm(request.user, request.POST, instance=layer_thickness_measurement)
-        sample_form = form_utils.SampleForm(request.user, layer_thickness_measurement, preset_sample, request.POST)
+        sample_form = form_utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, request.POST)
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if layer_thickness_measurement else None
         all_valid = is_all_valid(sample_form, layer_thickness_form, edit_description_form)
         referentially_valid = is_referentially_valid(layer_thickness_form, sample_form, layer_thickness_measurement_id)
@@ -140,7 +140,7 @@ def edit(request, layer_thickness_measurement_id):
         initial = {}
         if old_sample:
             initial["sample"] = old_sample.pk
-        sample_form = form_utils.SampleForm(request.user, layer_thickness_measurement, preset_sample, initial=initial)
+        sample_form = form_utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, initial=initial)
         edit_description_form = form_utils.EditDescriptionForm() if layer_thickness_measurement else None
     title = _("Thickness of {sample}").format(sample=old_sample) if layer_thickness_measurement else _("Add thickness")
     return render(request, "samples/edit_layer_thickness_measurement.html",

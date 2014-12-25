@@ -156,7 +156,7 @@ def measurement_is_referentially_valid(measurement_form, sample_form, measuremen
     :param institute_model: the related Database model
 
     :type measurement_form: `samples.views.form_utils.ProcessForm`
-    :type sample_form: `SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleForm`
     :type measurement_number: unicode
     :type institute_model: `samples.models.common.Process`
 
@@ -196,40 +196,6 @@ def three_digits(number):
     :rtype: unicode
     """
     return "{0:03}".format(number)
-
-
-class SampleForm(forms.Form):
-    """Form for the sample selection field.  You can only select *one* sample
-    per process (in contrast to depositions).
-    """
-    _ = ugettext_lazy
-    sample = SampleField(label=capfirst(_("sample")))
-
-    def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
-        """I only set the selection of samples to the
-        current user's “My Samples”.
-
-        :param user: the current user
-        :param process_instance: the process instance to be edited, or ``None`` if
-            a new is about to be created
-        :param preset_sample: the sample to which the process should be
-            appended when creating a new process; see
-            `utils.extract_preset_sample`
-
-        :type user: django.contrib.auth.models.User
-        :type process_instance: `samples.models.common.Process`
-        :type preset_sample: `samples.models.Sample`
-        """
-        super(SampleForm, self).__init__(*args, **kwargs)
-        samples = list(user.my_samples.all())
-        if process_instance:
-            sample = process_instance.samples.get()
-            samples.append(sample)
-            self.fields["sample"].initial = sample.pk
-        if preset_sample:
-            samples.append(preset_sample)
-            self.fields["sample"].initial = preset_sample.pk
-        self.fields["sample"].set_samples(samples, user)
 
 
 deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")

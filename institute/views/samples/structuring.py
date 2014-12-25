@@ -43,7 +43,7 @@ def is_all_valid(structuring_form, sample_form, remove_from_my_samples_form, edi
     :param edit_description_form: a bound edit-description form
 
     :type structuring_form: `StructuringForm`
-    :type sample_form: `institute.views.form_utils.SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleSelectForm`
     :type remove_from_my_samples_form:
         `samples.views.form_utils.RemoveFromMySamplesForm` or NoneType
     :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
@@ -62,6 +62,7 @@ def is_all_valid(structuring_form, sample_form, remove_from_my_samples_form, edi
         all_valid = edit_description_form.is_valid() and all_valid
     return all_valid
 
+
 def is_referentially_valid(structuring_form, sample_form):
     """Test whether the forms are consistent with each other and with the
     database.  In particular, it tests whether the sample is still “alive” at
@@ -71,7 +72,7 @@ def is_referentially_valid(structuring_form, sample_form):
     :param sample_form: a bound sample selection form
 
     :type structuring_form: `StructuringForm`
-    :type sample_form: `samples.views.form_utils.SampleForm`
+    :type sample_form: `samples.views.form_utils.SampleSelectForm`
 
     :return:
       whether the forms are consistent with each other and the database
@@ -85,6 +86,7 @@ def is_referentially_valid(structuring_form, sample_form):
             structuring_form.add_error("timestamp", _("Sample is already dead at this time."))
             referentially_valid = False
     return referentially_valid
+
 
 @login_required
 def edit(request, structuring_id):
@@ -108,7 +110,7 @@ def edit(request, structuring_id):
     preset_sample = utils.extract_preset_sample(request) if not structuring else None
     if request.method == "POST":
         structuring_form = StructuringForm(request.user, request.POST, instance=structuring)
-        sample_form = form_utils.SampleForm(request.user, structuring, preset_sample, request.POST)
+        sample_form = form_utils.SampleSelectForm(request.user, structuring, preset_sample, request.POST)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(request.POST) if not structuring else None
         edit_description_form = form_utils.EditDescriptionForm(request.POST) if structuring else None
         all_valid = is_all_valid(structuring_form, sample_form, remove_from_my_samples_form, edit_description_form)
@@ -135,7 +137,7 @@ def edit(request, structuring_id):
             samples = structuring.samples.all()
             if samples:
                 initial["sample"] = samples[0].pk
-        sample_form = form_utils.SampleForm(request.user, structuring, preset_sample, initial=initial)
+        sample_form = form_utils.SampleSelectForm(request.user, structuring, preset_sample, initial=initial)
         remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not structuring else None
         edit_description_form = form_utils.EditDescriptionForm() if structuring else None
     title = _("Edit structuring process") if structuring_id else _("Add structuring process")

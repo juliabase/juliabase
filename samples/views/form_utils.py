@@ -1060,3 +1060,35 @@ def check_sample_name(match, user, is_new=True):
         if not models.Initials.objects.filter(initials=groups["combined_initials"]). \
            filter(Q(external_operator__contact_persons=user) | Q(user=user)).exists():
             raise ValidationError(_("The initials do not match yours, nor any of your external contacts."))
+
+
+class SampleSelectForm(forms.Form):
+    """Form for the sample selection field.  You can only select *one* sample
+    per process (in contrast to depositions).
+    """
+    sample = SampleField(label=capfirst(_("sample")))
+
+    def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
+        """I only set the selection of samples to the current user's “My Samples”.
+
+        :param user: the current user
+        :param process_instance: the process instance to be edited, or ``None`` if
+            a new is about to be created
+        :param preset_sample: the sample to which the process should be
+            appended when creating a new process; see
+            `utils.extract_preset_sample`
+
+        :type user: django.contrib.auth.models.User
+        :type process_instance: `samples.models.common.Process`
+        :type preset_sample: `samples.models.Sample`
+        """
+        super(SampleSelectForm, self).__init__(*args, **kwargs)
+        samples = list(user.my_samples.all())
+        if process_instance:
+            sample = process_instance.samples.get()
+            samples.append(sample)
+            self.fields["sample"].initial = sample.pk
+        if preset_sample:
+            samples.append(preset_sample)
+            self.fields["sample"].initial = preset_sample.pk
+        self.fields["sample"].set_samples(samples, user)
