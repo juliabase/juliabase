@@ -25,6 +25,7 @@ import datetime, os.path, re, codecs
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+import django.contrib.auth.models
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from jb_common.utils import is_json_requested, respond_in_json, check_filepath
@@ -57,22 +58,29 @@ def get_data_from_file(number):
     result = {"number": six.text_type(number)}
     sample = None
     try:
-        result["raw_datafile"] = os.path.join(settings.PDS_ROOT_DIR, "measurement-{}.dat".format(number))
-        for i, line in open(result["raw_datafile"]):
-            if i > 4:
+        result["raw_datafile"] = "measurement-{}.dat".format(number)
+        for i, line in enumerate(open(os.path.join(settings.PDS_ROOT_DIR, result["raw_datafile"]))):
+            if i > 5:
                 break
-            key, value = line[1:].split(":")
+            key, __, value = line[1:].partition(":")
             key, value = key.strip().lower(), value.strip()
             if key == "timestamp":
-                result[key] = datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                result["timestamp"] = datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
             elif key == "apparatus":
-                result[key] = "pds" + apparatus
-            elif key in ["operator", "comments"]:
-                result[key] = value
+                result["apparatus"] = "pds" + value
+            elif key == "comments":
+                result["comments"] = value
+            elif key == "operator":
+                try:
+                    operator = django.contrib.auth.models.User.objects.get(username=value)
+                except django.contrib.auth.models.User.DoesNotExist:
+                    pass
+                else:
+                    result["operator"] = result["combined_operator"] = operator.pk
             elif key == "sample":
                 try:
                     sample = models.Sample.objects.get(name=value)
-                    key["sample"] = sample.pk
+                    result["sample"] = sample.pk
                 except models.Sample.DoesNotExist:
                     pass
     except IOError:
