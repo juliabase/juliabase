@@ -29,7 +29,7 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
-from jb_common.utils import is_json_requested, unquote_view_parameters
+from jb_common.utils import is_json_requested, unquote_view_parameters, int_or_zero
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from django.contrib.contenttypes.models import ContentType
@@ -488,7 +488,7 @@ def split_and_rename_after_deposition(request, deposition_number):
             return utils.successful_response(request, _("Samples were successfully split and/or renamed."),
                                              json_response=True)
     else:
-        new_names = dict((utils.int_or_zero(key[len("new-name-"):]), new_name)
+        new_names = dict((int_or_zero(key[len("new-name-"):]), new_name)
                          for key, new_name in request.GET.items() if key.startswith("new-name-"))
         new_names.pop(0, None)
         original_data_forms, new_name_form_lists, global_new_data_form = \

@@ -30,7 +30,7 @@ from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
-from jb_common.utils import get_really_full_name, check_markdown
+from jb_common.utils import get_really_full_name, check_markdown, int_or_zero
 from jb_common.models import Topic, Department
 from samples import models
 from samples.views import utils
@@ -313,7 +313,7 @@ class AddLayersForm(forms.Form):
         self.model = model
 
     def clean_number_of_layers_to_add(self):
-        return utils.int_or_zero(self.cleaned_data["number_of_layers_to_add"])
+        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
 
     def clean_my_layer_to_be_added(self):
         nickname = self.cleaned_data["my_layer_to_be_added"]

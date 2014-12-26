@@ -27,7 +27,7 @@ import PIL.ImageOps
 from jb_common.signals import storage_changed
 from jb_common.utils import HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
-    mkdirs, cache_key_locked, get_from_cache, unlazy_object
+    mkdirs, cache_key_locked, get_from_cache, unlazy_object, int_or_zero
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -787,7 +787,7 @@ def search(request):
             found_samples = found_samples[:max_results] if too_many_results else found_samples
     my_samples = request.user.my_samples.all()
     if request.method == "POST":
-        sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
+        sample_ids = set(int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
                          if value == "on")
         samples = base_query.in_bulk(sample_ids).values()
         request.user.my_samples.add(*samples)
@@ -847,8 +847,7 @@ def advanced_search(request):
             results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
-                    sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
-                                     if value == "on")
+                    sample_ids = set(int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items() if value == "on")
                     samples = base_query.in_bulk(sample_ids).values()
                     request.user.my_samples.add(*samples)
                 my_samples = request.user.my_samples.all()

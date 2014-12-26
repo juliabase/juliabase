@@ -25,7 +25,7 @@ from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther
+from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther, camel_case_to_underscores
 from samples import models, permissions
 from samples.views import utils, form_utils
 import django.core
@@ -98,7 +98,7 @@ class PermissionsPhysicalProcess(object):
         """
         self.name = physical_process_class._meta.verbose_name_plural
         self.codename = physical_process_class.__name__
-        substitutions = {"process_name": utils.camel_case_to_underscores(physical_process_class.__name__)}
+        substitutions = {"process_name": camel_case_to_underscores(physical_process_class.__name__)}
         try:
             self.edit_permissions_permission = \
                 Permission.objects.get(codename="edit_permissions_for_{process_name}".format(**substitutions))

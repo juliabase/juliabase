@@ -26,7 +26,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core.urlresolvers
 from django.contrib import messages
-from jb_common.utils import is_json_requested, respond_in_json
+from jb_common.utils import is_json_requested, respond_in_json, capitalize_first_letter
 from samples.views.form_utils import *
 from samples import permissions
 
@@ -105,10 +105,10 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
             messages.error(request, _("The deposition was not saved due to incorrect or missing data."))
     else:
         form_set.from_database(request.GET)
-    institute_model_name = utils.capitalize_first_letter(institute_model._meta.verbose_name)
+    institute_model_name = capitalize_first_letter(institute_model._meta.verbose_name)
     title = _("Edit {name} “{number}”").format(name=institute_model_name, number=deposition_number) if deposition_number \
         else _("Add {name}").format(name=institute_model._meta.verbose_name)
-    title = utils.capitalize_first_letter(title)
+    title = capitalize_first_letter(title)
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
     return render(request, edit_url, context_dict)

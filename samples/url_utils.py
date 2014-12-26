@@ -16,7 +16,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
-from samples.views.shared_utils import camel_case_to_underscores
+from jb_common.utils import camel_case_to_underscores
 
 
 class PatternGenerator(object):

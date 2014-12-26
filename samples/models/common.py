@@ -37,7 +37,7 @@ import django.core.urlresolvers
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from jb_common.utils import get_really_full_name, cache_key_locked, format_enumeration
+from jb_common.utils import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
 from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from samples.views import shared_utils
@@ -244,7 +244,7 @@ class Process(PolymorphicModel):
                 format(process_class_name=self._meta.verbose_name, identifier=self.id)
 
     def _urlresolve(self, prefix):
-        class_name = shared_utils.camel_case_to_underscores(self.__class__.__name__)
+        class_name = camel_case_to_underscores(self.__class__.__name__)
         try:
             field_name = parameter_name = self.JBMeta.identifying_field
         except AttributeError:
@@ -343,8 +343,8 @@ class Process(PolymorphicModel):
         :type filename: str or list of str
         :type for_thumbnail: bool
 
-        :raises PlotError: if anything went wrong during the generation of the
-            plot
+        :raises samples.utils.plots.PlotError: if anything went wrong during
+            the generation of the plot
         """
         raise NotImplementedError
 
@@ -395,7 +395,7 @@ class Process(PolymorphicModel):
 
         :rtype: unicode
         """
-        basename = "{0}_{1}".format(shared_utils.camel_case_to_underscores(self.__class__.__name__), self.id)
+        basename = "{0}_{1}".format(camel_case_to_underscores(self.__class__.__name__), self.id)
         if plot_id:
             basename += "_" + plot_id
         return basename
@@ -529,22 +529,19 @@ class Process(PolymorphicModel):
             context["name"] = name[:1].upper() + name[1:]
         if "html_body" not in context:
             context["html_body"] = render_to_string(
-                "samples/show_" + shared_utils.camel_case_to_underscores(self.__class__.__name__) + ".html",
-                context_instance=Context(context))
+                "samples/show_" + camel_case_to_underscores(self.__class__.__name__) + ".html", context_instance=Context(context))
             if "short_html_body" not in context:
                 try:
                     context["short_html_body"] = render_to_string(
                         "samples/show-short_{0}.html". \
-                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
-                        context_instance=Context(context))
+                            format(camel_case_to_underscores(self.__class__.__name__)), context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["short_html_body"] = None
             if "extend_html_body" not in context:
                 try:
                     context["extended_html_body"] = render_to_string(
                         "samples/show-extended_{0}.html". \
-                            format(shared_utils.camel_case_to_underscores(self.__class__.__name__)),
-                        context_instance=Context(context))
+                            format(camel_case_to_underscores(self.__class__.__name__)), context_instance=Context(context))
                 except TemplateDoesNotExist:
                     context["extended_html_body"] = None
         if "operator" not in context:
@@ -632,7 +629,7 @@ class PhysicalProcess(Process):
         :rtype: str
         """
         try:
-            return django.core.urlresolvers.reverse("add_" + shared_utils.camel_case_to_underscores(cls.__name__))
+            return django.core.urlresolvers.reverse("add_" + camel_case_to_underscores(cls.__name__))
         except django.core.urlresolvers.NoReverseMatch:
             return None
 

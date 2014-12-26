@@ -292,9 +292,9 @@ def edit(request, task_id):
                     else:
                         edit_description["description"] += _("* No operator is set anymore.\n")
                 if old_samples != set(task.samples.all()):
-                    edit_description["description"] += "* {0}.\n".format(utils.capitalize_first_letter(_("samples")))
+                    edit_description["description"] += "* {0}.\n".format(common_utils.capitalize_first_letter(_("samples")))
                 if old_task.comments != task.comments:
-                    edit_description["description"] += "* {0}.\n".format(utils.capitalize_first_letter(_("comments")))
+                    edit_description["description"] += "* {0}.\n".format(common_utils.capitalize_first_letter(_("comments")))
             else:
                 edit_description = None
             feed_utils.Reporter(request.user).report_task(task, edit_description)

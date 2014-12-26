@@ -33,6 +33,7 @@ from samples.data_tree import DataItem
 from jb_common import search, model_fields
 from jb_common.utils import format_lazy
 from samples.views import utils
+from samples.utils.plots import PlotError
 import institute.layouts
 import institute.utils as institute_utils
 
@@ -185,7 +186,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         y_values = 1000 * numpy.array(y_values)
         related_cell = self.cells.get(position=plot_id)
         if not related_cell.area:
-            raise utils.PlotError("Area was zero, so could not determine current density.")
+            raise PlotError("Area was zero, so could not determine current density.")
         y_values /= related_cell.area
         if for_thumbnail:
             axes.set_position((0.2, 0.15, 0.6, 0.8))

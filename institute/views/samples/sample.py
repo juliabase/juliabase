@@ -33,7 +33,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from jb_common.utils import get_really_full_name
+from jb_common.utils import get_really_full_name, int_or_zero
 from samples import models, permissions
 from samples.views import utils, form_utils, feed_utils
 from institute import models as institute_models
@@ -154,7 +154,7 @@ def add_samples_to_database(add_samples_form, user):
     occupied_provisional_numbers.insert(0, 0)
     number_of_samples = cleaned_data["number_of_samples"]
     if add_samples_form.cleaned_data.get("rename") == "cleaning":
-        subnumbers = [utils.int_or_zero(name.rpartition("-")[2]) for name in
+        subnumbers = [int_or_zero(name.rpartition("-")[2]) for name in
                       models.Sample.objects.filter(name__startswith=cleaning_number).values_list("name", flat=True)]
         starting_number = max(subnumbers) + 1 if subnumbers else 1
         names = [cleaning_number + "-{0:02}".format(i) for i in range(starting_number, starting_number + number_of_samples)]

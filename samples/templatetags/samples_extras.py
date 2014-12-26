@@ -138,7 +138,7 @@ class VerboseNameNode(template.Node):
             return ""
         verbose_name = six.text_type(model._meta.get_field(field).verbose_name)
         if verbose_name:
-            verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
+            verbose_name = jb_common.utils.capitalize_first_letter(verbose_name)
         return verbose_name
 
 
@@ -339,7 +339,7 @@ def first_upper(value):
     """Filter for formatting the value to set the first character to uppercase.
     """
     if value:
-        return samples.views.utils.capitalize_first_letter(value)
+        return jb_common.utils.capitalize_first_letter(value)
 
 
 @register.filter
@@ -385,7 +385,7 @@ class ValueFieldNode(template.Node):
                     self.unit = model_field.unit
                 except AttributeError:
                     pass
-        verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
+        verbose_name = jb_common.utils.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
             field = jb_common.templatetags.juliabase.fancy_bool(field)
             unit = None
@@ -503,7 +503,7 @@ class ValueSplitFieldNode(template.Node):
                     self.unit = model_field.unit
                 except AttributeError:
                     pass
-        verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
+        verbose_name = jb_common.utils.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if all(field is None for field in fields):
                 return """<td colspan="2"></td>"""
@@ -751,4 +751,4 @@ def strip_substrings(value, pattern):
 @register.filter
 def camel_case_to_human_text(value):
     # see `samples.views.utils.camel_case_to_human_text` for documentation
-    return samples.views.utils.camel_case_to_human_text(value)
+    return jb_common.utils.camel_case_to_human_text(value)

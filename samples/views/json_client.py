@@ -34,7 +34,7 @@ import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
 from jb_common.models import Topic
-from jb_common.utils import respond_in_json, JSONRequestException
+from jb_common.utils import respond_in_json, JSONRequestException, int_or_zero
 from samples.views import utils
 from samples import models, permissions
 from django.contrib.contenttypes.models import ContentType
@@ -357,7 +357,7 @@ def fold_process(request, sample_id):
 
     :rtype: HttpResponse
     """
-    process_id = utils.int_or_zero(request.POST["process_id"])
+    process_id = int_or_zero(request.POST["process_id"])
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
     folded_processes = json.loads(request.user.samples_user_details.folded_processes)
     exceptional_processes = folded_processes.setdefault(sample_id, [])
@@ -428,7 +428,7 @@ def fold_main_menu_element(request):
         folded_elements = json.dumps(folded_elements)
         return is_folded, folded_elements
 
-    element_id = utils.int_or_zero(request.POST["element_id"])
+    element_id = int_or_zero(request.POST["element_id"])
 
     if not element_id:
         element_id = request.POST["element_id"]

@@ -28,6 +28,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from samples import models, permissions
 from samples.views import utils
+from samples.utils.plots import PlotError
 import jb_common.utils
 from jb_common.signals import storage_changed
 
@@ -92,7 +93,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 jb_common.utils.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
-        except utils.PlotError as e:
+        except PlotError as e:
             raise Http404(six.text_type(e) or "Plot could not be generated.")
     return jb_common.utils.static_file_response(plot_filepath,
                                                      None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf")

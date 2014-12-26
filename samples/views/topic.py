@@ -28,9 +28,10 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
 from jb_common.models import Topic
+from jb_common.utils import int_or_zero
 from samples import permissions
 from samples.views import utils, feed_utils, form_utils
-from  samples.views.permissions import PermissionsPhysicalProcess
+from samples.views.permissions import PermissionsPhysicalProcess
 from django.utils.text import capfirst
 
 
@@ -201,7 +202,7 @@ def edit(request, id):
 
     :rtype: HttpResponse
     """
-    topic = get_object_or_404(Topic, id=utils.int_or_zero(id), parent_topic=None)
+    topic = get_object_or_404(Topic, id=int_or_zero(id), parent_topic=None)
     permissions.assert_can_edit_topic(request.user, topic)
     if request.method == "POST":
         edit_topic_form = EditTopicForm(request.user, topic, request.POST)
