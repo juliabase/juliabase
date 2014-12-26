@@ -43,34 +43,3 @@ def get_next_deposition_number(letter):
                for deposition_number in deposition_numbers]
     next_number = max(numbers) + 1 if numbers else 1
     return prefix + "{0:03}".format(next_number)
-
-
-def get_next_deposition_or_process_number(letter, process_cls):
-    """This function works like the `get_next_deposition_number` from
-    `samples.utils`, but it also searches throught a given process that is
-    using the same pool of numbers such as the deposition.
-
-    For example see the FiveChamberDeposition and the FiveChamberEtching.
-    There are two different processes that are made on the same apparatus and
-    therefore have the same numbers.
-
-    :param letter: the indentifying letter of the deposition apparatus.  For
-        example, it is ``"B"`` for the 6-chamber deposition.
-    :param process_cls: the model class from the process who has the same
-      type of numbers such as the deposition.
-
-    :type letter: str
-    :type process_cls: `samples.models.PhysicalProcess`
-
-    :return:
-      A so-far unused deposition number for the current calendar year for the
-      given deposition apparatus.
-    """
-    prefix = "{year}{letter}-".format(year=datetime.date.today().strftime("%y"), letter=letter)
-    numbers = map(int, map(lambda string: string[len(prefix):],
-                           set(models.Deposition.objects.filter(number__startswith=prefix).values_list('number', flat=True). \
-                               iterator()) |
-                           set(process_cls.objects.filter(number__startswith=prefix).values_list('number', flat=True). \
-                               iterator())))
-    next_number = max(numbers) + 1 if numbers else 1
-    return prefix + "{0:03}".format(next_number)
