@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-25 19:10+0100\n"
-"PO-Revision-Date: 2014-12-25 19:14+0100\n"
+"POT-Creation-Date: 2014-12-26 01:27+0100\n"
+"PO-Revision-Date: 2014-12-26 01:29+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -223,7 +223,8 @@ msgstr "Thema"
 
 #: samples/models/common.py:690 samples/models/common.py:964
 #: samples/models/common.py:1048 samples/templates/samples/show_claim.html:44
-#: samples/views/form_utils.py:705 samples/views/sample_series.py:355
+#: samples/views/form_utils.py:726 samples/views/form_utils.py:1090
+#: samples/views/sample_series.py:355
 msgid "sample"
 msgstr "Probe"
 
@@ -426,7 +427,7 @@ msgid "sample series"
 msgstr "Probenserien"
 
 #: samples/models/common.py:1407 samples/models/common.py:1414
-#: samples/views/form_utils.py:317
+#: samples/views/form_utils.py:338
 msgid "initials"
 msgstr "Kürzel"
 
@@ -1359,7 +1360,7 @@ msgid "No search was performed yet."
 msgstr "Es ist noch keine Suche durchgeführt worden."
 
 #: samples/templates/samples/base.html:25
-#: samples/templates/samples/main_menu.html:79 samples/views/form_utils.py:673
+#: samples/templates/samples/main_menu.html:79 samples/views/form_utils.py:694
 #: samples/views/result.py:104 samples/views/sample_series.py:51
 #: samples/views/task_lists.py:40
 msgid "Samples"
@@ -3050,88 +3051,92 @@ msgstr ""
 "öffnet Sie den Prozess in einem anderen Tab und kombinieren Sie die "
 "Änderungen."
 
-#: samples/views/form_utils.py:237
+#: samples/views/form_utils.py:240
+msgid "Sample is already dead at this time."
+msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
+
+#: samples/views/form_utils.py:258
 msgid "The deposition number must not be changed."
 msgstr "Die Depositionsnummer darf nicht geändert werden"
 
-#: samples/views/form_utils.py:240
+#: samples/views/form_utils.py:261
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer existiert schon."
 
-#: samples/views/form_utils.py:284
+#: samples/views/form_utils.py:305
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
-#: samples/views/form_utils.py:286
+#: samples/views/form_utils.py:307
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: samples/views/form_utils.py:345
+#: samples/views/form_utils.py:366
 msgid "These initials are already used."
 msgstr "Dieses Namenskürzel ist schon vergeben."
 
-#: samples/views/form_utils.py:366
+#: samples/views/form_utils.py:387
 msgid "Description of edit"
 msgstr "Beschreibung der Änderung"
 
-#: samples/views/form_utils.py:367
+#: samples/views/form_utils.py:388
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: samples/views/form_utils.py:706
+#: samples/views/form_utils.py:727
 msgid "sample position"
 msgstr "Probenposition"
 
-#: samples/views/form_utils.py:739 samples/views/sample_series.py:83
+#: samples/views/form_utils.py:760 samples/views/sample_series.py:83
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: samples/views/form_utils.py:748
+#: samples/views/form_utils.py:769
 msgid "Remove processed sample(s) from My Samples"
 msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
 
-#: samples/views/form_utils.py:778
+#: samples/views/form_utils.py:799
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/views/form_utils.py:782
+#: samples/views/form_utils.py:803
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/views/form_utils.py:813 samples/views/status.py:88
+#: samples/views/form_utils.py:834 samples/views/status.py:88
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: samples/views/form_utils.py:816
+#: samples/views/form_utils.py:837
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: samples/views/form_utils.py:818
+#: samples/views/form_utils.py:839
 msgid "The year must not be earlier than 1900."
 msgstr "Das Jahr darf nicht vor 1900 sein."
 
-#: samples/views/form_utils.py:849
+#: samples/views/form_utils.py:870
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/views/form_utils.py:855
+#: samples/views/form_utils.py:876
 #, python-brace-format
 msgid "The unit is invalid.  Valid units are: {units}"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: {units}"
 
-#: samples/views/form_utils.py:1044 samples/views/form_utils.py:1047
+#: samples/views/form_utils.py:1065 samples/views/form_utils.py:1068
 msgid "The year must be the current year."
 msgstr "Das Jahr muss das aktuelle Jahr sein."
 
-#: samples/views/form_utils.py:1054
+#: samples/views/form_utils.py:1075
 msgid "The initials do not match yours."
 msgstr "Das Kürzel ist nicht deines."
 
-#: samples/views/form_utils.py:1058
+#: samples/views/form_utils.py:1079
 msgid "The initials do not match any of your external contacts."
 msgstr "Das Kürzel passt nicht zu irgendeinem deiner externen Kontakte."
 
-#: samples/views/form_utils.py:1062
+#: samples/views/form_utils.py:1083
 msgid "The initials do not match yours, nor any of your external contacts."
 msgstr ""
 "Das Kürzel ist nicht deines, noch das von irgendeinem deiner externen "
@@ -4399,9 +4404,6 @@ msgstr "Themen und Berechtigungen von {user_name}"
 #~ msgstr ""
 #~ "Die Probe {0} hat bereits einen Prozess vor dem Zeitstempel dieses "
 #~ "Substrates, nämlich von {1}."
-
-#~ msgid "Sample {0} has already a substrate."
-#~ msgstr "Die Probe {0} hat bereits ein Substrat."
 
 #~ msgid "Substrate {0} was successfully changed in the database."
 #~ msgstr "Das Substrat {0} wurde erfolgreich in der Datenbank geändert."

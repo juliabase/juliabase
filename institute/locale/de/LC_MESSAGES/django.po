@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-25 19:10+0100\n"
-"PO-Revision-Date: 2014-12-25 19:13+0100\n"
+"POT-Creation-Date: 2014-12-26 01:27+0100\n"
+"PO-Revision-Date: 2014-12-26 01:28+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -445,7 +445,7 @@ msgstr "Schichtdickenmessung"
 msgid "layer thickness measurements"
 msgstr "Schichtdickenmessungen"
 
-#: institute/models/sample_details.py:47 institute/views/form_utils.py:206
+#: institute/models/sample_details.py:47
 msgid "sample"
 msgstr "Probe"
 
@@ -912,32 +912,17 @@ msgid "Edit {name} “{number}”"
 msgstr "{name} „{number}“ ändern"
 
 #: institute/views/form_utils.py:110
-#: institute/views/samples/solarsimulator_measurement.py:228
+#: institute/views/samples/solarsimulator_measurement.py:223
 #, python-brace-format
 msgid "Add {name}"
 msgstr "{name} hinzufügen"
 
-#: institute/views/form_utils.py:139
-#, python-brace-format
-msgid "{name} “{number}”"
-msgstr "{name} „{number}“"
-
-#: institute/views/form_utils.py:174
-msgid "This number is already in use."
-msgstr "Diese Nummer ist schon vergeben."
-
-#: institute/views/form_utils.py:178
-#: institute/views/samples/solarsimulator_measurement.py:133
-#: institute/views/samples/structuring.py:85
-msgid "Sample is already dead at this time."
-msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
-
 #. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: institute/views/form_utils.py:259
+#: institute/views/form_utils.py:157
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr "Ungültige Depositionsnummer.  Sie muss von der Form JJB-NNN sein."
 
-#: institute/views/form_utils.py:262 institute/views/form_utils.py:266
+#: institute/views/form_utils.py:160 institute/views/form_utils.py:164
 #, python-brace-format
 msgid "The deposition letter must be an uppercase “{letter}”."
 msgstr "Der Anlangen-Buchstabe muss ein großes „{letter}“ sein."
@@ -1091,47 +1076,51 @@ msgstr[1] "Die Proben {samples} sind zu diesem Zeitpunkt schon tot."
 msgid "No layers given."
 msgstr "Keine Schichten angebeben."
 
-#: institute/views/samples/layer_thickness_measurement.py:128
+#: institute/views/samples/layer_thickness_measurement.py:123
 #, python-brace-format
 msgid "{measurement} was successfully changed in the database."
 msgstr "{measurement} wurde erfolgreich in der Datenbank geändert."
 
-#: institute/views/samples/layer_thickness_measurement.py:130
+#: institute/views/samples/layer_thickness_measurement.py:125
 #, python-brace-format
 msgid "{measurement} was successfully added to the database."
 msgstr "{measurement} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: institute/views/samples/layer_thickness_measurement.py:145
+#: institute/views/samples/layer_thickness_measurement.py:140
 #, python-brace-format
 msgid "Thickness of {sample}"
 msgstr "Dicke von {sample}"
 
-#: institute/views/samples/layer_thickness_measurement.py:145
+#: institute/views/samples/layer_thickness_measurement.py:140
 msgid "Add thickness"
 msgstr "Dicke hinzufügen"
 
-#: institute/views/samples/pds_measurement.py:126
+#: institute/views/samples/pds_measurement.py:100
+msgid "This PDS number exists already."
+msgstr "Diese PDS-Nummer ist schon vergeben."
+
+#: institute/views/samples/pds_measurement.py:121
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
-#: institute/views/samples/pds_measurement.py:236
-#: institute/views/samples/solarsimulator_measurement.py:207
+#: institute/views/samples/pds_measurement.py:232
+#: institute/views/samples/solarsimulator_measurement.py:202
 #, python-brace-format
 msgid "{process} was successfully changed in the database."
 msgstr "{process} wurde erfolgreich in der Datenbank geändert."
 
-#: institute/views/samples/pds_measurement.py:237
-#: institute/views/samples/solarsimulator_measurement.py:209
+#: institute/views/samples/pds_measurement.py:233
+#: institute/views/samples/solarsimulator_measurement.py:204
 #, python-brace-format
 msgid "{process} was successfully added to the database."
 msgstr "{process} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: institute/views/samples/pds_measurement.py:253
+#: institute/views/samples/pds_measurement.py:249
 #, python-brace-format
 msgid "Edit PDS measurement of {sample}"
 msgstr "Ändern der PDS-Messung von {sample}"
 
-#: institute/views/samples/pds_measurement.py:253
+#: institute/views/samples/pds_measurement.py:249
 msgid "Add PDS measurement"
 msgstr "PDS-Messung hinzufügen"
 
@@ -1249,11 +1238,11 @@ msgstr "Informellen Stapel von „{sample}“ kopieren"
 msgid "No measurenents given."
 msgstr "Keine Messungen angebeben."
 
-#: institute/views/samples/solarsimulator_measurement.py:141
+#: institute/views/samples/solarsimulator_measurement.py:136
 msgid "This cell position is already given."
 msgstr "Diese Zellposition ist schon vergeben."
 
-#: institute/views/samples/solarsimulator_measurement.py:226
+#: institute/views/samples/solarsimulator_measurement.py:221
 #, python-brace-format
 msgid "{name} of {sample}"
 msgstr "{name} von {sample}"
@@ -1263,19 +1252,23 @@ msgstr "{name} von {sample}"
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: institute/views/samples/structuring.py:126
+#: institute/views/samples/structuring.py:86
+msgid "Sample is already dead at this time."
+msgstr "Die Probe ist zu diesem Zeitpunkt schon tot."
+
+#: institute/views/samples/structuring.py:128
 msgid "Structuring process was successfully changed in the database."
 msgstr "Strukturierungsprozess wurde erfolgreich in der Datenbank geändert."
 
-#: institute/views/samples/structuring.py:129
+#: institute/views/samples/structuring.py:131
 msgid "Structuring process was successfully added to the database."
 msgstr "Strukturierungsprozess wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: institute/views/samples/structuring.py:141
+#: institute/views/samples/structuring.py:143
 msgid "Edit structuring process"
 msgstr "Strukturierungsprozess ändern"
 
-#: institute/views/samples/structuring.py:141
+#: institute/views/samples/structuring.py:143
 msgid "Add structuring process"
 msgstr "Strukturierungsprozess hinzufügen"
 
@@ -1312,14 +1305,17 @@ msgstr "Ändern des Substrates „{0}“"
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
 
+#~ msgid "{name} “{number}”"
+#~ msgstr "{name} „{number}“"
+
+#~ msgid "This number is already in use."
+#~ msgstr "Diese Nummer ist schon vergeben."
+
 #~ msgid "Operator"
 #~ msgstr "Operateur"
 
 #~ msgid "The deposition number must not be changed."
 #~ msgstr "Die Depositionsnummer darf nicht verändert werden."
-
-#~ msgid "This deposition number exists already."
-#~ msgstr "Diese Depositionsnummer ist schon vergeben."
 
 #~ msgid "time"
 #~ msgstr "Zeit"
