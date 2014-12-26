@@ -165,7 +165,7 @@ class AmbiguityException(Exception):
 def lookup_sample(sample_name, user, with_clearance=False):
     """Looks up the ``sample_name`` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
-    to view it.  Shortened provisional names like “*2” are also found.  If
+    to view it.  Shortened provisional names like “\*2” are also found.  If
     nothing is found or the permissions are not sufficient, it raises an
     exception.
 

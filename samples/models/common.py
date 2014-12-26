@@ -1091,7 +1091,7 @@ sample_death_reasons = (
 
 class SampleDeath(Process):
     """This special process marks the end of the sample.  It can have various
-    reasons according to :py:var:`sample_death_reasons`.  It is impossible to
+    reasons according to :py:data:`sample_death_reasons`.  It is impossible to
     add processes to a sample if it has a `SampleDeath` process, and its
     timestamp must be the last.
     """
