@@ -13,51 +13,9 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 from __future__ import absolute_import, unicode_literals, division
-from django.utils.six.moves import cStringIO as StringIO
 
 import datetime, re
-import numpy
-from samples.views import shared_utils
 from samples import models
-
-
-def read_solarsimulator_plot_file(filename, position):
-    """Read a datafile from a solarsimulator measurement and return the content of
-    the voltage column and the selected current column.
-
-    :param filename: full path to the solarsimulator measurement data file
-    :param position: the position of the cell the currents of which should be read.
-
-    :type filename: str
-    :type position: str
-
-    :return:
-      all voltages in Volt, then all currents in Ampere
-
-    :rtype: list of float, list of float
-
-    :raises PlotError: if something wents wrong with interpreting the file (I/O,
-        unparseble data)
-    """
-    try:
-        datafile_content = StringIO(open(filename).read())
-    except IOError:
-        raise shared_utils.PlotError("Data file could not be read.")
-    for line in datafile_content:
-        if line.startswith("# Positions:"):
-            positions = line.partition(":")[2].split()
-            break
-    else:
-        positions = []
-    try:
-        column = positions.index(position) + 1
-    except ValueError:
-        raise shared_utils.PlotError("Cell position not found in the datafile.")
-    datafile_content.seek(0)
-    try:
-        return numpy.loadtxt(datafile_content, usecols=(0, column), unpack=True)
-    except ValueError:
-        raise shared_utils.PlotError("Data file format was invalid.")
 
 
 deposition_index_pattern = re.compile(r"\d{3,4}")

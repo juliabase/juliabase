@@ -34,7 +34,7 @@ from jb_common import search, model_fields
 from jb_common.utils import format_lazy
 from samples.views import utils
 import institute.layouts
-import institute.views.shared_utils as institute_utils
+import institute.utils as institute_utils
 
 
 substrate_materials = (

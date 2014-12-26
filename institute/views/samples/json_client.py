@@ -33,7 +33,8 @@ from django.http import Http404
 from jb_common.models import Topic
 from samples.views import utils
 from samples import models, permissions
-from institute import models as institute_models, layouts
+import institute.models
+from institute import layouts
 from institute.views import shared_utils
 from jb_common.utils import respond_in_json, JSONRequestException
 
@@ -103,7 +104,7 @@ def get_substrates(sample):
 
     :rtype: list of `institute.models.Substrate`
     """
-    substrates = list(institute_models.Substrate.objects.filter(samples=sample))
+    substrates = list(institute.models.Substrate.objects.filter(samples=sample))
     if sample.split_origin:
         substrates = get_substrates(sample.split_origin.parent) + substrates
     return substrates
@@ -196,7 +197,7 @@ def _get_solarsimulator_measurement_by_filepath(filepath, user):
         solarsimulator measurement
     :raises Http404: if the filepath was not found in the database
     """
-    cells = institute_models.SolarsimulatorCellMeasurement.objects.filter(data_file=filepath)
+    cells = institute.models.SolarsimulatorCellMeasurement.objects.filter(data_file=filepath)
     if cells.exists():
         measurement = cells[0].measurement
     else:
@@ -271,7 +272,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cel
         sample = get_object_or_404(models.Sample, id=sample_id)
         start_date = datetime.datetime.strptime(date, "%Y-%m-%d")
         end_date = start_date + datetime.timedelta(days=1)
-        matching_measurements = institute_models.SolarsimulatorMeasurement.objects.filter(
+        matching_measurements = institute.models.SolarsimulatorMeasurement.objects.filter(
             samples__id=sample_id, irradiation=irradiation, timestamp__gte=start_date, timestamp__lt=end_date). \
             exclude(cells__position=cell_position).order_by("timestamp")
         if matching_measurements.exists():
