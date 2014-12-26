@@ -29,7 +29,6 @@ from django.utils.translation import ugettext as _
 from jb_common.signals import maintain
 from jb_common import utils
 from samples.models import Result, PhysicalProcess, Sample, SampleAlias
-from samples.views import shared_utils
 from institute import models as institute_app
 
 

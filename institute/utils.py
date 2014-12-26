@@ -19,7 +19,6 @@ from django.utils.six.moves import cStringIO as StringIO
 import datetime, re
 import numpy
 from samples import models
-from samples.views import shared_utils
 from samples.utils.plots import PlotError
 from institute.views.samples import json_client
 

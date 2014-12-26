@@ -33,7 +33,7 @@ from jb_common.signals import storage_changed
 from jb_common import search, model_fields
 import jb_common.utils
 from samples.data_tree import DataNode, DataItem
-import samples.models, samples.views.shared_utils
+import samples.models
 
 
 @python_2_unicode_compatible

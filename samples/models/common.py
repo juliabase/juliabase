@@ -40,7 +40,6 @@ from django.core.cache import cache
 from jb_common.utils import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
 from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
-from samples.views import shared_utils
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from django.contrib.contenttypes.models import ContentType

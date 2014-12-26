@@ -14,8 +14,7 @@
 
 
 """General helper functions for the views.  Try to avoid using it outside the
-views package.  All symbols from `shared_utils` are also available here.  So
-`shared_utils` should be useful only for the Remote Client.
+views package.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -30,7 +29,6 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters
 from samples import models, permissions
-from samples.views.shared_utils import *
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm, \
     UnicodeWriter
