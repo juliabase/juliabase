@@ -28,11 +28,12 @@ from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext, ungettext, ugettext_lazy
 import jb_common.utils
 from samples import models
 from samples.views import utils, feed_utils
-from institute.views import form_utils, shared_utils
-from django.utils.translation import ugettext, ungettext, ugettext_lazy
+from institute.views import form_utils
+import institute.utils
 import institute.models as institute_models
 
 _ = ugettext
@@ -351,7 +352,7 @@ class FormSet(object):
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["timestamp_inaccuracy"] = 0
                 deposition_data["operator"] = self.user.pk
-                deposition_data["number"] = shared_utils.get_next_deposition_number("C")
+                deposition_data["number"] = institute.utils.get_next_deposition_number("C")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 build_layer_forms(source_deposition_query[0])
         if not self.deposition_form:
@@ -363,7 +364,7 @@ class FormSet(object):
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                        "number": shared_utils.get_next_deposition_number("C")})
+                                        "number": institute.utils.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition)
