@@ -24,4 +24,5 @@ import samples.models
 samples.models.clearance_sets.update({
         PDSMeasurement: (PDSMeasurement, Substrate),
         ClusterToolDeposition: (ClusterToolDeposition, Substrate),
+        FiveChamberDeposition: (FiveChamberDeposition, Substrate),
         })
