@@ -14,8 +14,8 @@
 
 
 """Helper classes and function for the views that are used for the institute.
-It extends :py:mod:`samples.views.form_utils` (in includes all names from it)
-with institute specific classes and functions.
+It supplements :py:mod:`samples.views.form_utils` with institute specific
+classes and functions.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -27,7 +27,6 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core.urlresolvers
 from django.contrib import messages
 from jb_common.utils import is_json_requested, respond_in_json, capitalize_first_letter
-from samples.views.form_utils import *
 from samples import permissions
 
 

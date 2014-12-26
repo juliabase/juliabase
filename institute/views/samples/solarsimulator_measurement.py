@@ -23,12 +23,12 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from jb_common.utils import is_json_requested, \
     respond_in_json
 from samples import permissions
-from samples.views import utils, feed_utils
+from samples.views import utils, feed_utils, form_utils as samples_form_utils
 from institute.models import SolarsimulatorMeasurement, SolarsimulatorCellMeasurement
 from institute.views import form_utils
 
 
-class SolarsimulatorMeasurementForm(form_utils.ProcessForm):
+class SolarsimulatorMeasurementForm(samples_form_utils.ProcessForm):
 
     class Meta:
         model = SolarsimulatorMeasurement
@@ -66,7 +66,7 @@ def solarsimulator_cell_forms_from_post(post, form_cls):
 
     :rtype: list
     """
-    indices = form_utils.collect_subform_indices(post)
+    indices = samples_form_utils.collect_subform_indices(post)
     return [form_cls(post, prefix=str(measurement_index)) for measurement_index in indices]
 
 
@@ -170,13 +170,12 @@ def edit(request, solarsimulator_measurement_id):
                                                      SolarsimulatorMeasurement)
     preset_sample = utils.extract_preset_sample(request) if not solarsimulator_measurement else None
     if request.method == "POST":
-        sample_form = form_utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample, request.POST)
+        sample_form = samples_form_utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample, request.POST)
         samples = solarsimulator_measurement.samples.all() if solarsimulator_measurement else None
-        remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(request.POST) if not solarsimulator_measurement \
+        remove_from_my_samples_form = samples_form_utils.RemoveFromMySamplesForm(request.POST) if not solarsimulator_measurement \
             else None
-        edit_description_form = form_utils.EditDescriptionForm(request.POST) if solarsimulator_measurement else None
-        solarsimulator_cell_forms = solarsimulator_cell_forms_from_post(request.POST,
-                                                                                             SolarsimulatorCellForm)
+        edit_description_form = samples_form_utils.EditDescriptionForm(request.POST) if solarsimulator_measurement else None
+        solarsimulator_cell_forms = solarsimulator_cell_forms_from_post(request.POST, SolarsimulatorCellForm)
         solarsimulator_measurement_form = SolarsimulatorMeasurementForm(request.user, request.POST,
                                                                         instance=solarsimulator_measurement)
         all_valid = is_all_valid(solarsimulator_measurement_form, sample_form, remove_from_my_samples_form,
@@ -215,9 +214,9 @@ def edit(request, solarsimulator_measurement_id):
             solarsimulator_cell_forms = \
                 [SolarsimulatorCellForm(prefix=str(index), instance=solarsimulator_cell)
                  for index, solarsimulator_cell in enumerate(solarsimulator_measurement.cells.all())]
-        sample_form = form_utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample, initial=initial)
-        remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm() if not solarsimulator_measurement else None
-        edit_description_form = form_utils.EditDescriptionForm() if solarsimulator_measurement else None
+        sample_form = samples_form_utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample, initial=initial)
+        remove_from_my_samples_form = samples_form_utils.RemoveFromMySamplesForm() if not solarsimulator_measurement else None
+        edit_description_form = samples_form_utils.EditDescriptionForm() if solarsimulator_measurement else None
     title = _(u"{name} of {sample}").format(name=SolarsimulatorMeasurement._meta.verbose_name,
                                                         sample=samples[0]) if solarsimulator_measurement \
         else _(u"Add {name}").format(name=SolarsimulatorMeasurement._meta.verbose_name)
