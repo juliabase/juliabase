@@ -549,34 +549,6 @@ def restricted_samples_query(user):
                                         Q(topic__isnull=True)).order_by("name").distinct()
 
 
-def round(value, digits):
-    """Method for rounding a numeric value to a fixed number of significant
-    digits.
-
-    :param value: the numeric value
-    :param digit: number of significant digits
-
-    :type value: float
-    :type digits: int
-
-    :return:
-        rounded value
-
-    :rtype: str
-    """
-    try:
-        value = float(value)
-    except (ValueError, TypeError):
-        pass
-    else:
-        try:
-            digits = int(digits)
-        except (ValueError, TypeError):
-            pass
-        else:
-            return "{{0:.{0}g}}".format(digits).format(value)
-
-
 def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
     """Unblocks specified processes of a sample for a given user.
 

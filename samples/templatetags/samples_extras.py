@@ -50,7 +50,7 @@ def round(value, digits):
     """Filter for rounding a numeric value to a fixed number of significant digits.
     The result may be used for the :py:func:`quantity` filter below.
     """
-    return samples.utils.views.round(value, digits)
+    return jb_common.utils.round(value, digits)
 
 
 @register.filter(needs_autoescape=True)
@@ -402,7 +402,7 @@ class ValueFieldNode(template.Node):
         else:
             unit = self.unit
         if self.significant_digits and field != "—":
-            field = round(field, self.significant_digits)
+            field = jb_common.utils.round(field, self.significant_digits)
         return """<td class="label">{label}:</td><td class="value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 

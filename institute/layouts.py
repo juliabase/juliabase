@@ -31,9 +31,9 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import mm
 import reportlab.pdfbase.pdfmetrics
 from django.conf import settings
+from jb_common import utils
 import institute.models
 from institute.reportlab_config import default_fontname
-import samples.utils.views as utils
 
 
 class NoStructuringFound(Exception):
