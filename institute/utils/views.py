@@ -19,15 +19,17 @@ classes and functions.
 """
 
 from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 from django.utils.six.moves import urllib
 
-from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy
+import re
+from django.shortcuts import render
+from django.utils.translation import ugettext as _
 import django.core.urlresolvers
+from django.forms.util import ValidationError
 from django.contrib import messages
-from jb_common.utils import is_json_requested, respond_in_json, capitalize_first_letter
+from jb_common.utils import capitalize_first_letter
 from samples import permissions
+from samples.views import utils
 
 
 def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):
@@ -156,8 +158,7 @@ def clean_deposition_number_field(value, letter):
         raise ValidationError(_("Invalid deposition number.  It must be of the form YYL-NNN."))
     if isinstance(letter, list):
         if value[2] not in letter:
-            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(
-                    letter=", ".join(letter)))
+            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=", ".join(letter)))
     else:
         if value[2] != letter:
             raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
