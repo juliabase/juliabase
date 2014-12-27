@@ -27,7 +27,7 @@ from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core
 from django.conf import settings
-from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther, camel_case_to_underscores
+from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther, camel_case_to_underscores, sorted_users
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -127,11 +127,11 @@ class PermissionsPhysicalProcess(object):
         full_editors = base_query.filter(Q(groups__permissions=self.edit_all_permission) |
                                          Q(user_permissions=self.edit_all_permission)).distinct() \
                                    if self.edit_all_permission else []
-        self.permission_editors = utils.sorted_users(permission_editors)
-        self.adders = utils.sorted_users(adders)
-        self.full_viewers = utils.sorted_users(full_viewers)
-        self.full_editors = utils.sorted_users(full_editors)
-        self.all_users = utils.sorted_users(set(adders) | set(permission_editors))
+        self.permission_editors = sorted_users(permission_editors)
+        self.adders = sorted_users(adders)
+        self.full_viewers = sorted_users(full_viewers)
+        self.full_editors = sorted_users(full_editors)
+        self.all_users = sorted_users(set(adders) | set(permission_editors))
 
 
 class UserListForm(forms.Form):
@@ -223,7 +223,7 @@ def list_(request):
     else:
         user_list_form = None
     if user.has_perm("jb_common.can_edit_all_topics"):
-        topic_managers = utils.sorted_users(
+        topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |
                     Q(user_permissions=PermissionsPhysicalProcess.topic_manager_permission)).distinct())

@@ -927,3 +927,35 @@ def round(value, digits):
             pass
         else:
             return "{{0:.{0}g}}".format(digits).format(value)
+
+
+def sorted_users(users):
+    """Return a list of users sorted by family name.  In particular, it sorts
+    case-insensitively.
+
+    :param users: the users to be sorted; it may also be a QuerySet
+
+    :type users: an iterable of django.contrib.auth.models.User
+
+    :return:
+      the sorted users
+
+    :rtype: list of django.contrib.auth.models.User
+    """
+    return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
+
+
+def sorted_users_by_first_name(users):
+    """Return a list of users sorted by first name.  In particular, it sorts
+    case-insensitively.
+
+    :param users: the users to be sorted; it may also be a QuerySet
+
+    :type users: an iterable of django.contrib.auth.models.User
+
+    :return:
+      the sorted users
+
+    :rtype: list of django.contrib.auth.models.User
+    """
+    return sorted(users, key=lambda user: user.first_name.lower() if user.first_name else user.username)

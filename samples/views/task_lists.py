@@ -111,7 +111,7 @@ class TaskForm(forms.ModelForm):
         self.fields["operator"].choices = [("", "---------")]
         if self.task:
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
-                                                   for user in utils.sorted_users_by_first_name(eligible_operators))
+                                                   for user in common_utils.sorted_users_by_first_name(eligible_operators))
         self.fields["process_class"].choices = utils.choices_of_content_types(
             permissions.get_all_addable_physical_process_models())
         self.fields["finished_process"].choices = [("", "---------")]
