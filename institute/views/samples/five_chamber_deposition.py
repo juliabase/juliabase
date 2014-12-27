@@ -24,7 +24,7 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
 from jb_common.utils import is_json_requested, format_enumeration
 from samples.views import utils, feed_utils, form_utils as samples_form_utils
-from institute.views import form_utils
+import institute.utils.views as form_utils
 import institute.utils.base
 import institute.models as institute_models
 

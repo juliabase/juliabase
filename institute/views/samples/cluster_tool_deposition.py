@@ -32,7 +32,7 @@ from django.utils.translation import ugettext, ungettext, ugettext_lazy
 import jb_common.utils
 from samples import models
 from samples.views import utils, feed_utils, form_utils as samples_form_utils
-from institute.views import form_utils
+import institute.utils.views as form_utils
 import institute.utils.base
 import institute.models as institute_models
 

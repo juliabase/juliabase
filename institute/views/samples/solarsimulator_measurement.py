@@ -25,7 +25,7 @@ from jb_common.utils import is_json_requested, \
 from samples import permissions
 from samples.views import utils, feed_utils, form_utils as samples_form_utils
 from institute.models import SolarsimulatorMeasurement, SolarsimulatorCellMeasurement
-from institute.views import form_utils
+import institute.utils.views as form_utils
 
 
 class SolarsimulatorMeasurementForm(samples_form_utils.ProcessForm):

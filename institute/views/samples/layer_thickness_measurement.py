@@ -22,7 +22,7 @@ from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from samples.views import utils, feed_utils, form_utils as samples_form_utils
-from institute.views import form_utils
+import institute.utils.views as form_utils
 from samples import permissions
 from institute.models import LayerThicknessMeasurement
 from django.conf import settings

@@ -30,7 +30,7 @@ from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from jb_common.utils import is_json_requested, respond_in_json, check_filepath
 from samples.views import utils, feed_utils, form_utils as samples_form_utils
-from institute.views import form_utils
+import institute.utils.views as form_utils
 from samples import models, permissions
 import institute.models as institute_models
 

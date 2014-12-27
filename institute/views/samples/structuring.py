@@ -20,7 +20,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from samples.views import utils, form_utils as samples_form_utils
-from institute.views import form_utils
+import institute.utils.views as form_utils
 import institute.models as institute_models
 
 
