@@ -36,7 +36,7 @@ from samples.views import utils
 from samples import models, permissions
 import institute.models
 from institute import layouts
-import institute.utils
+import institute.utils.base
 
 
 @login_required
@@ -171,7 +171,7 @@ def next_deposition_number(request, letter):
 
     :rtype: HttpResponse
     """
-    return respond_in_json(institute.utils.get_next_deposition_number(letter))
+    return respond_in_json(institute.utils.base.get_next_deposition_number(letter))
 
 
 def _get_solarsimulator_measurement_by_filepath(filepath, user):

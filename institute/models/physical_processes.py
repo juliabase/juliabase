@@ -35,7 +35,7 @@ from jb_common.utils import format_lazy
 from samples.views import utils
 from samples.utils.plots import PlotError
 import institute.layouts
-import institute.utils as institute_utils
+import institute.utils.base
 
 
 substrate_materials = (
@@ -182,7 +182,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
-        x_values, y_values = institute_utils.read_solarsimulator_plot_file(filename, position=plot_id)
+        x_values, y_values = institute.utils.base.read_solarsimulator_plot_file(filename, position=plot_id)
         y_values = 1000 * numpy.array(y_values)
         related_cell = self.cells.get(position=plot_id)
         if not related_cell.area:

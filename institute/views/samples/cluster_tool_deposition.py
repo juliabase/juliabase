@@ -33,7 +33,7 @@ import jb_common.utils
 from samples import models
 from samples.views import utils, feed_utils, form_utils as samples_form_utils
 from institute.views import form_utils
-import institute.utils
+import institute.utils.base
 import institute.models as institute_models
 
 _ = ugettext
@@ -352,7 +352,7 @@ class FormSet(object):
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["timestamp_inaccuracy"] = 0
                 deposition_data["operator"] = self.user.pk
-                deposition_data["number"] = institute.utils.get_next_deposition_number("C")
+                deposition_data["number"] = institute.utils.base.get_next_deposition_number("C")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 build_layer_forms(source_deposition_query[0])
         if not self.deposition_form:
@@ -364,7 +364,7 @@ class FormSet(object):
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                        "number": institute.utils.get_next_deposition_number("C")})
+                                        "number": institute.utils.base.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = samples_form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition)
