@@ -477,7 +477,7 @@ There are two things to set up for electronic lab notebooks: The URL and the
 template.
 
 Adding the URL for depositions is trivial as the method
-:py:meth:`samples.url_utils.PatternGenerator.deposition` by default also
+:py:meth:`samples.utils.urls.PatternGenerator.deposition` by default also
 creates a lab notebook URL::
 
     pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")

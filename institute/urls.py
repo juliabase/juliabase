@@ -29,7 +29,7 @@ root URL module.
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
-from samples.url_utils import PatternGenerator
+from samples.utils.urls import PatternGenerator
 from django.views.generic import TemplateView
 
 

@@ -19,7 +19,7 @@ methods of physical process models, and the layout work is done in the
 :file:`lab_notebook_{camel_case_class_name_of_process}.html` templates.
 
 Furthermore, if you'd like to add a lab notebook function, you must add its URL
-explicitly to ``urls.py``.  See :py:mod:`samples.url_utils` for further
+explicitly to ``urls.py``.  See :py:mod:`samples.utils.urls` for further
 information.
 """
 
