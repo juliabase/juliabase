@@ -27,14 +27,14 @@ from django import forms
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
-from jb_common.utils import get_really_full_name
-from samples import models, permissions
-from samples.views import utils, form_utils
-from samples.permissions import get_all_addable_physical_process_models
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from jb_common.utils import get_really_full_name
 from jb_common import utils as jb_common_utils
 from jb_common.models import Topic, Department
-from django.conf import settings
+from samples import models, permissions
+from samples.permissions import get_all_addable_physical_process_models
+import samples.utils.views as utils
 
 
 class UserDetailsForm(forms.ModelForm):
@@ -59,14 +59,14 @@ class UserDetailsForm(forms.ModelForm):
         for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = set(process for process in processes
                                           if process._meta.app_label == department.app_label)
-            choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
+            choices.append((department.name, utils.choices_of_content_types(process_from_department)))
         if not choices:
             choices = (("", 9 * "-"),)
         self.fields["default_folded_process_classes"].choices = choices
         self.fields["default_folded_process_classes"].initial = [content_type.id for content_type
                                                      in user.samples_user_details.default_folded_process_classes.iterator()]
         self.fields["default_folded_process_classes"].widget.attrs["size"] = "15"
-        self.fields["subscribed_feeds"].choices = form_utils.choices_of_content_types(
+        self.fields["subscribed_feeds"].choices = utils.choices_of_content_types(
             list(get_all_addable_physical_process_models()) + [models.Sample, models.SampleSeries, Topic])
         self.fields["subscribed_feeds"].widget.attrs["size"] = "15"
         self.fields["show_users_from_departments"].choices = [(department.pk, department.name)
@@ -126,7 +126,7 @@ def edit_preferences(request, login_name):
     user_details = user.samples_user_details
     if request.method == "POST":
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
-        initials_form = form_utils.InitialsForm(user, initials_mandatory, request.POST)
+        initials_form = utils.InitialsForm(user, initials_mandatory, request.POST)
         if user_details_form.is_valid() and initials_form.is_valid():
             __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
             user_details = user_details_form.save(commit=False)
@@ -139,7 +139,7 @@ def edit_preferences(request, login_name):
             return utils.successful_response(request, _("The preferences were successfully updated."))
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
-        initials_form = form_utils.InitialsForm(user, initials_mandatory)
+        initials_form = utils.InitialsForm(user, initials_mandatory)
     return render(request, "samples/edit_preferences.html",
                   {"title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
                    "user_details": user_details_form, "initials": initials_form,

@@ -25,10 +25,10 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.template import defaultfilters
 from django.utils.translation import ugettext as _
-from samples import permissions
-from samples.views import utils
 import jb_common.utils
 from jb_common.signals import storage_changed
+from samples import permissions
+import samples.utils.views as utils
 from institute import models, informal_stacks
 
 

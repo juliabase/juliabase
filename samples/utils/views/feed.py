@@ -21,8 +21,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.contrib.contenttypes.models import ContentType
 import jb_common.models
-from samples import models
-from samples import permissions
+from samples import models, permissions
 
 
 class Reporter(object):

@@ -20,7 +20,6 @@ views package.
 from __future__ import absolute_import, unicode_literals
 
 import copy, re
-from jb_common import mimeparse
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
@@ -28,6 +27,7 @@ from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters
+from jb_common import mimeparse
 from samples import models, permissions
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm, \

@@ -27,10 +27,11 @@ import django.utils.six as six
 
 from django.utils.encoding import python_2_unicode_compatible
 
-import hashlib, os.path, datetime, json
+import hashlib, os.path, datetime, json, collections
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
+from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
 import django.core.urlresolvers
@@ -42,8 +43,6 @@ from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
-from django.contrib.contenttypes.models import ContentType
-import collections
 
 if six.PY2:
     import HTMLParser

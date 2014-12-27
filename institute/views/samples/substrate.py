@@ -23,10 +23,10 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.contrib.auth.decorators import login_required
 from institute import models as institute_models
 from samples import permissions
-from samples.views import utils, feed_utils, form_utils
+import samples.utils.views as utils
 
 
-class SubstrateForm(form_utils.ProcessForm):
+class SubstrateForm(utils.ProcessForm):
     """Model form class for a substrate.
     """
     class Meta:
@@ -50,8 +50,8 @@ def is_referentially_valid(substrate_form, samples_form, edit_description_form):
     :param edit_description_form: form with the description of the changes
 
     :type substrate_form: `SubstrateForm`
-    :type samples_form: `samples.views.form_utils.DepositionSamplesForm`
-    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+    :type samples_form: `samples.utils.views.DepositionSamplesForm`
+    :type edit_description_form: `samples.utils.views.EditDescriptionForm`
         or NoneType
 
     :return:
@@ -98,15 +98,15 @@ def edit(request, substrate_id):
     preset_sample = utils.extract_preset_sample(request) if not substrate else None
     if request.method == "POST":
         substrate_form = SubstrateForm(request.user, request.POST, instance=substrate)
-        samples_form = form_utils.DepositionSamplesForm(request.user, preset_sample, substrate, request.POST)
-        edit_description_form = form_utils.EditDescriptionForm(request.POST) if substrate else None
+        samples_form = utils.DepositionSamplesForm(request.user, preset_sample, substrate, request.POST)
+        edit_description_form = utils.EditDescriptionForm(request.POST) if substrate else None
         referentially_valid = is_referentially_valid(substrate_form, samples_form, edit_description_form)
         if all([substrate_form.is_valid(), samples_form.is_valid() or not samples_form.is_bound,
                 edit_description_form.is_valid() if edit_description_form else True]) and referentially_valid:
             new_substrate = substrate_form.save()
             if samples_form.is_bound:
                 new_substrate.samples = samples_form.cleaned_data["sample_list"]
-            feed_utils.Reporter(request.user).report_physical_process(
+            utils.Reporter(request.user).report_physical_process(
                 new_substrate, edit_description_form.cleaned_data if edit_description_form else None)
             if substrate:
                 # FixMe: Give the show-substrate function as the "view"
@@ -121,8 +121,8 @@ def edit(request, substrate_id):
                     json_response=new_substrate.pk)
     else:
         substrate_form = SubstrateForm(request.user, instance=substrate)
-        samples_form = form_utils.DepositionSamplesForm(request.user, preset_sample, substrate)
-        edit_description_form = form_utils.EditDescriptionForm() if substrate else None
+        samples_form = utils.DepositionSamplesForm(request.user, preset_sample, substrate)
+        edit_description_form = utils.EditDescriptionForm() if substrate else None
     title = _("Edit substrate “{0}”").format(substrate) if substrate else _("Add substrate")
     return render(request, "samples/edit_substrate.html", {"title": title, "substrate": substrate_form,
                                                            "samples": samples_form,

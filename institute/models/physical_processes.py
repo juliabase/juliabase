@@ -32,7 +32,7 @@ from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
 from jb_common.utils import format_lazy
-from samples.views import utils
+import samples.utils.views as utils
 from samples.utils.plots import PlotError
 import institute.layouts
 import institute.utils.base

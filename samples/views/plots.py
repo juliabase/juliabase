@@ -26,11 +26,11 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from samples import models, permissions
-from samples.views import utils
-from samples.utils.plots import PlotError
 import jb_common.utils
 from jb_common.signals import storage_changed
+from samples import models, permissions
+import samples.utils.views as utils
+from samples.utils.plots import PlotError
 
 
 @login_required

@@ -35,7 +35,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from jb_common.utils import get_really_full_name, int_or_zero
 from samples import models, permissions
-from samples.views import utils, form_utils, feed_utils
+import samples.utils.views as utils
 from institute import models as institute_models
 from institute import printer_labels
 
@@ -69,7 +69,7 @@ class AddSamplesForm(forms.Form):
     purpose = forms.CharField(label=_("Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_("Tags"), max_length=255, required=False,
                            help_text=_("separated with commas, no whitespace"))
-    topic = form_utils.TopicField(label=_("Topic"), required=False)
+    topic = utils.TopicField(label=_("Topic"), required=False)
     rename = forms.ChoiceField(label=_("Rename"), choices=rename_choices, required=False,
                                widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
     cleaning_number = forms.CharField(label=_("Cleaning number"), max_length=8, required=False)
@@ -218,7 +218,7 @@ def add(request):
                 else:
                     break
             ids = [sample.pk for sample in samples]
-            feed_utils.Reporter(user).report_new_samples(samples)
+            utils.Reporter(user).report_new_samples(samples)
             if add_samples_form.cleaned_data["topic"]:
                 for watcher in (user_details.user
                                 for user_details in add_samples_form.cleaned_data["topic"].auto_adders.all()):
@@ -245,7 +245,7 @@ def add(request):
 
 
 class DestinationSamplesForm(forms.Form):
-    samples = form_utils.MultipleSamplesField(label=_("Destination samples"))
+    samples = utils.MultipleSamplesField(label=_("Destination samples"))
 
     def __init__(self, user, current_sample, *args, **kwargs):
         super(DestinationSamplesForm, self).__init__(*args, **kwargs)
@@ -283,7 +283,7 @@ def copy_informal_stack(request, sample_name):
                     layer.sample_details = destination_sample.sample_details
                     layer.id = None
                     layer.save()
-            feed_reporter = feed_utils.Reporter(request.user)
+            feed_reporter = utils.Reporter(request.user)
             message = _("Informal stack was copied from sample {sample}.".format(sample=sample))
             feed_reporter.report_edited_samples(destination_samples,
                                                 edit_description={"important": False, "description": message})

@@ -19,12 +19,12 @@ import datetime
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
-from samples.views import utils, form_utils as samples_form_utils
+import samples.utils.views as utils
 import institute.utils.views as form_utils
 import institute.models as institute_models
 
 
-class StructuringForm(samples_form_utils.ProcessForm):
+class StructuringForm(utils.ProcessForm):
 
     class Meta:
         model = institute_models.Structuring
@@ -81,8 +81,8 @@ def is_referentially_valid(structuring_form, sample_form):
     """
     referentially_valid = True
     if structuring_form.is_valid():
-        if sample_form.is_valid() and samples_form_utils.dead_samples([sample_form.cleaned_data["sample"]],
-                                                                      structuring_form.cleaned_data["timestamp"]):
+        if sample_form.is_valid() and utils.dead_samples([sample_form.cleaned_data["sample"]],
+                                                         structuring_form.cleaned_data["timestamp"]):
             structuring_form.add_error("timestamp", _("Sample is already dead at this time."))
             referentially_valid = False
     return referentially_valid
@@ -110,9 +110,9 @@ def edit(request, structuring_id):
     preset_sample = utils.extract_preset_sample(request) if not structuring else None
     if request.method == "POST":
         structuring_form = StructuringForm(request.user, request.POST, instance=structuring)
-        sample_form = samples_form_utils.SampleSelectForm(request.user, structuring, preset_sample, request.POST)
-        remove_from_my_samples_form = samples_form_utils.RemoveFromMySamplesForm(request.POST) if not structuring else None
-        edit_description_form = samples_form_utils.EditDescriptionForm(request.POST) if structuring else None
+        sample_form = utils.SampleSelectForm(request.user, structuring, preset_sample, request.POST)
+        remove_from_my_samples_form = utils.RemoveFromMySamplesForm(request.POST) if not structuring else None
+        edit_description_form = utils.EditDescriptionForm(request.POST) if structuring else None
         all_valid = is_all_valid(structuring_form, sample_form, remove_from_my_samples_form, edit_description_form)
         referentially_valid = is_referentially_valid(structuring_form, sample_form)
         if all_valid and referentially_valid:
@@ -137,9 +137,9 @@ def edit(request, structuring_id):
             samples = structuring.samples.all()
             if samples:
                 initial["sample"] = samples[0].pk
-        sample_form = samples_form_utils.SampleSelectForm(request.user, structuring, preset_sample, initial=initial)
-        remove_from_my_samples_form = samples_form_utils.RemoveFromMySamplesForm() if not structuring else None
-        edit_description_form = samples_form_utils.EditDescriptionForm() if structuring else None
+        sample_form = utils.SampleSelectForm(request.user, structuring, preset_sample, initial=initial)
+        remove_from_my_samples_form = utils.RemoveFromMySamplesForm() if not structuring else None
+        edit_description_form = utils.EditDescriptionForm() if structuring else None
     title = _("Edit structuring process") if structuring_id else _("Add structuring process")
     return render(request, "samples/edit_structuring.html", {"title": title,
                                                              "process": structuring_form,

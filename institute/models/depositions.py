@@ -24,10 +24,10 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.utils.http import urlquote_plus
 from django.db import models
+from jb_common import models as jb_common_models, model_fields
 import samples.models.depositions
 from samples import permissions
 from samples.data_tree import DataItem
-from jb_common import models as jb_common_models, model_fields
 
 
 class ClusterToolHotWireAndPECVDGases(models.Model):

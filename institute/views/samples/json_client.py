@@ -32,7 +32,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from jb_common.models import Topic
 from jb_common.utils import respond_in_json, JSONRequestException
-from samples.views import utils
+import samples.utils.views as utils
 from samples import models, permissions
 import institute.models
 from institute import layouts

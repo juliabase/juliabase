@@ -24,6 +24,7 @@ be changed once they have been created.
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
+import hashlib, datetime
 from jb_common.utils import adjust_timezone_information
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -32,13 +33,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
-from samples import models, permissions
-from samples.views import utils, form_utils, feed_utils
+import django.contrib.auth.models
 import jb_common.utils
 from jb_common.utils import unquote_view_parameters
-import datetime
-import django.contrib.auth.models
-import hashlib
+from samples import models, permissions
+import samples.utils.views as utils
 
 
 class SampleSeriesForm(forms.ModelForm):
@@ -46,9 +45,9 @@ class SampleSeriesForm(forms.ModelForm):
     """
     _ = ugettext_lazy
     short_name = forms.CharField(label=_("Name"), max_length=50)
-    currently_responsible_person = form_utils.UserField(label=_("Currently responsible person"))
-    topic = form_utils.TopicField(label=_("Topic"))
-    samples = form_utils.MultipleSamplesField(label=_("Samples"))
+    currently_responsible_person = utils.UserField(label=_("Currently responsible person"))
+    topic = utils.TopicField(label=_("Topic"))
+    samples = utils.MultipleSamplesField(label=_("Samples"))
 
     class Meta:
         model = models.SampleSeries
@@ -211,7 +210,7 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
 
     :type sample_series: `samples.models.SampleSeries`
     :type sample_series_form: `SampleSeriesForm`
-    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+    :type edit_description_form: `samples.utils.views.EditDescriptionForm`
 
     :return:
       whether the “important” tickbox was really marked in case of significant
@@ -252,13 +251,13 @@ def edit(request, name):
     permissions.assert_can_edit_sample_series(request.user, sample_series)
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(request.user, request.POST, instance=sample_series)
-        edit_description_form = form_utils.EditDescriptionForm(request.POST)
+        edit_description_form = utils.EditDescriptionForm(request.POST)
         all_valid = sample_series_form.is_valid()
         all_valid = edit_description_form.is_valid() and all_valid
         referentially_valid = is_referentially_valid(sample_series, sample_series_form, edit_description_form)
         if all_valid and referentially_valid:
             edit_description = edit_description_form.cleaned_data
-            feed_reporter = feed_utils.Reporter(request.user)
+            feed_reporter = utils.Reporter(request.user)
             if sample_series.currently_responsible_person != sample_series_form.cleaned_data["currently_responsible_person"]:
                 feed_reporter.report_new_responsible_person_sample_series(sample_series, edit_description)
             if sample_series.topic != sample_series_form.cleaned_data["topic"]:
@@ -276,7 +275,7 @@ def edit(request, name):
                                       "currently_responsible_person": sample_series.currently_responsible_person.pk,
                                       "topic": sample_series.topic.pk,
                                       "samples": [sample.pk for sample in sample_series.samples.all()]})
-        edit_description_form = form_utils.EditDescriptionForm()
+        edit_description_form = utils.EditDescriptionForm()
     return render(request, "samples/edit_sample_series.html",
                   {"title": _("Edit sample series “{name}”").format(name=sample_series.name),
                    "sample_series": sample_series_form,
@@ -316,7 +315,7 @@ def new(request):
                 sample_series.timestamp = timestamp
                 sample_series.save()
                 sample_series_form.save_m2m()
-                feed_utils.Reporter(request.user).report_new_sample_series(sample_series)
+                utils.Reporter(request.user).report_new_sample_series(sample_series)
                 return utils.successful_response(
                     request, _("Sample series {name} was successfully added to the database.").format(name=full_name))
     else:

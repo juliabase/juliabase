@@ -25,8 +25,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _
-from samples import permissions
 from jb_common.utils import camel_case_to_underscores
+from samples import permissions
 
 
 start_pattern = re.compile(r"\d{4}-\d\d-\d\d \d\d:\d\d:\d\d INFO     started crawling")

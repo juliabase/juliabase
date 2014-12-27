@@ -30,11 +30,11 @@ from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
+from django.utils.text import capfirst
 from jb_common.utils import get_really_full_name, check_markdown, int_or_zero
 from jb_common.models import Topic, Department
 from samples import models
-from samples.views import utils
-from django.utils.text import capfirst
+from . import base as utils
 
 
 class OperatorField(forms.ChoiceField):

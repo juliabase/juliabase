@@ -26,17 +26,15 @@ entries are self-contained.
 from __future__ import absolute_import, unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 
-from jb_common.models import Topic, PolymorphicModel
-from jb_common.utils import get_really_full_name
+import hashlib
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
-from samples.models.common import Sample, Process, Result, \
-    SampleSplit, SampleSeries, StatusMessage, Task
 import django.contrib.auth.models
 import django.core.urlresolvers
-import hashlib
-
+from samples.models.common import Sample, Process, Result, SampleSplit, SampleSeries, StatusMessage, Task
+from jb_common.models import Topic, PolymorphicModel
+from jb_common.utils import get_really_full_name
 
 
 @python_2_unicode_compatible

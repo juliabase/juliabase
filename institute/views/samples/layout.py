@@ -24,8 +24,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from samples.views import utils
 import jb_common.utils
+import samples.utils.views as utils
 from institute import models
 from institute import layouts
 

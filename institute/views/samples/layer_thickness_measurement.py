@@ -21,14 +21,14 @@ from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
 from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from samples.views import utils, feed_utils, form_utils as samples_form_utils
+import samples.utils.views as utils
 import institute.utils.views as form_utils
 from samples import permissions
 from institute.models import LayerThicknessMeasurement
 from django.conf import settings
 
 
-class LayerThicknessForm(samples_form_utils.ProcessForm):
+class LayerThicknessForm(utils.ProcessForm):
     """Form for the layer thickness measurement.
     """
     class Meta:
@@ -111,14 +111,14 @@ def edit(request, layer_thickness_measurement_id):
     preset_sample = utils.extract_preset_sample(request) if not layer_thickness_measurement else None
     if request.method == "POST":
         layer_thickness_form = LayerThicknessForm(request.user, request.POST, instance=layer_thickness_measurement)
-        sample_form = samples_form_utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, request.POST)
-        edit_description_form = samples_form_utils.EditDescriptionForm(request.POST) if layer_thickness_measurement else None
+        sample_form = utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, request.POST)
+        edit_description_form = utils.EditDescriptionForm(request.POST) if layer_thickness_measurement else None
         all_valid = is_all_valid(sample_form, layer_thickness_form, edit_description_form)
         referentially_valid = is_referentially_valid(layer_thickness_form, sample_form)
         if all_valid and referentially_valid:
             layer_thickness_measurement = layer_thickness_form.save()
             layer_thickness_measurement.samples = [sample_form.cleaned_data["sample"]]
-            feed_utils.Reporter(request.user).report_physical_process(
+            utils.Reporter(request.user).report_physical_process(
                 layer_thickness_measurement, edit_description_form.cleaned_data if edit_description_form else None)
             success_report = _("{measurement} was successfully changed in the database."). \
                 format(measurement=layer_thickness_measurement) if layer_thickness_measurement_id else \
@@ -135,8 +135,8 @@ def edit(request, layer_thickness_measurement_id):
         initial = {}
         if old_sample:
             initial["sample"] = old_sample.pk
-        sample_form = samples_form_utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, initial=initial)
-        edit_description_form = samples_form_utils.EditDescriptionForm() if layer_thickness_measurement else None
+        sample_form = utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, initial=initial)
+        edit_description_form = utils.EditDescriptionForm() if layer_thickness_measurement else None
     title = _("Thickness of {sample}").format(sample=old_sample) if layer_thickness_measurement else _("Add thickness")
     return render(request, "samples/edit_layer_thickness_measurement.html",
                   {"title": title, "measurement": layer_thickness_form, "sample": sample_form,

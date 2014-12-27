@@ -25,19 +25,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
 from django.utils.text import capfirst
-from jb_common import utils as common_utils
-from samples.models import Process, Task
-from samples.views import utils, feed_utils, form_utils
-from samples import permissions
-from jb_common.models import Department
 from django.apps import apps
+from jb_common import utils as common_utils
+from jb_common.models import Department
+from samples.models import Process, Task
+from samples import permissions
+import samples.utils.views as utils
 
 
 class SamplesForm(forms.Form):
     """Form for the list selection of samples.
     """
     _ = ugettext_lazy
-    sample_list = form_utils.MultipleSamplesField(label=_("Samples"))
+    sample_list = utils.MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, preset_sample, task, data=None, **kwargs):
         samples = list(user.my_samples.all())
@@ -112,7 +112,7 @@ class TaskForm(forms.ModelForm):
         if self.task:
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
                                                    for user in utils.sorted_users_by_first_name(eligible_operators))
-        self.fields["process_class"].choices = form_utils.choices_of_content_types(
+        self.fields["process_class"].choices = utils.choices_of_content_types(
             permissions.get_all_addable_physical_process_models())
         self.fields["finished_process"].choices = [("", "---------")]
         if self.task:
@@ -191,7 +191,7 @@ class ChooseTaskListsForm(forms.Form):
         for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().keys()
                                           if process._meta.app_label == department.app_label)
-            choices.append((department.name, form_utils.choices_of_content_types(process_from_department)))
+            choices.append((department.name, utils.choices_of_content_types(process_from_department)))
         if len(choices) == 1:
             choices = choices[0][1]
         if not choices:
@@ -297,7 +297,7 @@ def edit(request, task_id):
                     edit_description["description"] += "* {0}.\n".format(common_utils.capitalize_first_letter(_("comments")))
             else:
                 edit_description = None
-            feed_utils.Reporter(request.user).report_task(task, edit_description)
+            utils.Reporter(request.user).report_task(task, edit_description)
             message = _("Task was {verb} successfully.").format(verb=_("edited") if task_id else _("added"))
             return utils.successful_response(request, message, "samples.views.task_lists.show")
     else:
@@ -370,6 +370,6 @@ def remove(request, task_id):
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id))
     if task.customer != request.user:
         raise permissions.PermissionError(request.user, _("You are not the customer of this task."))
-    feed_utils.Reporter(request.user).report_removed_task(task)
+    utils.Reporter(request.user).report_removed_task(task)
     task.delete()
     return utils.successful_response(request, _("The task was successfully removed."), show)

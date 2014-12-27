@@ -302,7 +302,7 @@ The form
 
 For such a simple process class, this is simple::
 
-    class LayerThicknessForm(form_utils.ProcessForm):
+    class LayerThicknessForm(samples.utils.views.ProcessForm):
         class Meta:
             model = LayerThicknessMeasurement
             fields = "__all__"
@@ -337,7 +337,7 @@ The second function,
 
 returns ``True`` if the data of all forms is valid in relation to each other
 (for example, the deposition has at least one layer).  Here, we can rely solely
-on :py:meth:`~samples.views.form_utils.ProcessForm.is_referentially_valid`.
+on :py:meth:`~samples.utils.views.ProcessForm.is_referentially_valid`.
 
 
 View function
@@ -371,7 +371,7 @@ The general outline of a view function is:
     #. If forms are valid:
         #. Save everything
         #. Generate feed notification
-        #. Return by calling :py:func:`~samples.views.utils.successful_response`
+        #. Return by calling :py:func:`~samples.utils.views.successful_response`
 #. If HTTP method is GET:
     #. Build forms, maybe with initial values
 #. Return by calling :py:func:`django.shortcuts.render`

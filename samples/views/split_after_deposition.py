@@ -29,10 +29,10 @@ import django.contrib.auth.models
 from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
+from django.contrib.contenttypes.models import ContentType
 from jb_common.utils import is_json_requested, unquote_view_parameters, int_or_zero
 from samples import models, permissions
-from samples.views import utils, form_utils, feed_utils
-from django.contrib.contenttypes.models import ContentType
+import samples.utils.views as utils
 
 
 class OriginalDataForm(Form):
@@ -370,7 +370,7 @@ def forms_from_post_data(user, post_data, deposition, remote_client):
     :rtype: list of `OriginalDataForm`, list of lists of `NewNameForm`,
       `GlobalNewDataForm`
     """
-    post_data, number_of_samples, list_of_number_of_new_names = form_utils.normalize_prefixes(post_data)
+    post_data, number_of_samples, list_of_number_of_new_names = utils.normalize_prefixes(post_data)
     original_data_forms = [OriginalDataForm(remote_client, deposition.number, post_data, prefix=str(i))
                            for i in range(number_of_samples)]
     new_name_form_lists = []
@@ -484,7 +484,7 @@ def split_and_rename_after_deposition(request, deposition_number):
         if all_valid and referentially_valid and not structure_changed:
             sample_splits = save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition)
             for sample_split in sample_splits:
-                feed_utils.Reporter(request.user).report_sample_split(sample_split, sample_completely_split=True)
+                utils.Reporter(request.user).report_sample_split(sample_split, sample_completely_split=True)
             return utils.successful_response(request, _("Samples were successfully split and/or renamed."),
                                              json_response=True)
     else:

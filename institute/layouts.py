@@ -33,7 +33,7 @@ import reportlab.pdfbase.pdfmetrics
 from django.conf import settings
 import institute.models
 from institute.reportlab_config import default_fontname
-import samples.views.utils
+import samples.utils.views as utils
 
 
 class NoStructuringFound(Exception):
@@ -309,13 +309,13 @@ class CellsLayout(Layout):
         for cell in cell_measurements:
             if irradiation == "AM1.5":
                 color = map_value_to_RGB(cell.eta, [0.33, 3.1, 5.3, 6.3, 7.0, 7.7, 8.4, 9.2])
-                label = samples.views.utils.round(cell.eta, 3)
+                label = utils.round(cell.eta, 3)
             elif irradiation == "OG590":
                 color = map_value_to_RGB(cell.isc, [2.5, 3.6, 4.3, 5.0, 6.7, 9.1, 10, 12])
-                label = samples.views.utils.round(cell.isc, 3)
+                label = utils.round(cell.isc, 3)
             elif irradiation == "BG7":
                 color = map_value_to_RGB(cell.isc, [1.66, 2.45, 2.65, 2.77, 2.87, 2.93, 3.00, 3.13])
-                label = samples.views.utils.round(cell.isc, 3)
+                label = utils.round(cell.isc, 3)
             else:
                 color = (0, 0, 0)
                 label = None

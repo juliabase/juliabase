@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from jb_common.utils import unquote_view_parameters
 from samples import models, permissions
-from samples.views import utils
+import samples.utils.views as utils
 
 
 class SampleDeathForm(forms.ModelForm):

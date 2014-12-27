@@ -26,9 +26,9 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
-from samples import models, permissions
 from jb_common.utils import respond_in_json, format_enumeration, unquote_view_parameters
-from samples.views import utils, feed_utils, form_utils
+from samples import models, permissions
+import samples.utils.views as utils
 
 
 class NewNameForm(forms.Form):
@@ -65,7 +65,7 @@ class NewNameForm(forms.Form):
                         utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
                     error_message += further_error_message
                 raise ValidationError(error_message)
-            form_utils.check_sample_name(match, self.user)
+            utils.check_sample_name(match, self.user)
         if utils.does_sample_exist(new_name):
             raise ValidationError(_("Name does already exist in database."))
         return new_name
@@ -314,7 +314,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces)
         if all_valid and referentially_valid and not structure_changed:
             sample_split, new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
-            feed_utils.Reporter(request.user).report_sample_split(
+            utils.Reporter(request.user).report_sample_split(
                 sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
                 request, _("Sample “{sample}” was successfully split.").format(sample=parent),

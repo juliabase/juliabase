@@ -32,10 +32,10 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, pgettext_lazy
-from samples import models, permissions
-from samples.views import utils, form_utils, feed_utils
-import jb_common.utils
 import django.forms as forms
+import jb_common.utils
+from samples import models, permissions
+import samples.utils.views as utils
 
 
 def save_image_file(image_data, result, related_data_form):
@@ -81,7 +81,7 @@ def save_image_file(image_data, result, related_data_form):
     result.save()
 
 
-class ResultForm(form_utils.ProcessForm):
+class ResultForm(utils.ProcessForm):
     """Model form for a result process.  Note that I exclude many fields
     because they are not used in results or explicitly set.
     """
@@ -101,7 +101,7 @@ class RelatedDataForm(forms.Form):
     model itself, they are in a form of its own.
     """
     _ = ugettext_lazy
-    samples = form_utils.MultipleSamplesField(label=_("Samples"), required=False)
+    samples = utils.MultipleSamplesField(label=_("Samples"), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", "Sample series"), queryset=None,
                                                    required=False)
     image_file = forms.FileField(label=_("Image file"), required=False)
@@ -266,7 +266,7 @@ class FormSet(object):
     :type previous_dimensions_form: `DimensionsForm`
     :type quantity_forms: list of `QuantityForm`
     :type value_form_lists: list of list of `ValueForm`
-    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+    :type edit_description_form: `samples.utils.views.EditDescriptionForm`
         or NoneType
     """
 
@@ -290,7 +290,7 @@ class FormSet(object):
         """
         self.result_form = ResultForm(self.user, instance=self.result)
         self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result)
-        self.edit_description_form = form_utils.EditDescriptionForm() if self.result else None
+        self.edit_description_form = utils.EditDescriptionForm() if self.result else None
         if self.result and self.result.quantities_and_values:
             quantities, values = json.loads(self.result.quantities_and_values)
         else:
@@ -345,7 +345,7 @@ class FormSet(object):
                 else:
                     values.append(ValueForm(prefix="{0}_{1}".format(i, j)))
             self.value_form_lists.append(values)
-        self.edit_description_form = form_utils.EditDescriptionForm(post_data) if self.result else None
+        self.edit_description_form = utils.EditDescriptionForm(post_data) if self.result else None
 
     def _is_all_valid(self):
         """Test whether all bound forms are valid.  This routine guarantees that
@@ -519,7 +519,7 @@ def edit(request, process_id):
         form_set.from_post_data(request.POST, request.FILES)
         result = form_set.save_to_database(request.FILES)
         if result:
-            feed_utils.Reporter(request.user).report_result_process(
+            utils.Reporter(request.user).report_result_process(
                 result, form_set.edit_description_form.cleaned_data if form_set.edit_description_form else None)
             return utils.successful_response(request)
     else:

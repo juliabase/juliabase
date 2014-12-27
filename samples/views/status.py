@@ -30,12 +30,12 @@ from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
+import django.forms as forms
 from jb_common.utils import check_markdown
 from jb_common.search import DateTimeField
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models, PermissionError
-from samples.views import form_utils, feed_utils, utils
-import django.forms as forms
+import samples.utils.views as utils
 
 
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
@@ -48,7 +48,7 @@ class StatusForm(forms.ModelForm):
     """The status message model form class.
     """
     _ = ugettext_lazy
-    operator = form_utils.FixedOperatorField(label=capfirst(_("operator")))
+    operator = utils.FixedOperatorField(label=capfirst(_("operator")))
     status_level = forms.ChoiceField(label=capfirst(_("status level")), choices=models.status_level_choices,
                                      widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
     begin = DateTimeField(label=capfirst(_("begin")), start=True, required=False, with_inaccuracy=True,
@@ -67,7 +67,7 @@ class StatusForm(forms.ModelForm):
         self.fields["operator"].set_operator(user, user.is_staff)
         self.fields["operator"].initial = user.pk
         self.fields["timestamp"].initial = datetime.datetime.now()
-        self.fields["process_classes"].choices = form_utils.choices_of_content_types(
+        self.fields["process_classes"].choices = utils.choices_of_content_types(
             cls for cls in get_all_addable_physical_process_models()
             if (cls._meta.app_label, cls._meta.module_name) not in settings.PHYSICAL_PROCESSES_BLACKLIST)
         self.fields["process_classes"].widget.attrs["size"] = 24
@@ -126,7 +126,7 @@ def add(request):
         if status_form.is_valid():
             status = status_form.save()
             for process_class in status.process_classes.all():
-                feed_utils.Reporter(request.user).report_status_message(process_class, status)
+                utils.Reporter(request.user).report_status_message(process_class, status)
             return utils.successful_response(request, _("The status message was successfully added to the database."))
     else:
         status_form = StatusForm(request.user)
@@ -193,5 +193,5 @@ def withdraw(request, id_):
     status_message.withdrawn = True
     status_message.save()
     for process_class in status_message.process_classes.all():
-        feed_utils.Reporter(request.user).report_withdrawn_status_message(process_class, status_message)
+        utils.Reporter(request.user).report_withdrawn_status_message(process_class, status_message)
     return utils.successful_response(request, _("The status message was successfully withdrawn."), show)

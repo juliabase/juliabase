@@ -108,14 +108,12 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 from django.utils.six.moves import cStringIO as StringIO
 
+import csv, codecs
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-import jb_common.utils
-import csv
-import codecs
 import django.core.urlresolvers
 import django.forms as forms
-
+import jb_common.utils
 
 
 class UnicodeWriter(object):

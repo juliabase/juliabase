@@ -29,9 +29,9 @@ import django.contrib.auth.models
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from jb_common.utils import is_json_requested, respond_in_json, check_filepath
-from samples.views import utils, feed_utils, form_utils as samples_form_utils
-import institute.utils.views as form_utils
+import samples.utils.views as utils
 from samples import models, permissions
+import institute.utils.views as form_utils
 import institute.models as institute_models
 
 
@@ -88,7 +88,7 @@ def get_data_from_file(number):
     return result, sample
 
 
-class PDSMeasurementForm(samples_form_utils.ProcessForm):
+class PDSMeasurementForm(utils.ProcessForm):
     """Model form for the core PDS measurement data.
     """
     class Meta:
@@ -200,10 +200,10 @@ def edit(request, number):
     preset_sample = utils.extract_preset_sample(request) if not pds_measurement else None
     if request.method == "POST":
         pds_measurement_form = None
-        sample_form = samples_form_utils.SampleSelectForm(request.user, pds_measurement, preset_sample, request.POST)
-        remove_from_my_samples_form = samples_form_utils.RemoveFromMySamplesForm(request.POST) if not pds_measurement else None
+        sample_form = utils.SampleSelectForm(request.user, pds_measurement, preset_sample, request.POST)
+        remove_from_my_samples_form = utils.RemoveFromMySamplesForm(request.POST) if not pds_measurement else None
         overwrite_form = OverwriteForm(request.POST)
-        edit_description_form = samples_form_utils.EditDescriptionForm(request.POST) if pds_measurement else None
+        edit_description_form = utils.EditDescriptionForm(request.POST) if pds_measurement else None
         if overwrite_form.is_valid() and overwrite_form.cleaned_data["overwrite_from_file"]:
             try:
                 number = int(request.POST["number"])
@@ -225,7 +225,7 @@ def edit(request, number):
             samples = [sample_form.cleaned_data["sample"]]
             pds_measurement.samples = samples
             reporter = request.user if not request.user.is_staff else pds_measurement_form.cleaned_data["operator"]
-            feed_utils.Reporter(reporter).report_physical_process(
+            utils.Reporter(reporter).report_physical_process(
                 pds_measurement, edit_description_form.cleaned_data if edit_description_form else None)
             if remove_from_my_samples_form and remove_from_my_samples_form.cleaned_data["remove_from_my_samples"]:
                 utils.remove_samples_from_my_samples(samples, request.user)
@@ -242,10 +242,10 @@ def edit(request, number):
         initial = {}
         if old_sample:
             initial["sample"] = old_sample.pk
-        sample_form = samples_form_utils.SampleSelectForm(request.user, pds_measurement, preset_sample, initial=initial)
-        remove_from_my_samples_form = samples_form_utils.RemoveFromMySamplesForm() if not pds_measurement else None
+        sample_form = utils.SampleSelectForm(request.user, pds_measurement, preset_sample, initial=initial)
+        remove_from_my_samples_form = utils.RemoveFromMySamplesForm() if not pds_measurement else None
         overwrite_form = OverwriteForm()
-        edit_description_form = samples_form_utils.EditDescriptionForm() if pds_measurement else None
+        edit_description_form = utils.EditDescriptionForm() if pds_measurement else None
     title = _("Edit PDS measurement of {sample}").format(sample=old_sample) if pds_measurement else _("Add PDS measurement")
     return render(request, "samples/edit_pds_measurement.html",
                   {"title": title, "pds_measurement": pds_measurement_form, "overwrite": overwrite_form,

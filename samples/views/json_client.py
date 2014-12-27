@@ -33,11 +33,11 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 import django.contrib.auth.models
 import django.contrib.auth
 from django.shortcuts import get_object_or_404
+from django.contrib.contenttypes.models import ContentType
 from jb_common.models import Topic
 from jb_common.utils import respond_in_json, JSONRequestException, int_or_zero
-from samples.views import utils
+import samples.utils.views as utils
 from samples import models, permissions
-from django.contrib.contenttypes.models import ContentType
 
 
 @login_required

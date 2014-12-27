@@ -25,11 +25,11 @@ from django.contrib.auth.models import User, Permission
 from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther, camel_case_to_underscores
-from samples import models, permissions
-from samples.views import utils, form_utils
 import django.core
 from django.conf import settings
+from jb_common.utils import get_really_full_name, get_all_models, HttpResponseSeeOther, camel_case_to_underscores
+from samples import models, permissions
+import samples.utils.views as utils
 
 
 class PermissionsPhysicalProcess(object):
@@ -138,7 +138,7 @@ class UserListForm(forms.Form):
     """Form class for selecting the user to change the permissions for him/her.
     """
     _ = ugettext_lazy
-    selected_user = form_utils.UserField(label=_("Change the permissions of"))
+    selected_user = utils.UserField(label=_("Change the permissions of"))
 
     def __init__(self, user, *args, **kwargs):
         super(UserListForm, self).__init__(*args, **kwargs)

@@ -29,7 +29,7 @@ from django.forms.util import ValidationError
 from django.contrib import messages
 from jb_common.utils import capitalize_first_letter
 from samples import permissions
-from samples.views import utils
+import samples.utils.views as utils
 
 
 def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):

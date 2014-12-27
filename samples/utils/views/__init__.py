@@ -12,16 +12,9 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
-"""This program removes the finished tasks from the database which are older
-than a week.
 
-It should be called once a day at night as a cron job.  Maybe run it after the
-postgresql_backup script to have a backup, if needed.
-"""
+from __future__ import absolute_import, unicode_literals
 
-import datetime
-from samples.models import Task
-
-
-Task.objects.filter(status__contains="finished",
-                    last_modified__lte=datetime.datetime.now() - datetime.timedelta(days=7)).delete()
+from .base import *
+from .forms import *
+from .feed import *
