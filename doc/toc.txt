@@ -30,3 +30,4 @@ JuliaBase
    programming/settings
    programming/sample_names
    programming/hacking_on_juliabase
+   programming/utilities

@@ -1,0 +1,123 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+=========
+Utilities
+=========
+
+
+Common helpers
+===================
+
+
+String-related
+--------------
+
+.. autofunction:: jb_common.utils.base.format_lazy
+.. autofunction:: jb_common.utils.base.format_enumeration
+.. autofunction:: jb_common.utils.base.camel_case_to_underscores
+.. autofunction:: jb_common.utils.base.camel_case_to_human_text
+
+
+File-related
+------------
+
+.. autofunction:: jb_common.utils.base.find_file_in_directory
+.. autofunction:: jb_common.utils.base.check_filepath
+.. autofunction:: jb_common.utils.base.is_update_necessary
+.. autofunction:: jb_common.utils.base.remove_file
+.. autofunction:: jb_common.utils.base.mkdirs
+
+
+Generating responses
+--------------------
+
+.. autoexception:: jb_common.utils.base.JSONRequestException
+.. autofunction:: samples.utils.views.successful_response
+.. autofunction:: jb_common.utils.base.is_json_requested
+.. autofunction:: jb_common.utils.base.respond_in_json
+.. autofunction:: jb_common.utils.base.static_file_response
+
+
+Sample-related
+--------------
+
+.. autofunction:: jb_common.utils.base.get_really_full_name
+.. autofunction:: samples.utils.views.dead_samples
+.. autofunction:: samples.utils.views.sample_name_format
+.. autofunction:: samples.utils.views.get_sample
+.. autofunction:: samples.utils.views.does_sample_exist
+.. autofunction:: samples.utils.views.normalize_sample_name
+.. autofunction:: samples.utils.views.lookup_sample
+.. autofunction:: samples.utils.views.remove_samples_from_my_samples
+.. autofunction:: samples.utils.views.extract_preset_sample
+
+
+Miscellaneous
+-------------
+
+.. autofunction:: samples.utils.views.convert_id_to_int
+.. autofunction:: jb_common.utils.base.check_markdown
+.. autofunction:: jb_common.utils.base.help_link
+.. autofunction:: jb_common.utils.base.send_email
+.. autofunction:: jb_common.utils.base.round
+.. autofunction:: samples.utils.views.table_export
+
+
+Feed reporting
+================
+
+.. autoclass:: samples.utils.views.Reporter
+               :members:
+
+
+Form field classes
+====================
+
+.. autoclass:: jb_common.utils.views.UserField
+               :members: set_users, set_users_without
+.. autoclass:: jb_common.utils.views.MultipleUsersField
+               :members: set_users
+.. autoclass:: jb_common.utils.views.TopicField
+               :members: set_topics
+.. autoclass:: samples.utils.views.OperatorField
+               :members: set_choices
+
+
+Form classes
+==============
+
+.. autoclass:: samples.utils.views.ProcessForm
+               :members: is_referentially_valid
+.. autoclass:: samples.utils.views.DepositionForm
+               :members: is_referentially_valid
+.. autoclass:: samples.utils.views.SampleSelectForm
+.. autoclass:: samples.utils.views.DepositionSamplesForm
+.. autoclass:: samples.utils.views.EditDescriptionForm
+.. autoclass:: samples.utils.views.RemoveFromMySamplesForm
+
+
+Plots
+======
+
+.. autoexception:: samples.utils.plots.PlotError
+.. autofunction:: samples.utils.plots.read_plot_file_beginning_at_line_number
+.. autofunction:: samples.utils.plots.read_plot_file_beginning_after_start_value
+
+
+URLs
+======
+
+.. autoclass:: samples.utils.urls.PatternGenerator
+               :members:
