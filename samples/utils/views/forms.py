@@ -51,7 +51,7 @@ class OperatorField(forms.ChoiceField):
     both is ``None`` if the respective type of operator was not given.
 
     It is senseful to show this field only to non-staff, and staff gets the
-    usual operator/external operator fields.  In the IEK‑5/FZJ implementation,
+    usual operator/external operator fields.  In the IEK-5/FZJ implementation,
     we even allow all three fields for staff users as long as there no
     contradicting values are given.
 

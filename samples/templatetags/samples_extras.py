@@ -56,7 +56,7 @@ def round(value, digits):
 @register.filter(needs_autoescape=True)
 def quantity(value, unit=None, autoescape=False):
     """Filter for pretty-printing a physical quantity.  It converts ``3.4e-3`` into
-    ``3.4·10⁻³``.  The number is the part that is actually filtered, while the
+    :math:`3.4\\cdot10^{-3}`.  The number is the part that is actually filtered, while the
     unit is the optional argument of this filter.  So, you may write::
 
         {{ deposition.pressure|quantity:"mbar" }}

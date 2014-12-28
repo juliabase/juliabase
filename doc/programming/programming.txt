@@ -433,7 +433,7 @@ which in turn is an ordinary Django model (not a ``Process``)::
         deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
         layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
         chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
-        sih4 = model_fields.DecimalQuantityField("SiH₄", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
+        sih4 = model_fields.DecimalQuantityField("SiH4", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
         h2 = model_fields.DecimalQuantityField("H₂", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
         temperature_1 = model_fields.DecimalQuantityField(_("temperature 1"), max_digits=7, decimal_places=3, unit="℃", null=True, blank=True)
         temperature_2 = model_fields.DecimalQuantityField(_("temperature 2"), max_digits=7, decimal_places=3, unit="℃", null=True, blank=True)
