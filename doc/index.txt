@@ -79,5 +79,5 @@ like it, the next step could be :doc:`installing it
 </programming/installation>`.  Its installation includes the demo site, so you
 have immediately something up and running, and you can evaluate it even better.
 
-If you consider actually using JuliaBase, have a look at the :doc:`programming
-guide <programming/programming>` for how to adapt it to your needs.
+If you consider actually using JuliaBase, have a look at the full :doc:`table
+of contents <toc>`.
