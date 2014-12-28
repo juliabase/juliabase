@@ -541,6 +541,16 @@ def restricted_samples_query(user):
     allowed to see all of the samples themselves necessarily.  It is only about
     the names.  See the :py:func:`samples.views.sample.search` view for further
     information.
+
+    :param user: the user for which the allowed samples should be retrieved
+
+    :type user: django.contrib.auth.models.User
+
+    :return:
+      a queryset with all samples the names of which the user is allowed to
+      know
+
+    :rtype: QuerySet
     """
     if user.is_staff:
         return models.Sample.objects.all().order_by("name")
