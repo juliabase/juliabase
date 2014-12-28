@@ -619,9 +619,9 @@ def mkdirs(path):
 
 @contextmanager
 def cache_key_locked(key):
-    """Locks the `key` in the cache.  If `key` already exists, it waits for
+    """Locks the ``key`` in the cache.  If ``key`` already exists, it waits for
     max. 6 seconds.  If it's still not released, the whole cache is cleared.
-    In all cases, `key` is hold in the context.  After the context is left
+    In all cases, ``key`` is hold in the context.  After the context is left
     (even via an exception), the key is deleted, i.e. the lock is removed.  Use
     it like this::
 
@@ -895,6 +895,7 @@ def capitalize_first_letter(text):
 
     :rtype: unicode
     """
+    # FixMe: Remove this function in favour of django.utils.text.capfirst.
     if text:
         return text[0].upper() + text[1:]
     else:
