@@ -212,21 +212,22 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         return ""
 
 
-def find_file_in_directory(filename, path, max_depth=float("inf")):
+def find_file_in_directory(filename, path, max_depth=None):
     """Searches for a file in a directory recursively to a given depth.
 
-    :param filename: the file to be searched for. only the basename is
+    :param filename: The file to be searched for.  Only the basename is
         required.
-    :param path: the path from the top level directory where the searching
+    :param path: The path from the top level directory where the searching
         starts.
-    :param max_depth: the maximum recursion depth.
+    :param max_depth: The maximum recursion depth; if ``None``, there is no
+        limit.
 
     :type filename: str
     :type path: str
     :type max_depth: int
 
     :return:
-        the relative path to the searched file or ``None`` if not found.
+        The relative path to the searched file, or ``None`` if not found.
 
     :rtype: str
     """
@@ -239,7 +240,6 @@ def find_file_in_directory(filename, path, max_depth=float("inf")):
         if depth == max_depth:
             # prevents further searches in the subdirectories.
             dirs[:] = []
-
 
 
 class _AddHelpLink(object):
