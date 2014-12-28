@@ -555,6 +555,8 @@ class Process(PolymorphicModel):
                 context["edit_url"] = None
         else:
             context["edit_url"] = None
+        if hasattr(self, "get_sample_position_context"):
+            context = self.get_sample_position_context(user, context)
         return context
 
     @classmethod
