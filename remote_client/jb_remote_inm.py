@@ -45,6 +45,7 @@ class ClusterToolDeposition(object):
     def __init__(self, number=None):
         if number:
             data = connection.open("cluster_tool_depositions/{0}".format(number))
+            self.id = data["id"]
             self.sample_ids = data["samples"]
             self.operator = data["operator"]
             self.timestamp = parse_timestamp(data["timestamp"])
@@ -61,14 +62,13 @@ class ClusterToolDeposition(object):
                     ClusterToolHotWireLayer(self, layer_data)
                 else:
                     raise Exception("{} is an unknown layer type".format(layer_data["content_type"]))
-            self.existing = True
         else:
+            self.id = None
             self.sample_ids = []
             self.number = self.operator = self.timestamp = self.comments = None
             self.timestamp_inaccuracy = 0
             self.carrier = None
             self.layers = []
-            self.existing = False
         self.finished = True
         self.edit_description = None
         self.edit_important = True
@@ -76,7 +76,7 @@ class ClusterToolDeposition(object):
     def submit(self):
         if not self.operator:
             self.operator = connection.username
-        if self.number is None:
+        if self.id is None and self.number is None:
             self.number = connection.open("next_deposition_number/C")
         data = {"number": self.number,
                 "operator": primary_keys["users"][self.operator],
@@ -88,12 +88,12 @@ class ClusterToolDeposition(object):
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
         with TemporaryMySamples(self.sample_ids):
-            if self.existing:
-                result = connection.open("cluster_tool_depositions/{0}/edit/".format(self.number), data)
+            if self.id:
+                connection.open("cluster_tool_depositions/{0}/edit/".format(self.number), data)
             else:
-                result = connection.open("cluster_tool_depositions/add/", data)
+                self.id = connection.open("cluster_tool_depositions/add/", data)
                 logging.info("Successfully added cluster tool deposition {0}.".format(self.number))
-        return result
+        return self.id
 
     @classmethod
     def get_already_available_deposition_numbers(cls):
@@ -199,6 +199,7 @@ class PDSMeasurement(object):
         """
         if number:
             data = connection.open("pds_measurements/{0}".format(number))
+            self.id = data["id"]
             self.sample_id = data["samples"][0]
             self.number = data["number"]
             self.operator = data["operator"]
@@ -207,12 +208,10 @@ class PDSMeasurement(object):
             self.comments = data["comments"]
             self.apparatus = data["apparatus"]
             self.raw_datafile = data["raw_datafile"]
-            self.existing = True
         else:
-            self.sample_id = self.number = self.operator = self.timestamp = self.comments = self.apparatus = None
+            self.id = self.sample_id = self.number = self.operator = self.timestamp = self.comments = self.apparatus = None
             self.timestamp_inaccuracy = 0
             self.raw_datafile = None
-            self.existing = False
         self.edit_description = None
         self.edit_important = True
 
@@ -232,12 +231,12 @@ class PDSMeasurement(object):
                 "edit_description-important": self.edit_important
                 }
         with TemporaryMySamples(self.sample_id):
-            if self.existing:
+            if self.id:
                 connection.open("pds_measurements/{0}/edit/".format(self.number), data)
             else:
-                process_id = connection.open("pds_measurements/add/", data)
-                logging.info("Successfully added PDS measurement {0}.".format(process_id))
-                return process_id
+                self.id = connection.open("pds_measurements/add/", data)
+                logging.info("Successfully added PDS measurement {0}.".format(self.id))
+        return self.id
 
     @classmethod
     def get_already_available_pds_numbers(cls):
@@ -257,9 +256,9 @@ class Substrate(object):
     """
 
     def __init__(self, initial_data=None):
-        """Note that in contrast to the processes, you
-        currently can't retrieve an existing substrate from the database
-        (except by retrieving its respective sample).
+        """Note that in contrast to other processes, you currently can't retrieve an
+        existing substrate from the database (except by retrieving its
+        respective sample).
         """
         if initial_data:
             self.id, self.timestamp, self.timestamp_inaccuracy, self.operator, self.external_operator, self.material, \
@@ -280,11 +279,12 @@ class Substrate(object):
                 "operator": primary_keys["users"][self.operator],
                 "external_operator": self.external_operator and primary_keys["external_operators"][self.external_operator],
                 "sample_list": self.sample_ids}
-        if self.id:
-            data["edit_description-description"] = "automatic change by a non-interactive program"
-            connection.open("substrates/{0}/edit/".format(self.id), data)
-        else:
-            return connection.open("substrates/add/", data)
+        with TemporaryMySamples(self.sample_ids):
+            if self.id:
+                connection.open("substrates/{0}/edit/".format(self.id), data)
+            else:
+                self.id = connection.open("substrates/add/", data)
+        return self.id
 
 
 class SampleNotFound(Exception):
@@ -350,7 +350,7 @@ class SolarsimulatorMeasurement(object):
     def __init__(self, process_id=None):
         if process_id:
             data = connection.open("solarsimulator_measurements/{0}".format(process_id))
-            self.process_id = process_id
+            self.id = process_id
             self.irradiation = data["irradiation"]
             self.temperature = data["temperature"]
             self.sample_id = data["samples"][0]
@@ -363,13 +363,11 @@ class SolarsimulatorMeasurement(object):
                 if key.startswith("cell position "):
                     data = value
                     cell = SolarsimulatorCellMeasurement(self, data["position"], data)
-            self.existing = True
         else:
-            self.process_id = self.irradiation = self.temperature = self.sample_id = self.operator = self.timestamp = \
+            self.id = self.irradiation = self.temperature = self.sample_id = self.operator = self.timestamp = \
                 self.comments = None
             self.timestamp_inaccuracy = 0
             self.cells = {}
-            self.existing = False
         self.edit_important = True
         self.edit_description = None
 
@@ -389,13 +387,13 @@ class SolarsimulatorMeasurement(object):
         for index, cell in enumerate(self.cells.values()):
             data.update(cell.get_data(index))
         with TemporaryMySamples(self.sample_id):
-            if self.existing:
+            if self.id:
                 query_string = "?only_single_cell_added=true" if only_single_cell_added else ""
-                connection.open("solarsimulator_measurements/{0}/edit/".format(self.process_id) + query_string, data)
+                connection.open("solarsimulator_measurements/{0}/edit/".format(self.id) + query_string, data)
             else:
-                process_id = connection.open("solarsimulator_measurements/add/", data)
-                logging.info("Successfully added solarsimulator measurement {0}.".format(process_id))
-                return process_id
+                self.id = connection.open("solarsimulator_measurements/add/", data)
+                logging.info("Successfully added solarsimulator measurement {0}.".format(self.id))
+        return self.id
 
 
 class SolarsimulatorCellMeasurement(object):
@@ -423,8 +421,10 @@ class SolarsimulatorCellMeasurement(object):
 class Structuring(object):
 
     def __init__(self):
+        """Currently, you can only *add* such processes.
+        """
         self.sample_id = None
-        self.process_id = None
+        self.id = None
         self.operator = None
         self.timestamp = None
         self.timestamp_inaccuracy = 0
@@ -446,12 +446,12 @@ class Structuring(object):
                 "edit_description-description": self.edit_description,
                 "edit_description-important": self.edit_important}
         with TemporaryMySamples(self.sample_id):
-            if self.process_id:
-                connection.open("structurings/{0}/edit/".format(self.process_id), data)
+            if self.id:
+                connection.open("structurings/{0}/edit/".format(self.id), data)
             else:
-                self.process_id = connection.open("structurings/add/", data)
-                logging.info("Successfully added structuring {0}.".format(self.process_id))
-                return self.process_id
+                self.id = connection.open("structurings/add/", data)
+                logging.info("Successfully added structuring {0}.".format(self.id))
+        return self.id
 
 
 class FiveChamberDeposition(object):
@@ -469,6 +469,7 @@ class FiveChamberDeposition(object):
         """
         if number:
             data = connection.open("5-chamber_depositions/{0}".format(number))
+            self.id = data["id"]
             self.sample_ids = data["samples"]
             self.operator = data["operator"]
             self.timestamp = parse_timestamp(data["timestamp"])
@@ -479,15 +480,14 @@ class FiveChamberDeposition(object):
             layers = [(int(key[6:]), value) for key, value in data.items() if key.startswith("layer ")]
             for __, layer_data in sorted(layers):
                 FiveChamberLayer(self, layer_data)
-            self.existing = True
         else:
+            self.id = None
             self.number = None
             self.sample_ids = []
             self.operator = self.timestamp = None
             self.comments = ""
             self.timestamp_inaccuracy = 0
             self.layers = []
-            self.existing = False
         self.edit_description = None
         self.edit_important = True
 
@@ -515,12 +515,12 @@ class FiveChamberDeposition(object):
         for layer_index, layer in enumerate(self.layers):
             data.update(layer.get_data(layer_index))
         with TemporaryMySamples(self.sample_ids):
-            if self.existing:
-                result = connection.open("5-chamber_depositions/{0}/edit/".format(self.number), data)
+            if self.id:
+                connection.open("5-chamber_depositions/{0}/edit/".format(self.number), data)
             else:
-                result = connection.open("5-chamber_depositions/add/", data)
+                self.id = connection.open("5-chamber_depositions/add/", data)
                 logging.info("Successfully added 5-chamber deposition {0}.".format(self.number))
-        return result
+        return self.id
 
     @classmethod
     def get_already_available_deposition_numbers(cls):
