@@ -27,9 +27,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.forms.util import ValidationError
 import django.contrib.auth.models
-from samples import models, permissions
-from samples.views import utils
 from django.contrib import messages
+from samples import models, permissions
+import samples.utils.views as utils
 
 
 class MyLayerForm(forms.Form):

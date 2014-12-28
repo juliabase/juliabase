@@ -17,7 +17,7 @@ from __future__ import absolute_import, division, unicode_literals
 import django.utils.six as six
 from django.utils.six.moves import urllib_parse
 
-import codecs, re, os, os.path, time, json, datetime, copy, mimetypes
+import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string
 from contextlib import contextmanager
 from smtplib import SMTPException
 from functools import update_wrapper
@@ -794,3 +794,168 @@ def unquote_view_parameters(view):
                     *[urllib_parse.unquote(value) for value in args],
                     **dict((key, urllib_parse.unquote(value)) for key, value in kwargs.items()))
     return unquoting_view
+
+
+def int_or_zero(number):
+    """Converts ``number`` to an integer.  If this doesn't work, return ``0``.
+
+    :param number: a string that is supposed to contain an integer number
+
+    :type number: str or unicode or NoneType
+
+    :return:
+      the ``int`` representation of ``number``, or 0 if it didn't represent a
+      valid integer number
+
+    :rtype: int
+    """
+    try:
+        return int(number)
+    except (ValueError, TypeError):
+        return 0
+
+
+def camel_case_to_underscores(name):
+    """Converts a CamelCase identifier to one using underscores.  For example,
+    ``"MySamples"`` is converted to ``"my_samples"``, and ``"PDSMeasurement"``
+    to ``"pds_measurement"``.
+
+    :param name: the camel-cased identifier
+
+    :type name: str
+
+    :return:
+      the identifier in underscore notation
+
+    :rtype: str
+    """
+    result = []
+    for i, character in enumerate(name):
+        if i > 0 and character in string.ascii_uppercase + string.digits and (
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase + string.digits) or
+            (name[i - 1] not in string.ascii_uppercase + string.digits)):
+            result.append("_")
+        result.append(character.lower())
+    return "".join(result)
+
+
+def camel_case_to_human_text(name):
+    """Converts a CamelCase identifier to one intended to be read by humans.
+    For example, ``"MySamples"`` is converted to ``"my samples"``, and
+    ``"PDSMeasurement"`` to ``"PDS measurement"``.
+
+    :param name: the camel-cased identifier
+
+    :type name: str
+
+    :return:
+      the pretty-printed identifier
+
+    :rtype: str
+    """
+    result = []
+    for i, character in enumerate(name):
+        if i > 0 and character in string.ascii_uppercase and (
+            (i + 1 < len(name) and name[i + 1] not in string.ascii_uppercase) or
+            (name[i - 1] not in string.ascii_uppercase)):
+            result.append(" ")
+        result.append(character if i + 1 >= len(name) or name[i + 1] in string.ascii_uppercase else character.lower())
+    return "".join(result)
+
+
+def remove_file(path):
+    """Removes the file.  If the file didn't exist, this is a no-op.
+
+    :param path: absolute path to the file to be removed
+
+    :type path: str
+
+    :return:
+      whether the file was removed; if ``False``, it hadn't existed
+
+    :rtype: bool
+    """
+    try:
+        os.remove(path)
+    except OSError:
+        return False
+    else:
+        return True
+
+
+def capitalize_first_letter(text):
+    """Capitalise the first letter of the given string.
+
+    :param text: text whose first letter should be capitalised
+
+    :type text: unicode
+
+    :return:
+      the text with capitalised first letter
+
+    :rtype: unicode
+    """
+    if text:
+        return text[0].upper() + text[1:]
+    else:
+        return ""
+
+
+def round(value, digits):
+    """Method for rounding a numeric value to a fixed number of significant
+    digits.
+
+    :param value: the numeric value
+    :param digit: number of significant digits
+
+    :type value: float
+    :type digits: int
+
+    :return:
+        rounded value
+
+    :rtype: str
+    """
+    try:
+        value = float(value)
+    except (ValueError, TypeError):
+        pass
+    else:
+        try:
+            digits = int(digits)
+        except (ValueError, TypeError):
+            pass
+        else:
+            return "{{0:.{0}g}}".format(digits).format(value)
+
+
+def sorted_users(users):
+    """Return a list of users sorted by family name.  In particular, it sorts
+    case-insensitively.
+
+    :param users: the users to be sorted; it may also be a QuerySet
+
+    :type users: an iterable of django.contrib.auth.models.User
+
+    :return:
+      the sorted users
+
+    :rtype: list of django.contrib.auth.models.User
+    """
+    return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
+
+
+def sorted_users_by_first_name(users):
+    """Return a list of users sorted by first name.  In particular, it sorts
+    case-insensitively.
+
+    :param users: the users to be sorted; it may also be a QuerySet
+
+    :type users: an iterable of django.contrib.auth.models.User
+
+    :return:
+      the sorted users
+
+    :rtype: list of django.contrib.auth.models.User
+    """
+    return sorted(users, key=lambda user: user.first_name.lower() if user.first_name else user.username)

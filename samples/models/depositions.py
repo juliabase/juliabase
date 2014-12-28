@@ -26,9 +26,9 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 from django.db import models
+from jb_common import search
 from samples.models.common import PhysicalProcess, fields_to_data_items, remove_data_item
 from samples.data_tree import DataNode, DataItem
-from jb_common import search
 
 
 default_location_of_deposited_samples = {}

@@ -29,7 +29,7 @@ import markdown as markup
 from django.utils.translation import ugettext as _, pgettext
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
-from jb_common import utils
+import jb_common.utils.base as utils
 
 register = template.Library()
 

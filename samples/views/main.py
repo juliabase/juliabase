@@ -28,9 +28,10 @@ import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
-from samples.views import utils
-from jb_common.utils import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters
+from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
+    camel_case_to_underscores
 from jb_common.models import Topic
+import samples.utils.views as utils
 
 
 class MySeries(object):
@@ -105,7 +106,7 @@ def main_menu(request):
     lab_notebooks = []
     for process_class, process in permissions.get_all_addable_physical_process_models().items():
         try:
-            url = django.core.urlresolvers.reverse("lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+            url = django.core.urlresolvers.reverse("lab_notebook_" + camel_case_to_underscores(process["type"]),
                                                    kwargs={"year_and_month": ""})
         except django.core.urlresolvers.NoReverseMatch:
             pass

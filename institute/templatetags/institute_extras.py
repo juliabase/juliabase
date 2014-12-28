@@ -22,7 +22,7 @@ import os.path
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-from institute.views import form_utils
+import institute.utils.views as form_utils
 from institute import models
 from django.template.defaultfilters import stringfilter
 

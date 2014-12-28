@@ -26,10 +26,11 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from samples import models, permissions
-from samples.views import utils
-import jb_common.utils
+import jb_common.utils.base
 from jb_common.signals import storage_changed
+from samples import models, permissions
+import samples.utils.views as utils
+from samples.utils.plots import PlotError
 
 
 @login_required
@@ -66,9 +67,9 @@ def show_plot(request, process_id, plot_id, thumbnail):
         datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
         if not all(os.path.exists(filename) for filename in datafile_names):
             raise Http404("One of the raw datafiles was not found.")
-        update_necessary = jb_common.utils.is_update_necessary(plot_filepath, datafile_names, timestamps)
+        update_necessary = jb_common.utils.base.is_update_necessary(plot_filepath, datafile_names, timestamps)
     else:
-        update_necessary = jb_common.utils.is_update_necessary(plot_filepath, timestamps=timestamps)
+        update_necessary = jb_common.utils.base.is_update_necessary(plot_filepath, timestamps=timestamps)
     if update_necessary:
         try:
             if thumbnail:
@@ -78,7 +79,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 axes.set_position((0.17, 0.16, 0.78, 0.78))
                 axes.grid(True)
                 process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=True)
-                jb_common.utils.mkdirs(plot_filepath)
+                jb_common.utils.base.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, dpi=settings.THUMBNAIL_WIDTH / 4)
             else:
                 figure = Figure()
@@ -89,10 +90,10 @@ def show_plot(request, process_id, plot_id, thumbnail):
                 process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=False)
                 # FixMe: Activate this line with Matplotlib 1.1.0.
 #                figure.tight_layout()
-                jb_common.utils.mkdirs(plot_filepath)
+                jb_common.utils.base.mkdirs(plot_filepath)
                 canvas.print_figure(plot_filepath, format="pdf")
             storage_changed.send(models.Process)
-        except utils.PlotError as e:
+        except PlotError as e:
             raise Http404(six.text_type(e) or "Plot could not be generated.")
-    return jb_common.utils.static_file_response(plot_filepath,
+    return jb_common.utils.base.static_file_response(plot_filepath,
                                                      None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf")

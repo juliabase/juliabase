@@ -27,7 +27,7 @@ from django.utils.translation import ugettext
 def default(request):
     """Injects some session data into the template context.
 
-    The help link on the top (see the `samples.views.utils.help_link`
+    The help link on the top (see the `samples.utils.views.help_link`
     decorator) is added to the context by extracting it (and removing it from)
     the request object.
 

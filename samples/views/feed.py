@@ -26,12 +26,12 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
-from jb_common.utils import get_really_full_name
-from jb_common import __version__
-from samples import permissions, models
 from django.conf import settings
 import django.core.urlresolvers
-from samples.views import utils
+from jb_common.utils.base import get_really_full_name, camel_case_to_underscores
+from jb_common import __version__
+from samples import permissions, models
+import samples.utils.views as utils
 
 
 def indent(elem, level=0):
@@ -191,7 +191,7 @@ def show(request, username, user_hash):
             entry_element, "category", term=metadata["category term"], label=metadata["category label"])
         if "link" in metadata:
             ElementTree.SubElement(entry_element, "link", rel="alternate", href=request.build_absolute_uri(metadata["link"]))
-        template = loader.get_template("samples/" + utils.camel_case_to_underscores(entry.__class__.__name__) + ".html")
+        template = loader.get_template("samples/" + camel_case_to_underscores(entry.__class__.__name__) + ".html")
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}
         context_dict.update(entry.get_additional_template_context(user))

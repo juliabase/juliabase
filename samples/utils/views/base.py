@@ -14,14 +14,12 @@
 
 
 """General helper functions for the views.  Try to avoid using it outside the
-views package.  All symbols from `shared_utils` are also available here.  So
-`shared_utils` should be useful only for the Remote Client.
+views package.
 """
 
 from __future__ import absolute_import, unicode_literals
 
 import copy, re
-from jb_common import mimeparse
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
@@ -29,12 +27,12 @@ from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters
+from jb_common import mimeparse
 from samples import models, permissions
-from samples.views.shared_utils import *
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm, \
     UnicodeWriter
-import jb_common.utils
+import jb_common.utils.base
 
 
 def sample_name_format(name, with_match_object=False):
@@ -279,9 +277,9 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :rtype: HttpResponse
     """
-    if jb_common.utils.is_json_requested(request):
-        return jb_common.utils.respond_in_json(json_response)
-    return jb_common.utils.successful_response(request, success_report,
+    if jb_common.utils.base.is_json_requested(request):
+        return jb_common.utils.base.respond_in_json(json_response)
+    return jb_common.utils.base.successful_response(request, success_report,
                                                     view or "samples.views.main.main_menu", kwargs,
                                                     query_string, forced)
 
@@ -521,12 +519,12 @@ def digest_process(process, user, local_context={}):
     """
     process = process.actual_instance
     cache_key = process.get_cache_key(user.jb_user_details.get_data_hash(), local_context)
-    cached_context = jb_common.utils.get_from_cache(cache_key) if cache_key else None
+    cached_context = jb_common.utils.base.get_from_cache(cache_key) if cache_key else None
     if cached_context is None:
         process_context = process.get_context_for_user(user, local_context)
         if cache_key:
             keys_list_key = "process-keys:{0}".format(process.id)
-            with jb_common.utils.cache_key_locked("process-lock:{0}".format(process.id)):
+            with jb_common.utils.base.cache_key_locked("process-lock:{0}".format(process.id)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
@@ -549,34 +547,6 @@ def restricted_samples_query(user):
     return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |
                                         Q(topic__isnull=True)).order_by("name").distinct()
-
-
-def round(value, digits):
-    """Method for rounding a numeric value to a fixed number of significant
-    digits.
-
-    :param value: the numeric value
-    :param digit: number of significant digits
-
-    :type value: float
-    :type digits: int
-
-    :return:
-        rounded value
-
-    :rtype: str
-    """
-    try:
-        value = float(value)
-    except (ValueError, TypeError):
-        pass
-    else:
-        try:
-            digits = int(digits)
-        except (ValueError, TypeError):
-            pass
-        else:
-            return "{{0:.{0}g}}".format(digits).format(value)
 
 
 def enforce_clearance(user, clearance_processes, destination_user, sample, clearance=None, cutoff_timestamp=None):
@@ -619,38 +589,6 @@ def enforce_clearance(user, clearance_processes, destination_user, sample, clear
     if split_origin:
         enforce_clearance(user, clearance_processes, destination_user, split_origin.parent, clearance,
                           split_origin.timestamp)
-
-
-def sorted_users(users):
-    """Return a list of users sorted by family name.  In particular, it sorts
-    case-insensitively.
-
-    :param users: the users to be sorted; it may also be a QuerySet
-
-    :type users: an iterable of django.contrib.auth.models.User
-
-    :return:
-      the sorted users
-
-    :rtype: list of django.contrib.auth.models.User
-    """
-    return sorted(users, key=lambda user: user.last_name.lower() if user.last_name else user.username)
-
-
-def sorted_users_by_first_name(users):
-    """Return a list of users sorted by first name.  In particular, it sorts
-    case-insensitively.
-
-    :param users: the users to be sorted; it may also be a QuerySet
-
-    :type users: an iterable of django.contrib.auth.models.User
-
-    :return:
-      the sorted users
-
-    :rtype: list of django.contrib.auth.models.User
-    """
-    return sorted(users, key=lambda user: user.first_name.lower() if user.first_name else user.username)
 
 
 def table_export(request, data, label_column_heading):
@@ -720,7 +658,7 @@ def table_export(request, data, label_column_heading):
                 if requested_mime_type == "application/json":
                     data = [dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
                             for row in reduced_table[1:]]
-                    return jb_common.utils.respond_in_json(data)
+                    return jb_common.utils.base.respond_in_json(data)
                 else:
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \

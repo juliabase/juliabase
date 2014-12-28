@@ -30,9 +30,9 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 from django.contrib import messages
-from jb_common.utils import format_enumeration
+from jb_common.utils.base import format_enumeration
 from samples import models, permissions
-from samples.views import utils, form_utils
+import samples.utils.views as utils
 
 
 class PrefixesForm(forms.Form):
@@ -87,7 +87,7 @@ class NewNameForm(forms.Form):
             error_message = error_message.format(sample_formats=format_enumeration(
                 utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
             raise ValidationError(error_message)
-        form_utils.check_sample_name(match, self.user)
+        utils.check_sample_name(match, self.user)
         if utils.does_sample_exist(new_name):
             raise ValidationError(_("This sample name exists already."))
         return new_name

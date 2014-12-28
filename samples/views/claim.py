@@ -29,14 +29,14 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.conf import settings
-from jb_common.utils import send_email, get_really_full_name
-from samples.views import utils, form_utils
+from jb_common.utils.base import send_email, get_really_full_name
+import samples.utils.views as utils
 from samples import permissions, models
 
 
 class SamplesForm(forms.Form):
     _ = ugettext_lazy
-    samples = form_utils.MultipleSamplesField(label=_("Claimed samples"), help_text=_("“My Samples” are eligible."))
+    samples = utils.MultipleSamplesField(label=_("Claimed samples"), help_text=_("“My Samples” are eligible."))
 
     def __init__(self, user, *args, **kwargs):
         super(SamplesForm, self).__init__(*args, **kwargs)

@@ -22,14 +22,14 @@ from samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
-from jb_common.utils import is_json_requested, format_enumeration
-from samples.views import utils, feed_utils
-from institute.views import form_utils
-import institute.utils
+from jb_common.utils.base import is_json_requested, format_enumeration
+import samples.utils.views as utils
+import institute.utils.views as form_utils
+import institute.utils.base
 import institute.models as institute_models
 
 
-class DepositionForm(form_utils.DepositionForm):
+class DepositionForm(utils.DepositionForm):
     """Model form for the basic deposition data.
     """
     class Meta:
@@ -137,17 +137,17 @@ class FormSet(object):
         """
         self.post_data = post_data
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition,
-                                                        self.post_data)
+        self.add_layers_form = utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition,
+                                                   self.post_data)
         if not self.deposition:
-            self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
+            self.remove_from_my_samples_form = utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
-            form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition, self.post_data)
-        indices = form_utils.collect_subform_indices(self.post_data)
+            utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition, self.post_data)
+        indices = utils.collect_subform_indices(self.post_data)
         self.layer_forms = [LayerForm(self.post_data, prefix=str(layer_index)) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
-        self.edit_description_form = form_utils.EditDescriptionForm(self.post_data) \
+        self.edit_description_form = utils.EditDescriptionForm(self.post_data) \
             if self.deposition and self.deposition.finished else None
 
     def from_database(self, query_dict):
@@ -188,7 +188,7 @@ class FormSet(object):
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["timestamp_inaccuracy"] = 0
                 deposition_data["operator"] = self.user.pk
-                deposition_data["number"] = institute.utils.get_next_deposition_number("S")
+                deposition_data["number"] = institute.utils.base.get_next_deposition_number("S")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 __read_layer_forms(source_deposition_query[0])
         if not self.deposition_form:
@@ -200,15 +200,15 @@ class FormSet(object):
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                        "number": institute.utils.get_next_deposition_number("S")})
+                                        "number": institute.utils.base.get_next_deposition_number("S")})
                 self.layer_forms, self.change_layer_forms = [], []
-        self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
+        self.samples_form = utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
-        self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition)
-        self.edit_description_form = form_utils.EditDescriptionForm() \
+        self.add_layers_form = utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition)
+        self.edit_description_form = utils.EditDescriptionForm() \
             if self.deposition and self.deposition.finished else None
         if not self.deposition:
-            self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm()
+            self.remove_from_my_samples_form = utils.RemoveFromMySamplesForm()
 
     def __change_structure(self):
         """Apply any layer-based rearrangements the user has requested.  This
@@ -281,7 +281,7 @@ class FormSet(object):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.add_layers_form = form_utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition)
+            self.add_layers_form = utils.AddLayersForm(self.user_details, institute_models.FiveChamberDeposition)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -369,8 +369,8 @@ class FormSet(object):
             referentially_valid = False
         if self.deposition_form.is_valid():
             if self.samples_form.is_valid():
-                dead_samples = form_utils.dead_samples(self.samples_form.cleaned_data["sample_list"],
-                                                       self.deposition_form.cleaned_data["timestamp"])
+                dead_samples = utils.dead_samples(self.samples_form.cleaned_data["sample_list"],
+                                                  self.deposition_form.cleaned_data["timestamp"])
                 if dead_samples:
                     error_message = ungettext(
                         "The sample {samples} is already dead at this time.",
@@ -404,7 +404,7 @@ class FormSet(object):
                 layer = layer_form.save(commit=False)
                 layer.deposition = deposition
                 layer.save()
-            feed_utils.Reporter(self.user).report_physical_process(
+            utils.Reporter(self.user).report_physical_process(
                 deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
             return deposition
 

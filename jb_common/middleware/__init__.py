@@ -24,7 +24,7 @@ from django.template import loader, RequestContext
 from django.contrib.auth import logout
 import django.core.urlresolvers
 from jb_common.models import UserDetails, ErrorPage
-from jb_common.utils import is_json_requested, JSONRequestException
+from jb_common.utils.base import is_json_requested, JSONRequestException
 from django.conf import settings
 from django.utils.translation import ugettext as _
 import django.http

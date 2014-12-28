@@ -19,7 +19,7 @@ methods of physical process models, and the layout work is done in the
 :file:`lab_notebook_{camel_case_class_name_of_process}.html` templates.
 
 Furthermore, if you'd like to add a lab notebook function, you must add its URL
-explicitly to ``urls.py``.  See :py:mod:`samples.url_utils` for further
+explicitly to ``urls.py``.  See :py:mod:`samples.utils.urls` for further
 information.
 """
 
@@ -34,9 +34,9 @@ import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
+from jb_common.utils.base import HttpResponseSeeOther, get_all_models, camel_case_to_underscores, capitalize_first_letter
 from samples import permissions
-from samples.views import utils
-from jb_common.utils import HttpResponseSeeOther, get_all_models
+import samples.utils.views as utils
 
 
 class YearMonthForm(forms.Form):
@@ -142,7 +142,7 @@ def show(request, process_name, year_and_month):
     :rtype: HttpResponse
     """
     process_class = get_all_models()[process_name]
-    process_name = utils.camel_case_to_underscores(process_name)
+    process_name = camel_case_to_underscores(process_name)
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     if not year_and_month:
         try:
@@ -170,8 +170,8 @@ def show(request, process_name, year_and_month):
     except django.core.urlresolvers.NoReverseMatch:
         export_url = None
     return render(request, "samples/lab_notebook.html",
-                  {"title": utils.capitalize_first_letter(_("lab notebook for {process_name}")
-                                                          .format(process_name=process_class._meta.verbose_name_plural)),
+                  {"title": capitalize_first_letter(_("lab notebook for {process_name}")
+                                                    .format(process_name=process_class._meta.verbose_name_plural)),
                    "year": year, "month": month, "year_month": year_month_form,
                    "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
                    "export_url": export_url})

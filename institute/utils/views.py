@@ -14,21 +14,22 @@
 
 
 """Helper classes and function for the views that are used for the institute.
-It extends :py:mod:`samples.views.form_utils` (in includes all names from it)
-with institute specific classes and functions.
+It supplements :py:mod:`samples.views.form_utils` with institute specific
+classes and functions.
 """
 
 from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 from django.utils.six.moves import urllib
 
-from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy
+import re
+from django.shortcuts import render
+from django.utils.translation import ugettext as _
 import django.core.urlresolvers
+from django.forms.util import ValidationError
 from django.contrib import messages
-from jb_common.utils import is_json_requested, respond_in_json
-from samples.views.form_utils import *
+from jb_common.utils.base import capitalize_first_letter
 from samples import permissions
+import samples.utils.views as utils
 
 
 def edit_depositions(request, deposition_number, form_set, institute_model, edit_url, rename_conservatively=False):
@@ -105,10 +106,10 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
             messages.error(request, _("The deposition was not saved due to incorrect or missing data."))
     else:
         form_set.from_database(request.GET)
-    institute_model_name = utils.capitalize_first_letter(institute_model._meta.verbose_name)
+    institute_model_name = capitalize_first_letter(institute_model._meta.verbose_name)
     title = _("Edit {name} “{number}”").format(name=institute_model_name, number=deposition_number) if deposition_number \
         else _("Add {name}").format(name=institute_model._meta.verbose_name)
-    title = utils.capitalize_first_letter(title)
+    title = capitalize_first_letter(title)
     context_dict = {"title": title}
     context_dict.update(form_set.get_context_dict())
     return render(request, edit_url, context_dict)
@@ -157,8 +158,7 @@ def clean_deposition_number_field(value, letter):
         raise ValidationError(_("Invalid deposition number.  It must be of the form YYL-NNN."))
     if isinstance(letter, list):
         if value[2] not in letter:
-            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(
-                    letter=", ".join(letter)))
+            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=", ".join(letter)))
     else:
         if value[2] != letter:
             raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=letter))

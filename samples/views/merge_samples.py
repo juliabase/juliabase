@@ -23,18 +23,17 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.forms.util import ValidationError
-from samples import models
-from samples.views import utils
-from samples.views import form_utils
 from django.core.urlresolvers import get_callable
+from samples import models
+import samples.utils.views as utils
 
 
 class MergeSamplesForm(forms.Form):
     """The merge samples form class.
     """
     _ = ugettext_lazy
-    from_sample = form_utils.SampleField(label=_("merge sample"), required=False)
-    to_sample = form_utils.SampleField(label=_("into sample"), required=False)
+    from_sample = utils.SampleField(label=_("merge sample"), required=False)
+    to_sample = utils.SampleField(label=_("into sample"), required=False)
 
     def __init__(self, user, my_samples, *args, **kwargs):
         super(MergeSamplesForm, self).__init__(*args, **kwargs)

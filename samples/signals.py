@@ -165,11 +165,11 @@ import datetime, hashlib
 from django.db.models import signals
 from django.dispatch import receiver
 from django.contrib.auth.models import User
-from samples import models as samples_app
-from jb_common import models as jb_common_app
-import jb_common.signals
 import django.contrib.contenttypes.management
 from django.contrib.contenttypes.models import ContentType
+from jb_common import models as jb_common_app
+import jb_common.signals
+from samples import models as samples_app
 
 
 @receiver(signals.m2m_changed, sender=samples_app.Sample.watchers.through)

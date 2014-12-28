@@ -16,7 +16,7 @@ from __future__ import absolute_import, unicode_literals, division
 from . import six
 from .six.moves import urllib, http_cookiejar, _thread
 
-import mimetypes, json, logging, os, datetime, time, random
+import mimetypes, json, logging, os, datetime, time, random, re
 from io import IOBase
 if six.PY3:
     file = IOBase
@@ -445,3 +445,32 @@ class PrimaryKeys(object):
         return self.primary_keys[key]
 
 primary_keys = PrimaryKeys()
+
+
+def sanitize_for_markdown(text):
+    """Convert a raw string to Markdown syntax.  This is used when external
+    (legacy) strings are imported.  For example, comments found in data files
+    must be sent through this function before being stored in the database.
+
+    :param text: the original string
+
+    :type text: unicode
+
+    :return:
+      the Markdown-ready string
+
+    :rtype: unicode
+    """
+    text = text.replace("\r\n", "\n").replace("\r", "\n").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`"). \
+        replace("\n#", "\n\\#").replace("\n>", "\n\\>").replace("\n+", "\n\\+").replace("\n-", "\n\\-")
+    if text.startswith(tuple("#>+-")):
+        text = "\\" + text
+    # FixMe: Add ``flags=re.UNICODE`` with Python 2.7+
+    paragraphs = re.split(r"\n\s*\n", text)
+    for i, paragraph in enumerate(paragraphs):
+        lines = paragraph.split("\n")
+        for j, line in enumerate(lines):
+            if len(line) < 70:
+                lines[j] += "  "
+        paragraphs[i] = "\n".join(lines)
+    return "\n\n".join(paragraphs) + "\n"

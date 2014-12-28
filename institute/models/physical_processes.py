@@ -31,10 +31,12 @@ from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
-from jb_common.utils import format_lazy
-from samples.views import utils
+from jb_common.utils.base import format_lazy
+import jb_common.utils.base
+import samples.utils.views as utils
+from samples.utils.plots import PlotError
 import institute.layouts
-import institute.utils as institute_utils
+import institute.utils.base
 
 
 substrate_materials = (
@@ -176,16 +178,16 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         _ = ugettext
         data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
         best_eta = self.cells.aggregate(models.Max("eta"))["eta__max"]
-        data_node.items.append(DataItem(_("η of best cell") + "/%", utils.round(best_eta, 3)))
+        data_node.items.append(DataItem(_("η of best cell") + "/%", jb_common.utils.base.round(best_eta, 3)))
         return data_node
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         _ = ugettext
-        x_values, y_values = institute_utils.read_solarsimulator_plot_file(filename, position=plot_id)
+        x_values, y_values = institute.utils.base.read_solarsimulator_plot_file(filename, position=plot_id)
         y_values = 1000 * numpy.array(y_values)
         related_cell = self.cells.get(position=plot_id)
         if not related_cell.area:
-            raise utils.PlotError("Area was zero, so could not determine current density.")
+            raise PlotError("Area was zero, so could not determine current density.")
         y_values /= related_cell.area
         if for_thumbnail:
             axes.set_position((0.2, 0.15, 0.6, 0.8))

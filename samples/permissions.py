@@ -40,9 +40,8 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
+import jb_common.utils.base as utils
 import samples.models
-from jb_common import utils as jb_common_utils
-from samples.views import shared_utils
 
 
 def translate_permission(permission_codename):
@@ -154,7 +153,7 @@ def get_all_addable_physical_process_models():
     global all_addable_physical_process_models
     if all_addable_physical_process_models is None:
         all_addable_physical_process_models = {}
-        for process_class in jb_common_utils.get_all_models().values():
+        for process_class in utils.get_all_models().values():
             if issubclass(process_class, samples.models.PhysicalProcess):
                 url = process_class.get_add_link()
                 if url:
@@ -211,7 +210,7 @@ def get_all_adders(process_class):
 
     :rtype: QuerySet
     """
-    permission_codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    permission_codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     try:
         add_permission = Permission.objects.get(codename=permission_codename)
     except Permission.DoesNotExist:
@@ -300,12 +299,12 @@ def assert_can_fully_view_sample(user, sample):
         elif sample.topic.confidential:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name})."). \
-                            format(name=jb_common_utils.get_really_full_name(currently_responsible_person))
+                            format(name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
         elif not user.has_perm("samples.view_all_samples"):
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name}), nor can you view all samples."). \
-                            format(name=jb_common_utils.get_really_full_name(currently_responsible_person))
+                            format(name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
 
 
@@ -351,7 +350,7 @@ def get_sample_clearance(user, sample):
     :raises PermissionError: if the user is not allowed to view the
         sample.
     """
-    from samples.views.utils import enforce_clearance
+    from samples.utils.views import enforce_clearance
     clearance = None
     try:
         assert_can_fully_view_sample(user, sample)
@@ -385,7 +384,7 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
-    codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     if Permission.objects.filter(codename=codename).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
         if not user.has_perm(permission):
@@ -412,10 +411,10 @@ def assert_can_edit_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "edit_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    codename = "edit_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
-    codename = "add_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     if Permission.objects.filter(codename=codename).exists():
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
@@ -470,7 +469,7 @@ def assert_can_view_lab_notebook(user, process_class):
     :raises PermissionError: if the user is not allowed to view the lab
         notebook for this process class.
     """
-    codename = "view_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
     if Permission.objects.filter(codename=codename).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
@@ -503,7 +502,7 @@ def assert_can_view_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "view_every_{0}".format(shared_utils.camel_case_to_underscores(process_class.__name__))
+    codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
     if Permission.objects.filter(codename=codename).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)

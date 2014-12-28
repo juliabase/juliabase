@@ -30,7 +30,8 @@ from django.utils.translation import ugettext as _
 from django.shortcuts import render
 from django.conf import settings
 import django
-from jb_common import utils, __version__
+from jb_common import __version__
+import jb_common.utils.base as utils
 
 
 def get_cache_connections():

@@ -19,8 +19,9 @@ It should be called once a day at night as a cron job.  Maybe run it after the
 postgresql_backup script to have a backup, if needed.
 """
 
-from samples.models import Task
 import datetime
+from samples.models import Task
+
 
 Task.objects.filter(status__contains="finished",
                     last_modified__lte=datetime.datetime.now() - datetime.timedelta(days=7)).delete()

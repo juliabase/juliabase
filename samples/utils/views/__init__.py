@@ -13,18 +13,8 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-u"""Collection of tags and filters that I found useful for ther Kicker app of
-JuliaBase.
-"""
+from __future__ import absolute_import, unicode_literals
 
-from __future__ import absolute_import
-
-from django import template
-import jb_common.utils.base as utils
-
-register = template.Library()
-
-
-@register.filter
-def nickname(user):
-    return user.kicker_user_details.nickname or utils.get_really_full_name(user)
+from .base import *
+from .forms import *
+from .feed import *

@@ -27,11 +27,13 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.forms as forms
 from django.forms.util import ValidationError
-from jb_common.models import Topic
-from samples import permissions
-from samples.views import utils, feed_utils, form_utils
-from  samples.views.permissions import PermissionsPhysicalProcess
 from django.utils.text import capfirst
+from jb_common.models import Topic
+from jb_common.utils.base import int_or_zero
+from jb_common.utils.views import UserField, MultipleUsersField
+from samples import permissions
+from samples.views.permissions import PermissionsPhysicalProcess
+import samples.utils.views as utils
 
 
 class NewTopicForm(forms.Form):
@@ -43,7 +45,7 @@ class NewTopicForm(forms.Form):
     # Translators: Topic which is not open to senior members
     confidential = forms.BooleanField(label=_("confidential"), required=False)
     parent_topic = forms.ChoiceField(label=_("Upper topic"), required=False)
-    topic_manager = form_utils.UserField(label=capfirst(_("topic manager")))
+    topic_manager = UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)
@@ -161,9 +163,9 @@ class EditTopicForm(forms.Form):
     currently logged-in user must remain a member of the topic.
     """
     _ = ugettext_lazy
-    members = form_utils.MultipleUsersField(label=_("Members"), required=False)
+    members = MultipleUsersField(label=_("Members"), required=False)
     confidential = forms.BooleanField(label=_("confidential"), required=False)
-    topic_manager = form_utils.UserField(label=capfirst(_("topic manager")))
+    topic_manager = UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, topic, *args, **kwargs):
         super(EditTopicForm, self).__init__(*args, **kwargs)
@@ -201,7 +203,7 @@ def edit(request, id):
 
     :rtype: HttpResponse
     """
-    topic = get_object_or_404(Topic, id=utils.int_or_zero(id), parent_topic=None)
+    topic = get_object_or_404(Topic, id=int_or_zero(id), parent_topic=None)
     permissions.assert_can_edit_topic(request.user, topic)
     if request.method == "POST":
         edit_topic_form = EditTopicForm(request.user, topic, request.POST)
@@ -230,9 +232,9 @@ def edit(request, id):
                     removed_members.append(user)
                     topic.auto_adders.remove(user.samples_user_details)
             if added_members:
-                feed_utils.Reporter(request.user).report_changed_topic_membership(added_members, topic, "added")
+                utils.Reporter(request.user).report_changed_topic_membership(added_members, topic, "added")
             if removed_members:
-                feed_utils.Reporter(request.user).report_changed_topic_membership(removed_members, topic, "removed")
+                utils.Reporter(request.user).report_changed_topic_membership(removed_members, topic, "removed")
             return utils.successful_response(
                 request, _("Members of topic “{name}” were successfully updated.").format(name=topic.name))
     else:

@@ -28,9 +28,9 @@ from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
 from django.http import Http404
 from django.utils.translation import ugettext as _
-from jb_common.utils import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs
+from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs, int_or_zero
 from jb_common.signals import storage_changed
-from samples.views import utils
+import samples.utils.views as utils
 from kicker import models
 
 
@@ -181,7 +181,7 @@ class MatchResult(object):
 @login_required
 @require_http_methods(["POST"])
 def edit_match(request, id_=None):
-    match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
+    match = get_object_or_404(models.Match, pk=int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
         raise JSONRequestException(3005, "You must be the original reporter of this match.")
     try:
@@ -258,7 +258,7 @@ def edit_match(request, id_=None):
 @login_required
 @require_http_methods(["POST"])
 def cancel_match(request, id_):
-    match = get_object_or_404(models.Match, pk=utils.int_or_zero(id_)) if id_ else None
+    match = get_object_or_404(models.Match, pk=int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
         raise JSONRequestException(3005, "You must be the original reporter of this match.")
     if match.finished:

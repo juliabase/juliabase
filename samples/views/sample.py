@@ -24,10 +24,6 @@ from django.utils.six.moves import cStringIO as StringIO
 import hashlib, os.path, time, urllib, json
 import PIL
 import PIL.ImageOps
-from jb_common.signals import storage_changed
-from jb_common.utils import HttpResponseSeeOther, \
-    adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
-    mkdirs, cache_key_locked, get_from_cache, unlazy_object
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -42,11 +38,15 @@ from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
-import jb_common.search
-from jb_common.utils import format_enumeration, unquote_view_parameters
-from samples import models, permissions, data_tree
-from samples.views import utils, form_utils, feed_utils
 from django.forms.util import ValidationError
+import jb_common.search
+from jb_common.signals import storage_changed
+from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, \
+    adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
+    mkdirs, cache_key_locked, get_from_cache, unlazy_object, int_or_zero
+from jb_common.utils.views import UserField, TopicField
+from samples import models, permissions, data_tree
+import samples.utils.views as utils
 
 
 class IsMySampleForm(forms.Form):
@@ -63,8 +63,8 @@ class SampleForm(forms.ModelForm):
     *full* person names (not just the login name).
     """
     _ = ugettext_lazy
-    currently_responsible_person = form_utils.UserField(label=_("Currently responsible person"))
-    topic = form_utils.TopicField(label=_("Topic"), required=False)
+    currently_responsible_person = UserField(label=_("Currently responsible person"))
+    topic = TopicField(label=_("Topic"), required=False)
 
     class Meta:
         model = models.Sample
@@ -87,7 +87,7 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
 
     :type sample: `samples.models.Sample`
     :type sample_form: `SampleForm`
-    :type edit_description_form: `samples.views.form_utils.EditDescriptionForm`
+    :type edit_description_form: `samples.utils.views.EditDescriptionForm`
         or NoneType
 
     :return:
@@ -131,7 +131,7 @@ def edit(request, sample_name):
     sample_details = sample.get_sample_details()
     if request.method == "POST":
         sample_form = SampleForm(request.user, request.POST, instance=sample)
-        edit_description_form = form_utils.EditDescriptionForm(request.POST)
+        edit_description_form = utils.EditDescriptionForm(request.POST)
         all_valid = all([sample_form.is_valid(), edit_description_form.is_valid()])
         referentially_valid = is_referentially_valid(sample, sample_form, edit_description_form)
         if sample_details:
@@ -144,7 +144,7 @@ def edit(request, sample_name):
             sample = sample_form.save()
             if sample_details:
                 sample_details.save_form_data(sample_details_context)
-            feed_reporter = feed_utils.Reporter(request.user)
+            feed_reporter = utils.Reporter(request.user)
             if sample.currently_responsible_person != old_responsible_person:
                 sample.currently_responsible_person.my_samples.add(sample)
                 feed_reporter.report_new_responsible_person_samples([sample], edit_description_form.cleaned_data)
@@ -158,7 +158,7 @@ def edit(request, sample_name):
                 by_id, {"sample_id": sample.pk, "path_suffix": ""})
     else:
         sample_form = SampleForm(request.user, instance=sample)
-        edit_description_form = form_utils.EditDescriptionForm()
+        edit_description_form = utils.EditDescriptionForm()
         sample_details_context = sample_details.process_get(request.user) if sample_details else {}
     context = {"title": _("Edit sample “{sample}”").format(sample=sample), "sample": sample_form,
                "edit_description": edit_description_form}
@@ -787,7 +787,7 @@ def search(request):
             found_samples = found_samples[:max_results] if too_many_results else found_samples
     my_samples = request.user.my_samples.all()
     if request.method == "POST":
-        sample_ids = set(utils.int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
+        sample_ids = set(int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
                          if value == "on")
         samples = base_query.in_bulk(sample_ids).values()
         request.user.my_samples.add(*samples)
@@ -847,8 +847,7 @@ def advanced_search(request):
             results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
-                    sample_ids = set(utils.int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
-                                     if value == "on")
+                    sample_ids = set(int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items() if value == "on")
                     samples = base_query.in_bulk(sample_ids).values()
                     request.user.my_samples.add(*samples)
                 my_samples = request.user.my_samples.all()
@@ -1058,7 +1057,7 @@ def rename_sample(request):
             sample.save()
             if sample_rename_form.cleaned_data["create_alias"]:
                 models.SampleAlias.objects.create(name=old_name, sample=sample)
-            feed_reporter = feed_utils.Reporter(request.user)
+            feed_reporter = utils.Reporter(request.user)
             feed_reporter.report_edited_samples([sample], {"important": True,
                "description": _("Sample {old_name} was renamed to {new_name}").
                                                            format(new_name=sample.name, old_name=old_name)})

@@ -24,8 +24,8 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-from samples.views import utils
-import jb_common.utils
+import jb_common.utils.base
+import samples.utils.views as utils
 from institute import models
 from institute import layouts
 
@@ -36,15 +36,15 @@ def show_layout(request, process_id, sample_id):
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id)).actual_instance
 
     pdf_filename = "/tmp/layouts_{0}_{1}.pdf".format(process.id, sample.id)
-    jb_common.utils.mkdirs(pdf_filename)
+    jb_common.utils.base.mkdirs(pdf_filename)
     layout = layouts.get_layout(sample, process)
     if not layout:
         raise Http404("error")
     layout.generate_pdf(pdf_filename)
 
     png_filename = os.path.join(settings.CACHE_ROOT, "layouts", "{0}-{1}.png".format(process.id, sample.id))
-    jb_common.utils.mkdirs(png_filename)
+    jb_common.utils.base.mkdirs(png_filename)
     resolution = settings.THUMBNAIL_WIDTH / (layout.width / 72)
     subprocess.check_call(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r{0}".format(resolution), "-dEPSCrop",
                              "-sOutputFile=" + png_filename, pdf_filename])
-    return jb_common.utils.static_file_response(png_filename)
+    return jb_common.utils.base.static_file_response(png_filename)

@@ -24,8 +24,9 @@ from django.http import Http404
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
+from jb_common.utils.views import MultipleUsersField
 from samples import models, permissions
-from samples.views import utils, form_utils
+import samples.utils.views as utils
 
 
 class AddExternalOperatorForm(forms.ModelForm):
@@ -65,7 +66,7 @@ def new(request):
     permissions.assert_can_add_external_operator(request.user)
     if request.method == "POST":
         external_operator_form = AddExternalOperatorForm(request.user, request.POST)
-        initials_form = form_utils.InitialsForm(person=None, initials_mandatory=True, data=request.POST)
+        initials_form = utils.InitialsForm(person=None, initials_mandatory=True, data=request.POST)
         if external_operator_form.is_valid() and initials_form.is_valid():
             external_operator = external_operator_form.save()
             initials_form.save(external_operator)
@@ -74,7 +75,7 @@ def new(request):
                 _("The external operator “{operator}” was successfully added.".format(operator=external_operator.name)))
     else:
         external_operator_form = AddExternalOperatorForm(request.user)
-        initials_form = form_utils.InitialsForm(person=None, initials_mandatory=True)
+        initials_form = utils.InitialsForm(person=None, initials_mandatory=True)
     return render(request, "samples/edit_external_operator.html", {"title": _("Add external operator"),
                                                                    "external_operator": external_operator_form,
                                                                    "initials": initials_form})
@@ -85,7 +86,7 @@ class EditExternalOperatorForm(forms.ModelForm):
     also change the contact person.
     """
     _ = ugettext_lazy
-    contact_persons = form_utils.MultipleUsersField(label=_("Contact persons"))
+    contact_persons = MultipleUsersField(label=_("Contact persons"))
 
     class Meta:
         model = models.ExternalOperator
@@ -127,7 +128,7 @@ def edit(request, external_operator_id):
                 _("The external operator “{operator}” was successfully changed.").format(operator=external_operator.name))
     else:
         external_operator_form = EditExternalOperatorForm(request.user, instance=external_operator)
-    initials_form = form_utils.InitialsForm(external_operator, initials_mandatory=True)
+    initials_form = utils.InitialsForm(external_operator, initials_mandatory=True)
     return render(request, "samples/edit_external_operator.html",
                   {"title": _("Edit external operator “{operator}”").format(operator=external_operator.name),
                    "external_operator": external_operator_form,

@@ -31,12 +31,12 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from jb_common.models import Topic
-from jb_common.utils import respond_in_json, JSONRequestException
-from samples.views import utils
+from jb_common.utils.base import respond_in_json, JSONRequestException
+import samples.utils.views as utils
 from samples import models, permissions
 import institute.models
 from institute import layouts
-import institute.utils
+import institute.utils.base
 
 
 @login_required
@@ -171,7 +171,7 @@ def next_deposition_number(request, letter):
 
     :rtype: HttpResponse
     """
-    return respond_in_json(institute.utils.get_next_deposition_number(letter))
+    return respond_in_json(institute.utils.base.get_next_deposition_number(letter))
 
 
 def _get_solarsimulator_measurement_by_filepath(filepath, user):

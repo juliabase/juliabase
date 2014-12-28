@@ -29,11 +29,11 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext, ungettext, ugettext_lazy
-import jb_common.utils
+import jb_common.utils.base
 from samples import models
-from samples.views import utils, feed_utils
-from institute.views import form_utils
-import institute.utils
+import samples.utils.views as utils
+import institute.utils.views as form_utils
+import institute.utils.base
 import institute.models as institute_models
 
 _ = ugettext
@@ -63,7 +63,7 @@ class AddLayersForm(forms.Form):
 
     def __init__(self, user_details, model, data=None, **kwargs):
         super(AddLayersForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = form_utils.get_my_layers(user_details, model)
+        self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(user_details, model)
         self.model = model
 
     def clean_my_layer_to_be_added(self):
@@ -87,7 +87,7 @@ class AddLayersForm(forms.Form):
                     return result
 
 
-class DepositionForm(form_utils.DepositionForm):
+class DepositionForm(utils.DepositionForm):
     """Model form for the basic deposition data.
     """
     class Meta:
@@ -142,13 +142,13 @@ class HotWireLayerForm(forms.ModelForm):
         # FixMe: Min/Max values?
 
     def clean_time(self):
-        return form_utils.clean_time_field(self.cleaned_data["time"])
+        return utils.clean_time_field(self.cleaned_data["time"])
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        jb_common.utils.check_markdown(comments)
+        jb_common.utils.base.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
@@ -198,13 +198,13 @@ class PECVDLayerForm(forms.ModelForm):
             self.fields[fieldname].max_value = max_value
 
     def clean_time(self):
-        return form_utils.clean_time_field(self.cleaned_data["time"])
+        return utils.clean_time_field(self.cleaned_data["time"])
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        jb_common.utils.check_markdown(comments)
+        jb_common.utils.base.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
@@ -280,7 +280,7 @@ class FormSet(object):
         self.edit_description_form = None
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
-        self.json_client = jb_common.utils.is_json_requested(request)
+        self.json_client = jb_common.utils.base.is_json_requested(request)
 
     def from_post_data(self, post_data):
         """Interpret the POST data and create bound forms for the layers.
@@ -303,14 +303,14 @@ class FormSet(object):
         self.deposition_form = DepositionForm(self.user, self.post_data, instance=self.deposition)
         self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition, self.post_data)
         if not self.deposition:
-            self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm(self.post_data)
+            self.remove_from_my_samples_form = utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
-            form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition, self.post_data)
-        indices = form_utils.collect_subform_indices(self.post_data)
+            utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition, self.post_data)
+        indices = utils.collect_subform_indices(self.post_data)
         self.layer_forms = [get_layer_form(layer_index) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
                                    for change_layer_index in indices]
-        self.edit_description_form = form_utils.EditDescriptionForm(self.post_data) if self.deposition else None
+        self.edit_description_form = utils.EditDescriptionForm(self.post_data) if self.deposition else None
 
     def from_database(self, query_dict):
         """Create all forms from database data.  This is used if the view was
@@ -352,7 +352,7 @@ class FormSet(object):
                 deposition_data["timestamp"] = datetime.datetime.now()
                 deposition_data["timestamp_inaccuracy"] = 0
                 deposition_data["operator"] = self.user.pk
-                deposition_data["number"] = institute.utils.get_next_deposition_number("C")
+                deposition_data["number"] = institute.utils.base.get_next_deposition_number("C")
                 self.deposition_form = DepositionForm(self.user, initial=deposition_data)
                 build_layer_forms(source_deposition_query[0])
         if not self.deposition_form:
@@ -364,14 +364,14 @@ class FormSet(object):
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
                     self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                        "number": institute.utils.get_next_deposition_number("C")})
+                                        "number": institute.utils.base.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
-        self.samples_form = form_utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
+        self.samples_form = utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         if not self.deposition:
-            self.remove_from_my_samples_form = form_utils.RemoveFromMySamplesForm()
-        self.edit_description_form = form_utils.EditDescriptionForm() if self.deposition else None
+            self.remove_from_my_samples_form = utils.RemoveFromMySamplesForm()
+        self.edit_description_form = utils.EditDescriptionForm() if self.deposition else None
 
     def _change_structure(self):
         """Apply any layer-based rearrangements the user has requested.  This
@@ -395,8 +395,9 @@ class FormSet(object):
         *number*, whereas the internal numbers used as prefixes in the HTML
         names are called *indices*.  The index (and thus prefix) of a layer
         form does never change (in contrast to the 6-chamber deposition, see
-        `form_utils.normalize_prefixes`), not even across many “post cycles”.
-        Only the layer numbers are used for determining the order of layers.
+        `samples.views.form_utils.normalize_prefixes`), not even across many
+        “post cycles”.  Only the layer numbers are used for determining the
+        order of layers.
 
         :return:
           whether the structure was changed in any way.
@@ -547,13 +548,13 @@ class FormSet(object):
         """
         referentially_valid = True
         if self.deposition_form.is_valid() and self.samples_form.is_valid():
-            dead_samples = form_utils.dead_samples(self.samples_form.cleaned_data["sample_list"],
-                                                   self.deposition_form.cleaned_data["timestamp"])
+            dead_samples = utils.dead_samples(self.samples_form.cleaned_data["sample_list"],
+                                              self.deposition_form.cleaned_data["timestamp"])
             if dead_samples:
                 error_message = ungettext(
                     "The sample {samples} is already dead at this time.",
                     "The samples {samples} are already dead at this time.", len(dead_samples)).format(
-                    samples=jb_common.utils.format_enumeration([sample.name for sample in dead_samples]))
+                    samples=jb_common.utils.base.format_enumeration([sample.name for sample in dead_samples]))
                 self.deposition_form.add_error("timestamp", error_message)
                 referentially_valid = False
         if not self.layer_forms:
@@ -589,7 +590,7 @@ class FormSet(object):
             if self.remove_from_my_samples_form and \
                     self.remove_from_my_samples_form.cleaned_data["remove_from_my_samples"]:
                 utils.remove_samples_from_my_samples(deposition.samples.all(), self.user)
-            feed_utils.Reporter(self.user).report_physical_process(
+            utils.Reporter(self.user).report_physical_process(
                 deposition, self.edit_description_form.cleaned_data if self.edit_description_form else None)
             return deposition
 

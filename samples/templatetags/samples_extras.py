@@ -20,6 +20,7 @@ from __future__ import division, unicode_literals
 import django.utils.six as six
 
 import re, sys, decimal
+import markdown
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.template.loader import render_to_string
@@ -30,13 +31,12 @@ import django.utils.http
 import django.core.urlresolvers
 import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
-import markdown
 from django.conf import settings
-import jb_common.utils
+import jb_common.utils.base
 import jb_common.templatetags.juliabase
-import samples.views.utils
-from samples.views.form_utils import time_pattern
 import jb_common.search
+import samples.utils.views
+
 
 register = template.Library()
 
@@ -50,7 +50,7 @@ def round(value, digits):
     """Filter for rounding a numeric value to a fixed number of significant digits.
     The result may be used for the :py:func:`quantity` filter below.
     """
-    return samples.views.utils.round(value, digits)
+    return jb_common.utils.base.round(value, digits)
 
 
 @register.filter(needs_autoescape=True)
@@ -138,7 +138,7 @@ class VerboseNameNode(template.Node):
             return ""
         verbose_name = six.text_type(model._meta.get_field(field).verbose_name)
         if verbose_name:
-            verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
+            verbose_name = jb_common.utils.base.capitalize_first_letter(verbose_name)
         return verbose_name
 
 
@@ -163,7 +163,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     """Unfortunately, Django's get_full_name method for users returns the empty
     string if the user has no first and surname set. However, it'd be sensible
     to use the login name as a fallback then. This is realised here.  See also
-    :py:func:`samples.views.utils.get_really_full_name`.
+    :py:func:`samples.utils.views.get_really_full_name`.
 
     The optional parameter to this filter determines whether the name should be
     linked or not, and if so, how.  There are three possible parameter values:
@@ -242,7 +242,7 @@ def timestamp(value, minimal_inaccuracy=0):
     else:
         timestamp_ = value["timestamp"]
         inaccuracy = value["timestamp_inaccuracy"]
-    return mark_safe(jb_common.utils.unicode_strftime(timestamp_,
+    return mark_safe(jb_common.utils.base.unicode_strftime(timestamp_,
                                                            timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
 
 
@@ -270,7 +270,7 @@ def status_timestamp(value, type_):
         inaccuracy = value.end_inaccuracy
     if inaccuracy == 6:
         return None
-    return mark_safe(jb_common.utils.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
+    return mark_safe(jb_common.utils.base.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
 # FixMe: This pattern should probably be moved to settings.py.
@@ -290,13 +290,13 @@ def markdown_samples(value, margins="default"):
     at least Python Markdown 1.7 or later so that this works.
 
     FixMe: Before Markdown sees the text, all named entities are replaced, see
-    `samples.views.utils.substitute_html_entities`.  This creates a mild
+    `samples.utils.views.substitute_html_entities`.  This creates a mild
     escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
     value = jb_common.templatetags.juliabase.substitute_formulae(
-        jb_common.utils.substitute_html_entities(six.text_type(value)))
+        jb_common.utils.base.substitute_html_entities(six.text_type(value)))
     position = 0
     result = ""
     while position < len(value):
@@ -313,7 +313,7 @@ def markdown_samples(value, margins="default"):
             name = match.group("name")
             database_item = None
             if next_is_sample:
-                sample = samples.views.utils.get_sample(name)
+                sample = samples.utils.views.get_sample(name)
                 if isinstance(sample, samples.models.Sample):
                     database_item = sample
             else:
@@ -339,7 +339,7 @@ def first_upper(value):
     """Filter for formatting the value to set the first character to uppercase.
     """
     if value:
-        return samples.views.utils.capitalize_first_letter(value)
+        return jb_common.utils.base.capitalize_first_letter(value)
 
 
 @register.filter
@@ -385,7 +385,7 @@ class ValueFieldNode(template.Node):
                     self.unit = model_field.unit
                 except AttributeError:
                     pass
-        verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
+        verbose_name = jb_common.utils.base.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
             field = jb_common.templatetags.juliabase.fancy_bool(field)
             unit = None
@@ -402,7 +402,7 @@ class ValueFieldNode(template.Node):
         else:
             unit = self.unit
         if self.significant_digits and field != "—":
-            field = round(field, self.significant_digits)
+            field = jb_common.utils.base.round(field, self.significant_digits)
         return """<td class="label">{label}:</td><td class="value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 
@@ -503,7 +503,7 @@ class ValueSplitFieldNode(template.Node):
                     self.unit = model_field.unit
                 except AttributeError:
                     pass
-        verbose_name = samples.views.utils.capitalize_first_letter(verbose_name)
+        verbose_name = jb_common.utils.base.capitalize_first_letter(verbose_name)
         if self.unit == "sccm_collapse":
             if all(field is None for field in fields):
                 return """<td colspan="2"></td>"""
@@ -619,7 +619,7 @@ def display_search_tree(tree):
 def hms_to_minutes(time_string):
     """Converts ``"01:01:02"`` to ``"61.03"``.
     """
-    match = time_pattern.match(time_string)
+    match = samples.utils.views.time_pattern.match(time_string)
     if not match:
         return time_string
     minutes = int(match.group("H") or "0") * 60 + int(match.group("M")) + int(match.group("M")) / 60
@@ -750,5 +750,6 @@ def strip_substrings(value, pattern):
 
 @register.filter
 def camel_case_to_human_text(value):
-    # see `samples.views.utils.camel_case_to_human_text` for documentation
-    return samples.views.utils.camel_case_to_human_text(value)
+    """See `jb_common.utils.base.camel_case_to_human_text` for documentation.
+    """
+    return jb_common.utils.base.camel_case_to_human_text(value)

@@ -27,14 +27,15 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-from jb_common.utils import get_really_full_name, format_enumeration, check_markdown
+from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown
+from jb_common.utils.views import UserField, MultipleUsersField, TopicField
 from samples import permissions
-from samples.views import utils, form_utils, feed_utils
+import samples.utils.views as utils
 
 
 class MySamplesForm(forms.Form):
     _ = ugettext_lazy
-    samples = form_utils.MultipleSamplesField(label=_("My Samples"))
+    samples = utils.MultipleSamplesField(label=_("My Samples"))
 
     def __init__(self, user, *args, **kwargs):
         super(MySamplesForm, self).__init__(*args, **kwargs)
@@ -46,12 +47,12 @@ class ActionForm(forms.Form):
     """Form for all the things you can do with the selected samples.
     """
     _ = ugettext_lazy
-    new_currently_responsible_person = form_utils.UserField(label=_("New currently responsible person"), required=False)
-    new_topic = form_utils.TopicField(label=_("New Topic"), required=False)
+    new_currently_responsible_person = UserField(label=_("New currently responsible person"), required=False)
+    new_topic = TopicField(label=_("New Topic"), required=False)
     new_current_location = forms.CharField(label=_("New current location"), required=False, max_length=50)
     new_tags = forms.CharField(label=_("New sample tags"), required=False, max_length=255,
                                help_text=_("separated with commas, no whitespace"))
-    copy_to_user = form_utils.MultipleUsersField(label=_("Copy to user"), required=False)
+    copy_to_user = MultipleUsersField(label=_("Copy to user"), required=False)
     clearance = forms.ChoiceField(label=_("Clearance"), required=False)
     comment = forms.CharField(label=_("Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_("Remove from “My Samples”"), required=False)
@@ -212,7 +213,7 @@ def save_to_database(user, my_samples_form, action_form):
                     utils.enforce_clearance(user, action_data["clearance"], copy_user, sample)
         if action_data["remove_from_my_samples"]:
             current_user_my_samples.remove(sample)
-    feed_reporter = feed_utils.Reporter(user)
+    feed_reporter = utils.Reporter(user)
     edit_description = {"important": True, "description": action_data["comment"]}
     if samples_with_new_responsible_person:
         feed_reporter.report_new_responsible_person_samples(samples_with_new_responsible_person, edit_description)
@@ -224,7 +225,7 @@ def save_to_database(user, my_samples_form, action_form):
     # Now a separate(!) message for copied samples
     if action_data["copy_to_user"]:
         for copy_user in action_data["copy_to_user"]:
-            feed_utils.Reporter(user).report_copied_my_samples(samples, copy_user, action_data["comment"])
+            utils.Reporter(user).report_copied_my_samples(samples, copy_user, action_data["comment"])
 
 
 @login_required

@@ -18,9 +18,9 @@ from django.utils.six.moves import cStringIO as StringIO
 
 import datetime, re
 import numpy
-from samples.views import shared_utils
-from institute.views.samples import json_client
 from samples import models
+from samples.utils.plots import PlotError
+from institute.views.samples import json_client
 
 
 deposition_index_pattern = re.compile(r"\d{3,4}")
@@ -95,7 +95,7 @@ def read_solarsimulator_plot_file(filename, position):
     try:
         datafile_content = StringIO(open(filename).read())
     except IOError:
-        raise shared_utils.PlotError("Data file could not be read.")
+        raise PlotError("Data file could not be read.")
     for line in datafile_content:
         if line.startswith("# Positions:"):
             positions = line.partition(":")[2].split()
@@ -105,9 +105,9 @@ def read_solarsimulator_plot_file(filename, position):
     try:
         column = positions.index(position) + 1
     except ValueError:
-        raise shared_utils.PlotError("Cell position not found in the datafile.")
+        raise PlotError("Cell position not found in the datafile.")
     datafile_content.seek(0)
     try:
         return numpy.loadtxt(datafile_content, usecols=(0, column), unpack=True)
     except ValueError:
-        raise shared_utils.PlotError("Data file format was invalid.")
+        raise PlotError("Data file format was invalid.")
