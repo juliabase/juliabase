@@ -28,6 +28,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core
 from django.conf import settings
 from jb_common.utils.base import get_really_full_name, get_all_models, HttpResponseSeeOther, camel_case_to_underscores, sorted_users
+from jb_common.utils.views import UserField
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -138,7 +139,7 @@ class UserListForm(forms.Form):
     """Form class for selecting the user to change the permissions for him/her.
     """
     _ = ugettext_lazy
-    selected_user = utils.UserField(label=_("Change the permissions of"))
+    selected_user = UserField(label=_("Change the permissions of"))
 
     def __init__(self, user, *args, **kwargs):
         super(UserListForm, self).__init__(*args, **kwargs)

@@ -36,6 +36,7 @@ from django.views.decorators.http import condition
 import django.contrib.auth.models
 import jb_common.utils.base
 from jb_common.utils.base import unquote_view_parameters
+from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -45,8 +46,8 @@ class SampleSeriesForm(forms.ModelForm):
     """
     _ = ugettext_lazy
     short_name = forms.CharField(label=_("Name"), max_length=50)
-    currently_responsible_person = utils.UserField(label=_("Currently responsible person"))
-    topic = utils.TopicField(label=_("Topic"))
+    currently_responsible_person = UserField(label=_("Currently responsible person"))
+    topic = TopicField(label=_("Topic"))
     samples = utils.MultipleSamplesField(label=_("Samples"))
 
     class Meta:

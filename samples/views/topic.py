@@ -30,6 +30,7 @@ from django.forms.util import ValidationError
 from django.utils.text import capfirst
 from jb_common.models import Topic
 from jb_common.utils.base import int_or_zero
+from jb_common.utils.views import UserField, MultipleUsersField
 from samples import permissions
 from samples.views.permissions import PermissionsPhysicalProcess
 import samples.utils.views as utils
@@ -44,7 +45,7 @@ class NewTopicForm(forms.Form):
     # Translators: Topic which is not open to senior members
     confidential = forms.BooleanField(label=_("confidential"), required=False)
     parent_topic = forms.ChoiceField(label=_("Upper topic"), required=False)
-    topic_manager = utils.UserField(label=capfirst(_("topic manager")))
+    topic_manager = UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, *args, **kwargs):
         super(NewTopicForm, self).__init__(*args, **kwargs)
@@ -162,9 +163,9 @@ class EditTopicForm(forms.Form):
     currently logged-in user must remain a member of the topic.
     """
     _ = ugettext_lazy
-    members = utils.MultipleUsersField(label=_("Members"), required=False)
+    members = MultipleUsersField(label=_("Members"), required=False)
     confidential = forms.BooleanField(label=_("confidential"), required=False)
-    topic_manager = utils.UserField(label=capfirst(_("topic manager")))
+    topic_manager = UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, topic, *args, **kwargs):
         super(EditTopicForm, self).__init__(*args, **kwargs)

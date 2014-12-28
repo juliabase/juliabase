@@ -34,6 +34,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from jb_common.utils.base import get_really_full_name, int_or_zero
+from jb_common.utils.views import TopicField
 from samples import models, permissions
 import samples.utils.views as utils
 from institute import models as institute_models
@@ -69,7 +70,7 @@ class AddSamplesForm(forms.Form):
     purpose = forms.CharField(label=_("Purpose"), max_length=80, required=False)
     tags = forms.CharField(label=_("Tags"), max_length=255, required=False,
                            help_text=_("separated with commas, no whitespace"))
-    topic = utils.TopicField(label=_("Topic"), required=False)
+    topic = TopicField(label=_("Topic"), required=False)
     rename = forms.ChoiceField(label=_("Rename"), choices=rename_choices, required=False,
                                widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
     cleaning_number = forms.CharField(label=_("Cleaning number"), max_length=8, required=False)

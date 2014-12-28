@@ -40,11 +40,11 @@ from django.views.decorators.http import condition
 from django.utils.text import capfirst
 from django.forms.util import ValidationError
 import jb_common.search
-from jb_common.utils.base import format_enumeration, unquote_view_parameters
 from jb_common.signals import storage_changed
-from jb_common.utils.base import HttpResponseSeeOther, \
+from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
     mkdirs, cache_key_locked, get_from_cache, unlazy_object, int_or_zero
+from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
 
@@ -63,8 +63,8 @@ class SampleForm(forms.ModelForm):
     *full* person names (not just the login name).
     """
     _ = ugettext_lazy
-    currently_responsible_person = utils.UserField(label=_("Currently responsible person"))
-    topic = utils.TopicField(label=_("Topic"), required=False)
+    currently_responsible_person = UserField(label=_("Currently responsible person"))
+    topic = TopicField(label=_("Topic"), required=False)
 
     class Meta:
         model = models.Sample

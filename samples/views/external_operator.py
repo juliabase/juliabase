@@ -24,6 +24,7 @@ from django.http import Http404
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.contrib.auth.models
+from jb_common.utils.views import MultipleUsersField
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -85,7 +86,7 @@ class EditExternalOperatorForm(forms.ModelForm):
     also change the contact person.
     """
     _ = ugettext_lazy
-    contact_persons = utils.MultipleUsersField(label=_("Contact persons"))
+    contact_persons = MultipleUsersField(label=_("Contact persons"))
 
     class Meta:
         model = models.ExternalOperator
