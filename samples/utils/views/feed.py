@@ -211,8 +211,8 @@ class Reporter(object):
         :param process: the process which was added/edited recently
         :param edit_description: The dictionary containing data about what was
             edited in the process.  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`.  ``None`` if the process was
-            newly created.
+            `~samples.utils.views.EditDescriptionForm`.  ``None`` if the
+            process was newly created.
 
         :type process: `samples.models.Process`
         :type edit_description: dict mapping str to ``object``
@@ -235,8 +235,8 @@ class Reporter(object):
         :param result: the result process which was added/edited recently
         :param edit_description: The dictionary containing data about what was
             edited in the result.  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`.  ``None`` if the process was
-            newly created.
+            `~samples.utils.views.EditDescriptionForm`.  ``None`` if the
+            process was newly created.
 
         :type result: `samples.models.Result`
         :type edit_description: dict mapping str to ``object``
@@ -282,7 +282,7 @@ class Reporter(object):
         :param edit_description: Dictionary containing data about what was
             edited in the samples (besides the change of the responsible
             person).  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`.
+            `~samples.utils.views.EditDescriptionForm`.
 
         :type samples: list of `samples.models.Sample`
         :type edit_description: dict mapping str to ``object``
@@ -305,8 +305,9 @@ class Reporter(object):
         :param old_topic: the old topic of the samples; may be ``None`` if
             they weren't in any topic before
         :param edit_description: The dictionary containing data about what was
-            edited in the samples (besides the change of the topic).  Its
-            keys correspond to the fields of `form_utils.EditDescriptionForm`.
+            edited in the samples (besides the change of the topic).  Its keys
+            correspond to the fields of
+            `~samples.utils.views.EditDescriptionForm`.
 
         :type samples: list of `samples.models.Sample`
         :type old_topic: `jb_common.models.Topic`
@@ -332,7 +333,7 @@ class Reporter(object):
         :param samples: the samples that was edited
         :param edit_description: The dictionary containing data about what was
             edited in the samples.  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`.
+            `~samples.utils.views.EditDescriptionForm`.
 
         :type samples: list of `samples.models.Sample`
         :type edit_description: dict mapping str to ``object``
@@ -369,7 +370,7 @@ class Reporter(object):
         :param sample_series: the sample series that was edited
         :param edit_description: The dictionary containing data about what was
             edited in the sample series.  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`.
+            `~samples.utils.views.EditDescriptionForm`.
 
         :type sample_series: list of `samples.models.SampleSeries`
         :type edit_description: dict mapping str to ``object``
@@ -394,7 +395,7 @@ class Reporter(object):
         :param edit_description: Dictionary containing data about what was
             edited in the sample series (besides the change of the responsible
             person).  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`.
+            `~samples.utils.views.EditDescriptionForm`.
 
         :type sample_series: list of `samples.models.SampleSeries`
         :type edit_description: dict mapping str to ``object``
@@ -418,7 +419,7 @@ class Reporter(object):
         :param edit_description: The dictionary containing data about what was
             edited in the sample series (besides the change of the topic).
             Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`.
+            `~samples.utils.views.EditDescriptionForm`.
 
         :type sample_series: list of `samples.models.SampleSeries`
         :type old_topic: `jb_common.models.Topic`
@@ -503,8 +504,8 @@ class Reporter(object):
         :param task: the task that was created or edited
         :param edit_description: The dictionary containing data about what was
             edited in the task.  Its keys correspond to the fields of
-            `form_utils.EditDescriptionForm`. ``None`` if the task was newly
-            created.
+            `~samples.utils.views.EditDescriptionForm`. ``None`` if the task
+            was newly created.
 
         :type task: `models.Task`
         :type edit_description: dict mapping str to ``object`` or ``None``

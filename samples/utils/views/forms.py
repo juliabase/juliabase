@@ -37,6 +37,8 @@ from . import base as utils
 
 
 class OperatorField(forms.ChoiceField):
+    # FixMe: This is the new variant of :py:class:`FixedOperatorField`.  It
+    # makes :py:class:`FixedOperatorField` obsolete.
     """Form field class for the selection of a single operator.  This is
     intended for edit-process views when the operator must be the currently
     logged-in user, an external contact of that user, or the previous
@@ -49,26 +51,22 @@ class OperatorField(forms.ChoiceField):
     both is ``None`` if the respective type of operator was not given.
 
     It is senseful to show this field only to non-staff, and staff gets the
-    usual operator/external operator fields.  In the IEK-5/FZJ implementation,
+    usual operator/external operator fields.  In the IEK‑5/FZJ implementation,
     we even allow all three fields for staff users as long as there no
     contradicting values are given.
 
-    FixMe: This is the new variant of py:class:`FixedOperatorField`.  It makes
-    py:class:`FixedOperatorField` obsolete.
+    If you want to use this field for *non-staff*, do the following things:
 
-    If you want to use this field for *non-staff*, do the following things::
+    1. This field must be made required
 
-        1. This field must be made required
+    2. Make the possible choices of the operator and the external operator
+       fields empty.  Exclude those fields from the HTML.
 
-        2. Make the possible choices of the operator and the external operator
-           fields empty.  Exclude those fields from the HTML.
-
-        3. Check in your ``clean()`` method whether non-staff submits an
-           operator.  Since the operator is required in
-           ``samples.models.Process``, you must provide a senseful default for
-           the operator if none was returned (because an external operator was
-           selected).  I recommend to use the currently logged-in user in this
-           case.
+    3. Check in your ``clean()`` method whether non-staff submits an operator.
+       Since the operator is required in ``samples.models.Process``, you must
+       provide a senseful default for the operator if none was returned
+       (because an external operator was selected).  I recommend to use the
+       currently logged-in user in this case.
 
     A good example is in :py:mod:`institute.views.samples.substrate` of the INM
     adaption of JuliaBase.  There, you can also see how one can deal with staff
@@ -153,6 +151,11 @@ class ProcessForm(ModelForm):
     combined_operator = OperatorField(label=_("Operator"))
 
     def __init__(self, user, *args, **kwargs):
+        """
+        :param user: the currently logged-in user
+
+        :type user: django.contrib.auth.models.User
+        """
         self.user = user
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
@@ -383,6 +386,9 @@ class InitialsForm(forms.Form):
 
 
 class EditDescriptionForm(forms.Form):
+    """Form for letting the user enter a short description of the changes they
+    made.
+    """
     description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea)
     important = forms.BooleanField(label=_("Important edit"), required=False)
 
@@ -508,21 +514,14 @@ class FixedOperatorField(forms.ChoiceField):
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
 
-# FixMe: This should be moved to institute, because this special case is only
-# necessary because samples may get renamed after depositions.  Maybe
-# refactoring should be done because it is used for substrates, too.
-
 class DepositionSamplesForm(forms.Form):
-    """Form for the list selection of samples that took part in the
-    deposition.  Depositions need a special form class for this because it must
-    be disabled when editing an *existing* deposition.
+    """Form for the list selection of samples that took part in the deposition.
+    This form has the special behaviour that it prevents changing the samples
+    when editing an *existing* process.
     """
     sample_list = MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, preset_sample, deposition, data=None, **kwargs):
-        """Note that I have to distinguish clearly here
-        between new and existing depositions.
-        """
         samples = list(user.my_samples.all())
         if deposition:
             kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
@@ -916,8 +915,7 @@ class SampleSelectForm(forms.Form):
     sample = SampleField(label=capfirst(_("sample")))
 
     def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
-        """I only set the selection of samples to the current user's “My Samples”.
-
+        """
         :param user: the current user
         :param process_instance: the process instance to be edited, or ``None`` if
             a new is about to be created

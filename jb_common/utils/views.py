@@ -71,17 +71,18 @@ class UserField(forms.ChoiceField):
     """
 
     def set_users(self, user, additional_user=None):
-        """Set the user list shown in the widget.  You *must* call this method
-        (or `set_users_without`) in the constructor of the form in which you
-        use this field, otherwise the selection box will remain emtpy.  The
-        selection list will consist of all currently active users, plus the
-        given additional user if any.
+        """Set the user list shown in the widget.  You *must* call this method (or
+        :py:meth:`~jb_common.utils.views.UserField.set_users_without`) in the
+        constructor of the form in which you use this field, otherwise the
+        selection box will remain emtpy.  The selection list will consist of
+        all currently active users, plus the given additional user if any.
 
         :param user: Thr user who wants to see the user list
         :param additional_user: Optional additional user to be included into the
             list.  Typically, it is the current user for the process to be
             edited.
 
+        :type user: django.contrib.auth.models.User
         :type additional_user: django.contrib.auth.models.User
         """
         self.choices = [("", 9 * "-")] + \
@@ -89,10 +90,11 @@ class UserField(forms.ChoiceField):
 
 
     def set_users_without(self, user, excluded_user):
-        """Set the user list shown in the widget.  You *must* call this method
-        (or `set_users`) in the constructor of the form in which you use this
-        field, otherwise the selection box will remain emtpy.  The selection
-        list will consist of all currently active users, minus the given user.
+        """Set the user list shown in the widget.  You *must* call this method (or
+        :py:meth:`~jb_common.utils.views.UserField.set_users`) in the
+        constructor of the form in which you use this field, otherwise the
+        selection box will remain emtpy.  The selection list will consist of
+        all currently active users, minus the given user.
 
         :param user: Thr user who wants to see the user list
         :param excluded_user: User to be excluded from the list.  Typically, it

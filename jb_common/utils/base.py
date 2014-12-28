@@ -65,9 +65,13 @@ class HttpResponseSeeOther(django.http.HttpResponse):
 
 
 class JSONRequestException(Exception):
-    """Exception which is raised if a JSON response was requested and an error
-    in the submitted data occured.  This will result in an HTTP 422 response in
-    JuliaBase-common's middleware.
+    """Exception which is raised if a JSON response was requested and an error in
+    the submitted data occured.  This will result in an HTTP 422 response with
+    a JSON-encoded :samp:`({error code}, {error message})` body.  For example,
+    in a JSON-only view function, you might say::
+
+        if not request.user.is_staff:
+            raise JSONRequestException(6, "Only admins can access this ressource.")
 
     The ranges for the error codes are:
 
@@ -393,10 +397,10 @@ def send_email(subject, content, recipients, format_dict=None):
 
     ::
 
-        ``"Hello {name}".format(name=user.name)``,
+        "Hello {name}".format(name=user.name)
 
     you must pass a dictionary like ``{"name": user.name}`` to this function.
-    String formatting must be done here, otherwise, translating wouldn't work.
+    Otherwise, translating wouldn't work.
 
     :param subject: the subject of the email
     :param content: the content of the email; it may contain substitution tags
@@ -571,6 +575,8 @@ def format_lazy(string, *args, **kwargs):
     example, you might say::
 
         verbose_name = format_lazy(_(u"Raman {0} measurement"), 1)
+
+    Here, “``_``” is ``ugettext_lazy``.
     """
     return string.format(*args, **kwargs)
 # Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for

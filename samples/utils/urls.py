@@ -22,7 +22,13 @@ from jb_common.utils.base import camel_case_to_underscores
 class PatternGenerator(object):
     """This class helps to build URL pattern lists for physical processes.  You
     instantiate it once in your URLconf file.  Then, you add URLs by calling
-    `physical_process` for every physical process.
+    `physical_process` for every physical process::
+
+        pattern_generator = PatternGenerator(urlpatterns, "institute.views.samples")
+        pattern_generator.deposition("ClusterToolDeposition", views={"add", "edit"})
+        pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")
+        pattern_generator.physical_process("PDSMeasurement", "number")
+        pattern_generator.physical_process("Substrate", views={"edit"})
     """
 
     def __init__(self, url_patterns, views_prefix):
