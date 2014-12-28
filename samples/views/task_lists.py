@@ -26,7 +26,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
 from django.utils.text import capfirst
 from django.apps import apps
-from jb_common import utils as common_utils
+import jb_common.utils.base as common_utils
 from jb_common.models import Department
 from samples.models import Process, Task
 from samples import permissions

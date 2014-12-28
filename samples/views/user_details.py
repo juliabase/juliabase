@@ -29,8 +29,8 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from jb_common.utils import get_really_full_name
-from jb_common import utils as jb_common_utils
+from jb_common.utils.base import get_really_full_name
+import jb_common.utils.base as jb_common_utils
 from jb_common.models import Topic, Department
 from samples import models, permissions
 from samples.permissions import get_all_addable_physical_process_models

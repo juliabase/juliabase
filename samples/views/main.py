@@ -28,7 +28,7 @@ import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
-from jb_common.utils import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
+from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
     camel_case_to_underscores
 from jb_common.models import Topic
 import samples.utils.views as utils

@@ -35,7 +35,7 @@ import django.contrib.auth
 from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from jb_common.models import Topic
-from jb_common.utils import respond_in_json, JSONRequestException, int_or_zero
+from jb_common.utils.base import respond_in_json, JSONRequestException, int_or_zero
 import samples.utils.views as utils
 from samples import models, permissions
 

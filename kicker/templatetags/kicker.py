@@ -20,7 +20,7 @@ JuliaBase.
 from __future__ import absolute_import
 
 from django import template
-from jb_common import utils
+import jb_common.utils.base as utils
 
 register = template.Library()
 

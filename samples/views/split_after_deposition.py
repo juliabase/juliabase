@@ -30,7 +30,7 @@ from django.forms import Form
 from django import forms
 from django.forms.util import ValidationError
 from django.contrib.contenttypes.models import ContentType
-from jb_common.utils import is_json_requested, unquote_view_parameters, int_or_zero
+from jb_common.utils.base import is_json_requested, unquote_view_parameters, int_or_zero
 from samples import models, permissions
 import samples.utils.views as utils
 

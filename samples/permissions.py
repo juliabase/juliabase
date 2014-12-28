@@ -40,7 +40,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
-from jb_common import utils
+import jb_common.utils.base as utils
 import samples.models
 
 

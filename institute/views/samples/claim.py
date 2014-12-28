@@ -29,7 +29,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext, ugettext_lazy, ungettext
 from django.conf import settings
-from jb_common.utils import send_email, get_really_full_name, format_enumeration
+from jb_common.utils.base import send_email, get_really_full_name, format_enumeration
 from jb_common.models import Topic
 import samples.utils.views as utils
 from samples import permissions

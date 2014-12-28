@@ -25,7 +25,7 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 import hashlib, datetime
-from jb_common.utils import adjust_timezone_information
+from jb_common.utils.base import adjust_timezone_information
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms.util import ValidationError
@@ -34,8 +34,8 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.views.decorators.http import condition
 import django.contrib.auth.models
-import jb_common.utils
-from jb_common.utils import unquote_view_parameters
+import jb_common.utils.base
+from jb_common.utils.base import unquote_view_parameters
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -86,7 +86,7 @@ class SampleSeriesForm(forms.ModelForm):
         """Forbid image and headings syntax in Markdown markup.
         """
         description = self.cleaned_data["description"]
-        jb_common.utils.check_markdown(description)
+        jb_common.utils.base.check_markdown(description)
         return description
 
     def validate_unique(self):

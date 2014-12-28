@@ -27,7 +27,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
-from jb_common.utils import get_really_full_name, format_enumeration, check_markdown
+from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown
 from samples import permissions
 import samples.utils.views as utils
 

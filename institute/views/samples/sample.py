@@ -33,7 +33,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from jb_common.utils import get_really_full_name, int_or_zero
+from jb_common.utils.base import get_really_full_name, int_or_zero
 from samples import models, permissions
 import samples.utils.views as utils
 from institute import models as institute_models

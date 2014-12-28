@@ -25,7 +25,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _
-from jb_common.utils import camel_case_to_underscores
+from jb_common.utils.base import camel_case_to_underscores
 from samples import permissions
 
 

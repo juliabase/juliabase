@@ -22,7 +22,7 @@ from samples import models
 from django import forms
 from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
-from jb_common.utils import is_json_requested, format_enumeration
+from jb_common.utils.base import is_json_requested, format_enumeration
 import samples.utils.views as utils
 import institute.utils.views as form_utils
 import institute.utils.base

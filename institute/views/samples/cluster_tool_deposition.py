@@ -29,7 +29,7 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext, ungettext, ugettext_lazy
-import jb_common.utils
+import jb_common.utils.base
 from samples import models
 import samples.utils.views as utils
 import institute.utils.views as form_utils
@@ -148,7 +148,7 @@ class HotWireLayerForm(forms.ModelForm):
         """Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        jb_common.utils.check_markdown(comments)
+        jb_common.utils.base.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
@@ -204,7 +204,7 @@ class PECVDLayerForm(forms.ModelForm):
         """Forbid image and headings syntax in Markdown markup.
         """
         comments = self.cleaned_data["comments"]
-        jb_common.utils.check_markdown(comments)
+        jb_common.utils.base.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
@@ -280,7 +280,7 @@ class FormSet(object):
         self.edit_description_form = None
         self.preset_sample = utils.extract_preset_sample(request) if not self.deposition else None
         self.post_data = None
-        self.json_client = jb_common.utils.is_json_requested(request)
+        self.json_client = jb_common.utils.base.is_json_requested(request)
 
     def from_post_data(self, post_data):
         """Interpret the POST data and create bound forms for the layers.
@@ -554,7 +554,7 @@ class FormSet(object):
                 error_message = ungettext(
                     "The sample {samples} is already dead at this time.",
                     "The samples {samples} are already dead at this time.", len(dead_samples)).format(
-                    samples=jb_common.utils.format_enumeration([sample.name for sample in dead_samples]))
+                    samples=jb_common.utils.base.format_enumeration([sample.name for sample in dead_samples]))
                 self.deposition_form.add_error("timestamp", error_message)
                 referentially_valid = False
         if not self.layer_forms:

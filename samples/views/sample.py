@@ -40,9 +40,9 @@ from django.views.decorators.http import condition
 from django.utils.text import capfirst
 from django.forms.util import ValidationError
 import jb_common.search
-from jb_common.utils import format_enumeration, unquote_view_parameters
+from jb_common.utils.base import format_enumeration, unquote_view_parameters
 from jb_common.signals import storage_changed
-from jb_common.utils import HttpResponseSeeOther, \
+from jb_common.utils.base import HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
     mkdirs, cache_key_locked, get_from_cache, unlazy_object, int_or_zero
 from samples import models, permissions, data_tree

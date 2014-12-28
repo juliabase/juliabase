@@ -31,7 +31,7 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
-from jb_common.utils import get_really_full_name, check_markdown, int_or_zero, sorted_users_by_first_name
+from jb_common.utils.base import get_really_full_name, check_markdown, int_or_zero, sorted_users_by_first_name
 from jb_common.models import Topic, Department
 from samples import models
 from . import base as utils

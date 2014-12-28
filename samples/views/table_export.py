@@ -113,7 +113,6 @@ from django.forms.util import ValidationError
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core.urlresolvers
 import django.forms as forms
-import jb_common.utils
 
 
 class UnicodeWriter(object):

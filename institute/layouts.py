@@ -31,7 +31,7 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import mm
 import reportlab.pdfbase.pdfmetrics
 from django.conf import settings
-from jb_common import utils
+import jb_common.utils.base as utils
 import institute.models
 from institute.reportlab_config import default_fontname
 

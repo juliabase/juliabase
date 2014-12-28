@@ -25,7 +25,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.template import defaultfilters
 from django.utils.translation import ugettext as _
-import jb_common.utils
+import jb_common.utils.base
 from jb_common.signals import storage_changed
 from samples import permissions
 import samples.utils.views as utils
@@ -58,11 +58,10 @@ def show_stack(request, sample_id, thumbnail):
         raise Http404("No stack diagram available.")
     locations = sample_details.get_stack_diagram_locations()
     filepath = locations["thumbnail_file" if thumbnail else "diagram_file"]
-    if jb_common.utils.is_update_necessary(filepath, timestamps=[sample.last_modified]):
-        jb_common.utils.mkdirs(filepath)
-        if not thumbnail or jb_common.utils.is_update_necessary(locations["diagram_file"],
-                                                                     timestamps=[sample.last_modified]):
-            jb_common.utils.mkdirs(locations["diagram_file"])
+    if jb_common.utils.base.is_update_necessary(filepath, timestamps=[sample.last_modified]):
+        jb_common.utils.base.mkdirs(filepath)
+        if not thumbnail or jb_common.utils.base.is_update_necessary(locations["diagram_file"], timestamps=[sample.last_modified]):
+            jb_common.utils.base.mkdirs(locations["diagram_file"])
             informal_stacks.generate_diagram(
                 locations["diagram_file"], [informal_stacks.Layer(layer) for layer in sample_details.informal_layers.all()],
                 six.text_type(sample), _("Layer stack of {0}").format(sample))
@@ -70,5 +69,5 @@ def show_stack(request, sample_id, thumbnail):
             subprocess.call(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
                              "-sOutputFile=" + locations["thumbnail_file"], locations["diagram_file"]])
         storage_changed.send(models.SampleDetails)
-    return jb_common.utils.static_file_response(
+    return jb_common.utils.base.static_file_response(
         filepath, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(six.text_type(sample))))

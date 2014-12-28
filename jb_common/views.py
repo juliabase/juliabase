@@ -21,8 +21,9 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
-from jb_common import utils, models
-from jb_common.utils import help_link, get_really_full_name
+from jb_common import models
+import jb_common.utils.base as utils
+from jb_common.utils.base import help_link, get_really_full_name
 
 
 @login_required

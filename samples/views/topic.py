@@ -29,7 +29,7 @@ import django.forms as forms
 from django.forms.util import ValidationError
 from django.utils.text import capfirst
 from jb_common.models import Topic
-from jb_common.utils import int_or_zero
+from jb_common.utils.base import int_or_zero
 from samples import permissions
 from samples.views.permissions import PermissionsPhysicalProcess
 import samples.utils.views as utils

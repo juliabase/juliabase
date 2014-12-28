@@ -30,7 +30,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 from django.contrib import messages
-from jb_common.utils import format_enumeration
+from jb_common.utils.base import format_enumeration
 from samples import models, permissions
 import samples.utils.views as utils
 

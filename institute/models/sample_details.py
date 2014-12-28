@@ -31,7 +31,7 @@ from django.forms.util import ValidationError
 from django.forms.models import inlineformset_factory
 from jb_common.signals import storage_changed
 from jb_common import search, model_fields
-import jb_common.utils
+import jb_common.utils.base
 from samples.data_tree import DataNode, DataItem
 import samples.models
 
@@ -138,8 +138,8 @@ class SampleDetails(models.Model):
             context["informal_stack_url"] = plot_locations["diagram_url"]
             context["informal_stack_thumbnail_url"] = plot_locations["thumbnail_url"]
         else:
-            removed = jb_common.utils.remove_file(plot_locations["diagram_file"])
-            removed = jb_common.utils.remove_file(plot_locations["thumbnail_file"]) or removed
+            removed = jb_common.utils.base.remove_file(plot_locations["diagram_file"])
+            removed = jb_common.utils.base.remove_file(plot_locations["thumbnail_file"]) or removed
             context.pop("informal_stack_url", None)
             context.pop("informal_stack_thumbnail_url", None)
             if removed:

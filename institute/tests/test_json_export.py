@@ -18,7 +18,7 @@ from __future__ import absolute_import, unicode_literals
 import json
 from django.test import TestCase
 from django.test.client import Client
-import jb_common.utils
+import jb_common.utils.base
 
 
 class JsonTestCase(TestCase):
@@ -82,8 +82,8 @@ class ExportTest(JsonTestCase):
 class SharedUtilsTest(TestCase):
 
     def test_capitalize_first_letter(self):
-        self.assertEqual(jb_common.utils.capitalize_first_letter("hello World"), "Hello World")
-        self.assertEqual(jb_common.utils.capitalize_first_letter("ärgerlich"), "Ärgerlich")
+        self.assertEqual(jb_common.utils.base.capitalize_first_letter("hello World"), "Hello World")
+        self.assertEqual(jb_common.utils.base.capitalize_first_letter("ärgerlich"), "Ärgerlich")
 
 
 class AdminExportTest(JsonTestCase):

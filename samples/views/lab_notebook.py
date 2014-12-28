@@ -34,7 +34,7 @@ import django.forms as forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
-from jb_common.utils import HttpResponseSeeOther, get_all_models, camel_case_to_underscores, capitalize_first_letter
+from jb_common.utils.base import HttpResponseSeeOther, get_all_models, camel_case_to_underscores, capitalize_first_letter
 from samples import permissions
 import samples.utils.views as utils
 

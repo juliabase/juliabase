@@ -28,7 +28,7 @@ from django.conf import settings
 import django.contrib.auth.models
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
-from jb_common.utils import is_json_requested, respond_in_json, check_filepath
+from jb_common.utils.base import is_json_requested, respond_in_json, check_filepath
 import samples.utils.views as utils
 from samples import models, permissions
 import institute.utils.views as form_utils

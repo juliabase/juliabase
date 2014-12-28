@@ -31,7 +31,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from jb_common.models import Topic
-from jb_common.utils import respond_in_json, JSONRequestException
+from jb_common.utils.base import respond_in_json, JSONRequestException
 import samples.utils.views as utils
 from samples import models, permissions
 import institute.models

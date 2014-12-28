@@ -20,7 +20,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext_lazy
-from jb_common.utils import is_json_requested, \
+from jb_common.utils.base import is_json_requested, \
     respond_in_json
 from samples import permissions
 import samples.utils.views as utils

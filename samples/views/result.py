@@ -24,7 +24,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime, os, json, subprocess
 from jb_common.signals import storage_changed
-from jb_common.utils import static_file_response, \
+from jb_common.utils.base import static_file_response, \
     is_update_necessary, mkdirs
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -33,7 +33,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, pgettext_lazy
 import django.forms as forms
-import jb_common.utils
+import jb_common.utils.base
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -209,7 +209,7 @@ class QuantityForm(forms.Form):
 
     def clean_quantity(self):
         quantity = " ".join(self.cleaned_data["quantity"].split())
-        return jb_common.utils.substitute_html_entities(quantity)
+        return jb_common.utils.base.substitute_html_entities(quantity)
 
 
 class ValueForm(forms.Form):
@@ -550,8 +550,8 @@ def show(request, process_id):
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
-    if jb_common.utils.is_json_requested(request):
-        return jb_common.utils.respond_in_json(result.get_data())
+    if jb_common.utils.base.is_json_requested(request):
+        return jb_common.utils.base.respond_in_json(result.get_data())
     template_context = {"title": _("Result “{title}”").format(title=result.title), "result": result,
                         "samples": result.samples.all(), "sample_series": result.sample_series.all()}
     template_context.update(utils.digest_process(result, request.user))

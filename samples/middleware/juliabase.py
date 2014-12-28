@@ -19,7 +19,7 @@ from django.template import loader, RequestContext
 from django.utils.translation import ugettext as _
 import django.http
 from django.shortcuts import render
-from jb_common.utils import HttpResponseUnauthorized
+from jb_common.utils.base import HttpResponseUnauthorized
 import samples.utils.views as utils
 from samples.permissions import PermissionError
 

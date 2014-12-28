@@ -28,7 +28,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 import django.core.urlresolvers
-from jb_common.utils import get_really_full_name, camel_case_to_underscores
+from jb_common.utils.base import get_really_full_name, camel_case_to_underscores
 from jb_common import __version__
 from samples import permissions, models
 import samples.utils.views as utils

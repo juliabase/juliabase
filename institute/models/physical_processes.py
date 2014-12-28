@@ -31,8 +31,8 @@ from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
-from jb_common.utils import format_lazy
-import jb_common.utils
+from jb_common.utils.base import format_lazy
+import jb_common.utils.base
 import samples.utils.views as utils
 from samples.utils.plots import PlotError
 import institute.layouts
@@ -178,7 +178,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         _ = ugettext
         data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
         best_eta = self.cells.aggregate(models.Max("eta"))["eta__max"]
-        data_node.items.append(DataItem(_("η of best cell") + "/%", jb_common.utils.round(best_eta, 3)))
+        data_node.items.append(DataItem(_("η of best cell") + "/%", jb_common.utils.base.round(best_eta, 3)))
         return data_node
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):

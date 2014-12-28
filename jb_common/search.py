@@ -33,7 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from jb_common import utils
+import jb_common.utils.base as utils
 
 
 def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):

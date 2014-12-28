@@ -25,7 +25,7 @@ from django.forms.util import ValidationError
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
-from jb_common.utils import unquote_view_parameters
+from jb_common.utils.base import unquote_view_parameters
 from samples import models, permissions
 import samples.utils.views as utils
 

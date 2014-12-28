@@ -27,7 +27,7 @@ from django.dispatch import receiver
 import django.contrib.auth.models
 from django.utils.translation import ugettext as _
 from jb_common.signals import maintain
-from jb_common import utils
+import jb_common.utils.base as utils
 from samples.models import Result, PhysicalProcess, Sample, SampleAlias
 from institute import models as institute_app
 

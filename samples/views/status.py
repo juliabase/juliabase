@@ -31,7 +31,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.utils.text import capfirst
 import django.forms as forms
-from jb_common.utils import check_markdown
+from jb_common.utils.base import check_markdown
 from jb_common.search import DateTimeField
 from samples import models
 from samples.permissions import get_all_addable_physical_process_models, PermissionError

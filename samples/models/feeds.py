@@ -34,7 +34,7 @@ import django.contrib.auth.models
 import django.core.urlresolvers
 from samples.models.common import Sample, Process, Result, SampleSplit, SampleSeries, StatusMessage, Task
 from jb_common.models import Topic, PolymorphicModel
-from jb_common.utils import get_really_full_name
+from jb_common.utils.base import get_really_full_name
 
 
 @python_2_unicode_compatible

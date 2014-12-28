@@ -27,7 +27,7 @@ from django.utils.translation import ugettext as _
 import django.core.urlresolvers
 from django.forms.util import ValidationError
 from django.contrib import messages
-from jb_common.utils import capitalize_first_letter
+from jb_common.utils.base import capitalize_first_letter
 from samples import permissions
 import samples.utils.views as utils
 
