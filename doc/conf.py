@@ -57,7 +57,7 @@ master_doc = 'toc'
 
 # General information about the project.
 project = 'JuliaBase'
-copyright = u'2014, Forschungszentrum Jülich'
+copyright = u'2015, Torsten Bronger, Forschungszentrum Jülich'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -93,7 +93,7 @@ default_role = 'py:obj'
 
 # If true, the current module name will be prepended to all description
 # unit titles (such as .. function::).
-#add_module_names = True
+add_module_names = False
 
 # If true, sectionauthor and moduleauthor directives will be shown in the
 # output. They are ignored by default.

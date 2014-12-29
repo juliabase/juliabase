@@ -17,8 +17,8 @@ Template tags and filters
 ==========================
 
 
-JuliaBase
-==========
+JuliaBase core
+================
 
 You use these tags and filter with::
 

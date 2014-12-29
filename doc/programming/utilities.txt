@@ -24,6 +24,8 @@ Common helpers
 String-related
 --------------
 
+The following names are found in the module :py:mod:`jb_common.utils.base`.
+
 .. autofunction:: jb_common.utils.base.format_lazy
 .. autofunction:: jb_common.utils.base.format_enumeration
 .. autofunction:: jb_common.utils.base.camel_case_to_underscores
@@ -32,6 +34,8 @@ String-related
 
 File-related
 ------------
+
+The following names are found in the module :py:mod:`jb_common.utils.base`.
 
 .. autofunction:: jb_common.utils.base.find_file_in_directory
 .. autofunction:: jb_common.utils.base.check_filepath
@@ -43,17 +47,27 @@ File-related
 Generating responses
 --------------------
 
+The following names are found in the module :py:mod:`jb_common.utils.base`.
+
 .. autoexception:: jb_common.utils.base.JSONRequestException
-.. autofunction:: samples.utils.views.successful_response
 .. autofunction:: jb_common.utils.base.is_json_requested
 .. autofunction:: jb_common.utils.base.respond_in_json
 .. autofunction:: jb_common.utils.base.static_file_response
+
+The following name is found in the module :py:mod:`samples.utils.views`.
+
+.. autofunction:: samples.utils.views.successful_response
 
 
 Sample-related
 --------------
 
+The following name is found in the module :py:mod:`jb_common.utils.base`.
+
 .. autofunction:: jb_common.utils.base.get_really_full_name
+
+The following names are found in the module :py:mod:`samples.utils.views`.
+
 .. autofunction:: samples.utils.views.dead_samples
 .. autofunction:: samples.utils.views.sample_name_format
 .. autofunction:: samples.utils.views.get_sample
@@ -68,16 +82,23 @@ Sample-related
 Miscellaneous
 -------------
 
+The following names are found in the module :py:mod:`samples.utils.views`.
+
 .. autofunction:: samples.utils.views.convert_id_to_int
+.. autofunction:: samples.utils.views.table_export
+
+The following names are found in the module :py:mod:`jb_common.utils.base`.
+
 .. autofunction:: jb_common.utils.base.check_markdown
 .. autofunction:: jb_common.utils.base.help_link
 .. autofunction:: jb_common.utils.base.send_email
 .. autofunction:: jb_common.utils.base.round
-.. autofunction:: samples.utils.views.table_export
 
 
 Feed reporting
 ================
+
+The following name is found in the module :py:mod:`samples.utils.views`.
 
 .. autoclass:: samples.utils.views.Reporter
                :members:
@@ -86,18 +107,25 @@ Feed reporting
 Form field classes
 ====================
 
+The following names are found in the module :py:mod:`jb_common.utils.views`.
+
 .. autoclass:: jb_common.utils.views.UserField
                :members: set_users, set_users_without
 .. autoclass:: jb_common.utils.views.MultipleUsersField
                :members: set_users
 .. autoclass:: jb_common.utils.views.TopicField
                :members: set_topics
+
+The following name is found in the module :py:mod:`samples.utils.views`.
+
 .. autoclass:: samples.utils.views.OperatorField
                :members: set_choices
 
 
 Form classes
 ==============
+
+The following names are found in the module :py:mod:`samples.utils.views`.
 
 .. autoclass:: samples.utils.views.ProcessForm
                :members: is_referentially_valid
@@ -112,6 +140,8 @@ Form classes
 Plots
 ======
 
+The following names are found in the module :py:mod:`samples.utils.plots`.
+
 .. autoexception:: samples.utils.plots.PlotError
 .. autofunction:: samples.utils.plots.read_plot_file_beginning_at_line_number
 .. autofunction:: samples.utils.plots.read_plot_file_beginning_after_start_value
@@ -119,6 +149,8 @@ Plots
 
 URLs
 ======
+
+The following name is found in the module :py:mod:`samples.utils.urls`.
 
 .. autoclass:: samples.utils.urls.PatternGenerator
                :members:

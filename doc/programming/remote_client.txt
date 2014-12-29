@@ -101,6 +101,8 @@ series, and writes these plots back to the database.  There, one can see them
 on the series' pages, and in every sample's data sheet.
 
 
+.. `Extending the remote client`_
+
 Extending the remote client
 =============================
 
@@ -239,16 +241,19 @@ See the top comment in :file:`remote_client/delphi/juliabase.pas` for further
 instructions.
 
 
-Basic classes and functions
-==============================
+Classes and functions
+========================
+
+As explained in `Extending the remote client`_, the following names become
+available by saying
+
+::
+
+    from jb_remote import *
 
 .. automodule:: jb_remote.common
                 :members: login, connection, JuliaBaseConnection, JuliaBaseError, logout, primary_keys, PrimaryKeys, setup_logging,
                           parse_timestamp, double_urlquote, format_timestamp, sanitize_for_markdown
-
-
-Samples-related classes and functions
-=========================================
 
 .. automodule:: jb_remote.samples
                 :members:
