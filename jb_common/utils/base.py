@@ -265,7 +265,8 @@ def help_link(link):
     """Function decorator for views functions to set a help link for the view.  The
     help link is embedded into the top line in the layout, see the template
     ``base.html``.  The default template :file:`jb_base.html` prepends
-    ``"/trac/wiki/"``.
+    ``"http://www.juliabase.org/"``.  But you may change that by overriding the
+    ``help_link`` block in your own :file:`jb_base.html`.
 
     :param link: the relative URL to the help page.
 
