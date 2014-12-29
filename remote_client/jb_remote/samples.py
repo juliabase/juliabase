@@ -148,8 +148,10 @@ class Sample(object):
             data["topic"] = primary_keys["topics"][self.topic]
         if self.id:
             connection.open("samples/by_id/{0}/edit/".format(self.id), data)
+            logging.info("Edited sample {0}.".format(self.name))
         else:
             self.id = connection.open("add_sample", data)
+            logging.info("Added sample {0}.".format(self.name))
         return self.id
 
     def add_to_my_samples(self, user=None):
@@ -193,7 +195,6 @@ class Result(object):
                 self.image_data = connection.open("results/images/{0}".format(id_), response_is_json=False)
             self.external_operator = data["external_operator"]
             self.quantities, self.values = json.loads(data["quantities_and_values"])
-            self.existing = True
         else:
             self.id = None
             self.sample_ids = []
@@ -202,7 +203,6 @@ class Result(object):
             self.timestamp_inaccuracy = 0
             self.quantities = []
             self.values = []
-            self.existing = False
         self.image_filename = None
         self.finished = True
         self.edit_description = None
@@ -245,9 +245,10 @@ class Result(object):
         if self.image_filename:
             data["image_file"] = open(self.image_filename, "rb")
         with TemporaryMySamples(self.sample_ids):
-            if self.existing:
-                result = connection.open("results/{0}/edit/".format(self.id), data)
+            if self.id:
+                connection.open("results/{0}/edit/".format(self.id), data)
+                logging.info("Edited result {0}.".format(self.id))
             else:
-                result = connection.open("results/add/", data)
-                logging.info("Successfully added result {0}.".format(self.id))
-        return result
+                self.id = connection.open("results/add/", data)
+                logging.info("Added result {0}.".format(self.id))
+        return self.id

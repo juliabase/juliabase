@@ -521,7 +521,7 @@ def edit(request, process_id):
         if result:
             utils.Reporter(request.user).report_result_process(
                 result, form_set.edit_description_form.cleaned_data if form_set.edit_description_form else None)
-            return utils.successful_response(request)
+            return utils.successful_response(request, json_response=result.pk)
     else:
         form_set.from_database()
     form_set.update_previous_dimensions_form()

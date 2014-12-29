@@ -62,6 +62,7 @@ Sample-related
 .. autofunction:: samples.utils.views.lookup_sample
 .. autofunction:: samples.utils.views.remove_samples_from_my_samples
 .. autofunction:: samples.utils.views.extract_preset_sample
+.. autofunction:: samples.utils.views.restricted_samples_query
 
 
 Miscellaneous

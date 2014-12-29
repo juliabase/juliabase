@@ -23,6 +23,7 @@ from __future__ import absolute_import, unicode_literals
 
 import sys, json
 from django.db.utils import IntegrityError
+from django.db.models import Q
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext as _
@@ -38,6 +39,65 @@ from jb_common.models import Topic
 from jb_common.utils.base import respond_in_json, JSONRequestException, int_or_zero
 import samples.utils.views as utils
 from samples import models, permissions
+
+
+@login_required
+@require_http_methods(["POST"])
+@ensure_csrf_cookie
+def add_sample(request):
+    """Adds a new sample to the database.  It is added without processes.  This
+    view can only be used by admin accounts.
+
+    :param request: the current HTTP Request object; it must contain the sample
+        data in the POST data.
+
+    :return:
+      The primary key of the created sample.  ``False`` if something went
+      wrong.  It may return a 404 if the topic or the currently responsible
+      person wasn't found.
+
+    :rtype: HttpResponse
+    """
+    try:
+        name = request.POST["name"]
+        current_location = request.POST["current_location"]
+        currently_responsible_person = request.POST["currently_responsible_person"]
+        purpose = request.POST.get("purpose", "")
+        tags = request.POST.get("tags", "")
+        topic = request.POST.get("topic")
+    except KeyError as error:
+        raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
+    if len(name) > 30:
+        raise JSONRequestException(5, "The sample name is too long.")
+    if utils.sample_name_format(name) not in settings.SAMPLE_NAME_FORMATS["provisional"].get("possible renames", set()):
+        raise JSONRequestException(5, "The sample name is invalid.")
+    eligible_users = django.contrib.auth.models.User.objects.filter(is_active=True, jb_user_details__department__isnull=False)
+    try:
+        currently_responsible_person = eligible_users.get(pk=utils.convert_id_to_int(currently_responsible_person))
+    except django.contrib.auth.models.User.DoesNotExist:
+        raise Http404("Currently reponsible user not found.")
+    if topic:
+        all_topics = Topic.objects.all() if request.user.is_staff else \
+                     Topic.objects.filter(Q(confidential=False) | Q(members=request.user))
+        try:
+            topic = all_topics.get(pk=utils.convert_id_to_int(topic))
+        except Topic.DoesNotExist:
+            raise Http404("Topic not found")
+    try:
+        sample = models.Sample.objects.create(name=name, current_location=current_location,
+                                              currently_responsible_person=currently_responsible_person, purpose=purpose,
+                                              tags=tags, topic=topic)
+        # They will be shadowed anyway.  Nevertheless, this action is an
+        # emergency measure.  Probably the samples the aliases point to should
+        # be merged with the sample but this can't be decided automatically.
+        models.SampleAlias.objects.filter(name=name).delete()
+    except IntegrityError as error:
+        error_message = "The sample with this data could not be added."
+        if request.user.is_staff:
+            error_message += " {}".format(error)
+        raise JSONRequestException(5, error_message)
+    sample.watchers.add(request.user)
+    return respond_in_json(sample.pk)
 
 
 @login_required
@@ -63,7 +123,8 @@ def primary_keys(request):
     The same works for ``"topics"``, ``"users"``, and ``"external_operators"``.
     You can also mix all tree in the query string.  If you pass ``"*"`` instead
     of a values list, you get *all* primary keys.  For samples, however, this
-    is limited to “My Samples”.
+    is limited to “My Samples”.  If a sample name is mapped to a list, it is an
+    alias (which may point to more than one sample).
 
     The result is the JSON representation of the resulting nested dictionary.
 
@@ -78,50 +139,48 @@ def primary_keys(request):
     """
     result_dict = {}
     if "topics" in request.GET:
-        all_topics = set(topic for topic in Topic.objects.all()
-                         if not topic.confidential or request.user in topic.members.all() or request.user.is_staff)
+        all_topics = Topic.objects.all() if request.user.is_staff else \
+                     Topic.objects.filter(Q(confidential=False) | Q(members=request.user))
         if request.GET["topics"] == "*":
             topics = all_topics
         else:
             topicnames = request.GET["topics"].split(",")
-            topics = set(topic for topic in all_topics if topic.name in topicnames)
-        result_dict["topics"] = dict((topic.name, topic.id) for topic in topics)
+            topics = {topic for topic in all_topics if topic.name in topicnames}
+        result_dict["topics"] = {topic.name: topic.id for topic in topics}
     if "samples" in request.GET:
         if request.GET["samples"] == "*":
             result_dict["samples"] = dict(request.user.my_samples.values_list("name", "id"))
         else:
+            restricted_samples = utils.restricted_samples_query(request.user)
             sample_names = request.GET["samples"].split(",")
             result_dict["samples"] = {}
-            for alias, sample_id in models.SampleAlias.objects.filter(name__in=sample_names).values_list("name", "sample"):
-                result_dict["samples"].setdefault(alias, []).append(sample_id)
-            result_dict["samples"].update(models.Sample.objects.filter(name__in=sample_names).values_list("name", "id"))
+            for alias, sample_id in models.SampleAlias.objects.filter(name__in=sample_names, sample__in=restricted_samples). \
+               values_list("name", "sample"):
+                result_dict["samples"].setdefault(alias, set()).add(sample_id)
+            result_dict["samples"].update(restricted_samples.filter(name__in=sample_names).values_list("name", "id"))
     if "depositions" in request.GET:
         deposition_numbers = request.GET["depositions"].split(",")
         result_dict["depositions"] = dict(models.Deposition.objects.
                                           filter(number__in=deposition_numbers).values_list("number", "id"))
     if "users" in request.GET:
+        eligible_users = django.contrib.auth.models.User.objects.filter(
+            is_active=True, jb_user_details__department__isnull=False)
         if request.GET["users"] == "*":
-            result_dict["users"] = dict(django.contrib.auth.models.User.objects.values_list("username", "id"))
+            result_dict["users"] = dict(eligible_users.values_list("username", "id"))
         else:
             user_names = request.GET["users"].split(",")
-            # FixMe: Return only *active* users
-            result_dict["users"] = dict(django.contrib.auth.models.User.objects.filter(username__in=user_names).
-                                        values_list("username", "id"))
+            result_dict["users"] = dict(eligible_users.filter(username__in=user_names).values_list("username", "id"))
     if "external_operators" in request.GET:
         if request.user.is_staff:
-            all_external_operators = set(models.ExternalOperator.objects.all())
+            all_external_operators = models.ExternalOperator.objects.all()
         else:
-            all_external_operators = set(external_operator for external_operator in models.ExternalOperator.objects.all()
-                                         if not external_operator.confidential or
-                                         request.user in external_operator.contact_persons.all())
+            all_external_operators = models.ExternalOperator.objects.filter(Q(confidential=False) | Q(contact_persons=request.user))
         if request.GET["external_operators"] == "*":
             external_operators = all_external_operators
         else:
             external_operator_names = request.GET["external_operators"].split(",")
-            external_operators = set(external_operator for external_operator in all_external_operators
-                                     if external_operator.name in external_operator_names)
-        result_dict["external_operators"] = dict((external_operator.name, external_operator.id)
-                                                 for external_operator in external_operators)
+            external_operators = all_external_operators.filter(name__in=external_operator_names)
+        result_dict["external_operators"] = {external_operator.name: external_operator.id for external_operator in external_operators}
     return respond_in_json(result_dict)
 
 

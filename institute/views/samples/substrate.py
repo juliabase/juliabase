@@ -109,13 +109,9 @@ def edit(request, substrate_id):
             utils.Reporter(request.user).report_physical_process(
                 new_substrate, edit_description_form.cleaned_data if edit_description_form else None)
             if substrate:
-                # FixMe: Give the show-substrate function as the "view"
-                # parameter once we have it.
                 return utils.successful_response(
                     request, _("Substrate {0} was successfully changed in the database.").format(new_substrate))
             else:
-                # FixMe: Give the show-substrate function as the "view"
-                # parameter once we have it.
                 return utils.successful_response(
                     request, _("Substrate {0} was successfully added to the database.").format(new_substrate),
                     json_response=new_substrate.pk)

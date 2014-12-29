@@ -48,7 +48,6 @@ urlpatterns = [
 
     # Remote client
 
-    url(r"^add_sample$", "institute.views.samples.json_client.add_sample"),
     url(r"^substrates_by_sample/(?P<sample_id>\d+)$", "institute.views.samples.json_client.substrate_by_sample"),
     url(r"^next_deposition_number/(?P<letter>.+)", "institute.views.samples.json_client.next_deposition_number"),
     url(r"^solarsimulator_measurements/by_filepath",

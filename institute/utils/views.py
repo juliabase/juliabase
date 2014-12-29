@@ -99,7 +99,7 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
                 json_response = True
             else:
                 message = _("Deposition {number} was successfully added to the database.").format(number=deposition.number)
-                json_response = deposition.number
+                json_response = deposition.pk
             return utils.successful_response(request, message, next_view, next_view_kwargs or {}, query_string,
                                              forced=next_view is not None, json_response=json_response)
         else:
