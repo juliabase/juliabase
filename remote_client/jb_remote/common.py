@@ -501,8 +501,7 @@ def sanitize_for_markdown(text):
         replace("\n#", "\n\\#").replace("\n>", "\n\\>").replace("\n+", "\n\\+").replace("\n-", "\n\\-")
     if text.startswith(tuple("#>+-")):
         text = "\\" + text
-    # FixMe: Add ``flags=re.UNICODE`` with Python 2.7+
-    paragraphs = re.split(r"\n\s*\n", text)
+    paragraphs = re.split(r"\n\s*\n", text, flags=re.UNICODE)
     for i, paragraph in enumerate(paragraphs):
         lines = paragraph.split("\n")
         for j, line in enumerate(lines):
