@@ -42,6 +42,58 @@ from samples import models, permissions
 
 
 @login_required
+@require_http_methods(["POST"])
+@ensure_csrf_cookie
+def add_sample(request):
+    """Adds a new sample to the database.  It is added without processes.  This
+    view can only be used by admin accounts.
+
+    :param request: the current HTTP Request object; it must contain the sample
+        data in the POST data.
+
+    :return:
+      The primary key of the created sample.  ``False`` if something went
+      wrong.  It may return a 404 if the topic or the currently responsible
+      person wasn't found.
+
+    :rtype: HttpResponse
+    """
+    if not request.user.is_staff:
+        raise JSONRequestException(6, "Only admins can access this ressource.")
+    try:
+        name = request.POST["name"]
+        current_location = request.POST["current_location"]
+        currently_responsible_person = request.POST["currently_responsible_person"]
+        purpose = request.POST.get("purpose", "")
+        tags = request.POST.get("tags", "")
+        topic = request.POST.get("topic")
+    except KeyError as error:
+        raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
+    if len(name) > 30:
+        raise JSONRequestException(5, "The sample name is too long.")
+    currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
+                                                     pk=utils.convert_id_to_int(currently_responsible_person))
+    if topic:
+        topic = get_object_or_404(Topic, pk=utils.convert_id_to_int(topic))
+    try:
+        sample = models.Sample.objects.create(name=name, current_location=current_location,
+                                              currently_responsible_person=currently_responsible_person, purpose=purpose,
+                                              tags=tags, topic=topic)
+        for alias in models.SampleAlias.objects.filter(name=name):
+            # They will be shadowed anyway.  Nevertheless, this action is
+            # an emergency measure.  Probably the samples the aliases point
+            # to should be merged with the sample but this can't be decided
+            # automatically.
+            alias.delete()
+    except IntegrityError as error:
+        # If this function is refactored into a non-admin-only function, no
+        # database error message must be returned to non-privileged users.
+        raise JSONRequestException(5, "The sample with this data could not be added: {}".format(error))
+    sample.watchers.add(request.user)
+    return respond_in_json(sample.pk)
+
+
+@login_required
 @never_cache
 @require_http_methods(["GET"])
 def primary_keys(request):

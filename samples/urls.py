@@ -126,6 +126,7 @@ urlpatterns = [
     url(r"^claims/(?P<username>.+)/$", "samples.views.claim.list_"),
     url(r"^claims/(?P<claim_id>\d+)$", "samples.views.claim.show"),
 
+    url(r"^add_sample$", "samples.views.json_client.add_sample"),
     url(r"^primary_keys$", "samples.views.json_client.primary_keys"),
     url(r"^available_items/(?P<model_name>[A-Za-z_][A-Za-z_0-9]*)$", "samples.views.json_client.available_items"),
     url(r"^latest_split/(?P<sample_name>.+)", "samples.views.split_and_rename.latest_split"),
