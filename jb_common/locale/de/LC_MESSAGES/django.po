@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-28 03:30+0100\n"
+"POT-Creation-Date: 2014-12-29 17:17+0100\n"
 "PO-Revision-Date: 2014-12-25 19:15+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -381,31 +381,31 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: jb_common/utils/base.py:159
+#: jb_common/utils/base.py:163
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: jb_common/utils/base.py:188
+#: jb_common/utils/base.py:192
 #, python-brace-format
 msgid "Couldn't open {filename}."
 msgstr "Konnte {filename} nicht öffnen."
 
-#: jb_common/utils/base.py:202
+#: jb_common/utils/base.py:206
 msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #. Translators: Intended as a separator in an enumeration of three or more items
-#: jb_common/utils/base.py:773
+#: jb_common/utils/base.py:779
 msgid ", "
 msgstr ", "
 
-#: jb_common/utils/base.py:773
+#: jb_common/utils/base.py:779
 msgid ", and "
 msgstr " und "
 
 #. Translators: Intended to be used in an enumeration of exactly two items
-#: jb_common/utils/base.py:776
+#: jb_common/utils/base.py:782
 msgid " and "
 msgstr " und "
 

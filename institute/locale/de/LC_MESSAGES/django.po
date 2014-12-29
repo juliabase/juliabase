@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-28 03:30+0100\n"
-"PO-Revision-Date: 2014-12-26 01:28+0100\n"
+"POT-Creation-Date: 2014-12-29 17:17+0100\n"
+"PO-Revision-Date: 2014-12-29 17:20+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -597,6 +597,22 @@ msgid ""
 msgstr ""
 "Sie dürfen kein Substrat hinzufügen, weil Sie nicht alle beteiligten Proben "
 "ändern dürfen."
+
+#: institute/signals.py:60
+#, python-brace-format
+msgid "{user_name} uses {apparatus}"
+msgstr "{user_name} benutzt {apparatus}"
+
+#: institute/signals.py:61
+#, python-brace-format
+msgid ""
+"Dear supervisors of {apparatus_plural},\n"
+"\n"
+"{user_name} has created their first {apparatus}.\n"
+msgstr ""
+"An die Verantwortlichen von {apparatus_plural},\n"
+"\n"
+"{user_name} hat seinen/ihren ersten Prozess „{apparatus}“ angelegt.\n"
 
 #: institute/templates/404.html:28 institute/templates/404.html.py:29
 msgid "Resource not found"
@@ -1286,22 +1302,22 @@ msgstr ""
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
 
-#: institute/views/samples/substrate.py:115
+#: institute/views/samples/substrate.py:113
 #, python-brace-format
 msgid "Substrate {0} was successfully changed in the database."
 msgstr "Substrat {0} wurde erfolgreich in der Datenbank geändert."
 
-#: institute/views/samples/substrate.py:120
+#: institute/views/samples/substrate.py:116
 #, python-brace-format
 msgid "Substrate {0} was successfully added to the database."
 msgstr "Substrat {0} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: institute/views/samples/substrate.py:126
+#: institute/views/samples/substrate.py:122
 #, python-brace-format
 msgid "Edit substrate “{0}”"
 msgstr "Ändern des Substrates „{0}“"
 
-#: institute/views/samples/substrate.py:126
+#: institute/views/samples/substrate.py:122
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
 
