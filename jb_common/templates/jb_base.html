@@ -63,16 +63,19 @@ copyright holder, you must destroy it immediately and completely.
             <a href="/trac/newticket?reporter={{ user|get_really_full_name:'plain'|urlquote_plus }}&amp;cc={{ user.email|urlquote_plus }}"
                  ><img src="{% static "juliabase/icons/bug_add.png" %}" alt="add-bug icon"
                        title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
-            {% if help_link %} <a href="/trac/wiki/{{ help_link }}"><img
-              src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"
-                                                            width="16" height="16"/></a>{% endif %}
+          {% endif %}
+          {% if help_link %}
+            {% block help_link %}
+              <a href="http://www.juliabase.org/{{ help_link }}"><img
+                src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"
+                                                      width="16" height="16"/></a>
+            {% endblock %}
+          {% endif %}
+          {% if user.is_authenticated %}
             <a href="{% url 'django.contrib.auth.views.logout' %}"
                ><img src="{% static "juliabase/icons/door_open.png" %}" alt="log-out icon" title="{% trans 'Log out' %}"
                      width="16" height="16"/></a>
           {% else %}
-            {% if help_link %}<a href="/trac/wiki/{{ help_link }}"><img width="16" height="16"
-              src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"
-                                                            width="16" height="16"/></a> /{% endif %}
             <a href="{{ default_home_url }}"><img src="{% static "juliabase/icons/house.png" %}" width="16" height="16"
                                                   alt="log-in icon" title="{% trans 'Log in' %}"/></a>
           {% endif %}
