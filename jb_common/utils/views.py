@@ -175,12 +175,7 @@ class TopicField(forms.ChoiceField):
 
         self.choices = [("", 9 * "-")]
         if not user.is_superuser:
-            # FixMe: The second filter doesn't work because both values may be
-            # None, which makes the expression True although it should be False
-            # in this case.  Why not simply
-            # department=user.jb_user_details.department instead?
-            all_topics = Topic.objects.filter(members__is_active=True). \
-               filter(members__jb_user_details__department=user.jb_user_details.department).distinct()
+            all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
             user_topics = user.topics.all()
             top_level_topics = \
                 set(topic for topic in all_topics if (not topic.confidential or topic in user_topics) and not topic.has_parent())
