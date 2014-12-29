@@ -46,9 +46,12 @@ def default(request):
     """
     user = request.user
     result = {}
-    if hasattr(request, "jb_help_link"):
-        result["help_link"] = request.jb_help_link
-        del request.jb_help_link
+    try:
+        result["help_link"] = request.juliabase_help_link
+    except AttributeError:
+        pass
+    else:
+        del request.juliabase_help_link
     result["url"] = request.path
     if request.GET:
         result["url"] += "?" + request.GET.urlencode()
