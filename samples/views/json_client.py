@@ -23,6 +23,7 @@ from __future__ import absolute_import, unicode_literals
 
 import sys, json
 from django.db.utils import IntegrityError
+from django.db.models import Q
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import ugettext as _
@@ -79,8 +80,8 @@ def primary_keys(request):
     """
     result_dict = {}
     if "topics" in request.GET:
-        all_topics = {topic for topic in Topic.objects.all()
-                      if not topic.confidential or request.user in topic.members.all() or request.user.is_staff}
+        all_topics = Topic.objects.all() if request.user.is_staff else \
+                     Topic.objects.filter(Q(confidential=False) | Q(members=request.user))
         if request.GET["topics"] == "*":
             topics = all_topics
         else:
@@ -112,19 +113,15 @@ def primary_keys(request):
             result_dict["users"] = dict(eligible_users.filter(username__in=user_names).values_list("username", "id"))
     if "external_operators" in request.GET:
         if request.user.is_staff:
-            all_external_operators = set(models.ExternalOperator.objects.all())
+            all_external_operators = models.ExternalOperator.objects.all()
         else:
-            all_external_operators = {external_operator for external_operator in models.ExternalOperator.objects.all()
-                                      if not external_operator.confidential or
-                                      request.user in external_operator.contact_persons.all()}
+            all_external_operators = models.ExternalOperator.objects.filter(Q(confidential=False) | Q(contact_persons=request.user))
         if request.GET["external_operators"] == "*":
             external_operators = all_external_operators
         else:
             external_operator_names = request.GET["external_operators"].split(",")
-            external_operators = {external_operator for external_operator in all_external_operators
-                                  if external_operator.name in external_operator_names}
-        result_dict["external_operators"] = {external_operator.name: external_operator.id
-                                             for external_operator in external_operators}
+            external_operators = all_external_operators.filter(name__in=external_operator_names)
+        result_dict["external_operators"] = {external_operator.name: external_operator.id for external_operator in external_operators}
     return respond_in_json(result_dict)
 
 
