@@ -39,9 +39,8 @@ class TemporaryMySamples(object):
     """
 
     def __init__(self, sample_ids):
-        """Class constructor.
-
-          `sample_ids`: the IDs of the samples that must be on the “My Samples”
+        """
+         :param sample_ids: the IDs of the samples that must be on the “My Samples”
             list; it my also be a single ID
 
         :type sample_ids: list of int or int
@@ -112,8 +111,7 @@ class Sample(object):
     """
 
     def __init__(self, name=None, id_=None):
-        """Class constructor.
-
+        """
         :param name: the name of an existing sample; it is ignored if `id_` is
             given
         :param id_: the ID of an existing sample
@@ -139,6 +137,13 @@ class Sample(object):
         self.edit_important = True
 
     def submit(self):
+        """Submit the sample to the database.
+
+        :return:
+          the sample's ID if succeeded.
+
+        :rtype: int
+        """
         data = {"name": self.name, "current_location": self.current_location,
                 "currently_responsible_person": primary_keys["users"][self.currently_responsible_person],
                 "purpose": self.purpose, "tags": self.tags,
@@ -168,10 +173,11 @@ class Sample(object):
 
 
 class Result(object):
+    """Class representing result processes.
+    """
 
     def __init__(self, id_=None, with_image=True):
-        """Class constructor.
-
+        """
         :param id_: if given, the instance represents an existing result process
             of the database.  Note that this triggers an exception if the
             result ID is not found in the database.
@@ -214,7 +220,7 @@ class Result(object):
         :return:
           the result process ID if succeeded.
 
-        :rtype: unicode
+        :rtype: int
         """
         if not self.operator:
             self.operator = connection.username

@@ -12,6 +12,27 @@
 # If you have received a copy of this software without the explicit permission
 # of the copyright holder, you must destroy it immediately and completely.
 
+
+""".. py:data:: connection
+
+    The connection to the database server.  It is of the type
+    :py:class:`JuliaBaseConnection`.
+
+.. py:data:: primary_keys
+
+    A dict-like object of type :py:class:`PrimaryKeys` that is a mapping of
+    identifying keys to IDs.  Possible keys are:
+
+        ``"users"``
+            mapping user names to user IDs.
+
+        ``"external_operators"``
+            mapping external operator names to external operator IDs.
+
+        ``"topics"``
+            mapping topic names to topic IDs.
+"""
+
 from __future__ import absolute_import, unicode_literals, division
 from . import six
 from .six.moves import urllib, http_cookiejar, _thread
@@ -27,6 +48,21 @@ from . import settings
 def setup_logging(destination=None):
     """If the user wants to call this in order to enable logging, he must do
     so before logging in.  Note that it is a no-op if called a second time.
+
+    :param destination: Where to log to; possible values are:
+
+        ``"file"``
+            Log to :file:`/tmp/jb_remote.log` if :file:`/tmp` is existing,
+            otherwise (i.e. on Windows), log to :file:`jb_remote.log` in the
+            current directory.
+
+        ``"console"``
+            Log to stderr.
+
+        ``None``
+            Do not log.
+
+    :type destination: str
     """
     # This is not totally clean because it doesn't guarantee that logging is
     # properly configured *before* the first log message is generated but I'm
