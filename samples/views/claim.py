@@ -29,7 +29,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.conf import settings
-from jb_common.utils.base import send_email, get_really_full_name
+from jb_common.utils.base import help_link, send_email, get_really_full_name
 import samples.utils.views as utils
 from samples import permissions, models
 
@@ -66,6 +66,7 @@ class ReviewerForm(forms.Form):
             order_by("last_name", "first_name")
 
 
+@help_link("demo.html#the-actual-claim")
 @login_required
 def add(request, username):
     """View for adding a new claim.  The ``username`` parameter is actually
@@ -125,6 +126,7 @@ JuliaBase.
 
 
 
+@help_link("demo.html#claims-of-samples")
 @login_required
 def list_(request, username):
     """View for listing claim, both those with you being the requester and the

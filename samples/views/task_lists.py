@@ -27,6 +27,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.text import capfirst
 from django.apps import apps
 import jb_common.utils.base as common_utils
+from jb_common.utils.base import help_link
 from jb_common.models import Department
 from samples.models import Process, Task
 from samples import permissions
@@ -246,6 +247,7 @@ def save_to_database(task_form, samples_form, old_task):
     return task
 
 
+@help_link("demo.html#tasks")
 @login_required
 def edit(request, task_id):
     """Edit or create a task.
@@ -309,6 +311,8 @@ def edit(request, task_id):
     title = _("Edit task") if task else _("Add task")
     return render(request, "samples/edit_task.html", {"title": title, "task": task_form, "samples": samples_form})
 
+
+@help_link("demo.html#adding-a-task")
 @login_required
 def show(request):
     """Shows the task lists the user wants to see.

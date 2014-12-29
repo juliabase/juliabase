@@ -43,7 +43,7 @@ import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
-    mkdirs, cache_key_locked, get_from_cache, unlazy_object, int_or_zero
+    mkdirs, cache_key_locked, get_from_cache, unlazy_object, int_or_zero, help_link
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
@@ -107,6 +107,7 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
     return referentially_valid
 
 
+@help_link("demo.html#edit-samples")
 @login_required
 @unquote_view_parameters
 def edit(request, sample_name):
@@ -625,6 +626,7 @@ def sample_etag(request, sample_name):
         return hash_.hexdigest()
 
 
+@help_link("demo.html#sample-data-sheet")
 @login_required
 @unquote_view_parameters
 @condition(sample_etag, sample_timestamp)
@@ -800,6 +802,7 @@ def search(request):
                                                            "max_results": max_results})
 
 
+@help_link("demo.html#advanced-search")
 @login_required
 def advanced_search(request):
     """View for searching for samples, sample series, physical processes, and

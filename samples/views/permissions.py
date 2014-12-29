@@ -27,7 +27,8 @@ from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core
 from django.conf import settings
-from jb_common.utils.base import get_really_full_name, get_all_models, HttpResponseSeeOther, camel_case_to_underscores, sorted_users
+from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, \
+    camel_case_to_underscores, sorted_users
 from jb_common.utils.views import UserField
 from samples import models, permissions
 import samples.utils.views as utils
@@ -185,6 +186,7 @@ def get_physical_processes(user):
     return all_physical_processes
 
 
+@help_link("demo.html#change-permissions-for-processes")
 @login_required
 def list_(request):
     """View for listing user permissions.  It shows who can add new processes

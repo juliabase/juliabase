@@ -29,7 +29,7 @@ from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext, ugettext_lazy, ungettext
 from django.conf import settings
-from jb_common.utils.base import send_email, get_really_full_name, format_enumeration
+from jb_common.utils.base import help_link, send_email, get_really_full_name, format_enumeration
 from jb_common.models import Topic
 import samples.utils.views as utils
 from samples import permissions
@@ -103,6 +103,7 @@ class SubstrateForm(forms.ModelForm):
         return cleaned_data
 
 
+@help_link("demo.html#the-actual-claim")
 @login_required
 def add_oldstyle(request, username):
     """View for adding a new claim to old-style sample names.  This is a nice

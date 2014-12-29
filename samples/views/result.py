@@ -34,6 +34,7 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, pgettext_lazy
 import django.forms as forms
 import jb_common.utils.base
+from jb_common.utils.base import help_link
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -496,6 +497,7 @@ class FormSet(object):
                 "value_lists": self.value_form_lists}
 
 
+@help_link("demo.html#result-process")
 @login_required
 def edit(request, process_id):
     """View for editing existing results, and for creating new ones.

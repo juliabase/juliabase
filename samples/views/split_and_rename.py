@@ -26,7 +26,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.forms.util import ValidationError
-from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters
+from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters, help_link
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -276,6 +276,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
     return sample_split, new_pieces
 
 
+@help_link("demo.html#split-a-sample")
 @login_required
 @unquote_view_parameters
 def split_and_rename(request, parent_name=None, old_split_id=None):

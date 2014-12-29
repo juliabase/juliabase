@@ -33,7 +33,7 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from jb_common.utils.base import get_really_full_name, int_or_zero
+from jb_common.utils.base import help_link, get_really_full_name, int_or_zero
 from jb_common.utils.views import TopicField
 from samples import models, permissions
 import samples.utils.views as utils
@@ -186,6 +186,7 @@ def add_samples_to_database(add_samples_form, user):
     return new_names, samples
 
 
+@help_link("demo.html#add-samples")
 @login_required
 def add(request):
     """View for adding new samples.
