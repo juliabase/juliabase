@@ -60,9 +60,11 @@ copyright holder, you must destroy it immediately and completely.
             <a href="{{ default_home_url }}"
                ><img src="{% static "juliabase/icons/house.png" %}" alt="home icon" title="{% trans 'Main menu' %}"
                      width="16" height="16"/></a>
-            <a href="/trac/newticket?reporter={{ user|get_really_full_name:'plain'|urlquote_plus }}&amp;cc={{ user.email|urlquote_plus }}"
-                 ><img src="{% static "juliabase/icons/bug_add.png" %}" alt="add-bug icon"
-                       title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
+            {% block bug_report_link %}
+              <a href="/trac/newticket?reporter={{ user|get_really_full_name:'plain'|urlquote_plus }}&amp;cc={{ user.email|urlquote_plus }}"
+                   ><img src="{% static "juliabase/icons/bug_add.png" %}" alt="add-bug icon"
+                         title="{% trans 'Report feature wish or bug' %}" width="16" height="16"/></a>
+            {% endblock %}
           {% endif %}
           {% if help_link %}
             {% block help_link %}
