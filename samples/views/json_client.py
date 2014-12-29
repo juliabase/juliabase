@@ -58,8 +58,6 @@ def add_sample(request):
 
     :rtype: HttpResponse
     """
-    if not request.user.is_staff:
-        raise JSONRequestException(6, "Only admins can access this ressource.")
     try:
         name = request.POST["name"]
         current_location = request.POST["current_location"]
@@ -71,24 +69,33 @@ def add_sample(request):
         raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
     if len(name) > 30:
         raise JSONRequestException(5, "The sample name is too long.")
-    currently_responsible_person = get_object_or_404(django.contrib.auth.models.User,
-                                                     pk=utils.convert_id_to_int(currently_responsible_person))
+    if utils.sample_name_format(name) not in settings.SAMPLE_NAME_FORMATS["provisional"].get("possible renames", set()):
+        raise JSONRequestException(5, "The sample name is invalid.")
+    eligible_users = django.contrib.auth.models.User.objects.filter(is_active=True, jb_user_details__department__isnull=False)
+    try:
+        currently_responsible_person = eligible_users.get(pk=utils.convert_id_to_int(currently_responsible_person))
+    except django.contrib.auth.models.User.DoesNotExist:
+        raise Http404("Currently reponsible user not found.")
     if topic:
-        topic = get_object_or_404(Topic, pk=utils.convert_id_to_int(topic))
+        all_topics = Topic.objects.all() if request.user.is_staff else \
+                     Topic.objects.filter(Q(confidential=False) | Q(members=request.user))
+        try:
+            topic = all_topics.get(pk=utils.convert_id_to_int(topic))
+        except Topic.DoesNotExist:
+            raise Http404("Topic not found")
     try:
         sample = models.Sample.objects.create(name=name, current_location=current_location,
                                               currently_responsible_person=currently_responsible_person, purpose=purpose,
                                               tags=tags, topic=topic)
-        for alias in models.SampleAlias.objects.filter(name=name):
-            # They will be shadowed anyway.  Nevertheless, this action is
-            # an emergency measure.  Probably the samples the aliases point
-            # to should be merged with the sample but this can't be decided
-            # automatically.
-            alias.delete()
+        # They will be shadowed anyway.  Nevertheless, this action is an
+        # emergency measure.  Probably the samples the aliases point to should
+        # be merged with the sample but this can't be decided automatically.
+        models.SampleAlias.objects.filter(name=name).delete()
     except IntegrityError as error:
-        # If this function is refactored into a non-admin-only function, no
-        # database error message must be returned to non-privileged users.
-        raise JSONRequestException(5, "The sample with this data could not be added: {}".format(error))
+        error_message = "The sample with this data could not be added."
+        if request.user.is_staff:
+            error_message += " {}".format(error)
+        raise JSONRequestException(5, error_message)
     sample.watchers.add(request.user)
     return respond_in_json(sample.pk)
 
