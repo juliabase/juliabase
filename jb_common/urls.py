@@ -44,5 +44,5 @@ urlpatterns = [
     url(r"^switch_language$", "jb_common.views.switch_language"),
     url(r"^error_pages/(?P<hash_value>.+)", "jb_common.views.show_error_page"),
 
-    url(r"^jsi18n/$", "django.views.i18n.javascript_catalog", {"packages": settings.JAVASCRIPT_I18N_APPS}),
+    url(r"^jsi18n/$", "jb_common.views.cached_javascript_catalog", {"packages": settings.JAVASCRIPT_I18N_APPS}, name="jsi18n"),
 ]

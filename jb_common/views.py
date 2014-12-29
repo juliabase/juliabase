@@ -19,6 +19,8 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 import django.contrib.auth.models
+from django.views.decorators.cache import cache_control
+from django.views.i18n import javascript_catalog
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.auth.decorators import login_required
 from jb_common import models
@@ -134,3 +136,16 @@ def show_error_page(request, hash_value):
     """
     html = get_object_or_404(models.ErrorPage, hash_value=hash_value).html
     return HttpResponse(html)
+
+
+@cache_control(max_age=3600)
+def cached_javascript_catalog(request, domain="djangojs", packages=None):
+    """View for cached JavaScript i18n.  See
+    https://docs.djangoproject.com/en/1.7/topics/i18n/translation/#note-on-performance.
+    In contrast to the Django docs, however, we set a max-age header so that
+    the browser does not try to re-fetch the JavaScript translation catalog for
+    one hour.  This way, one can reduce the latency drastically with slow
+    server configurations.  The downside, namely that new translations are
+    delivered after at most one hour, is absolutely bearable.
+    """
+    return javascript_catalog(request, domain, packages)
