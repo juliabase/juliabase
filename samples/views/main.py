@@ -85,12 +85,12 @@ class MySeries(object):
 
 
 # Translators: This is a page name in the JuliaBase wiki
-@help_link(_("MainMenu"))
+@help_link(_("demo.html#the-my-samples-list"))
 @login_required
 def main_menu(request):
-    """The main menu view.  It displays the sample series in a dynamic way,
-    and the actions that depend on the specific permissions a user has.  The
-    rest is served static.
+    """The main menu view.  It displays the “My Samples” list in a dynamic way, and
+    the actions that depend on the specific permissions a user has.  The rest
+    is served static.
 
     :param request: the current HTTP Request object
 
