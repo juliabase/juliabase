@@ -148,8 +148,10 @@ class Sample(object):
             data["topic"] = primary_keys["topics"][self.topic]
         if self.id:
             connection.open("samples/by_id/{0}/edit/".format(self.id), data)
+            logging.info("Edited sample {0}.".format(self.name))
         else:
             self.id = connection.open("add_sample", data)
+            logging.info("Added sample {0}.".format(self.name))
         return self.id
 
     def add_to_my_samples(self, user=None):
@@ -245,7 +247,8 @@ class Result(object):
         with TemporaryMySamples(self.sample_ids):
             if self.id:
                 connection.open("results/{0}/edit/".format(self.id), data)
+                logging.info("Edited result {0}.".format(self.id))
             else:
                 self.id = connection.open("results/add/", data)
-                logging.info("Successfully added result {0}.".format(self.id))
+                logging.info("Added result {0}.".format(self.id))
         return self.id

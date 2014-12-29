@@ -90,9 +90,10 @@ class ClusterToolDeposition(object):
         with TemporaryMySamples(self.sample_ids):
             if self.id:
                 connection.open("cluster_tool_depositions/{0}/edit/".format(self.number), data)
+                logging.info("Edited cluster tool deposition {0}.".format(self.number))
             else:
                 self.id = connection.open("cluster_tool_depositions/add/", data)
-                logging.info("Successfully added cluster tool deposition {0}.".format(self.number))
+                logging.info("Added cluster tool deposition {0}.".format(self.number))
         return self.id
 
     @classmethod
@@ -233,9 +234,10 @@ class PDSMeasurement(object):
         with TemporaryMySamples(self.sample_id):
             if self.id:
                 connection.open("pds_measurements/{0}/edit/".format(self.number), data)
+                logging.info("Edited PDS measurement {0}.".format(self.number))
             else:
                 self.id = connection.open("pds_measurements/add/", data)
-                logging.info("Successfully added PDS measurement {0}.".format(self.id))
+                logging.info("Added PDS measurement {0}.".format(self.number))
         return self.id
 
     @classmethod
@@ -390,9 +392,10 @@ class SolarsimulatorMeasurement(object):
             if self.id:
                 query_string = "?only_single_cell_added=true" if only_single_cell_added else ""
                 connection.open("solarsimulator_measurements/{0}/edit/".format(self.id) + query_string, data)
+                logging.info("Edited solarsimulator measurement {0}.".format(self.id))
             else:
                 self.id = connection.open("solarsimulator_measurements/add/", data)
-                logging.info("Successfully added solarsimulator measurement {0}.".format(self.id))
+                logging.info("Added solarsimulator measurement {0}.".format(self.id))
         return self.id
 
 
@@ -448,9 +451,10 @@ class Structuring(object):
         with TemporaryMySamples(self.sample_id):
             if self.id:
                 connection.open("structurings/{0}/edit/".format(self.id), data)
+                logging.info("Edited structuring {0}.".format(self.id))
             else:
                 self.id = connection.open("structurings/add/", data)
-                logging.info("Successfully added structuring {0}.".format(self.id))
+                logging.info("Added structuring {0}.".format(self.id))
         return self.id
 
 
@@ -517,9 +521,10 @@ class FiveChamberDeposition(object):
         with TemporaryMySamples(self.sample_ids):
             if self.id:
                 connection.open("5-chamber_depositions/{0}/edit/".format(self.number), data)
+                logging.info("Edited 5-chamber deposition {0}.".format(self.number))
             else:
                 self.id = connection.open("5-chamber_depositions/add/", data)
-                logging.info("Successfully added 5-chamber deposition {0}.".format(self.number))
+                logging.info("Added 5-chamber deposition {0}.".format(self.number))
         return self.id
 
     @classmethod
