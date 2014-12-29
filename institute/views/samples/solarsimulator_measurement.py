@@ -112,16 +112,16 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
     database.  In particular, it tests whether the sample is still “alive” at
     the time of the measurement and whether the related data file exists.
 
-    FixMe: It does not check for the case that the same datapath is used in two
-    different solarsimulator measurements.  This should be added.  One may call
-    :py:func:`institute.views.samples.json_client._get_solarsimulator_measurement_by_filepath`
-    and catch an exception about multiple search results for checking this.
-
     :return:
       whether the forms are consistent with each other and the database
 
     :rtype: bool
     """
+    # FixMe: It does not check for the case that the same datapath is used in
+    # two different solarsimulator measurements.  This should be added.  One
+    # may call
+    # :py:func:`institute.views.samples.json_client._get_solarsimulator_measurement_by_filepath`
+    # and catch an exception about multiple search results for checking this.
     referentially_valid = solarsimulator_measurement_form.is_referentially_valid(sample_form)
     if not solarsimulator_cell_forms:
         solarsimulator_measurement_form.add_error(None, _("No measurenents given."))

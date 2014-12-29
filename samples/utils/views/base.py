@@ -211,11 +211,6 @@ def convert_id_to_int(process_id):
     converts it to a real integer and tests also for validity (not for
     availability in the database).
 
-    FixMe: This should be replaced with a function the gets the database model
-    class as an additional parameter and returns the found object, along the
-    lines of ``get_object_or_404``.  Then, it should also allow for ``None`` as
-    the `process_id`.
-
     :param process_id: the pristine process ID as given via the URL by the user
 
     :type process_id: str
@@ -227,6 +222,10 @@ def convert_id_to_int(process_id):
 
     :raises Http404: if the process_id didn't represent an integer number.
     """
+    # FixMe: This should be replaced with a function the gets the database
+    # model class as an additional parameter and returns the found object,
+    # along the lines of ``get_object_or_404``.  Then, it should also allow for
+    # ``None`` as the `process_id`.
     try:
         return int(process_id)
     except ValueError:
@@ -287,13 +286,13 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 def remove_samples_from_my_samples(samples, user):
     """Remove the given samples from the user's MySamples list
 
-    :param samples: the samples to be removed.  FixMe: How does it react if a
-        sample hasn't been in ``my_samples``?
+    :param samples: the samples to be removed.
     :param user: the user whose MySamples list is affected
 
     :type samples: list of `samples.models.Sample`
     :type user: django.contrib.auth.models.User
     """
+    # FixMe: How does it react if a sample hasn't been in ``my_samples``?
     for sample in samples:
         sample.watchers.remove(user)
 

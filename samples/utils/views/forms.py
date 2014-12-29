@@ -844,9 +844,6 @@ def choices_of_content_types(classes):
     English model name only.  And secondly, it sorts the choices by their
     (translated) names.
 
-    FixMe: The translation thing may become superfluous if Django Ticket #16803
-    is fixed.
-
     :param classes: the classes which should be included into the selection box
 
     :type classes: list of class
@@ -856,6 +853,8 @@ def choices_of_content_types(classes):
 
     :rtype: list of (int, unicode)
     """
+    # FixMe: The translation functionality in this function may become
+    # superfluous when Django Ticket #16803 is fixed.
     choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name) for cls in classes]
     choices.sort(key=lambda item: item[1].lower())
     return choices

@@ -13,9 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""
-FixMe: Layout files should be taken from cache if appropriate.
-"""
+# FixMe: Layout files should be taken from cache if appropriate.
 
 from __future__ import unicode_literals, absolute_import, division
 

@@ -79,12 +79,6 @@ def get_layout(sample, process):
     charge” at the timestamp of the process), adapts it to the process and the
     sample, and returns it.
 
-    FixMe: With another parameter, the caller should be enabled to limit the
-    found layouts to those that are of a certain class (or its derivatives).
-    For example, solarsimulator measurement only want ``CellsLayout`` because
-    they need its interface.  Alternatively, this function does the limiting
-    itself basing on the type of `process`.  However, this may be too implicit.
-
     :param sample: the sample whose last structuring should be found
     :param process: the process for which the structuring should be found,
         e.g. a solarsimulator measurement
@@ -100,6 +94,12 @@ def get_layout(sample, process):
 
     :rtype: `Layout` or NoneType
     """
+    # FixMe: With another parameter, the caller should be enabled to limit the
+    # found layouts to those that are of a certain class (or its derivatives).
+    # For example, solarsimulator measurement only want ``CellsLayout`` because
+    # they need its interface.  Alternatively, this function does the limiting
+    # itself basing on the type of `process`.  However, this may be too
+    # implicit.
     try:
         current_structuring = get_current_structuring(sample, process.timestamp)
     except NoStructuringFound:
