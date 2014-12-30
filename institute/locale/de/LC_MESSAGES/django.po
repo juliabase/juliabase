@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-29 17:17+0100\n"
-"PO-Revision-Date: 2014-12-29 17:20+0100\n"
+"POT-Creation-Date: 2014-12-30 16:18+0100\n"
+"PO-Revision-Date: 2014-12-30 16:18+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -642,14 +642,14 @@ msgid "Main menu"
 msgstr "Hauptmenü"
 
 #: institute/templates/500.html:44
-msgid "Jülich Forschungszentrum logo"
-msgstr "Logo des Forschungszentrums Jülich"
+msgid "JuliaBase logo"
+msgstr "JuliaBase-Logo"
 
-#: institute/templates/500.html:51
+#: institute/templates/500.html:50
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: institute/templates/500.html:52
+#: institute/templates/500.html:51
 msgid ""
 "\n"
 "<p>You experienced an internal error in the JuliaBase server software.  The\n"
@@ -684,20 +684,27 @@ msgid ""
 " Normally, clicking on the green bug icon would lead to a\n"
 "page where one could enter a new bug.  This way, users can report issues to "
 "the\n"
-"local web developer.  However, this demo site doesn't have a bug tracker\n"
-"installed (yet).  You may simply use <a href=\"http://trac.edgewall.org/"
-"\">Trac</a>\n"
-"or <a href=\"http://www.redmine.org/\">Redmine</a> for this.  "
+"<em>local</em> web developer, who then may forward some of them\n"
+"to <a href=\"https://github.com/juliabase/juliabase/issues/new"
+"\">JuliaBase's\n"
+"central issue tracker</a>.  However, this demo site deliberately doesn't "
+"have a\n"
+"bug tracker installed so that this message can be delivered.  You may\n"
+"use <a href=\"http://trac.edgewall.org/\">Trac</a>\n"
+"or <a href=\"http://www.redmine.org/\">Redmine</a> for issue tracking, or "
+"link to\n"
+"a <a href=\"https://github.com\">GitHub</a> page."
 msgstr ""
 "Normalerweise führt ein Klick auf das grüne Käfer-Icon auf eine Seite, auf "
-"der\n"
-"man einen neuen Bug eintragen kann.  Auf diese Weise wird ein solcher an "
-"den\n"
-"lokalen Web-Entwickler gemeldet.  Diese Demo-Site hat allerdings (noch) "
-"keinen\n"
-"Bug-Tracker installiert.  Man könnte dafür einfach <a\n"
-"href=\"http://trac.edgewall.org/\">Trac</a> oder <a\n"
-"href=\"http://www.redmine.org/\">Redmine</a> benutzen.  "
+"der man einen neuen Bug eintragen kann.  Auf diese Weise wird ein solcher an "
+"den <em>lokalen</em> Web-Entwickler gemeldet, welcher seinerseits einige "
+"davon an <a href=\"https://github.com/juliabase/juliabase/issues/new"
+"\">JuliaBases zentralen Bugtracker</a> weiterleiten könnte.  Diese Demo-Site "
+"hat allerdings keinen Bug-Tracker installiert, damit eben diese Meldung "
+"angezeigt werden kann.  Man könnte <a href=\"http://trac.edgewall.org/"
+"\">Trac</a> oder <a href=\"http://www.redmine.org/\">Redmine</a> zum "
+"Bugtracking benutzen, oder auf eine <a href=\"https://github.com\">GitHub</"
+"a>-Seite verlinken.  "
 
 #: institute/templates/jb_base.html:21
 msgid "INM logo"
@@ -977,18 +984,18 @@ msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: institute/views/samples/claim.py:149
+#: institute/views/samples/claim.py:150
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: institute/views/samples/claim.py:159
+#: institute/views/samples/claim.py:160
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: institute/views/samples/claim.py:160
+#: institute/views/samples/claim.py:161
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -1017,12 +1024,12 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: institute/views/samples/claim.py:190
+#: institute/views/samples/claim.py:191
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: institute/views/samples/claim.py:196
+#: institute/views/samples/claim.py:197
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
@@ -1212,7 +1219,7 @@ msgstr ""
 "Sie müssen eine Renigungsnummer angeben, wenn Sie diese für die Namen "
 "verwenden wollen."
 
-#: institute/views/samples/sample.py:230
+#: institute/views/samples/sample.py:231
 #, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
@@ -1221,31 +1228,31 @@ msgstr ""
 "Ihre Proben haben die Namen {first_name} bis {last_name}.  Sie wurden zu "
 "„Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:233
+#: institute/views/samples/sample.py:234
 #, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den Namen {name}.  Sie wurde zu „Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:243
+#: institute/views/samples/sample.py:244
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: institute/views/samples/sample.py:249
+#: institute/views/samples/sample.py:250
 msgid "Destination samples"
 msgstr "Zielproben"
 
-#: institute/views/samples/sample.py:288
+#: institute/views/samples/sample.py:289
 #, python-brace-format
 msgid "Informal stack was copied from sample {sample}."
 msgstr "Der informelle Stapel von Probe {sample} wurde übernommen."
 
-#: institute/views/samples/sample.py:292
+#: institute/views/samples/sample.py:293
 #, python-brace-format
 msgid "Informal stack of {sample} was successfully copied."
 msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 
-#: institute/views/samples/sample.py:296
+#: institute/views/samples/sample.py:297
 #, python-brace-format
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
@@ -1320,6 +1327,9 @@ msgstr "Ändern des Substrates „{0}“"
 #: institute/views/samples/substrate.py:122
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
+
+#~ msgid "Jülich Forschungszentrum logo"
+#~ msgstr "Logo des Forschungszentrums Jülich"
 
 #~ msgid "{name} “{number}”"
 #~ msgstr "{name} „{number}“"
