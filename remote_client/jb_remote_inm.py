@@ -16,7 +16,9 @@
 
     from jb_remote_institute import *
     login("r.miller", "mysecurepassword")
-    new_samples(10, "PECVD lab")
+    new_sample = Sample()
+    new_sample.name = "14-RM-1"
+    new_sample.current_location = "PECVD lab"
     logout()
 
 This module writes a log file.  On Windows, it is in the current directory.  On

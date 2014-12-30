@@ -55,57 +55,6 @@ class TemporaryMySamples(object):
             connection.open("change_my_samples", {"remove": comma_separated_ids(self.changed_sample_ids)})
 
 
-def new_samples(number_of_samples, current_location, substrate="asahi-u", timestamp=None, timestamp_inaccuracy=None,
-                purpose=None, tags=None, topic=None, substrate_comments=None):
-    """Creates new samples in the database.  All parameters except the number
-    of samples and the current location are optional.
-
-    :param number_of_samples: the number of samples to be created.  It must not
-        be greater than 100.
-    :param current_location: the current location of the samples
-    :param substrate: the substrate of the samples.  You find possible values in
-        `models.physical_processes`.
-    :param timestamp: the timestamp of the substrate process; defaults to the
-        current time
-    :param timestamp_inaccuracy: the timestamp inaccuracy of the substrate
-        process.  See ``samples.models.common`` for details.
-    :param purpose: the purpose of the samples
-    :param tags: the tags of the samples
-    :param topic: the name of the topic of the samples
-    :param substrate_comments: Further comments on the substrate process
-
-    :type number_of_samples: int
-    :type current_location: unicode
-    :type substrate: unicode
-    :type timestamp: unicode
-    :type timestamp_inaccuracy: unicode
-    :type purpose: unicode
-    :type tags: unicode
-    :type topic: unicode
-    :type substrate_comments: unicode
-
-    :return:
-      the IDs of the generated samples
-
-    :rtype: list of int
-    """
-    samples = connection.open("samples/add/",
-                              {"number_of_samples": number_of_samples,
-                               "current_location": current_location,
-                               "timestamp": format_timestamp(timestamp),
-                               "timestamp_inaccuracy": timestamp_inaccuracy or 0,
-                               "substrate": substrate,
-                               "substrate_comments": substrate_comments,
-                               "purpose": purpose,
-                               "tags": tags,
-                               "topic": primary_keys["topics"].get(topic),
-                               "currently_responsible_person":
-                                   primary_keys["users"][connection.username]})
-    logging.info("Successfully created {number} samples with the ids {ids}.".format(
-            number=len(samples), ids=comma_separated_ids(samples)))
-    return samples
-
-
 class Sample(object):
     """Class representing samples.
     """

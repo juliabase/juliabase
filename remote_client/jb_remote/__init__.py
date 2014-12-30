@@ -15,5 +15,5 @@
 from __future__ import absolute_import, unicode_literals, division
 
 from .common import login, logout, connection, primary_keys, JuliaBaseError, setup_logging, format_timestamp, parse_timestamp
-from .samples import TemporaryMySamples, new_samples, Sample, Result
+from .samples import TemporaryMySamples, Sample, Result
 from . import settings
