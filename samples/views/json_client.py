@@ -70,7 +70,7 @@ def add_sample(request):
     if len(name) > 30:
         raise JSONRequestException(5, "The sample name is too long.")
     if name_format is None or \
-       not request.user.is_staff and name_format not in settings.SAMPLE_NAME_FORMATS["provisional"].get("possible renames", set()):
+       not request.user.is_staff and name_format not in settings.SAMPLE_NAME_FORMATS["provisional"].get("possible_renames", set()):
         raise JSONRequestException(5, "The sample name is invalid.")
     eligible_users = django.contrib.auth.models.User.objects.filter(is_active=True, jb_user_details__department__isnull=False)
     try:

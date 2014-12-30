@@ -62,7 +62,7 @@ def get_renamable_name_formats():
     global renamable_name_formats
     if renamable_name_formats is None:
         renamable_name_formats = {name_format for (name_format, properties) in settings.SAMPLE_NAME_FORMATS.items()
-                                  if properties.get("possible renames")}
+                                  if properties.get("possible_renames")}
     return renamable_name_formats
 
 
@@ -81,7 +81,7 @@ def verbose_sample_name_format(name_format):
 
     :rtype: unicode
     """
-    return settings.SAMPLE_NAME_FORMATS[name_format]["verbose name"]
+    return settings.SAMPLE_NAME_FORMATS[name_format]["verbose_name"]
 
 
 def get_sample(sample_name):

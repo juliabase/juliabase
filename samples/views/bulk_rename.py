@@ -72,7 +72,7 @@ class NewNameForm(forms.Form):
         self.prefix_ = prefix_
         old_name_format = utils.sample_name_format(sample.name)
         if old_name_format:
-            self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_name_format].get("possible renames", set())
+            self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_name_format].get("possible_renames", set())
         else:
             self.possible_new_name_formats = set()
         self.user = user

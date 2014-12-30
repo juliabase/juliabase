@@ -32,20 +32,20 @@ class SamplesConfig(AppConfig):
 
         initials_groups = {}
         for name, properties in settings.INITIALS_FORMATS.items():
-            group_name = {"user": "user_initials", "external contact": "external_contact_initials"}[name]
+            group_name = {"user": "user_initials", "external_contact": "external_contact_initials"}[name]
             initials_groups[name] = "(?P<{group_name}>{pattern})".format(group_name=group_name, pattern=properties["pattern"])
             properties["regex"] = re.compile(properties["pattern"] + r"\Z")
         initials_groups["combined"] = "(?P<combined_initials>(?:{user})|(?:{external_contact}))".format(
             user=settings.INITIALS_FORMATS["user"]["pattern"],
-            external_contact=settings.INITIALS_FORMATS["external contact"]["pattern"])
+            external_contact=settings.INITIALS_FORMATS["external_contact"]["pattern"])
         settings.SAMPLE_NAME_FORMATS["provisional"]["pattern"] = r"\*(?P<id>\d{{5}})$"
         for properties in settings.SAMPLE_NAME_FORMATS.values():
             properties["pattern"] = properties["pattern"].format(
                 year=r"(?P<year>\d{4})", short_year=r"(?P<short_year>\d{2})",
                 user_initials=initials_groups["user"],
-                external_contact_initials=initials_groups["external contact"],
+                external_contact_initials=initials_groups["external_contact"],
                 combined_initials=initials_groups["combined"])
             properties["regex"] = re.compile(properties["pattern"] + r"\Z")
-        settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose name", _("provisional"))
+        settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose_name", _("provisional"))
         for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
-            properties.setdefault("verbose name", name_format)
+            properties.setdefault("verbose_name", name_format)

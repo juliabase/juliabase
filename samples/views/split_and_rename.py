@@ -44,7 +44,7 @@ class NewNameForm(forms.Form):
         self.parent_name = parent_name
         parent_name_format = utils.sample_name_format(parent_name)
         if parent_name_format:
-            self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[parent_name_format].get("possible renames", set())
+            self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[parent_name_format].get("possible_renames", set())
         else:
             self.possible_new_name_formats = set()
         self.user = user

@@ -23,9 +23,9 @@ name formats.  These are string patterns that describe all valid sample names.
 They are defined in :file:`settings.py` like this::
 
     SAMPLE_NAME_FORMATS = {
-        "provisional": {"possible renames": {"new"}},
+        "provisional": {"possible_renames": {"new"}},
         "old":         {"pattern": r"{short_year}[A-Z]-\d{{3,4}}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?",
-                        "possible renames": {"new"}},
+                        "possible_renames": {"new"}},
         "new":         {"pattern": r"({short_year}-{user_initials}|{external_contact_initials})"
                                    r"-[-A-Za-z_/0-9#()]+"}
     }
@@ -76,7 +76,7 @@ braces used in the pattern itself, as can be seen at the ``{{3,4}}`` in the
 example above.
 
 
-``"possible renames"``
+``"possible_renames"``
 ------------------------
 
 Default: ``set()`` (empty set)
@@ -88,7 +88,7 @@ format.  However, this property sets limits to what the *user* can *explicitly*
 do.  In the JulaBase code, it affects the bulk-rename view as well as the
 split-and-rename view.  And you may enforce it in your own code.
 
-``"verbose name"``
+``"verbose_name"``
 --------------------
 
 This propety contains a human-friendly name for the format name.  You should
@@ -125,7 +125,7 @@ user.
 
 Initials are at most 4 characters long.  Apart from that, JuliaBase is
 configurable with the setting :ref:`INITIALS_FORMATS`.  It is a dictionary
-mapping ``"user"`` and ``"external contact"`` to a properties dictionary.  The
+mapping ``"user"`` and ``"external_contact"`` to a properties dictionary.  The
 allowed properties are the following:
 
 ``"pattern"``

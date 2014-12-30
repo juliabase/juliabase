@@ -360,7 +360,7 @@ class InitialsForm(forms.Form):
         initials = self.cleaned_data["initials"]
         if not initials or self.readonly:
             return initials
-        properties = settings.INITIALS_FORMATS["user" if self.is_user else "external contact"]
+        properties = settings.INITIALS_FORMATS["user" if self.is_user else "external_contact"]
         pattern = properties["regex"]
         if not pattern.match(initials):
             raise ValidationError(properties["description"])

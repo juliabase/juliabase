@@ -26,7 +26,7 @@ CRAWLER_LOGS_WHITELIST = ()
 INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}",
                              "description": _("The initials start with two uppercase letters.  "
                                               "They contain uppercase letters and digits only.  Digits are at the end.")},
-                    "external contact": {"pattern": r"[A-Z]{4}|[A-Z]{3}\d|[A-Z]{2}\d{2}",
+                    "external_contact": {"pattern": r"[A-Z]{4}|[A-Z]{3}\d|[A-Z]{2}\d{2}",
                                          "description": _("The initials start with two uppercase letters.  "
                                                           "They contain uppercase letters and digits only.  "
                                                           "Digits are at the end.  "
@@ -35,7 +35,7 @@ INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}"
 MERGE_CLEANUP_FUNCTION = ""
 NAME_PREFIX_TEMPLATES = ()
 PHYSICAL_PROCESSES_BLACKLIST = ()
-SAMPLE_NAME_FORMATS = {"provisional": {"possible renames": {"default"}},
+SAMPLE_NAME_FORMATS = {"provisional": {"possible_renames": {"default"}},
                        "default":     {"pattern": r"[-A-Za-z_/0-9#()]*"}}
 THUMBNAIL_WIDTH = 400
 
