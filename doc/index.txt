@@ -81,3 +81,6 @@ have immediately something up and running, and you can evaluate it even better.
 
 If you consider actually using JuliaBase, have a look at the full :doc:`table
 of contents <toc>`.
+
+Finally, see :doc:`project` for how to get in touch with the JuliaBase
+community.

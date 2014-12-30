@@ -36,6 +36,7 @@ hosted on a server owned by Bronger.
 
 - Most importantly, JuliaBase's full source code is organised as a `public
   source code repository`_.
+- Also on GitHub is our `bug and feature tracker`_.
 - We have a public `mailing list`_ at GoogleGroups.  This is both for
   discussions about the development process as well as general questions.  We
   recommend that you subscribe to this list before sending emails to it.  (You
@@ -46,6 +47,7 @@ hosted on a server owned by Bronger.
 - On irc.freenode.net is our IRC chat room called #juliabase.
 
 .. _`public source code repository`: https://github.com/juliabase
+.. _`bug and feature tracker`: https://github.com/juliabase/juliabase/issues
 .. _`mailing list`: https://groups.google.com/forum/?hl=de#!forum/juliabase
 .. _`newsgroup`: http://dir.gmane.org/gmane.comp.db.juliabase
 
