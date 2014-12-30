@@ -48,9 +48,6 @@ class SolarsimulatorCellForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SolarsimulatorCellForm, self).__init__(*args, **kwargs)
 
-    def validate_unique(self):
-        pass
-
 
 def solarsimulator_cell_forms_from_post(post, form_cls):
     """This function initializes the solarsimulator cell forms from the post data.
