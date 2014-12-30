@@ -32,3 +32,4 @@ JuliaBase
    programming/hacking_on_juliabase
    programming/utilities
    programming/template_tags_and_filters
+   project

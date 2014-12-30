@@ -1,0 +1,62 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+
+=======================
+The JuliaBase project
+=======================
+
+JuliaBase is an open-source project in the spirit of Free Software.  As such,
+its community is equally open.  Our first goal is to have a large community of
+people adapting JuliaBase to their institutions.  While working with
+JuliaBase's source code, these people will probably make improvements.  Our
+second goal is to encourage everyone to contribute these improvements to the
+public JuliaBase code.  This way, everyone can benefit from the improvements of
+everyone else!
+
+The home of JuliaBase is its `home page`_.  The domain name “juliabase.org” is
+registered to Torsten Bronger.  However, the content of the home page,
+including all logos, is part of JuliaBase's source code and licenced as Free
+Software.  The current maintainer of JuliaBase is Torsten Bronger,
+bronger@physik.rwth-aachen.de.  The home page as well as the demo site is
+hosted on a server owned by Bronger.
+
+.. _`home page`: http://www.juliabase.org
+
+- Most importantly, JuliaBase's full source code is organised as a `public
+  source code repository`_.
+- We have a public `mailing list`_ at GoogleGroups.  This is both for
+  discussions about the development process as well as general questions.  We
+  recommend that you subscribe to this list before sending emails to it.  (You
+  don't need a Google account for this.  Ask the maintainer if you have
+  questions.)
+- For Usenet fans, this mailing list is also available on Gmane as a
+  `newsgroup`_.
+- On irc.freenode.net is our IRC chat room called #juliabase.
+
+.. _`public source code repository`: https://github.com/juliabase
+.. _`mailing list`: https://groups.google.com/forum/?hl=de#!forum/juliabase
+.. _`newsgroup`: http://dir.gmane.org/gmane.comp.db.juliabase
+
+
+Short project history
+======================
+
+JuliaBase was started in 2008 in one institute of the Forschungszentrum Jülich
+under the name of “Chantal”.  At this time, it was a one-man project of
+T. Bronger.  In 2009, Marvin Goblet joined the team as a full-time payed
+programmer.  In 2014, three further institutes in Jülich created Chantal
+deployments, and with them, further programmers joined the team.  The core of
+the source code was separated from the institute-specific parts and rebranded
+as “JuliaBase”.
