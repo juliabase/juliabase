@@ -33,6 +33,11 @@ They are defined in :file:`settings.py` like this::
 In this example, three name formats are defined, namely “provisional”, “old”,
 and “new”.  They are mapped to dictionaries which contain their properties.
 
+.. note::
+
+   There is a length limit of 30 characters for sample names.  This is
+   hard-wired in JuliaBase.
+
 
 Name format properties
 ==========================
