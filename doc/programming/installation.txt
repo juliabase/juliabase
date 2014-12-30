@@ -105,32 +105,33 @@ instructions`_.  Not further configuration is necessary.
 
 .. _Django's own instructions: https://www.djangoproject.com/download/
 
-JuliaBase
-===========================
 
-Currently, JuliaBase is organised in a non-public `Git`_ repository.  It
-contains three Django apps:
+JuliaBase
+===========
+
+JuliaBase is organised in a public `Git`_ `repository on GitHub`_.  You can
+clone this repository locally with
+
+.. code-block:: shell-session
+
+    username@server:~$ git clone https://github.com/juliabase/juliabase.git
+
+It contains three Django apps:
 
 1. jb_common
 2. samples
-3. inm
+3. institute
 
 “jb_common” implements the basic JuliaBase functionality.  On top of that,
-“samples” implements the actual samples database.  And on top of that, “inm”
-implements code that is specific to the specific institution or department or
-work group that wants to use JuliaBase.  “inm” implements a *generic*
-institute.  You will replace “inm” with your own app and rename it accordingly.
+“samples” implements the actual samples database.  And on top of that,
+“institute” implements code that is specific to the specific institution or
+department or work group that wants to use JuliaBase.  “institute” implements a
+*generic* institute.  You will replace “institute” with your own app and rename
+it accordingly.
 
 .. _Git: http://git-scm.com/
 
-Once you have arranged with the `JuliaBase maintainers`_ read access for the
-Git repository, you can check out the source code on your computer with::
-
-  git clone git@bob.ipv.kfa-juelich.de:juliabase
-
-.. _JuliaBase maintainers: mailto:m.goblet@fz-juelich.de
-.. _manage.py as known from Django:
-   https://docs.djangoproject.com/en/dev/ref/django-admin/
+.. _repository on GitHub: https://github.com/juliabase
 
 
 Apache
