@@ -22,7 +22,8 @@ from jb_remote_inm import *
 setup_logging("console")
 login("juliabase", "12345")
 
-def create_depo(timestamp, sample_name, comments=None):
+def create_depo(timestamp, deposition_number, comments=None):
+    sample_name = deposition_number
     try:
         sample_id = get_sample(sample_name)
     except SampleNotFound as exception:
@@ -44,6 +45,7 @@ def create_depo(timestamp, sample_name, comments=None):
     sample.add_to_my_samples("r.calvert")
 
     deposition = FiveChamberDeposition()
+    deposition.number = deposition_number
     deposition.sample_ids = [sample_id]
     deposition.operator = "r.calvert"
     deposition.timestamp = timestamp
