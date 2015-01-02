@@ -13,10 +13,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: JuliaBase-common 1.0\n"
+"Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-12 20:26+0100\n"
-"PO-Revision-Date: 2014-12-30 16:56+0100\n"
+"PO-Revision-Date: 2015-01-02 22:56+0100\n"
 "Last-Translator: nileboss <Unknown>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
