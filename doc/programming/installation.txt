@@ -109,8 +109,9 @@ instructions`_.  Not further configuration is necessary.
 JuliaBase
 ===========
 
-JuliaBase is organised in a public `Git`_ `repository on GitHub`_.  You can
-clone this repository locally with
+JuliaBase is organised in a public `Git`_ `repository on GitHub`_.  So far,
+there is no public release of JuliaBase 1.0.  However, you should consider the
+master branch in the repository a release candidate, and clone it locally with
 
 .. code-block:: shell-session
 
