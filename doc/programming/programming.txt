@@ -105,7 +105,7 @@ try to get it running with
 .. code-block:: shell-session
 
     username@server:~/mysite$ ./manage.py migrate
-    username@server:~/mysite$ ./manage.py loaddata demo
+    username@server:~/mysite$ ./manage.py loaddata demo_accounts
     username@server:~/mysite$ ./manage.py collectstatic
     username@server:~/mysite$ ./manage.py runserver
 
