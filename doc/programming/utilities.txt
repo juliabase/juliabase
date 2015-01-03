@@ -16,6 +16,12 @@
 Utilities
 =========
 
+In the following sections, the most important functions, classes, and exception
+classes are mentioned and explained.  This covers everything that is used in
+the “institute” app.  It should give you a solid starting point for creating an
+own institute app.  Nevertheless, the utility modules contain even more
+functions and classes.
+
 
 Common helpers
 ===================
@@ -62,10 +68,6 @@ The following name is found in the module :py:mod:`samples.utils.views`.
 Sample-related
 --------------
 
-The following name is found in the module :py:mod:`jb_common.utils.base`.
-
-.. autofunction:: jb_common.utils.base.get_really_full_name
-
 The following names are found in the module :py:mod:`samples.utils.views`.
 
 .. autofunction:: samples.utils.views.dead_samples
@@ -89,6 +91,7 @@ The following names are found in the module :py:mod:`samples.utils.views`.
 
 The following names are found in the module :py:mod:`jb_common.utils.base`.
 
+.. autofunction:: jb_common.utils.base.get_really_full_name
 .. autofunction:: jb_common.utils.base.check_markdown
 .. autofunction:: jb_common.utils.base.help_link
 .. autofunction:: jb_common.utils.base.send_email
@@ -115,11 +118,6 @@ The following names are found in the module :py:mod:`jb_common.utils.views`.
                :members: set_users
 .. autoclass:: jb_common.utils.views.TopicField
                :members: set_topics
-
-The following name is found in the module :py:mod:`samples.utils.views`.
-
-.. autoclass:: samples.utils.views.OperatorField
-               :members: set_choices
 
 
 Form classes
