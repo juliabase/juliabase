@@ -26,8 +26,10 @@ try:
 except ImportError:
     memcache = None
 import matplotlib
+from django.views.decorators.cache import cache_page
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
+from django.db import connection
 from django.conf import settings
 import django
 from jb_common import __version__
@@ -85,6 +87,7 @@ def statistics(request):
                    "cache_connections": get_cache_connections()})
 
 
+@cache_page(600)
 def about(request):
     """The “about” view.  It displays general superficial information about
     JuliaBase.  This view is more or less static – it shows only the components
@@ -101,9 +104,16 @@ def about(request):
 
     :rtype: HttpResponse
     """
-    return render(request, "samples/about.html", {"title": _("With kind support of …"),
-                                                  "language_version": sys.version.split()[0],
-                                                  "matplotlib_version": matplotlib.__version__,
-                                                  "framework_version": django.get_version(),
-                                                  "juliabase_version": __version__
-                                              })
+    context = {"title": _("With kind support of …"),
+               "language_version": sys.version.split()[0],
+               "matplotlib_version": matplotlib.__version__,
+               "framework_version": django.get_version(),
+               "juliabase_version": __version__
+    }
+    db_configuration = settings.DATABASES.get("default", {})
+    db_backend = db_configuration.get("ENGINE")
+    if db_backend == "django.db.backends.postgresql_psycopg2":
+        cursor = connection.cursor()
+        cursor.execute("SELECT version()")
+        context["postgresql_version"] = cursor.fetchone()[0].split()[1]
+    return render(request, "samples/about.html", context)

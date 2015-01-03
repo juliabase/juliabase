@@ -63,6 +63,17 @@ copyright holder, you must destroy it immediately and completely.
       <p><a href="http://www.python.org">Python</a>
         <span class="version">{{ language_version }}</span></p></td>
   </tr>
+  {% if postgresql_version %}
+    <tr>
+      <th>{% trans 'Database backend' %}:</th>
+      <td style="vertical-align: bottom">
+        <p><a href="http://www.postgresql.org/"
+              ><img class="helper-program-logo" src="{% static "samples/postgresql.png" %}" alt="{% trans 'PostgreSQL logo' %}"
+                    width="49" height="50"/></a></p>
+        <p><a href="http://www.postgresql.org/">PostgreSQL</a>
+          <span class="version">{{ postgresql_version }}</span></p></td>
+    </tr>
+  {% endif %}
   </tbody>
 </table>
 {% endblock %}
