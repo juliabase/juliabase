@@ -52,6 +52,56 @@ hosted on a server owned by Bronger.
 .. _`newsgroup`: http://dir.gmane.org/gmane.comp.db.juliabase
 
 
+Licences
+==========
+
+JuliaBase's core is licenced under the terms of the `Affero GNU Public
+Licence`_ (AGPL).
+
+.. _`Affero GNU Public Licence`: http://www.gnu.org/licenses/agpl-3.0.de.html
+
+The following files, however, are distributed under the terms of the less
+strict `GNU General Public License`_ (GPL):
+
+- The top-level files :file:`settings.py`, :file:`wsgi.py`, :file:`manage.py`,
+  :file:`urls.py`, and :file:`log.py`
+- All files below :file:`institute/` (the “institute” app)
+- :file:`remote_client/jb_remote_inm.py`
+- :file:`remote_client/delphi/juliabase.pas`
+- All files below :file:`remote_client/examples/`
+
+.. _`GNU General Public License`: http://www.gnu.org/licenses/gpl-3.0.html
+
+Finally, the “six” module and the “mimeparse” module are distributed under
+their own terms stated at the start of the respective file.
+
+
+What does this mean?
+--------------------
+
+It effectively means:
+
+1. You can download, run, and modify JuliaBase freely.
+2. You can use all files that serve as examples (in particular, the “institute”
+   app) as a starting point for your adaption of JuliaBase.
+3. You can offer a JuliaBase web service in your institute, company, or
+   whatever, as long as you also offer the JuliaBase source code, including
+   your modifications, for download for your users.  You can fulfil this
+   requirement by contributing your modifications to the JuliaBase project.
+4. The GPL ensures that you do *not* need to offer the files of (2.) for
+   download or to contribute them, as they may contain confidential material.
+   Besides, they will change often, so it would be a hassle.
+
+This rather elaborate licencing is done in order to have maximal convenience
+and flexibility for people who adapt and use JuliaBase, while strongly
+encourage them to contribute improvements of JuliaBase itself back to the
+community at large.
+
+*Thus, have fun using JuliaBase behind closed doors, but if you improve it,
+please send patches to the JuliaBase maintainers so that everyone benefits.
+Thank you!*
+
+
 Short project history
 ======================
 
