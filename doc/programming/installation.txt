@@ -12,9 +12,14 @@
 .. permission of the copyright holder, you must destroy it immediately and
 .. completely.
 
+.. index:: installation
+
 ==============
 Installation
 ==============
+
+
+.. index:: prerequisites
 
 Prerequisites
 ===============
@@ -50,6 +55,7 @@ While our way is already useful for a production system, you may wish or need
 to do it in a different way.  Thus, consider the following a good starting
 point for your own configuration.
 
+
 Linux configuration
 =======================
 
@@ -63,6 +69,9 @@ operating system by default anyway, you must install:
 - reportlab
 - Dejavu fonts
 
+
+.. index::
+   pair: PostgreSQL; configuration
 
 PostgreSQL
 ==============
@@ -95,6 +104,9 @@ password.  Finally, create the database with::
 
   $ createdb juliabase
 
+
+.. index::
+   pair: Django; configuration
 
 Django
 =========
@@ -134,6 +146,9 @@ it accordingly.
 
 .. _repository on GitHub: https://github.com/juliabase
 
+
+.. index::
+   pair: Apache; configuration
 
 Apache
 ==========

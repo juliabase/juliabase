@@ -20,8 +20,10 @@ This *unfinished* chapter explains how to contribute to the JuliaBase project
 itself instead of adapting it to your institution.
 
 
+.. index:: architecture
+
 Architecture
-====================
+=============
 
 Since JuliaBase is based on the Django Web framework, it consists of several
 Django apps.  The core app is called “jb_common”.  It provides functionality
@@ -37,8 +39,11 @@ your own app.  Besides, essential testing of JuliaBase can only be done on top
 of inm.
 
 
+.. index::
+   pair: coding; guidelines
+
 Coding guidelines
-===========================
+====================
 
 JuliaBase source code modules should not exceed 1000 lines of code.  You should
 stick to `PEP 8`_ and the `Django coding guidelines`_.  String literals are
@@ -74,6 +79,8 @@ Note that in code which is executed at module load time (e.g. model and form
 fields), ``_`` should stand for ``ugettext_lazy``, whereas within functions and
 methods which are executed on each request, it should be ``ugettext``.
 
+
+.. index:: Python 3
 
 Python 3
 --------

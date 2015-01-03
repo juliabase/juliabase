@@ -12,10 +12,11 @@
 .. permission of the copyright holder, you must destroy it immediately and
 .. completely.
 
+.. index:: adapting
+
 ===============
 Programming
 ===============
-
 
 This document explains JuliaBase for the programmer who wants to adapt it to
 their institute, research department, or scientific group.  It contains an
@@ -35,6 +36,9 @@ For the adaption process, you should be familiar with several technologies:
 
 Furthermode, some admin skills are necessary to get everything running.
 
+
+.. index::
+   pair: source code; structure
 
 .. _Organizing your source code:
 
@@ -77,6 +81,8 @@ Thus, follow these steps:
 #. Copy recursively the directory :file:`myproject/juliabase/institute` to
    :file:`myproject/`.
 
+
+.. index:: git
 
 Git subtree
 -----------
@@ -122,6 +128,8 @@ adapting the app to your group or institution are:
 3. Manage the physical processes.
 
 
+.. index:: branding
+
 Branding
 --------
 
@@ -135,6 +143,9 @@ the institution as well as its logo.  The logo file should be placed in
 Moreover, every JuliaBase installation must have at least one department.  It
 needs to be created only once and should be named appropriately.
 
+
+.. index::
+   pair: sample; add
 
 The “add new samples” view
 --------------------------
@@ -159,6 +170,8 @@ you may give the names totally automatically.  Or, you may do it similarly to
 the INM: Let the user decide between some options, and possibly redirect to a
 bulk-rename view after having added the samples with provisional names.
 
+
+.. index:: processes
 
 Physical processes
 ------------------
@@ -186,6 +199,9 @@ entirely: You still need to remove its views module, templates, and models in
 order to have everything neat and clean.  But removing the URL is enough for
 the moment.
 
+
+.. index::
+   triple: add; process; module
 
 Adding a new process module
 =================================
@@ -218,7 +234,7 @@ not really bad.)
 
 
 Creating the database models
------------------------------------
+----------------------------
 
 A “database model” or simply a “model” is a class in the Python code which
 represents a table in the database.  It defines which things need to be stored
@@ -257,6 +273,9 @@ the number of digits for decimal fields.  This not only forces users to enter
 plausible values, it also helps debugging.
 
 
+.. index::
+   pair: schema; migration
+
 Schema migration
 ................
 
@@ -275,14 +294,19 @@ The first line will create a new file in :file:`institute/migrations/`.  It
 should be added to your repository.
 
 
+.. index:: URLs
+
 Creating the URLs
----------------------
+-----------------
 
 The following work is done in :file:`institute/urls.py`.  This step is fairly
 simple.  For the thickness measurement, you add::
 
     pattern_generator.physical_process("LayerThicknessMeasurement")
 
+
+.. index::
+   pair: process; view
 
 Creating the view
 -----------------
@@ -380,6 +404,9 @@ You can see this outline in action in
 :py:func:`institute.views.samples.layer_thickness_measurement.edit`.
 
 
+.. index::
+   pair: process; template
+
 Creating the templates
 ----------------------
 
@@ -446,6 +473,8 @@ deposition this layer belongs to.  It forms part of a ``unique_together``
 declaration.  The other fields are ordinary data fields.
 
 
+.. index:: user context, get_context_for_user()
+
 Populating user context
 -----------------------
 
@@ -469,6 +498,8 @@ additional program logic can be used to generate the HTML.  In case of
 depositions, a “duplicate” button can be added, depending on the user's
 permissions.
 
+
+.. index:: lab notebook
 
 The lab notebook
 ----------------

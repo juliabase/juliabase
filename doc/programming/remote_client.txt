@@ -12,6 +12,8 @@
 .. permission of the copyright holder, you must destroy it immediately and
 .. completely.
 
+.. index:: remote client
+
 ====================
 The remote client
 ====================
@@ -35,8 +37,10 @@ Use cases
 The remote client has many applications.
 
 
+.. index:: crawlers
+
 Crawlers
-----------
+--------
 
 Crawlers are programs that go through a bunch of data or log files and transmit
 their content to the database.  For example, a measurement setup may write a
@@ -66,7 +70,7 @@ as possible.
 
 
 Connecting the setup with the database
-------------------------------------------
+--------------------------------------
 
 A more direct way than the crawler for bringing processing and measurement data
 into the database, albeit not always feasible, is to extend the control program
@@ -85,7 +89,7 @@ Delphi binding.
 
 
 Data mining and analysis
-----------------------------
+------------------------
 
 Everyone with browser access to the JuliaBase database can use the remote
 client for accessing, too.  The permissions will be the same in both cases, of
@@ -200,6 +204,8 @@ By the way, the files are organised in a way that you can update very
 conveniently: If a new version of JuliaBase is released, you simply have to
 replace the :file:`jb_remote/` subdirectory with the new one.
 
+
+.. index:: Delphi
 
 Other programming languages
 =================================

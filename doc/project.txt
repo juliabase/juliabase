@@ -13,6 +13,9 @@
 .. completely.
 
 
+.. index:: community, source code, repository, mailing list, chat room, irc,
+           usenet, newsgroup
+
 =======================
 The JuliaBase project
 =======================
@@ -51,6 +54,8 @@ hosted on a server owned by Bronger.
 .. _`mailing list`: https://groups.google.com/forum/?hl=de#!forum/juliabase
 .. _`newsgroup`: http://dir.gmane.org/gmane.comp.db.juliabase
 
+
+.. index:: licence
 
 Licences
 ==========
@@ -101,6 +106,9 @@ community at large.
 please send patches to the JuliaBase maintainers so that everyone benefits.
 Thank you!*
 
+
+.. index::
+   pair: project; history
 
 Short project history
 ======================
