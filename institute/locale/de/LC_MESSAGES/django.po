@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-30 16:18+0100\n"
+"POT-Creation-Date: 2015-01-03 22:45+0100\n"
 "PO-Revision-Date: 2015-01-02 22:55+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -935,7 +935,7 @@ msgid "Edit {name} “{number}”"
 msgstr "{name} „{number}“ ändern"
 
 #: institute/utils/views.py:111
-#: institute/views/samples/solarsimulator_measurement.py:222
+#: institute/views/samples/solarsimulator_measurement.py:219
 #, python-brace-format
 msgid "Add {name}"
 msgstr "{name} hinzufügen"
@@ -1127,13 +1127,13 @@ msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
 #: institute/views/samples/pds_measurement.py:232
-#: institute/views/samples/solarsimulator_measurement.py:201
+#: institute/views/samples/solarsimulator_measurement.py:198
 #, python-brace-format
 msgid "{process} was successfully changed in the database."
 msgstr "{process} wurde erfolgreich in der Datenbank geändert."
 
 #: institute/views/samples/pds_measurement.py:233
-#: institute/views/samples/solarsimulator_measurement.py:203
+#: institute/views/samples/solarsimulator_measurement.py:200
 #, python-brace-format
 msgid "{process} was successfully added to the database."
 msgstr "{process} wurde erfolgreich zur Datenbank hinzugefügt."
@@ -1257,15 +1257,15 @@ msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
 
-#: institute/views/samples/solarsimulator_measurement.py:127
+#: institute/views/samples/solarsimulator_measurement.py:124
 msgid "No measurenents given."
 msgstr "Keine Messungen angebeben."
 
-#: institute/views/samples/solarsimulator_measurement.py:136
+#: institute/views/samples/solarsimulator_measurement.py:133
 msgid "This cell position is already given."
 msgstr "Diese Zellposition ist schon vergeben."
 
-#: institute/views/samples/solarsimulator_measurement.py:220
+#: institute/views/samples/solarsimulator_measurement.py:217
 #, python-brace-format
 msgid "{name} of {sample}"
 msgstr "{name} von {sample}"

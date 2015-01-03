@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-29 17:17+0100\n"
+"POT-Creation-Date: 2015-01-03 22:45+0100\n"
 "PO-Revision-Date: 2015-01-02 22:55+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -195,7 +195,7 @@ msgstr ""
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: jb_common/templates/500.html:35 jb_common/templates/jb_base.html:77
+#: jb_common/templates/500.html:35 jb_common/templates/jb_base.html:82
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -231,19 +231,19 @@ msgstr "Willkommen,"
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: jb_common/templates/jb_base.html:65
+#: jb_common/templates/jb_base.html:66
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: jb_common/templates/jb_base.html:67 jb_common/templates/jb_base.html:74
+#: jb_common/templates/jb_base.html:72
 msgid "Help"
 msgstr "Hilfe"
 
-#: jb_common/templates/jb_base.html:70
+#: jb_common/templates/jb_base.html:78
 msgid "Log out"
 msgstr "Abmelden"
 
-#: jb_common/templates/jb_base.html:94
+#: jb_common/templates/jb_base.html:99
 msgid "JuliaBase logo"
 msgstr "JuliaBase-Logo"
 
@@ -396,28 +396,28 @@ msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #. Translators: Intended as a separator in an enumeration of three or more items
-#: jb_common/utils/base.py:779
+#: jb_common/utils/base.py:780
 msgid ", "
 msgstr ", "
 
-#: jb_common/utils/base.py:779
+#: jb_common/utils/base.py:780
 msgid ", and "
 msgstr " und "
 
 #. Translators: Intended to be used in an enumeration of exactly two items
-#: jb_common/utils/base.py:782
+#: jb_common/utils/base.py:783
 msgid " and "
 msgstr " und "
 
-#: jb_common/views.py:60
+#: jb_common/views.py:62
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: jb_common/views.py:70
+#: jb_common/views.py:72
 msgid "MarkdownMarkup"
 msgstr "MarkdownMarkup"
 
-#: jb_common/views.py:92
+#: jb_common/views.py:94
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
 
