@@ -34,7 +34,6 @@ INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}"
                     }
 MERGE_CLEANUP_FUNCTION = ""
 NAME_PREFIX_TEMPLATES = ()
-PHYSICAL_PROCESSES_BLACKLIST = ()
 SAMPLE_NAME_FORMATS = {"provisional": {"possible_renames": {"default"}},
                        "default":     {"pattern": r"[-A-Za-z_/0-9#()]*"}}
 THUMBNAIL_WIDTH = 400

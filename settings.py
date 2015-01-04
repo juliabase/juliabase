@@ -146,7 +146,6 @@ MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, str("remote_client"), str("ex
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds_raw_data"))
 SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("solarsimulator_raw_data"))
 
-PHYSICAL_PROCESSES_BLACKLIST = [("institute", "substrate")]
 MERGE_CLEANUP_FUNCTION = "institute.utils.clean_up_after_merging"
 
 SAMPLE_NAME_FORMATS = {

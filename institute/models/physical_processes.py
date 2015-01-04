@@ -70,6 +70,9 @@ class Substrate(PhysicalProcess):
         verbose_name = _("substrate")
         verbose_name_plural = _("substrates")
 
+    class JBMeta:
+        editable_status = False
+
     def __str__(self):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
@@ -334,3 +337,6 @@ class LayerThicknessMeasurement(PhysicalProcess):
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("layer thickness measurement")
         verbose_name_plural = _("layer thickness measurements")
+
+    class JBMeta:
+        editable_status = False

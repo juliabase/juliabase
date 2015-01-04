@@ -61,6 +61,13 @@ class StatusForm(forms.ModelForm):
         model = models.StatusMessage
         fields = "__all__"
 
+    @staticmethod
+    def is_editable(cls):
+        try:
+            return cls.JBMeta.editable_status
+        except AttributeError:
+            return True
+
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
         self.user = user
@@ -68,8 +75,7 @@ class StatusForm(forms.ModelForm):
         self.fields["operator"].initial = user.pk
         self.fields["timestamp"].initial = datetime.datetime.now()
         self.fields["process_classes"].choices = utils.choices_of_content_types(
-            cls for cls in get_all_addable_physical_process_models()
-            if (cls._meta.app_label, cls._meta.module_name) not in settings.PHYSICAL_PROCESSES_BLACKLIST)
+            cls for cls in get_all_addable_physical_process_models() if self.is_editable(cls))
         self.fields["process_classes"].widget.attrs["size"] = 24
 
     def clean_message(self):

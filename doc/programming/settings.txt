@@ -166,21 +166,6 @@ List of string templates that define possible sample name prefixes.  See
 :doc:`sample_names` for more information.
 
 
-.. index:: PHYSICAL_PROCESSES_BLACKLIST
-
-PHYSICAL_PROCESSES_BLACKLIST
-----------------------------
-
-Default: ``()`` (Empty tuple)
-
-This lists all physical process classes which should not appear in the status
-messages tables.  Every entry itself is a tuple containing the app name and the
-process class, in all-lowercase::
-
-    PHYSICAL_PROCESSES_BLACKLIST = [("institute", "substrate"),
-                                    ("institute", "layerthicknessmeasurement")]
-
-
 .. index:: SAMPLE_NAME_FORMATS
 
 SAMPLE_NAME_FORMATS
