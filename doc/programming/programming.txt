@@ -400,8 +400,16 @@ The general outline of a view function is:
     #. Build forms, maybe with initial values
 #. Return by calling :py:func:`django.shortcuts.render`
 
+.. raw:: latex
+
+         \bgroup\raggedright
+
 You can see this outline in action in
 :py:func:`institute.views.samples.layer_thickness_measurement.edit`.
+
+.. raw:: latex
+
+         \par\egroup
 
 
 .. index::
@@ -443,10 +451,12 @@ which in turn is a ``Process``::
     class FiveChamberDeposition(samples.models.depositions.Deposition):
         class Meta(samples.models.depositions.Deposition.Meta):
             _ = lambda x: x
-            permissions = (("add_five_chamber_deposition", _("Can add 5-chamber depositions")),
-                           ("edit_permissions_for_five_chamber_deposition", _("Can edit perms for 5-chamber depositions")),
-                           ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
-                           ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
+            permissions = (
+                ("add_five_chamber_deposition", _("Can add 5-chamber depositions")),
+                ("edit_permissions_for_five_chamber_deposition",
+                 _("Can edit perms for 5-chamber depositions")),
+                ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
+                ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
 
 It contains a full set of permisions to limit “add” and “edit” access to
 certain users.  Moreover the ``view_every_five_chamber_deposition`` makes a lab
@@ -455,15 +465,21 @@ notebook possible.
 In contrast, the layer model is derived from :py:class:`~samples.models.Layer`,
 which in turn is an ordinary Django model (not a ``Process``)::
 
-
     class FiveChamberLayer(samples.models.depositions.Layer):
-        deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
-        layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
-        chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
-        sih4 = model_fields.DecimalQuantityField("SiH4", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
-        h2 = model_fields.DecimalQuantityField("H₂", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
-        temperature_1 = model_fields.DecimalQuantityField(_("temperature 1"), max_digits=7, decimal_places=3, unit="℃", null=True, blank=True)
-        temperature_2 = model_fields.DecimalQuantityField(_("temperature 2"), max_digits=7, decimal_places=3, unit="℃", null=True, blank=True)
+        deposition = models.ForeignKey(
+            FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
+        layer_type = models.CharField(
+            _("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
+        chamber = models.CharField(
+            _("chamber"), max_length=2, choices=five_chamber_chamber_choices)
+        sih4 = model_fields.DecimalQuantityField(
+            "SiH4", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
+        h2 = model_fields.DecimalQuantityField(
+            "H₂", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
+        temperature_1 = model_fields.DecimalQuantityField(
+            _("temperature 1"), max_digits=7, decimal_places=3, unit="℃", null=True, blank=True)
+        temperature_2 = model_fields.DecimalQuantityField(
+            _("temperature 2"), max_digits=7, decimal_places=3, unit="℃", null=True, blank=True)
 
         class Meta(samples.models.depositions.Layer.Meta):
             unique_together = ("deposition", "number")
@@ -486,7 +502,8 @@ deposition model::
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.core.urlresolvers.reverse("add_five_chamber_deposition"), urlquote_plus(self.number))
+                django.core.urlresolvers.reverse("add_five_chamber_deposition"),
+                urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
@@ -515,7 +532,8 @@ creates a lab notebook URL::
 
 For normal processes, you need to request the lab notebook URL explicitly::
 
-    pattern_generator.physical_process("ConductivityMeasurement", views={"add", "edit", "lab_notebook"})
+    pattern_generator.physical_process("ConductivityMeasurement",
+                                       views={"add", "edit", "lab_notebook"})
 
 Finally, you need to create a template called
 :file:`lab_notebook_{process_class}.html`.  It contains the processes to be

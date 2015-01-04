@@ -27,12 +27,20 @@
 
 import sys, os
 
+# To make code snippets in LaTeX output smaller
+from sphinx.highlighting import PygmentsBridge
+from pygments.formatters.latex import LatexFormatter
+class SmallerVerbatimLatexFormatter(LatexFormatter):
+    def __init__(self, **options):
+        super(SmallerVerbatimLatexFormatter, self).__init__(**options)
+        self.verboptions = r"formatcom=\scriptsize"
+PygmentsBridge.latex_formatter = SmallerVerbatimLatexFormatter
+
 # If your extensions are in another directory, add it here. If the directory
 # is relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
 sys.path.extend([os.path.abspath('..'), os.path.abspath('../remote_client')])
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
-#import settings
 
 # General configuration
 # ---------------------
@@ -119,7 +127,7 @@ html_style = 'jb_style.css'
 html_title = 'JuliaBase, the samples database'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-#html_short_title = None
+html_short_title = "JuliaBase documentation"
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
@@ -198,7 +206,13 @@ latex_documents = [
 #latex_use_parts = False
 
 # Additional stuff for the LaTeX preamble.
-latex_preamble = '\usepackage{mathpazo}\usepackage{courier}\usepackage[scaled=0.9]{berasans}'
+latex_preamble = r"""
+\usepackage{mathpazo}
+\usepackage{courier}
+\usepackage[scaled=0.9]{berasans}
+\let\oldprintindex\printindex
+\def\printindex{\raggedright\oldprintindex}
+"""
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
