@@ -43,8 +43,9 @@ def inform_process_supervisors(sender, instance, **kwargs):
     # fixed, this function must be connected only with senders of
     # ``PhysicalProcess``.  If this is not possible because ``PhysicalProcess``
     # is abstract, this line must stay, and this function must be connected
-    # with senders of ``Process`` only.
-    if isinstance(instance, PhysicalProcess) and instance.finished:
+    # with senders of ``Process`` only.  The check ``raw==False`` must stay,
+    # though.
+    if not kwargs.get("raw") and isinstance(instance, PhysicalProcess) and instance.finished:
         user = instance.operator
         process_class = instance.__class__
         if not process_class.objects.filter(operator=user).exists():
@@ -109,12 +110,13 @@ def update_informal_layers(sender, instance, created, **kwargs):
     # fixed, this function must be connected only with senders of
     # ``PhysicalProcess``.  If this is not possible because ``PhysicalProcess``
     # is abstract, this line must stay, and this function must be connected
-    # with senders of ``Process`` only.
+    # with senders of ``Process`` only.  The check ``raw==False`` must stay,
+    # though.
     #
     # FixMe: The following code doesn't seem to work if the index of an
     # existing informal layer is 0.  Either one must fix it here or prevent
     # such indices from happening.
-    if isinstance(instance, PhysicalProcess) and instance.finished:
+    if not kwargs.get("raw") and isinstance(instance, PhysicalProcess) and instance.finished:
         def append_non_process_layers(consumed_layers=None):
             """Appends old informal layers not connected with a process to the
             new informal stack.  First, the `consumed_layers` are marked as
