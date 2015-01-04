@@ -314,7 +314,7 @@ class JuliaBaseConnection(object):
     """
     cookie_jar = http_cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
-    http_headers = [("User-agent", "JuliaBase-Remote/1.0a"),
+    http_headers = [("User-agent", "JuliaBase-Remote/1.0c"),
                     ("X-requested-with", "XMLHttpRequest"),
                     ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
     opener.addheaders = http_headers
