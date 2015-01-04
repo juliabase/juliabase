@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -30,14 +30,14 @@ everyone else!
 
 The home of JuliaBase is its `home page`_.  The domain name “juliabase.org” is
 registered to Torsten Bronger.  However, the content of the home page,
-including all logos, is part of JuliaBase's source code and licenced as Free
+including all logos, is part of JuliaBase's source code and licensed as Free
 Software.  The current maintainer of JuliaBase is Torsten Bronger,
 bronger@physik.rwth-aachen.de.  The home page as well as the demo site is
 hosted on a server owned by Bronger.
 
 .. _`home page`: http://www.juliabase.org
 
-- Most importantly, JuliaBase's full source code is organised as a `public
+- Most importantly, JuliaBase's full source code is organized as a `public
   source code repository`_.
 - Also on GitHub is our `bug and feature tracker`_.
 - We have a public `mailing list`_ at GoogleGroups.  This is both for
@@ -55,15 +55,15 @@ hosted on a server owned by Bronger.
 .. _`newsgroup`: http://dir.gmane.org/gmane.comp.db.juliabase
 
 
-.. index:: licence
+.. index:: license
 
-Licences
+Licenses
 ==========
 
-JuliaBase's core is licenced under the terms of the `Affero GNU Public
-Licence`_ (AGPL).
+JuliaBase's core is licensed under the terms of the `Affero GNU Public
+License`_ (AGPL).
 
-.. _`Affero GNU Public Licence`: http://www.gnu.org/licenses/agpl-3.0.de.html
+.. _`Affero GNU Public License`: http://www.gnu.org/licenses/agpl-3.0.de.html
 
 The following files, however, are distributed under the terms of the less
 strict `GNU General Public License`_ (GPL):
@@ -91,13 +91,13 @@ It effectively means:
    app) as a starting point for your adaption of JuliaBase.
 3. You can offer a JuliaBase web service in your institute, company, or
    whatever, as long as you also offer the JuliaBase source code, including
-   your modifications, for download for your users.  You can fulfil this
+   your modifications, for download for your users.  You can fulfill this
    requirement by contributing your modifications to the JuliaBase project.
 4. The GPL ensures that you do *not* need to offer the files of (2.) for
    download or to contribute them, as they may contain confidential material.
    Besides, they will change often, so it would be a hassle.
 
-This rather elaborate licencing is done in order to have maximal convenience
+This rather elaborate licensing is done in order to have maximal convenience
 and flexibility for people who adapt and use JuliaBase, while strongly
 encourage them to contribute improvements of JuliaBase itself back to the
 community at large.
@@ -118,5 +118,5 @@ under the name of “Chantal”.  At this time, it was a one-man project of
 T. Bronger.  In 2009, Marvin Goblet joined the team as a full-time payed
 programmer.  In 2014, three further institutes in Jülich created Chantal
 deployments, and with them, further programmers joined the team.  The core of
-the source code was separated from the institute-specific parts and rebranded
+the source code was separated from the institute-specific parts and re-branded
 as “JuliaBase”.

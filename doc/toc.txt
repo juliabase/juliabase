@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..

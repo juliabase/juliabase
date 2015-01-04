@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -61,7 +61,7 @@ JuliaBase mostly uses this directory to store images, e.g. plot files.  If the
 path doesn't exist when the JuliaBase service is started, it is created.  The
 default value should be changed to e.g. ``"/var/cache/juliabase"``.  Note that
 such a path needs to be created by you because Juliabase doesn't have the
-necessary permissions.  ALso note that such a path needs to be writable by the
+necessary permissions.  Also note that such a path needs to be writable by the
 webserver process JuliaBase is running on.
 
 
@@ -235,7 +235,7 @@ Default: ``"(!(userAccountControl:1.2.840.113556.1.4.803:=2))"``
 
 LDAP filter for filtering LDAP members that are eligible for JuliaBase access.
 The default filter finds any member which is not inactive.  The default value
-works well for Active Directory domain controlers.
+works well for Active Directory domain controllers.
 
 
 .. index:: LDAP_ADDITIONAL_ATTRIBUTES
@@ -261,7 +261,7 @@ LDAP_ADDITIONAL_USERS
 
 Default: ``{}`` (Empty dict)
 
-Distionary mapping user names to JuliaBase department names.  This contains
+Dictionary mapping user names to JuliaBase department names.  This contains
 users that are in the LDAP directory but are not in one of the departments
 listed in the setting `LDAP_DEPARTMENTS`_ explained below.  The use case is
 that some people working in the organization but not in the department(s) may
@@ -279,7 +279,7 @@ Default: ``{}`` (Empty dict)
 
 Dictionary mapping LDAP department names to JuliaBase department names.  If
 your LDAP directory data sets contain the "department" attribute, this setting
-determines which department get access to chantal.  If this setting is empty,
+determines which department get access to JuliaBase.  If this setting is empty,
 all LDAP members get access.
 
 If the LDAP doesn't contain the "department" attribute, this setting should be
@@ -348,7 +348,7 @@ LDAP_URLS
 Default: ``()`` (Empty tuple)
 
 List of URLs of LDAP directories.  If you want to use LDAP, this must contain
-at least one URL.  It may contain more if there are multiple redundent LDAP
+at least one URL.  It may contain more if there are multiple redundant LDAP
 servers.  In this case, JuliaBase will try each of them until it finds a
 working one.  An example value may be::
 
@@ -464,7 +464,7 @@ application.  It is used in the default templates if you click on the
 MIDDLEWARE_CLASSES
 ------------------
 
-The following is a minimal set of middelware JuliaBase is working with::
+The following is a minimal set of middleware JuliaBase is working with::
 
     MIDDLEWARE_CLASSES = (
         "django.middleware.common.CommonMiddleware",
@@ -477,7 +477,7 @@ The following is a minimal set of middelware JuliaBase is working with::
     )
 
 Note that while you may add further middleware, you must not change the inner
-ordering of extisting middleware.
+ordering of existing middleware.
 
 
 .. index:: SECRET_KEY

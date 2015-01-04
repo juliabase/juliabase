@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -43,7 +43,7 @@ Mostly, no sophisticated finetuning of the components is necessary because
 JuliaBase deployments will serve only a few (< 1000) people.  In particular,
 PostgreSQL and Apache can run in default configuration by and large.  On the
 other hand, the computer should be a `high-availability system`_, possibly
-realised with virtual machines.  In our own installation, we manage a
+realized with virtual machines.  In our own installation, we manage a
 three-nines system, i.e. 99.9 % availability.  Additionally, regular backups
 are a must! To set up these things, however, is beyond the scope of this
 document.  Your IT department may turn out to be very helpful with this.
@@ -121,7 +121,7 @@ instructions`_.  Not further configuration is necessary.
 JuliaBase
 ===========
 
-JuliaBase is organised in a public `Git`_ `repository on GitHub`_.  So far,
+JuliaBase is organized in a public `Git`_ `repository on GitHub`_.  So far,
 there is no public release of JuliaBase 1.0.  However, you should consider the
 master branch in the repository a release candidate, and clone it locally with
 

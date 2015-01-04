@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -29,9 +29,9 @@ levels of permissions, add samples, processes, tasks etc., have a look at
 sample data sheets or a lab notebook, and much more.
 
 However, since this site is accessable to everyone, it may become chaotic over
-time.  In order to prevent that, all the data is resetted every hour on the
-hour.  So, don't be suprised if you have to log in again after some time – all
-session data is resetted, too.  There is nothing to worry though as you may log
+time.  In order to prevent that, all the data is reset every hour on the
+hour.  So, don't be surprised if you have to log in again after some time – all
+session data is reset, too.  There is nothing to worry though as you may log
 in as often as you wish.
 
 This demo site is also the default target of the remote client code shipped
@@ -72,9 +72,9 @@ let another person use his PDS.
 researchers, but after proper instructions by him, other people may use the
 apparatus, too.
 
-**Eddie Monroe** (e.monroe) is a depositeur.  This is a technician who manages
-a deposition system, in his case, the *cluster tool deposition*.  Here too,
-other institute members may use this system after proper instructions.
+**Eddie Monroe** (e.monroe) is a deposition operator.  This is a technician who
+manages a deposition system, in his case, the *cluster tool deposition*.  Here
+too, other institute members may use this system after proper instructions.
 
 
 The scientific staff
@@ -128,7 +128,7 @@ unfold sections that you want to hide.
 Topics
 ------
 
-One sample usually belongs to exactly one topic.  This helps to organize
+One sample usually belongs to exactly one topic.  This helps to organise
 samples.  For one thing, one can give topics expressive names, which makes the
 samples' purpose clear.  In Rosalee's list, all samples belong to the topic
 “Cooperation with Paris University”.
@@ -315,9 +315,9 @@ Add samples
 
 From the main menu, you can click on “Add things – Samples” to add samples.
 Note that this page is quite institute-specific.  Your institute may not have
-the concept of subtrates, for example, and surely not something like a
+the concept of substrates, for example, and surely not something like a
 “cleaning number”.  Anyway, you must enter the number of samples as well as
-their currect location.  Add a couple of samples, but don't rename them yet.
+their current location.  Add a couple of samples, but don't rename them yet.
 
 Fresh samples have a provisional name in JuliaBase.  It looks like “\*00034”,
 i.e., an asterisk followed by a five-digit number.  Never use these names on
@@ -332,7 +332,7 @@ Lab notebooks
 -------------
 
 From the main menu, open the lab notebook of the five-chamber deposition.  You
-see six depositions of Octobre 2014.  Select one of them.  JuliaBase shows you
+see six depositions of October 2014.  Select one of them.  JuliaBase shows you
 a page containing the details of only this deposition.  At the top of it, click
 on the gear icon |gear add icon| in order to duplicate this deposition.
 
@@ -341,7 +341,7 @@ Add new deposition process
 --------------------------
 
 Rosalee duplicates old depositions because she doesn't vary much.  This way,
-she adds new depositions without fuss.  In the page for the new deposition, whe
+she adds new depositions without fuss.  In the page for the new deposition, she
 only has to select the samples for the deposition (which are the samples
 recently added, with these “\*…” names), change some other things that were
 different in this run, and click on “Submit”.
@@ -352,7 +352,7 @@ different in this run, and click on “Submit”.
    :scale: 50%
 
 Now, its a habit in the Institute of Nifty New Materials to give the sample the
-same name as the deposition.  Therefore, immediately after havin added the
+same name as the deposition.  Therefore, immediately after having added the
 deposition, you are redirected to a page where you can check and change the new
 sample names.  JuliaBase suggests the deposition's name for all samples (in the
 case of the screenshot, three of them).  However, names must be unique, so
@@ -396,7 +396,7 @@ has got the following additional permissions:
 Claims of samples
 -----------------
 
-There is one of Juliette's samples that Rosalee wants to acquire posession of.
+There is one of Juliette's samples that Rosalee wants to acquire possession of.
 In principle, Juliette could set the sample's “currently responsible person” to
 Rosalee, but Juliette is reluctant to do work that also other could do (more on
 that later).
@@ -446,7 +446,7 @@ Juliette: The assigner of work
 ================================
 
 Juliette has a lot to do and cannot deal with such things as sample preparation
-and characterisation itself.  Thus, she assigns tasks to other people and
+and characterization itself.  Thus, she assigns tasks to other people and
 analyses the results.  Logout and re-login as j.silverton/12345.
 
 
@@ -521,7 +521,7 @@ Moreover, Nick has been notified by the transfer in “Main menu – Miscellaneo
 – Newsfeed”.  There, he can also see that Juliette has files a new task for PDS
 measurements because Nick has the necessary permissions for the PDS.  The
 newsfeed contains all important news for the respective user: Changes in their
-samples, new samples in their topics, samples transfered to them, new tasks,
+samples, new samples in their topics, samples transferred to them, new tasks,
 and much more.
 
 The newsfeed is not really intended to be view in the browser.  You may do so,
@@ -595,3 +595,6 @@ Approve a sample claim
 Visit on the main menu “Miscellaneous – sample claims”.  At the bottom of this
 page, you see the sample claim of Juliette.  Click on it.  Sean can now review
 it in detail, and approve or reject it.
+
+..  LocalWords:  INM Renard renard Burkhardt burkhardt PDS monroe calvert PDF
+..  LocalWords:  hoc html CSV mathrm login RSS

@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -135,7 +135,7 @@ Branding
 
 For the time being, we will stay with the app name “institute” to keep the
 number of changes small.  Remember that it is only the app name; you may
-rebrand the wabpages to whatever you like.  The central point of doing so is
+re-brand the webpages to whatever you like.  The central point of doing so is
 :file:`institute/templates/jb_base.html`.  There, you may change the name of
 the institution as well as its logo.  The logo file should be placed in
 :file:`institute/static/institute/`.
@@ -163,7 +163,7 @@ substrate data, and creates the samples together with their substrates.  You
 may or may not wish to have substrates, too.
 
 The second big issue is sample names.  Most institutions have quite
-ideosycratic ideas about the sample naming policy.  But JuliaBase is very
+idiosyncratic ideas about the sample naming policy.  But JuliaBase is very
 flexible regarding this, see :doc:`sample_names`.  In the “add new samples”
 view, you may let the user input (a pattern for) the new samples right away, or
 you may give the names totally automatically.  Or, you may do it similarly to
@@ -249,17 +249,17 @@ method, you want to give the user the choice between five pre-set methods.
 
 Thus, add the following code to your ``models.py``::
 
-    methode_choices=((u"profilers&edge", _(u"profilers + edge")),
-		     (u"ellipsometer", _(u"ellipsometer")),
-		     (u"calculated", _(u"calculated from deposition parameters")),
-		     (u"estimate", _(u"estimate")),
-		     (u"other", _(u"other")))
+    method_choices=((u"profilers&edge", _(u"profilers + edge")),
+                    (u"ellipsometer", _(u"ellipsometer")),
+                    (u"calculated", _(u"calculated from deposition parameters")),
+                    (u"estimate", _(u"estimate")),
+                    (u"other", _(u"other")))
 
     class ThicknessMeasurement(PhysicalProcess):
         thickness = models.DecimalField(_(u"layer thickness"), max_digits=6,
                                         decimal_places=2, help_text=_(u"in nm"))
         method = models.CharField(_(u"measurement method"), max_length=30, 
-                                  choices=methode_choices, default="profilers&edge")
+                                  choices=method_choices, default="profilers&edge")
 
 The first part defines the five choices – note that it defines pairs of
 strings, namely the internal name, which will be written to the hard disk, and
@@ -335,7 +335,7 @@ For such a simple process class, this is simple::
 Validation
 ..........
 
-The valdation function have turned out to be a practical approach to structure
+The validation function have turned out to be a practical approach to structure
 the view module, but you may do it completely differently.  We usually define
 two functions.  This first one,
 
@@ -458,7 +458,7 @@ which in turn is a ``Process``::
                 ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
                 ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
 
-It contains a full set of permisions to limit “add” and “edit” access to
+It contains a full set of permissions to limit “add” and “edit” access to
 certain users.  Moreover the ``view_every_five_chamber_deposition`` makes a lab
 notebook possible.
 

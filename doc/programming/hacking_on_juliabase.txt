@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -72,7 +72,7 @@ All variables and source code comments should be in English.
 
 .. _`ReST format`: http://sphinx-doc.org/rest.html
 
-Internationalisation is a very important point in JuliaBase.  All strings exposed
+Internationalization is a very important point in JuliaBase.  All strings exposed
 to the user should be marked as translatable by putting them in ``_("...")``
 unless you have very good reason not to do so (e.g. for some proper names).
 Note that in code which is executed at module load time (e.g. model and form

@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -21,7 +21,7 @@ Sample names
 
 .. index:: SAMPLE_NAME_FORMATS
 
-The naming scheme for samples is an inportant aspect of your samples database.
+The naming scheme for samples is an important aspect of your samples database.
 In order to support you with that, JuliaBase allows the definition of so-called
 name formats.  These are string patterns that describe all valid sample names.
 They are defined in :file:`settings.py` like this::
@@ -49,7 +49,7 @@ Name format properties
 ``"pattern"``
 -------------
 
-This is the `regular extression pattern
+This is the `regular expression pattern
 <https://docs.python.org/3.4/library/re.html#regular-expression-syntax>`_ for
 this name format.  It should match sample names of this format *and only
 these*.  In other words, every sample name should be identified unambiguously
@@ -89,14 +89,14 @@ This is a set containing all name formats into which this name format can be
 renamed by the user.  Of course, Python code can rename a sample to anything --
 although it will cause trouble if the new name is not matched by any name
 format.  However, this property sets limits to what the *user* can *explicitly*
-do.  In the JulaBase code, it affects the bulk-rename view as well as the
+do.  In the JuliaBase code, it affects the bulk-rename view as well as the
 split-and-rename view.  And you may enforce it in your own code.
 
 
 ``"verbose_name"``
 ------------------
 
-This propety contains a human-friendly name for the format name.  You should
+This property contains a human-friendly name for the format name.  You should
 enclose it with ``_("...")`` to make it translatable.
 
 
@@ -142,7 +142,7 @@ allowed properties are the following:
 ``"pattern"``
 -------------
 
-This is a `regular extression pattern
+This is a `regular expression pattern
 <https://docs.python.org/3.4/library/re.html#regular-expression-syntax>`_.  The
 whole initials must match it.  In contrast to ``SAMPLE_NAME_FORMATS``, this
 pattern cannot contain placeholders, and therefore, you must not double any
@@ -164,7 +164,7 @@ is used for error messages.
 
 
 .. index::
-   triple: name; predix; templates
+   triple: name; prefix; templates
 
 Name prefix templates
 ========================

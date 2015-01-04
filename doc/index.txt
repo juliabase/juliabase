@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -92,3 +92,5 @@ Finally, see :doc:`project` for how to get in touch with the JuliaBase
 community.
 
 .. _in PDF format: http://www.juliabase.org/juliabase.pdf
+
+..  LocalWords:  toc

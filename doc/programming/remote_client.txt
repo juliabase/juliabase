@@ -1,4 +1,4 @@
-.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "british" -*-
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
 .. This file is part of JuliaBase, the samples database.
 ..
@@ -60,9 +60,9 @@ invalid, or if the central server is temporarily unavailable, it must gently
 exit and try again next time, without forgetting to add something, and without
 adding things twice.
 
-Moreover, legacy data mostly is poorly structured and organised.  If you think
+Moreover, legacy data mostly is poorly structured and organized.  If you think
 your data is the exception, think again.  During writing the crawler, you will
-be surprised how many odd ideas and mistakes your collegues are capable of.
+be surprised how many odd ideas and mistakes your colleagues are capable of.
 
 Be that as it may, crawlers are the primary use case for the remote client.
 The remote client contains functions especially for making writing them as easy
@@ -200,7 +200,7 @@ Then, you use the remote client with a Python script as easy as this::
 
     logout()
 
-By the way, the files are organised in a way that you can update very
+By the way, the files are organized in a way that you can update very
 conveniently: If a new version of JuliaBase is released, you simply have to
 replace the :file:`jb_remote/` subdirectory with the new one.
 
