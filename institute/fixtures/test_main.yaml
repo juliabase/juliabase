@@ -1,0 +1,3181 @@
+- fields: {app_label: auth, model: permission, name: permission}
+  model: contenttypes.contenttype
+- fields: {app_label: auth, model: group, name: group}
+  model: contenttypes.contenttype
+- fields: {app_label: auth, model: user, name: user}
+  model: contenttypes.contenttype
+- fields: {app_label: contenttypes, model: contenttype, name: content type}
+  model: contenttypes.contenttype
+- fields: {app_label: sessions, model: session, name: session}
+  model: contenttypes.contenttype
+- fields: {app_label: admin, model: logentry, name: log entry}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: substrate, name: substrate}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: pdsmeasurement, name: PDS measurement}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: solarsimulatormeasurement, name: solarsimulator
+      measurement}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: solarsimulatorcellmeasurement, name: solarsimulator
+      cell measurement}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: structuring, name: structuring}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: layerthicknessmeasurement, name: layer thickness
+      measurement}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: clustertooldeposition, name: cluster tool
+      deposition}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: clustertoollayer, name: cluster tool layer}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: clustertoolhotwirelayer, name: cluster tool
+      hot-wire layer}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: clustertoolpecvdlayer, name: cluster tool
+      PECVD layer}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: fivechamberdeposition, name: 5-chamber deposition}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: fivechamberlayer, name: 5-chamber layer}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: sampledetails, name: sample details}
+  model: contenttypes.contenttype
+- fields: {app_label: institute, model: informallayer, name: informal layer}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: externaloperator, name: external operator}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: process, name: process}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: sample, name: sample}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: samplealias, name: name alias}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: samplesplit, name: sample split}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: clearance, name: clearance}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: sampleclaim, name: sample claim}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: sampledeath, name: cease of existence}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: result, name: result}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: sampleseries, name: sample series}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: initials, name: initials}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: userdetails, name: user details}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: statusmessage, name: status message}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: task, name: task}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: deposition, name: deposition}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedentry, name: feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feednewsamples, name: new samples feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedmovedsamples, name: moved samples feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feednewphysicalprocess, name: new physical process
+      feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feededitedphysicalprocess, name: edited physical
+      process feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedresult, name: result feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedcopiedmysamples, name: copied My Samples
+      feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feededitedsamples, name: edited samples feed
+      entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedsamplesplit, name: sample split feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feededitedsampleseries, name: edited sample
+      series feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feednewsampleseries, name: new sample series
+      feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedmovedsampleseries, name: moved sample series
+      feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedchangedtopic, name: changed topic feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedstatusmessage, name: status message feed
+      entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedwithdrawnstatusmessage, name: withdrawn
+      status message feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feednewtask, name: new task feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feededitedtask, name: edited task feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: samples, model: feedremovedtask, name: removed task feed entry}
+  model: contenttypes.contenttype
+- fields: {app_label: jb_common, model: department, name: department}
+  model: contenttypes.contenttype
+- fields: {app_label: jb_common, model: userdetails, name: user details}
+  model: contenttypes.contenttype
+- fields: {app_label: jb_common, model: topic, name: topic}
+  model: contenttypes.contenttype
+- fields: {app_label: jb_common, model: errorpage, name: error page}
+  model: contenttypes.contenttype
+- fields: {area: 0.1, data_file: measurement-8.dat, eta: 1.5, isc: 9.4, measurement: 29,
+    position: '11'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 1
+- fields: {area: 0.1, data_file: measurement-8.dat, eta: 1.7625, isc: 3.425, measurement: 29,
+    position: '10'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 2
+- fields: {area: 0.5, data_file: measurement-8.dat, eta: 5.9456, isc: 11.595, measurement: 29,
+    position: '13'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 3
+- fields: {area: 0.1, data_file: measurement-8.dat, eta: 4.212, isc: 8.0, measurement: 29,
+    position: '12'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 4
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 2.8143, isc: 4.975, measurement: 29,
+    position: '14'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 5
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 4.364525, isc: 7.5075, measurement: 29,
+    position: '17'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 6
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 7.13295, isc: 10.5875, measurement: 29,
+    position: '16'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 7
+- fields: {area: 0.1, data_file: measurement-8.dat, eta: 2.95475, isc: 5.875, measurement: 29,
+    position: '24'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 8
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 8.0318, isc: 14.465, measurement: 29,
+    position: '18'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 9
+- fields: {area: 0.1, data_file: measurement-8.dat, eta: 2.491, isc: 6.175, measurement: 29,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 10
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 5.91175, isc: 10.33, measurement: 29,
+    position: '28'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 11
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 4.7466, isc: 10.435, measurement: 29,
+    position: '3'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 12
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 6.536225, isc: 11.4525, measurement: 29,
+    position: '6'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 13
+- fields: {area: 0.1, data_file: measurement-8.dat, eta: 5.08375, isc: 12.525, measurement: 29,
+    position: '9'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 14
+- fields: {area: 1.0, data_file: measurement-8.dat, eta: 6.09015, isc: 9.7825, measurement: 29,
+    position: '32'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 15
+- fields: {area: 0.1, data_file: measurement-4.dat, eta: 4.6255, isc: 8.675, measurement: 33,
+    position: '10'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 16
+- fields: {area: 0.5, data_file: measurement-4.dat, eta: 1.2675, isc: 12.41, measurement: 33,
+    position: '26'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 17
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 1.989775, isc: 3.5775, measurement: 33,
+    position: '27'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 18
+- fields: {area: 0.5, data_file: measurement-4.dat, eta: 4.1391, isc: 7.21, measurement: 33,
+    position: '20'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 19
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 3.01245, isc: 6.2075, measurement: 33,
+    position: '17'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 20
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 3.9611, isc: 10.15, measurement: 33,
+    position: '25'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 21
+- fields: {area: 0.5, data_file: measurement-4.dat, eta: 1.6795, isc: 15.255, measurement: 33,
+    position: '33'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 22
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 3.795, isc: 8.075, measurement: 33,
+    position: '32'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 23
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 9.32985, isc: 17.0125, measurement: 33,
+    position: '30'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 24
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 5.408825, isc: 9.46, measurement: 33,
+    position: '29'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 25
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 2.59325, isc: 10.62, measurement: 33,
+    position: '35'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 26
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 7.10955, isc: 12.675, measurement: 33,
+    position: '34'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 27
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 6.1915, isc: 12.235, measurement: 33,
+    position: '3'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 28
+- fields: {area: 0.5, data_file: measurement-4.dat, eta: 4.94975, isc: 8.495, measurement: 33,
+    position: '7'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 29
+- fields: {area: 1.0, data_file: measurement-4.dat, eta: 7.62935, isc: 13.555, measurement: 33,
+    position: '6'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 30
+- fields: {area: 0.1, data_file: measurement-3.dat, eta: 0.381306243896, isc: 2.6,
+    measurement: 36, position: '24'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 31
+- fields: {area: 0.5, data_file: measurement-3.dat, eta: 0.69325, isc: 1.145, measurement: 36,
+    position: '13'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 32
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 1.322175, isc: 2.505, measurement: 36,
+    position: '27'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 33
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 1.342225, isc: 2.35, measurement: 36,
+    position: '15'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 34
+- fields: {area: 0.1, data_file: measurement-3.dat, eta: 0.798, isc: 1.5, measurement: 36,
+    position: '21'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 35
+- fields: {area: 0.1, data_file: measurement-3.dat, eta: 0.2565, isc: 1.075, measurement: 36,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 36
+- fields: {area: 0.5, data_file: measurement-3.dat, eta: 0.1835, isc: 1.755, measurement: 36,
+    position: '26'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 37
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 1.13985, isc: 2.25, measurement: 36,
+    position: '35'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 38
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 1.1563, isc: 2.1, measurement: 36,
+    position: '29'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 39
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 1.5624, isc: 2.675, measurement: 36,
+    position: '1'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 40
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 1.0126, isc: 2.185, measurement: 36,
+    position: '3'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 41
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 0.0712555725098, isc: 0.75,
+    measurement: 36, position: '2'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 42
+- fields: {area: 0.1, data_file: measurement-3.dat, eta: 0.451, isc: 1.775, measurement: 36,
+    position: '9'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 43
+- fields: {area: 1.0, data_file: measurement-3.dat, eta: 1.01475, isc: 1.795, measurement: 36,
+    position: '34'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 44
+- fields: {area: 0.1, data_file: measurement-5.dat, eta: 1.0875, isc: 2.05, measurement: 37,
+    position: '10'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 45
+- fields: {area: 0.5, data_file: measurement-5.dat, eta: 0.2865, isc: 2.78, measurement: 37,
+    position: '26'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 46
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 0.45135, isc: 0.7675, measurement: 37,
+    position: '27'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 47
+- fields: {area: 0.5, data_file: measurement-5.dat, eta: 0.28125, isc: 1.665, measurement: 37,
+    position: '20'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 48
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 0.2655, isc: 1.3975, measurement: 37,
+    position: '17'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 49
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 0.27, isc: 2.3125, measurement: 37,
+    position: '25'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 50
+- fields: {area: 0.5, data_file: measurement-5.dat, eta: 1.804, isc: 3.29, measurement: 37,
+    position: '33'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 51
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 0.899, isc: 1.7625, measurement: 37,
+    position: '32'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 52
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 2.13855, isc: 3.665, measurement: 37,
+    position: '30'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 53
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 1.03785, isc: 2.135, measurement: 37,
+    position: '29'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 54
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 0.598, isc: 2.5, measurement: 37,
+    position: '35'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 55
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 1.644625, isc: 2.775, measurement: 37,
+    position: '34'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 56
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 0.394225, isc: 2.785, measurement: 37,
+    position: '3'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 57
+- fields: {area: 0.5, data_file: measurement-5.dat, eta: 1.1098, isc: 2.045, measurement: 37,
+    position: '7'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 58
+- fields: {area: 1.0, data_file: measurement-5.dat, eta: 1.6483, isc: 2.95, measurement: 37,
+    position: '6'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 59
+- fields: {area: 0.1521, data_file: measurement-11.dat, eta: 1.10552268245, isc: 1.92307692308,
+    measurement: 39, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 60
+- fields: {area: 0.0676, data_file: measurement-11.dat, eta: 5.16826923077, isc: 8.32100591716,
+    measurement: 39, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 61
+- fields: {area: 0.1521, data_file: measurement-11.dat, eta: 3.82001972387, isc: 7.06771860618,
+    measurement: 39, position: 2B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 62
+- fields: {area: 0.0676, data_file: measurement-11.dat, eta: 5.19230769231, isc: 9.98520710059,
+    measurement: 39, position: 3B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 63
+- fields: {area: 0.0676, data_file: measurement-11.dat, eta: 5.96301775148, isc: 11.0576923077,
+    measurement: 39, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 64
+- fields: {area: 0.1521, data_file: measurement-11.dat, eta: 5.01314924392, isc: 10.8809993425,
+    measurement: 39, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 65
+- fields: {area: 0.1521, data_file: measurement-11.dat, eta: 5.33727810651, isc: 8.82642998028,
+    measurement: 39, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 66
+- fields: {area: 0.1521, data_file: measurement-11.dat, eta: 6.76528599606, isc: 11.5713346483,
+    measurement: 39, position: 4C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 67
+- fields: {area: 0.0676, data_file: measurement-11.dat, eta: 6.97041420118, isc: 11.5384615385,
+    measurement: 39, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 68
+- fields: {area: 0.1521, data_file: measurement-14.dat, eta: 4.9358974359, isc: 9.58251150559,
+    measurement: 41, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 69
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 9.93602071006, isc: 17.048816568,
+    measurement: 41, position: 1A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 70
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 5.57174556213, isc: 10.9837278107,
+    measurement: 41, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 71
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 10.3642751479, isc: 16.8269230769,
+    measurement: 41, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 72
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 7.72707100592, isc: 14.1272189349,
+    measurement: 41, position: 1D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 73
+- fields: {area: 0.1521, data_file: measurement-14.dat, eta: 4.48372781065, isc: 7.57725180802,
+    measurement: 41, position: 2B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 74
+- fields: {area: 0.1521, data_file: measurement-14.dat, eta: 1.88034188034, isc: 3.12294543064,
+    measurement: 41, position: 2C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 75
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 6.90088757396, isc: 13.6094674556,
+    measurement: 41, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 76
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 5.32544378698, isc: 8.83875739645,
+    measurement: 41, position: 3B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 77
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 8.80473372781, isc: 13.0177514793,
+    measurement: 41, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 78
+- fields: {area: 0.1521, data_file: measurement-14.dat, eta: 0.668055106119, isc: 6.44312952005,
+    measurement: 41, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 79
+- fields: {area: 0.1521, data_file: measurement-14.dat, eta: 4.8875739645, isc: 12.8698224852,
+    measurement: 41, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 80
+- fields: {area: 0.1521, data_file: measurement-14.dat, eta: 5.14349112426, isc: 9.15516107824,
+    measurement: 41, position: 4D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 81
+- fields: {area: 0.0676, data_file: measurement-14.dat, eta: 6.75480769231, isc: 10.0961538462,
+    measurement: 41, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 82
+- fields: {area: 0.1, data_file: measurement-10.dat, eta: 0.912, isc: 1.7, measurement: 43,
+    position: '24'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 83
+- fields: {area: 0.5, data_file: measurement-10.dat, eta: 0.8215, isc: 1.515, measurement: 43,
+    position: '13'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 84
+- fields: {area: 0.1, data_file: measurement-10.dat, eta: 1.9625, isc: 3.65, measurement: 43,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 85
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 0.267, isc: 2.0225, measurement: 43,
+    position: '17'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 86
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 0.9702, isc: 1.5775, measurement: 43,
+    position: '16'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 87
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 0.35045, isc: 0.9275, measurement: 43,
+    position: '18'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 88
+- fields: {area: 0.5, data_file: measurement-10.dat, eta: 0.6141, isc: 2.66, measurement: 43,
+    position: '26'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 89
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 1.08675, isc: 1.8825, measurement: 43,
+    position: '29'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 90
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 1.499075, isc: 2.4275, measurement: 43,
+    position: '1'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 91
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 0.840275, isc: 1.685, measurement: 43,
+    position: '2'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 92
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 1.0197, isc: 1.8625, measurement: 43,
+    position: '4'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 93
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 0.725, isc: 1.2275, measurement: 43,
+    position: '6'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 94
+- fields: {area: 1.0, data_file: measurement-10.dat, eta: 1.21655, isc: 2.5875, measurement: 43,
+    position: '32'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 95
+- fields: {area: 0.1521, data_file: measurement-16.dat, eta: 6.49737015122, isc: 10.8974358974,
+    measurement: 45, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 96
+- fields: {area: 0.0676, data_file: measurement-16.dat, eta: 3.83210059172, isc: 6.4349112426,
+    measurement: 45, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 97
+- fields: {area: 0.0676, data_file: measurement-16.dat, eta: 6.75665680473, isc: 11.2056213018,
+    measurement: 45, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 98
+- fields: {area: 0.1521, data_file: measurement-16.dat, eta: 4.23109796187, isc: 7.62656147272,
+    measurement: 45, position: 2A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 99
+- fields: {area: 0.1521, data_file: measurement-16.dat, eta: 4.86094674556, isc: 9.04010519395,
+    measurement: 45, position: 2C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 100
+- fields: {area: 0.0676, data_file: measurement-16.dat, eta: 6.46819526627, isc: 12.1671597633,
+    measurement: 45, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 101
+- fields: {area: 0.0676, data_file: measurement-16.dat, eta: 3.68897928994, isc: 7.10059171598,
+    measurement: 45, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 102
+- fields: {area: 0.1521, data_file: measurement-16.dat, eta: 4.55325443787, isc: 10.157790927,
+    measurement: 45, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 103
+- fields: {area: 0.1521, data_file: measurement-16.dat, eta: 5.25147928994, isc: 10.9796186719,
+    measurement: 45, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 104
+- fields: {area: 0.1521, data_file: measurement-16.dat, eta: 4.70989480605, isc: 9.05654174885,
+    measurement: 45, position: 4D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 105
+- fields: {area: 0.0676, data_file: measurement-16.dat, eta: 5.94452662722, isc: 12.7588757396,
+    measurement: 45, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 106
+- fields: {area: 0.1521, data_file: measurement-20.dat, eta: 0.244575936884, isc: 1.98882314267,
+    measurement: 47, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 107
+- fields: {area: 0.1521, data_file: measurement-20.dat, eta: 1.50887573964, isc: 2.77777777778,
+    measurement: 47, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 108
+- fields: {area: 0.0676, data_file: measurement-20.dat, eta: 0.737795857988, isc: 1.36834319527,
+    measurement: 47, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 109
+- fields: {area: 0.0676, data_file: measurement-20.dat, eta: 1.70857988166, isc: 3.77218934911,
+    measurement: 47, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 110
+- fields: {area: 0.0676, data_file: measurement-20.dat, eta: 1.68639053254, isc: 2.58875739645,
+    measurement: 47, position: 1D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 111
+- fields: {area: 0.1521, data_file: measurement-20.dat, eta: 1.44970414201, isc: 2.66272189349,
+    measurement: 47, position: 2B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 112
+- fields: {area: 0.0676, data_file: measurement-20.dat, eta: 0.325443786982, isc: 2.03402366864,
+    measurement: 47, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 113
+- fields: {area: 0.0676, data_file: measurement-20.dat, eta: 0.317320897029, isc: 2.73668639053,
+    measurement: 47, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 114
+- fields: {area: 0.0676, data_file: measurement-20.dat, eta: 1.63091715976, isc: 3.10650887574,
+    measurement: 47, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 115
+- fields: {area: 0.1521, data_file: measurement-20.dat, eta: 0.899408284024, isc: 1.59434582512,
+    measurement: 47, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 116
+- fields: {area: 0.1521, data_file: measurement-20.dat, eta: 1.34648257725, isc: 2.30111768573,
+    measurement: 47, position: 4C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 117
+- fields: {area: 0.1521, data_file: measurement-20.dat, eta: 1.55555555556, isc: 2.79421433268,
+    measurement: 47, position: 2A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 118
+- fields: {area: 0.1, data_file: measurement-2.dat, eta: 7.028, isc: 11.925, measurement: 48,
+    position: '24'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 119
+- fields: {area: 0.5, data_file: measurement-2.dat, eta: 3.0063, isc: 5.205, measurement: 48,
+    position: '13'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 120
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 5.6608, isc: 11.0575, measurement: 48,
+    position: '27'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 121
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 6.0465, isc: 11.3625, measurement: 48,
+    position: '15'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 122
+- fields: {area: 0.1, data_file: measurement-2.dat, eta: 3.5055, isc: 6.65, measurement: 48,
+    position: '21'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 123
+- fields: {area: 0.1, data_file: measurement-2.dat, eta: 2.8975, isc: 4.7, measurement: 48,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 124
+- fields: {area: 0.5, data_file: measurement-2.dat, eta: 0.816722125244, isc: 7.6,
+    measurement: 48, position: '26'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 125
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 1.30672546387, isc: 9.6625,
+    measurement: 48, position: '35'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 126
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 5.20645, isc: 9.23, measurement: 48,
+    position: '29'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 127
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 7.10535, isc: 12.0875, measurement: 48,
+    position: '1'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 128
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 4.6288, isc: 9.78, measurement: 48,
+    position: '3'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 129
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 2.058, isc: 3.3025, measurement: 48,
+    position: '2'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 130
+- fields: {area: 0.1, data_file: measurement-2.dat, eta: 4.65, isc: 7.925, measurement: 48,
+    position: '9'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 131
+- fields: {area: 1.0, data_file: measurement-2.dat, eta: 4.2608, isc: 7.98, measurement: 48,
+    position: '34'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 132
+- fields: {area: 0.1521, data_file: measurement-12.dat, eta: 5.08711374096, isc: 9.58251150559,
+    measurement: 50, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 133
+- fields: {area: 0.1521, data_file: measurement-12.dat, eta: 7.85009861933, isc: 15.1380670611,
+    measurement: 50, position: 4D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 134
+- fields: {area: 0.0676, data_file: measurement-12.dat, eta: 7.81878698225, isc: 12.9437869822,
+    measurement: 50, position: 1A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 135
+- fields: {area: 0.0676, data_file: measurement-12.dat, eta: 8.83136094675, isc: 16.8269230769,
+    measurement: 50, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 136
+- fields: {area: 0.0676, data_file: measurement-12.dat, eta: 3.06804733728, isc: 5.47337278107,
+    measurement: 50, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 137
+- fields: {area: 0.1521, data_file: measurement-12.dat, eta: 3.65023011177, isc: 7.01840894149,
+    measurement: 50, position: 2A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 138
+- fields: {area: 0.1521, data_file: measurement-12.dat, eta: 8.12771203156, isc: 15.5325443787,
+    measurement: 50, position: 2C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 139
+- fields: {area: 0.0676, data_file: measurement-12.dat, eta: 5.25517751479, isc: 9.06065088757,
+    measurement: 50, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 140
+- fields: {area: 0.0676, data_file: measurement-12.dat, eta: 6.21856508876, isc: 9.98520710059,
+    measurement: 50, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 141
+- fields: {area: 0.1521, data_file: measurement-12.dat, eta: 6.03583168968, isc: 10.7495069034,
+    measurement: 50, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 142
+- fields: {area: 0.1521, data_file: measurement-12.dat, eta: 7.21499013807, isc: 14.7435897436,
+    measurement: 50, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 143
+- fields: {area: 0.1521, data_file: measurement-12.dat, eta: 3.02202498356, isc: 8.79355687048,
+    measurement: 50, position: 4C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 144
+- fields: {area: 0.0676, data_file: measurement-12.dat, eta: 6.25961538462, isc: 10.6878698225,
+    measurement: 50, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 145
+- fields: {area: 0.1, data_file: measurement-7.dat, eta: 1.515, isc: 2.6, measurement: 52,
+    position: '11'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 146
+- fields: {area: 0.1, data_file: measurement-7.dat, eta: 1.452, isc: 3.325, measurement: 52,
+    position: '10'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 147
+- fields: {area: 0.1, data_file: measurement-7.dat, eta: 1.2325, isc: 1.825, measurement: 52,
+    position: '12'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 148
+- fields: {area: 0.5, data_file: measurement-7.dat, eta: 1.30685, isc: 2.255, measurement: 52,
+    position: '20'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 149
+- fields: {area: 0.1, data_file: measurement-7.dat, eta: 1.8645, isc: 3.3, measurement: 52,
+    position: '21'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 150
+- fields: {area: 0.1, data_file: measurement-7.dat, eta: 1.2505, isc: 2.15, measurement: 52,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 151
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 1.791225, isc: 3.24, measurement: 52,
+    position: '16'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 152
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 0.2465, isc: 0.4225, measurement: 52,
+    position: '19'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 153
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 0.350675, isc: 3.0125, measurement: 52,
+    position: '32'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 154
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 1.175625, isc: 2.515, measurement: 52,
+    position: '31'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 155
+- fields: {area: 0.1, data_file: measurement-7.dat, eta: 0.7125, isc: 1.55, measurement: 52,
+    position: '23'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 156
+- fields: {area: 0.5, data_file: measurement-7.dat, eta: 1.1225, isc: 2.365, measurement: 52,
+    position: '36'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 157
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 0.956175, isc: 1.6725, measurement: 52,
+    position: '35'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 158
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 0.7526, isc: 1.4, measurement: 52,
+    position: '1'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 159
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 1.093125, isc: 2.585, measurement: 52,
+    position: '27'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 160
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 1.5216, isc: 2.49, measurement: 52,
+    position: '25'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 161
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 1.239, isc: 1.8825, measurement: 52,
+    position: '6'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 162
+- fields: {area: 1.0, data_file: measurement-7.dat, eta: 1.42755, isc: 2.5525, measurement: 52,
+    position: '8'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 163
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 4.50125, isc: 7.725, measurement: 54,
+    position: '11'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 164
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 3.09375, isc: 5.675, measurement: 54,
+    position: '10'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 165
+- fields: {area: 0.5, data_file: measurement-1.dat, eta: 0.8244, isc: 6.62, measurement: 54,
+    position: '13'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 166
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 5.7475, isc: 10.375, measurement: 54,
+    position: '12'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 167
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 7.006, isc: 14.075, measurement: 54,
+    position: '21'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 168
+- fields: {area: 1.0, data_file: measurement-1.dat, eta: 5.1119, isc: 8.5, measurement: 54,
+    position: '17'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 169
+- fields: {area: 1.0, data_file: measurement-1.dat, eta: 9.8864, isc: 16.6775, measurement: 54,
+    position: '16'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 170
+- fields: {area: 0.5, data_file: measurement-1.dat, eta: 4.3741, isc: 7.695, measurement: 54,
+    position: '33'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 171
+- fields: {area: 1.0, data_file: measurement-1.dat, eta: 5.14605, isc: 10.5625, measurement: 54,
+    position: '18'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 172
+- fields: {area: 1.0, data_file: measurement-1.dat, eta: 3.3642, isc: 5.8625, measurement: 54,
+    position: '31'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 173
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 1.0525, isc: 9.775, measurement: 54,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 174
+- fields: {area: 0.5, data_file: measurement-1.dat, eta: 7.381, isc: 10.95, measurement: 54,
+    position: '26'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 175
+- fields: {area: 1.0, data_file: measurement-1.dat, eta: 3.6008, isc: 7.1025, measurement: 54,
+    position: '35'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 176
+- fields: {area: 0.5, data_file: measurement-1.dat, eta: 3.2034, isc: 5.895, measurement: 54,
+    position: '36'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 177
+- fields: {area: 1.0, data_file: measurement-1.dat, eta: 2.12875, isc: 5.0175, measurement: 54,
+    position: '4'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 178
+- fields: {area: 0.5, data_file: measurement-1.dat, eta: 0.2808, isc: 2.255, measurement: 54,
+    position: '7'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 179
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 4.935, isc: 8.85, measurement: 54,
+    position: '24'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 180
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 4.5135, isc: 7.3, measurement: 54,
+    position: '9'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 181
+- fields: {area: 0.1, data_file: measurement-1.dat, eta: 6.045, isc: 10.725, measurement: 54,
+    position: '23'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 182
+- fields: {area: 0.1, data_file: measurement-9.dat, eta: 3.71925, isc: 7.35, measurement: 55,
+    position: '24'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 183
+- fields: {area: 0.5, data_file: measurement-9.dat, eta: 3.71475, isc: 6.49, measurement: 55,
+    position: '13'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 184
+- fields: {area: 0.1, data_file: measurement-9.dat, eta: 8.4645, isc: 16.325, measurement: 55,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 185
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 4.493075, isc: 9.02, measurement: 55,
+    position: '17'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 186
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 4.33785, isc: 6.7175, measurement: 55,
+    position: '16'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 187
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 1.611425, isc: 4.2325, measurement: 55,
+    position: '18'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 188
+- fields: {area: 0.5, data_file: measurement-9.dat, eta: 7.068, isc: 12.205, measurement: 55,
+    position: '26'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 189
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 4.9501, isc: 8.545, measurement: 55,
+    position: '29'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 190
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 6.312, isc: 10.4875, measurement: 55,
+    position: '1'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 191
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 3.527925, isc: 7.1675, measurement: 55,
+    position: '2'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 192
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 4.2471, isc: 7.88, measurement: 55,
+    position: '4'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 193
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 3.2034, isc: 5.295, measurement: 55,
+    position: '6'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 194
+- fields: {area: 1.0, data_file: measurement-9.dat, eta: 5.664, isc: 11.9025, measurement: 55,
+    position: '32'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 195
+- fields: {area: 0.1521, data_file: measurement-19.dat, eta: 5.19132149901, isc: 9.08941485865,
+    measurement: 56, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 196
+- fields: {area: 0.1521, data_file: measurement-19.dat, eta: 6.27284681131, isc: 13.3136094675,
+    measurement: 56, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 197
+- fields: {area: 0.0676, data_file: measurement-19.dat, eta: 3.09060650888, isc: 5.91715976331,
+    measurement: 56, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 198
+- fields: {area: 0.0676, data_file: measurement-19.dat, eta: 7.38350591716, isc: 15.9763313609,
+    measurement: 56, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 199
+- fields: {area: 0.0676, data_file: measurement-19.dat, eta: 7.45562130178, isc: 10.9097633136,
+    measurement: 56, position: 1D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 200
+- fields: {area: 0.1521, data_file: measurement-19.dat, eta: 6.60650887574, isc: 12.3109796187,
+    measurement: 56, position: 2B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 201
+- fields: {area: 0.0676, data_file: measurement-19.dat, eta: 4.6375739645, isc: 8.43195266272,
+    measurement: 56, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 202
+- fields: {area: 0.0676, data_file: measurement-19.dat, eta: 7.06176035503, isc: 12.573964497,
+    measurement: 56, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 203
+- fields: {area: 0.0676, data_file: measurement-19.dat, eta: 7.26664201183, isc: 13.9053254438,
+    measurement: 56, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 204
+- fields: {area: 0.1521, data_file: measurement-19.dat, eta: 3.80374753452, isc: 6.49243918475,
+    measurement: 56, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 205
+- fields: {area: 0.1521, data_file: measurement-19.dat, eta: 5.99605522682, isc: 10.6015779093,
+    measurement: 56, position: 4C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 206
+- fields: {area: 0.1521, data_file: measurement-19.dat, eta: 6.93293885602, isc: 12.2452333991,
+    measurement: 56, position: 2A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 207
+- fields: {area: 0.1, data_file: measurement-6.dat, eta: 6.63, isc: 12.175, measurement: 57,
+    position: '11'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 208
+- fields: {area: 0.1, data_file: measurement-6.dat, eta: 5.4855, isc: 14.275, measurement: 57,
+    position: '10'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 209
+- fields: {area: 0.1, data_file: measurement-6.dat, eta: 5.06051040649, isc: 8.575,
+    measurement: 57, position: '12'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 210
+- fields: {area: 0.5, data_file: measurement-6.dat, eta: 5.6581, isc: 10.27, measurement: 57,
+    position: '20'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 211
+- fields: {area: 0.1, data_file: measurement-6.dat, eta: 8.052, isc: 14.575, measurement: 57,
+    position: '21'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 212
+- fields: {area: 0.1, data_file: measurement-6.dat, eta: 5.6425, isc: 10.075, measurement: 57,
+    position: '22'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 213
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 8.038425, isc: 14.835, measurement: 57,
+    position: '16'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 214
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 1.0759, isc: 1.8975, measurement: 57,
+    position: '19'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 215
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 5.486325, isc: 12.7025, measurement: 57,
+    position: '32'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 216
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 5.208375, isc: 11.1675, measurement: 57,
+    position: '31'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 217
+- fields: {area: 0.1, data_file: measurement-6.dat, eta: 3.2825, isc: 6.825, measurement: 57,
+    position: '23'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 218
+- fields: {area: 0.5, data_file: measurement-6.dat, eta: 4.9675, isc: 10.455, measurement: 57,
+    position: '36'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 219
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 4.01915, isc: 7.2775, measurement: 57,
+    position: '35'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 220
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 3.2489, isc: 6.375, measurement: 57,
+    position: '1'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 221
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 4.644825, isc: 10.7225, measurement: 57,
+    position: '27'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 222
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 6.648075, isc: 11.74, measurement: 57,
+    position: '25'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 223
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 5.546425, isc: 8.9625, measurement: 57,
+    position: '6'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 224
+- fields: {area: 1.0, data_file: measurement-6.dat, eta: 6.476675, isc: 10.6, measurement: 57,
+    position: '8'}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 225
+- fields: {area: 0.1521, data_file: measurement-18.dat, eta: 2.81065088757, isc: 5.02958579882,
+    measurement: 59, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 226
+- fields: {area: 0.1521, data_file: measurement-18.dat, eta: 1.38313609467, isc: 10.8645627876,
+    measurement: 59, position: 4D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 227
+- fields: {area: 0.0676, data_file: measurement-18.dat, eta: 6.04105029586, isc: 9.94822485207,
+    measurement: 59, position: 1A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 228
+- fields: {area: 0.0676, data_file: measurement-18.dat, eta: 4.07729289941, isc: 6.10207100592,
+    measurement: 59, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 229
+- fields: {area: 0.0676, data_file: measurement-18.dat, eta: 6.0073964497, isc: 12.0192307692,
+    measurement: 59, position: 1D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 230
+- fields: {area: 0.1521, data_file: measurement-18.dat, eta: 3.1285338593, isc: 5.40762656147,
+    measurement: 59, position: 2B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 231
+- fields: {area: 0.0676, data_file: measurement-18.dat, eta: 4.1749260355, isc: 7.24852071006,
+    measurement: 59, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 232
+- fields: {area: 0.0676, data_file: measurement-18.dat, eta: 6.4926035503, isc: 11.0207100592,
+    measurement: 59, position: 3B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 233
+- fields: {area: 0.0676, data_file: measurement-18.dat, eta: 7.33579881657, isc: 15.5325443787,
+    measurement: 59, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 234
+- fields: {area: 0.1521, data_file: measurement-18.dat, eta: 7.07840236686, isc: 12.6890203813,
+    measurement: 59, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 235
+- fields: {area: 0.1521, data_file: measurement-18.dat, eta: 7.46564760026, isc: 14.4641683103,
+    measurement: 59, position: 4C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 236
+- fields: {area: 0.1521, data_file: measurement-18.dat, eta: 3.26101249178, isc: 5.96646942801,
+    measurement: 59, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 237
+- fields: {area: 0.1521, data_file: measurement-17.dat, eta: 1.419460881, isc: 2.5641025641,
+    measurement: 60, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 238
+- fields: {area: 0.0676, data_file: measurement-17.dat, eta: 0.147928994083, isc: 1.44230769231,
+    measurement: 60, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 239
+- fields: {area: 0.0676, data_file: measurement-17.dat, eta: 1.53402366864, isc: 2.3298816568,
+    measurement: 60, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 240
+- fields: {area: 0.1521, data_file: measurement-17.dat, eta: 0.950361604208, isc: 1.67652859961,
+    measurement: 60, position: 2A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 241
+- fields: {area: 0.1521, data_file: measurement-17.dat, eta: 1.09286653517, isc: 2.10387902696,
+    measurement: 60, position: 2C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 242
+- fields: {area: 0.0676, data_file: measurement-17.dat, eta: 1.46634615385, isc: 2.81065088757,
+    measurement: 60, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 243
+- fields: {area: 0.0676, data_file: measurement-17.dat, eta: 0.836538461538, isc: 1.55325443787,
+    measurement: 60, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 244
+- fields: {area: 0.1521, data_file: measurement-17.dat, eta: 1.05621301775, isc: 2.38330046022,
+    measurement: 60, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 245
+- fields: {area: 0.1521, data_file: measurement-17.dat, eta: 1.25657462196, isc: 2.5641025641,
+    measurement: 60, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 246
+- fields: {area: 0.1521, data_file: measurement-17.dat, eta: 0.215318869165, isc: 2.03813280736,
+    measurement: 60, position: 4D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 247
+- fields: {area: 0.0676, data_file: measurement-17.dat, eta: 1.36686390533, isc: 2.84763313609,
+    measurement: 60, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 248
+- fields: {area: 0.1521, data_file: measurement-13.dat, eta: 1.20414201183, isc: 2.15318869165,
+    measurement: 61, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 249
+- fields: {area: 0.1521, data_file: measurement-13.dat, eta: 1.7580539119, isc: 3.4352399737,
+    measurement: 61, position: 4D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 250
+- fields: {area: 0.0676, data_file: measurement-13.dat, eta: 0.427884615385, isc: 3.10650887574,
+    measurement: 61, position: 1A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 251
+- fields: {area: 0.0676, data_file: measurement-13.dat, eta: 1.94193786982, isc: 3.80917159763,
+    measurement: 61, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 252
+- fields: {area: 0.0676, data_file: measurement-13.dat, eta: 0.697855029586, isc: 1.2573964497,
+    measurement: 61, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 253
+- fields: {area: 0.1521, data_file: measurement-13.dat, eta: 0.810157790927, isc: 1.54503616042,
+    measurement: 61, position: 2A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 254
+- fields: {area: 0.1521, data_file: measurement-13.dat, eta: 1.92521367521, isc: 3.28731097962,
+    measurement: 61, position: 2C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 255
+- fields: {area: 0.0676, data_file: measurement-13.dat, eta: 1.20710059172, isc: 2.21893491124,
+    measurement: 61, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 256
+- fields: {area: 0.0676, data_file: measurement-13.dat, eta: 1.37204142012, isc: 2.36686390533,
+    measurement: 61, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 257
+- fields: {area: 0.1521, data_file: measurement-13.dat, eta: 1.41025641026, isc: 2.5641025641,
+    measurement: 61, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 258
+- fields: {area: 0.1521, data_file: measurement-13.dat, eta: 1.53320184089, isc: 3.30374753452,
+    measurement: 61, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 259
+- fields: {area: 0.1521, data_file: measurement-13.dat, eta: 0.415844838922, isc: 2.03813280736,
+    measurement: 61, position: 4C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 260
+- fields: {area: 0.0676, data_file: measurement-13.dat, eta: 1.49038461538, isc: 2.44082840237,
+    measurement: 61, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 261
+- fields: {area: 0.1521, data_file: measurement-15.dat, eta: 1.08547008547, isc: 2.12031558185,
+    measurement: 62, position: 2D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 262
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 2.38202662722, isc: 3.84615384615,
+    measurement: 62, position: 1A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 263
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 1.27810650888, isc: 2.58875739645,
+    measurement: 62, position: 1C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 264
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 2.27847633136, isc: 3.88313609467,
+    measurement: 62, position: 1B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 265
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 1.71449704142, isc: 3.2174556213,
+    measurement: 62, position: 1D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 266
+- fields: {area: 0.1521, data_file: measurement-15.dat, eta: 1.03632478632, isc: 1.6929651545,
+    measurement: 62, position: 2B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 267
+- fields: {area: 0.1521, data_file: measurement-15.dat, eta: 0.0927021696252, isc: 0.739644970414,
+    measurement: 62, position: 2C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 268
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 0.288461538462, isc: 3.14349112426,
+    measurement: 62, position: 3C}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 269
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 1.17603550296, isc: 1.88609467456,
+    measurement: 62, position: 3B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 270
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 1.88720414201, isc: 2.92159763314,
+    measurement: 62, position: 3A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 271
+- fields: {area: 0.1521, data_file: measurement-15.dat, eta: 0.940664036818, isc: 1.38067061144,
+    measurement: 62, position: 4A}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 272
+- fields: {area: 0.1521, data_file: measurement-15.dat, eta: 1.1540105194, isc: 2.99145299145,
+    measurement: 62, position: 4B}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 273
+- fields: {area: 0.1521, data_file: measurement-15.dat, eta: 1.10634451019, isc: 2.23537146614,
+    measurement: 62, position: 4D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 274
+- fields: {area: 0.0676, data_file: measurement-15.dat, eta: 1.63461538462, isc: 2.3298816568,
+    measurement: 62, position: 3D}
+  model: institute.solarsimulatorcellmeasurement
+  pk: 275
+- fields:
+    actual_object_id: 1
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 4
+    number: 1
+  model: institute.clustertoollayer
+  pk: 1
+- fields:
+    actual_object_id: 2
+    content_type: [institute, clustertoolpecvdlayer]
+    deposition: 4
+    number: 2
+  model: institute.clustertoollayer
+  pk: 2
+- fields:
+    actual_object_id: 3
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 4
+    number: 3
+  model: institute.clustertoollayer
+  pk: 3
+- fields:
+    actual_object_id: 4
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 8
+    number: 1
+  model: institute.clustertoollayer
+  pk: 4
+- fields:
+    actual_object_id: 5
+    content_type: [institute, clustertoolpecvdlayer]
+    deposition: 8
+    number: 2
+  model: institute.clustertoollayer
+  pk: 5
+- fields:
+    actual_object_id: 6
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 8
+    number: 3
+  model: institute.clustertoollayer
+  pk: 6
+- fields:
+    actual_object_id: 7
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 12
+    number: 1
+  model: institute.clustertoollayer
+  pk: 7
+- fields:
+    actual_object_id: 8
+    content_type: [institute, clustertoolpecvdlayer]
+    deposition: 12
+    number: 2
+  model: institute.clustertoollayer
+  pk: 8
+- fields:
+    actual_object_id: 9
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 12
+    number: 3
+  model: institute.clustertoollayer
+  pk: 9
+- fields:
+    actual_object_id: 10
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 16
+    number: 1
+  model: institute.clustertoollayer
+  pk: 10
+- fields:
+    actual_object_id: 11
+    content_type: [institute, clustertoolpecvdlayer]
+    deposition: 16
+    number: 2
+  model: institute.clustertoollayer
+  pk: 11
+- fields:
+    actual_object_id: 12
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 16
+    number: 3
+  model: institute.clustertoollayer
+  pk: 12
+- fields:
+    actual_object_id: 13
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 20
+    number: 1
+  model: institute.clustertoollayer
+  pk: 13
+- fields:
+    actual_object_id: 14
+    content_type: [institute, clustertoolpecvdlayer]
+    deposition: 20
+    number: 2
+  model: institute.clustertoollayer
+  pk: 14
+- fields:
+    actual_object_id: 15
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 20
+    number: 3
+  model: institute.clustertoollayer
+  pk: 15
+- fields:
+    actual_object_id: 16
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 24
+    number: 1
+  model: institute.clustertoollayer
+  pk: 16
+- fields:
+    actual_object_id: 17
+    content_type: [institute, clustertoolpecvdlayer]
+    deposition: 24
+    number: 2
+  model: institute.clustertoollayer
+  pk: 17
+- fields:
+    actual_object_id: 18
+    content_type: [institute, clustertoolhotwirelayer]
+    deposition: 24
+    number: 3
+  model: institute.clustertoollayer
+  pk: 18
+- fields: {base_pressure: 2.0, comments: p-type layer, h2: '1.00', sih4: '0.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 1
+- fields: {base_pressure: 9.0, comments: p-type layer, h2: '0.00', sih4: '4.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 4
+- fields: {base_pressure: 1.0, comments: p-type layer, h2: '0.00', sih4: '3.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 7
+- fields: {base_pressure: 1.0, comments: p-type layer, h2: '0.00', sih4: '4.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 10
+- fields: {base_pressure: 4.0, comments: p-type layer, h2: '1.00', sih4: '0.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 13
+- fields: {base_pressure: 8.0, comments: p-type layer, h2: '1.00', sih4: '0.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 16
+- fields: {base_pressure: 6.0, comments: n-type layer, h2: '8.00', sih4: '3.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 15
+- fields: {base_pressure: 2.0, comments: n-type layer, h2: '4.00', sih4: '8.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 3
+- fields: {base_pressure: 2.0, comments: n-type layer, h2: '4.00', sih4: '6.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 12
+- fields: {base_pressure: 0.0, comments: n-type layer, h2: '9.00', sih4: '2.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 6
+- fields: {base_pressure: 1.0, comments: n-type layer, h2: '6.00', sih4: '3.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 18
+- fields: {base_pressure: 7.0, comments: n-type layer, h2: '10.00', sih4: '4.00',
+    time: '10:00', wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 9
+- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
+    plasma_start_with_shutter: false, sih4: '3.00', time: '55:00'}
+  model: institute.clustertoolpecvdlayer
+  pk: 2
+- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
+    plasma_start_with_shutter: false, sih4: '1.00', time: '55:00'}
+  model: institute.clustertoolpecvdlayer
+  pk: 5
+- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
+    plasma_start_with_shutter: false, sih4: '1.00', time: '55:00'}
+  model: institute.clustertoolpecvdlayer
+  pk: 8
+- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
+    plasma_start_with_shutter: false, sih4: '0.00', time: '55:00'}
+  model: institute.clustertoolpecvdlayer
+  pk: 11
+- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
+    plasma_start_with_shutter: false, sih4: '0.00', time: '55:00'}
+  model: institute.clustertoolpecvdlayer
+  pk: 14
+- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
+    plasma_start_with_shutter: false, sih4: '3.00', time: '55:00'}
+  model: institute.clustertoolpecvdlayer
+  pk: 17
+- fields: {chamber: p, deposition: 3, h2: '1.000', layer_type: p, number: 1, sih4: '4.000',
+    temperature_1: '152.000', temperature_2: '172.000'}
+  model: institute.fivechamberlayer
+  pk: 1
+- fields: {chamber: i2, deposition: 3, h2: '0.000', layer_type: i, number: 2, sih4: '2.000',
+    temperature_1: '132.000', temperature_2: '171.000'}
+  model: institute.fivechamberlayer
+  pk: 2
+- fields: {chamber: n, deposition: 3, h2: '0.000', layer_type: n, number: 3, sih4: '9.000',
+    temperature_1: '148.000', temperature_2: '157.000'}
+  model: institute.fivechamberlayer
+  pk: 3
+- fields: {chamber: p, deposition: 7, h2: '0.000', layer_type: p, number: 1, sih4: '0.000',
+    temperature_1: '157.000', temperature_2: '177.000'}
+  model: institute.fivechamberlayer
+  pk: 4
+- fields: {chamber: i2, deposition: 7, h2: '0.000', layer_type: i, number: 2, sih4: '1.000',
+    temperature_1: '141.000', temperature_2: '179.000'}
+  model: institute.fivechamberlayer
+  pk: 5
+- fields: {chamber: n, deposition: 7, h2: '6.000', layer_type: n, number: 3, sih4: '2.000',
+    temperature_1: '146.000', temperature_2: '157.000'}
+  model: institute.fivechamberlayer
+  pk: 6
+- fields: {chamber: p, deposition: 11, h2: '1.000', layer_type: p, number: 1, sih4: '4.000',
+    temperature_1: '155.000', temperature_2: '169.000'}
+  model: institute.fivechamberlayer
+  pk: 7
+- fields: {chamber: i2, deposition: 11, h2: '0.000', layer_type: i, number: 2, sih4: '2.000',
+    temperature_1: '151.000', temperature_2: '171.000'}
+  model: institute.fivechamberlayer
+  pk: 8
+- fields: {chamber: n, deposition: 11, h2: '4.000', layer_type: n, number: 3, sih4: '7.000',
+    temperature_1: '135.000', temperature_2: '156.000'}
+  model: institute.fivechamberlayer
+  pk: 9
+- fields: {chamber: p, deposition: 15, h2: '1.000', layer_type: p, number: 1, sih4: '0.000',
+    temperature_1: '155.000', temperature_2: '179.000'}
+  model: institute.fivechamberlayer
+  pk: 10
+- fields: {chamber: i2, deposition: 15, h2: '0.000', layer_type: i, number: 2, sih4: '1.000',
+    temperature_1: '140.000', temperature_2: '179.000'}
+  model: institute.fivechamberlayer
+  pk: 11
+- fields: {chamber: n, deposition: 15, h2: '2.000', layer_type: n, number: 3, sih4: '1.000',
+    temperature_1: '130.000', temperature_2: '158.000'}
+  model: institute.fivechamberlayer
+  pk: 12
+- fields: {chamber: p, deposition: 19, h2: '0.000', layer_type: p, number: 1, sih4: '4.000',
+    temperature_1: '154.000', temperature_2: '174.000'}
+  model: institute.fivechamberlayer
+  pk: 13
+- fields: {chamber: i2, deposition: 19, h2: '0.000', layer_type: i, number: 2, sih4: '0.000',
+    temperature_1: '120.000', temperature_2: '171.000'}
+  model: institute.fivechamberlayer
+  pk: 14
+- fields: {chamber: n, deposition: 19, h2: '1.000', layer_type: n, number: 3, sih4: '9.000',
+    temperature_1: '146.000', temperature_2: '155.000'}
+  model: institute.fivechamberlayer
+  pk: 15
+- fields: {chamber: p, deposition: 23, h2: '0.000', layer_type: p, number: 1, sih4: '1.000',
+    temperature_1: '152.000', temperature_2: '172.000'}
+  model: institute.fivechamberlayer
+  pk: 16
+- fields: {chamber: i2, deposition: 23, h2: '0.000', layer_type: i, number: 2, sih4: '3.000',
+    temperature_1: '113.000', temperature_2: '176.000'}
+  model: institute.fivechamberlayer
+  pk: 17
+- fields: {chamber: n, deposition: 23, h2: '9.000', layer_type: n, number: 3, sih4: '2.000',
+    temperature_1: '144.000', temperature_2: '158.000'}
+  model: institute.fivechamberlayer
+  pk: 18
+- fields: {}
+  model: institute.sampledetails
+  pk: 2
+- fields: {}
+  model: institute.sampledetails
+  pk: 4
+- fields: {}
+  model: institute.sampledetails
+  pk: 6
+- fields: {}
+  model: institute.sampledetails
+  pk: 8
+- fields: {}
+  model: institute.sampledetails
+  pk: 10
+- fields: {}
+  model: institute.sampledetails
+  pk: 12
+- fields: {}
+  model: institute.sampledetails
+  pk: 1
+- fields: {}
+  model: institute.sampledetails
+  pk: 3
+- fields: {}
+  model: institute.sampledetails
+  pk: 5
+- fields: {}
+  model: institute.sampledetails
+  pk: 7
+- fields: {}
+  model: institute.sampledetails
+  pk: 9
+- fields: {}
+  model: institute.sampledetails
+  pk: 11
+- fields: {additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
+    color: red, comments: '', doping: p, index: 2, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '50.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 1
+- fields: {additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
+    color: orange, comments: '', doping: i, index: 3, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '120.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 2
+- fields: {additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
+    color: green, comments: '', doping: n, index: 4, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '50.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 3
+- fields: {additional_process_data: '', always_collapsed: false, classification: glass,
+    color: lightblue, comments: '', doping: null, index: 1, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '1100000.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 4
+- fields: {additional_process_data: '', always_collapsed: false, classification: silver,
+    color: silver, comments: '', doping: null, index: 5, process: null, sample_details: 1,
+    structured: true, textured: false, thickness: '800.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 5
+- fields: {app_label: '', name: INM}
+  model: jb_common.department
+  pk: 1
+- fields:
+    codename: add_pds_measurement
+    content_type: [institute, pdsmeasurement]
+    name: Can add PDS measurements
+  model: auth.permission
+- fields:
+    codename: edit_permissions_for_pds_measurement
+    content_type: [institute, pdsmeasurement]
+    name: Can edit perms for PDS measurements
+  model: auth.permission
+- fields:
+    codename: view_every_pds_measurement
+    content_type: [institute, pdsmeasurement]
+    name: Can view all PDS measurements
+  model: auth.permission
+- fields:
+    codename: add_solarsimulator_measurement
+    content_type: [institute, solarsimulatormeasurement]
+    name: Can add solarsimulator measurements
+  model: auth.permission
+- fields:
+    codename: edit_permissions_for_solarsimulator_measurement
+    content_type: [institute, solarsimulatormeasurement]
+    name: Can edit perms for solarsimulator measurements
+  model: auth.permission
+- fields:
+    codename: view_every_solarsimulator_measurement
+    content_type: [institute, solarsimulatormeasurement]
+    name: Can view all solarsimulator measurements
+  model: auth.permission
+- fields:
+    codename: add_cluster_tool_deposition
+    content_type: [institute, clustertooldeposition]
+    name: Can add cluster tool depositions
+  model: auth.permission
+- fields:
+    codename: edit_permissions_for_cluster_tool_deposition
+    content_type: [institute, clustertooldeposition]
+    name: Can edit perms for cluster tool I depositions
+  model: auth.permission
+- fields:
+    codename: view_every_cluster_tool_deposition
+    content_type: [institute, clustertooldeposition]
+    name: Can view all cluster tool depositions
+  model: auth.permission
+- fields:
+    codename: edit_every_cluster_tool_deposition
+    content_type: [institute, clustertooldeposition]
+    name: Can edit all cluster tool depositions
+  model: auth.permission
+- fields:
+    codename: add_five_chamber_deposition
+    content_type: [institute, fivechamberdeposition]
+    name: Can add 5-chamber depositions
+  model: auth.permission
+- fields:
+    codename: edit_permissions_for_five_chamber_deposition
+    content_type: [institute, fivechamberdeposition]
+    name: Can edit perms for 5-chamber depositions
+  model: auth.permission
+- fields:
+    codename: view_every_five_chamber_deposition
+    content_type: [institute, fivechamberdeposition]
+    name: Can view all 5-chamber depositions
+  model: auth.permission
+- fields:
+    codename: edit_every_five_chamber_deposition
+    content_type: [institute, fivechamberdeposition]
+    name: Can edit all 5-chamber depositions
+  model: auth.permission
+- fields:
+    codename: add_external_operator
+    content_type: [samples, externaloperator]
+    name: Can add an external operator
+  model: auth.permission
+- fields:
+    codename: view_all_external_operators
+    content_type: [samples, externaloperator]
+    name: Can view all external operators
+  model: auth.permission
+- fields:
+    codename: view_all_samples
+    content_type: [samples, sample]
+    name: Can view all samples from his/her department
+  model: auth.permission
+- fields:
+    codename: adopt_samples
+    content_type: [samples, sample]
+    name: Can adopt samples from his/her department
+  model: auth.permission
+- fields:
+    codename: rename_samples
+    content_type: [samples, sample]
+    name: Can rename samples from his/her department
+  model: auth.permission
+- fields:
+    codename: edit_permissions_for_all_physical_processes
+    content_type: [samples, userdetails]
+    name: Can edit permissions for all physical processes
+  model: auth.permission
+- fields:
+    codename: can_edit_all_topics
+    content_type: [jb_common, topic]
+    name: Can edit all topics, and can add new topics
+  model: auth.permission
+- fields:
+    codename: can_edit_their_topics
+    content_type: [jb_common, topic]
+    name: Can edit topics that he/she is a manager of
+  model: auth.permission
+- fields:
+    date_joined: 2015-01-04 15:34:07.956897
+    email: ''
+    first_name: Julia
+    groups: []
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: 2015-01-04 15:34:37.691697
+    last_name: ''
+    password: pbkdf2_sha256$12000$cR90ZMRfLff5$6ePE2B/JOKcGjarKtasJokaM/j8CGNAZOKvGd1YBUS4=
+    user_permissions: []
+    username: juliabase
+  model: auth.user
+- fields:
+    date_joined: 2015-01-04 15:34:07.991407
+    email: ''
+    first_name: ''
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2015-01-04 15:34:07.991318
+    last_name: Nobody
+    password: ''
+    user_permissions: []
+    username: nobody
+  model: auth.user
+- fields:
+    date_joined: 2015-01-04 15:34:08.021798
+    email: ''
+    first_name: Nick
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2015-01-04 15:34:08.021716
+    last_name: Burkhardt
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_pds_measurement, institute, pdsmeasurement]
+    - [edit_permissions_for_pds_measurement, institute, pdsmeasurement]
+    - [view_every_pds_measurement, institute, pdsmeasurement]
+    username: n.burkhardt
+  model: auth.user
+- fields:
+    date_joined: 2015-01-04 15:34:08.068201
+    email: ''
+    first_name: Hank
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2015-01-04 15:34:08.068105
+    last_name: Griffin
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    - [edit_permissions_for_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    - [view_every_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    username: h.griffin
+  model: auth.user
+- fields:
+    date_joined: 2015-01-04 15:34:08.104447
+    email: ''
+    first_name: Juliette
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2015-01-04 15:34:08.104366
+    last_name: Silverton
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    username: j.silverton
+  model: auth.user
+- fields:
+    date_joined: 2015-01-04 15:34:08.146772
+    email: ''
+    first_name: Eddie
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2015-01-04 15:34:08.146705
+    last_name: Monroe
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_cluster_tool_deposition, institute, clustertooldeposition]
+    - [edit_every_cluster_tool_deposition, institute, clustertooldeposition]
+    - [edit_permissions_for_cluster_tool_deposition, institute, clustertooldeposition]
+    - [view_every_cluster_tool_deposition, institute, clustertooldeposition]
+    username: e.monroe
+  model: auth.user
+- fields:
+    date_joined: 2015-01-04 15:34:08.190656
+    email: ''
+    first_name: Rosalee
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2015-01-04 15:34:08.190588
+    last_name: Calvert
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [add_five_chamber_deposition, institute, fivechamberdeposition]
+    - [edit_every_five_chamber_deposition, institute, fivechamberdeposition]
+    - [edit_permissions_for_five_chamber_deposition, institute, fivechamberdeposition]
+    - [view_every_five_chamber_deposition, institute, fivechamberdeposition]
+    username: r.calvert
+  model: auth.user
+- fields:
+    date_joined: 2015-01-04 15:34:08.246488
+    email: ''
+    first_name: Jean
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: 2015-01-04 15:34:08.246406
+    last_name: Renard
+    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    user_permissions:
+    - [can_edit_all_topics, jb_common, topic]
+    - [add_external_operator, samples, externaloperator]
+    - [view_all_external_operators, samples, externaloperator]
+    - [adopt_samples, samples, sample]
+    - [view_all_samples, samples, sample]
+    - [edit_permissions_for_all_physical_processes, samples, userdetails]
+    username: s.renard
+  model: auth.user
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 2
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 1
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 6
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 5
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 9
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 10
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 13
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 14
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 17
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 18
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 22
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 21
+- fields: {apparatus: pds1, number: 1, raw_datafile: measurement-1.dat}
+  model: institute.pdsmeasurement
+  pk: 32
+- fields: {apparatus: pds1, number: 2, raw_datafile: measurement-2.dat}
+  model: institute.pdsmeasurement
+  pk: 30
+- fields: {apparatus: pds1, number: 3, raw_datafile: measurement-3.dat}
+  model: institute.pdsmeasurement
+  pk: 27
+- fields: {apparatus: pds1, number: 4, raw_datafile: measurement-4.dat}
+  model: institute.pdsmeasurement
+  pk: 26
+- fields: {apparatus: pds1, number: 5, raw_datafile: measurement-5.dat}
+  model: institute.pdsmeasurement
+  pk: 28
+- fields: {apparatus: pds1, number: 6, raw_datafile: measurement-6.dat}
+  model: institute.pdsmeasurement
+  pk: 34
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 54
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 48
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 36
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 33
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 37
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 57
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 52
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 29
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 55
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 43
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 39
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 50
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 61
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 41
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 62
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 45
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 60
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 59
+- fields: {irradiation: AM1.5, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 56
+- fields: {irradiation: BG7, temperature: '23.5'}
+  model: institute.solarsimulatormeasurement
+  pk: 47
+- fields: {layout: inm standard, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 53
+- fields: {layout: inm standard, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 35
+- fields: {layout: inm standard, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 31
+- fields: {layout: inm standard, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 51
+- fields: {layout: inm standard, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 25
+- fields: {layout: inm standard, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 42
+- fields: {layout: acme1, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 38
+- fields: {layout: acme1, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 49
+- fields: {layout: acme1, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 40
+- fields: {layout: acme1, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 44
+- fields: {layout: acme1, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 58
+- fields: {layout: acme1, length: null, parameters: '', width: null}
+  model: institute.structuring
+  pk: 46
+- fields: {carrier: ''}
+  model: institute.clustertooldeposition
+  pk: 4
+- fields: {carrier: ''}
+  model: institute.clustertooldeposition
+  pk: 8
+- fields: {carrier: ''}
+  model: institute.clustertooldeposition
+  pk: 12
+- fields: {carrier: ''}
+  model: institute.clustertooldeposition
+  pk: 16
+- fields: {carrier: ''}
+  model: institute.clustertooldeposition
+  pk: 20
+- fields: {carrier: ''}
+  model: institute.clustertooldeposition
+  pk: 24
+- fields: {}
+  model: institute.fivechamberdeposition
+  pk: 3
+- fields: {}
+  model: institute.fivechamberdeposition
+  pk: 7
+- fields: {}
+  model: institute.fivechamberdeposition
+  pk: 11
+- fields: {}
+  model: institute.fivechamberdeposition
+  pk: 15
+- fields: {}
+  model: institute.fivechamberdeposition
+  pk: 19
+- fields: {}
+  model: institute.fivechamberdeposition
+  pk: 23
+- fields:
+    actual_object_id: 1
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:09.109611
+    operator: [r.calvert]
+    timestamp: 2014-10-01 10:29:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 1
+- fields:
+    actual_object_id: 2
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:09.123862
+    operator: [e.monroe]
+    timestamp: 2014-10-01 10:29:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 2
+- fields:
+    actual_object_id: 3
+    comments: ''
+    content_type: [institute, fivechamberdeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:11.311290
+    operator: [r.calvert]
+    timestamp: 2014-10-01 10:30:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 3
+- fields:
+    actual_object_id: 4
+    comments: ''
+    content_type: [institute, clustertooldeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:11.313535
+    operator: [e.monroe]
+    timestamp: 2014-10-01 10:30:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 4
+- fields:
+    actual_object_id: 5
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:11.709082
+    operator: [r.calvert]
+    timestamp: 2014-10-02 11:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 5
+- fields:
+    actual_object_id: 6
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:11.716260
+    operator: [e.monroe]
+    timestamp: 2014-10-02 11:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 6
+- fields:
+    actual_object_id: 7
+    comments: ''
+    content_type: [institute, fivechamberdeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:12.070096
+    operator: [r.calvert]
+    timestamp: 2014-10-02 11:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 7
+- fields:
+    actual_object_id: 8
+    comments: ''
+    content_type: [institute, clustertooldeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:12.073907
+    operator: [e.monroe]
+    timestamp: 2014-10-02 11:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 8
+- fields:
+    actual_object_id: 9
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:12.472073
+    operator: [r.calvert]
+    timestamp: 2014-10-02 12:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 9
+- fields:
+    actual_object_id: 10
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:12.485984
+    operator: [e.monroe]
+    timestamp: 2014-10-02 12:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 10
+- fields:
+    actual_object_id: 11
+    comments: 'AFTER: chamber cleaned!'
+    content_type: [institute, fivechamberdeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:12.808599
+    operator: [r.calvert]
+    timestamp: 2014-10-02 12:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 11
+- fields:
+    actual_object_id: 12
+    comments: ''
+    content_type: [institute, clustertooldeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:12.821150
+    operator: [e.monroe]
+    timestamp: 2014-10-02 12:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 12
+- fields:
+    actual_object_id: 13
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:13.242038
+    operator: [r.calvert]
+    timestamp: 2014-10-02 13:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 13
+- fields:
+    actual_object_id: 14
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:13.280280
+    operator: [e.monroe]
+    timestamp: 2014-10-02 13:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 14
+- fields:
+    actual_object_id: 15
+    comments: ''
+    content_type: [institute, fivechamberdeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:13.591337
+    operator: [r.calvert]
+    timestamp: 2014-10-02 13:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 15
+- fields:
+    actual_object_id: 16
+    comments: ''
+    content_type: [institute, clustertooldeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:13.643249
+    operator: [e.monroe]
+    timestamp: 2014-10-02 13:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 16
+- fields:
+    actual_object_id: 17
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:14.008227
+    operator: [r.calvert]
+    timestamp: 2014-10-02 14:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 17
+- fields:
+    actual_object_id: 18
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:14.075199
+    operator: [e.monroe]
+    timestamp: 2014-10-02 14:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 18
+- fields:
+    actual_object_id: 19
+    comments: ''
+    content_type: [institute, fivechamberdeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:14.368784
+    operator: [r.calvert]
+    timestamp: 2014-10-02 14:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 19
+- fields:
+    actual_object_id: 20
+    comments: ''
+    content_type: [institute, clustertooldeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:14.426759
+    operator: [e.monroe]
+    timestamp: 2014-10-02 14:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 20
+- fields:
+    actual_object_id: 21
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:14.807736
+    operator: [r.calvert]
+    timestamp: 2014-10-02 15:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 21
+- fields:
+    actual_object_id: 22
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:14.882147
+    operator: [e.monroe]
+    timestamp: 2014-10-02 15:09:00
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 22
+- fields:
+    actual_object_id: 23
+    comments: ''
+    content_type: [institute, fivechamberdeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:15.182290
+    operator: [r.calvert]
+    timestamp: 2014-10-02 15:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 23
+- fields:
+    actual_object_id: 24
+    comments: ''
+    content_type: [institute, clustertooldeposition]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:15.266026
+    operator: [e.monroe]
+    timestamp: 2014-10-02 15:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 24
+- fields:
+    actual_object_id: 25
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:16.451479
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:07:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 25
+- fields:
+    actual_object_id: 26
+    comments: ''
+    content_type: [institute, pdsmeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:17.926592
+    operator: [n.burkhardt]
+    timestamp: 2014-10-07 10:04:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 26
+- fields:
+    actual_object_id: 27
+    comments: ''
+    content_type: [institute, pdsmeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:18.386992
+    operator: [n.burkhardt]
+    timestamp: 2014-10-07 10:03:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 27
+- fields:
+    actual_object_id: 28
+    comments: ''
+    content_type: [institute, pdsmeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:18.831727
+    operator: [n.burkhardt]
+    timestamp: 2014-10-07 10:05:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 28
+- fields:
+    actual_object_id: 29
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:18.834994
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:08:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 29
+- fields:
+    actual_object_id: 30
+    comments: ''
+    content_type: [institute, pdsmeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:19.221754
+    operator: [n.burkhardt]
+    timestamp: 2014-10-07 10:02:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 30
+- fields:
+    actual_object_id: 31
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:19.431519
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:03:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 31
+- fields:
+    actual_object_id: 32
+    comments: ''
+    content_type: [institute, pdsmeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:19.583900
+    operator: [n.burkhardt]
+    timestamp: 2014-10-07 10:01:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 32
+- fields:
+    actual_object_id: 33
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:19.738391
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:04:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 33
+- fields:
+    actual_object_id: 34
+    comments: ''
+    content_type: [institute, pdsmeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:19.953125
+    operator: [n.burkhardt]
+    timestamp: 2014-10-07 10:06:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 34
+- fields:
+    actual_object_id: 35
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:20.268484
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:02:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 35
+- fields:
+    actual_object_id: 36
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:20.654022
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:03:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 36
+- fields:
+    actual_object_id: 37
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:21.352806
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:05:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 37
+- fields:
+    actual_object_id: 38
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:21.954302
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 38
+- fields:
+    actual_object_id: 39
+    comments: Click on cells to change data.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:24.158586
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:11:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 39
+- fields:
+    actual_object_id: 40
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:24.767449
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:13:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 40
+- fields:
+    actual_object_id: 41
+    comments: Click on cells to change data.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:25.140801
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:14:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 41
+- fields:
+    actual_object_id: 42
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:25.751044
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:09:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 42
+- fields:
+    actual_object_id: 43
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:26.145495
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:10:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 43
+- fields:
+    actual_object_id: 44
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:26.734326
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:15:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 44
+- fields:
+    actual_object_id: 45
+    comments: Click on cells to change data.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:27.124821
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:16:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 45
+- fields:
+    actual_object_id: 46
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:27.727566
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:19:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 46
+- fields:
+    actual_object_id: 47
+    comments: There was a *small* crack in the filter.  Note that $I_{\mathrm{sc}}$
+      is actually$J_{\mathrm{sc}} = \frac{I_{\mathrm{sc}}}{A}$.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:28.115627
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:20:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 47
+- fields:
+    actual_object_id: 48
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:28.832554
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:02:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 48
+- fields:
+    actual_object_id: 49
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:29.490785
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:11:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 49
+- fields:
+    actual_object_id: 50
+    comments: Click on cells to change data.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:29.871527
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:12:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 50
+- fields:
+    actual_object_id: 51
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:30.508189
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:06:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 51
+- fields:
+    actual_object_id: 52
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:30.914683
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:07:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 52
+- fields:
+    actual_object_id: 53
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:31.556759
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:00:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 53
+- fields:
+    actual_object_id: 54
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:31.959637
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:01:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 54
+- fields:
+    actual_object_id: 55
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:32.654730
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:09:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 55
+- fields:
+    actual_object_id: 56
+    comments: Click on cells to change data.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:33.339178
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:19:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 56
+- fields:
+    actual_object_id: 57
+    comments: ''
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:34.078624
+    operator: [h.griffin]
+    timestamp: 2014-10-08 10:06:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 57
+- fields:
+    actual_object_id: 58
+    comments: ''
+    content_type: [institute, structuring]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:34.750575
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:17:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 58
+- fields:
+    actual_object_id: 59
+    comments: Click on cells to change data.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:35.140279
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:18:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 59
+- fields:
+    actual_object_id: 60
+    comments: There was a *small* crack in the filter.  Note that $I_{\mathrm{sc}}$
+      is actually$J_{\mathrm{sc}} = \frac{I_{\mathrm{sc}}}{A}$.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:35.847512
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:17:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 60
+- fields:
+    actual_object_id: 61
+    comments: There was a *small* crack in the filter.  Note that $I_{\mathrm{sc}}$
+      is actually$J_{\mathrm{sc}} = \frac{I_{\mathrm{sc}}}{A}$.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:36.533437
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:13:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 61
+- fields:
+    actual_object_id: 62
+    comments: There was a *small* crack in the filter.  Note that $I_{\mathrm{sc}}$
+      is actually$J_{\mathrm{sc}} = \frac{I_{\mathrm{sc}}}{A}$.
+    content_type: [institute, solarsimulatormeasurement]
+    external_operator: null
+    finished: true
+    last_modified: 2015-01-04 15:34:37.212947
+    operator: [r.calvert]
+    timestamp: 2014-10-08 10:15:00
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 62
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: 2015-01-04 15:34:24.210455
+    name: 14S-001
+    processes: [1, 3, 38, 39]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 1
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: 2015-01-04 15:34:32.010661
+    name: 14-JS-1
+    processes: [2, 4, 32, 53, 54]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 2
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: 2015-01-04 15:34:36.584605
+    name: 14S-002
+    processes: [5, 7, 49, 50, 61]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 3
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: 2015-01-04 15:34:28.886801
+    name: 14-JS-2
+    processes: [6, 8, 30, 48, 35, 36]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 4
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: 2015-01-04 15:34:37.259053
+    name: 14S-003
+    processes: [9, 11, 40, 41, 62]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 5
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: 2015-01-04 15:34:21.405431
+    name: 14-JS-3
+    processes: [10, 12, 27, 31, 33, 37]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 6
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: 2015-01-04 15:34:35.898293
+    name: 14S-004
+    processes: [13, 15, 44, 45, 60]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 7
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: 2015-01-04 15:34:34.134239
+    name: 14-JS-4
+    processes: [14, 16, 26, 51, 57, 52]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 8
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: 2015-01-04 15:34:35.189040
+    name: 14S-005
+    processes: [17, 19, 58, 59]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 9
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: 2015-01-04 15:34:18.937244
+    name: 14-JS-5
+    processes: [18, 20, 28, 25, 29]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 10
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: 2015-01-04 15:34:33.390967
+    name: 14S-006
+    processes: [21, 23, 46, 56, 47]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 11
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: 2015-01-04 15:34:32.705715
+    name: 14-JS-6
+    processes: [22, 24, 34, 42, 55, 43]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 12
+- fields:
+    external_operator: null
+    user: [j.silverton]
+  model: samples.initials
+  pk: JS
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 2015-01-04 15:34:07.969256
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: c0721478e7f85a572679622a1660fffcfe49d6e0
+    my_layers: ''
+    my_samples_timestamp: 2015-01-04 15:34:36.947058
+    only_important_news: false
+    show_users_from_departments: []
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 1
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 2015-01-04 15:34:07.998439
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
+    my_layers: ''
+    my_samples_timestamp: 2015-01-04 15:34:07.998490
+    only_important_news: false
+    show_users_from_departments: []
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 2
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 2015-01-04 15:34:08.391088
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: ''
+    my_layers: ''
+    my_samples_timestamp: 1990-01-01 00:00:00
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 3
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 1990-01-01 00:00:00
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: ''
+    my_layers: ''
+    my_samples_timestamp: 1990-01-01 00:00:00
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 4
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 2015-01-04 15:34:08.373432
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: ''
+    my_layers: ''
+    my_samples_timestamp: 2015-01-04 15:34:15.014227
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 5
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 2015-01-04 15:34:08.394721
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: ''
+    my_layers: ''
+    my_samples_timestamp: 1990-01-01 00:00:00
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 6
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 2015-01-04 15:34:08.398336
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: ''
+    my_layers: ''
+    my_samples_timestamp: 2015-01-04 15:34:14.928220
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 7
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 1990-01-01 00:00:00
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: ''
+    my_layers: ''
+    my_samples_timestamp: 1990-01-01 00:00:00
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 8
+- fields: {number: 14S-001, split_done: false}
+  model: samples.deposition
+  pk: 3
+- fields: {number: 14C-001, split_done: false}
+  model: samples.deposition
+  pk: 4
+- fields: {number: 14S-002, split_done: false}
+  model: samples.deposition
+  pk: 7
+- fields: {number: 14C-002, split_done: false}
+  model: samples.deposition
+  pk: 8
+- fields: {number: 14S-003, split_done: false}
+  model: samples.deposition
+  pk: 11
+- fields: {number: 14C-003, split_done: false}
+  model: samples.deposition
+  pk: 12
+- fields: {number: 14S-004, split_done: false}
+  model: samples.deposition
+  pk: 15
+- fields: {number: 14C-004, split_done: false}
+  model: samples.deposition
+  pk: 16
+- fields: {number: 14S-005, split_done: false}
+  model: samples.deposition
+  pk: 19
+- fields: {number: 14C-005, split_done: false}
+  model: samples.deposition
+  pk: 20
+- fields: {number: 14S-006, split_done: false}
+  model: samples.deposition
+  pk: 23
+- fields: {number: 14C-006, split_done: false}
+  model: samples.deposition
+  pk: 24
+- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-04
+      15:34:07.967015'}
+  model: jb_common.userdetails
+  pk: 1
+- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-04
+      15:34:07.996873'}
+  model: jb_common.userdetails
+  pk: 2
+- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+      00:00:00'}
+  model: jb_common.userdetails
+  pk: 3
+- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+      00:00:00'}
+  model: jb_common.userdetails
+  pk: 4
+- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+      00:00:00'}
+  model: jb_common.userdetails
+  pk: 5
+- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+      00:00:00'}
+  model: jb_common.userdetails
+  pk: 6
+- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+      00:00:00'}
+  model: jb_common.userdetails
+  pk: 7
+- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+      00:00:00'}
+  model: jb_common.userdetails
+  pk: 8
+- fields:
+    confidential: false
+    department: 1
+    manager: [nobody]
+    members: []
+    name: Legacy
+    parent_topic: null
+  model: jb_common.topic
+  pk: 1
+- fields:
+    confidential: false
+    department: 1
+    manager: [j.silverton]
+    members:
+    - [j.silverton]
+    name: Juliette's PhD thesis
+    parent_topic: null
+  model: jb_common.topic
+  pk: 2
+- fields:
+    confidential: false
+    department: 1
+    manager: [r.calvert]
+    members:
+    - [n.burkhardt]
+    - [e.monroe]
+    - [r.calvert]
+    name: Cooperation with Paris University
+    parent_topic: null
+  model: jb_common.topic
+  pk: 3
