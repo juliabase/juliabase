@@ -33,6 +33,7 @@ characterization, with the following features:
   measurement setups, and to your workflows
 - possibility to manage more than one department in a single database
 - fine-grained access control
+- connects to your LDAP server for user management
 - keeps track of samples across sample splits
 - support for pre-evaluating raw data and creating plots
 - automatic notification of changes in your samples
