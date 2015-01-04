@@ -522,8 +522,8 @@ Finally, you need to create a template called
 displayed in a lab notebook table in the context variable ``processes``.
 
 
-Glossary
-===========
+Process glossary
+===================
 
 .. glossary::
 
