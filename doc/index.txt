@@ -15,8 +15,8 @@
 
 .. meta::
    :description: JuliaBase is an open-source web framework written in Python
-                 for creating databases for samples as used in research and
-                 development.
+                 for creating databases for samples or specimens as used in
+                 research and development.
 
 
 =============
