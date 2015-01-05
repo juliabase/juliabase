@@ -525,6 +525,8 @@ class Process(PolymorphicModel):
         if "name" not in context:
             name = six.text_type(self._meta.verbose_name) if not isinstance(self, Result) else self.title
             context["name"] = name[:1].upper() + name[1:]
+        if hasattr(self, "get_sample_position_context"):
+            context = self.get_sample_position_context(user, context)
         if "html_body" not in context:
             context["html_body"] = render_to_string(
                 "samples/show_" + camel_case_to_underscores(self.__class__.__name__) + ".html", context_instance=Context(context))
@@ -555,8 +557,6 @@ class Process(PolymorphicModel):
                 context["edit_url"] = None
         else:
             context["edit_url"] = None
-        if hasattr(self, "get_sample_position_context"):
-            context = self.get_sample_position_context(user, context)
         return context
 
     @classmethod
