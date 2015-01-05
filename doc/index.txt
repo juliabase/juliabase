@@ -17,6 +17,7 @@
    :description: JuliaBase is a web framework written in Python for creating
                  databases for samples or specimens as used in research and
                  development.
+   :robots: noindex
 
 
 =============
