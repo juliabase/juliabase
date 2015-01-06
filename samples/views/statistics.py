@@ -26,7 +26,7 @@ try:
 except ImportError:
     memcache = None
 import matplotlib
-from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page, cache_control
 from django.utils.translation import ugettext as _
 from django.shortcuts import render
 from django.db import connection
@@ -87,7 +87,8 @@ def statistics(request):
                    "cache_connections": get_cache_connections()})
 
 
-@cache_page(600)
+@cache_control(max_age=0)  # This is for language switching
+@cache_page(3600)
 def about(request):
     """The “about” view.  It displays general superficial information about
     JuliaBase.  This view is more or less static – it shows only the components
