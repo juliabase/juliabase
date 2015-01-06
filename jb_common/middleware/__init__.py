@@ -40,7 +40,8 @@ class LocaleMiddleware(object):
     translated to the language the user desires (if the language is available,
     of course).
 
-    It must be after ``AuthenticationMiddleware`` in the list.
+    It must be after ``django.middleware.locale.LocaleMiddleware`` and
+    ``AuthenticationMiddleware`` in the list.
     """
     language_pattern = re.compile("[a-zA-Z0-9]+")
 
