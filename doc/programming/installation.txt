@@ -139,8 +139,7 @@ It contains three Django apps:
 “samples” implements the actual samples database.  And on top of that,
 “institute” implements code that is specific to the specific institution or
 department or work group that wants to use JuliaBase.  “institute” implements a
-*generic* institute.  You will replace “institute” with your own app and rename
-it accordingly.
+*generic* institute.  You will replace “institute” with your own app.
 
 .. _Git: http://git-scm.com/
 
