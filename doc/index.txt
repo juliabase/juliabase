@@ -55,8 +55,8 @@ We believe that the database should adapt to the people and the existing
 workflows rather than the other way round!
 
 However, there is no free lunch … JuliaBase's flexibility comes at a cost.  You
-have to create the Python code to define how it should behave for you.  Mostly,
-this is copy, paste, and modify.  JuliaBase contains code for typical
+have to create the Python code to describe your setups and apparatuses.
+Mostly, this is copy, paste, and modify.  JuliaBase contains code for typical
 processing and measurement setups that you can use as a starting point.
 
 
