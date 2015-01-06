@@ -37,8 +37,10 @@ Short project history
 ======================
 
 JuliaBase was started in 2008 in one institute of the Forschungszentrum Jülich
-under the name of “Chantal” by T. Bronger.  In 2009, Marvin Goblet joined the
-team as a full-time payed programmer.  In 2013/14, three further institutes in
-Jülich created Chantal deployments, and with them, further programmers joined
-the team.  The core of the source code was separated from the
-institute-specific parts and re-branded as “JuliaBase”.
+under the name of “Chantal” by Torsten Bronger.  In 2009, Marvin Goblet was
+hired as a full-time programmer for Chantal.  In 2013/14, three further
+institutes in Jülich created Chantal deployments, and with them, further
+programmers joined the team.  The core of the source code was separated from
+the institute-specific parts and re-branded as “JuliaBase”.  This name is
+derived from *Iuliacum*, the Latin name of Jülich, where JuliaBase was
+contrived.
