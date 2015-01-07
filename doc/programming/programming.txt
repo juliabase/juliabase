@@ -98,14 +98,14 @@ the :file:`juliabase` subdirectory.  Then, you say:
 .. code-block:: shell-session
 
     username@server:~/myproject$ git subtree add --prefix juliabase --squash \
-        git@bob.ipv.kfa-juelich.de:juliabase v1.0
+        https://github.com/juliabase/juliabase.git v1.0
 
 A new version is pulled into your repo with:
 
 .. code-block:: shell-session
 
     username@server:~/myproject$ git subtree pull --prefix juliabase --squash \
-        git@bob.ipv.kfa-juelich.de:juliabase v2.0
+        https://github.com/juliabase/juliabase.git v2.0
 
 
 Creating a new Django app
