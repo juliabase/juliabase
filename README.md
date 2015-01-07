@@ -10,10 +10,17 @@ For further information, visit its [web page](http://www.juliabase.org)
 Community
 ---------
 
-The current maintainer is Torsten Bronger, bronger@physik.rwth-aachen.de.
-
 The mailing list is "juliabase at googlegroups.com".  It also exists in
 newsgroup form on news.gmane.org as "gmane.comp.db.juliabase".
+
+
+Authors
+-------
+
+Principal author and current maintainer: Torsten Bronger,
+bronger@physik.rwth-aachen.de.
+
+Significant contributions: Marvin Goblet.
 
 
 Licensing
