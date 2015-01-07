@@ -1,0 +1,184 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+
+.. index::
+   single: markdown
+   pair: process; comments
+
+===========
+Markdown
+===========
+
+If you enter a comment, this is just plain text at first.  However, JuliaBase
+supports a special syntax in these comments.  This makes them more useful.
+
+This special syntax was not invented for JuliaBase.  Instead, it is a well-known
+markup syntax called “`Markdown <http://en.wikipedia.org/wiki/markdown>`_”.
+See also its `homepage <http://daringfireball.net/projects/markdown/basics>`_
+for the full story.  However, for practical reasons, JuliaBase forbids image
+inclusion and headings in its comments.  But you can use all the rest.  Note
+that some characters (e.g. »_«, »\*«, »[«) have a special meaning, so if you
+want to use them as-is, you have to prepend a backslash »\\«.
+
+JuliaBase even adds a nice feature itself: If you enter the name of a sample or a
+sample series, JuliaBase converts it to a clickable link automatically.  Within
+names, prepending a backslash to »_« is not necessary.
+
+If you like to test JuliaBase's comment syntax, visit the `Markdown sandbox
+<http://demo.juliabase.org/markdown>`_ on the demo site.
+
+
+Paragraphs
+=============
+
+Paragraphs are separated by an empty line:
+
+.. code-block:: none
+
+    First paragraph.
+
+    Second paragraph.
+
+Output:
+
+    First paragraph.
+
+    Second paragraph.
+
+
+Emphasis
+===========
+
+.. code-block:: none
+
+    *italics*, **bold**.  Alternatively:  _italics_, __bold__
+
+..
+
+    *italics*, **bold**.  Alternatively: *italics*, **bold**
+
+
+Escaping characters
+======================
+
+If you like to use a character as-is but Markdown interprets it as something
+special, put a backslash before it:
+
+.. code-block:: none
+
+    In *italics*, and this is not in \*italics\*.
+
+..
+
+    In *italics*, and this is not in \*italics\*.
+
+Note that this is not necessary in sample names.  For example, in
+“08B-410_a_3”, nothing gets italic (if this sample exists).
+
+
+Special characters
+====================
+
+.. code-block:: none
+
+    &sigma; = e n &mu;
+    &micro;c-Si:H
+
+..
+
+    | σ = e n μ
+    | µc-Si:H
+
+See the `Wikipedia entry
+<http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references>`_
+for a full list of these characters.
+
+
+.. index:: maths, equations, formulae
+
+Math equations
+=================
+
+You can use LaTeX equations between $...$:
+
+.. code-block:: none
+
+    $\alpha = \frac{1}{\beta}$
+
+..
+
+    :math:`\alpha = \frac{1}{\beta}`
+
+
+Links
+======
+
+.. code-block:: none
+
+    [Homepage of IBM](http://www.ibm.com), <http://www.fz-juelich.de>
+
+..
+
+    `Homepage of IBM <http://www.ibm.com>`_, http://www.fz-juelich.de
+
+Note that names of samples and sample series are converted to links
+automatically.
+
+
+Lists
+======
+
+.. code-block:: none
+
+    1. sputtering
+    2. etching
+    3. depositing
+
+..
+
+    1. sputtering
+    2. etching
+    3. depositing
+
+Yes, that's not the same!  ``;-)`` For long lines, indentation is correct this
+way.
+
+.. code-block:: none
+
+    * this
+    * that
+    * and this, too
+
+..
+
+    * this
+    * that
+    * and this, too
+
+
+Line breaks
+=============
+
+Put two spaces at the end of the line:
+
+.. code-block:: none
+
+    First line.<SPC><SPC>
+    Second line.
+
+..
+
+    | First line.
+    | Second line.

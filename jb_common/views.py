@@ -69,7 +69,7 @@ class SandboxForm(forms.Form):
         return sandbox
 
 
-@help_link(_("MarkdownMarkup"))
+@help_link("markdown.html")
 def markdown_sandbox(request):
     """View so that the user can test Markdown syntax.  I deliberately decided
     not to *explain* Markdown on this page.  Rather, I recommend the help page
