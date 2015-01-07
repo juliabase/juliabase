@@ -67,7 +67,6 @@ operating system by default anyway, you must install:
 - memcached (and the Python module for it)
 - matplotlib
 - reportlab
-- Dejavu fonts
 
 
 .. index::
