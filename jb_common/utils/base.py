@@ -99,7 +99,8 @@ class JSONRequestException(Exception):
 
 entities = {}
 for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
-    entities[line[:12].rstrip()] = line[12]
+    if line.strip() and not line.startswith("#"):
+        entities[line[:12].rstrip()] = line[12]
 entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
 
 def substitute_html_entities(text):
