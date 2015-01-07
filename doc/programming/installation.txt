@@ -87,9 +87,11 @@ typically found in /etc/postgresql/*version*/main/.
 .. _general configuration:
    http://www.postgresql.org/docs/9.1/static/runtime-config.html
 
-Anyway, you create a PostgreSQL user with this::
+Anyway, you create a PostgreSQL user with this:
 
-  $ sudo -u postgres psql
+.. code-block:: shell-session
+
+  username@server:~$ sudo -u postgres psql
   psql (9.3.4)
   Type "help" for help.
 
@@ -99,9 +101,11 @@ Anyway, you create a PostgreSQL user with this::
 
 In this snippet, you have to replace ``username`` with your UNIX user name, and
 ``topsecret`` with a proper password, which shouldn't be your UNIX login
-password.  Finally, create the database with::
+password.  Finally, create the database with:
 
-  $ createdb juliabase
+.. code-block:: shell-session
+
+  username@server:~$ createdb juliabase
 
 
 .. index::
@@ -149,7 +153,9 @@ department or work group that wants to use JuliaBase.  “institute” implement
 Apache
 ==========
 
-Add to your Apache configuration something like the following::
+Add to your Apache configuration something like the following:
+
+.. code-block:: apache
 
   <VirtualHost *:80>
     ServerName juliabase.example.com

@@ -89,13 +89,19 @@ Git subtree
 
 If you're using Git, you may consider using the ``subtree`` command to get
 JuliaBase in your repo: You structure your repository like above but without
-the :file:`juliabase` subdirectory.  Then, you say::
+the :file:`juliabase` subdirectory.  Then, you say:
 
-    git subtree add --prefix juliabase --squash git@bob.ipv.kfa-juelich.de:juliabase v1.0
+.. code-block:: shell-session
 
-A new version is pulled into your repo with::
+    username@server:~/myproject$ git subtree add --prefix juliabase --squash \
+        git@bob.ipv.kfa-juelich.de:juliabase v1.0
 
-    git subtree pull --prefix juliabase --squash git@bob.ipv.kfa-juelich.de:juliabase v2.0
+A new version is pulled into your repo with:
+
+.. code-block:: shell-session
+
+    username@server:~/myproject$ git subtree pull --prefix juliabase --squash \
+        git@bob.ipv.kfa-juelich.de:juliabase v2.0
 
 
 Creating a new Django app
@@ -110,10 +116,10 @@ try to get it running with
 
 .. code-block:: shell-session
 
-    username@server:~/mysite$ ./manage.py migrate
-    username@server:~/mysite$ ./manage.py loaddata demo_accounts
-    username@server:~/mysite$ ./manage.py collectstatic
-    username@server:~/mysite$ ./manage.py runserver
+    username@server:~/myproject$ ./manage.py migrate
+    username@server:~/myproject$ ./manage.py loaddata demo_accounts
+    username@server:~/myproject$ ./manage.py collectstatic
+    username@server:~/myproject$ ./manage.py runserver
 
 This should make the site accessible locally at the URL http://127.0.0.1:8000.
 
