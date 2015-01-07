@@ -75,15 +75,17 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
 
   {# FixMe: make translated strings lowercase and use |capfirst #}
   <ul style='list-style-image: url("{% static "juliabase/icons/add.png" %}")'>
-    <li style='list-style-image: url("{% static "juliabase/icons/ruby_add.png" %}")'>
-      <a href="{{ add_sample_url }}">{% trans 'Samples' %}</a></li>
-    <li style='list-style-image: url("{% static "juliabase/icons/chart_organisation_add.png" %}")'>
-      <a href="{% url 'samples.views.sample_series.new' %}">{% trans 'Sample series' %}</a></li>
-    <li style='list-style-image: url("{% static "juliabase/icons/lightbulb_add.png" %}")'>
-      <a href="{% url 'add_result' %}">{% trans 'Result' %}</a></li>
-    {% for physical_process in physical_processes %}
-      <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
-    {% endfor %}
+    {% block add_things_list %}
+      <li style='list-style-image: url("{% static "juliabase/icons/ruby_add.png" %}")'>
+        <a href="{{ add_sample_url }}">{% trans 'Samples' %}</a></li>
+      <li style='list-style-image: url("{% static "juliabase/icons/chart_organisation_add.png" %}")'>
+        <a href="{% url 'samples.views.sample_series.new' %}">{% trans 'Sample series' %}</a></li>
+      <li style='list-style-image: url("{% static "juliabase/icons/lightbulb_add.png" %}")'>
+        <a href="{% url 'add_result' %}">{% trans 'Result' %}</a></li>
+      {% for physical_process in physical_processes %}
+        <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
+      {% endfor %}
+    {% endblock %}
   </ul>
 
   <h2>{% trans 'Search for things' %}</h2>
@@ -130,6 +132,8 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
       {% endif %}
     </ul>
   {% endif %}
+
+  {% block menu_extras %}{% endblock %}
 
   <h2>{% trans 'Miscellaneous' %}</h2>
   <ul>
