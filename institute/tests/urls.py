@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
-# Copyright © 2008–2015 Torsten Bronger <bronger@physik.rwth-aachen.de>,
-#                       Marvin Goblet <m.goblet@fz-juelich.de>.
+# Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
@@ -20,7 +19,6 @@
 #
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
-# Copyright © 2010 Torsten Bronger <bronger@physik.rwth-aachen.de>
 
 
 """Root URL dispach for testing the “institute” app.
