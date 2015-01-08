@@ -177,7 +177,7 @@ the INM: Let the user decide between some options, and possibly redirect to a
 bulk-rename view after having added the samples with provisional names.
 
 
-.. index:: processes
+.. index:: process
 
 Physical processes
 ------------------

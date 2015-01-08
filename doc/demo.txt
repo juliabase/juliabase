@@ -166,7 +166,7 @@ sample, in chronological order.  It starts with the substrate, is continued
 with the deposition of the silicon layers, and ends with a measurement in the
 solar simulator.
 
-.. index:: processes
+.. index:: process
 
 Every such step is called a “process” in JuliaBase.  Even the “Substrate” is a
 process, albeit a slightly odd one.  Every process has an operator and a
