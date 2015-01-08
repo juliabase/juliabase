@@ -34,49 +34,62 @@ class JsonTestCase(TestCase):
         data = json.loads(response.content.decode("ascii"))
         self.remove_dynamic_fields(data)
         self.assertEqual(data, dictionary)
-        
 
-substrate_data = {"samples": [1, 2], "timestamp_inaccuracy": 0, "timestamp": "2010-12-02T11:07:36",
-                  "material": "corning", "external_operator": None, "finished": True, "comments": "",
-                  "operator": "testuser", "content_type": "substrate", "id": 1}
 
 class ExportTest(JsonTestCase):
-    fixtures = ["test_institute"]
+    fixtures = ["test_main"]
     urls = "institute.tests.urls"
     maxDiff = None
 
     def setUp(self):
         self.client = Client()
-        assert self.client.login(username="testuser", password="12345")
+        assert self.client.login(username="j.silverton", password="12345")
 
     def test_substrate_export(self):
-        response = self.client.get("/processes/1", HTTP_ACCEPT="application/json")
+        response = self.client.get("/processes/13", HTTP_ACCEPT="application/json")
         self.assertEqual(response["Content-Type"], "application/json")
-        self.assertJsonDictEqual(response, substrate_data)
+        self.assertJsonDictEqual(response,
+            {"samples": [7], "timestamp_inaccuracy": 3, "timestamp": "2014-10-01T10:29:00", "material": "corning", "id": 13,
+             "external_operator": None, "finished": True, "comments": "", "operator": "e.monroe",
+             "content_type": "substrate"})
 
     def test_pds_measurement_export(self):
         response = self.client.get("/pds_measurements/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertJsonDictEqual(response,
-            {"samples": [2], "apparatus": "pds1", "timestamp_inaccuracy": 0, "timestamp": "2010-12-02T12:07:36",
-             "external_operator": None,
-             "operator": "testuser", "finished": True, "comments": "", "id": 2,
-             "number": 1, "content_type": "PDS measurement", "raw_datafile": "T:/Daten/pds/p4600-/pd4636.dat"})
+            {"samples": [7], "apparatus": "pds1", "timestamp_inaccuracy": 0, "timestamp": "2014-10-07T10:01:00",
+             "external_operator": None, "id": 29,
+             "operator": "n.burkhardt", "finished": True, "comments": "",
+             "number": 1, "content_type": "PDS measurement", "raw_datafile": "measurement-1.dat"})
 
     def test_sample_export(self):
-        response = self.client.get("/samples/by_id/2", HTTP_ACCEPT="application/json")
+        response = self.client.get("/samples/by_id/7", HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertJsonDictEqual(response,
-            {"currently_responsible_person": "testuser", "name": "10-TB-second", "tags": "", "topic": None, "purpose": "",
-             "current_location": u"Torsten's office", "split_origin": None, "id": 2,
-             "process #1": {"samples": [1, 2], "content_type": "substrate", "timestamp_inaccuracy": 0,
-                            "timestamp": "2010-12-02T11:07:36", "external_operator": None, "operator": "testuser",
-                            "finished": True, "comments": "", "material": "corning", "id": 1},
-             "process #2": {"samples": [2], "content_type": "PDS measurement", "timestamp_inaccuracy": 0,
-                            "timestamp": "2010-12-02T12:07:36", "external_operator": None, "operator": "testuser",
-                            "finished": True, "comments": "", "apparatus": "pds1", "number": 1, "id": 2,
-                            "raw_datafile": "T:/Daten/pds/p4600-/pd4636.dat"}
-            })
+            {"split_origin": None, "name": "14-JS-1", "tags": "", "currently_responsible_person": "j.silverton",
+             "topic": "Juliette's PhD thesis", "purpose": "",
+             "current_location": "Juliette's office", "id": 7,
+             "process #13": {"content_type": "substrate", "timestamp": "2014-10-01T10:29:00", "material": "corning",
+                             "timestamp_inaccuracy": 3, "comments": "", "finished": True,
+                             "samples": [7], "external_operator": None,
+                             "operator": "e.monroe", "id": 13},
+             "process #14": {"external_operator": None, "content_type": "cluster tool deposition",
+                             "layer 1": {"base_pressure": 2.0, "h2": 1.0, "number": 1, "comments": "p-type layer",
+                                         "content_type": "cluster tool hot-wire layer", "time": "10:00", "sih4": 1.0,
+                                         "wire_material": "rhenium", "id": 1},
+                             "layer 2": {"plasma_start_with_shutter": False, "h2": 0.0, "number": 2, "comments":
+                                         "i-type layer", "chamber": "#3", "deposition_power": None,
+                                         "content_type": "cluster tool PECVD layer", "time": "55:00", "sih4": 0.0, "id": 2},
+                             "layer 3": {"base_pressure": 6.0, "h2": 4.0, "number": 3, "comments": "n-type layer",
+                                         "content_type": "cluster tool hot-wire layer", "time": "10:00", "sih4": 5.0,
+                                         "wire_material": "rhenium", "id": 3},
+                             "timestamp_inaccuracy": 0, "comments": "", "number": "14C-001", "finished": True, "carrier": "",
+                             "samples": [7], "timestamp": "2014-10-01T10:30:00", "operator": "e.monroe", "split_done": False,
+                             "id": 14},
+             "process #29": {"external_operator": None, "content_type": "PDS measurement", "apparatus": "pds1",
+                             "timestamp": "2014-10-07T10:01:00", "timestamp_inaccuracy": 0, "comments": "", "number": 1,
+                             "finished": True, "raw_datafile": "measurement-1.dat", "samples": [7],
+                             "operator": "n.burkhardt", "id": 29}})
 
 
 class SharedUtilsTest(TestCase):
@@ -87,7 +100,7 @@ class SharedUtilsTest(TestCase):
 
 
 class AdminExportTest(JsonTestCase):
-    fixtures = ["test_institute"]
+    fixtures = ["test_main"]
     urls = "institute.tests.urls"
 
     def setUp(self):
@@ -98,6 +111,6 @@ class AdminExportTest(JsonTestCase):
         response = self.client.get("/substrates_by_sample/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertJsonDictEqual(response,
-                         {"operator": "testuser", "timestamp": "2010-12-02T11:07:36", "material": "corning",
-                          "timestamp_inaccuracy": 0, "comments": "", "finished": True, "samples": [1, 2],
+                         {"operator": "r.calvert", "timestamp": "2014-10-01T10:29:00", "material": "corning",
+                          "timestamp_inaccuracy": 3, "comments": "", "finished": True, "samples": [1],
                           "external_operator": None, "content_type": "substrate", "id": 1})
