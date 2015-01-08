@@ -6,8 +6,7 @@ createdb -U juliabase juliabase
 ./manage.py migrate
 ./manage.py loaddata demo_accounts
 cd remote_client/examples
-./run-crawlers.sh synchronous
+./run-crawlers.sh build_test_main
 python add_informal_stack.py
 cd ../..
-./manage.py dumpdata --format=yaml --indent=2 --natural-foreign --natural-primary --exclude=sessions.Session \
-            > institute/fixtures/test_main.yaml
+./manage.py dumpdata --format=yaml --indent=2 --natural-foreign --exclude=sessions.Session > institute/fixtures/test_main.yaml
