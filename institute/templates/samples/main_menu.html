@@ -1,0 +1,27 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/templates/samples/main_menu.html" %}
+{% comment %}
+This file is part of JuliaBase, the samples database.
+
+Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+                      Marvin Goblet <m.goblet@fz-juelich.de>,
+                      Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load staticfiles %}
+
+{% block search_things_extras %}
+  <li><a href="{% url 'samples.views.main.deposition_search' %}">{% trans 'Depositions by number' %}</a></li>
+{% endblock %}
+
+{% block miscellaneous_extras %}
+  <li style='list-style-image: url("{% static "juliabase/icons/shape_square_edit.png" %}")'>
+    <a href="{% url 'samples.views.my_layers.edit' login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
+  {{ block.super }}
+{% endblock %}

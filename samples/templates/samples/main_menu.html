@@ -92,7 +92,6 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
     <li><a href="{% url 'samples.views.sample.advanced_search' %}">{% trans 'Advanced search' %}</a></li>
     <li><a href="{% url 'samples.views.sample.search' %}">{% trans 'Samples by name' %}</a></li>
     {% block search_things_extras %}{% endblock %}
-    <li><a href="{% url 'samples.views.main.deposition_search' %}">{% trans 'Depositions by number' %}</a></li>
   </ul>
 
   {% if lab_notebooks %}
@@ -163,10 +162,7 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
       <a href="{% url 'samples.views.feed.show' username=user.username user_hash=user_hash %}">{% trans 'Newsfeed' %}</a></li>
     {% block miscellaneous_extras %}
       <li style='list-style-image: url("{% static "juliabase/icons/table.png" %}")'>
-       <a href="{% url 'samples.views.status.show' %}"
-           >{% trans 'Status messages' %}</a></li>
-      <li style='list-style-image: url("{% static "juliabase/icons/shape_square_edit.png" %}")'>
-        <a href="{% url 'samples.views.my_layers.edit' login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
+        <a href="{% url 'samples.views.status.show' %}">{% trans 'Status messages' %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/arrow_merge.png" %}")'>
         <a href="{% url 'samples.views.merge_samples.merge' %}">{% trans 'Merge samples' %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/flag_blue.png" %}")'>
