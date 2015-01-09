@@ -55,10 +55,10 @@ def default(request):
     result["url"] = request.path
     if request.GET:
         result["url"] += "?" + request.GET.urlencode()
-    # Now for the flags for the language switching
-    if request.method == "GET" and user.is_authenticated():
-        result["translation_flags"] = tuple((code, ugettext(language)) for code, language in settings.LANGUAGES)
+    if user.is_authenticated():
         result["salutation"] = user.first_name or user.username
+    if request.method == "GET":
+        result["translation_flags"] = tuple((code, ugettext(language)) for code, language in settings.LANGUAGES)
     else:
         result["translation_flags"] = ()
     result["default_home_url"] = settings.LOGIN_REDIRECT_URL
