@@ -28,7 +28,7 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
 from django.conf import settings
-from django.utils.encoding import iri_to_uri
+from django.utils.encoding import iri_to_uri, smart_text
 from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -799,8 +799,8 @@ def unquote_view_parameters(view):
     # FixMe: Actually, percent-encoding "/" and "%" is enough.
     def unquoting_view(request, *args, **kwargs):
         return view(request,
-                    *[urllib_parse.unquote(value) for value in args],
-                    **dict((key, urllib_parse.unquote(value)) for key, value in kwargs.items()))
+                    *[smart_text(urllib_parse.unquote(six.binary_type(value))) for value in args],
+                    **dict((key, smart_text(urllib_parse.unquote(six.binary_type(value)))) for key, value in kwargs.items()))
     return unquoting_view
 
 
