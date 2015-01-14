@@ -15,11 +15,6 @@
 
 """Functions and classes for the advanced search.
 """
-# FixMe: For some reason now obscure to me, ``.values("pk")`` is used throughout
-# this module although
-# https://docs.djangoproject.com/en/1.3/ref/models/querysets/#in suggests that it
-# is superfluous.  It doesn't have any bad functionality/performance impact
-# though.
 
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
@@ -634,7 +629,7 @@ class SearchTreeNode(object):
             if node:
                 name = self.related_models[node.model_class] + "__pk__in"
                 result = result.filter(**{name: node.get_query_set()})
-        return result.values("pk")
+        return result.only("pk")
 
     def is_valid(self):
         """Returns whether the whole tree contains only bound and valid
@@ -792,7 +787,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
             else:
                 Q_expression = current_Q
         result = result.filter(Q_expression).distinct()
-        return result.values("pk")
+        return result.only("pk")
 
 
 class DetailsSearchTreeNode(SearchTreeNode):
@@ -863,4 +858,4 @@ class DetailsSearchTreeNode(SearchTreeNode):
                 else:
                     self.details_node.children.append((None, node))
         result = result.filter(pk__in=self.details_node.get_query_set())
-        return result.values("pk")
+        return result.only("pk")
