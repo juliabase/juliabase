@@ -45,10 +45,14 @@ import samples.models
 
 
 def translate_permission(permission_codename):
-    """Translates a permission description to the user's language.
+    """Translates a permission description to the user's language.  Note that in
+    order to uniquely identify a permission, the model is needed, too.  This is
+    not the case here.  Instead, we assume that if the codename is the same,
+    the translation will be so, too.
 
     :param permission_codename: the codename of the permission, *with* the
-        ``"all_label."`` prefix
+        ``"all_label."`` prefix; only the naked codename is used for lookup,
+        though
 
     :type permission_codename: str
 
@@ -61,8 +65,8 @@ def translate_permission(permission_codename):
     """
     permission_codename = permission_codename.partition(".")[2]
     try:
-        return ugettext(Permission.objects.get(codename=permission_codename).name)
-    except Permission.DoesNotExist:
+        return ugettext(Permission.objects.filter(codename=permission_codename)[0].name)
+    except IndexError:
         return _("[not available]")
 
 
