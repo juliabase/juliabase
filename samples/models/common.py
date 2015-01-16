@@ -616,6 +616,9 @@ class PhysicalProcess(Process):
         ordering = ["timestamp"]
         get_latest_by = "timestamp"
 
+    class JBMeta:
+        configurable_permissions = True
+
     @classmethod
     def get_add_link(cls):
         """Returns the URL to the “add” view for this process.  A physical process

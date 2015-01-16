@@ -151,7 +151,7 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
          >{% trans 'My topics and permissions' %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/webcam.png" %}")'>
       <a href="{% url 'samples.views.permissions.list_' %}"
-         >{% trans "Permissions to processes" %}</a></li>
+         >{% trans "Permissions" %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/layout.png" %}")'>
       <a href="{% url 'samples.views.task_lists.show' %}">{% trans 'Task lists' %}</a></li>
     {% if user.has_usable_password %}
