@@ -37,6 +37,7 @@ from __future__ import absolute_import, unicode_literals
 
 import hashlib
 from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
@@ -216,7 +217,8 @@ def get_all_adders(process_class):
     """
     permission_codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     try:
-        add_permission = Permission.objects.get(codename=permission_codename)
+        add_permission = Permission.objects.get(codename=permission_codename,
+                                                content_type=ContentType.objects.get_for_model(process_class))
     except Permission.DoesNotExist:
         return User.objects.none()
     else:
@@ -389,7 +391,7 @@ def assert_can_add_physical_process(user, process_class):
     :raises PermissionError: if the user is not allowed to add a process.
     """
     codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
-    if Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
         if not user.has_perm(permission):
             description = _("You are not allowed to add {process_plural_name} because you don't have the "
@@ -419,7 +421,7 @@ def assert_can_edit_physical_process(user, process):
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
-    if Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     else:
@@ -475,7 +477,7 @@ def assert_can_view_lab_notebook(user, process_class):
     """
     codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
-    if Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
     else:
         has_view_all_permission = user.is_superuser
@@ -508,7 +510,7 @@ def assert_can_view_physical_process(user, process):
     process_class = process.content_type.model_class()
     codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
-    if Permission.objects.filter(codename=codename).exists():
+    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
     else:
         has_view_all_permission = user.is_superuser

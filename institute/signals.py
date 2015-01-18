@@ -24,6 +24,7 @@ from __future__ import absolute_import, unicode_literals
 import re
 from django.db.models import signals
 from django.dispatch import receiver
+from django.contrib.contenttypes.models import ContentType
 import django.contrib.auth.models
 from django.utils.translation import ugettext as _
 from jb_common.signals import maintain
@@ -51,7 +52,8 @@ def inform_process_supervisors(sender, instance, **kwargs):
         if not process_class.objects.filter(operator=user).exists():
             try:
                 permission = django.contrib.auth.models.Permission.objects.get(
-                    codename="edit_permissions_for_{0}".format(utils.camel_case_to_underscores(process_class.__name__)))
+                    codename="edit_permissions_for_{0}".format(utils.camel_case_to_underscores(process_class.__name__)),
+                    content_type=ContentType.objects.get_for_model(process_class))
             except django.contrib.auth.models.Permission.DoesNotExist:
                 return
             recipients = list(django.contrib.auth.models.User.objects.filter(user_permissions=permission)) or \

@@ -60,7 +60,8 @@ class ReviewerForm(forms.Form):
     reviewer = ReviewerChoiceField(label=_("Requested reviewer"), queryset=None)
     def __init__(self, *args, **kwargs):
         super(ReviewerForm, self).__init__(*args, **kwargs)
-        permission = django.contrib.auth.models.Permission.objects.get(codename="adopt_samples")
+        permission = django.contrib.auth.models.Permission.objects.get(
+            codename="adopt_samples", content_type=ContentType.objects.get_for_model(models.Sample))
         self.fields["reviewer"].queryset = django.contrib.auth.models.User.objects.filter(
             Q(groups__permissions=permission) | Q(user_permissions=permission)).distinct(). \
             order_by("last_name", "first_name")

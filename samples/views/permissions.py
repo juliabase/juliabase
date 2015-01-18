@@ -22,11 +22,13 @@ from __future__ import absolute_import, unicode_literals
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Permission
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core
 from django.conf import settings
+from jb_common.models import Topic
 from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, \
     camel_case_to_underscores, sorted_users
 from jb_common.utils.views import UserField
@@ -87,8 +89,10 @@ class PermissionsPhysicalProcess(object):
     :type topic_manager_permission: django.contrib.auth.models.Permission
     """
 
-    topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics")
-    add_external_operators_permission = Permission.objects.get(codename="add_external_operator")
+    topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics",
+                                                      content_type=ContentType.objects.get_for_model(Topic))
+    add_external_operators_permission = Permission.objects.get(codename="add_external_operator",
+                                                               content_type=ContentType.objects.get_for_model(models.ExternalOperator))
 
     def __init__(self, physical_process_class):
         """
@@ -99,23 +103,26 @@ class PermissionsPhysicalProcess(object):
           ``samples.models.PhysicalProcess``)
         """
         self.name = physical_process_class._meta.verbose_name_plural
-        self.codename = physical_process_class.__name__
-        substitutions = {"process_name": camel_case_to_underscores(physical_process_class.__name__)}
+        self.codename = camel_case_to_underscores(physical_process_class.__name__)
+        content_type = ContentType.objects.get_for_model(physical_process_class)
         try:
-            self.edit_permissions_permission = \
-                Permission.objects.get(codename="edit_permissions_for_{process_name}".format(**substitutions))
+            self.edit_permissions_permission = Permission.objects.get(codename="edit_permissions_for_{}".format(self.codename),
+                                                                      content_type=content_type)
         except Permission.DoesNotExist:
             self.edit_permissions_permission = None
         try:
-            self.add_permission = Permission.objects.get(codename="add_{process_name}".format(**substitutions))
+            self.add_permission = Permission.objects.get(codename="add_{}".format(self.codename),
+                                                         content_type=content_type)
         except Permission.DoesNotExist:
             self.add_permission = None
         try:
-            self.view_all_permission = Permission.objects.get(codename="view_every_{process_name}".format(**substitutions))
+            self.view_all_permission = Permission.objects.get(codename="view_every_{}".format(self.codename),
+                                                              content_type=content_type)
         except Permission.DoesNotExist:
             self.view_all_permission = None
         try:
-            self.edit_all_permission = Permission.objects.get(codename="edit_every_{process_name}".format(**substitutions))
+            self.edit_all_permission = Permission.objects.get(codename="edit_every_{}".format(self.codename),
+                                                              content_type=content_type)
         except Permission.DoesNotExist:
             self.edit_all_permission = None
         base_query = User.objects.filter(is_active=True, is_superuser=False)
