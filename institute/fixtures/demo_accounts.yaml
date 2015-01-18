@@ -105,6 +105,7 @@
 
 - fields:
     name: INM
+    app_label: institute
   model: jb_common.department
   pk: 1
 

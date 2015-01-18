@@ -535,7 +535,7 @@
     verified: true}
   model: institute.informallayer
   pk: 5
-- fields: {app_label: '', name: INM}
+- fields: {app_label: 'institute', name: INM}
   model: jb_common.department
   pk: 1
 - fields:
