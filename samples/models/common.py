@@ -127,8 +127,8 @@ class ExternalOperator(models.Model):
         verbose_name_plural = _("external operators")
         _ = lambda x: x
         default_permissions = ()
-        permissions = (("add_external_operator", _("Can add an external operator")),
-                       ("view_all_external_operators", _("Can view all external operators")))
+        permissions = (("add_externaloperator", _("Can add an external operator")),
+                       ("view_every_externaloperator", _("Can view all external operators")))
 
     def save(self, *args, **kwargs):
         super(ExternalOperator, self).save(*args, **kwargs)
@@ -690,7 +690,7 @@ class Sample(models.Model):
         verbose_name_plural = _("samples")
         ordering = ["name"]
         _ = lambda x: x
-        permissions = (("view_all_samples", _("Can view all samples from his/her department")),
+        permissions = (("view_every_sample", _("Can view all samples from his/her department")),
                        ("adopt_samples", _("Can adopt samples from his/her department")),
                        ("rename_samples", _("Can rename samples from his/her department")))
 

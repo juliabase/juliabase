@@ -118,7 +118,7 @@ class Topic(models.Model):
     Roughly speaking, a user can view samples of their topics.
 
     The attribute ``confidential`` means that senior users (i.e. users with the
-    permission ``"view_all_samples"``) cannot view samples of confidential
+    permission ``"view_every_sample"``) cannot view samples of confidential
     topics (in order to make non-disclosure agreements with external partners
     possible).
     """
@@ -139,8 +139,8 @@ class Topic(models.Model):
         unique_together = ("name", "department")
         _ = lambda x: x
         default_permissions = ()
-        permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
-                       ("can_edit_their_topics", _("Can edit topics that he/she is a manager of")))
+        permissions = (("edit_every_topic", _("Can edit all topics, and can add new topics")),
+                       ("edit_their_topics", _("Can edit topics that he/she is a manager of")))
 
     def __str__(self):
         return six.text_type(self.name)

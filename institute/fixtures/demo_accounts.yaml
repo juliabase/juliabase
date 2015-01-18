@@ -94,12 +94,12 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [view_all_samples, samples, sample]
+    - [view_every_sample, samples, sample]
     - [adopt_samples, samples, sample]
     - [edit_permissions_for_all_physical_processes, samples, userdetails]
-    - [add_external_operator, samples, externaloperator]
-    - [view_all_external_operators, samples, externaloperator]
-    - [can_edit_all_topics, jb_common, topic]
+    - [add_externaloperator, samples, externaloperator]
+    - [view_every_externaloperator, samples, externaloperator]
+    - [edit_every_topic, jb_common, topic]
   model: auth.user
   pk: 8
 

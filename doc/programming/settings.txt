@@ -283,10 +283,10 @@ the Django ``codename`` of the permission, without any app label.  An example
 might be::
 
     LDAP_GROUPS_TO_PERMISSIONS = {
-            "TG_IEF-5_teamleaders": {"view_all_samples", "adopt_samples",
+            "TG_IEF-5_teamleaders": {"view_every_sample", "adopt_samples",
                                      "edit_permissions_for_all_physical_processes",
-                                     "add_external_operator",
-                                     "view_all_external_operators", "can_edit_all_topics"}
+                                     "add_externaloperator",
+                                     "view_every_externaloperator", "edit_every_topic"}
         }
 
 Note that you should not change permissions in JuliaBase's admin interface that

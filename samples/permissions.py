@@ -307,7 +307,7 @@ def assert_can_fully_view_sample(user, sample):
                             "its currently responsible person ({name})."). \
                             format(name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
-        elif not user.has_perm("samples.view_all_samples"):
+        elif not user.has_perm("samples.view_every_sample"):
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name}), nor can you view all samples."). \
                             format(name=utils.get_really_full_name(currently_responsible_person))
@@ -666,7 +666,7 @@ def assert_can_add_external_operator(user):
     :raises PermissionError: if the user is not allowed to add an external
         operator.
     """
-    permission = "samples.add_external_operator"
+    permission = "samples.add_externaloperator"
     if not user.has_perm(permission):
         description = _("You are not allowed to add an external operator because you don't have the permission “{name}”.") \
             .format(name=translate_permission(permission))
@@ -708,7 +708,7 @@ def assert_can_view_external_operator(user, external_operator):
             description = _("You are not allowed to view this external operator because you are not their "
                             "current contact person.")
             raise PermissionError(user, description)
-        elif not user.has_perm("samples.view_all_external_operators"):
+        elif not user.has_perm("samples.view_every_externaloperator"):
             description = _("You are not allowed to view this external operator because neither are you their "
                             "current contact person, nor can you view all external operators.")
             raise PermissionError(user, description)
@@ -730,23 +730,23 @@ def assert_can_edit_topic(user, topic=None):
         or to add new topics.
     """
     if not topic:
-        if not user.has_perm("jb_common.can_edit_all_topics"):
+        if not user.has_perm("jb_common.edit_every_topic"):
             description = _("You are not allowed to add topics because you don't have the permission “{name}”.") \
-                .format(name=translate_permission("jb_common.can_edit_all_topics"))
+                .format(name=translate_permission("jb_common.edit_every_topic"))
             raise PermissionError(user, description)
     else:
         if user in topic.members.all():
-            if not user.has_perm("jb_common.can_edit_all_topics") and \
+            if not user.has_perm("jb_common.edit_every_topic") and \
                     topic.manager != user:
                 description = _("You are not allowed to change this topic because you don't have the permission "
-                                "“{0}” or “{1}”.").format(translate_permission("jb_common.can_edit_all_topics"),
-                                                           translate_permission("jb_common.can_edit_their_topics"))
+                                "“{0}” or “{1}”.").format(translate_permission("jb_common.edit_every_topic"),
+                                                           translate_permission("jb_common.edit_their_topics"))
                 raise PermissionError(user, description)
         else:
-            if not user.has_perm("jb_common.can_edit_all_topics"):
+            if not user.has_perm("jb_common.edit_every_topic"):
                 description = _("You are not allowed to change this topic because "
                                 "you don't have the permission “{name}”.").format(
-                    name=translate_permission("jb_common.can_edit_all_topics"))
+                    name=translate_permission("jb_common.edit_every_topic"))
                 raise PermissionError(user, description)
             elif topic.confidential and not user.is_superuser:
                 description = _("You are not allowed to change this topic because it is confidential "
@@ -766,11 +766,11 @@ def assert_can_edit_users_topics(user):
     :raises PermissionError: if the user is not allowed to edit his/ her
         topics, or to add new sub topics.
     """
-    if not user.has_perm("jb_common.can_edit_their_topics") and \
-        not user.has_perm("jb_common.can_edit_all_topics"):
+    if not user.has_perm("jb_common.edit_their_topics") and \
+        not user.has_perm("jb_common.edit_every_topic"):
         description = _("You are not allowed to change your topics because you don't have the permission "
-                        "“{0}” or “{1}”.").format(translate_permission("jb_common.can_edit_all_topics"),
-                                                  translate_permission("jb_common.can_edit_their_topics"))
+                        "“{0}” or “{1}”.").format(translate_permission("jb_common.edit_every_topic"),
+                                                  translate_permission("jb_common.edit_their_topics"))
         raise PermissionError(user, description)
 
 

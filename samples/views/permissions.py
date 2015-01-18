@@ -89,9 +89,9 @@ class PermissionsPhysicalProcess(object):
     :type topic_manager_permission: django.contrib.auth.models.Permission
     """
 
-    topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics",
+    topic_manager_permission = Permission.objects.get(codename="edit_their_topics",
                                                       content_type=ContentType.objects.get_for_model(Topic))
-    add_external_operators_permission = Permission.objects.get(codename="add_external_operator",
+    add_external_operators_permission = Permission.objects.get(codename="add_externaloperator",
                                                                content_type=ContentType.objects.get_for_model(models.ExternalOperator))
 
     def __init__(self, physical_process_class):
@@ -232,7 +232,7 @@ def list_(request):
             user_list_form = UserListForm(user)
     else:
         user_list_form = None
-    if user.has_perm("jb_common.can_edit_all_topics"):
+    if user.has_perm("jb_common.edit_every_topic"):
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |

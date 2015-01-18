@@ -623,19 +623,19 @@
   model: auth.permission
   pk: 14
 - fields:
-    codename: add_external_operator
+    codename: add_externaloperator
     content_type: [samples, externaloperator]
     name: Can add an external operator
   model: auth.permission
   pk: 15
 - fields:
-    codename: view_all_external_operators
+    codename: view_every_externaloperator
     content_type: [samples, externaloperator]
     name: Can view all external operators
   model: auth.permission
   pk: 16
 - fields:
-    codename: view_all_samples
+    codename: view_every_sample
     content_type: [samples, sample]
     name: Can view all samples from his/her department
   model: auth.permission
@@ -659,13 +659,13 @@
   model: auth.permission
   pk: 20
 - fields:
-    codename: can_edit_all_topics
+    codename: edit_every_topic
     content_type: [jb_common, topic]
     name: Can edit all topics, and can add new topics
   model: auth.permission
   pk: 21
 - fields:
-    codename: can_edit_their_topics
+    codename: edit_their_topics
     content_type: [jb_common, topic]
     name: Can edit topics that he/she is a manager of
   model: auth.permission
@@ -802,11 +802,11 @@
     last_name: Renard
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [can_edit_all_topics, jb_common, topic]
-    - [add_external_operator, samples, externaloperator]
-    - [view_all_external_operators, samples, externaloperator]
+    - [edit_every_topic, jb_common, topic]
+    - [add_externaloperator, samples, externaloperator]
+    - [view_every_externaloperator, samples, externaloperator]
     - [adopt_samples, samples, sample]
-    - [view_all_samples, samples, sample]
+    - [view_every_sample, samples, sample]
     - [edit_permissions_for_all_physical_processes, samples, userdetails]
     username: s.renard
   model: auth.user
