@@ -286,7 +286,8 @@ might be::
             "TG_IEF-5_teamleaders": {"view_every_sample", "adopt_samples",
                                      "edit_permissions_for_all_physical_processes",
                                      "add_externaloperator",
-                                     "view_every_externaloperator", "edit_every_topic"}
+                                     "view_every_externaloperator",
+                                     "add_topic", "edit_every_topic"}
         }
 
 Note that you should not change permissions in JuliaBase's admin interface that

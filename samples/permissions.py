@@ -730,9 +730,9 @@ def assert_can_edit_topic(user, topic=None):
         or to add new topics.
     """
     if not topic:
-        if not user.has_perm("jb_common.edit_every_topic"):
+        if not user.has_perm("jb_common.add_topic"):
             description = _("You are not allowed to add topics because you don't have the permission “{name}”.") \
-                .format(name=translate_permission("jb_common.edit_every_topic"))
+                .format(name=translate_permission("jb_common.add_topic"))
             raise PermissionError(user, description)
     else:
         if user in topic.members.all():

@@ -99,6 +99,7 @@
     - [edit_permissions_for_all_physical_processes, samples, userdetails]
     - [add_externaloperator, samples, externaloperator]
     - [view_every_externaloperator, samples, externaloperator]
+    - [add_topic, jb_common, topic]
     - [edit_every_topic, jb_common, topic]
   model: auth.user
   pk: 8

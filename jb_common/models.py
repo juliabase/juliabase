@@ -139,7 +139,8 @@ class Topic(models.Model):
         unique_together = ("name", "department")
         _ = lambda x: x
         default_permissions = ()
-        permissions = (("edit_every_topic", _("Can edit all topics, and can add new topics")),
+        permissions = (("add_topic", _("Can add new topics")),
+                       ("edit_every_topic", _("Can edit all topics")),
                        ("edit_their_topics", _("Can edit topics that he/she is a manager of")))
 
     def __str__(self):

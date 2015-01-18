@@ -232,7 +232,7 @@ def list_(request):
             user_list_form = UserListForm(user)
     else:
         user_list_form = None
-    if user.has_perm("jb_common.edit_every_topic"):
+    if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.edit_every_topic"):
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |

@@ -659,17 +659,23 @@
   model: auth.permission
   pk: 20
 - fields:
-    codename: edit_every_topic
+    codename: add_topic
     content_type: [jb_common, topic]
-    name: Can edit all topics, and can add new topics
+    name: Can add new topics
   model: auth.permission
   pk: 21
+- fields:
+    codename: edit_every_topic
+    content_type: [jb_common, topic]
+    name: Can edit all topics
+  model: auth.permission
+  pk: 22
 - fields:
     codename: edit_their_topics
     content_type: [jb_common, topic]
     name: Can edit topics that he/she is a manager of
   model: auth.permission
-  pk: 22
+  pk: 23
 - fields:
     date_joined: 2015-01-08 19:44:09.159911
     email: ''
@@ -802,6 +808,7 @@
     last_name: Renard
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
+    - [add_topic, jb_common, topic]
     - [edit_every_topic, jb_common, topic]
     - [add_externaloperator, samples, externaloperator]
     - [view_every_externaloperator, samples, externaloperator]
