@@ -24,7 +24,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
 from django.forms.util import ValidationError
 from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters, help_link
 from samples import models, permissions
