@@ -71,7 +71,7 @@
     - [add_clustertooldeposition, institute, clustertooldeposition]
     - [edit_permissions_for_clustertooldeposition, institute, clustertooldeposition]
     - [view_every_clustertooldeposition, institute, clustertooldeposition]
-    - [edit_every_clustertooldeposition, institute, clustertooldeposition]
+    - [change_clustertooldeposition, institute, clustertooldeposition]
   model: auth.user
   pk: 6
 - fields:
@@ -84,7 +84,7 @@
     - [add_fivechamberdeposition, institute, fivechamberdeposition]
     - [edit_permissions_for_fivechamberdeposition, institute, fivechamberdeposition]
     - [view_every_fivechamberdeposition, institute, fivechamberdeposition]
-    - [edit_every_fivechamberdeposition, institute, fivechamberdeposition]
+    - [change_fivechamberdeposition, institute, fivechamberdeposition]
   model: auth.user
   pk: 7
 - fields:
@@ -100,7 +100,7 @@
     - [add_externaloperator, samples, externaloperator]
     - [view_every_externaloperator, samples, externaloperator]
     - [add_topic, jb_common, topic]
-    - [edit_every_topic, jb_common, topic]
+    - [change_topic, jb_common, topic]
   model: auth.user
   pk: 8
 

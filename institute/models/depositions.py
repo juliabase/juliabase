@@ -57,7 +57,7 @@ class ClusterToolDeposition(samples.models.Deposition):
                        # (not even to English)
                         _("Can edit perms for cluster tool I depositions")),
                        ("view_every_clustertooldeposition", _("Can view all cluster tool depositions")),
-                       ("edit_every_clustertooldeposition", _("Can edit all cluster tool depositions")))
+                       ("change_clustertooldeposition", _("Can edit all cluster tool depositions")))
 
     def get_context_for_user(self, user, old_context):
         """
@@ -179,7 +179,7 @@ class FiveChamberDeposition(samples.models.Deposition):
                        # (not even to English)
                        ("edit_permissions_for_fivechamberdeposition", _("Can edit perms for 5-chamber depositions")),
                        ("view_every_fivechamberdeposition", _("Can view all 5-chamber depositions")),
-                       ("edit_every_fivechamberdeposition", _("Can edit all 5-chamber depositions")))
+                       ("change_fivechamberdeposition", _("Can edit all 5-chamber depositions")))
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()

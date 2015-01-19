@@ -120,7 +120,7 @@ class PermissionsPhysicalProcess(object):
         except Permission.DoesNotExist:
             self.view_all_permission = None
         try:
-            self.edit_all_permission = Permission.objects.get(codename="edit_every_{}".format(self.codename),
+            self.edit_all_permission = Permission.objects.get(codename="change_{}".format(self.codename),
                                                               content_type=content_type)
         except Permission.DoesNotExist:
             self.edit_all_permission = None
@@ -231,7 +231,7 @@ def list_(request):
             user_list_form = UserListForm(user)
     else:
         user_list_form = None
-    if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.edit_every_topic"):
+    if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.change_topic"):
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |

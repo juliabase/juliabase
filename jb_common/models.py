@@ -140,7 +140,7 @@ class Topic(models.Model):
         _ = lambda x: x
         default_permissions = ()
         permissions = (("add_topic", _("Can add new topics")),
-                       ("edit_every_topic", _("Can edit all topics")),
+                       ("change_topic", _("Can edit all topics")),
                        ("edit_their_topics", _("Can edit topics that he/she is a manager of")))
 
     def __str__(self):

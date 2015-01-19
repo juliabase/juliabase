@@ -593,7 +593,7 @@
   model: auth.permission
   pk: 9
 - fields:
-    codename: edit_every_clustertooldeposition
+    codename: change_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can edit all cluster tool depositions
   model: auth.permission
@@ -617,7 +617,7 @@
   model: auth.permission
   pk: 13
 - fields:
-    codename: edit_every_fivechamberdeposition
+    codename: change_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can edit all 5-chamber depositions
   model: auth.permission
@@ -665,7 +665,7 @@
   model: auth.permission
   pk: 21
 - fields:
-    codename: edit_every_topic
+    codename: change_topic
     content_type: [jb_common, topic]
     name: Can edit all topics
   model: auth.permission
@@ -771,7 +771,7 @@
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
     - [add_clustertooldeposition, institute, clustertooldeposition]
-    - [edit_every_clustertooldeposition, institute, clustertooldeposition]
+    - [change_clustertooldeposition, institute, clustertooldeposition]
     - [edit_permissions_for_clustertooldeposition, institute, clustertooldeposition]
     - [view_every_clustertooldeposition, institute, clustertooldeposition]
     username: e.monroe
@@ -790,7 +790,7 @@
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
     - [add_fivechamberdeposition, institute, fivechamberdeposition]
-    - [edit_every_fivechamberdeposition, institute, fivechamberdeposition]
+    - [change_fivechamberdeposition, institute, fivechamberdeposition]
     - [edit_permissions_for_fivechamberdeposition, institute, fivechamberdeposition]
     - [view_every_fivechamberdeposition, institute, fivechamberdeposition]
     username: r.calvert
@@ -809,7 +809,7 @@
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
     - [add_topic, jb_common, topic]
-    - [edit_every_topic, jb_common, topic]
+    - [change_topic, jb_common, topic]
     - [add_externaloperator, samples, externaloperator]
     - [view_every_externaloperator, samples, externaloperator]
     - [adopt_samples, samples, sample]

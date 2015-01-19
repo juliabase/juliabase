@@ -462,7 +462,7 @@ which in turn is a ``Process``::
                 ("edit_permissions_for_fivechamberdeposition",
                  _("Can edit perms for 5-chamber depositions")),
                 ("view_every_fivechamberdeposition", _("Can view all 5-chamber depositions")),
-                ("edit_every_fivechamberdeposition", _("Can edit all 5-chamber depositions")))
+                ("change_fivechamberdeposition", _("Can edit all 5-chamber depositions")))
 
 It contains a full set of permissions to limit “add” and “edit” access to
 certain users.  Moreover the ``view_every_fivechamberdeposition`` makes a lab

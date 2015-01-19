@@ -417,7 +417,7 @@ def assert_can_edit_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "edit_every_{0}".format(process_class.__name__.lower())
+    codename = "change_{0}".format(process_class.__name__.lower())
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     codename = "add_{0}".format(process_class.__name__.lower())
@@ -736,17 +736,17 @@ def assert_can_edit_topic(user, topic=None):
             raise PermissionError(user, description)
     else:
         if user in topic.members.all():
-            if not user.has_perm("jb_common.edit_every_topic") and \
+            if not user.has_perm("jb_common.change_topic") and \
                     topic.manager != user:
                 description = _("You are not allowed to change this topic because you don't have the permission "
-                                "“{0}” or “{1}”.").format(translate_permission("jb_common.edit_every_topic"),
+                                "“{0}” or “{1}”.").format(translate_permission("jb_common.change_topic"),
                                                            translate_permission("jb_common.edit_their_topics"))
                 raise PermissionError(user, description)
         else:
-            if not user.has_perm("jb_common.edit_every_topic"):
+            if not user.has_perm("jb_common.change_topic"):
                 description = _("You are not allowed to change this topic because "
                                 "you don't have the permission “{name}”.").format(
-                    name=translate_permission("jb_common.edit_every_topic"))
+                    name=translate_permission("jb_common.change_topic"))
                 raise PermissionError(user, description)
             elif topic.confidential and not user.is_superuser:
                 description = _("You are not allowed to change this topic because it is confidential "
@@ -767,9 +767,9 @@ def assert_can_edit_users_topics(user):
         topics, or to add new sub topics.
     """
     if not user.has_perm("jb_common.edit_their_topics") and \
-        not user.has_perm("jb_common.edit_every_topic"):
+        not user.has_perm("jb_common.change_topic"):
         description = _("You are not allowed to change your topics because you don't have the permission "
-                        "“{0}” or “{1}”.").format(translate_permission("jb_common.edit_every_topic"),
+                        "“{0}” or “{1}”.").format(translate_permission("jb_common.change_topic"),
                                                   translate_permission("jb_common.edit_their_topics"))
         raise PermissionError(user, description)
 
