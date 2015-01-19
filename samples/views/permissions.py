@@ -29,8 +29,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core
 from django.conf import settings
 from jb_common.models import Topic
-from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, \
-    camel_case_to_underscores, sorted_users
+from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, sorted_users
 from jb_common.utils.views import UserField
 from samples import models, permissions
 import samples.utils.views as utils
@@ -103,7 +102,7 @@ class PermissionsPhysicalProcess(object):
           ``samples.models.PhysicalProcess``)
         """
         self.name = physical_process_class._meta.verbose_name_plural
-        self.codename = camel_case_to_underscores(physical_process_class.__name__)
+        self.codename = physical_process_class.__name__.lower()
         content_type = ContentType.objects.get_for_model(physical_process_class)
         try:
             self.edit_permissions_permission = Permission.objects.get(codename="edit_permissions_for_{}".format(self.codename),

@@ -94,11 +94,11 @@ class PDSMeasurement(PhysicalProcess):
         verbose_name = _("PDS measurement")
         verbose_name_plural = _("PDS measurements")
         _ = lambda x: x
-        permissions = (("add_pds_measurement", _("Can add PDS measurements")),
+        permissions = (("add_pdsmeasurement", _("Can add PDS measurements")),
                        # Translators: Don't abbreviate "perms" in translation
                        # (not even to English)
-                       ("edit_permissions_for_pds_measurement", _("Can edit perms for PDS measurements")),
-                       ("view_every_pds_measurement", _("Can view all PDS measurements")))
+                       ("edit_permissions_for_pdsmeasurement", _("Can edit perms for PDS measurements")),
+                       ("view_every_pdsmeasurement", _("Can view all PDS measurements")))
         ordering = ["number"]
 
     class JBMeta:
@@ -136,12 +136,12 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         verbose_name = _("solarsimulator measurement")
         verbose_name_plural = _("solarsimulator measurements")
         _ = lambda x: x
-        permissions = (("add_solarsimulator_measurement", _("Can add solarsimulator measurements")),
+        permissions = (("add_solarsimulatormeasurement", _("Can add solarsimulator measurements")),
                        # Translators: Don't abbreviate "perms" in translation
                        # (not even to English)
-                       ("edit_permissions_for_solarsimulator_measurement",
+                       ("edit_permissions_for_solarsimulatormeasurement",
                         _("Can edit perms for solarsimulator measurements")),
-                       ("view_every_solarsimulator_measurement", _("Can view all solarsimulator measurements")))
+                       ("view_every_solarsimulatormeasurement", _("Can view all solarsimulator measurements")))
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()

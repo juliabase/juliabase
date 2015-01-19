@@ -539,85 +539,85 @@
   model: jb_common.department
   pk: 1
 - fields:
-    codename: add_pds_measurement
+    codename: add_pdsmeasurement
     content_type: [institute, pdsmeasurement]
     name: Can add PDS measurements
   model: auth.permission
   pk: 1
 - fields:
-    codename: edit_permissions_for_pds_measurement
+    codename: edit_permissions_for_pdsmeasurement
     content_type: [institute, pdsmeasurement]
     name: Can edit perms for PDS measurements
   model: auth.permission
   pk: 2
 - fields:
-    codename: view_every_pds_measurement
+    codename: view_every_pdsmeasurement
     content_type: [institute, pdsmeasurement]
     name: Can view all PDS measurements
   model: auth.permission
   pk: 3
 - fields:
-    codename: add_solarsimulator_measurement
+    codename: add_solarsimulatormeasurement
     content_type: [institute, solarsimulatormeasurement]
     name: Can add solarsimulator measurements
   model: auth.permission
   pk: 4
 - fields:
-    codename: edit_permissions_for_solarsimulator_measurement
+    codename: edit_permissions_for_solarsimulatormeasurement
     content_type: [institute, solarsimulatormeasurement]
     name: Can edit perms for solarsimulator measurements
   model: auth.permission
   pk: 5
 - fields:
-    codename: view_every_solarsimulator_measurement
+    codename: view_every_solarsimulatormeasurement
     content_type: [institute, solarsimulatormeasurement]
     name: Can view all solarsimulator measurements
   model: auth.permission
   pk: 6
 - fields:
-    codename: add_cluster_tool_deposition
+    codename: add_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can add cluster tool depositions
   model: auth.permission
   pk: 7
 - fields:
-    codename: edit_permissions_for_cluster_tool_deposition
+    codename: edit_permissions_for_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can edit perms for cluster tool I depositions
   model: auth.permission
   pk: 8
 - fields:
-    codename: view_every_cluster_tool_deposition
+    codename: view_every_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can view all cluster tool depositions
   model: auth.permission
   pk: 9
 - fields:
-    codename: edit_every_cluster_tool_deposition
+    codename: edit_every_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can edit all cluster tool depositions
   model: auth.permission
   pk: 10
 - fields:
-    codename: add_five_chamber_deposition
+    codename: add_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can add 5-chamber depositions
   model: auth.permission
   pk: 11
 - fields:
-    codename: edit_permissions_for_five_chamber_deposition
+    codename: edit_permissions_for_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can edit perms for 5-chamber depositions
   model: auth.permission
   pk: 12
 - fields:
-    codename: view_every_five_chamber_deposition
+    codename: view_every_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can view all 5-chamber depositions
   model: auth.permission
   pk: 13
 - fields:
-    codename: edit_every_five_chamber_deposition
+    codename: edit_every_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can edit all 5-chamber depositions
   model: auth.permission
@@ -718,9 +718,9 @@
     last_name: Burkhardt
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_pds_measurement, institute, pdsmeasurement]
-    - [edit_permissions_for_pds_measurement, institute, pdsmeasurement]
-    - [view_every_pds_measurement, institute, pdsmeasurement]
+    - [add_pdsmeasurement, institute, pdsmeasurement]
+    - [edit_permissions_for_pdsmeasurement, institute, pdsmeasurement]
+    - [view_every_pdsmeasurement, institute, pdsmeasurement]
     username: n.burkhardt
   model: auth.user
   pk: 3
@@ -736,9 +736,9 @@
     last_name: Griffin
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_solarsimulator_measurement, institute, solarsimulatormeasurement]
-    - [edit_permissions_for_solarsimulator_measurement, institute, solarsimulatormeasurement]
-    - [view_every_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    - [edit_permissions_for_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    - [view_every_solarsimulatormeasurement, institute, solarsimulatormeasurement]
     username: h.griffin
   model: auth.user
   pk: 4
@@ -754,7 +754,7 @@
     last_name: Silverton
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
     username: j.silverton
   model: auth.user
   pk: 5
@@ -770,10 +770,10 @@
     last_name: Monroe
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_cluster_tool_deposition, institute, clustertooldeposition]
-    - [edit_every_cluster_tool_deposition, institute, clustertooldeposition]
-    - [edit_permissions_for_cluster_tool_deposition, institute, clustertooldeposition]
-    - [view_every_cluster_tool_deposition, institute, clustertooldeposition]
+    - [add_clustertooldeposition, institute, clustertooldeposition]
+    - [edit_every_clustertooldeposition, institute, clustertooldeposition]
+    - [edit_permissions_for_clustertooldeposition, institute, clustertooldeposition]
+    - [view_every_clustertooldeposition, institute, clustertooldeposition]
     username: e.monroe
   model: auth.user
   pk: 6
@@ -789,10 +789,10 @@
     last_name: Calvert
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_five_chamber_deposition, institute, fivechamberdeposition]
-    - [edit_every_five_chamber_deposition, institute, fivechamberdeposition]
-    - [edit_permissions_for_five_chamber_deposition, institute, fivechamberdeposition]
-    - [view_every_five_chamber_deposition, institute, fivechamberdeposition]
+    - [add_fivechamberdeposition, institute, fivechamberdeposition]
+    - [edit_every_fivechamberdeposition, institute, fivechamberdeposition]
+    - [edit_permissions_for_fivechamberdeposition, institute, fivechamberdeposition]
+    - [view_every_fivechamberdeposition, institute, fivechamberdeposition]
     username: r.calvert
   model: auth.user
   pk: 7

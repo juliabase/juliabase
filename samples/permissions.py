@@ -215,7 +215,7 @@ def get_all_adders(process_class):
 
     :rtype: QuerySet
     """
-    permission_codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    permission_codename = "add_{0}".format(process_class.__name__.lower())
     try:
         add_permission = Permission.objects.get(codename=permission_codename,
                                                 content_type=ContentType.objects.get_for_model(process_class))
@@ -390,7 +390,7 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
-    codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "add_{0}".format(process_class.__name__.lower())
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
         if not user.has_perm(permission):
@@ -417,10 +417,10 @@ def assert_can_edit_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "edit_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "edit_every_{0}".format(process_class.__name__.lower())
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
-    codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "add_{0}".format(process_class.__name__.lower())
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
@@ -475,7 +475,7 @@ def assert_can_view_lab_notebook(user, process_class):
     :raises PermissionError: if the user is not allowed to view the lab
         notebook for this process class.
     """
-    codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "view_every_{0}".format(process_class.__name__.lower())
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
@@ -508,7 +508,7 @@ def assert_can_view_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "view_every_{0}".format(process_class.__name__.lower())
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)

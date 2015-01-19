@@ -34,9 +34,9 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_pds_measurement, institute, pdsmeasurement]
-    - [edit_permissions_for_pds_measurement, institute, pdsmeasurement]
-    - [view_every_pds_measurement, institute, pdsmeasurement]
+    - [add_pdsmeasurement, institute, pdsmeasurement]
+    - [edit_permissions_for_pdsmeasurement, institute, pdsmeasurement]
+    - [view_every_pdsmeasurement, institute, pdsmeasurement]
   model: auth.user
   pk: 3
 - fields:
@@ -46,9 +46,9 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_solarsimulator_measurement, institute, solarsimulatormeasurement]
-    - [edit_permissions_for_solarsimulator_measurement, institute, solarsimulatormeasurement]
-    - [view_every_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    - [edit_permissions_for_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    - [view_every_solarsimulatormeasurement, institute, solarsimulatormeasurement]
   model: auth.user
   pk: 4
 - fields:
@@ -58,7 +58,7 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_solarsimulator_measurement, institute, solarsimulatormeasurement]
+    - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
   model: auth.user
   pk: 5
 - fields:
@@ -68,10 +68,10 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_cluster_tool_deposition, institute, clustertooldeposition]
-    - [edit_permissions_for_cluster_tool_deposition, institute, clustertooldeposition]
-    - [view_every_cluster_tool_deposition, institute, clustertooldeposition]
-    - [edit_every_cluster_tool_deposition, institute, clustertooldeposition]
+    - [add_clustertooldeposition, institute, clustertooldeposition]
+    - [edit_permissions_for_clustertooldeposition, institute, clustertooldeposition]
+    - [view_every_clustertooldeposition, institute, clustertooldeposition]
+    - [edit_every_clustertooldeposition, institute, clustertooldeposition]
   model: auth.user
   pk: 6
 - fields:
@@ -81,10 +81,10 @@
     # 12345
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
-    - [add_five_chamber_deposition, institute, fivechamberdeposition]
-    - [edit_permissions_for_five_chamber_deposition, institute, fivechamberdeposition]
-    - [view_every_five_chamber_deposition, institute, fivechamberdeposition]
-    - [edit_every_five_chamber_deposition, institute, fivechamberdeposition]
+    - [add_fivechamberdeposition, institute, fivechamberdeposition]
+    - [edit_permissions_for_fivechamberdeposition, institute, fivechamberdeposition]
+    - [view_every_fivechamberdeposition, institute, fivechamberdeposition]
+    - [edit_every_fivechamberdeposition, institute, fivechamberdeposition]
   model: auth.user
   pk: 7
 - fields:

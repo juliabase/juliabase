@@ -52,7 +52,7 @@ def inform_process_supervisors(sender, instance, **kwargs):
         if not process_class.objects.filter(operator=user).exists():
             try:
                 permission = django.contrib.auth.models.Permission.objects.get(
-                    codename="edit_permissions_for_{0}".format(utils.camel_case_to_underscores(process_class.__name__)),
+                    codename="edit_permissions_for_{0}".format(process_class.__name__.lower()),
                     content_type=ContentType.objects.get_for_model(process_class))
             except django.contrib.auth.models.Permission.DoesNotExist:
                 return
