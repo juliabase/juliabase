@@ -32,7 +32,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 import django.contrib.auth.models
 import django.core.urlresolvers
-from samples.models.common import Sample, Process, Result, SampleSplit, SampleSeries, StatusMessage, Task
+from samples.models import Sample, Process, Result, SampleSplit, SampleSeries, StatusMessage, Task
 from jb_common.models import Topic, PolymorphicModel
 from jb_common.utils.base import get_really_full_name
 

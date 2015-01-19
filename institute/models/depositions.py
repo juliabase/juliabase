@@ -42,12 +42,12 @@ class ClusterToolHotWireAndPECVDGases(models.Model):
                 DataItem("SiH₄/sccm", self.sih4), ]
 
 
-class ClusterToolDeposition(samples.models.depositions.Deposition):
+class ClusterToolDeposition(samples.models.Deposition):
     """cluster tool depositions..
     """
     carrier = models.CharField(_("carrier"), max_length=10, blank=True)
 
-    class Meta(samples.models.depositions.Deposition.Meta):
+    class Meta(samples.models.Deposition.Meta):
         verbose_name = _("cluster tool deposition")
         verbose_name_plural = _("cluster tool depositions")
         _ = lambda x: x
@@ -102,12 +102,11 @@ class ClusterToolDeposition(samples.models.depositions.Deposition):
         del model_field.related_models[ClusterToolLayer]
         return model_field
 
-samples.models.depositions.default_location_of_deposited_samples[ClusterToolDeposition] = \
-    _("cluster tool deposition lab")
+samples.models.default_location_of_deposited_samples[ClusterToolDeposition] = _("cluster tool deposition lab")
 
 
 @python_2_unicode_compatible
-class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.PolymorphicModel):
+class ClusterToolLayer(samples.models.Layer, jb_common_models.PolymorphicModel):
     """Model for a layer of the “cluster tool”.  Note that this is the common
     base class for the actual layer models `ClusterToolHotWireLayer` and
     `ClusterToolPECVDLayer`.  This is *not* an abstract model though because
@@ -117,7 +116,7 @@ class ClusterToolLayer(samples.models.depositions.Layer, jb_common_models.Polymo
     """
     deposition = models.ForeignKey(ClusterToolDeposition, related_name="layers", verbose_name=_("deposition"))
 
-    class Meta(samples.models.depositions.Layer.Meta):
+    class Meta(samples.models.Layer.Meta):
         unique_together = ("deposition", "number")
         verbose_name = _("cluster tool layer")
         verbose_name_plural = _("cluster tool layers")
@@ -168,10 +167,10 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
         verbose_name_plural = _("cluster tool PECVD layers")
 
 
-class FiveChamberDeposition(samples.models.depositions.Deposition):
+class FiveChamberDeposition(samples.models.Deposition):
     """5-chamber depositions.
     """
-    class Meta(samples.models.depositions.Deposition.Meta):
+    class Meta(samples.models.Deposition.Meta):
         verbose_name = _("5-chamber deposition")
         verbose_name_plural = _("5-chamber depositions")
         _ = lambda x: x
@@ -192,7 +191,7 @@ class FiveChamberDeposition(samples.models.depositions.Deposition):
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
 
 
-samples.models.depositions.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
+samples.models.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
 
 
 five_chamber_chamber_choices = (
@@ -210,7 +209,7 @@ five_chamber_layer_type_choices = (
 )
 
 @python_2_unicode_compatible
-class FiveChamberLayer(samples.models.depositions.Layer):
+class FiveChamberLayer(samples.models.Layer):
     """One layer in a 5-chamber deposition.
     """
     deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
@@ -223,7 +222,7 @@ class FiveChamberLayer(samples.models.depositions.Layer):
     temperature_2 = model_fields.DecimalQuantityField(_("temperature 2"), max_digits=7, decimal_places=3, unit="℃",
                                                       null=True, blank=True)
 
-    class Meta(samples.models.depositions.Layer.Meta):
+    class Meta(samples.models.Layer.Meta):
         unique_together = ("deposition", "number")
         verbose_name = _("5-chamber layer")
         verbose_name_plural = _("5-chamber layers")

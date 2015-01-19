@@ -454,8 +454,8 @@ by a “foreign key” field.
 The deposition model is derived from :py:class:`~samples.models.Deposition`,
 which in turn is a ``Process``::
 
-    class FiveChamberDeposition(samples.models.depositions.Deposition):
-        class Meta(samples.models.depositions.Deposition.Meta):
+    class FiveChamberDeposition(samples.models.Deposition):
+        class Meta(samples.models.Deposition.Meta):
             _ = lambda x: x
             permissions = (
                 ("add_five_chamber_deposition", _("Can add 5-chamber depositions")),
@@ -471,7 +471,7 @@ notebook possible.
 In contrast, the layer model is derived from :py:class:`~samples.models.Layer`,
 which in turn is an ordinary Django model (not a ``Process``)::
 
-    class FiveChamberLayer(samples.models.depositions.Layer):
+    class FiveChamberLayer(samples.models.Layer):
         deposition = models.ForeignKey(
             FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
         layer_type = models.CharField(
@@ -487,7 +487,7 @@ which in turn is an ordinary Django model (not a ``Process``)::
         temperature_2 = model_fields.DecimalQuantityField(
             _("temperature 2"), max_digits=7, decimal_places=3, unit="℃", null=True, blank=True)
 
-        class Meta(samples.models.depositions.Layer.Meta):
+        class Meta(samples.models.Layer.Meta):
             unique_together = ("deposition", "number")
 
 The most important thing here is the ``deposition`` field which points to the

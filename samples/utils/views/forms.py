@@ -923,7 +923,7 @@ class SampleSelectForm(forms.Form):
             `utils.extract_preset_sample`
 
         :type user: django.contrib.auth.models.User
-        :type process_instance: `samples.models.common.Process`
+        :type process_instance: `samples.models.Process`
         :type preset_sample: `samples.models.Sample`
         """
         super(SampleSelectForm, self).__init__(*args, **kwargs)

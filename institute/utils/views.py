@@ -53,7 +53,7 @@ def edit_depositions(request, deposition_number, form_set, institute_model, edit
     :type request: QueryDict
     :type deposition_number: unicode or NoneType
     :type form_set: FormSet
-    :type institute_model: `samples.models.depositions.Deposition`
+    :type institute_model: `samples.models.Deposition`
     :type edit_url: unicode
     :type rename_conservatively: bool
 
