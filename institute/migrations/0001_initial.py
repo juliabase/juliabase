@@ -1,18 +1,5 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# This file is part of JuliaBase, the samples database.
-#
-# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
-#                       Marvin Goblet <m.goblet@fz-juelich.de>,
-#                       Torsten Bronger <t.bronger@fz-juelich.de>
-#
-# You must not use, install, pass on, offer, sell, analyse, modify, or
-# distribute this software without explicit permission of the copyright holder.
-# If you have received a copy of this software without the explicit permission
-# of the copyright holder, you must destroy it immediately and completely.
-
-from __future__ import absolute_import, unicode_literals, division
+from __future__ import unicode_literals
 
 from django.db import models, migrations
 import jb_common.model_fields
@@ -166,12 +153,12 @@ class Migration(migrations.Migration):
                 ('method', models.CharField(default='profilers&edge', max_length=30, verbose_name='measurement method', choices=[('profilers&edge', 'profilometer + edge'), ('ellipsometer', 'ellipsometer'), ('calculated', 'calculated from deposition parameters'), ('estimate', 'estimate'), ('other', 'other')])),
             ],
             options={
+                'get_latest_by': 'timestamp',
                 'ordering': ['timestamp'],
                 'abstract': False,
-                'get_latest_by': 'timestamp',
-                'verbose_name': 'layer thickness measurement',
                 'verbose_name_plural': 'layer thickness measurements',
                 'default_permissions': (),
+                'verbose_name': 'layer thickness measurement',
             },
             bases=('samples.process',),
         ),
@@ -249,12 +236,12 @@ class Migration(migrations.Migration):
                 ('parameters', models.TextField(verbose_name='parameters', blank=True)),
             ],
             options={
+                'get_latest_by': 'timestamp',
                 'ordering': ['timestamp'],
                 'abstract': False,
-                'get_latest_by': 'timestamp',
-                'verbose_name': 'structuring',
                 'verbose_name_plural': 'structurings',
                 'default_permissions': (),
+                'verbose_name': 'structuring',
             },
             bases=('samples.process',),
         ),
@@ -265,12 +252,12 @@ class Migration(migrations.Migration):
                 ('material', models.CharField(max_length=30, verbose_name='substrate material', choices=[('custom', 'custom'), ('asahi-u', 'ASAHI-U'), ('asahi-vu', 'ASAHI-VU'), ('corning', 'Corning glass'), ('glass', 'glass'), ('si-wafer', 'silicon wafer'), ('quartz', 'quartz'), ('sapphire', 'sapphire'), ('aluminium foil', 'aluminium foil')])),
             ],
             options={
+                'get_latest_by': 'timestamp',
                 'ordering': ['timestamp'],
                 'abstract': False,
-                'get_latest_by': 'timestamp',
-                'verbose_name': 'substrate',
                 'verbose_name_plural': 'substrates',
                 'default_permissions': (),
+                'verbose_name': 'substrate',
             },
             bases=('samples.process',),
         ),
