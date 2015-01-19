@@ -455,7 +455,7 @@ The deposition model is derived from :py:class:`~samples.models.Deposition`,
 which in turn is a ``Process``::
 
     class FiveChamberDeposition(samples.models.Deposition):
-        class Meta(samples.models.Deposition.Meta):
+        class Meta(samples.models.PhysicalProcess.Meta):
             _ = lambda x: x
             permissions = (
                 ("add_five_chamber_deposition", _("Can add 5-chamber depositions")),

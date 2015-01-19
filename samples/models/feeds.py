@@ -128,7 +128,7 @@ class FeedNewSamples(FeedEntry):
     purpose = models.CharField(_("purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("auto adders"), blank=True)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         # FixMe: The labels are gramatically unfortunate.  “feed entry for new
         # samples” is better.
         verbose_name = _("new samples feed entry")
@@ -156,7 +156,7 @@ class FeedMovedSamples(FeedEntry):
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("auto adders"), blank=True)
     description = models.TextField(_("description"))
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("moved samples feed entry")
         verbose_name_plural = _("moved samples feed entries")
 
@@ -178,7 +178,7 @@ class FeedNewPhysicalProcess(FeedEntry):
     """
     process = models.OneToOneField(Process, verbose_name=_("process"))
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("new physical process feed entry")
         verbose_name_plural = _("new physical process feed entries")
 
@@ -202,7 +202,7 @@ class FeedEditedPhysicalProcess(FeedEntry):
     process = models.ForeignKey(Process, verbose_name=_("process"))
     description = models.TextField(_("description"))
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("edited physical process feed entry")
         verbose_name_plural = _("edited physical process feed entries")
 
@@ -230,7 +230,7 @@ class FeedResult(FeedEntry):
     description = models.TextField(_("description"), blank=True)
     is_new = models.BooleanField(_("result is new"), default=False)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("result feed entry")
         verbose_name_plural = _("result feed entries")
 
@@ -263,7 +263,7 @@ class FeedCopiedMySamples(FeedEntry):
     samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
     comments = models.TextField(_("comments"))
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("copied My Samples feed entry")
         verbose_name_plural = _("copied My Samples feed entries")
 
@@ -287,7 +287,7 @@ class FeedEditedSamples(FeedEntry):
     description = models.TextField(_("description"))
     responsible_person_changed = models.BooleanField(_("has responsible person changed"), default=False)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("edited samples feed entry")
         verbose_name_plural = _("edited samples feed entries")
 
@@ -309,7 +309,7 @@ class FeedSampleSplit(FeedEntry):
     sample_split = models.ForeignKey(SampleSplit, verbose_name=_("sample split"))
     sample_completely_split = models.BooleanField(_("sample was completely split"), default=False)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
             # Translators: Feed entry for a split of a sample
         verbose_name = _("sample split feed entry")
             # Translators: Feed entries for splits of samples
@@ -333,7 +333,7 @@ class FeedEditedSampleSeries(FeedEntry):
     description = models.TextField(_("description"))
     responsible_person_changed = models.BooleanField(_("has responsible person changed"), default=False)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("edited sample series feed entry")
         verbose_name_plural = _("edited sample series feed entries")
 
@@ -354,7 +354,7 @@ class FeedNewSampleSeries(FeedEntry):
     topic = models.ForeignKey(Topic, verbose_name=_("topic"))
     subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("subscribers"), blank=True)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("new sample series feed entry")
         verbose_name_plural = _("new sample series feed entries")
 
@@ -382,7 +382,7 @@ class FeedMovedSampleSeries(FeedEntry):
     description = models.TextField(_("description"))
     subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("subscribers"), blank=True)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("moved sample series feed entry")
         verbose_name_plural = _("moved sample series feed entries")
 
@@ -412,7 +412,7 @@ class FeedChangedTopic(FeedEntry):
         # Translators: Action is either addition or removal
     action = models.CharField(_("action"), max_length=7, choices=changed_topic_action_choices)
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("changed topic feed entry")
         verbose_name_plural = _("changed topic feed entries")
 
@@ -434,7 +434,7 @@ class FeedStatusMessage(FeedEntry):
     process_class = models.ForeignKey(ContentType, verbose_name=_("process class"))
     status = models.ForeignKey(StatusMessage, verbose_name=_("status message"), related_name="feed_entries")
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("status message feed entry")
         verbose_name_plural = _("status message feed entries")
 
@@ -455,7 +455,7 @@ class FeedWithdrawnStatusMessage(FeedEntry):
     process_class = models.ForeignKey(ContentType, verbose_name=_("process class"))
     status = models.ForeignKey(StatusMessage, verbose_name=_("status message"), related_name="feed_entries_for_withdrawal")
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("withdrawn status message feed entry")
         verbose_name_plural = _("withdrawn status message feed entries")
 
@@ -474,7 +474,7 @@ class FeedNewTask(FeedEntry):
     """
     task = models.ForeignKey(Task, verbose_name=_("task"), related_name="feed_entries_for_new_tasks")
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("new task feed entry")
         verbose_name_plural = _("new task feed entries")
 
@@ -494,7 +494,7 @@ class FeedEditedTask(FeedEntry):
     task = models.ForeignKey(Task, verbose_name=_("task"), related_name="feed_entries_for_edited_tasks")
     description = models.TextField(_("description"))
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("edited task feed entry")
         verbose_name_plural = _("edited task feed entries")
 
@@ -515,7 +515,7 @@ class FeedRemovedTask(FeedEntry):
     process_class = models.ForeignKey(ContentType, verbose_name=_("process class"))
     samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
 
-    class Meta(FeedEntry.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("removed task feed entry")
         verbose_name_plural = _("removed task feed entries")
 

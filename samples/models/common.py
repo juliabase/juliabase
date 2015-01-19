@@ -609,10 +609,10 @@ class PhysicalProcess(Process):
     If neiter ``"add_model_name"`` nor ``"edit_permissions_for_model_name"`` is
     included, the process won't show up on the permissions list page.
     """
-    class Meta(Process.Meta):
+    class Meta(PolymorphicModel.Meta):
         abstract = True
-        # FixMe: The following two lines are necessary possibly due to a Django
-        # bug.  This should be cleared up.
+        # I must repeat it here because I can derive ``Meta`` only from an
+        # abstract ancestor, and this one doesn't have these fields.
         ordering = ["timestamp"]
         get_latest_by = "timestamp"
 
@@ -988,7 +988,7 @@ class SampleSplit(Process):
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too."""
 
-    class Meta(Process.Meta):
+    class Meta(PolymorphicModel.Meta):
         verbose_name = _("sample split")
         verbose_name_plural = _("sample splits")
 
@@ -1095,7 +1095,7 @@ class SampleDeath(Process):
         # Translators: Of a sample
     reason = models.CharField(_("cause of death"), max_length=50, choices=sample_death_reasons)
 
-    class Meta(Process.Meta):
+    class Meta(PolymorphicModel.Meta):
             # Translators: Of a sample
         verbose_name = _("cease of existence")
             # Translators: Of a sample
@@ -1131,7 +1131,7 @@ class Result(Process):
     already *before* anyting is written here.)
     """
 
-    class Meta(Process.Meta):
+    class Meta(PolymorphicModel.Meta):
             # Translators: experimental result
         verbose_name = _("result")
             # Translators: experimental results

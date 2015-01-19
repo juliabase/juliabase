@@ -47,7 +47,7 @@ class ClusterToolDeposition(samples.models.Deposition):
     """
     carrier = models.CharField(_("carrier"), max_length=10, blank=True)
 
-    class Meta(samples.models.Deposition.Meta):
+    class Meta(samples.models.PhysicalProcess.Meta):
         verbose_name = _("cluster tool deposition")
         verbose_name_plural = _("cluster tool depositions")
         _ = lambda x: x
@@ -141,7 +141,7 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
     wire_material = models.CharField(_("wire material"), max_length=20, choices=cluster_tool_wire_material_choices)
     base_pressure = model_fields.FloatQuantityField(_("base pressure"), unit="mbar", null=True, blank=True)
 
-    class Meta(ClusterToolLayer.Meta):
+    class Meta(samples.models.Layer.Meta):
         verbose_name = _("cluster tool hot-wire layer")
         verbose_name_plural = _("cluster tool hot-wire layers")
 
@@ -162,7 +162,7 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
                                                          null=True, blank=True, unit="W")
 
 
-    class Meta(ClusterToolLayer.Meta):
+    class Meta(samples.models.Layer.Meta):
         verbose_name = _("cluster tool PECVD layer")
         verbose_name_plural = _("cluster tool PECVD layers")
 
@@ -170,7 +170,7 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
 class FiveChamberDeposition(samples.models.Deposition):
     """5-chamber depositions.
     """
-    class Meta(samples.models.Deposition.Meta):
+    class Meta(samples.models.PhysicalProcess.Meta):
         verbose_name = _("5-chamber deposition")
         verbose_name_plural = _("5-chamber depositions")
         _ = lambda x: x
