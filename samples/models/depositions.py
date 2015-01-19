@@ -62,7 +62,7 @@ class Deposition(PhysicalProcess):
         verbose_name = _("deposition")
         verbose_name_plural = _("depositions")
 
-    class JBMeta(PhysicalProcess.JBMeta):
+    class JBMeta:
         identifying_field = "number"
 
     def _get_layers(self):

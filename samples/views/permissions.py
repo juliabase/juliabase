@@ -32,6 +32,8 @@ from jb_common.utils.base import help_link, get_really_full_name, get_all_models
 from jb_common.utils.views import UserField
 from samples import models, permissions
 import samples.utils.views as utils
+import jb_common.utils.base as jb_common_utils
+from django.contrib.auth.models import ContentType
 
 
 class PermissionsModels(object):
@@ -173,13 +175,14 @@ def get_addable_models(user):
     all_addable_models = []
     for model in get_all_models().values():
         if model._meta.app_label not in ["samples", "jb_common"]:
+            permission_codename = "edit_permissions_for_{0}".format(jb_common_utils.camel_case_to_underscores(model.__name__))
+            content_type = ContentType.objects.get_for_model(model)
             try:
-                configurable_permissions = model.JBMeta.configurable_permissions
-            except AttributeError:
+                Permission.objects.get(codename=permission_codename, content_type=content_type)
+            except Permission.DoesNotExist:
                 continue
             else:
-                if configurable_permissions:
-                    all_addable_models.append(model)
+                all_addable_models.append(model)
 
     if not user.is_superuser:
         user_department = user.jb_user_details.department
