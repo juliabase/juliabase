@@ -126,6 +126,7 @@ class ExternalOperator(models.Model):
         verbose_name = _("external operator")
         verbose_name_plural = _("external operators")
         _ = lambda x: x
+        default_permissions = ()
         permissions = (("add_external_operator", _("Can add an external operator")),
                        ("view_all_external_operators", _("Can view all external operators")))
 
@@ -611,6 +612,7 @@ class PhysicalProcess(Process):
     """
     class Meta(PolymorphicModel.Meta):
         abstract = True
+        default_permissions = ()
         # I must repeat it here because I can derive ``Meta`` only from an
         # abstract ancestor, and this one doesn't have these fields.
         ordering = ["timestamp"]

@@ -52,6 +52,7 @@ class Migration(migrations.Migration):
                 ('confidential', models.BooleanField(default=False, verbose_name='confidential')),
             ],
             options={
+                'default_permissions': (),
                 'verbose_name': 'external operator',
                 'verbose_name_plural': 'external operators',
                 'permissions': (('add_external_operator', 'Can add an external operator'), ('view_all_external_operators', 'Can view all external operators')),
@@ -342,6 +343,7 @@ class Migration(migrations.Migration):
                 'get_latest_by': 'timestamp',
                 'verbose_name': 'deposition',
                 'verbose_name_plural': 'depositions',
+                'default_permissions': (),
             },
             bases=('samples.process',),
         ),

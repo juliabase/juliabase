@@ -138,6 +138,7 @@ class Topic(models.Model):
         verbose_name_plural = _("topics")
         unique_together = ("name", "department")
         _ = lambda x: x
+        default_permissions = ()
         permissions = (("can_edit_all_topics", _("Can edit all topics, and can add new topics")),
                        ("can_edit_their_topics", _("Can edit topics that he/she is a manager of")))
 
