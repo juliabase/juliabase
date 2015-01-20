@@ -26,6 +26,7 @@ JuliaBase
    demo
    programming/installation
    programming/programming
+   programming/permissions
    programming/remote_client
    programming/settings
    programming/sample_names
