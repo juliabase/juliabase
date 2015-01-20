@@ -45,7 +45,8 @@ import jb_common.utils.base as utils
 import samples.models
 
 
-_permission_name_regex = re.compile("(?P<prefix>Can (?:add|edit every|view every|edit permissions for) )'(?P<class_name>.+)'")
+_permission_name_regex = re.compile("(?P<prefix>Can (?:add|edit every|view every|edit permissions for) )'(?P<class_name>.+)'",
+                                    re.UNICODE)
 
 def translate_permission(permission_codename):
     """Translates a permission description to the user's language.  Note that in
