@@ -31,7 +31,7 @@ from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
-from jb_common.utils.base import format_lazy
+from jb_common.utils.base import format_lazy, generate_permissions
 import jb_common.utils.base
 import samples.utils.views as utils
 from samples.utils.plots import PlotError
@@ -93,12 +93,7 @@ class PDSMeasurement(PhysicalProcess):
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("PDS measurement")
         verbose_name_plural = _("PDS measurements")
-        _ = lambda x: x
-        permissions = (("add_pdsmeasurement", _("Can add PDS measurements")),
-                       # Translators: Don't abbreviate "perms" in translation
-                       # (not even to English)
-                       ("edit_permissions_for_pdsmeasurement", _("Can edit perms for PDS measurements")),
-                       ("view_every_pdsmeasurement", _("Can view all PDS measurements")))
+        permissions = generate_permissions({"add", "view_every", "edit_permissions"}, "PDSMeasurement")
         ordering = ["number"]
 
     class JBMeta:
@@ -135,13 +130,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("solarsimulator measurement")
         verbose_name_plural = _("solarsimulator measurements")
-        _ = lambda x: x
-        permissions = (("add_solarsimulatormeasurement", _("Can add solarsimulator measurements")),
-                       # Translators: Don't abbreviate "perms" in translation
-                       # (not even to English)
-                       ("edit_permissions_for_solarsimulatormeasurement",
-                        _("Can edit perms for solarsimulator measurements")),
-                       ("view_every_solarsimulatormeasurement", _("Can view all solarsimulator measurements")))
+        permissions = generate_permissions({"add", "view_every", "edit_permissions"}, "SolarsimulatorMeasurement")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()

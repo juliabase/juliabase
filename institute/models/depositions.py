@@ -25,6 +25,7 @@ import django.core.urlresolvers
 from django.utils.http import urlquote_plus
 from django.db import models
 from jb_common import models as jb_common_models, model_fields
+from jb_common.utils.base import generate_permissions
 import samples.models.depositions
 from samples import permissions
 from samples.data_tree import DataItem
@@ -46,14 +47,7 @@ class ClusterToolDeposition(samples.models.Deposition):
     class Meta(samples.models.PhysicalProcess.Meta):
         verbose_name = _("cluster tool deposition")
         verbose_name_plural = _("cluster tool depositions")
-        _ = lambda x: x
-        permissions = (("add_clustertooldeposition", _("Can add cluster tool depositions")),
-                       ("edit_permissions_for_clustertooldeposition",
-                       # Translators: Don't abbreviate "perms" in translation
-                       # (not even to English)
-                        _("Can edit perms for cluster tool I depositions")),
-                       ("view_every_clustertooldeposition", _("Can view all cluster tool depositions")),
-                       ("change_clustertooldeposition", _("Can edit all cluster tool depositions")))
+        permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "ClusterToolDeposition")
 
     def get_context_for_user(self, user, old_context):
         """
@@ -169,13 +163,7 @@ class FiveChamberDeposition(samples.models.Deposition):
     class Meta(samples.models.PhysicalProcess.Meta):
         verbose_name = _("5-chamber deposition")
         verbose_name_plural = _("5-chamber depositions")
-        _ = lambda x: x
-        permissions = (("add_fivechamberdeposition", _("Can add 5-chamber depositions")),
-                       # Translators: Don't abbreviate "perms" in translation
-                       # (not even to English)
-                       ("edit_permissions_for_fivechamberdeposition", _("Can edit perms for 5-chamber depositions")),
-                       ("view_every_fivechamberdeposition", _("Can view all 5-chamber depositions")),
-                       ("change_fivechamberdeposition", _("Can edit all 5-chamber depositions")))
+        permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "FiveChamberDeposition")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
