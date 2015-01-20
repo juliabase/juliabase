@@ -58,7 +58,7 @@ class ExportTest(JsonTestCase):
         self.assertEqual(response["content-type"], "application/json")
         self.assertJsonDictEqual(response,
             {"samples": [7], "apparatus": "pds1", "timestamp_inaccuracy": 0, "timestamp": "2014-10-07T10:01:00",
-             "external_operator": None, "id": 29,
+             "external_operator": None, "id": 25,
              "operator": "n.burkhardt", "finished": True, "comments": "",
              "number": 1, "content_type": "PDS measurement", "raw_datafile": "measurement-1.dat"})
 
@@ -74,22 +74,22 @@ class ExportTest(JsonTestCase):
                              "samples": [7], "external_operator": None,
                              "operator": "e.monroe", "id": 13},
              "process #14": {"external_operator": None, "content_type": "cluster tool deposition",
-                             "layer 1": {"base_pressure": 3.0, "h2": 1.0, "number": 1, "comments": "p-type layer",
-                                         "content_type": "cluster tool hot-wire layer", "time": "10:00", "sih4": 1.0,
+                             "layer 1": {"base_pressure": 0.0, "h2": 1.0, "number": 1, "comments": "p-type layer",
+                                         "content_type": "cluster tool hot-wire layer", "time": "10:00", "sih4": 2.0,
                                          "wire_material": "rhenium", "id": 1},
                              "layer 2": {"plasma_start_with_shutter": False, "h2": 0.0, "number": 2, "comments":
                                          "i-type layer", "chamber": "#3", "deposition_power": None,
                                          "content_type": "cluster tool PECVD layer", "time": "55:00", "sih4": 3.0, "id": 2},
-                             "layer 3": {"base_pressure": 0.0, "h2": 11.0, "number": 3, "comments": "n-type layer",
-                                         "content_type": "cluster tool hot-wire layer", "time": "10:00", "sih4": 2.0,
+                             "layer 3": {"base_pressure": 4.0, "h2": 4.0, "number": 3, "comments": "n-type layer",
+                                         "content_type": "cluster tool hot-wire layer", "time": "10:00", "sih4": 7.0,
                                          "wire_material": "rhenium", "id": 3},
                              "timestamp_inaccuracy": 0, "comments": "", "number": "14C-001", "finished": True, "carrier": "",
                              "samples": [7], "timestamp": "2014-10-01T10:30:00", "operator": "e.monroe", "split_done": False,
                              "id": 14},
-             "process #29": {"external_operator": None, "content_type": "PDS measurement", "apparatus": "pds1",
+             "process #25": {"external_operator": None, "content_type": "PDS measurement", "apparatus": "pds1",
                              "timestamp": "2014-10-07T10:01:00", "timestamp_inaccuracy": 0, "comments": "", "number": 1,
                              "finished": True, "raw_datafile": "measurement-1.dat", "samples": [7],
-                             "operator": "n.burkhardt", "id": 29}})
+                             "operator": "n.burkhardt", "id": 25}})
 
 
 class SharedUtilsTest(TestCase):
