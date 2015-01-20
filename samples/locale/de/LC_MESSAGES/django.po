@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-20 15:14+0100\n"
+"POT-Creation-Date: 2015-01-21 00:04+0100\n"
 "PO-Revision-Date: 2015-01-03 22:45+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -997,15 +997,20 @@ msgstr "Feed-Einträge für verschobene Aufträge"
 msgid "Removed a task for {process_class}"
 msgstr "Entfernter Auftrag {process_class}"
 
-#: samples/permissions.py:71
+#: samples/permissions.py:73
 msgid "[not available]"
 msgstr "[nicht vorhanden]"
 
-#: samples/permissions.py:257
+#: samples/permissions.py:77
+#, python-brace-format
+msgid "{class_name}"
+msgstr ""
+
+#: samples/permissions.py:265
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
 
-#: samples/permissions.py:297
+#: samples/permissions.py:305
 msgid ""
 "You are not allowed to view the sample since the sample doesn't belong to "
 "your department."
@@ -1013,7 +1018,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da die Probe nicht zu Ihrer Abteilung "
 "gehört."
 
-#: samples/permissions.py:302
+#: samples/permissions.py:310
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "topic, nor belongs the sample to your department."
@@ -1021,7 +1026,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "die Probe zu Ihrer Abteilung gehört."
 
-#: samples/permissions.py:306
+#: samples/permissions.py:314
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
@@ -1030,7 +1035,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher ({name}) sind."
 
-#: samples/permissions.py:311
+#: samples/permissions.py:319
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
@@ -1040,11 +1045,11 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher ({name}) sind, noch alle Proben sehen dürfen."
 
-#: samples/permissions.py:336 samples/views/sample.py:1011
+#: samples/permissions.py:344 samples/views/sample.py:1011
 msgid "You are not allowed to rename the sample."
 msgstr "Sie dürfen die Probe nicht umbenennen."
 
-#: samples/permissions.py:397
+#: samples/permissions.py:405
 #, python-brace-format
 msgid ""
 "You are not allowed to add {process_plural_name} because you don't have the "
@@ -1053,7 +1058,7 @@ msgstr ""
 "Sie dürfen keine {process_plural_name} hinzufügen, weil Sie nicht die "
 "Berechtigung „{permission}“ haben."
 
-#: samples/permissions.py:431
+#: samples/permissions.py:439
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the process “{process}” because you are not the "
@@ -1062,7 +1067,7 @@ msgstr ""
 "Sie dürfen den Prozess „{process}“ nicht ändern, weil Sie nicht der "
 "Operateur dieses Prozesses sind."
 
-#: samples/permissions.py:485
+#: samples/permissions.py:493
 #, python-brace-format
 msgid ""
 "You are not allowed to view lab notebooks for {process_plural_name} because "
@@ -1071,7 +1076,7 @@ msgstr ""
 "Sie dürfen keine Laborbücher für {process_plural_name} einsehen, weil Sie "
 "nicht die Berechtigung „{permission}“ haben."
 
-#: samples/permissions.py:520
+#: samples/permissions.py:528
 #, python-brace-format
 msgid ""
 "You are not allowed to view the process “{process}” because neither you have "
@@ -1083,7 +1088,7 @@ msgstr ""
 "Berechtigung „{permission}“ haben, noch eine der beteiligten Proben sehen "
 "dürfen, noch der Operateur sind, noch eine Freigabe für diesen Prozess haben."
 
-#: samples/permissions.py:540
+#: samples/permissions.py:548
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the result “{result}” because you didn't create "
@@ -1092,7 +1097,7 @@ msgstr ""
 "Sie dürfen das Resultat „{result}“ nicht ändern, weil Sie dieses Resultat "
 "nicht selbst angelegt haben."
 
-#: samples/permissions.py:562
+#: samples/permissions.py:570
 #, python-brace-format
 msgid ""
 "You are not allowed to view the result “{result}” because neither did you "
@@ -1103,7 +1108,7 @@ msgstr ""
 "Urheber dieses Ergebnisses sind, noch eine der beteiligten Proben oder "
 "Probenserien sehen dürfen, noch eine Freigabe für dieses Ergebnis haben."
 
-#: samples/permissions.py:585
+#: samples/permissions.py:593
 #, python-brace-format
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
@@ -1114,7 +1119,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probe sind, noch ein Mitglied ihres "
 "Themas."
 
-#: samples/permissions.py:589
+#: samples/permissions.py:597
 #, python-brace-format
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
@@ -1125,7 +1130,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probenserie sind, noch ein Mitglied "
 "ihres Themas."
 
-#: samples/permissions.py:611
+#: samples/permissions.py:619
 msgid ""
 "You are not allowed to edit the sample since the sample doesn't belong to "
 "your department."
@@ -1133,7 +1138,7 @@ msgstr ""
 "Sie dürfen die Probe nicht ändern, da die Probe nicht zu Ihrer Abteilung "
 "gehört."
 
-#: samples/permissions.py:616
+#: samples/permissions.py:624
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the sample “{name}” (including splitting and "
@@ -1143,7 +1148,7 @@ msgstr ""
 "Sie dürfen die Probe „{name}“ nicht ändern (inklusive spalten und für tot "
 "erklären), weil Sie nicht ihr aktuell Verantwortlicher sind."
 
-#: samples/permissions.py:635
+#: samples/permissions.py:643
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the sample series “{name}” because you are not "
@@ -1152,7 +1157,7 @@ msgstr ""
 "Sie dürfen die Probenserie „{name}“ nicht ändern, weil Sie nicht ihr aktuell "
 "Verantwortlicher sind."
 
-#: samples/permissions.py:654
+#: samples/permissions.py:662
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample series “{name}” because neither are "
@@ -1161,7 +1166,7 @@ msgstr ""
 "Sie dürfen die Probenserie {name} nicht sehen, weil Sie weder der aktuell "
 "Verantwortliche für diese Probeserie sind, noch ein Mitglied ihres Themas."
 
-#: samples/permissions.py:671
+#: samples/permissions.py:679
 #, python-brace-format
 msgid ""
 "You are not allowed to add an external operator because you don't have the "
@@ -1170,7 +1175,7 @@ msgstr ""
 "Sie dürfen keinen neuen externen Operateur anlegen, weil Ihnen die "
 "Berechtgung „{name}“ fehlt."
 
-#: samples/permissions.py:689
+#: samples/permissions.py:697
 msgid ""
 "You are not allowed to edit this external operator because you aren't their "
 "current contact person."
@@ -1178,7 +1183,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht ändern, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: samples/permissions.py:708
+#: samples/permissions.py:716
 msgid ""
 "You are not allowed to view this external operator because you are not their "
 "current contact person."
@@ -1186,7 +1191,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht einsehen, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: samples/permissions.py:712
+#: samples/permissions.py:720
 msgid ""
 "You are not allowed to view this external operator because neither are you "
 "their current contact person, nor can you view all external operators."
@@ -1195,7 +1200,7 @@ msgstr ""
 "aktuelle Kontaktperson für ihn sind, noch alle externen Operateure sehen "
 "dürfen."
 
-#: samples/permissions.py:734
+#: samples/permissions.py:742
 #, python-brace-format
 msgid ""
 "You are not allowed to add topics because you don't have the permission "
@@ -1204,7 +1209,7 @@ msgstr ""
 "Sie dürfen Themen nicht neu anlegen, weil Ihnen die Berechtgung „{name}“ "
 "fehlt."
 
-#: samples/permissions.py:741
+#: samples/permissions.py:749
 #, python-brace-format
 msgid ""
 "You are not allowed to change this topic because you don't have the "
@@ -1213,7 +1218,7 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{1}“ fehlt."
 
-#: samples/permissions.py:747
+#: samples/permissions.py:755
 #, python-brace-format
 msgid ""
 "You are not allowed to change this topic because you don't have the "
@@ -1222,14 +1227,14 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{name}“ "
 "fehlt."
 
-#: samples/permissions.py:752
+#: samples/permissions.py:760
 msgid ""
 "You are not allowed to change this topic because it is confidential and you "
 "are not in this topic."
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Sie nicht in diesem Thema sind."
 
-#: samples/permissions.py:771
+#: samples/permissions.py:779
 #, python-brace-format
 msgid ""
 "You are not allowed to change your topics because you don't have the "
@@ -1238,7 +1243,7 @@ msgstr ""
 "Sie dürfen Ihre Themen nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{1}“ fehlt."
 
-#: samples/permissions.py:799
+#: samples/permissions.py:807
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
 "access the news feed of another user."
@@ -1247,7 +1252,7 @@ msgstr ""
 "Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
 "dürfen."
 
-#: samples/permissions.py:803
+#: samples/permissions.py:811
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 

@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-20 15:14+0100\n"
+"POT-Creation-Date: 2015-01-21 00:04+0100\n"
 "PO-Revision-Date: 2015-01-20 15:16+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -38,177 +38,141 @@ msgstr "Frau {user.last_name}"
 msgid "Mr. {user.last_name}"
 msgstr "Herr {user.last_name}"
 
-#: institute/models/depositions.py:48
+#: institute/models/depositions.py:45
 msgid "carrier"
 msgstr "Carrier"
 
-#: institute/models/depositions.py:51
+#: institute/models/depositions.py:48
 msgid "cluster tool deposition"
 msgstr "Cluster-Tool-Deposition"
 
-#: institute/models/depositions.py:52
+#: institute/models/depositions.py:49
 msgid "cluster tool depositions"
 msgstr "Cluster-Tool-Depositionen"
 
-#: institute/models/depositions.py:54
-msgid "Can add cluster tool depositions"
-msgstr "Darf Cluster-Tool-Depositionen hinzufügen"
-
-#. Translators: Don't abbreviate "perms" in translation
-#. (not even to English)
-#: institute/models/depositions.py:58
-msgid "Can edit perms for cluster tool I depositions"
-msgstr "Darf die Berechtigungen für Cluster-Tool-I-Depositionen ändern"
-
-#: institute/models/depositions.py:59
-msgid "Can view all cluster tool depositions"
-msgstr "Darf alle Cluster-Tool-Depositionen sehen"
-
-#: institute/models/depositions.py:60
-msgid "Can edit all cluster tool depositions"
-msgstr "Darf alle Cluster-Tool-Depositionen ändern"
-
-#: institute/models/depositions.py:105
+#: institute/models/depositions.py:95
 msgid "cluster tool deposition lab"
 msgstr "Labor des Cluster-Tools"
 
-#: institute/models/depositions.py:117 institute/models/depositions.py:215
+#: institute/models/depositions.py:107 institute/models/depositions.py:199
 msgid "deposition"
 msgstr "Deposition"
 
-#: institute/models/depositions.py:121
+#: institute/models/depositions.py:111
 msgid "cluster tool layer"
 msgstr "Schicht des Cluster-Tools"
 
-#: institute/models/depositions.py:122
+#: institute/models/depositions.py:112
 msgid "cluster tool layers"
 msgstr "Schichten des Cluster-Tools"
 
-#: institute/models/depositions.py:126 institute/models/depositions.py:232
+#: institute/models/depositions.py:116 institute/models/depositions.py:216
 #, python-brace-format
 msgid "layer {number} of {deposition}"
 msgstr "Schicht {number} von {deposition}"
 
-#: institute/models/depositions.py:130
+#: institute/models/depositions.py:120
 msgid "unknown"
 msgstr "unbekannt"
 
-#: institute/models/depositions.py:131
+#: institute/models/depositions.py:121
 msgid "rhenium"
 msgstr "Rhenium"
 
-#: institute/models/depositions.py:132
+#: institute/models/depositions.py:122
 msgid "tantalum"
 msgstr "Tantal"
 
-#: institute/models/depositions.py:133
+#: institute/models/depositions.py:123
 msgid "tungsten"
 msgstr "Wolfram"
 
-#: institute/models/depositions.py:139 institute/models/depositions.py:158
+#: institute/models/depositions.py:129 institute/models/depositions.py:148
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: institute/models/depositions.py:139 institute/models/depositions.py:158
+#: institute/models/depositions.py:129 institute/models/depositions.py:148
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
-#: institute/models/depositions.py:140 institute/models/depositions.py:159
+#: institute/models/depositions.py:130 institute/models/depositions.py:149
 #: institute/models/sample_details.py:283
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:33
 msgid "comments"
 msgstr "Kommentare"
 
-#: institute/models/depositions.py:141
+#: institute/models/depositions.py:131
 msgid "wire material"
 msgstr "Drahtmaterial"
 
-#: institute/models/depositions.py:142
+#: institute/models/depositions.py:132
 msgid "base pressure"
 msgstr "Basisdruck"
 
-#: institute/models/depositions.py:145
+#: institute/models/depositions.py:135
 msgid "cluster tool hot-wire layer"
 msgstr "Hot-Wire-Schicht im Cluster-Tool"
 
-#: institute/models/depositions.py:146
+#: institute/models/depositions.py:136
 msgid "cluster tool hot-wire layers"
 msgstr "Hot-Wire-Schichten im Cluster-Tool"
 
-#: institute/models/depositions.py:157 institute/models/depositions.py:217
+#: institute/models/depositions.py:147 institute/models/depositions.py:201
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:28
 msgid "chamber"
 msgstr "Kammer"
 
-#: institute/models/depositions.py:160
+#: institute/models/depositions.py:150
 msgid "plasma start with shutter"
 msgstr "Plasma startet mit Shutter"
 
-#: institute/models/depositions.py:161
+#: institute/models/depositions.py:151
 msgid "deposition power"
 msgstr "Depositionsleistung"
 
-#: institute/models/depositions.py:166
+#: institute/models/depositions.py:156
 msgid "cluster tool PECVD layer"
 msgstr "PECVD-Schicht im Cluster-Tool"
 
-#: institute/models/depositions.py:167
+#: institute/models/depositions.py:157
 msgid "cluster tool PECVD layers"
 msgstr "PECVD-Schichten im Cluster-Tool"
 
-#: institute/models/depositions.py:174
+#: institute/models/depositions.py:164
 msgid "5-chamber deposition"
 msgstr "5-Kammer-Deposition"
 
-#: institute/models/depositions.py:175
+#: institute/models/depositions.py:165
 msgid "5-chamber depositions"
 msgstr "5-Kammer-Depositionen"
 
-#: institute/models/depositions.py:177
-msgid "Can add 5-chamber depositions"
-msgstr "Darf 5-Kammer-Depositionen hinzufügen"
-
-#. Translators: Don't abbreviate "perms" in translation
-#. (not even to English)
-#: institute/models/depositions.py:180
-msgid "Can edit perms for 5-chamber depositions"
-msgstr "Darf die Berechtigungen für 5-Kammer-Depositionen ändern"
-
-#: institute/models/depositions.py:181
-msgid "Can view all 5-chamber depositions"
-msgstr "Darf alle 5-Kammer-Depositionen sehen"
-
-#: institute/models/depositions.py:182
-msgid "Can edit all 5-chamber depositions"
-msgstr "Darf alle 5-Kammer-Depositionen ändern"
-
-#: institute/models/depositions.py:194
+#: institute/models/depositions.py:178
 msgid "5-chamber deposition lab"
 msgstr "5-Kammer-Depositionslabor"
 
-#: institute/models/depositions.py:216
+#: institute/models/depositions.py:200
 msgid "layer type"
 msgstr "Schichttyp"
 
-#: institute/models/depositions.py:220
+#: institute/models/depositions.py:204
 msgid "temperature 1"
 msgstr "Temperatur 1"
 
-#: institute/models/depositions.py:222
+#: institute/models/depositions.py:206
 msgid "temperature 2"
 msgstr "Temperatur 2"
 
-#: institute/models/depositions.py:227
+#: institute/models/depositions.py:211
 msgid "5-chamber layer"
 msgstr "5-Kammer-Schicht"
 
-#: institute/models/depositions.py:228
+#: institute/models/depositions.py:212
 msgid "5-chamber layers"
 msgstr "5-Kammer-Schichten"
 
 #. Translators: sample substrate type
 #: institute/models/physical_processes.py:44
-#: institute/models/physical_processes.py:287
+#: institute/models/physical_processes.py:276
 msgid "custom"
 msgstr "speziell"
 
@@ -272,7 +236,7 @@ msgid "raw data file"
 msgstr "Rohdaten-Datei"
 
 #: institute/models/physical_processes.py:90
-#: institute/models/physical_processes.py:244
+#: institute/models/physical_processes.py:233
 #, python-brace-format
 msgid "only the relative path below \"{path}\""
 msgstr "nur der relative Pfad unterhalb von \"{path}\""
@@ -289,159 +253,133 @@ msgstr "PDS-Messung"
 msgid "PDS measurements"
 msgstr "PDS-Messungen"
 
-#: institute/models/physical_processes.py:97
-msgid "Can add PDS measurements"
-msgstr "Darf PDS-Messungen hinzufügen"
-
-#. Translators: Don't abbreviate "perms" in translation
-#. (not even to English)
-#: institute/models/physical_processes.py:100
-msgid "Can edit perms for PDS measurements"
-msgstr "Darf die Berechtigungen für PDS-Messungen ändern"
-
-#: institute/models/physical_processes.py:101
-msgid "Can view all PDS measurements"
-msgstr "Darf alle PDS-Messungen sehen"
-
-#: institute/models/physical_processes.py:111
+#: institute/models/physical_processes.py:106
 msgid "energy in eV"
 msgstr "Energie in eV"
 
-#: institute/models/physical_processes.py:112
+#: institute/models/physical_processes.py:107
 msgid "α in cm⁻¹"
 msgstr "α in cm⁻¹"
 
-#: institute/models/physical_processes.py:132
+#: institute/models/physical_processes.py:127
 msgid "irradiation"
 msgstr "Beleuchtung"
 
-#: institute/models/physical_processes.py:133
+#: institute/models/physical_processes.py:128
 msgid "temperature"
 msgstr "Temperatur"
 
-#: institute/models/physical_processes.py:136
-#: institute/models/physical_processes.py:241
+#: institute/models/physical_processes.py:131
+#: institute/models/physical_processes.py:230
 msgid "solarsimulator measurement"
 msgstr "Sonnensimulator-Messung"
 
-#: institute/models/physical_processes.py:137
+#: institute/models/physical_processes.py:132
 msgid "solarsimulator measurements"
 msgstr "Sonnensimulator-Messungen"
 
-#: institute/models/physical_processes.py:139
-msgid "Can add solarsimulator measurements"
-msgstr "Darf Sonnensimulator-Messungen hinzufügen"
-
-#: institute/models/physical_processes.py:143
-msgid "Can edit perms for solarsimulator measurements"
-msgstr "Darf die Berechtigungen für Sonnensimlulator-Messungen ändern"
-
-#: institute/models/physical_processes.py:144
-msgid "Can view all solarsimulator measurements"
-msgstr "Darf alle Sonnensimlulator-Messungen sehen"
-
-#: institute/models/physical_processes.py:184
+#: institute/models/physical_processes.py:173
 msgid "η of best cell"
 msgstr "η der besten Zelle"
 
-#: institute/models/physical_processes.py:201
+#: institute/models/physical_processes.py:190
 msgid "voltage in V"
 msgstr "Spannung in V"
 
-#: institute/models/physical_processes.py:202
+#: institute/models/physical_processes.py:191
 msgid "current density in mA/cm²"
 msgstr "Stromdichte in mA/cm²"
 
-#: institute/models/physical_processes.py:242
+#: institute/models/physical_processes.py:231
 msgid "cell position"
 msgstr "Zellposition"
 
-#: institute/models/physical_processes.py:243
+#: institute/models/physical_processes.py:232
 msgid "data file"
 msgstr "Datendatei"
 
-#: institute/models/physical_processes.py:246
+#: institute/models/physical_processes.py:235
 msgid "area"
 msgstr "Fläche"
 
-#: institute/models/physical_processes.py:247
+#: institute/models/physical_processes.py:236
 msgid "efficiency η"
 msgstr "Effizienz η"
 
-#: institute/models/physical_processes.py:248
+#: institute/models/physical_processes.py:237
 msgid "short-circuit current density"
 msgstr "Kurzschluss­strom­dichte"
 
-#: institute/models/physical_processes.py:251
+#: institute/models/physical_processes.py:240
 msgid "solarsimulator cell measurement"
 msgstr "Sonnensimulator-Zellmessung"
 
-#: institute/models/physical_processes.py:252
+#: institute/models/physical_processes.py:241
 msgid "solarsimulator cell measurements"
 msgstr "Sonnensimulator-Zellmessungen"
 
-#: institute/models/physical_processes.py:257
+#: institute/models/physical_processes.py:246
 #, python-brace-format
 msgid "cell {position} of {solarsimulator_measurement}"
 msgstr "Zelle {position} von {solarsimulator_measurement}"
 
-#: institute/models/physical_processes.py:311
+#: institute/models/physical_processes.py:300
 msgid "layout"
 msgstr "Layout"
 
-#: institute/models/physical_processes.py:312
+#: institute/models/physical_processes.py:301
 msgid "length"
 msgstr "Länge"
 
-#: institute/models/physical_processes.py:313
+#: institute/models/physical_processes.py:302
 msgid "width"
 msgstr "Breite"
 
-#: institute/models/physical_processes.py:314
+#: institute/models/physical_processes.py:303
 msgid "parameters"
 msgstr "Parameter"
 
-#: institute/models/physical_processes.py:317
+#: institute/models/physical_processes.py:306
 msgid "structuring"
 msgstr "Strukturierung"
 
-#: institute/models/physical_processes.py:318
+#: institute/models/physical_processes.py:307
 msgid "structurings"
 msgstr "Strukturierungen"
 
-#: institute/models/physical_processes.py:323
+#: institute/models/physical_processes.py:312
 msgid "profilometer + edge"
 msgstr "Profilometer + Kante"
 
-#: institute/models/physical_processes.py:324
+#: institute/models/physical_processes.py:313
 msgid "ellipsometer"
 msgstr "Ellipsometer"
 
-#: institute/models/physical_processes.py:325
+#: institute/models/physical_processes.py:314
 msgid "calculated from deposition parameters"
 msgstr "berechnet aus Depo-Parametern."
 
-#: institute/models/physical_processes.py:326
+#: institute/models/physical_processes.py:315
 msgid "estimate"
 msgstr "Schätzung"
 
-#: institute/models/physical_processes.py:327
+#: institute/models/physical_processes.py:316
 msgid "other"
 msgstr "anderes"
 
-#: institute/models/physical_processes.py:334
+#: institute/models/physical_processes.py:323
 msgid "layer thickness"
 msgstr "Schichtdicke"
 
-#: institute/models/physical_processes.py:335
+#: institute/models/physical_processes.py:324
 msgid "measurement method"
 msgstr "Messmethode"
 
-#: institute/models/physical_processes.py:338
+#: institute/models/physical_processes.py:327
 msgid "layer thickness measurement"
 msgstr "Schichtdickenmessung"
 
-#: institute/models/physical_processes.py:339
+#: institute/models/physical_processes.py:328
 msgid "layer thickness measurements"
 msgstr "Schichtdickenmessungen"
 
@@ -1335,6 +1273,48 @@ msgstr "Ändern des Substrates „{0}“"
 #: institute/views/samples/substrate.py:122
 msgid "Add substrate"
 msgstr "Substrat hinzufügen"
+
+#~ msgid "Can add cluster tool depositions"
+#~ msgstr "Darf Cluster-Tool-Depositionen hinzufügen"
+
+#~ msgid "Can edit perms for cluster tool I depositions"
+#~ msgstr "Darf die Berechtigungen für Cluster-Tool-I-Depositionen ändern"
+
+#~ msgid "Can view all cluster tool depositions"
+#~ msgstr "Darf alle Cluster-Tool-Depositionen sehen"
+
+#~ msgid "Can edit all cluster tool depositions"
+#~ msgstr "Darf alle Cluster-Tool-Depositionen ändern"
+
+#~ msgid "Can add 5-chamber depositions"
+#~ msgstr "Darf 5-Kammer-Depositionen hinzufügen"
+
+#~ msgid "Can edit perms for 5-chamber depositions"
+#~ msgstr "Darf die Berechtigungen für 5-Kammer-Depositionen ändern"
+
+#~ msgid "Can view all 5-chamber depositions"
+#~ msgstr "Darf alle 5-Kammer-Depositionen sehen"
+
+#~ msgid "Can edit all 5-chamber depositions"
+#~ msgstr "Darf alle 5-Kammer-Depositionen ändern"
+
+#~ msgid "Can add PDS measurements"
+#~ msgstr "Darf PDS-Messungen hinzufügen"
+
+#~ msgid "Can edit perms for PDS measurements"
+#~ msgstr "Darf die Berechtigungen für PDS-Messungen ändern"
+
+#~ msgid "Can view all PDS measurements"
+#~ msgstr "Darf alle PDS-Messungen sehen"
+
+#~ msgid "Can add solarsimulator measurements"
+#~ msgstr "Darf Sonnensimulator-Messungen hinzufügen"
+
+#~ msgid "Can edit perms for solarsimulator measurements"
+#~ msgstr "Darf die Berechtigungen für Sonnensimlulator-Messungen ändern"
+
+#~ msgid "Can view all solarsimulator measurements"
+#~ msgstr "Darf alle Sonnensimlulator-Messungen sehen"
 
 #~ msgid "Jülich Forschungszentrum logo"
 #~ msgstr "Logo des Forschungszentrums Jülich"
