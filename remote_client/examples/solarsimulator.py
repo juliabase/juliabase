@@ -16,7 +16,7 @@ from __future__ import unicode_literals
 import sys, os; sys.path.append(os.path.abspath(".."))
 from jb_remote.six.moves import urllib
 
-import os, datetime, glob, random
+import os, datetime, glob
 import numpy
 import scipy.interpolate, scipy.optimize
 from jb_remote_inm import *
