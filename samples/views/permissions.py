@@ -29,8 +29,7 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 import django.core
 from django.conf import settings
 from jb_common.models import Topic
-from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, \
-    camel_case_to_underscores, sorted_users
+from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, sorted_users
 from jb_common.utils.views import UserField
 from samples import models, permissions
 import samples.utils.views as utils
@@ -89,9 +88,9 @@ class PermissionsPhysicalProcess(object):
     :type topic_manager_permission: django.contrib.auth.models.Permission
     """
 
-    topic_manager_permission = Permission.objects.get(codename="can_edit_their_topics",
+    topic_manager_permission = Permission.objects.get(codename="edit_their_topics",
                                                       content_type=ContentType.objects.get_for_model(Topic))
-    add_external_operators_permission = Permission.objects.get(codename="add_external_operator",
+    add_external_operators_permission = Permission.objects.get(codename="add_externaloperator",
                                                                content_type=ContentType.objects.get_for_model(models.ExternalOperator))
 
     def __init__(self, physical_process_class):
@@ -103,7 +102,7 @@ class PermissionsPhysicalProcess(object):
           ``samples.models.PhysicalProcess``)
         """
         self.name = physical_process_class._meta.verbose_name_plural
-        self.codename = camel_case_to_underscores(physical_process_class.__name__)
+        self.codename = physical_process_class.__name__.lower()
         content_type = ContentType.objects.get_for_model(physical_process_class)
         try:
             self.edit_permissions_permission = Permission.objects.get(codename="edit_permissions_for_{}".format(self.codename),
@@ -121,7 +120,7 @@ class PermissionsPhysicalProcess(object):
         except Permission.DoesNotExist:
             self.view_all_permission = None
         try:
-            self.edit_all_permission = Permission.objects.get(codename="edit_every_{}".format(self.codename),
+            self.edit_all_permission = Permission.objects.get(codename="change_{}".format(self.codename),
                                                               content_type=content_type)
         except Permission.DoesNotExist:
             self.edit_all_permission = None
@@ -232,7 +231,7 @@ def list_(request):
             user_list_form = UserListForm(user)
     else:
         user_list_form = None
-    if user.has_perm("jb_common.can_edit_all_topics"):
+    if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.change_topic"):
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |

@@ -458,14 +458,14 @@ which in turn is a ``Process``::
         class Meta(samples.models.PhysicalProcess.Meta):
             _ = lambda x: x
             permissions = (
-                ("add_five_chamber_deposition", _("Can add 5-chamber depositions")),
-                ("edit_permissions_for_five_chamber_deposition",
+                ("add_fivechamberdeposition", _("Can add 5-chamber depositions")),
+                ("edit_permissions_for_fivechamberdeposition",
                  _("Can edit perms for 5-chamber depositions")),
-                ("view_every_five_chamber_deposition", _("Can view all 5-chamber depositions")),
-                ("edit_every_five_chamber_deposition", _("Can edit all 5-chamber depositions")))
+                ("view_every_fivechamberdeposition", _("Can view all 5-chamber depositions")),
+                ("change_fivechamberdeposition", _("Can edit all 5-chamber depositions")))
 
 It contains a full set of permissions to limit “add” and “edit” access to
-certain users.  Moreover the ``view_every_five_chamber_deposition`` makes a lab
+certain users.  Moreover the ``view_every_fivechamberdeposition`` makes a lab
 notebook possible.
 
 In contrast, the layer model is derived from :py:class:`~samples.models.Layer`,

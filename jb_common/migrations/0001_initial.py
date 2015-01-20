@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'topics',
                 'default_permissions': (),
                 'verbose_name': 'topic',
-                'permissions': (('can_edit_all_topics', 'Can edit all topics, and can add new topics'), ('can_edit_their_topics', 'Can edit topics that he/she is a manager of')),
+                'permissions': (('add_topic', 'Can add new topics'), ('change_topic', 'Can edit all topics'), ('edit_their_topics', 'Can edit topics that he/she is a manager of')),
             },
             bases=(models.Model,),
         ),

@@ -1,0 +1,129 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
+..
+.. This file is part of JuliaBase, the samples database.
+..
+.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+..                       Marvin Goblet <m.goblet@fz-juelich.de>,
+..                       Torsten Bronger <t.bronger@fz-juelich.de>
+..
+.. You must not use, install, pass on, offer, sell, analyse, modify, or
+.. distribute this software without explicit permission of the copyright
+.. holder.  If you have received a copy of this software without the explicit
+.. permission of the copyright holder, you must destroy it immediately and
+.. completely.
+
+
+.. index:: permissions
+
+=====================
+Model permissions
+=====================
+
+Permissions defined in the ``Meta`` class of models are used in Django to
+define user permissions connected with this model.  JuliaBase also makes use of
+this permissions framework.  There are, however, some peculiarities to be taken
+into account when defining model permissions for JuliaBase model classes.
+
+
+Semantics and conventions
+==============================
+
+For models derived from :py:class:`~samples.models.PhysicalProcess`, there are
+four permissions with a special meaning to JuliaBase.  Their codenames must
+follow the following naming conventions so that they have effect.
+
+.. index::
+   pair: process; unfinished
+
+:samp:`add_{classname}`
+      Means that a user is allowed to add new processes, and to edit unfinished
+      processes.
+:samp:`edit_permissions_for_{classname}`
+      Means that a user is allowed to edit the permissions of other users for
+      this process class.
+:samp:`view_every_{classname}`
+      Means that a user is allowed to view all processes.  In particular, such
+      users are allowed to read the lab notebook.
+:samp:`change_{classname}`
+      Means that a user is allowed to edit *all* processes.
+
+Further rules:
+
+- :samp:`{classname}` must be given in lowercase letters without underscores.
+- If a user has the permission :samp:`add_{classname}`, this user can edit
+  processes he/she is the operator of.
+- You can view processes of samples that you can view.
+- For obvious reasons, the :samp:`edit_permissions_for_{classname}` permission
+  implies all the others.  Usually, the users in charge of this setup or
+  apparatus have this permission.
+
+
+Example
+-------
+
+The following code snipped defines the permissions for the
+:py:class:`~institute.models.ClusterToolDeposition`::
+
+    class Meta(samples.models.PhysicalProcess.Meta):
+        _ = lambda x: x
+        permissions = (("add_clustertooldeposition", _("Can add cluster tool depositions")),
+                       ("edit_permissions_for_clustertooldeposition",
+                       # Translators: Don't abbreviate "perms" in translation
+                       # (not even to English)
+                        _("Can edit perms for cluster tool I depositions")),
+                       ("view_every_clustertooldeposition",
+                        _("Can view all cluster tool depositions")),
+                       ("change_clustertooldeposition",
+                        _("Can edit all cluster tool depositions")))
+
+The :samp:`_ = lambda x: x` trick enables you to mark the permission names
+translatable without really translating them here, which wouldn't work.  The
+English names are stored in the database backend.  When they are retrieved,
+they are translated.
+
+
+Omitting permissions
+=======================
+
+You may define all four permissions above.  However, if you omit some of them,
+this has influence on JuliaBase's treatment of that process class.  The obvious
+effect of omitting a permission is that no user can have that permission.  But
+there are also more subtle effects.
+
+If you omit the ``add_...`` permission, *every* user is allowed to add such a
+process.  This may be suitable for things like specimen tempering, etching, or
+thickness measurements that are not bound to a specific apparatus.
+
+If you omit the ``edit_permissions_for_...`` permission, no email is sent to a
+person in charge of the setup if a user creates his/her very first process of
+that kind.
+
+If you omit both the ``add_...`` and ``edit_permissions_for_...`` permissions,
+the process class will not appear in the :ref:`“Permissions to processes”
+<Permissions to processes>` page.
+
+
+Django's default permissions
+===============================
+
+By default, Django generates an ``add_...``, ``change_...``, and ``delete_...``
+permission for every model.  You can switch it off for a certain model by
+saying
+
+::
+
+   class Meta:
+       default_permissions = ()
+
+For physical processes, this has been done already — this is the reason why we
+derived our ``Meta`` class from ``samples.models.PhysicalProcess.Meta`` in the
+above `Example`_.
+
+We recommend you to switch off Django's default permissions globally for your
+project.  This way, it's much easier to control which permissions exist for a
+certain model.  You switch them off by saying in your :file:`manage.py`::
+
+   import django.contrib.auth.management
+   def _get_only_custom_permissions(opts, ctype):
+       return list(opts.permissions)
+   django.contrib.auth.management._get_all_permissions = _get_only_custom_permissions

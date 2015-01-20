@@ -127,8 +127,8 @@ class ExternalOperator(models.Model):
         verbose_name_plural = _("external operators")
         _ = lambda x: x
         default_permissions = ()
-        permissions = (("add_external_operator", _("Can add an external operator")),
-                       ("view_all_external_operators", _("Can view all external operators")))
+        permissions = (("add_externaloperator", _("Can add an external operator")),
+                       ("view_every_externaloperator", _("Can view all external operators")))
 
     def save(self, *args, **kwargs):
         super(ExternalOperator, self).save(*args, **kwargs)
@@ -592,22 +592,23 @@ class PhysicalProcess(Process):
     class doesn't define anything.  Its main purpose is to bring structure to
     the class hierarchy by pooling all physical processes.
 
-    Such processes can have permissions of the form ``"add_model_name"``,
-    ``"view_every_model_name"`` and ``"edit_permissions_for_model_name"`` where
-    the model name is in lowercase with underscores.
+    Such processes can have permissions of the form ``"add_classname"``,
+    ``"change_classname"``, ``"view_every_classname"`` and
+    ``"edit_permissions_for_classname"`` where the model name is in lowercase
+    with underscores.
 
-    Normally, all three permissions are available.  However, you may omit
-    ``"add_model_name"`` if *every* user should be allowed to add such
-    processes (and edit their own).
+    Normally, all four permissions are available.  However, you may omit
+    ``"add_classname"`` if *every* user should be allowed to add such processes
+    (and edit their own).
 
-    You can omit ``"view_every_model_name"`` if no-one should be allowed to see
+    You can omit ``"view_every_classname"`` if no-one should be allowed to see
     all processes (or see the lab notebook, which shouldn't even exist in this
     case for obvious reasons).
 
-    If you omit ``"edit_permissions_for_model_name"``, no email is sent if a
+    If you omit ``"edit_permissions_for_classname"``, no email is sent if a
     particular user adds it first process of this kind.
 
-    If neiter ``"add_model_name"`` nor ``"edit_permissions_for_model_name"`` is
+    If neiter ``"add_classname"`` nor ``"edit_permissions_for_classname"`` is
     included, the process won't show up on the permissions list page.
     """
     class Meta(PolymorphicModel.Meta):
@@ -690,7 +691,7 @@ class Sample(models.Model):
         verbose_name_plural = _("samples")
         ordering = ["name"]
         _ = lambda x: x
-        permissions = (("view_all_samples", _("Can view all samples from his/her department")),
+        permissions = (("view_every_sample", _("Can view all samples from his/her department")),
                        ("adopt_samples", _("Can adopt samples from his/her department")),
                        ("rename_samples", _("Can rename samples from his/her department")))
 

@@ -215,7 +215,7 @@ def get_all_adders(process_class):
 
     :rtype: QuerySet
     """
-    permission_codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    permission_codename = "add_{0}".format(process_class.__name__.lower())
     try:
         add_permission = Permission.objects.get(codename=permission_codename,
                                                 content_type=ContentType.objects.get_for_model(process_class))
@@ -307,7 +307,7 @@ def assert_can_fully_view_sample(user, sample):
                             "its currently responsible person ({name})."). \
                             format(name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
-        elif not user.has_perm("samples.view_all_samples"):
+        elif not user.has_perm("samples.view_every_sample"):
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
                             "its currently responsible person ({name}), nor can you view all samples."). \
                             format(name=utils.get_really_full_name(currently_responsible_person))
@@ -390,7 +390,7 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
-    codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "add_{0}".format(process_class.__name__.lower())
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
         if not user.has_perm(permission):
@@ -417,10 +417,10 @@ def assert_can_edit_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "edit_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "change_{0}".format(process_class.__name__.lower())
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
-    codename = "add_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "add_{0}".format(process_class.__name__.lower())
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
@@ -475,7 +475,7 @@ def assert_can_view_lab_notebook(user, process_class):
     :raises PermissionError: if the user is not allowed to view the lab
         notebook for this process class.
     """
-    codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "view_every_{0}".format(process_class.__name__.lower())
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
@@ -508,7 +508,7 @@ def assert_can_view_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
-    codename = "view_every_{0}".format(utils.camel_case_to_underscores(process_class.__name__))
+    codename = "view_every_{0}".format(process_class.__name__.lower())
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         has_view_all_permission = user.has_perm(permission_name_to_view_all)
@@ -666,7 +666,7 @@ def assert_can_add_external_operator(user):
     :raises PermissionError: if the user is not allowed to add an external
         operator.
     """
-    permission = "samples.add_external_operator"
+    permission = "samples.add_externaloperator"
     if not user.has_perm(permission):
         description = _("You are not allowed to add an external operator because you don't have the permission “{name}”.") \
             .format(name=translate_permission(permission))
@@ -708,7 +708,7 @@ def assert_can_view_external_operator(user, external_operator):
             description = _("You are not allowed to view this external operator because you are not their "
                             "current contact person.")
             raise PermissionError(user, description)
-        elif not user.has_perm("samples.view_all_external_operators"):
+        elif not user.has_perm("samples.view_every_externaloperator"):
             description = _("You are not allowed to view this external operator because neither are you their "
                             "current contact person, nor can you view all external operators.")
             raise PermissionError(user, description)
@@ -730,23 +730,23 @@ def assert_can_edit_topic(user, topic=None):
         or to add new topics.
     """
     if not topic:
-        if not user.has_perm("jb_common.can_edit_all_topics"):
+        if not user.has_perm("jb_common.add_topic"):
             description = _("You are not allowed to add topics because you don't have the permission “{name}”.") \
-                .format(name=translate_permission("jb_common.can_edit_all_topics"))
+                .format(name=translate_permission("jb_common.add_topic"))
             raise PermissionError(user, description)
     else:
         if user in topic.members.all():
-            if not user.has_perm("jb_common.can_edit_all_topics") and \
+            if not user.has_perm("jb_common.change_topic") and \
                     topic.manager != user:
                 description = _("You are not allowed to change this topic because you don't have the permission "
-                                "“{0}” or “{1}”.").format(translate_permission("jb_common.can_edit_all_topics"),
-                                                           translate_permission("jb_common.can_edit_their_topics"))
+                                "“{0}” or “{1}”.").format(translate_permission("jb_common.change_topic"),
+                                                           translate_permission("jb_common.edit_their_topics"))
                 raise PermissionError(user, description)
         else:
-            if not user.has_perm("jb_common.can_edit_all_topics"):
+            if not user.has_perm("jb_common.change_topic"):
                 description = _("You are not allowed to change this topic because "
                                 "you don't have the permission “{name}”.").format(
-                    name=translate_permission("jb_common.can_edit_all_topics"))
+                    name=translate_permission("jb_common.change_topic"))
                 raise PermissionError(user, description)
             elif topic.confidential and not user.is_superuser:
                 description = _("You are not allowed to change this topic because it is confidential "
@@ -766,11 +766,11 @@ def assert_can_edit_users_topics(user):
     :raises PermissionError: if the user is not allowed to edit his/ her
         topics, or to add new sub topics.
     """
-    if not user.has_perm("jb_common.can_edit_their_topics") and \
-        not user.has_perm("jb_common.can_edit_all_topics"):
+    if not user.has_perm("jb_common.edit_their_topics") and \
+        not user.has_perm("jb_common.change_topic"):
         description = _("You are not allowed to change your topics because you don't have the permission "
-                        "“{0}” or “{1}”.").format(translate_permission("jb_common.can_edit_all_topics"),
-                                                  translate_permission("jb_common.can_edit_their_topics"))
+                        "“{0}” or “{1}”.").format(translate_permission("jb_common.change_topic"),
+                                                  translate_permission("jb_common.edit_their_topics"))
         raise PermissionError(user, description)
 
 
