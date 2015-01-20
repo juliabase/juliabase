@@ -222,7 +222,7 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'solarsimulator measurements',
                 'default_permissions': (),
                 'verbose_name': 'solarsimulator measurement',
-                'permissions': (('view_every_solarsimulatormeasurement', "Can view every 'solarsimulator measurement'"), ('add_solarsimulatormeasurement', "Can add 'solarsimulator measurement'"), ('edit_permissions_for_solarsimulatormeasurement', "Can edit permissions for 'solarsimulator measurement'")),
+                'permissions': (('view_every_solarsimulatormeasurement', "Can view every 'solarsimulator measure\u2026'"), ('add_solarsimulatormeasurement', "Can add 'solarsimulator measure\u2026'"), ('edit_permissions_for_solarsimulatormeasurement', "Can edit permissions for 'solarsimulator measure\u2026'")),
             },
             bases=('samples.process',),
         ),
