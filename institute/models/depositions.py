@@ -37,10 +37,6 @@ class ClusterToolHotWireAndPECVDGases(models.Model):
     class Meta:
         abstract = True
 
-    def get_data_items_for_table_export(self):
-        return [DataItem("H₂/sccm", self.h2),
-                DataItem("SiH₄/sccm", self.sih4), ]
-
 
 class ClusterToolDeposition(samples.models.Deposition):
     """cluster tool depositions..
