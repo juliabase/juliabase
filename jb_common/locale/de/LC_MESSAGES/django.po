@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-20 15:14+0100\n"
-"PO-Revision-Date: 2015-01-20 15:15+0100\n"
+"POT-Creation-Date: 2015-01-20 22:31+0100\n"
+"PO-Revision-Date: 2015-01-20 22:34+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -412,6 +412,26 @@ msgstr " und "
 #: jb_common/utils/base.py:784
 msgid " and "
 msgstr " und "
+
+#: jb_common/utils/base.py:978
+#, python-brace-format
+msgid "Can add {class_name}"
+msgstr "Darf {class_name} hinzufügen"
+
+#: jb_common/utils/base.py:979
+#, python-brace-format
+msgid "Can edit every {class_name}"
+msgstr "Darf jede(n/s) {class_name} ändern"
+
+#: jb_common/utils/base.py:980
+#, python-brace-format
+msgid "Can view every {class_name}"
+msgstr "Darf jede(n/s) {class_name} sehen"
+
+#: jb_common/utils/base.py:981
+#, python-brace-format
+msgid "Can edit permissions for {class_name}"
+msgstr "Darf die Berechtigungen für {class_name} ändern"
 
 #: jb_common/views.py:62
 msgid "Sandbox"

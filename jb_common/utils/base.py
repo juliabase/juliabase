@@ -972,3 +972,21 @@ def sorted_users_by_first_name(users):
     :rtype: list of django.contrib.auth.models.User
     """
     return sorted(users, key=lambda user: user.first_name.lower() if user.first_name else user.username)
+
+
+_ = lambda s: s
+_permissions = {"add": ("add_{class_name}", _("Can add {class_name}")),
+                "change": ("change_{class_name}", _("Can edit every {class_name}")),
+                "view_every": ("view_every_{class_name}", _("Can view every {class_name}")),
+                "edit_permissions": ("edit_permissions_for_{class_name}", _("Can edit permissions for {class_name}"))}
+
+def generate_permissions(permissions, class_name):
+    class_name_lower = class_name.lower()
+    class_name_human = "'{}'".format(camel_case_to_human_text(class_name))
+    result = []
+    for permission in permissions:
+        codename, name = _permissions[permission]
+        codename = codename.format(class_name=class_name_lower)
+        name = name.format(class_name=class_name_human)
+        result.append((codename, name))
+    return tuple(result)

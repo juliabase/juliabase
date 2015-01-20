@@ -35,7 +35,7 @@ permission just means that e.g. a link is not generated (for example, in the
 
 from __future__ import absolute_import, unicode_literals
 
-import hashlib
+import hashlib, re
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
@@ -44,6 +44,8 @@ from django.conf import settings
 import jb_common.utils.base as utils
 import samples.models
 
+
+_permission_name_regex = re.compile("(?P<prefix>Can (?:add|edit every|view every|edit permissions for) )'(?P<class_name>.+)'")
 
 def translate_permission(permission_codename):
     """Translates a permission description to the user's language.  Note that in
@@ -66,9 +68,15 @@ def translate_permission(permission_codename):
     """
     permission_codename = permission_codename.partition(".")[2]
     try:
-        return ugettext(Permission.objects.filter(codename=permission_codename)[0].name)
+        name = Permission.objects.filter(codename=permission_codename)[0].name
     except IndexError:
         return _("[not available]")
+    else:
+        match = _permission_name_regex.match(name)
+        if match:
+            return ugettext(match.group("prefix") + "{class_name}").format(class_name=ugettext(match.group("class_name")))
+        else:
+            return ugettext(name)
 
 
 def get_user_permissions(user):
@@ -93,9 +101,9 @@ def get_user_permissions(user):
         if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
             full_permission_name = permission.content_type.app_label + "." + permission.codename
             if user.has_perm(full_permission_name):
-                has.append(ugettext(permission.name))
+                has.append(translate_permission(full_permission_name))
             else:
-                has_not.append(ugettext(permission.name))
+                has_not.append(translate_permission(full_permission_name))
     return has, has_not
 
 
