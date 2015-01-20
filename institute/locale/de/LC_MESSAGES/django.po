@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-03 22:45+0100\n"
-"PO-Revision-Date: 2015-01-02 22:55+0100\n"
+"POT-Creation-Date: 2015-01-20 15:14+0100\n"
+"PO-Revision-Date: 2015-01-20 15:16+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -68,147 +68,147 @@ msgstr "Darf alle Cluster-Tool-Depositionen sehen"
 msgid "Can edit all cluster tool depositions"
 msgstr "Darf alle Cluster-Tool-Depositionen ändern"
 
-#: institute/models/depositions.py:106
+#: institute/models/depositions.py:105
 msgid "cluster tool deposition lab"
 msgstr "Labor des Cluster-Tools"
 
-#: institute/models/depositions.py:118 institute/models/depositions.py:216
+#: institute/models/depositions.py:117 institute/models/depositions.py:215
 msgid "deposition"
 msgstr "Deposition"
 
-#: institute/models/depositions.py:122
+#: institute/models/depositions.py:121
 msgid "cluster tool layer"
 msgstr "Schicht des Cluster-Tools"
 
-#: institute/models/depositions.py:123
+#: institute/models/depositions.py:122
 msgid "cluster tool layers"
 msgstr "Schichten des Cluster-Tools"
 
-#: institute/models/depositions.py:127 institute/models/depositions.py:233
+#: institute/models/depositions.py:126 institute/models/depositions.py:232
 #, python-brace-format
 msgid "layer {number} of {deposition}"
 msgstr "Schicht {number} von {deposition}"
 
-#: institute/models/depositions.py:131
+#: institute/models/depositions.py:130
 msgid "unknown"
 msgstr "unbekannt"
 
-#: institute/models/depositions.py:132
+#: institute/models/depositions.py:131
 msgid "rhenium"
 msgstr "Rhenium"
 
-#: institute/models/depositions.py:133
+#: institute/models/depositions.py:132
 msgid "tantalum"
 msgstr "Tantal"
 
-#: institute/models/depositions.py:134
+#: institute/models/depositions.py:133
 msgid "tungsten"
 msgstr "Wolfram"
 
-#: institute/models/depositions.py:140 institute/models/depositions.py:159
+#: institute/models/depositions.py:139 institute/models/depositions.py:158
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: institute/models/depositions.py:140 institute/models/depositions.py:159
+#: institute/models/depositions.py:139 institute/models/depositions.py:158
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
-#: institute/models/depositions.py:141 institute/models/depositions.py:160
+#: institute/models/depositions.py:140 institute/models/depositions.py:159
 #: institute/models/sample_details.py:283
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:33
 msgid "comments"
 msgstr "Kommentare"
 
-#: institute/models/depositions.py:142
+#: institute/models/depositions.py:141
 msgid "wire material"
 msgstr "Drahtmaterial"
 
-#: institute/models/depositions.py:143
+#: institute/models/depositions.py:142
 msgid "base pressure"
 msgstr "Basisdruck"
 
-#: institute/models/depositions.py:146
+#: institute/models/depositions.py:145
 msgid "cluster tool hot-wire layer"
 msgstr "Hot-Wire-Schicht im Cluster-Tool"
 
-#: institute/models/depositions.py:147
+#: institute/models/depositions.py:146
 msgid "cluster tool hot-wire layers"
 msgstr "Hot-Wire-Schichten im Cluster-Tool"
 
-#: institute/models/depositions.py:158 institute/models/depositions.py:218
+#: institute/models/depositions.py:157 institute/models/depositions.py:217
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:28
 msgid "chamber"
 msgstr "Kammer"
 
-#: institute/models/depositions.py:161
+#: institute/models/depositions.py:160
 msgid "plasma start with shutter"
 msgstr "Plasma startet mit Shutter"
 
-#: institute/models/depositions.py:162
+#: institute/models/depositions.py:161
 msgid "deposition power"
 msgstr "Depositionsleistung"
 
-#: institute/models/depositions.py:167
+#: institute/models/depositions.py:166
 msgid "cluster tool PECVD layer"
 msgstr "PECVD-Schicht im Cluster-Tool"
 
-#: institute/models/depositions.py:168
+#: institute/models/depositions.py:167
 msgid "cluster tool PECVD layers"
 msgstr "PECVD-Schichten im Cluster-Tool"
 
-#: institute/models/depositions.py:175
+#: institute/models/depositions.py:174
 msgid "5-chamber deposition"
 msgstr "5-Kammer-Deposition"
 
-#: institute/models/depositions.py:176
+#: institute/models/depositions.py:175
 msgid "5-chamber depositions"
 msgstr "5-Kammer-Depositionen"
 
-#: institute/models/depositions.py:178
+#: institute/models/depositions.py:177
 msgid "Can add 5-chamber depositions"
 msgstr "Darf 5-Kammer-Depositionen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: institute/models/depositions.py:181
+#: institute/models/depositions.py:180
 msgid "Can edit perms for 5-chamber depositions"
 msgstr "Darf die Berechtigungen für 5-Kammer-Depositionen ändern"
 
-#: institute/models/depositions.py:182
+#: institute/models/depositions.py:181
 msgid "Can view all 5-chamber depositions"
 msgstr "Darf alle 5-Kammer-Depositionen sehen"
 
-#: institute/models/depositions.py:183
+#: institute/models/depositions.py:182
 msgid "Can edit all 5-chamber depositions"
 msgstr "Darf alle 5-Kammer-Depositionen ändern"
 
-#: institute/models/depositions.py:195
+#: institute/models/depositions.py:194
 msgid "5-chamber deposition lab"
 msgstr "5-Kammer-Depositionslabor"
 
-#: institute/models/depositions.py:217
+#: institute/models/depositions.py:216
 msgid "layer type"
 msgstr "Schichttyp"
 
-#: institute/models/depositions.py:221
+#: institute/models/depositions.py:220
 msgid "temperature 1"
 msgstr "Temperatur 1"
 
-#: institute/models/depositions.py:223
+#: institute/models/depositions.py:222
 msgid "temperature 2"
 msgstr "Temperatur 2"
 
-#: institute/models/depositions.py:228
+#: institute/models/depositions.py:227
 msgid "5-chamber layer"
 msgstr "5-Kammer-Schicht"
 
-#: institute/models/depositions.py:229
+#: institute/models/depositions.py:228
 msgid "5-chamber layers"
 msgstr "5-Kammer-Schichten"
 
 #. Translators: sample substrate type
 #: institute/models/physical_processes.py:44
-#: institute/models/physical_processes.py:284
+#: institute/models/physical_processes.py:287
 msgid "custom"
 msgstr "speziell"
 
@@ -250,198 +250,198 @@ msgstr "Substrat"
 msgid "substrates"
 msgstr "Substrate"
 
-#: institute/models/physical_processes.py:74
+#: institute/models/physical_processes.py:77
 #, python-brace-format
 msgid "{material} substrate #{number}"
 msgstr "{material}-Substrat Nr. {number}"
 
-#: institute/models/physical_processes.py:78
+#: institute/models/physical_processes.py:81
 msgid "PDS #1"
 msgstr "PDS 1"
 
-#: institute/models/physical_processes.py:79
+#: institute/models/physical_processes.py:82
 msgid "PDS #2"
 msgstr "PDS 2"
 
-#: institute/models/physical_processes.py:85
+#: institute/models/physical_processes.py:88
 msgid "PDS number"
 msgstr "PDS-Nummer"
 
-#: institute/models/physical_processes.py:86
+#: institute/models/physical_processes.py:89
 msgid "raw data file"
 msgstr "Rohdaten-Datei"
 
-#: institute/models/physical_processes.py:87
-#: institute/models/physical_processes.py:241
+#: institute/models/physical_processes.py:90
+#: institute/models/physical_processes.py:244
 #, python-brace-format
 msgid "only the relative path below \"{path}\""
 msgstr "nur der relative Pfad unterhalb von \"{path}\""
 
-#: institute/models/physical_processes.py:88
+#: institute/models/physical_processes.py:91
 msgid "apparatus"
 msgstr "Anlage"
 
-#: institute/models/physical_processes.py:91
+#: institute/models/physical_processes.py:94
 msgid "PDS measurement"
 msgstr "PDS-Messung"
 
-#: institute/models/physical_processes.py:92
+#: institute/models/physical_processes.py:95
 msgid "PDS measurements"
 msgstr "PDS-Messungen"
 
-#: institute/models/physical_processes.py:94
+#: institute/models/physical_processes.py:97
 msgid "Can add PDS measurements"
 msgstr "Darf PDS-Messungen hinzufügen"
 
 #. Translators: Don't abbreviate "perms" in translation
 #. (not even to English)
-#: institute/models/physical_processes.py:97
+#: institute/models/physical_processes.py:100
 msgid "Can edit perms for PDS measurements"
 msgstr "Darf die Berechtigungen für PDS-Messungen ändern"
 
-#: institute/models/physical_processes.py:98
+#: institute/models/physical_processes.py:101
 msgid "Can view all PDS measurements"
 msgstr "Darf alle PDS-Messungen sehen"
 
-#: institute/models/physical_processes.py:108
+#: institute/models/physical_processes.py:111
 msgid "energy in eV"
 msgstr "Energie in eV"
 
-#: institute/models/physical_processes.py:109
+#: institute/models/physical_processes.py:112
 msgid "α in cm⁻¹"
 msgstr "α in cm⁻¹"
 
-#: institute/models/physical_processes.py:129
+#: institute/models/physical_processes.py:132
 msgid "irradiation"
 msgstr "Beleuchtung"
 
-#: institute/models/physical_processes.py:130
+#: institute/models/physical_processes.py:133
 msgid "temperature"
 msgstr "Temperatur"
 
-#: institute/models/physical_processes.py:133
-#: institute/models/physical_processes.py:238
+#: institute/models/physical_processes.py:136
+#: institute/models/physical_processes.py:241
 msgid "solarsimulator measurement"
 msgstr "Sonnensimulator-Messung"
 
-#: institute/models/physical_processes.py:134
+#: institute/models/physical_processes.py:137
 msgid "solarsimulator measurements"
 msgstr "Sonnensimulator-Messungen"
 
-#: institute/models/physical_processes.py:136
+#: institute/models/physical_processes.py:139
 msgid "Can add solarsimulator measurements"
 msgstr "Darf Sonnensimulator-Messungen hinzufügen"
 
-#: institute/models/physical_processes.py:140
+#: institute/models/physical_processes.py:143
 msgid "Can edit perms for solarsimulator measurements"
 msgstr "Darf die Berechtigungen für Sonnensimlulator-Messungen ändern"
 
-#: institute/models/physical_processes.py:141
+#: institute/models/physical_processes.py:144
 msgid "Can view all solarsimulator measurements"
 msgstr "Darf alle Sonnensimlulator-Messungen sehen"
 
-#: institute/models/physical_processes.py:181
+#: institute/models/physical_processes.py:184
 msgid "η of best cell"
 msgstr "η der besten Zelle"
 
-#: institute/models/physical_processes.py:198
+#: institute/models/physical_processes.py:201
 msgid "voltage in V"
 msgstr "Spannung in V"
 
-#: institute/models/physical_processes.py:199
+#: institute/models/physical_processes.py:202
 msgid "current density in mA/cm²"
 msgstr "Stromdichte in mA/cm²"
 
-#: institute/models/physical_processes.py:239
+#: institute/models/physical_processes.py:242
 msgid "cell position"
 msgstr "Zellposition"
 
-#: institute/models/physical_processes.py:240
+#: institute/models/physical_processes.py:243
 msgid "data file"
 msgstr "Datendatei"
 
-#: institute/models/physical_processes.py:243
+#: institute/models/physical_processes.py:246
 msgid "area"
 msgstr "Fläche"
 
-#: institute/models/physical_processes.py:244
+#: institute/models/physical_processes.py:247
 msgid "efficiency η"
 msgstr "Effizienz η"
 
-#: institute/models/physical_processes.py:245
+#: institute/models/physical_processes.py:248
 msgid "short-circuit current density"
 msgstr "Kurzschluss­strom­dichte"
 
-#: institute/models/physical_processes.py:248
+#: institute/models/physical_processes.py:251
 msgid "solarsimulator cell measurement"
 msgstr "Sonnensimulator-Zellmessung"
 
-#: institute/models/physical_processes.py:249
+#: institute/models/physical_processes.py:252
 msgid "solarsimulator cell measurements"
 msgstr "Sonnensimulator-Zellmessungen"
 
-#: institute/models/physical_processes.py:254
+#: institute/models/physical_processes.py:257
 #, python-brace-format
 msgid "cell {position} of {solarsimulator_measurement}"
 msgstr "Zelle {position} von {solarsimulator_measurement}"
 
-#: institute/models/physical_processes.py:308
+#: institute/models/physical_processes.py:311
 msgid "layout"
 msgstr "Layout"
 
-#: institute/models/physical_processes.py:309
+#: institute/models/physical_processes.py:312
 msgid "length"
 msgstr "Länge"
 
-#: institute/models/physical_processes.py:310
+#: institute/models/physical_processes.py:313
 msgid "width"
 msgstr "Breite"
 
-#: institute/models/physical_processes.py:311
+#: institute/models/physical_processes.py:314
 msgid "parameters"
 msgstr "Parameter"
 
-#: institute/models/physical_processes.py:314
+#: institute/models/physical_processes.py:317
 msgid "structuring"
 msgstr "Strukturierung"
 
-#: institute/models/physical_processes.py:315
+#: institute/models/physical_processes.py:318
 msgid "structurings"
 msgstr "Strukturierungen"
 
-#: institute/models/physical_processes.py:320
+#: institute/models/physical_processes.py:323
 msgid "profilometer + edge"
 msgstr "Profilometer + Kante"
 
-#: institute/models/physical_processes.py:321
+#: institute/models/physical_processes.py:324
 msgid "ellipsometer"
 msgstr "Ellipsometer"
 
-#: institute/models/physical_processes.py:322
+#: institute/models/physical_processes.py:325
 msgid "calculated from deposition parameters"
 msgstr "berechnet aus Depo-Parametern."
 
-#: institute/models/physical_processes.py:323
+#: institute/models/physical_processes.py:326
 msgid "estimate"
 msgstr "Schätzung"
 
-#: institute/models/physical_processes.py:324
+#: institute/models/physical_processes.py:327
 msgid "other"
 msgstr "anderes"
 
-#: institute/models/physical_processes.py:331
+#: institute/models/physical_processes.py:334
 msgid "layer thickness"
 msgstr "Schichtdicke"
 
-#: institute/models/physical_processes.py:332
+#: institute/models/physical_processes.py:335
 msgid "measurement method"
 msgstr "Messmethode"
 
-#: institute/models/physical_processes.py:335
+#: institute/models/physical_processes.py:338
 msgid "layer thickness measurement"
 msgstr "Schichtdickenmessung"
 
-#: institute/models/physical_processes.py:336
+#: institute/models/physical_processes.py:339
 msgid "layer thickness measurements"
 msgstr "Schichtdickenmessungen"
 
@@ -598,12 +598,12 @@ msgstr ""
 "Sie dürfen kein Substrat hinzufügen, weil Sie nicht alle beteiligten Proben "
 "ändern dürfen."
 
-#: institute/signals.py:60
+#: institute/signals.py:63
 #, python-brace-format
 msgid "{user_name} uses {apparatus}"
 msgstr "{user_name} benutzt {apparatus}"
 
-#: institute/signals.py:61
+#: institute/signals.py:64
 #, python-brace-format
 msgid ""
 "Dear supervisors of {apparatus_plural},\n"
@@ -857,6 +857,14 @@ msgstr "Probennamen nach „alter Art“, die bislang noch nicht existieren"
 #: institute/templates/samples/list_claims.html:27
 msgid "“To exist” means here “to exist in the database”."
 msgstr "„Existieren“ bedeutet hier „in der Probendatenbank existieren“."
+
+#: institute/templates/samples/main_menu.html:20
+msgid "Depositions by number"
+msgstr "Depositionen nach Nummer"
+
+#: institute/templates/samples/main_menu.html:25
+msgid "Edit “My Layers”"
+msgstr "“Meine Schichten” ändern"
 
 #: institute/templates/samples/permission_error.html:22
 #, python-format

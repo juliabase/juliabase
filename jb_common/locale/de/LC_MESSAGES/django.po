@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-03 22:45+0100\n"
-"PO-Revision-Date: 2015-01-02 22:55+0100\n"
+"POT-Creation-Date: 2015-01-20 15:14+0100\n"
+"PO-Revision-Date: 2015-01-20 15:15+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -54,7 +54,7 @@ msgstr "Abteilung"
 msgid "departments"
 msgstr "Abteilungen"
 
-#: jb_common/models.py:63 jb_common/models.py:247
+#: jb_common/models.py:63 jb_common/models.py:249
 msgid "user"
 msgstr "Benutzer"
 
@@ -98,77 +98,81 @@ msgstr "Thema"
 msgid "topics"
 msgstr "Themen"
 
-#: jb_common/models.py:141
-msgid "Can edit all topics, and can add new topics"
-msgstr "Darf alle Themen ändern und darf neue Themen hinzufügen"
-
 #: jb_common/models.py:142
+msgid "Can add new topics"
+msgstr "Darf neue Themen hinzufügen"
+
+#: jb_common/models.py:143
+msgid "Can edit all topics"
+msgstr "Darf alle Themen ändern"
+
+#: jb_common/models.py:144
 msgid "Can edit topics that he/she is a manager of"
 msgstr "Darf Themen ändern, für die er/sie Manager ist"
 
-#: jb_common/models.py:173
+#: jb_common/models.py:175
 #, python-brace-format
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: jb_common/models.py:246
+#: jb_common/models.py:248
 msgid "hash value"
 msgstr "Hashwert"
 
-#: jb_common/models.py:249
+#: jb_common/models.py:251
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: jb_common/models.py:251
+#: jb_common/models.py:253
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: jb_common/models.py:254
+#: jb_common/models.py:256
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: jb_common/models.py:255
+#: jb_common/models.py:257
 msgid "error pages"
 msgstr "Fehlerseiten"
 
-#: jb_common/search.py:252
+#: jb_common/search.py:247
 msgid "You can't search for empty values while giving a non-empty value."
 msgstr ""
 "Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen "
 "nicht-leeren Wert angeben."
 
-#: jb_common/search.py:259
+#: jb_common/search.py:254
 msgid "explicitly empty"
 msgstr "explizit leer"
 
-#: jb_common/search.py:341
+#: jb_common/search.py:336
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 "Der Zeitstempel passte nicht in das Muster JJJJ-MM-TT HH:MM:SS oder einem "
 "vorderen Teil davon."
 
-#: jb_common/search.py:369
+#: jb_common/search.py:364
 msgid "Invalid date or time."
 msgstr "Ungültiges Datum oder ungültige Zeit."
 
-#: jb_common/search.py:403
+#: jb_common/search.py:398
 msgid "doesn't matter"
 msgstr "egal"
 
-#: jb_common/search.py:403
+#: jb_common/search.py:398
 msgid "yes"
 msgstr "ja"
 
-#: jb_common/search.py:403
+#: jb_common/search.py:398
 msgid "no"
 msgstr "nein"
 
-#: jb_common/search.py:425
+#: jb_common/search.py:420
 msgid "containing"
 msgstr "enthaltend"
 
-#: jb_common/search.py:759
+#: jb_common/search.py:754
 msgid "restrict to"
 msgstr "beschränken auf"
 
@@ -381,31 +385,31 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: jb_common/utils/base.py:163
+#: jb_common/utils/base.py:164
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: jb_common/utils/base.py:192
+#: jb_common/utils/base.py:193
 #, python-brace-format
 msgid "Couldn't open {filename}."
 msgstr "Konnte {filename} nicht öffnen."
 
-#: jb_common/utils/base.py:206
+#: jb_common/utils/base.py:207
 msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #. Translators: Intended as a separator in an enumeration of three or more items
-#: jb_common/utils/base.py:780
+#: jb_common/utils/base.py:781
 msgid ", "
 msgstr ", "
 
-#: jb_common/utils/base.py:780
+#: jb_common/utils/base.py:781
 msgid ", and "
 msgstr " und "
 
 #. Translators: Intended to be used in an enumeration of exactly two items
-#: jb_common/utils/base.py:783
+#: jb_common/utils/base.py:784
 msgid " and "
 msgstr " und "
 
@@ -413,13 +417,12 @@ msgstr " und "
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: jb_common/views.py:72
-msgid "MarkdownMarkup"
-msgstr "MarkdownMarkup"
-
 #: jb_common/views.py:94
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
+
+#~ msgid "MarkdownMarkup"
+#~ msgstr "MarkdownMarkup"
 
 #~ msgid "in {unit}"
 #~ msgstr "in {unit}"
