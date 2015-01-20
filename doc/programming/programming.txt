@@ -456,17 +456,12 @@ which in turn is a ``Process``::
 
     class FiveChamberDeposition(samples.models.Deposition):
         class Meta(samples.models.PhysicalProcess.Meta):
-            _ = lambda x: x
-            permissions = (
-                ("add_fivechamberdeposition", _("Can add 5-chamber depositions")),
-                ("edit_permissions_for_fivechamberdeposition",
-                 _("Can edit perms for 5-chamber depositions")),
-                ("view_every_fivechamberdeposition", _("Can view all 5-chamber depositions")),
-                ("change_fivechamberdeposition", _("Can edit all 5-chamber depositions")))
+            permissions = generate_permissions(
+                {"add", "change", "view_every", "edit_permissions"}, "FiveChamberDeposition")
 
 It contains a full set of permissions to limit “add” and “edit” access to
-certain users.  Moreover the ``view_every_fivechamberdeposition`` makes a lab
-notebook possible.
+certain users.  Moreover the ``view_every`` makes a lab notebook possible.  See
+:doc:`permissions` for further information.
 
 In contrast, the layer model is derived from :py:class:`~samples.models.Layer`,
 which in turn is an ordinary Django model (not a ``Process``)::

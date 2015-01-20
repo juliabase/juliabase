@@ -99,6 +99,7 @@ The following names are found in the module :py:mod:`jb_common.utils.base`.
 .. autofunction:: jb_common.utils.base.help_link
 .. autofunction:: jb_common.utils.base.send_email
 .. autofunction:: jb_common.utils.base.round
+.. autofunction:: jb_common.utils.base.generate_permissions
 
 
 Feed reporting
