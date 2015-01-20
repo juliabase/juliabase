@@ -1003,7 +1003,11 @@ def generate_permissions(permissions, class_name):
     :rtype: tuple of (unicode, unicode)
     """
     class_name_lower = class_name.lower()
-    class_name_human = "'{}'".format(camel_case_to_human_text(class_name))
+    class_name_human = camel_case_to_human_text(class_name)
+    max_length = django.contrib.auth.models.Permission._meta.get_field("name").max_length - len("Can edit permissions for ''")
+    if len(class_name_human) > max_length:
+        class_name_human = class_name_human[:max_length - 1] + "…"
+    class_name_human = "'{}'".format(class_name_human)
     result = []
     for permission in permissions:
         codename, name = _permissions[permission]
