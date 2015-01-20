@@ -981,6 +981,27 @@ _permissions = {"add": ("add_{class_name}", _("Can add {class_name}")),
                 "edit_permissions": ("edit_permissions_for_{class_name}", _("Can edit permissions for {class_name}"))}
 
 def generate_permissions(permissions, class_name):
+    """Auto-generates model permissions.  It may be used in physical process
+    classes – but not only there – like this::
+
+        class Meta(samples.models.PhysicalProcess.Meta):
+            permissions = generate_permissions(
+                {"add", "change", "view_every", "edit_permissions"}, "ModelClassName")
+
+
+    :param permissions: The permissions to generate.  Possible values are
+      ``"add"``, ``"change"``, ``"view_every"``, and ``"edit_permissions"``.
+    :param class_name: python class name of the model class,
+      e.g. ``"LayerThicknessMeasurement"``.
+
+    :type permissions: set of unicode
+    :type class_name: str
+
+    :return:
+      the permissions tuple
+
+    :rtype: tuple of (unicode, unicode)
+    """
     class_name_lower = class_name.lower()
     class_name_human = "'{}'".format(camel_case_to_human_text(class_name))
     result = []
