@@ -36,7 +36,7 @@ def read_pds_file(filepath):
 setup_logging("console")
 login("juliabase", "12345")
 
-for filepath in glob.glob("pds_raw_data/*.dat"):
+for filepath in sorted(glob.glob("pds_raw_data/*.dat")):
     pds_header_data = read_pds_file(filepath)
     try:
         sample_id = get_sample(pds_header_data["sample"])

@@ -1,10 +1,10 @@
-- fields: {app_label: auth, model: group, name: group}
+- fields: {app_label: auth, model: permission, name: permission}
   model: contenttypes.contenttype
   pk: 1
-- fields: {app_label: auth, model: user, name: user}
+- fields: {app_label: auth, model: group, name: group}
   model: contenttypes.contenttype
   pk: 2
-- fields: {app_label: auth, model: permission, name: permission}
+- fields: {app_label: auth, model: user, name: user}
   model: contenttypes.contenttype
   pk: 3
 - fields: {app_label: contenttypes, model: contenttype, name: content type}
@@ -16,169 +16,169 @@
 - fields: {app_label: admin, model: logentry, name: log entry}
   model: contenttypes.contenttype
   pk: 6
-- fields: {app_label: institute, model: solarsimulatormeasurement, name: solarsimulator
-      measurement}
+- fields: {app_label: institute, model: substrate, name: substrate}
   model: contenttypes.contenttype
   pk: 7
-- fields: {app_label: institute, model: clustertooldeposition, name: cluster tool
-      deposition}
+- fields: {app_label: institute, model: pdsmeasurement, name: PDS measurement}
   model: contenttypes.contenttype
   pk: 8
-- fields: {app_label: institute, model: structuring, name: structuring}
+- fields: {app_label: institute, model: solarsimulatormeasurement, name: solarsimulator
+      measurement}
   model: contenttypes.contenttype
   pk: 9
 - fields: {app_label: institute, model: solarsimulatorcellmeasurement, name: solarsimulator
       cell measurement}
   model: contenttypes.contenttype
   pk: 10
-- fields: {app_label: institute, model: clustertoolhotwirelayer, name: cluster tool
-      hot-wire layer}
+- fields: {app_label: institute, model: structuring, name: structuring}
   model: contenttypes.contenttype
   pk: 11
-- fields: {app_label: institute, model: sampledetails, name: sample details}
-  model: contenttypes.contenttype
-  pk: 12
-- fields: {app_label: institute, model: clustertoolpecvdlayer, name: cluster tool
-      PECVD layer}
-  model: contenttypes.contenttype
-  pk: 13
 - fields: {app_label: institute, model: layerthicknessmeasurement, name: layer thickness
       measurement}
   model: contenttypes.contenttype
-  pk: 14
+  pk: 12
+- fields: {app_label: institute, model: clustertooldeposition, name: cluster tool
+      deposition}
+  model: contenttypes.contenttype
+  pk: 13
 - fields: {app_label: institute, model: clustertoollayer, name: cluster tool layer}
   model: contenttypes.contenttype
+  pk: 14
+- fields: {app_label: institute, model: clustertoolhotwirelayer, name: cluster tool
+      hot-wire layer}
+  model: contenttypes.contenttype
   pk: 15
-- fields: {app_label: institute, model: fivechamberlayer, name: 5-chamber layer}
+- fields: {app_label: institute, model: clustertoolpecvdlayer, name: cluster tool
+      PECVD layer}
   model: contenttypes.contenttype
   pk: 16
-- fields: {app_label: institute, model: pdsmeasurement, name: PDS measurement}
+- fields: {app_label: institute, model: fivechamberdeposition, name: 5-chamber deposition}
   model: contenttypes.contenttype
   pk: 17
-- fields: {app_label: institute, model: substrate, name: substrate}
+- fields: {app_label: institute, model: fivechamberlayer, name: 5-chamber layer}
   model: contenttypes.contenttype
   pk: 18
-- fields: {app_label: institute, model: fivechamberdeposition, name: 5-chamber deposition}
+- fields: {app_label: institute, model: sampledetails, name: sample details}
   model: contenttypes.contenttype
   pk: 19
 - fields: {app_label: institute, model: informallayer, name: informal layer}
   model: contenttypes.contenttype
   pk: 20
-- fields: {app_label: samples, model: sampleclaim, name: sample claim}
+- fields: {app_label: samples, model: externaloperator, name: external operator}
   model: contenttypes.contenttype
   pk: 21
 - fields: {app_label: samples, model: process, name: process}
   model: contenttypes.contenttype
   pk: 22
-- fields: {app_label: samples, model: feedentry, name: feed entry}
-  model: contenttypes.contenttype
-  pk: 23
-- fields: {app_label: samples, model: feednewsampleseries, name: new sample series
-      feed entry}
-  model: contenttypes.contenttype
-  pk: 24
-- fields: {app_label: samples, model: feedresult, name: result feed entry}
-  model: contenttypes.contenttype
-  pk: 25
 - fields: {app_label: samples, model: sample, name: sample}
   model: contenttypes.contenttype
-  pk: 26
-- fields: {app_label: samples, model: result, name: result}
-  model: contenttypes.contenttype
-  pk: 27
-- fields: {app_label: samples, model: feednewtask, name: new task feed entry}
-  model: contenttypes.contenttype
-  pk: 28
-- fields: {app_label: samples, model: feededitedsamples, name: edited samples feed
-      entry}
-  model: contenttypes.contenttype
-  pk: 29
-- fields: {app_label: samples, model: feedmovedsamples, name: moved samples feed entry}
-  model: contenttypes.contenttype
-  pk: 30
-- fields: {app_label: samples, model: feededitedsampleseries, name: edited sample
-      series feed entry}
-  model: contenttypes.contenttype
-  pk: 31
-- fields: {app_label: samples, model: feednewsamples, name: new samples feed entry}
-  model: contenttypes.contenttype
-  pk: 32
-- fields: {app_label: samples, model: feedcopiedmysamples, name: copied My Samples
-      feed entry}
-  model: contenttypes.contenttype
-  pk: 33
-- fields: {app_label: samples, model: sampleseries, name: sample series}
-  model: contenttypes.contenttype
-  pk: 34
-- fields: {app_label: samples, model: feedmovedsampleseries, name: moved sample series
-      feed entry}
-  model: contenttypes.contenttype
-  pk: 35
+  pk: 23
 - fields: {app_label: samples, model: samplealias, name: name alias}
   model: contenttypes.contenttype
-  pk: 36
-- fields: {app_label: samples, model: feededitedphysicalprocess, name: edited physical
-      process feed entry}
-  model: contenttypes.contenttype
-  pk: 37
-- fields: {app_label: samples, model: feedstatusmessage, name: status message feed
-      entry}
-  model: contenttypes.contenttype
-  pk: 38
-- fields: {app_label: samples, model: feedwithdrawnstatusmessage, name: withdrawn
-      status message feed entry}
-  model: contenttypes.contenttype
-  pk: 39
+  pk: 24
 - fields: {app_label: samples, model: samplesplit, name: sample split}
   model: contenttypes.contenttype
-  pk: 40
-- fields: {app_label: samples, model: feedremovedtask, name: removed task feed entry}
+  pk: 25
+- fields: {app_label: samples, model: clearance, name: clearance}
   model: contenttypes.contenttype
-  pk: 41
-- fields: {app_label: samples, model: deposition, name: deposition}
+  pk: 26
+- fields: {app_label: samples, model: sampleclaim, name: sample claim}
   model: contenttypes.contenttype
-  pk: 42
-- fields: {app_label: samples, model: feedchangedtopic, name: changed topic feed entry}
+  pk: 27
+- fields: {app_label: samples, model: sampledeath, name: cease of existence}
   model: contenttypes.contenttype
-  pk: 43
+  pk: 28
+- fields: {app_label: samples, model: result, name: result}
+  model: contenttypes.contenttype
+  pk: 29
+- fields: {app_label: samples, model: sampleseries, name: sample series}
+  model: contenttypes.contenttype
+  pk: 30
+- fields: {app_label: samples, model: initials, name: initials}
+  model: contenttypes.contenttype
+  pk: 31
+- fields: {app_label: samples, model: userdetails, name: user details}
+  model: contenttypes.contenttype
+  pk: 32
 - fields: {app_label: samples, model: statusmessage, name: status message}
   model: contenttypes.contenttype
-  pk: 44
+  pk: 33
 - fields: {app_label: samples, model: task, name: task}
   model: contenttypes.contenttype
-  pk: 45
-- fields: {app_label: samples, model: feededitedtask, name: edited task feed entry}
+  pk: 34
+- fields: {app_label: samples, model: deposition, name: deposition}
   model: contenttypes.contenttype
-  pk: 46
+  pk: 35
+- fields: {app_label: samples, model: feedentry, name: feed entry}
+  model: contenttypes.contenttype
+  pk: 36
+- fields: {app_label: samples, model: feednewsamples, name: new samples feed entry}
+  model: contenttypes.contenttype
+  pk: 37
+- fields: {app_label: samples, model: feedmovedsamples, name: moved samples feed entry}
+  model: contenttypes.contenttype
+  pk: 38
 - fields: {app_label: samples, model: feednewphysicalprocess, name: new physical process
       feed entry}
   model: contenttypes.contenttype
-  pk: 47
-- fields: {app_label: samples, model: sampledeath, name: cease of existence}
+  pk: 39
+- fields: {app_label: samples, model: feededitedphysicalprocess, name: edited physical
+      process feed entry}
   model: contenttypes.contenttype
-  pk: 48
-- fields: {app_label: samples, model: externaloperator, name: external operator}
+  pk: 40
+- fields: {app_label: samples, model: feedresult, name: result feed entry}
   model: contenttypes.contenttype
-  pk: 49
+  pk: 41
+- fields: {app_label: samples, model: feedcopiedmysamples, name: copied My Samples
+      feed entry}
+  model: contenttypes.contenttype
+  pk: 42
+- fields: {app_label: samples, model: feededitedsamples, name: edited samples feed
+      entry}
+  model: contenttypes.contenttype
+  pk: 43
 - fields: {app_label: samples, model: feedsamplesplit, name: sample split feed entry}
   model: contenttypes.contenttype
+  pk: 44
+- fields: {app_label: samples, model: feededitedsampleseries, name: edited sample
+      series feed entry}
+  model: contenttypes.contenttype
+  pk: 45
+- fields: {app_label: samples, model: feednewsampleseries, name: new sample series
+      feed entry}
+  model: contenttypes.contenttype
+  pk: 46
+- fields: {app_label: samples, model: feedmovedsampleseries, name: moved sample series
+      feed entry}
+  model: contenttypes.contenttype
+  pk: 47
+- fields: {app_label: samples, model: feedchangedtopic, name: changed topic feed entry}
+  model: contenttypes.contenttype
+  pk: 48
+- fields: {app_label: samples, model: feedstatusmessage, name: status message feed
+      entry}
+  model: contenttypes.contenttype
+  pk: 49
+- fields: {app_label: samples, model: feedwithdrawnstatusmessage, name: withdrawn
+      status message feed entry}
+  model: contenttypes.contenttype
   pk: 50
-- fields: {app_label: samples, model: userdetails, name: user details}
+- fields: {app_label: samples, model: feednewtask, name: new task feed entry}
   model: contenttypes.contenttype
   pk: 51
-- fields: {app_label: samples, model: clearance, name: clearance}
+- fields: {app_label: samples, model: feededitedtask, name: edited task feed entry}
   model: contenttypes.contenttype
   pk: 52
-- fields: {app_label: samples, model: initials, name: initials}
+- fields: {app_label: samples, model: feedremovedtask, name: removed task feed entry}
   model: contenttypes.contenttype
   pk: 53
 - fields: {app_label: jb_common, model: department, name: department}
   model: contenttypes.contenttype
   pk: 54
-- fields: {app_label: jb_common, model: topic, name: topic}
+- fields: {app_label: jb_common, model: userdetails, name: user details}
   model: contenttypes.contenttype
   pk: 55
-- fields: {app_label: jb_common, model: userdetails, name: user details}
+- fields: {app_label: jb_common, model: topic, name: topic}
   model: contenttypes.contenttype
   pk: 56
 - fields: {app_label: jb_common, model: errorpage, name: error page}
@@ -310,52 +310,52 @@
     number: 3
   model: institute.clustertoollayer
   pk: 18
-- fields: {base_pressure: 3.0, comments: p-type layer, h2: '1.00', sih4: '1.00', time: '10:00',
+- fields: {base_pressure: 0.0, comments: p-type layer, h2: '1.00', sih4: '2.00', time: '10:00',
     wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
   pk: 1
-- fields: {base_pressure: 2.0, comments: p-type layer, h2: '0.00', sih4: '0.00', time: '10:00',
-    wire_material: rhenium}
-  model: institute.clustertoolhotwirelayer
-  pk: 4
-- fields: {base_pressure: 6.0, comments: p-type layer, h2: '0.00', sih4: '2.00', time: '10:00',
-    wire_material: rhenium}
-  model: institute.clustertoolhotwirelayer
-  pk: 7
-- fields: {base_pressure: 5.0, comments: p-type layer, h2: '1.00', sih4: '1.00', time: '10:00',
-    wire_material: rhenium}
-  model: institute.clustertoolhotwirelayer
-  pk: 10
-- fields: {base_pressure: 6.0, comments: p-type layer, h2: '1.00', sih4: '2.00', time: '10:00',
-    wire_material: rhenium}
-  model: institute.clustertoolhotwirelayer
-  pk: 13
 - fields: {base_pressure: 7.0, comments: p-type layer, h2: '1.00', sih4: '3.00', time: '10:00',
     wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
-  pk: 16
-- fields: {base_pressure: 9.0, comments: n-type layer, h2: '4.00', sih4: '1.00', time: '10:00',
+  pk: 4
+- fields: {base_pressure: 6.0, comments: p-type layer, h2: '0.00', sih4: '3.00', time: '10:00',
     wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
-  pk: 15
-- fields: {base_pressure: 0.0, comments: n-type layer, h2: '11.00', sih4: '2.00',
+  pk: 7
+- fields: {base_pressure: 1.0, comments: p-type layer, h2: '0.00', sih4: '3.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 10
+- fields: {base_pressure: 8.0, comments: p-type layer, h2: '1.00', sih4: '0.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 13
+- fields: {base_pressure: 5.0, comments: p-type layer, h2: '1.00', sih4: '4.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
+  pk: 16
+- fields: {base_pressure: 9.0, comments: n-type layer, h2: '11.00', sih4: '7.00',
     time: '10:00', wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
+  pk: 15
+- fields: {base_pressure: 4.0, comments: n-type layer, h2: '4.00', sih4: '7.00', time: '10:00',
+    wire_material: rhenium}
+  model: institute.clustertoolhotwirelayer
   pk: 3
-- fields: {base_pressure: 4.0, comments: n-type layer, h2: '2.00', sih4: '3.00', time: '10:00',
+- fields: {base_pressure: 1.0, comments: n-type layer, h2: '3.00', sih4: '9.00', time: '10:00',
     wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
   pk: 12
-- fields: {base_pressure: 8.0, comments: n-type layer, h2: '3.00', sih4: '1.00', time: '10:00',
+- fields: {base_pressure: 4.0, comments: n-type layer, h2: '8.00', sih4: '3.00', time: '10:00',
     wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
   pk: 6
-- fields: {base_pressure: 7.0, comments: n-type layer, h2: '3.00', sih4: '3.00', time: '10:00',
+- fields: {base_pressure: 6.0, comments: n-type layer, h2: '7.00', sih4: '4.00', time: '10:00',
     wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
   pk: 18
-- fields: {base_pressure: 9.0, comments: n-type layer, h2: '5.00', sih4: '9.00', time: '10:00',
-    wire_material: rhenium}
+- fields: {base_pressure: 9.0, comments: n-type layer, h2: '11.00', sih4: '6.00',
+    time: '10:00', wire_material: rhenium}
   model: institute.clustertoolhotwirelayer
   pk: 9
 - fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
@@ -363,95 +363,95 @@
   model: institute.clustertoolpecvdlayer
   pk: 2
 - fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
-    plasma_start_with_shutter: false, sih4: '1.00', time: '55:00'}
+    plasma_start_with_shutter: false, sih4: '3.00', time: '55:00'}
   model: institute.clustertoolpecvdlayer
   pk: 5
 - fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
-    plasma_start_with_shutter: false, sih4: '1.00', time: '55:00'}
+    plasma_start_with_shutter: false, sih4: '0.00', time: '55:00'}
   model: institute.clustertoolpecvdlayer
   pk: 8
 - fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
-    plasma_start_with_shutter: false, sih4: '1.00', time: '55:00'}
+    plasma_start_with_shutter: false, sih4: '0.00', time: '55:00'}
   model: institute.clustertoolpecvdlayer
   pk: 11
-- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
-    plasma_start_with_shutter: false, sih4: '2.00', time: '55:00'}
-  model: institute.clustertoolpecvdlayer
-  pk: 14
 - fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
     plasma_start_with_shutter: false, sih4: '3.00', time: '55:00'}
   model: institute.clustertoolpecvdlayer
+  pk: 14
+- fields: {chamber: '#3', comments: i-type layer, deposition_power: null, h2: '0.00',
+    plasma_start_with_shutter: false, sih4: '2.00', time: '55:00'}
+  model: institute.clustertoolpecvdlayer
   pk: 17
-- fields: {chamber: p, deposition: 2, h2: '0.000', layer_type: p, number: 1, sih4: '1.000',
-    temperature_1: '154.000', temperature_2: '163.000'}
+- fields: {chamber: p, deposition: 2, h2: '1.000', layer_type: p, number: 1, sih4: '2.000',
+    temperature_1: '150.000', temperature_2: '163.000'}
   model: institute.fivechamberlayer
   pk: 1
-- fields: {chamber: i2, deposition: 2, h2: '0.000', layer_type: i, number: 2, sih4: '0.000',
-    temperature_1: '105.000', temperature_2: '170.000'}
+- fields: {chamber: i2, deposition: 2, h2: '0.000', layer_type: i, number: 2, sih4: '3.000',
+    temperature_1: '101.000', temperature_2: '174.000'}
   model: institute.fivechamberlayer
   pk: 2
-- fields: {chamber: n, deposition: 2, h2: '7.000', layer_type: n, number: 3, sih4: '8.000',
-    temperature_1: '131.000', temperature_2: '155.000'}
+- fields: {chamber: n, deposition: 2, h2: '9.000', layer_type: n, number: 3, sih4: '9.000',
+    temperature_1: '145.000', temperature_2: '158.000'}
   model: institute.fivechamberlayer
   pk: 3
-- fields: {chamber: p, deposition: 4, h2: '0.000', layer_type: p, number: 1, sih4: '3.000',
-    temperature_1: '153.000', temperature_2: '179.000'}
+- fields: {chamber: p, deposition: 4, h2: '1.000', layer_type: p, number: 1, sih4: '1.000',
+    temperature_1: '156.000', temperature_2: '161.000'}
   model: institute.fivechamberlayer
   pk: 4
-- fields: {chamber: i2, deposition: 4, h2: '0.000', layer_type: i, number: 2, sih4: '2.000',
-    temperature_1: '127.000', temperature_2: '172.000'}
+- fields: {chamber: i2, deposition: 4, h2: '0.000', layer_type: i, number: 2, sih4: '1.000',
+    temperature_1: '139.000', temperature_2: '176.000'}
   model: institute.fivechamberlayer
   pk: 5
-- fields: {chamber: n, deposition: 4, h2: '11.000', layer_type: n, number: 3, sih4: '3.000',
-    temperature_1: '148.000', temperature_2: '155.000'}
+- fields: {chamber: n, deposition: 4, h2: '11.000', layer_type: n, number: 3, sih4: '6.000',
+    temperature_1: '142.000', temperature_2: '159.000'}
   model: institute.fivechamberlayer
   pk: 6
-- fields: {chamber: p, deposition: 6, h2: '0.000', layer_type: p, number: 1, sih4: '4.000',
-    temperature_1: '154.000', temperature_2: '179.000'}
+- fields: {chamber: p, deposition: 6, h2: '0.000', layer_type: p, number: 1, sih4: '0.000',
+    temperature_1: '151.000', temperature_2: '172.000'}
   model: institute.fivechamberlayer
   pk: 7
-- fields: {chamber: i2, deposition: 6, h2: '0.000', layer_type: i, number: 2, sih4: '0.000',
-    temperature_1: '151.000', temperature_2: '176.000'}
+- fields: {chamber: i2, deposition: 6, h2: '0.000', layer_type: i, number: 2, sih4: '3.000',
+    temperature_1: '131.000', temperature_2: '171.000'}
   model: institute.fivechamberlayer
   pk: 8
-- fields: {chamber: n, deposition: 6, h2: '0.000', layer_type: n, number: 3, sih4: '7.000',
-    temperature_1: '140.000', temperature_2: '159.000'}
+- fields: {chamber: n, deposition: 6, h2: '11.000', layer_type: n, number: 3, sih4: '9.000',
+    temperature_1: '146.000', temperature_2: '155.000'}
   model: institute.fivechamberlayer
   pk: 9
-- fields: {chamber: p, deposition: 8, h2: '0.000', layer_type: p, number: 1, sih4: '2.000',
-    temperature_1: '158.000', temperature_2: '176.000'}
+- fields: {chamber: p, deposition: 8, h2: '1.000', layer_type: p, number: 1, sih4: '3.000',
+    temperature_1: '156.000', temperature_2: '178.000'}
   model: institute.fivechamberlayer
   pk: 10
-- fields: {chamber: i2, deposition: 8, h2: '0.000', layer_type: i, number: 2, sih4: '1.000',
-    temperature_1: '107.000', temperature_2: '170.000'}
+- fields: {chamber: i2, deposition: 8, h2: '0.000', layer_type: i, number: 2, sih4: '3.000',
+    temperature_1: '130.000', temperature_2: '179.000'}
   model: institute.fivechamberlayer
   pk: 11
-- fields: {chamber: n, deposition: 8, h2: '2.000', layer_type: n, number: 3, sih4: '6.000',
-    temperature_1: '145.000', temperature_2: '157.000'}
+- fields: {chamber: n, deposition: 8, h2: '7.000', layer_type: n, number: 3, sih4: '4.000',
+    temperature_1: '144.000', temperature_2: '158.000'}
   model: institute.fivechamberlayer
   pk: 12
-- fields: {chamber: p, deposition: 10, h2: '1.000', layer_type: p, number: 1, sih4: '0.000',
-    temperature_1: '155.000', temperature_2: '160.000'}
+- fields: {chamber: p, deposition: 10, h2: '1.000', layer_type: p, number: 1, sih4: '4.000',
+    temperature_1: '158.000', temperature_2: '165.000'}
   model: institute.fivechamberlayer
   pk: 13
-- fields: {chamber: i2, deposition: 10, h2: '0.000', layer_type: i, number: 2, sih4: '2.000',
-    temperature_1: '137.000', temperature_2: '171.000'}
+- fields: {chamber: i2, deposition: 10, h2: '0.000', layer_type: i, number: 2, sih4: '3.000',
+    temperature_1: '113.000', temperature_2: '172.000'}
   model: institute.fivechamberlayer
   pk: 14
 - fields: {chamber: n, deposition: 10, h2: '11.000', layer_type: n, number: 3, sih4: '9.000',
-    temperature_1: '138.000', temperature_2: '158.000'}
+    temperature_1: '133.000', temperature_2: '158.000'}
   model: institute.fivechamberlayer
   pk: 15
-- fields: {chamber: p, deposition: 12, h2: '0.000', layer_type: p, number: 1, sih4: '1.000',
-    temperature_1: '159.000', temperature_2: '176.000'}
+- fields: {chamber: p, deposition: 12, h2: '1.000', layer_type: p, number: 1, sih4: '4.000',
+    temperature_1: '158.000', temperature_2: '151.000'}
   model: institute.fivechamberlayer
   pk: 16
 - fields: {chamber: i2, deposition: 12, h2: '0.000', layer_type: i, number: 2, sih4: '0.000',
-    temperature_1: '159.000', temperature_2: '172.000'}
+    temperature_1: '113.000', temperature_2: '179.000'}
   model: institute.fivechamberlayer
   pk: 17
-- fields: {chamber: n, deposition: 12, h2: '11.000', layer_type: n, number: 3, sih4: '6.000',
-    temperature_1: '143.000', temperature_2: '159.000'}
+- fields: {chamber: n, deposition: 12, h2: '2.000', layer_type: n, number: 3, sih4: '2.000',
+    temperature_1: '138.000', temperature_2: '155.000'}
   model: institute.fivechamberlayer
   pk: 18
 - fields: {}
@@ -524,1013 +524,167 @@
   model: jb_common.department
   pk: 1
 - fields:
-    codename: add_permission
-    content_type: [auth, permission]
-    name: Can add permission
-  model: auth.permission
-  pk: 1
-- fields:
-    codename: change_permission
-    content_type: [auth, permission]
-    name: Can change permission
-  model: auth.permission
-  pk: 2
-- fields:
-    codename: delete_permission
-    content_type: [auth, permission]
-    name: Can delete permission
-  model: auth.permission
-  pk: 3
-- fields:
-    codename: add_group
-    content_type: [auth, group]
-    name: Can add group
-  model: auth.permission
-  pk: 4
-- fields:
-    codename: change_group
-    content_type: [auth, group]
-    name: Can change group
-  model: auth.permission
-  pk: 5
-- fields:
-    codename: delete_group
-    content_type: [auth, group]
-    name: Can delete group
-  model: auth.permission
-  pk: 6
-- fields:
-    codename: add_user
-    content_type: [auth, user]
-    name: Can add user
-  model: auth.permission
-  pk: 7
-- fields:
-    codename: change_user
-    content_type: [auth, user]
-    name: Can change user
-  model: auth.permission
-  pk: 8
-- fields:
-    codename: delete_user
-    content_type: [auth, user]
-    name: Can delete user
-  model: auth.permission
-  pk: 9
-- fields:
-    codename: add_contenttype
-    content_type: [contenttypes, contenttype]
-    name: Can add content type
-  model: auth.permission
-  pk: 10
-- fields:
-    codename: change_contenttype
-    content_type: [contenttypes, contenttype]
-    name: Can change content type
-  model: auth.permission
-  pk: 11
-- fields:
-    codename: delete_contenttype
-    content_type: [contenttypes, contenttype]
-    name: Can delete content type
-  model: auth.permission
-  pk: 12
-- fields:
-    codename: add_session
-    content_type: [sessions, session]
-    name: Can add session
-  model: auth.permission
-  pk: 13
-- fields:
-    codename: change_session
-    content_type: [sessions, session]
-    name: Can change session
-  model: auth.permission
-  pk: 14
-- fields:
-    codename: delete_session
-    content_type: [sessions, session]
-    name: Can delete session
-  model: auth.permission
-  pk: 15
-- fields:
-    codename: add_logentry
-    content_type: [admin, logentry]
-    name: Can add log entry
-  model: auth.permission
-  pk: 16
-- fields:
-    codename: change_logentry
-    content_type: [admin, logentry]
-    name: Can change log entry
-  model: auth.permission
-  pk: 17
-- fields:
-    codename: delete_logentry
-    content_type: [admin, logentry]
-    name: Can delete log entry
-  model: auth.permission
-  pk: 18
-- fields:
     codename: add_pdsmeasurement
     content_type: [institute, pdsmeasurement]
     name: Can add PDS measurements
   model: auth.permission
-  pk: 19
+  pk: 1
 - fields:
     codename: edit_permissions_for_pdsmeasurement
     content_type: [institute, pdsmeasurement]
     name: Can edit perms for PDS measurements
   model: auth.permission
-  pk: 20
+  pk: 2
 - fields:
     codename: view_every_pdsmeasurement
     content_type: [institute, pdsmeasurement]
     name: Can view all PDS measurements
   model: auth.permission
-  pk: 21
+  pk: 3
 - fields:
     codename: add_solarsimulatormeasurement
     content_type: [institute, solarsimulatormeasurement]
     name: Can add solarsimulator measurements
   model: auth.permission
-  pk: 22
+  pk: 4
 - fields:
     codename: edit_permissions_for_solarsimulatormeasurement
     content_type: [institute, solarsimulatormeasurement]
     name: Can edit perms for solarsimulator measurements
   model: auth.permission
-  pk: 23
+  pk: 5
 - fields:
     codename: view_every_solarsimulatormeasurement
     content_type: [institute, solarsimulatormeasurement]
     name: Can view all solarsimulator measurements
   model: auth.permission
-  pk: 24
-- fields:
-    codename: add_solarsimulatorcellmeasurement
-    content_type: [institute, solarsimulatorcellmeasurement]
-    name: Can add solarsimulator cell measurement
-  model: auth.permission
-  pk: 25
-- fields:
-    codename: change_solarsimulatorcellmeasurement
-    content_type: [institute, solarsimulatorcellmeasurement]
-    name: Can change solarsimulator cell measurement
-  model: auth.permission
-  pk: 26
-- fields:
-    codename: delete_solarsimulatorcellmeasurement
-    content_type: [institute, solarsimulatorcellmeasurement]
-    name: Can delete solarsimulator cell measurement
-  model: auth.permission
-  pk: 27
+  pk: 6
 - fields:
     codename: add_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can add cluster tool depositions
   model: auth.permission
-  pk: 28
+  pk: 7
 - fields:
     codename: edit_permissions_for_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can edit perms for cluster tool I depositions
   model: auth.permission
-  pk: 29
+  pk: 8
 - fields:
     codename: view_every_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can view all cluster tool depositions
   model: auth.permission
-  pk: 30
+  pk: 9
 - fields:
     codename: change_clustertooldeposition
     content_type: [institute, clustertooldeposition]
     name: Can edit all cluster tool depositions
   model: auth.permission
-  pk: 31
-- fields:
-    codename: add_clustertoollayer
-    content_type: [institute, clustertoollayer]
-    name: Can add cluster tool layer
-  model: auth.permission
-  pk: 32
-- fields:
-    codename: change_clustertoollayer
-    content_type: [institute, clustertoollayer]
-    name: Can change cluster tool layer
-  model: auth.permission
-  pk: 33
-- fields:
-    codename: delete_clustertoollayer
-    content_type: [institute, clustertoollayer]
-    name: Can delete cluster tool layer
-  model: auth.permission
-  pk: 34
-- fields:
-    codename: add_clustertoolhotwirelayer
-    content_type: [institute, clustertoolhotwirelayer]
-    name: Can add cluster tool hot-wire layer
-  model: auth.permission
-  pk: 35
-- fields:
-    codename: change_clustertoolhotwirelayer
-    content_type: [institute, clustertoolhotwirelayer]
-    name: Can change cluster tool hot-wire layer
-  model: auth.permission
-  pk: 36
-- fields:
-    codename: delete_clustertoolhotwirelayer
-    content_type: [institute, clustertoolhotwirelayer]
-    name: Can delete cluster tool hot-wire layer
-  model: auth.permission
-  pk: 37
-- fields:
-    codename: add_clustertoolpecvdlayer
-    content_type: [institute, clustertoolpecvdlayer]
-    name: Can add cluster tool PECVD layer
-  model: auth.permission
-  pk: 38
-- fields:
-    codename: change_clustertoolpecvdlayer
-    content_type: [institute, clustertoolpecvdlayer]
-    name: Can change cluster tool PECVD layer
-  model: auth.permission
-  pk: 39
-- fields:
-    codename: delete_clustertoolpecvdlayer
-    content_type: [institute, clustertoolpecvdlayer]
-    name: Can delete cluster tool PECVD layer
-  model: auth.permission
-  pk: 40
+  pk: 10
 - fields:
     codename: add_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can add 5-chamber depositions
   model: auth.permission
-  pk: 41
+  pk: 11
 - fields:
     codename: edit_permissions_for_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can edit perms for 5-chamber depositions
   model: auth.permission
-  pk: 42
+  pk: 12
 - fields:
     codename: view_every_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can view all 5-chamber depositions
   model: auth.permission
-  pk: 43
+  pk: 13
 - fields:
     codename: change_fivechamberdeposition
     content_type: [institute, fivechamberdeposition]
     name: Can edit all 5-chamber depositions
   model: auth.permission
-  pk: 44
-- fields:
-    codename: add_fivechamberlayer
-    content_type: [institute, fivechamberlayer]
-    name: Can add 5-chamber layer
-  model: auth.permission
-  pk: 45
-- fields:
-    codename: change_fivechamberlayer
-    content_type: [institute, fivechamberlayer]
-    name: Can change 5-chamber layer
-  model: auth.permission
-  pk: 46
-- fields:
-    codename: delete_fivechamberlayer
-    content_type: [institute, fivechamberlayer]
-    name: Can delete 5-chamber layer
-  model: auth.permission
-  pk: 47
-- fields:
-    codename: add_sampledetails
-    content_type: [institute, sampledetails]
-    name: Can add sample details
-  model: auth.permission
-  pk: 48
-- fields:
-    codename: change_sampledetails
-    content_type: [institute, sampledetails]
-    name: Can change sample details
-  model: auth.permission
-  pk: 49
-- fields:
-    codename: delete_sampledetails
-    content_type: [institute, sampledetails]
-    name: Can delete sample details
-  model: auth.permission
-  pk: 50
-- fields:
-    codename: add_informallayer
-    content_type: [institute, informallayer]
-    name: Can add informal layer
-  model: auth.permission
-  pk: 51
-- fields:
-    codename: change_informallayer
-    content_type: [institute, informallayer]
-    name: Can change informal layer
-  model: auth.permission
-  pk: 52
-- fields:
-    codename: delete_informallayer
-    content_type: [institute, informallayer]
-    name: Can delete informal layer
-  model: auth.permission
-  pk: 53
+  pk: 14
 - fields:
     codename: add_externaloperator
     content_type: [samples, externaloperator]
     name: Can add an external operator
   model: auth.permission
-  pk: 54
+  pk: 15
 - fields:
     codename: view_every_externaloperator
     content_type: [samples, externaloperator]
     name: Can view all external operators
   model: auth.permission
-  pk: 55
-- fields:
-    codename: add_process
-    content_type: [samples, process]
-    name: Can add process
-  model: auth.permission
-  pk: 56
-- fields:
-    codename: change_process
-    content_type: [samples, process]
-    name: Can change process
-  model: auth.permission
-  pk: 57
-- fields:
-    codename: delete_process
-    content_type: [samples, process]
-    name: Can delete process
-  model: auth.permission
-  pk: 58
-- fields:
-    codename: add_sample
-    content_type: [samples, sample]
-    name: Can add sample
-  model: auth.permission
-  pk: 59
-- fields:
-    codename: change_sample
-    content_type: [samples, sample]
-    name: Can change sample
-  model: auth.permission
-  pk: 60
-- fields:
-    codename: delete_sample
-    content_type: [samples, sample]
-    name: Can delete sample
-  model: auth.permission
-  pk: 61
+  pk: 16
 - fields:
     codename: view_every_sample
     content_type: [samples, sample]
     name: Can view all samples from his/her department
   model: auth.permission
-  pk: 62
+  pk: 17
 - fields:
     codename: adopt_samples
     content_type: [samples, sample]
     name: Can adopt samples from his/her department
   model: auth.permission
-  pk: 63
+  pk: 18
 - fields:
     codename: rename_samples
     content_type: [samples, sample]
     name: Can rename samples from his/her department
   model: auth.permission
-  pk: 64
-- fields:
-    codename: add_samplealias
-    content_type: [samples, samplealias]
-    name: Can add name alias
-  model: auth.permission
-  pk: 65
-- fields:
-    codename: change_samplealias
-    content_type: [samples, samplealias]
-    name: Can change name alias
-  model: auth.permission
-  pk: 66
-- fields:
-    codename: delete_samplealias
-    content_type: [samples, samplealias]
-    name: Can delete name alias
-  model: auth.permission
-  pk: 67
-- fields:
-    codename: add_samplesplit
-    content_type: [samples, samplesplit]
-    name: Can add sample split
-  model: auth.permission
-  pk: 68
-- fields:
-    codename: change_samplesplit
-    content_type: [samples, samplesplit]
-    name: Can change sample split
-  model: auth.permission
-  pk: 69
-- fields:
-    codename: delete_samplesplit
-    content_type: [samples, samplesplit]
-    name: Can delete sample split
-  model: auth.permission
-  pk: 70
-- fields:
-    codename: add_clearance
-    content_type: [samples, clearance]
-    name: Can add clearance
-  model: auth.permission
-  pk: 71
-- fields:
-    codename: change_clearance
-    content_type: [samples, clearance]
-    name: Can change clearance
-  model: auth.permission
-  pk: 72
-- fields:
-    codename: delete_clearance
-    content_type: [samples, clearance]
-    name: Can delete clearance
-  model: auth.permission
-  pk: 73
-- fields:
-    codename: add_sampleclaim
-    content_type: [samples, sampleclaim]
-    name: Can add sample claim
-  model: auth.permission
-  pk: 74
-- fields:
-    codename: change_sampleclaim
-    content_type: [samples, sampleclaim]
-    name: Can change sample claim
-  model: auth.permission
-  pk: 75
-- fields:
-    codename: delete_sampleclaim
-    content_type: [samples, sampleclaim]
-    name: Can delete sample claim
-  model: auth.permission
-  pk: 76
-- fields:
-    codename: add_sampledeath
-    content_type: [samples, sampledeath]
-    name: Can add cease of existence
-  model: auth.permission
-  pk: 77
-- fields:
-    codename: change_sampledeath
-    content_type: [samples, sampledeath]
-    name: Can change cease of existence
-  model: auth.permission
-  pk: 78
-- fields:
-    codename: delete_sampledeath
-    content_type: [samples, sampledeath]
-    name: Can delete cease of existence
-  model: auth.permission
-  pk: 79
-- fields:
-    codename: add_result
-    content_type: [samples, result]
-    name: Can add result
-  model: auth.permission
-  pk: 80
-- fields:
-    codename: change_result
-    content_type: [samples, result]
-    name: Can change result
-  model: auth.permission
-  pk: 81
-- fields:
-    codename: delete_result
-    content_type: [samples, result]
-    name: Can delete result
-  model: auth.permission
-  pk: 82
-- fields:
-    codename: add_sampleseries
-    content_type: [samples, sampleseries]
-    name: Can add sample series
-  model: auth.permission
-  pk: 83
-- fields:
-    codename: change_sampleseries
-    content_type: [samples, sampleseries]
-    name: Can change sample series
-  model: auth.permission
-  pk: 84
-- fields:
-    codename: delete_sampleseries
-    content_type: [samples, sampleseries]
-    name: Can delete sample series
-  model: auth.permission
-  pk: 85
-- fields:
-    codename: add_initials
-    content_type: [samples, initials]
-    name: Can add initials
-  model: auth.permission
-  pk: 86
-- fields:
-    codename: change_initials
-    content_type: [samples, initials]
-    name: Can change initials
-  model: auth.permission
-  pk: 87
-- fields:
-    codename: delete_initials
-    content_type: [samples, initials]
-    name: Can delete initials
-  model: auth.permission
-  pk: 88
-- fields:
-    codename: add_userdetails
-    content_type: [samples, userdetails]
-    name: Can add user details
-  model: auth.permission
-  pk: 89
-- fields:
-    codename: change_userdetails
-    content_type: [samples, userdetails]
-    name: Can change user details
-  model: auth.permission
-  pk: 90
-- fields:
-    codename: delete_userdetails
-    content_type: [samples, userdetails]
-    name: Can delete user details
-  model: auth.permission
-  pk: 91
+  pk: 19
 - fields:
     codename: edit_permissions_for_all_physical_processes
     content_type: [samples, userdetails]
     name: Can edit permissions for all physical processes
   model: auth.permission
-  pk: 92
-- fields:
-    codename: add_statusmessage
-    content_type: [samples, statusmessage]
-    name: Can add status message
-  model: auth.permission
-  pk: 93
-- fields:
-    codename: change_statusmessage
-    content_type: [samples, statusmessage]
-    name: Can change status message
-  model: auth.permission
-  pk: 94
-- fields:
-    codename: delete_statusmessage
-    content_type: [samples, statusmessage]
-    name: Can delete status message
-  model: auth.permission
-  pk: 95
-- fields:
-    codename: add_task
-    content_type: [samples, task]
-    name: Can add task
-  model: auth.permission
-  pk: 96
-- fields:
-    codename: change_task
-    content_type: [samples, task]
-    name: Can change task
-  model: auth.permission
-  pk: 97
-- fields:
-    codename: delete_task
-    content_type: [samples, task]
-    name: Can delete task
-  model: auth.permission
-  pk: 98
-- fields:
-    codename: add_feedentry
-    content_type: [samples, feedentry]
-    name: Can add feed entry
-  model: auth.permission
-  pk: 99
-- fields:
-    codename: change_feedentry
-    content_type: [samples, feedentry]
-    name: Can change feed entry
-  model: auth.permission
-  pk: 100
-- fields:
-    codename: delete_feedentry
-    content_type: [samples, feedentry]
-    name: Can delete feed entry
-  model: auth.permission
-  pk: 101
-- fields:
-    codename: add_feednewsamples
-    content_type: [samples, feednewsamples]
-    name: Can add new samples feed entry
-  model: auth.permission
-  pk: 102
-- fields:
-    codename: change_feednewsamples
-    content_type: [samples, feednewsamples]
-    name: Can change new samples feed entry
-  model: auth.permission
-  pk: 103
-- fields:
-    codename: delete_feednewsamples
-    content_type: [samples, feednewsamples]
-    name: Can delete new samples feed entry
-  model: auth.permission
-  pk: 104
-- fields:
-    codename: add_feedmovedsamples
-    content_type: [samples, feedmovedsamples]
-    name: Can add moved samples feed entry
-  model: auth.permission
-  pk: 105
-- fields:
-    codename: change_feedmovedsamples
-    content_type: [samples, feedmovedsamples]
-    name: Can change moved samples feed entry
-  model: auth.permission
-  pk: 106
-- fields:
-    codename: delete_feedmovedsamples
-    content_type: [samples, feedmovedsamples]
-    name: Can delete moved samples feed entry
-  model: auth.permission
-  pk: 107
-- fields:
-    codename: add_feednewphysicalprocess
-    content_type: [samples, feednewphysicalprocess]
-    name: Can add new physical process feed entry
-  model: auth.permission
-  pk: 108
-- fields:
-    codename: change_feednewphysicalprocess
-    content_type: [samples, feednewphysicalprocess]
-    name: Can change new physical process feed entry
-  model: auth.permission
-  pk: 109
-- fields:
-    codename: delete_feednewphysicalprocess
-    content_type: [samples, feednewphysicalprocess]
-    name: Can delete new physical process feed entry
-  model: auth.permission
-  pk: 110
-- fields:
-    codename: add_feededitedphysicalprocess
-    content_type: [samples, feededitedphysicalprocess]
-    name: Can add edited physical process feed entry
-  model: auth.permission
-  pk: 111
-- fields:
-    codename: change_feededitedphysicalprocess
-    content_type: [samples, feededitedphysicalprocess]
-    name: Can change edited physical process feed entry
-  model: auth.permission
-  pk: 112
-- fields:
-    codename: delete_feededitedphysicalprocess
-    content_type: [samples, feededitedphysicalprocess]
-    name: Can delete edited physical process feed entry
-  model: auth.permission
-  pk: 113
-- fields:
-    codename: add_feedresult
-    content_type: [samples, feedresult]
-    name: Can add result feed entry
-  model: auth.permission
-  pk: 114
-- fields:
-    codename: change_feedresult
-    content_type: [samples, feedresult]
-    name: Can change result feed entry
-  model: auth.permission
-  pk: 115
-- fields:
-    codename: delete_feedresult
-    content_type: [samples, feedresult]
-    name: Can delete result feed entry
-  model: auth.permission
-  pk: 116
-- fields:
-    codename: add_feedcopiedmysamples
-    content_type: [samples, feedcopiedmysamples]
-    name: Can add copied My Samples feed entry
-  model: auth.permission
-  pk: 117
-- fields:
-    codename: change_feedcopiedmysamples
-    content_type: [samples, feedcopiedmysamples]
-    name: Can change copied My Samples feed entry
-  model: auth.permission
-  pk: 118
-- fields:
-    codename: delete_feedcopiedmysamples
-    content_type: [samples, feedcopiedmysamples]
-    name: Can delete copied My Samples feed entry
-  model: auth.permission
-  pk: 119
-- fields:
-    codename: add_feededitedsamples
-    content_type: [samples, feededitedsamples]
-    name: Can add edited samples feed entry
-  model: auth.permission
-  pk: 120
-- fields:
-    codename: change_feededitedsamples
-    content_type: [samples, feededitedsamples]
-    name: Can change edited samples feed entry
-  model: auth.permission
-  pk: 121
-- fields:
-    codename: delete_feededitedsamples
-    content_type: [samples, feededitedsamples]
-    name: Can delete edited samples feed entry
-  model: auth.permission
-  pk: 122
-- fields:
-    codename: add_feedsamplesplit
-    content_type: [samples, feedsamplesplit]
-    name: Can add sample split feed entry
-  model: auth.permission
-  pk: 123
-- fields:
-    codename: change_feedsamplesplit
-    content_type: [samples, feedsamplesplit]
-    name: Can change sample split feed entry
-  model: auth.permission
-  pk: 124
-- fields:
-    codename: delete_feedsamplesplit
-    content_type: [samples, feedsamplesplit]
-    name: Can delete sample split feed entry
-  model: auth.permission
-  pk: 125
-- fields:
-    codename: add_feededitedsampleseries
-    content_type: [samples, feededitedsampleseries]
-    name: Can add edited sample series feed entry
-  model: auth.permission
-  pk: 126
-- fields:
-    codename: change_feededitedsampleseries
-    content_type: [samples, feededitedsampleseries]
-    name: Can change edited sample series feed entry
-  model: auth.permission
-  pk: 127
-- fields:
-    codename: delete_feededitedsampleseries
-    content_type: [samples, feededitedsampleseries]
-    name: Can delete edited sample series feed entry
-  model: auth.permission
-  pk: 128
-- fields:
-    codename: add_feednewsampleseries
-    content_type: [samples, feednewsampleseries]
-    name: Can add new sample series feed entry
-  model: auth.permission
-  pk: 129
-- fields:
-    codename: change_feednewsampleseries
-    content_type: [samples, feednewsampleseries]
-    name: Can change new sample series feed entry
-  model: auth.permission
-  pk: 130
-- fields:
-    codename: delete_feednewsampleseries
-    content_type: [samples, feednewsampleseries]
-    name: Can delete new sample series feed entry
-  model: auth.permission
-  pk: 131
-- fields:
-    codename: add_feedmovedsampleseries
-    content_type: [samples, feedmovedsampleseries]
-    name: Can add moved sample series feed entry
-  model: auth.permission
-  pk: 132
-- fields:
-    codename: change_feedmovedsampleseries
-    content_type: [samples, feedmovedsampleseries]
-    name: Can change moved sample series feed entry
-  model: auth.permission
-  pk: 133
-- fields:
-    codename: delete_feedmovedsampleseries
-    content_type: [samples, feedmovedsampleseries]
-    name: Can delete moved sample series feed entry
-  model: auth.permission
-  pk: 134
-- fields:
-    codename: add_feedchangedtopic
-    content_type: [samples, feedchangedtopic]
-    name: Can add changed topic feed entry
-  model: auth.permission
-  pk: 135
-- fields:
-    codename: change_feedchangedtopic
-    content_type: [samples, feedchangedtopic]
-    name: Can change changed topic feed entry
-  model: auth.permission
-  pk: 136
-- fields:
-    codename: delete_feedchangedtopic
-    content_type: [samples, feedchangedtopic]
-    name: Can delete changed topic feed entry
-  model: auth.permission
-  pk: 137
-- fields:
-    codename: add_feedstatusmessage
-    content_type: [samples, feedstatusmessage]
-    name: Can add status message feed entry
-  model: auth.permission
-  pk: 138
-- fields:
-    codename: change_feedstatusmessage
-    content_type: [samples, feedstatusmessage]
-    name: Can change status message feed entry
-  model: auth.permission
-  pk: 139
-- fields:
-    codename: delete_feedstatusmessage
-    content_type: [samples, feedstatusmessage]
-    name: Can delete status message feed entry
-  model: auth.permission
-  pk: 140
-- fields:
-    codename: add_feedwithdrawnstatusmessage
-    content_type: [samples, feedwithdrawnstatusmessage]
-    name: Can add withdrawn status message feed entry
-  model: auth.permission
-  pk: 141
-- fields:
-    codename: change_feedwithdrawnstatusmessage
-    content_type: [samples, feedwithdrawnstatusmessage]
-    name: Can change withdrawn status message feed entry
-  model: auth.permission
-  pk: 142
-- fields:
-    codename: delete_feedwithdrawnstatusmessage
-    content_type: [samples, feedwithdrawnstatusmessage]
-    name: Can delete withdrawn status message feed entry
-  model: auth.permission
-  pk: 143
-- fields:
-    codename: add_feednewtask
-    content_type: [samples, feednewtask]
-    name: Can add new task feed entry
-  model: auth.permission
-  pk: 144
-- fields:
-    codename: change_feednewtask
-    content_type: [samples, feednewtask]
-    name: Can change new task feed entry
-  model: auth.permission
-  pk: 145
-- fields:
-    codename: delete_feednewtask
-    content_type: [samples, feednewtask]
-    name: Can delete new task feed entry
-  model: auth.permission
-  pk: 146
-- fields:
-    codename: add_feededitedtask
-    content_type: [samples, feededitedtask]
-    name: Can add edited task feed entry
-  model: auth.permission
-  pk: 147
-- fields:
-    codename: change_feededitedtask
-    content_type: [samples, feededitedtask]
-    name: Can change edited task feed entry
-  model: auth.permission
-  pk: 148
-- fields:
-    codename: delete_feededitedtask
-    content_type: [samples, feededitedtask]
-    name: Can delete edited task feed entry
-  model: auth.permission
-  pk: 149
-- fields:
-    codename: add_feedremovedtask
-    content_type: [samples, feedremovedtask]
-    name: Can add removed task feed entry
-  model: auth.permission
-  pk: 150
-- fields:
-    codename: change_feedremovedtask
-    content_type: [samples, feedremovedtask]
-    name: Can change removed task feed entry
-  model: auth.permission
-  pk: 151
-- fields:
-    codename: delete_feedremovedtask
-    content_type: [samples, feedremovedtask]
-    name: Can delete removed task feed entry
-  model: auth.permission
-  pk: 152
-- fields:
-    codename: add_department
-    content_type: [jb_common, department]
-    name: Can add department
-  model: auth.permission
-  pk: 153
-- fields:
-    codename: change_department
-    content_type: [jb_common, department]
-    name: Can change department
-  model: auth.permission
-  pk: 154
-- fields:
-    codename: delete_department
-    content_type: [jb_common, department]
-    name: Can delete department
-  model: auth.permission
-  pk: 155
-- fields:
-    codename: add_userdetails
-    content_type: [jb_common, userdetails]
-    name: Can add user details
-  model: auth.permission
-  pk: 156
-- fields:
-    codename: change_userdetails
-    content_type: [jb_common, userdetails]
-    name: Can change user details
-  model: auth.permission
-  pk: 157
-- fields:
-    codename: delete_userdetails
-    content_type: [jb_common, userdetails]
-    name: Can delete user details
-  model: auth.permission
-  pk: 158
+  pk: 20
 - fields:
     codename: add_topic
     content_type: [jb_common, topic]
     name: Can add new topics
   model: auth.permission
-  pk: 159
+  pk: 21
 - fields:
     codename: change_topic
     content_type: [jb_common, topic]
     name: Can edit all topics
   model: auth.permission
-  pk: 160
+  pk: 22
 - fields:
     codename: edit_their_topics
     content_type: [jb_common, topic]
     name: Can edit topics that he/she is a manager of
   model: auth.permission
-  pk: 161
+  pk: 23
 - fields:
-    codename: add_errorpage
-    content_type: [jb_common, errorpage]
-    name: Can add error page
-  model: auth.permission
-  pk: 162
-- fields:
-    codename: change_errorpage
-    content_type: [jb_common, errorpage]
-    name: Can change error page
-  model: auth.permission
-  pk: 163
-- fields:
-    codename: delete_errorpage
-    content_type: [jb_common, errorpage]
-    name: Can delete error page
-  model: auth.permission
-  pk: 164
-- fields:
-    date_joined: 2015-01-19 19:32:43.986683
+    date_joined: 2015-01-20 21:25:07.803976
     email: ''
     first_name: Julia
     groups: []
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: 2015-01-19 19:33:12.871977
+    last_login: 2015-01-20 21:25:29.865885
     last_name: ''
-    password: pbkdf2_sha256$12000$wf2uj6nAzeTC$chVBM/DzLnhTlaATRvSHQf9XmLqriEH+RFXsS4ZPG9s=
+    password: pbkdf2_sha256$12000$Fxi9eAGbzLPD$/I85hteX3QtmvLSEf1cJxLD45ZgieyX75jWsgRDSbus=
     user_permissions: []
     username: juliabase
   model: auth.user
   pk: 1
 - fields:
-    date_joined: 2015-01-19 19:32:44.021027
+    date_joined: 2015-01-20 21:25:07.839692
     email: ''
     first_name: ''
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-19 19:32:44.020952
+    last_login: 2015-01-20 21:25:07.839606
     last_name: Nobody
     password: ''
     user_permissions: []
@@ -1538,14 +692,14 @@
   model: auth.user
   pk: 2
 - fields:
-    date_joined: 2015-01-19 19:32:44.050992
+    date_joined: 2015-01-20 21:25:07.874266
     email: ''
     first_name: Nick
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-19 19:32:44.050923
+    last_login: 2015-01-20 21:25:07.874173
     last_name: Burkhardt
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -1556,14 +710,14 @@
   model: auth.user
   pk: 3
 - fields:
-    date_joined: 2015-01-19 19:32:44.092060
+    date_joined: 2015-01-20 21:25:07.920220
     email: ''
     first_name: Hank
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-19 19:32:44.091979
+    last_login: 2015-01-20 21:25:07.920139
     last_name: Griffin
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -1574,14 +728,14 @@
   model: auth.user
   pk: 4
 - fields:
-    date_joined: 2015-01-19 19:32:44.127676
+    date_joined: 2015-01-20 21:25:07.959405
     email: ''
     first_name: Juliette
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-19 19:32:44.127596
+    last_login: 2015-01-20 21:25:07.959326
     last_name: Silverton
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -1590,14 +744,14 @@
   model: auth.user
   pk: 5
 - fields:
-    date_joined: 2015-01-19 19:32:44.173325
+    date_joined: 2015-01-20 21:25:08.000692
     email: ''
     first_name: Eddie
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-19 19:32:44.173254
+    last_login: 2015-01-20 21:25:08.000625
     last_name: Monroe
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -1609,14 +763,14 @@
   model: auth.user
   pk: 6
 - fields:
-    date_joined: 2015-01-19 19:32:44.217233
+    date_joined: 2015-01-20 21:25:08.045631
     email: ''
     first_name: Rosalee
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-19 19:32:44.217165
+    last_login: 2015-01-20 21:25:08.045550
     last_name: Calvert
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -1628,14 +782,14 @@
   model: auth.user
   pk: 7
 - fields:
-    date_joined: 2015-01-19 19:32:44.274248
+    date_joined: 2015-01-20 21:25:08.103022
     email: ''
     first_name: Jean
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-19 19:32:44.274178
+    last_login: 2015-01-20 21:25:08.102941
     last_name: Renard
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -1687,19 +841,19 @@
   pk: 23
 - fields: {apparatus: pds1, number: 1, raw_datafile: measurement-1.dat}
   model: institute.pdsmeasurement
-  pk: 29
+  pk: 25
 - fields: {apparatus: pds1, number: 2, raw_datafile: measurement-2.dat}
   model: institute.pdsmeasurement
-  pk: 28
+  pk: 26
 - fields: {apparatus: pds1, number: 3, raw_datafile: measurement-3.dat}
   model: institute.pdsmeasurement
-  pk: 26
+  pk: 27
 - fields: {apparatus: pds1, number: 4, raw_datafile: measurement-4.dat}
   model: institute.pdsmeasurement
-  pk: 25
+  pk: 28
 - fields: {apparatus: pds1, number: 5, raw_datafile: measurement-5.dat}
   model: institute.pdsmeasurement
-  pk: 27
+  pk: 29
 - fields: {apparatus: pds1, number: 6, raw_datafile: measurement-6.dat}
   model: institute.pdsmeasurement
   pk: 30
@@ -1745,7 +899,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:49.829597
+    last_modified: 2015-01-20 21:25:09.059315
     operator: [r.calvert]
     timestamp: 2014-10-01 10:29:00
     timestamp_inaccuracy: 3
@@ -1757,7 +911,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:53.105625
+    last_modified: 2015-01-20 21:25:11.355371
     operator: [r.calvert]
     timestamp: 2014-10-01 10:30:00
     timestamp_inaccuracy: 0
@@ -1769,7 +923,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:53.731954
+    last_modified: 2015-01-20 21:25:11.847439
     operator: [r.calvert]
     timestamp: 2014-10-02 11:09:00
     timestamp_inaccuracy: 3
@@ -1781,7 +935,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:54.262826
+    last_modified: 2015-01-20 21:25:12.282096
     operator: [r.calvert]
     timestamp: 2014-10-02 11:10:00
     timestamp_inaccuracy: 0
@@ -1793,7 +947,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:54.805562
+    last_modified: 2015-01-20 21:25:12.778357
     operator: [r.calvert]
     timestamp: 2014-10-02 12:09:00
     timestamp_inaccuracy: 3
@@ -1805,7 +959,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:55.330406
+    last_modified: 2015-01-20 21:25:13.209921
     operator: [r.calvert]
     timestamp: 2014-10-02 12:10:00
     timestamp_inaccuracy: 0
@@ -1817,7 +971,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:55.878864
+    last_modified: 2015-01-20 21:25:13.713044
     operator: [r.calvert]
     timestamp: 2014-10-02 13:09:00
     timestamp_inaccuracy: 3
@@ -1829,7 +983,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:56.369084
+    last_modified: 2015-01-20 21:25:14.139711
     operator: [r.calvert]
     timestamp: 2014-10-02 13:10:00
     timestamp_inaccuracy: 0
@@ -1841,7 +995,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:56.900168
+    last_modified: 2015-01-20 21:25:14.658743
     operator: [r.calvert]
     timestamp: 2014-10-02 14:09:00
     timestamp_inaccuracy: 3
@@ -1853,7 +1007,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:57.398186
+    last_modified: 2015-01-20 21:25:15.098395
     operator: [r.calvert]
     timestamp: 2014-10-02 14:10:00
     timestamp_inaccuracy: 0
@@ -1865,7 +1019,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:57.954056
+    last_modified: 2015-01-20 21:25:15.608579
     operator: [r.calvert]
     timestamp: 2014-10-02 15:09:00
     timestamp_inaccuracy: 3
@@ -1877,7 +1031,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:58.438071
+    last_modified: 2015-01-20 21:25:16.045466
     operator: [r.calvert]
     timestamp: 2014-10-02 15:10:00
     timestamp_inaccuracy: 0
@@ -1889,7 +1043,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:32:59.372460
+    last_modified: 2015-01-20 21:25:16.939084
     operator: [e.monroe]
     timestamp: 2014-10-01 10:29:00
     timestamp_inaccuracy: 3
@@ -1901,7 +1055,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:01.780016
+    last_modified: 2015-01-20 21:25:19.303185
     operator: [e.monroe]
     timestamp: 2014-10-01 10:30:00
     timestamp_inaccuracy: 0
@@ -1913,7 +1067,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:02.366572
+    last_modified: 2015-01-20 21:25:19.861524
     operator: [e.monroe]
     timestamp: 2014-10-02 11:09:00
     timestamp_inaccuracy: 3
@@ -1925,7 +1079,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:02.827612
+    last_modified: 2015-01-20 21:25:20.318689
     operator: [e.monroe]
     timestamp: 2014-10-02 11:10:00
     timestamp_inaccuracy: 0
@@ -1937,7 +1091,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:03.413473
+    last_modified: 2015-01-20 21:25:20.857866
     operator: [e.monroe]
     timestamp: 2014-10-02 12:09:00
     timestamp_inaccuracy: 3
@@ -1949,7 +1103,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:03.871232
+    last_modified: 2015-01-20 21:25:21.312556
     operator: [e.monroe]
     timestamp: 2014-10-02 12:10:00
     timestamp_inaccuracy: 0
@@ -1961,7 +1115,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:04.458676
+    last_modified: 2015-01-20 21:25:21.869087
     operator: [e.monroe]
     timestamp: 2014-10-02 13:09:00
     timestamp_inaccuracy: 3
@@ -1973,7 +1127,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:04.965727
+    last_modified: 2015-01-20 21:25:22.323331
     operator: [e.monroe]
     timestamp: 2014-10-02 13:10:00
     timestamp_inaccuracy: 0
@@ -1985,7 +1139,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:05.596158
+    last_modified: 2015-01-20 21:25:22.883681
     operator: [e.monroe]
     timestamp: 2014-10-02 14:09:00
     timestamp_inaccuracy: 3
@@ -1997,7 +1151,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:06.122990
+    last_modified: 2015-01-20 21:25:23.351073
     operator: [e.monroe]
     timestamp: 2014-10-02 14:10:00
     timestamp_inaccuracy: 0
@@ -2009,7 +1163,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:06.715300
+    last_modified: 2015-01-20 21:25:23.941764
     operator: [e.monroe]
     timestamp: 2014-10-02 15:09:00
     timestamp_inaccuracy: 3
@@ -2021,7 +1175,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:07.237187
+    last_modified: 2015-01-20 21:25:24.414200
     operator: [e.monroe]
     timestamp: 2014-10-02 15:10:00
     timestamp_inaccuracy: 0
@@ -2033,9 +1187,9 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:10.045777
+    last_modified: 2015-01-20 21:25:27.211030
     operator: [n.burkhardt]
-    timestamp: 2014-10-07 10:04:00
+    timestamp: 2014-10-07 10:01:00
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 25
@@ -2045,9 +1199,9 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:10.526368
+    last_modified: 2015-01-20 21:25:27.682733
     operator: [n.burkhardt]
-    timestamp: 2014-10-07 10:03:00
+    timestamp: 2014-10-07 10:02:00
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 26
@@ -2057,9 +1211,9 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:10.976454
+    last_modified: 2015-01-20 21:25:28.124151
     operator: [n.burkhardt]
-    timestamp: 2014-10-07 10:05:00
+    timestamp: 2014-10-07 10:03:00
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 27
@@ -2069,9 +1223,9 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:11.509882
+    last_modified: 2015-01-20 21:25:28.561788
     operator: [n.burkhardt]
-    timestamp: 2014-10-07 10:02:00
+    timestamp: 2014-10-07 10:04:00
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 28
@@ -2081,9 +1235,9 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:11.978705
+    last_modified: 2015-01-20 21:25:29.005930
     operator: [n.burkhardt]
-    timestamp: 2014-10-07 10:01:00
+    timestamp: 2014-10-07 10:05:00
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 29
@@ -2093,7 +1247,7 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-19 19:33:12.438908
+    last_modified: 2015-01-20 21:25:29.440287
     operator: [n.burkhardt]
     timestamp: 2014-10-07 10:06:00
     timestamp_inaccuracy: 0
@@ -2102,7 +1256,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-19 19:32:53.157534
+    last_modified: 2015-01-20 21:25:11.395946
     name: 14S-001
     processes: [1, 2]
     purpose: ''
@@ -2117,7 +1271,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-19 19:32:54.315900
+    last_modified: 2015-01-20 21:25:12.322257
     name: 14S-002
     processes: [3, 4]
     purpose: ''
@@ -2132,7 +1286,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-19 19:32:55.380932
+    last_modified: 2015-01-20 21:25:13.251747
     name: 14S-003
     processes: [5, 6]
     purpose: ''
@@ -2147,7 +1301,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-19 19:32:56.411242
+    last_modified: 2015-01-20 21:25:14.178591
     name: 14S-004
     processes: [7, 8]
     purpose: ''
@@ -2162,7 +1316,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-19 19:32:57.444364
+    last_modified: 2015-01-20 21:25:15.138576
     name: 14S-005
     processes: [9, 10]
     purpose: ''
@@ -2177,7 +1331,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-19 19:32:58.478178
+    last_modified: 2015-01-20 21:25:16.082793
     name: 14S-006
     processes: [11, 12]
     purpose: ''
@@ -2192,9 +1346,9 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-19 19:33:12.026763
+    last_modified: 2015-01-20 21:25:27.254021
     name: 14-JS-1
-    processes: [13, 14, 29]
+    processes: [13, 14, 25]
     purpose: ''
     split_origin: null
     tags: ''
@@ -2207,9 +1361,9 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-19 19:33:11.553437
+    last_modified: 2015-01-20 21:25:27.724845
     name: 14-JS-2
-    processes: [15, 16, 28]
+    processes: [15, 16, 26]
     purpose: ''
     split_origin: null
     tags: ''
@@ -2222,9 +1376,9 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-19 19:33:10.569206
+    last_modified: 2015-01-20 21:25:28.164439
     name: 14-JS-3
-    processes: [17, 18, 26]
+    processes: [17, 18, 27]
     purpose: ''
     split_origin: null
     tags: ''
@@ -2237,9 +1391,9 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-19 19:33:10.087714
+    last_modified: 2015-01-20 21:25:28.603121
     name: 14-JS-4
-    processes: [19, 20, 25]
+    processes: [19, 20, 28]
     purpose: ''
     split_origin: null
     tags: ''
@@ -2252,9 +1406,9 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-19 19:33:11.020938
+    last_modified: 2015-01-20 21:25:29.046200
     name: 14-JS-5
-    processes: [21, 22, 27]
+    processes: [21, 22, 29]
     purpose: ''
     split_origin: null
     tags: ''
@@ -2267,7 +1421,7 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-19 19:33:12.481422
+    last_modified: 2015-01-20 21:25:29.480033
     name: 14-JS-6
     processes: [23, 24, 30]
     purpose: ''
@@ -2287,13 +1441,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-19 19:32:43.998272
+    display_settings_timestamp: 2015-01-20 21:25:07.815320
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: c0721478e7f85a572679622a1660fffcfe49d6e0
     my_layers: ''
-    my_samples_timestamp: 2015-01-19 19:33:12.215381
+    my_samples_timestamp: 2015-01-20 21:25:29.228408
     only_important_news: false
     show_users_from_departments: []
     subscribed_feeds:
@@ -2306,13 +1460,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-19 19:32:44.027310
+    display_settings_timestamp: 2015-01-20 21:25:07.847139
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
     my_layers: ''
-    my_samples_timestamp: 2015-01-19 19:32:44.027360
+    my_samples_timestamp: 2015-01-20 21:25:07.847191
     only_important_news: false
     show_users_from_departments: []
     subscribed_feeds:
@@ -2325,7 +1479,7 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-19 19:32:44.423248
+    display_settings_timestamp: 2015-01-20 21:25:08.246591
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
@@ -2363,13 +1517,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-19 19:32:44.402981
+    display_settings_timestamp: 2015-01-20 21:25:08.229331
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
     my_layers: ''
-    my_samples_timestamp: 2015-01-19 19:33:06.888515
+    my_samples_timestamp: 2015-01-20 21:25:24.099321
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -2382,7 +1536,7 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-19 19:32:44.427856
+    display_settings_timestamp: 2015-01-20 21:25:08.250247
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
@@ -2401,13 +1555,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-19 19:32:44.432006
+    display_settings_timestamp: 2015-01-20 21:25:08.253869
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
     my_layers: ''
-    my_samples_timestamp: 2015-01-19 19:32:58.135686
+    my_samples_timestamp: 2015-01-20 21:25:15.762752
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -2472,12 +1626,12 @@
 - fields: {number: 14C-006, split_done: false}
   model: samples.deposition
   pk: 24
-- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-19
-      19:32:43.996480'}
+- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-20
+      21:25:07.813382'}
   model: jb_common.userdetails
   pk: 1
-- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-19
-      19:32:44.025835'}
+- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-20
+      21:25:07.845399'}
   model: jb_common.userdetails
   pk: 2
 - fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01

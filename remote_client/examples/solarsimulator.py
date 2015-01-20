@@ -69,7 +69,7 @@ def read_solarsimulator_file(filepath):
 setup_logging("console")
 login("juliabase", "12345")
 
-for filepath in glob.glob("solarsimulator_raw_data/measurement-*.dat"):
+for filepath in sorted(glob.glob("solarsimulator_raw_data/measurement-*.dat")):
     header_data, evaluated_data = read_solarsimulator_file(filepath)
     try:
         sample_id = get_sample(header_data["sample"])

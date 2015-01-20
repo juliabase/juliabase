@@ -19,6 +19,7 @@ sys.path.append(os.path.abspath(".."))
 from jb_remote_inm import *
 
 
+random.seed(8765432)
 setup_logging("console")
 login("juliabase", "12345")
 
