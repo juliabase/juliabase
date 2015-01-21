@@ -81,7 +81,7 @@ def is_referentially_valid(layer_thickness_form, sample_form):
 
     :rtype: bool
     """
-    return layer_thickness_form.measurement_is_referentially_valid(sample_form)
+    return layer_thickness_form.is_referentially_valid(sample_form)
 
 
 @login_required
@@ -129,8 +129,7 @@ def edit(request, layer_thickness_measurement_id):
         if layer_thickness_measurement_id is None:
             initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
         if layer_thickness_measurement:
-            initial["thickness"] = LayerThicknessMeasurement.convert_thickness(layer_thickness_measurement.thickness,
-                                                                               "nm", layer_thickness_measurement.unit)
+            initial["thickness"] = layer_thickness_measurement.thickness
         layer_thickness_form = LayerThicknessForm(request.user, instance=layer_thickness_measurement, initial=initial)
         initial = {}
         if old_sample:
