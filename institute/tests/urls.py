@@ -19,20 +19,21 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls.defaults import *
+from django.conf.urls import url, include
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
+import jb_common.urls, samples.urls, institute.urls
 
 
-urlpatterns = patterns("",
-                       (r"", include("jb_common.urls")),
-                       (r"", include("samples.urls")),
-                       (r"", include("institute.urls")),
-                       )
+urlpatterns = [
+    url(r"", include(jb_common.urls)),
+    url(r"", include(samples.urls)),
+    url(r"", include(institute.urls)),
+]
 
-urlpatterns += patterns("",
-    (r"^admin/", include(admin.site.urls)),
-)
+urlpatterns += [
+    url(r"^admin/", include(admin.site.urls)),
+]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -20,14 +20,15 @@ the Django application “kicker”.
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
+from kicker.views import edit_match, cancel_match, set_start_kicker_number, edit_user_details, get_player, summary
 
 
 urlpatterns = [
-    url(r"^matches/(?P<id_>\d+)/edit/$", "kicker.views.edit_match"),
-    url(r"^matches/add/$", "kicker.views.edit_match", {"id_": None}),
-    url(r"^matches/(?P<id_>\d+)/cancel/$", "kicker.views.cancel_match"),
-    url(r"^starting_numbers/(?P<username>.+)/add/$", "kicker.views.set_start_kicker_number"),
-    url(r"^details/(?P<username>.+)", "kicker.views.edit_user_details"),
-    url(r"^player", "kicker.views.get_player"),
-    url(r"^$", "kicker.views.summary"),
+    url(r"^matches/(?P<id_>\d+)/edit/$", edit_match),
+    url(r"^matches/add/$", edit_match, {"id_": None}),
+    url(r"^matches/(?P<id_>\d+)/cancel/$", cancel_match),
+    url(r"^starting_numbers/(?P<username>.+)/add/$", set_start_kicker_number),
+    url(r"^details/(?P<username>.+)", edit_user_details),
+    url(r"^player", get_player),
+    url(r"^$", summary),
 ]
