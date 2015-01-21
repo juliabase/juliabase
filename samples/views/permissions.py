@@ -180,7 +180,7 @@ def get_addable_models(user):
     all_addable_models = []
     for model in get_all_models().values():
         if model._meta.app_label not in ["samples", "jb_common"]:
-            permission_codename = "edit_permissions_for_{0}".format(jb_common_utils.camel_case_to_underscores(model.__name__))
+            permission_codename = "edit_permissions_for_{0}".format(model.__name__.lower())
             content_type = ContentType.objects.get_for_model(model)
             try:
                 Permission.objects.get(codename=permission_codename, content_type=content_type)
