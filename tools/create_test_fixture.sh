@@ -9,4 +9,4 @@ cd remote_client/examples
 ./run-crawlers.sh build_test_main
 python add_informal_stack.py
 cd ../..
-./manage.py dumpdata --format=yaml --indent=2 --natural-foreign --exclude=sessions.Session > institute/fixtures/test_main.yaml
+./manage.py dumpdata --format=yaml --indent=2 --natural-foreign --exclude=auth.Permission --exclude=contenttypes.ContentType --exclude=sessions.Session > institute/fixtures/test_main.yaml

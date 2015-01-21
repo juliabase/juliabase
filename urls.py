@@ -31,12 +31,13 @@ from django.conf.urls import url, include
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
+import institute.urls, jb_common.urls, samples.urls
 
 
 urlpatterns = [
-    url(r"", include("institute.urls")),
-    url(r"", include("jb_common.urls")),
-    url(r"", include("samples.urls")),
+    url(r"", include(institute.urls)),
+    url(r"", include(jb_common.urls)),
+    url(r"", include(samples.urls)),
 
     url(r"^admin/", include(admin.site.urls)),
 ]

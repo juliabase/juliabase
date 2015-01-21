@@ -29,20 +29,20 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 from django.conf import settings
-
+from django.contrib.auth.views import password_change, password_change_done, login, logout
+from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page, cached_javascript_catalog
 
 urlpatterns = [
-    url(r"^change_password$", "django.contrib.auth.views.password_change", {"template_name": "jb_common/change_password.html"},
-        name="password_change"),
-    url(r"^change_password/done/$", "django.contrib.auth.views.password_change_done",
+    url(r"^change_password$", password_change, {"template_name": "jb_common/change_password.html"}, name="password_change"),
+    url(r"^change_password/done/$", password_change_done,
         {"template_name": "jb_common/password_changed.html"}, name="password_change_done"),
-    url(r"^login$", "django.contrib.auth.views.login", {"template_name": "jb_common/login.html"}, name="login"),
-    url(r"^logout$", "django.contrib.auth.views.logout", {"template_name": "jb_common/logout.html"}, name="logout"),
+    url(r"^login$", login, {"template_name": "jb_common/login.html"}, name="login"),
+    url(r"^logout$", logout, {"template_name": "jb_common/logout.html"}, name="logout"),
 
-    url(r"^users/(?P<login_name>.+)", "jb_common.views.show_user"),
-    url(r"^markdown$", "jb_common.views.markdown_sandbox"),
-    url(r"^switch_language$", "jb_common.views.switch_language"),
-    url(r"^error_pages/(?P<hash_value>.+)", "jb_common.views.show_error_page"),
+    url(r"^users/(?P<login_name>.+)", show_user),
+    url(r"^markdown$", markdown_sandbox),
+    url(r"^switch_language$", switch_language),
+    url(r"^error_pages/(?P<hash_value>.+)", show_error_page),
 
-    url(r"^jsi18n/$", "jb_common.views.cached_javascript_catalog", {"packages": settings.JAVASCRIPT_I18N_APPS}, name="jsi18n"),
+    url(r"^jsi18n/$", cached_javascript_catalog, {"packages": settings.JAVASCRIPT_I18N_APPS}, name="jsi18n"),
 ]

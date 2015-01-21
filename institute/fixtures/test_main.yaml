@@ -1,189 +1,3 @@
-- fields: {app_label: auth, model: permission, name: permission}
-  model: contenttypes.contenttype
-  pk: 1
-- fields: {app_label: auth, model: group, name: group}
-  model: contenttypes.contenttype
-  pk: 2
-- fields: {app_label: auth, model: user, name: user}
-  model: contenttypes.contenttype
-  pk: 3
-- fields: {app_label: contenttypes, model: contenttype, name: content type}
-  model: contenttypes.contenttype
-  pk: 4
-- fields: {app_label: sessions, model: session, name: session}
-  model: contenttypes.contenttype
-  pk: 5
-- fields: {app_label: admin, model: logentry, name: log entry}
-  model: contenttypes.contenttype
-  pk: 6
-- fields: {app_label: institute, model: substrate, name: substrate}
-  model: contenttypes.contenttype
-  pk: 7
-- fields: {app_label: institute, model: pdsmeasurement, name: PDS measurement}
-  model: contenttypes.contenttype
-  pk: 8
-- fields: {app_label: institute, model: solarsimulatormeasurement, name: solarsimulator
-      measurement}
-  model: contenttypes.contenttype
-  pk: 9
-- fields: {app_label: institute, model: solarsimulatorcellmeasurement, name: solarsimulator
-      cell measurement}
-  model: contenttypes.contenttype
-  pk: 10
-- fields: {app_label: institute, model: structuring, name: structuring}
-  model: contenttypes.contenttype
-  pk: 11
-- fields: {app_label: institute, model: layerthicknessmeasurement, name: layer thickness
-      measurement}
-  model: contenttypes.contenttype
-  pk: 12
-- fields: {app_label: institute, model: clustertooldeposition, name: cluster tool
-      deposition}
-  model: contenttypes.contenttype
-  pk: 13
-- fields: {app_label: institute, model: clustertoollayer, name: cluster tool layer}
-  model: contenttypes.contenttype
-  pk: 14
-- fields: {app_label: institute, model: clustertoolhotwirelayer, name: cluster tool
-      hot-wire layer}
-  model: contenttypes.contenttype
-  pk: 15
-- fields: {app_label: institute, model: clustertoolpecvdlayer, name: cluster tool
-      PECVD layer}
-  model: contenttypes.contenttype
-  pk: 16
-- fields: {app_label: institute, model: fivechamberdeposition, name: 5-chamber deposition}
-  model: contenttypes.contenttype
-  pk: 17
-- fields: {app_label: institute, model: fivechamberlayer, name: 5-chamber layer}
-  model: contenttypes.contenttype
-  pk: 18
-- fields: {app_label: institute, model: sampledetails, name: sample details}
-  model: contenttypes.contenttype
-  pk: 19
-- fields: {app_label: institute, model: informallayer, name: informal layer}
-  model: contenttypes.contenttype
-  pk: 20
-- fields: {app_label: samples, model: externaloperator, name: external operator}
-  model: contenttypes.contenttype
-  pk: 21
-- fields: {app_label: samples, model: process, name: process}
-  model: contenttypes.contenttype
-  pk: 22
-- fields: {app_label: samples, model: sample, name: sample}
-  model: contenttypes.contenttype
-  pk: 23
-- fields: {app_label: samples, model: samplealias, name: name alias}
-  model: contenttypes.contenttype
-  pk: 24
-- fields: {app_label: samples, model: samplesplit, name: sample split}
-  model: contenttypes.contenttype
-  pk: 25
-- fields: {app_label: samples, model: clearance, name: clearance}
-  model: contenttypes.contenttype
-  pk: 26
-- fields: {app_label: samples, model: sampleclaim, name: sample claim}
-  model: contenttypes.contenttype
-  pk: 27
-- fields: {app_label: samples, model: sampledeath, name: cease of existence}
-  model: contenttypes.contenttype
-  pk: 28
-- fields: {app_label: samples, model: result, name: result}
-  model: contenttypes.contenttype
-  pk: 29
-- fields: {app_label: samples, model: sampleseries, name: sample series}
-  model: contenttypes.contenttype
-  pk: 30
-- fields: {app_label: samples, model: initials, name: initials}
-  model: contenttypes.contenttype
-  pk: 31
-- fields: {app_label: samples, model: userdetails, name: user details}
-  model: contenttypes.contenttype
-  pk: 32
-- fields: {app_label: samples, model: statusmessage, name: status message}
-  model: contenttypes.contenttype
-  pk: 33
-- fields: {app_label: samples, model: task, name: task}
-  model: contenttypes.contenttype
-  pk: 34
-- fields: {app_label: samples, model: deposition, name: deposition}
-  model: contenttypes.contenttype
-  pk: 35
-- fields: {app_label: samples, model: feedentry, name: feed entry}
-  model: contenttypes.contenttype
-  pk: 36
-- fields: {app_label: samples, model: feednewsamples, name: new samples feed entry}
-  model: contenttypes.contenttype
-  pk: 37
-- fields: {app_label: samples, model: feedmovedsamples, name: moved samples feed entry}
-  model: contenttypes.contenttype
-  pk: 38
-- fields: {app_label: samples, model: feednewphysicalprocess, name: new physical process
-      feed entry}
-  model: contenttypes.contenttype
-  pk: 39
-- fields: {app_label: samples, model: feededitedphysicalprocess, name: edited physical
-      process feed entry}
-  model: contenttypes.contenttype
-  pk: 40
-- fields: {app_label: samples, model: feedresult, name: result feed entry}
-  model: contenttypes.contenttype
-  pk: 41
-- fields: {app_label: samples, model: feedcopiedmysamples, name: copied My Samples
-      feed entry}
-  model: contenttypes.contenttype
-  pk: 42
-- fields: {app_label: samples, model: feededitedsamples, name: edited samples feed
-      entry}
-  model: contenttypes.contenttype
-  pk: 43
-- fields: {app_label: samples, model: feedsamplesplit, name: sample split feed entry}
-  model: contenttypes.contenttype
-  pk: 44
-- fields: {app_label: samples, model: feededitedsampleseries, name: edited sample
-      series feed entry}
-  model: contenttypes.contenttype
-  pk: 45
-- fields: {app_label: samples, model: feednewsampleseries, name: new sample series
-      feed entry}
-  model: contenttypes.contenttype
-  pk: 46
-- fields: {app_label: samples, model: feedmovedsampleseries, name: moved sample series
-      feed entry}
-  model: contenttypes.contenttype
-  pk: 47
-- fields: {app_label: samples, model: feedchangedtopic, name: changed topic feed entry}
-  model: contenttypes.contenttype
-  pk: 48
-- fields: {app_label: samples, model: feedstatusmessage, name: status message feed
-      entry}
-  model: contenttypes.contenttype
-  pk: 49
-- fields: {app_label: samples, model: feedwithdrawnstatusmessage, name: withdrawn
-      status message feed entry}
-  model: contenttypes.contenttype
-  pk: 50
-- fields: {app_label: samples, model: feednewtask, name: new task feed entry}
-  model: contenttypes.contenttype
-  pk: 51
-- fields: {app_label: samples, model: feededitedtask, name: edited task feed entry}
-  model: contenttypes.contenttype
-  pk: 52
-- fields: {app_label: samples, model: feedremovedtask, name: removed task feed entry}
-  model: contenttypes.contenttype
-  pk: 53
-- fields: {app_label: jb_common, model: department, name: department}
-  model: contenttypes.contenttype
-  pk: 54
-- fields: {app_label: jb_common, model: userdetails, name: user details}
-  model: contenttypes.contenttype
-  pk: 55
-- fields: {app_label: jb_common, model: topic, name: topic}
-  model: contenttypes.contenttype
-  pk: 56
-- fields: {app_label: jb_common, model: errorpage, name: error page}
-  model: contenttypes.contenttype
-  pk: 57
 - fields:
     actual_object_id: 1
     content_type: [institute, clustertoolhotwirelayer]
@@ -524,167 +338,29 @@
   model: jb_common.department
   pk: 1
 - fields:
-    codename: add_pdsmeasurement
-    content_type: [institute, pdsmeasurement]
-    name: Can add PDS measurements
-  model: auth.permission
-  pk: 1
-- fields:
-    codename: edit_permissions_for_pdsmeasurement
-    content_type: [institute, pdsmeasurement]
-    name: Can edit perms for PDS measurements
-  model: auth.permission
-  pk: 2
-- fields:
-    codename: view_every_pdsmeasurement
-    content_type: [institute, pdsmeasurement]
-    name: Can view all PDS measurements
-  model: auth.permission
-  pk: 3
-- fields:
-    codename: add_solarsimulatormeasurement
-    content_type: [institute, solarsimulatormeasurement]
-    name: Can add solarsimulator measurements
-  model: auth.permission
-  pk: 4
-- fields:
-    codename: edit_permissions_for_solarsimulatormeasurement
-    content_type: [institute, solarsimulatormeasurement]
-    name: Can edit perms for solarsimulator measurements
-  model: auth.permission
-  pk: 5
-- fields:
-    codename: view_every_solarsimulatormeasurement
-    content_type: [institute, solarsimulatormeasurement]
-    name: Can view all solarsimulator measurements
-  model: auth.permission
-  pk: 6
-- fields:
-    codename: add_clustertooldeposition
-    content_type: [institute, clustertooldeposition]
-    name: Can add cluster tool depositions
-  model: auth.permission
-  pk: 7
-- fields:
-    codename: edit_permissions_for_clustertooldeposition
-    content_type: [institute, clustertooldeposition]
-    name: Can edit perms for cluster tool I depositions
-  model: auth.permission
-  pk: 8
-- fields:
-    codename: view_every_clustertooldeposition
-    content_type: [institute, clustertooldeposition]
-    name: Can view all cluster tool depositions
-  model: auth.permission
-  pk: 9
-- fields:
-    codename: change_clustertooldeposition
-    content_type: [institute, clustertooldeposition]
-    name: Can edit all cluster tool depositions
-  model: auth.permission
-  pk: 10
-- fields:
-    codename: add_fivechamberdeposition
-    content_type: [institute, fivechamberdeposition]
-    name: Can add 5-chamber depositions
-  model: auth.permission
-  pk: 11
-- fields:
-    codename: edit_permissions_for_fivechamberdeposition
-    content_type: [institute, fivechamberdeposition]
-    name: Can edit perms for 5-chamber depositions
-  model: auth.permission
-  pk: 12
-- fields:
-    codename: view_every_fivechamberdeposition
-    content_type: [institute, fivechamberdeposition]
-    name: Can view all 5-chamber depositions
-  model: auth.permission
-  pk: 13
-- fields:
-    codename: change_fivechamberdeposition
-    content_type: [institute, fivechamberdeposition]
-    name: Can edit all 5-chamber depositions
-  model: auth.permission
-  pk: 14
-- fields:
-    codename: add_externaloperator
-    content_type: [samples, externaloperator]
-    name: Can add an external operator
-  model: auth.permission
-  pk: 15
-- fields:
-    codename: view_every_externaloperator
-    content_type: [samples, externaloperator]
-    name: Can view all external operators
-  model: auth.permission
-  pk: 16
-- fields:
-    codename: view_every_sample
-    content_type: [samples, sample]
-    name: Can view all samples from his/her department
-  model: auth.permission
-  pk: 17
-- fields:
-    codename: adopt_samples
-    content_type: [samples, sample]
-    name: Can adopt samples from his/her department
-  model: auth.permission
-  pk: 18
-- fields:
-    codename: rename_samples
-    content_type: [samples, sample]
-    name: Can rename samples from his/her department
-  model: auth.permission
-  pk: 19
-- fields:
-    codename: edit_permissions_for_all_physical_processes
-    content_type: [samples, userdetails]
-    name: Can edit permissions for all physical processes
-  model: auth.permission
-  pk: 20
-- fields:
-    codename: add_topic
-    content_type: [jb_common, topic]
-    name: Can add new topics
-  model: auth.permission
-  pk: 21
-- fields:
-    codename: change_topic
-    content_type: [jb_common, topic]
-    name: Can edit all topics
-  model: auth.permission
-  pk: 22
-- fields:
-    codename: edit_their_topics
-    content_type: [jb_common, topic]
-    name: Can edit topics that he/she is a manager of
-  model: auth.permission
-  pk: 23
-- fields:
-    date_joined: 2015-01-20 21:25:07.803976
+    date_joined: 2015-01-21 11:15:00.969312
     email: ''
     first_name: Julia
     groups: []
     is_active: true
     is_staff: true
     is_superuser: true
-    last_login: 2015-01-20 21:25:29.865885
+    last_login: 2015-01-21 11:15:23.571307
     last_name: ''
-    password: pbkdf2_sha256$12000$Fxi9eAGbzLPD$/I85hteX3QtmvLSEf1cJxLD45ZgieyX75jWsgRDSbus=
+    password: pbkdf2_sha256$12000$chvBwzKZcaiQ$zbqWTPx1AKB8m+xaQkqaDcIKxrpAR4CAbsfBnGyqfV4=
     user_permissions: []
     username: juliabase
   model: auth.user
   pk: 1
 - fields:
-    date_joined: 2015-01-20 21:25:07.839692
+    date_joined: 2015-01-21 11:15:01.010626
     email: ''
     first_name: ''
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-20 21:25:07.839606
+    last_login: 2015-01-21 11:15:01.010541
     last_name: Nobody
     password: ''
     user_permissions: []
@@ -692,14 +368,14 @@
   model: auth.user
   pk: 2
 - fields:
-    date_joined: 2015-01-20 21:25:07.874266
+    date_joined: 2015-01-21 11:15:01.041482
     email: ''
     first_name: Nick
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-20 21:25:07.874173
+    last_login: 2015-01-21 11:15:01.041415
     last_name: Burkhardt
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -710,14 +386,14 @@
   model: auth.user
   pk: 3
 - fields:
-    date_joined: 2015-01-20 21:25:07.920220
+    date_joined: 2015-01-21 11:15:01.086492
     email: ''
     first_name: Hank
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-20 21:25:07.920139
+    last_login: 2015-01-21 11:15:01.086410
     last_name: Griffin
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -728,14 +404,14 @@
   model: auth.user
   pk: 4
 - fields:
-    date_joined: 2015-01-20 21:25:07.959405
+    date_joined: 2015-01-21 11:15:01.122580
     email: ''
     first_name: Juliette
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-20 21:25:07.959326
+    last_login: 2015-01-21 11:15:01.122512
     last_name: Silverton
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -744,14 +420,14 @@
   model: auth.user
   pk: 5
 - fields:
-    date_joined: 2015-01-20 21:25:08.000692
+    date_joined: 2015-01-21 11:15:01.166809
     email: ''
     first_name: Eddie
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-20 21:25:08.000625
+    last_login: 2015-01-21 11:15:01.166741
     last_name: Monroe
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -763,14 +439,14 @@
   model: auth.user
   pk: 6
 - fields:
-    date_joined: 2015-01-20 21:25:08.045631
+    date_joined: 2015-01-21 11:15:01.208190
     email: ''
     first_name: Rosalee
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-20 21:25:08.045550
+    last_login: 2015-01-21 11:15:01.208121
     last_name: Calvert
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -782,14 +458,14 @@
   model: auth.user
   pk: 7
 - fields:
-    date_joined: 2015-01-20 21:25:08.103022
+    date_joined: 2015-01-21 11:15:01.264646
     email: ''
     first_name: Jean
     groups: []
     is_active: true
     is_staff: false
     is_superuser: false
-    last_login: 2015-01-20 21:25:08.102941
+    last_login: 2015-01-21 11:15:01.264577
     last_name: Renard
     password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
     user_permissions:
@@ -899,7 +575,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:09.059315
+    last_modified: 2015-01-21 11:15:02.216143
     operator: [r.calvert]
     timestamp: 2014-10-01 10:29:00
     timestamp_inaccuracy: 3
@@ -911,7 +587,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:11.355371
+    last_modified: 2015-01-21 11:15:04.542851
     operator: [r.calvert]
     timestamp: 2014-10-01 10:30:00
     timestamp_inaccuracy: 0
@@ -923,7 +599,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:11.847439
+    last_modified: 2015-01-21 11:15:05.046175
     operator: [r.calvert]
     timestamp: 2014-10-02 11:09:00
     timestamp_inaccuracy: 3
@@ -935,7 +611,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:12.282096
+    last_modified: 2015-01-21 11:15:05.462685
     operator: [r.calvert]
     timestamp: 2014-10-02 11:10:00
     timestamp_inaccuracy: 0
@@ -947,7 +623,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:12.778357
+    last_modified: 2015-01-21 11:15:05.987522
     operator: [r.calvert]
     timestamp: 2014-10-02 12:09:00
     timestamp_inaccuracy: 3
@@ -959,7 +635,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:13.209921
+    last_modified: 2015-01-21 11:15:06.418728
     operator: [r.calvert]
     timestamp: 2014-10-02 12:10:00
     timestamp_inaccuracy: 0
@@ -971,7 +647,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:13.713044
+    last_modified: 2015-01-21 11:15:06.935283
     operator: [r.calvert]
     timestamp: 2014-10-02 13:09:00
     timestamp_inaccuracy: 3
@@ -983,7 +659,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:14.139711
+    last_modified: 2015-01-21 11:15:07.354177
     operator: [r.calvert]
     timestamp: 2014-10-02 13:10:00
     timestamp_inaccuracy: 0
@@ -995,7 +671,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:14.658743
+    last_modified: 2015-01-21 11:15:07.872832
     operator: [r.calvert]
     timestamp: 2014-10-02 14:09:00
     timestamp_inaccuracy: 3
@@ -1007,7 +683,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:15.098395
+    last_modified: 2015-01-21 11:15:08.337276
     operator: [r.calvert]
     timestamp: 2014-10-02 14:10:00
     timestamp_inaccuracy: 0
@@ -1019,7 +695,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:15.608579
+    last_modified: 2015-01-21 11:15:08.884493
     operator: [r.calvert]
     timestamp: 2014-10-02 15:09:00
     timestamp_inaccuracy: 3
@@ -1031,7 +707,7 @@
     content_type: [institute, fivechamberdeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:16.045466
+    last_modified: 2015-01-21 11:15:09.333501
     operator: [r.calvert]
     timestamp: 2014-10-02 15:10:00
     timestamp_inaccuracy: 0
@@ -1043,7 +719,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:16.939084
+    last_modified: 2015-01-21 11:15:10.277558
     operator: [e.monroe]
     timestamp: 2014-10-01 10:29:00
     timestamp_inaccuracy: 3
@@ -1055,7 +731,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:19.303185
+    last_modified: 2015-01-21 11:15:12.866565
     operator: [e.monroe]
     timestamp: 2014-10-01 10:30:00
     timestamp_inaccuracy: 0
@@ -1067,7 +743,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:19.861524
+    last_modified: 2015-01-21 11:15:13.425107
     operator: [e.monroe]
     timestamp: 2014-10-02 11:09:00
     timestamp_inaccuracy: 3
@@ -1079,7 +755,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:20.318689
+    last_modified: 2015-01-21 11:15:13.899064
     operator: [e.monroe]
     timestamp: 2014-10-02 11:10:00
     timestamp_inaccuracy: 0
@@ -1091,7 +767,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:20.857866
+    last_modified: 2015-01-21 11:15:14.490815
     operator: [e.monroe]
     timestamp: 2014-10-02 12:09:00
     timestamp_inaccuracy: 3
@@ -1103,7 +779,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:21.312556
+    last_modified: 2015-01-21 11:15:14.960087
     operator: [e.monroe]
     timestamp: 2014-10-02 12:10:00
     timestamp_inaccuracy: 0
@@ -1115,7 +791,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:21.869087
+    last_modified: 2015-01-21 11:15:15.518081
     operator: [e.monroe]
     timestamp: 2014-10-02 13:09:00
     timestamp_inaccuracy: 3
@@ -1127,7 +803,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:22.323331
+    last_modified: 2015-01-21 11:15:16.008760
     operator: [e.monroe]
     timestamp: 2014-10-02 13:10:00
     timestamp_inaccuracy: 0
@@ -1139,7 +815,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:22.883681
+    last_modified: 2015-01-21 11:15:16.588090
     operator: [e.monroe]
     timestamp: 2014-10-02 14:09:00
     timestamp_inaccuracy: 3
@@ -1151,7 +827,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:23.351073
+    last_modified: 2015-01-21 11:15:17.058667
     operator: [e.monroe]
     timestamp: 2014-10-02 14:10:00
     timestamp_inaccuracy: 0
@@ -1163,7 +839,7 @@
     content_type: [institute, substrate]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:23.941764
+    last_modified: 2015-01-21 11:15:17.640783
     operator: [e.monroe]
     timestamp: 2014-10-02 15:09:00
     timestamp_inaccuracy: 3
@@ -1175,7 +851,7 @@
     content_type: [institute, clustertooldeposition]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:24.414200
+    last_modified: 2015-01-21 11:15:18.115474
     operator: [e.monroe]
     timestamp: 2014-10-02 15:10:00
     timestamp_inaccuracy: 0
@@ -1187,7 +863,7 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:27.211030
+    last_modified: 2015-01-21 11:15:20.902695
     operator: [n.burkhardt]
     timestamp: 2014-10-07 10:01:00
     timestamp_inaccuracy: 0
@@ -1199,7 +875,7 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:27.682733
+    last_modified: 2015-01-21 11:15:21.356040
     operator: [n.burkhardt]
     timestamp: 2014-10-07 10:02:00
     timestamp_inaccuracy: 0
@@ -1211,7 +887,7 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:28.124151
+    last_modified: 2015-01-21 11:15:21.798023
     operator: [n.burkhardt]
     timestamp: 2014-10-07 10:03:00
     timestamp_inaccuracy: 0
@@ -1223,7 +899,7 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:28.561788
+    last_modified: 2015-01-21 11:15:22.241226
     operator: [n.burkhardt]
     timestamp: 2014-10-07 10:04:00
     timestamp_inaccuracy: 0
@@ -1235,7 +911,7 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:29.005930
+    last_modified: 2015-01-21 11:15:22.697991
     operator: [n.burkhardt]
     timestamp: 2014-10-07 10:05:00
     timestamp_inaccuracy: 0
@@ -1247,7 +923,7 @@
     content_type: [institute, pdsmeasurement]
     external_operator: null
     finished: true
-    last_modified: 2015-01-20 21:25:29.440287
+    last_modified: 2015-01-21 11:15:23.149198
     operator: [n.burkhardt]
     timestamp: 2014-10-07 10:06:00
     timestamp_inaccuracy: 0
@@ -1256,7 +932,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-20 21:25:11.395946
+    last_modified: 2015-01-21 11:15:04.584448
     name: 14S-001
     processes: [1, 2]
     purpose: ''
@@ -1271,7 +947,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-20 21:25:12.322257
+    last_modified: 2015-01-21 11:15:05.508435
     name: 14S-002
     processes: [3, 4]
     purpose: ''
@@ -1286,7 +962,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-20 21:25:13.251747
+    last_modified: 2015-01-21 11:15:06.460807
     name: 14S-003
     processes: [5, 6]
     purpose: ''
@@ -1301,7 +977,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-20 21:25:14.178591
+    last_modified: 2015-01-21 11:15:07.390776
     name: 14S-004
     processes: [7, 8]
     purpose: ''
@@ -1316,7 +992,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-20 21:25:15.138576
+    last_modified: 2015-01-21 11:15:08.381294
     name: 14S-005
     processes: [9, 10]
     purpose: ''
@@ -1331,7 +1007,7 @@
 - fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
-    last_modified: 2015-01-20 21:25:16.082793
+    last_modified: 2015-01-21 11:15:09.376303
     name: 14S-006
     processes: [11, 12]
     purpose: ''
@@ -1346,7 +1022,7 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-20 21:25:27.254021
+    last_modified: 2015-01-21 11:15:20.948951
     name: 14-JS-1
     processes: [13, 14, 25]
     purpose: ''
@@ -1361,7 +1037,7 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-20 21:25:27.724845
+    last_modified: 2015-01-21 11:15:21.399868
     name: 14-JS-2
     processes: [15, 16, 26]
     purpose: ''
@@ -1376,7 +1052,7 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-20 21:25:28.164439
+    last_modified: 2015-01-21 11:15:21.840466
     name: 14-JS-3
     processes: [17, 18, 27]
     purpose: ''
@@ -1391,7 +1067,7 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-20 21:25:28.603121
+    last_modified: 2015-01-21 11:15:22.286083
     name: 14-JS-4
     processes: [19, 20, 28]
     purpose: ''
@@ -1406,7 +1082,7 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-20 21:25:29.046200
+    last_modified: 2015-01-21 11:15:22.742821
     name: 14-JS-5
     processes: [21, 22, 29]
     purpose: ''
@@ -1421,7 +1097,7 @@
 - fields:
     current_location: Juliette's office
     currently_responsible_person: [j.silverton]
-    last_modified: 2015-01-20 21:25:29.480033
+    last_modified: 2015-01-21 11:15:23.190381
     name: 14-JS-6
     processes: [23, 24, 30]
     purpose: ''
@@ -1441,13 +1117,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-20 21:25:07.815320
+    display_settings_timestamp: 2015-01-21 11:15:00.981355
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: c0721478e7f85a572679622a1660fffcfe49d6e0
     my_layers: ''
-    my_samples_timestamp: 2015-01-20 21:25:29.228408
+    my_samples_timestamp: 2015-01-21 11:15:22.930176
     only_important_news: false
     show_users_from_departments: []
     subscribed_feeds:
@@ -1460,13 +1136,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-20 21:25:07.847139
+    display_settings_timestamp: 2015-01-21 11:15:01.018006
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
     my_layers: ''
-    my_samples_timestamp: 2015-01-20 21:25:07.847191
+    my_samples_timestamp: 2015-01-21 11:15:01.018055
     only_important_news: false
     show_users_from_departments: []
     subscribed_feeds:
@@ -1479,7 +1155,7 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-20 21:25:08.246591
+    display_settings_timestamp: 2015-01-21 11:15:01.407550
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
@@ -1517,13 +1193,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-20 21:25:08.229331
+    display_settings_timestamp: 2015-01-21 11:15:01.388460
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
     my_layers: ''
-    my_samples_timestamp: 2015-01-20 21:25:24.099321
+    my_samples_timestamp: 2015-01-21 11:15:17.811089
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -1536,7 +1212,7 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-20 21:25:08.250247
+    display_settings_timestamp: 2015-01-21 11:15:01.411968
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
@@ -1555,13 +1231,13 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-20 21:25:08.253869
+    display_settings_timestamp: 2015-01-21 11:15:01.416374
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
     my_layers: ''
-    my_samples_timestamp: 2015-01-20 21:25:15.762752
+    my_samples_timestamp: 2015-01-21 11:15:09.051932
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -1626,12 +1302,12 @@
 - fields: {number: 14C-006, split_done: false}
   model: samples.deposition
   pk: 24
-- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-20
-      21:25:07.813382'}
+- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-21
+      11:15:00.979187'}
   model: jb_common.userdetails
   pk: 1
-- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-20
-      21:25:07.845399'}
+- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-21
+      11:15:01.016460'}
   model: jb_common.userdetails
   pk: 2
 - fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01

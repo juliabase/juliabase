@@ -31,36 +31,37 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from samples.utils.urls import PatternGenerator
+from institute.views.samples import sample, claim, stack, layout, json_client, substrate, structuring
 
 
 urlpatterns = [
     # General additions
 
-    url(r"^samples/add/$", "institute.views.samples.sample.add"),
-    url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", "institute.views.samples.sample.copy_informal_stack"),
-    url(r"^claims/(?P<username>.+)/add_oldstyle/$", "institute.views.samples.claim.add_oldstyle"),
-    url(r"^stacks/(?P<sample_id>\d+)$", "institute.views.samples.stack.show_stack", {"thumbnail": False}, "stack_diagram"),
-    url(r"^stacks/thumbnails/(?P<sample_id>\d+)$", "institute.views.samples.stack.show_stack", {"thumbnail": True},
+    url(r"^samples/add/$", sample.add),
+    url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", sample.copy_informal_stack),
+    url(r"^claims/(?P<username>.+)/add_oldstyle/$", claim.add_oldstyle),
+    url(r"^stacks/(?P<sample_id>\d+)$", stack.show_stack, {"thumbnail": False}, "stack_diagram"),
+    url(r"^stacks/thumbnails/(?P<sample_id>\d+)$", stack.show_stack, {"thumbnail": True},
         "stack_diagram_thumbnail"),
-    url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)$", "institute.views.samples.layout.show_layout"),
-    url(r"^printer_label/(?P<sample_id>\d+)$", "institute.views.samples.sample.printer_label"),
+    url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)$", layout.show_layout),
+    url(r"^printer_label/(?P<sample_id>\d+)$", sample.printer_label),
     url(r"^trac/", TemplateView.as_view(template_name="bug_tracker.html")),
 
     # Remote client
 
-    url(r"^substrates_by_sample/(?P<sample_id>\d+)$", "institute.views.samples.json_client.substrate_by_sample"),
-    url(r"^next_deposition_number/(?P<letter>.+)", "institute.views.samples.json_client.next_deposition_number"),
+    url(r"^substrates_by_sample/(?P<sample_id>\d+)$", json_client.substrate_by_sample),
+    url(r"^next_deposition_number/(?P<letter>.+)", json_client.next_deposition_number),
     url(r"^solarsimulator_measurements/by_filepath",
-        "institute.views.samples.json_client.get_solarsimulator_measurement_by_filepath"),
-    url(r"^structurings/by_sample/(?P<sample_id>\d+)$", "institute.views.samples.json_client.get_current_structuring"),
+        json_client.get_solarsimulator_measurement_by_filepath),
+    url(r"^structurings/by_sample/(?P<sample_id>\d+)$", json_client.get_current_structuring),
     url(r"^solarsimulator_measurements/matching/(?P<irradiation>[A-Za-z0-9.]+)/(?P<sample_id>\d+)/"
         r"(?P<cell_position>[^/]+)/(?P<date>\d{4}-\d\d-\d\d)/$",
-        "institute.views.samples.json_client.get_matching_solarsimulator_measurement"),
+        json_client.get_matching_solarsimulator_measurement),
     # I don't add the following two with the pattern generator in order to
     # prevent an “add” link on the main menu page; they are used only by the
     # remote client.
-    url(r"^substrates/add/$", "institute.views.samples.substrate.edit", {"substrate_id": None}),
-    url(r"^structurings/add/$", "institute.views.samples.structuring.edit", {"structuring_id": None}),
+    url(r"^substrates/add/$", substrate.edit, {"substrate_id": None}),
+    url(r"^structurings/add/$", structuring.edit, {"structuring_id": None}),
 ]
 
 

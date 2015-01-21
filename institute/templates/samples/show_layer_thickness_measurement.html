@@ -1,10 +1,10 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% comment %}
-This file is part of Chantal, the samples database.
+This file is part of JuliaBase, the samples database.
 
-Copyright (C) 2010 Forschungszentrum Jülich, Germany,
-                   Marvin Goblet <m.goblet@fz-juelich.de>,
-                   Torsten Bronger <t.bronger@fz-juelich.de>
+Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
+                      Marvin Goblet <m.goblet@fz-juelich.de>,
+                      Torsten Bronger <t.bronger@fz-juelich.de>
 
 You must not use, install, pass on, offer, sell, analyse, modify, or distribute
 this software without explicit permission of the copyright holder.  If you have
@@ -14,22 +14,21 @@ copyright holder, you must destroy it immediately and completely.
 
 {% load i18n %}
 {% load samples_extras %}
-{% load ipv_extras %}
 
 <table>
   <tbody>
-  <tr>
-    <td class="label" style="padding-left: 2em">{% verbose_name LayerThicknessMeasurement.thickness %}:</td>
-    <td class="value" style="padding-right: 2em">{{ process|convert_thickness }} {{ process.get_unit_display }}</td>
-    <td class="label" style="padding-left: 2em">{% verbose_name LayerThicknessMeasurement.method %}:</td>
-    <td class="value" style="padding-right: 2em">{{ process.get_method_display }}</td>
-    {% value_field process.uncertainty "%" %}
-  </tr>
-  {% if process.comments %}
     <tr>
-      <td class="label" style="vertical-align: top">{% verbose_name LayerThicknessMeasurement.comments %}:</td>
-      <td class="value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
+      {% value_field process.thickness %}
     </tr>
-  {% endif %}
+    <tr>
+      <td class="label" style="padding-left: 2em">{% verbose_name LayerThicknessMeasurement.method %}:</td>
+      <td class="value" style="padding-right: 2em">{{ process.get_method_display }}</td>
+    </tr>
+    {% if process.comments %}
+      <tr>
+        <td class="label" style="vertical-align: top">{% verbose_name LayerThicknessMeasurement.comments %}:</td>
+        <td class="value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
+      </tr>
+    {% endif %}
   </tbody>
 </table>
