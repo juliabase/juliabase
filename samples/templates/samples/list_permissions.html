@@ -21,14 +21,14 @@ copyright holder, you must destroy it immediately and completely.
   <p>{% trans "People who can change permissions of users for the respective process are printed in bold." %}</p>
   <table class="padding10" border="1">
     <tbody>
-    {% for process in physical_processes %}
-      {% if process.add_permission or process.edit_permissions_permission %}
+    {% for model in addable_models %}
+      {% if model.add_permission or model.edit_permissions_permission %}
         <tr style="vertical-align: top">
-          <td>{{ process.name }}</td>
+          <td>{{ model.name }}</td>
           <td>
-            {% for user in process.all_users %}
+            {% for user in model.all_users %}
               {% spaceless %}
-                {% if user in process.permission_editors %}
+                {% if user in model.permission_editors %}
                   <strong>{{ user|get_really_full_name:"plain" }}</strong>
                 {% else %}
                   <span>{{ user|get_really_full_name:"plain" }}</span>

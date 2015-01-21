@@ -32,7 +32,7 @@ from jb_common.models import Topic
 from jb_common.utils.base import int_or_zero
 from jb_common.utils.views import UserField, MultipleUsersField
 from samples import permissions
-from samples.views.permissions import PermissionsPhysicalProcess
+from samples.views.permissions import PermissionsModels
 import samples.utils.views as utils
 
 
@@ -123,7 +123,7 @@ def add(request):
             else:
                 next_view = "samples.views.topic.edit"
                 next_view_kwargs = {"id": django.utils.http.urlquote(new_topic.id, safe="")}
-            new_topic.manager.user_permissions.add(PermissionsPhysicalProcess.topic_manager_permission)
+            new_topic.manager.user_permissions.add(PermissionsModels.topic_manager_permission)
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
             return utils.successful_response(
@@ -220,9 +220,9 @@ def edit(request, id):
             topic.save()
             if old_manager != new_manager:
                 if not old_manager.managed_topics.all():
-                    old_manager.user_permissions.remove(PermissionsPhysicalProcess.topic_manager_permission)
+                    old_manager.user_permissions.remove(PermissionsModels.topic_manager_permission)
                 if not permissions.has_permission_to_edit_users_topics(new_manager):
-                    new_manager.user_permissions.add(PermissionsPhysicalProcess.topic_manager_permission)
+                    new_manager.user_permissions.add(PermissionsModels.topic_manager_permission)
             for user in new_members:
                 if user not in old_members:
                     added_members.append(user)

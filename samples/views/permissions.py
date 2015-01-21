@@ -13,7 +13,7 @@
 # of the copyright holder, you must destroy it immediately and completely.
 
 
-"""Views for editing permissions for physical processes and to appoint topic
+"""Views for editing permissions for addable models and to appoint topic
 managers.
 """
 
@@ -33,43 +33,44 @@ from jb_common.utils.base import help_link, get_really_full_name, get_all_models
 from jb_common.utils.views import UserField
 from samples import models, permissions
 import samples.utils.views as utils
+import jb_common.utils.base as jb_common_utils
 
 
-class PermissionsPhysicalProcess(object):
-    """Class for holding the permissions status of a physical process class.
+class PermissionsModels(object):
+    """Class for holding the permissions status of a addable model class.
 
-    :ivar name: the verbose plural name of the process class
+    :ivar name: the verbose plural name of the model class
 
-    :ivar codename: the name of the process class
+    :ivar codename: the name of the model class
 
     :ivar edit_permissions_permission: the permission instance for editing
-      permissions of this process
+      permissions of this model
 
-    :ivar add_permission: the permission instance for adding such processes
+    :ivar add_permission: the permission instance for adding such models
 
     :ivar view_all_permission: the permission instance for viewing all
-      processes of this processes class
+      instances of this model class
 
     :ivar permission_editors: All users who have the permission of change
-      permissions for this process class.  Note that this excludes superusers,
+      permissions for this model class.  Note that this excludes superusers,
       unless they have the distinctive permission.
 
-    :ivar adders: All users who have the permission to add such processes.
-      Note that this excludes superusers, unless they have the distinctive
+    :ivar adders: All users who have the permission to add instances of such
+      model. Note that this excludes superusers, unless they have the distinctive
       permission.
 
-    :ivar full_viewers: All users who have the permission to view all processes
-      of this process class.  Note that this excludes superusers, unless they
+    :ivar full_viewers: All users who have the permission to view all instances
+      of this model class.  Note that this excludes superusers, unless they
       have the distinctive permission.
 
-    :ivar full_editors: All users who have the permission to edit all processes
-      of this process class.  Note that this excludes superusers, unless they
+    :ivar full_editors: All users who have the permission to edit all instances
+      of this model class.  Note that this excludes superusers, unless they
       have the distinctive permission.
 
-    :ivar all_users: All users who have the permission to add such processes,
-      plus those who can change permissions (because they can give them the
-      right to add processes anyway).  This is used to the overview table to
-      show all users of a process.  Note that this excludes superusers, unless
+    :ivar all_users: All users who have the permission to add instances of this
+      model, plus those who can change permissions (because they can give them the
+      right to add instances anyway).  This is used to the overview table to
+      show all users of a model.  Note that this excludes superusers, unless
       they have the distinctive permissions.
 
     :cvar topic_manager_permission: the permission instance for changing
@@ -93,17 +94,17 @@ class PermissionsPhysicalProcess(object):
     add_external_operators_permission = Permission.objects.get(codename="add_externaloperator",
                                                                content_type=ContentType.objects.get_for_model(models.ExternalOperator))
 
-    def __init__(self, physical_process_class):
+    def __init__(self, addable_model_class):
         """
-        :param physical_process_class: the physical process class to which this
+        :param addable_model_class: the addable model class to which this
             instance belongs
 
-        :type physical_process_class: ``class`` (derived from
-          ``samples.models.PhysicalProcess``)
+        :type addable_model_class: ``class`` (derived from
+          ``django.db.models.Model``)
         """
-        self.name = physical_process_class._meta.verbose_name_plural
-        self.codename = physical_process_class.__name__.lower()
-        content_type = ContentType.objects.get_for_model(physical_process_class)
+        self.name = addable_model_class._meta.verbose_name_plural
+        self.codename = addable_model_class.__name__.lower()
+        content_type = ContentType.objects.get_for_model(addable_model_class)
         try:
             self.edit_permissions_permission = Permission.objects.get(codename="edit_permissions_for_{}".format(self.codename),
                                                                       content_type=content_type)
@@ -128,7 +129,7 @@ class PermissionsPhysicalProcess(object):
         permission_editors = base_query.filter(Q(groups__permissions=self.edit_permissions_permission) |
                                                Q(user_permissions=self.edit_permissions_permission)).distinct() \
                                                if self.edit_permissions_permission else []
-        adders = permissions.get_all_adders(physical_process_class)
+        adders = permissions.get_all_adders(addable_model_class)
         full_viewers = base_query.filter(Q(groups__permissions=self.view_all_permission) |
                                          Q(user_permissions=self.view_all_permission)).distinct() \
                                    if self.view_all_permission else []
@@ -153,14 +154,14 @@ class UserListForm(forms.Form):
         self.fields["selected_user"].set_users(user)
 
 
-def get_physical_processes(user):
-    """Return a list with all registered physical process classes the user is
+def get_addable_models(user):
+    """Return a list with all registered addable model classes the user is
     allowed to see (the classes per se; this is not about the visibility of the
-    process instances).  Their type is of `PermissionsPhysicalProcess`, which
+    model instances).  Their type is of `PermissionsModels`, which
     means that they contain information about the users who have permissions
-    for that process.
+    for that model.
 
-    You can see all physical process classes of your department.  A superuser
+    You can see all addable model classes of your department.  A superuser
     can see all classes.
 
     The result is used to build the list of apparatuses for which one can set
@@ -172,24 +173,32 @@ def get_physical_processes(user):
     :type user: django.contrib.auth.models.User
 
     :return:
-      all physical processes for the user
+      all addable models for the user
 
-    :rtype: list of `samples.models.PhysicalProcess`
+    :rtype: list of `django.db.models.Model`
     """
-    all_physical_processes = [process for process in get_all_models().values()
-                              if issubclass(process, models.PhysicalProcess) and not process._meta.abstract
-                              # FixMe: This will break someday:
-                              and process != models.Deposition]
+    all_addable_models = []
+    for model in get_all_models().values():
+        if model._meta.app_label not in ["samples", "jb_common"]:
+            permission_codename = "edit_permissions_for_{0}".format(jb_common_utils.camel_case_to_underscores(model.__name__))
+            content_type = ContentType.objects.get_for_model(model)
+            try:
+                Permission.objects.get(codename=permission_codename, content_type=content_type)
+            except Permission.DoesNotExist:
+                continue
+            else:
+                all_addable_models.append(model)
+
     if not user.is_superuser:
         user_department = user.jb_user_details.department
         if user_department:
-            all_physical_processes = [process for process in all_physical_processes
-                                      if process._meta.app_label == user_department.app_label]
+            all_addable_models = [model for model in all_addable_models
+                                      if model._meta.app_label == user_department.app_label]
         else:
-            all_physical_processes = []
-    all_physical_processes.sort(key=lambda process: process._meta.verbose_name_plural.lower())
-    all_physical_processes = [PermissionsPhysicalProcess(process) for process in all_physical_processes]
-    return all_physical_processes
+            all_addable_models = []
+    all_addable_models.sort(key=lambda model: model._meta.verbose_name_plural.lower())
+    all_addable_models = [PermissionsModels(model) for model in all_addable_models]
+    return all_addable_models
 
 
 @help_link("demo.html#change-permissions-for-processes")
@@ -218,9 +227,9 @@ def list_(request):
     :rtype: HttpResponse
     """
     user = request.user
-    physical_processes = get_physical_processes(user)
+    addable_models = get_addable_models(user)
     can_edit_permissions = user.has_perm("samples.edit_permissions_for_all_physical_processes") or \
-        any(user in process.permission_editors for process in physical_processes)
+        any(user in model.permission_editors for model in addable_models)
     if can_edit_permissions:
         if request.method == "POST":
             user_list_form = UserListForm(user, request.POST)
@@ -234,17 +243,17 @@ def list_(request):
     if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.change_topic"):
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
-            .filter(Q(groups__permissions=PermissionsPhysicalProcess.topic_manager_permission) |
-                    Q(user_permissions=PermissionsPhysicalProcess.topic_manager_permission)).distinct())
+            .filter(Q(groups__permissions=PermissionsModels.topic_manager_permission) |
+                    Q(user_permissions=PermissionsModels.topic_manager_permission)).distinct())
     else:
         topic_managers = None
     return render(request, "samples/list_permissions.html",
-                  {"title": _("Permissions to processes"), "physical_processes": physical_processes,
+                  {"title": _("Permissions"), "addable_models": addable_models,
                    "user_list": user_list_form, "topic_managers": topic_managers})
 
 
 class PermissionsForm(forms.Form):
-    """Form class for setting the permission triplets of a single process
+    """Form class for setting the permission triplets of a single model
     class and a single user.  See `edit` for further information.
     """
     _ = ugettext_lazy
@@ -253,19 +262,19 @@ class PermissionsForm(forms.Form):
     can_edit_all = forms.BooleanField(label="Can edit all", required=False)
     can_edit_permissions = forms.BooleanField(label="Can edit permissions", required=False)
 
-    def __init__(self, edited_user, process, *args, **kwargs):
-        kwargs["initial"] = {"can_add": edited_user in process.adders,
-                             "can_view_all": edited_user in process.full_viewers,
-                             "can_edit_all": edited_user in process.full_editors,
-                             "can_edit_permissions": edited_user in process.permission_editors}
+    def __init__(self, edited_user, model, *args, **kwargs):
+        kwargs["initial"] = {"can_add": edited_user in model.adders,
+                             "can_view_all": edited_user in model.full_viewers,
+                             "can_edit_all": edited_user in model.full_editors,
+                             "can_edit_permissions": edited_user in model.permission_editors}
         super(PermissionsForm, self).__init__(*args, **kwargs)
-        if not process.add_permission:
+        if not model.add_permission:
             self.fields["can_add"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
-        if not process.view_all_permission:
+        if not model.view_all_permission:
             self.fields["can_view_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
-        if not process.edit_all_permission:
+        if not model.edit_all_permission:
             self.fields["can_edit_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
-        if not process.edit_permissions_permission:
+        if not model.edit_permissions_permission:
             self.fields["can_edit_permissions"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
 
     def clean(self):
@@ -302,33 +311,33 @@ def edit(request, username):
     edited_user = get_object_or_404(User, username=username)
     user = request.user
     has_global_edit_permission = user.has_perm("samples.edit_permissions_for_all_physical_processes")
-    physical_processes = get_physical_processes(user)
+    addable_models = get_addable_models(user)
     permissions_list = []
-    for process in physical_processes:
-        if process.add_permission or process.view_all_permission or process.edit_all_permission or \
-                process.edit_permissions_permission:
-            if user in process.permission_editors or has_global_edit_permission:
+    for model in addable_models:
+        if model.add_permission or model.view_all_permission or model.edit_all_permission or \
+                model.edit_permissions_permission:
+            if user in model.permission_editors or has_global_edit_permission:
                 if request.method == "POST":
-                    permissions_list.append((process, PermissionsForm(edited_user, process, request.POST,
-                                                                      prefix=process.codename)))
+                    permissions_list.append((model, PermissionsForm(edited_user, model, request.POST,
+                                                                      prefix=model.codename)))
                 else:
-                    permissions_list.append((process, PermissionsForm(edited_user, process, prefix=process.codename)))
+                    permissions_list.append((model, PermissionsForm(edited_user, model, prefix=model.codename)))
     if request.method == "POST":
         if all(permission[1].is_valid() for permission in permissions_list):
-            for process, permissions_form in permissions_list:
+            for model, permissions_form in permissions_list:
                 cleaned_data = permissions_form.cleaned_data
-                def process_permission(form_key, attribute_name, permission):
+                def model_permission(form_key, attribute_name, permission):
                     if permission:
                         if cleaned_data[form_key]:
-                            if edited_user not in getattr(process, attribute_name):
+                            if edited_user not in getattr(model, attribute_name):
                                 edited_user.user_permissions.add(permission)
                         else:
-                            if edited_user in getattr(process, attribute_name):
+                            if edited_user in getattr(model, attribute_name):
                                 edited_user.user_permissions.remove(permission)
-                process_permission("can_add", "adders", process.add_permission)
-                process_permission("can_view_all", "full_viewers", process.view_all_permission)
-                process_permission("can_edit_all", "full_editors", process.edit_all_permission)
-                process_permission("can_edit_permissions", "permission_editors", process.edit_permissions_permission)
+                model_permission("can_add", "adders", model.add_permission)
+                model_permission("can_view_all", "full_viewers", model.view_all_permission)
+                model_permission("can_edit_all", "full_editors", model.edit_all_permission)
+                model_permission("can_edit_permissions", "permission_editors", model.edit_permissions_permission)
             return utils.successful_response(request, _("The permissions of {name} were successfully changed."). \
                                                  format(name=get_really_full_name(edited_user)), list_)
     return render(request, "samples/edit_permissions.html",
