@@ -18,3 +18,4 @@ from __future__ import absolute_import, unicode_literals
 from .base import *
 from .forms import *
 from .feed import *
+from .class_views import *

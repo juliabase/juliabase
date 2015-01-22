@@ -84,6 +84,11 @@ def is_referentially_valid(layer_thickness_form, sample_form):
     return layer_thickness_form.is_referentially_valid(sample_form)
 
 
+class LayerThicknessView(utils.ProcessView):
+    model = LayerThicknessMeasurement
+    form = LayerThicknessForm
+
+
 @login_required
 def edit(request, layer_thickness_measurement_id):
     """Edit and create view for Layer Thickness Measurements.

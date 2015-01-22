@@ -32,6 +32,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from samples.utils.urls import PatternGenerator
 from institute.views.samples import sample, claim, stack, layout, json_client, substrate, structuring
+from institute.views.samples.layer_thickness_measurement import LayerThicknessView
 
 
 urlpatterns = [
@@ -62,6 +63,8 @@ urlpatterns = [
     # remote client.
     url(r"^substrates/add/$", substrate.edit, {"substrate_id": None}),
     url(r"^structurings/add/$", structuring.edit, {"structuring_id": None}),
+    url(r"^layer_thickness_measurements/add/$", LayerThicknessView.as_view(), {"layer_thickness_measurement_id": None}),
+    url(r"^layer_thickness_measurements/(?P<layer_thickness_measurement_id>.+)/edit/$", LayerThicknessView.as_view()),
 ]
 
 
