@@ -42,3 +42,56 @@ class FloatQuantityField(models.FloatField):
         result = super(FloatQuantityField, self).formfield(**kwargs)
         result.unit = self.unit
         return result
+
+
+class IntegerQuantityField(models.IntegerField):
+    description = _("Integer in the unit of %(unit)s")
+
+    def __init__(self, *args, **kwargs):
+        self.unit = kwargs.pop("unit", None)
+        super(IntegerQuantityField, self).__init__(*args, **kwargs)
+
+    def formfield(self, **kwargs):
+        result = super(IntegerQuantityField, self).formfield(**kwargs)
+        result.unit = self.unit
+        return result
+
+
+class PositiveIntegerQuantityField(models.PositiveIntegerField):
+    description = _("Positive integer in the unit of %(unit)s")
+
+    def __init__(self, *args, **kwargs):
+        self.unit = kwargs.pop("unit", None)
+        super(PositiveIntegerQuantityField, self).__init__(*args, **kwargs)
+
+    def formfield(self, **kwargs):
+        result = super(PositiveIntegerQuantityField, self).formfield(**kwargs)
+        result.unit = self.unit
+        return result
+
+
+class SmallIntegerQuantityField(models.SmallIntegerField):
+    description = _("Small integer in the unit of %(unit)s")
+
+    def __init__(self, *args, **kwargs):
+        self.unit = kwargs.pop("unit", None)
+        super(SmallIntegerQuantityField, self).__init__(*args, **kwargs)
+
+    def formfield(self, **kwargs):
+        result = super(SmallIntegerQuantityField, self).formfield(**kwargs)
+        result.unit = self.unit
+        return result
+
+
+class PositiveSmallIntegerQuantityField(models.PositiveSmallIntegerField):
+    description = _("Positive small integer in the unit of %(unit)s")
+
+    def __init__(self, *args, **kwargs):
+        self.unit = kwargs.pop("unit", None)
+        super(PositiveSmallIntegerQuantityField, self).__init__(*args, **kwargs)
+
+    def formfield(self, **kwargs):
+        result = super(PositiveSmallIntegerQuantityField, self).formfield(**kwargs)
+        result.unit = self.unit
+        return result
+
