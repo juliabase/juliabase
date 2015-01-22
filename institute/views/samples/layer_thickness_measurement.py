@@ -130,5 +130,5 @@ def edit(request, layer_thickness_measurement_id):
         edit_description_form = utils.EditDescriptionForm() if layer_thickness_measurement else None
     title = _("Thickness of {sample}").format(sample=old_sample) if layer_thickness_measurement else _("Add thickness")
     return render(request, "samples/edit_layer_thickness_measurement.html",
-                  {"title": title, "measurement": layer_thickness_form, "sample": sample_form,
+                  {"title": title, "process": layer_thickness_form, "sample": sample_form,
                    "edit_description": edit_description_form})

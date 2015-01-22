@@ -19,7 +19,7 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 <form method="post">
-  {% error_list measurement _("Error in measurement") %}
+  {% error_list process _("Error in measurement") %}
   {% error_list sample  _("Error in sample list") %}
   <table class="padding5">
     <tbody>
@@ -27,31 +27,31 @@ copyright holder, you must destroy it immediately and completely.
       {% input_field sample.sample %}
     </tr>
     <tr>
-      {% input_field measurement.timestamp %}
+      {% input_field process.timestamp %}
     </tr>
-    {% if measurement.user.is_staff %}
+    {% if process.user.is_staff %}
       <tr>
-        {% input_field measurement.operator %}
+        {% input_field process.operator %}
       </tr>
       <tr>
-        {% input_field measurement.external_operator %}
+        {% input_field process.external_operator %}
       </tr>
     {% else %}
       <tr>
-        {% input_field measurement.combined_operator %}
+        {% input_field process.combined_operator %}
       </tr>
     {% endif %}
     <tr>
-      {% input_field measurement.thickness %}
+      {% input_field process.thickness %}
     </tr>
     <tr>
-      {% input_field measurement.method %}
+      {% input_field process.method %}
     </tr>
     <tr>
      <td style="text-align: right">
-        <label for="id_{{ measurement.comments.html_name }}">{{ measurement.comments.label }}:<br/>
+        <label for="id_{{ process.comments.html_name }}">{{ process.comments.label }}:<br/>
           {% markdown_hint %}</label></td>
-      <td>{{ measurement.comments }}</td>
+      <td>{{ process.comments }}</td>
     </tr>
     </tbody>
   </table>
@@ -60,7 +60,7 @@ copyright holder, you must destroy it immediately and completely.
 
   <div style="display: none">
     {# Hidden so that it's only set/changed by the remote client. #}
-    {{ measurement.timestamp_inaccuracy }}
+    {{ process.timestamp_inaccuracy }}
   </div>
 
   <p class="submit-button"><input type="submit"/></p>
