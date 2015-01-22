@@ -40,7 +40,7 @@ __all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_layers", "A
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
            "SamplePositionForm", "RemoveFromMySamplesForm", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
-           "choices_of_content_types", "check_sample_name", "SampleSelectForm")
+           "choices_of_content_types", "check_sample_name", "SampleSelectForm", "MultipleSamplesSelectForm")
 
 
 class OperatorField(forms.ChoiceField):
@@ -936,6 +936,24 @@ class SampleSelectForm(forms.Form):
             samples.append(preset_sample)
             self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples, user)
+
+
+class MultipleSamplesSelectForm(forms.Form):
+    """Form for the list selection of samples that took part in a process.
+    """
+    sample_list = MultipleSamplesField(label=capfirst(_("samples")))
+
+    def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
+        super(MultipleSamplesSelectForm, self).__init__(*args, **kwargs)
+        samples = list(user.my_samples.all())
+        if process_instance:
+            samples.extend(process_instance.samples.all())
+            self.fields["sample_list"].initial = process_instance.samples.values_list("pk", flat=True)
+        if preset_sample:
+            samples.append(preset_sample)
+            self.fields["sample_list"].initial.append(preset_sample.pk)
+        self.fields["sample_list"].set_samples(samples, user)
+        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 
 _ = ugettext
