@@ -363,8 +363,7 @@ class FormSet(object):
             else:
                 # New deposition, or duplication has failed
                 self.deposition_form = DepositionForm(
-                    self.user, initial={"operator": self.user.pk, "timestamp": datetime.datetime.now(),
-                                        "number": institute.utils.base.get_next_deposition_number("C")})
+                    self.user, initial={"number": institute.utils.base.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
         self.samples_form = utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
         self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition)

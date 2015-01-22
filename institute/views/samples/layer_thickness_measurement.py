@@ -125,12 +125,7 @@ def edit(request, layer_thickness_measurement_id):
                 _("{measurement} was successfully added to the database.").format(measurement=layer_thickness_measurement)
             return utils.successful_response(request, success_report, json_response=layer_thickness_measurement.pk)
     else:
-        initial = {}
-        if layer_thickness_measurement_id is None:
-            initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
-        if layer_thickness_measurement:
-            initial["thickness"] = layer_thickness_measurement.thickness
-        layer_thickness_form = LayerThicknessForm(request.user, instance=layer_thickness_measurement, initial=initial)
+        layer_thickness_form = LayerThicknessForm(request.user, instance=layer_thickness_measurement)
         initial = {}
         if old_sample:
             initial["sample"] = old_sample.pk

@@ -235,7 +235,6 @@ def edit(request, number):
     else:
         initial = {}
         if number is None:
-            initial = {"timestamp": datetime.datetime.now(), "operator": request.user.pk}
             numbers = institute_models.PDSMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
         pds_measurement_form = PDSMeasurementForm(request.user, instance=pds_measurement, initial=initial)

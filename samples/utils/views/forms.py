@@ -159,8 +159,10 @@ class ProcessForm(ModelForm):
         self.user = user
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
-        if self.unfinished:
+        if not self.process or self.unfinished:
             kwargs.setdefault("initial", {}).update({"timestamp": datetime.datetime.now()})
+        if not self.process:
+            kwargs.setdefault("initial", {}).update({"operator": user.pk, "combined_operator": user.pk})
         super(ProcessForm, self).__init__(*args, **kwargs)
         if self.process and self.process.finished:
             self.fields["finished"].widget.attrs["disabled"] = "disabled"
