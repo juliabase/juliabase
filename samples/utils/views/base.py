@@ -36,6 +36,13 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
 import jb_common.utils.base
 
 
+__all__ = ("sample_name_format", "get_renamable_name_formats", "verbose_sample_name_format", "get_sample",
+           "does_sample_exist", "normalize_sample_name", "AmbiguityException", "lookup_sample", "convert_id_to_int",
+           "successful_response", "remove_samples_from_my_samples", "StructuredSeries", "StructuredTopic",
+           "build_structured_sample_list", "extract_preset_sample", "digest_process", "restricted_samples_query",
+           "enforce_clearance", "UnicodeWriter", "table_export", "median", "average")
+
+
 def sample_name_format(name, with_match_object=False):
     """Determines which sample name format the given name has.  It doesn't test
     whether the sample name is existing, nor if the initials are valid.

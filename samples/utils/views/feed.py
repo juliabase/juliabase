@@ -24,6 +24,9 @@ import jb_common.models
 from samples import models, permissions
 
 
+__all__ = ("Reporter",)
+
+
 class Reporter(object):
     """This class contains all feed-generating routines as methods.  Their
     names start with ``report_...``.  The main reason for putting them into a
