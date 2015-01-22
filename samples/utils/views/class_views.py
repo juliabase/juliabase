@@ -34,6 +34,8 @@ import jb_common.utils.base
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from . import forms as utils
+from .feed import Reporter
+from .base import successful_response
 from django.contrib.auth.decorators import login_required
 
 
@@ -61,9 +63,10 @@ class ProcessView(TemplateView):
         self.preset_sample = utils.extract_preset_sample(self.request) if not self.process else None
 
     def build_forms(self):
-        self.forms.update({"process": self.form(self.request.user, instance=self.process),
-                           "sample": utils.SampleSelectForm(self.request.user, self.process, self.preset_sample),
-                           "edit_description": utils.EditDescriptionForm() if self.process else None})
+        data = self.request.POST or None
+        self.forms.update({"process": self.form(self.request.user, data, instance=self.process),
+                           "sample": utils.SampleSelectForm(self.request.user, self.process, self.preset_sample, data),
+                           "edit_description": utils.EditDescriptionForm(data) if self.process else None})
 
     def respond(self, request):
         title = _("Thickness of {sample}").format(sample=old_sample) if self.process else _("Add thickness")
@@ -71,10 +74,50 @@ class ProcessView(TemplateView):
                       {"title": title, "measurement": layer_thickness_form, "sample": sample_form,
                        "edit_description": edit_description_form})
 
+    def _check_validity(self, forms):
+        all_valid = True
+        for form in forms:
+            if isinstance(form, (list, tuple)):
+                all_valid = self._check_validity(form) and all_valid
+            elif form is not None:
+                all_valid = form.is_valid() and all_valid
+        return all_valid
+        
+    def is_all_valid(self):
+        return self._check_validity(self.forms.values())
+
+    def is_referentially_valid(self):
+        if not self.multiple_samples:
+            return self.forms["process"].is_referentially_valid(self.forms["sample"])
+        else:
+            return True
+
+    def save_to_database(self):
+        process = self.forms["process"].save()
+        if self.multiple_samples:
+            process.samples = self.forms["samples"].cleaned_data["sample_list"]
+        else:
+            process.samples = [self.forms["sample"].cleaned_data["sample"]]
+        return process
+
     def get(self, request, *args, **kwargs):
         self.startup()
         self.build_forms()
         return super(ProcessView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.startup()
+        self.build_forms()
+        if self.is_all_valid() and self.is_referentially_valid():
+            saved_process = self.save_to_database()
+            Reporter(request.user).report_physical_process(
+                saved_process, self.forms["edit_description"].cleaned_data if self.forms["edit_description"] else None)
+            success_report = _("{process} was successfully changed in the database."). \
+                format(process=saved_process) if self.process else \
+                _("{measurement} was successfully added to the database.").format(measurement=saved_process)
+            return successful_response(request, success_report, json_response=saved_process.pk)
+        else:
+            return super(ProcessView, self).get(request, *args, **kwargs)
 
     def get_title(self):
         return _("Edit {process}").format(process=self.process) if self.process else \
