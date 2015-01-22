@@ -44,5 +44,5 @@ urlpatterns = [
     url(r"^switch_language$", switch_language),
     url(r"^error_pages/(?P<hash_value>.+)", show_error_page),
 
-    url(r"^jsi18n/$", cached_javascript_catalog, {"packages": settings.JAVASCRIPT_I18N_APPS}, name="jsi18n"),
+    url(r"^jsi18n/$", cached_javascript_catalog, {"packages": settings.JAVASCRIPT_I18N_APPS}, name="jb_common_jsi18n"),
 ]
