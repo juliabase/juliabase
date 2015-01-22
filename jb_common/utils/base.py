@@ -19,6 +19,7 @@ from django.utils.six.moves import urllib_parse
 
 import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string
 from contextlib import contextmanager
+from functools import wraps
 from smtplib import SMTPException
 from functools import update_wrapper
 import dateutil.tz
@@ -33,6 +34,7 @@ from django.forms.util import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
+from django.utils.decorators import available_attrs
 from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
 from django.utils.functional import allow_lazy
 from jb_common import mimeparse
@@ -797,11 +799,13 @@ def unquote_view_parameters(view):
     :type view: function
     """
     # FixMe: Actually, percent-encoding "/" and "%" is enough.
+    @wraps(view, assigned=available_attrs(view))
     def unquoting_view(request, *args, **kwargs):
         if six.PY2:
             return view(request,
                         *[urllib_parse.unquote(six.binary_type(value)).decode("utf-8") for value in args],
-                        **dict((key, urllib_parse.unquote(six.binary_type(value)).decode("utf-8")) for key, value in kwargs.items()))
+                        **dict((key, urllib_parse.unquote(six.binary_type(value)).decode("utf-8"))
+                               for key, value in kwargs.items()))
         return view(request,
                     *[urllib_parse.unquote(value) for value in args],
                     **dict((key, urllib_parse.unquote(value)) for key, value in kwargs.items()))
