@@ -238,10 +238,7 @@ def edit(request, number):
             numbers = institute_models.PDSMeasurement.objects.values_list("number", flat=True)
             initial["number"] = max(numbers) + 1 if numbers else 1
         pds_measurement_form = PDSMeasurementForm(request.user, instance=pds_measurement, initial=initial)
-        initial = {}
-        if old_sample:
-            initial["sample"] = old_sample.pk
-        sample_form = utils.SampleSelectForm(request.user, pds_measurement, preset_sample, initial=initial)
+        sample_form = utils.SampleSelectForm(request.user, pds_measurement, preset_sample)
         remove_from_my_samples_form = utils.RemoveFromMySamplesForm() if not pds_measurement else None
         overwrite_form = OverwriteForm()
         edit_description_form = utils.EditDescriptionForm() if pds_measurement else None

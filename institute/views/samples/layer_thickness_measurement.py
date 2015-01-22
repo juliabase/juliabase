@@ -126,10 +126,7 @@ def edit(request, layer_thickness_measurement_id):
             return utils.successful_response(request, success_report, json_response=layer_thickness_measurement.pk)
     else:
         layer_thickness_form = LayerThicknessForm(request.user, instance=layer_thickness_measurement)
-        initial = {}
-        if old_sample:
-            initial["sample"] = old_sample.pk
-        sample_form = utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample, initial=initial)
+        sample_form = utils.SampleSelectForm(request.user, layer_thickness_measurement, preset_sample)
         edit_description_form = utils.EditDescriptionForm() if layer_thickness_measurement else None
     title = _("Thickness of {sample}").format(sample=old_sample) if layer_thickness_measurement else _("Add thickness")
     return render(request, "samples/edit_layer_thickness_measurement.html",

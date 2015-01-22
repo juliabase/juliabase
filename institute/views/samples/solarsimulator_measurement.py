@@ -202,16 +202,13 @@ def edit(request, solarsimulator_measurement_id):
             return utils.successful_response(request, success_report, json_response=solarsimulator_measurement.pk)
     else:
         solarsimulator_measurement_form = SolarsimulatorMeasurementForm(request.user, instance=solarsimulator_measurement)
-        initial = {}
         solarsimulator_cell_forms = []
         if solarsimulator_measurement:
             samples = solarsimulator_measurement.samples.all()
-            if samples:
-                initial["sample"] = samples[0].pk
             solarsimulator_cell_forms = \
                 [SolarsimulatorCellForm(prefix=str(index), instance=solarsimulator_cell)
                  for index, solarsimulator_cell in enumerate(solarsimulator_measurement.cells.all())]
-        sample_form = utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample, initial=initial)
+        sample_form = utils.SampleSelectForm(request.user, solarsimulator_measurement, preset_sample)
         remove_from_my_samples_form = utils.RemoveFromMySamplesForm() if not solarsimulator_measurement else None
         edit_description_form = utils.EditDescriptionForm() if solarsimulator_measurement else None
     title = _(u"{name} of {sample}").format(name=SolarsimulatorMeasurement._meta.verbose_name,
