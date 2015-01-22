@@ -35,20 +35,19 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from . import forms as utils
 from .feed import Reporter
-from .base import successful_response
+from .base import successful_response, extract_preset_sample
 from django.contrib.auth.decorators import login_required
 
 
-__all__ = ("ProcessView",)
+__all__ = ("ProcessView", "ProcessMultipleSamplesView")
 
 
-class ProcessView(TemplateView):
-    multiple_samples = False
+class ProcessWithoutSamplesView(TemplateView):
 
     def __init__(self, **kwargs):
         self.class_name = camel_case_to_underscores(self.model.__name__)
         self.template_name = "samples/edit_{}.html".format(self.class_name)
-        super(ProcessView, self).__init__(**kwargs)
+        super(ProcessWithoutSamplesView, self).__init__(**kwargs)
         self.forms = {}
 
     def startup(self):
@@ -58,21 +57,13 @@ class ProcessView(TemplateView):
             field_name, parameter_name = "id", self.class_name + "_id"
         self.id = self.kwargs[parameter_name]
         self.process = self.model.objects.get(**{field_name: self.id}) if self.id else None
-        self.old_sample = self.process.samples.get() if self.process else None
         permissions.assert_can_add_edit_physical_process(self.request.user, self.process, self.model)
-        self.preset_sample = utils.extract_preset_sample(self.request) if not self.process else None
+        self.preset_sample = extract_preset_sample(self.request) if not self.process else None
+        self.data = self.request.POST or None
 
     def build_forms(self):
-        data = self.request.POST or None
-        self.forms.update({"process": self.form(self.request.user, data, instance=self.process),
-                           "sample": utils.SampleSelectForm(self.request.user, self.process, self.preset_sample, data),
-                           "edit_description": utils.EditDescriptionForm(data) if self.process else None})
-
-    def respond(self, request):
-        title = _("Thickness of {sample}").format(sample=old_sample) if self.process else _("Add thickness")
-        return render(request, "samples/edit_layer_thickness_measurement.html",
-                      {"title": title, "measurement": layer_thickness_form, "sample": sample_form,
-                       "edit_description": edit_description_form})
+        self.forms.update({"process": self.form(self.request.user, self.data, instance=self.process),
+                           "edit_description": utils.EditDescriptionForm(self.data) if self.process else None})
 
     def _check_validity(self, forms):
         all_valid = True
@@ -87,23 +78,16 @@ class ProcessView(TemplateView):
         return self._check_validity(self.forms.values())
 
     def is_referentially_valid(self):
-        if not self.multiple_samples:
-            return self.forms["process"].is_referentially_valid(self.forms["sample"])
-        else:
-            return True
+        return True
 
     def save_to_database(self):
         process = self.forms["process"].save()
-        if self.multiple_samples:
-            process.samples = self.forms["samples"].cleaned_data["sample_list"]
-        else:
-            process.samples = [self.forms["sample"].cleaned_data["sample"]]
         return process
 
     def get(self, request, *args, **kwargs):
         self.startup()
         self.build_forms()
-        return super(ProcessView, self).get(request, *args, **kwargs)
+        return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.startup()
@@ -117,7 +101,7 @@ class ProcessView(TemplateView):
                 _("{measurement} was successfully added to the database.").format(measurement=saved_process)
             return successful_response(request, success_report, json_response=saved_process.pk)
         else:
-            return super(ProcessView, self).get(request, *args, **kwargs)
+            return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
 
     def get_title(self):
         return _("Edit {process}").format(process=self.process) if self.process else \
@@ -128,9 +112,39 @@ class ProcessView(TemplateView):
         context["title"] = self.get_title()
         context.update(kwargs)
         context.update(self.forms)
-        return super(ProcessView, self).get_context_data(**context)
+        return super(ProcessWithoutSamplesView, self).get_context_data(**context)
 
     @classmethod
     def as_view(cls, **initkwargs):
-        view = super(ProcessView, cls).as_view(**initkwargs)
+        view = super(ProcessWithoutSamplesView, cls).as_view(**initkwargs)
         return login_required(view)
+
+
+class ProcessView(ProcessWithoutSamplesView):
+
+    def build_forms(self):
+        super(ProcessView, self).build_forms()
+        self.forms["sample"] = utils.SampleSelectForm(self.request.user, self.process, self.preset_sample, self.data)
+
+    def is_referentially_valid(self):
+        referentially_valid = super(ProcessView, self).is_referentially_valid()
+        referentially_valid = referentially_valid and self.forms["process"].is_referentially_valid(self.forms["sample"])
+        return referentially_valid
+
+    def save_to_database(self):
+        process = super(ProcessView, self).save_to_database()
+        process.samples = [self.forms["sample"].cleaned_data["sample"]]
+        return process
+
+
+class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
+
+    def build_forms(self):
+        super(ProcessMultipleSamplesView, self).build_forms()
+        self.forms["samples"] = utils.MultipleSamplesSelectForm(self.request.user, self.process, self.preset_sample,
+                                                                self.data)
+
+    def save_to_database(self):
+        process = super(ProcessMultipleSamplesView, self).save_to_database()
+        process.samples = self.forms["samples"].cleaned_data["sample_list"]
+        return process
