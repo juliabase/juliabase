@@ -530,7 +530,7 @@ class DepositionSamplesForm(forms.Form):
     """
     sample_list = MultipleSamplesField(label=_("Samples"))
 
-    def __init__(self, user, preset_sample, deposition, data=None, **kwargs):
+    def __init__(self, user, deposition, preset_sample, data=None, **kwargs):
         samples = list(user.my_samples.all())
         if deposition:
             kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}

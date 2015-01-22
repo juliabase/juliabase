@@ -305,7 +305,7 @@ class FormSet(object):
         if not self.deposition:
             self.remove_from_my_samples_form = utils.RemoveFromMySamplesForm(self.post_data)
         self.samples_form = \
-            utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition, self.post_data)
+            utils.DepositionSamplesForm(self.user, self.deposition, self.preset_sample, self.post_data)
         indices = utils.collect_subform_indices(self.post_data)
         self.layer_forms = [get_layer_form(layer_index) for layer_index in indices]
         self.change_layer_forms = [ChangeLayerForm(self.post_data, prefix=str(change_layer_index))
@@ -365,7 +365,7 @@ class FormSet(object):
                 self.deposition_form = DepositionForm(
                     self.user, initial={"number": institute.utils.base.get_next_deposition_number("C")})
                 self.layer_forms, self.change_layer_forms = [], []
-        self.samples_form = utils.DepositionSamplesForm(self.user, self.preset_sample, self.deposition)
+        self.samples_form = utils.DepositionSamplesForm(self.user, self.deposition, self.preset_sample)
         self.add_layers_form = AddLayersForm(self.user_details, institute_models.ClusterToolDeposition)
         self.change_layer_forms = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.layer_forms))]
         if not self.deposition:
