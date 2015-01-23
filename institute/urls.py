@@ -32,7 +32,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from samples.utils.urls import PatternGenerator
 from institute.views.samples import sample, claim, stack, layout, json_client, substrate, structuring
-from institute.views.samples.layer_thickness_measurement import LayerThicknessView
+from institute.views.samples.pds_measurement import PDSMeasurementView
 
 
 urlpatterns = [
@@ -63,8 +63,8 @@ urlpatterns = [
     # remote client.
     url(r"^substrates/add/$", substrate.edit, {"substrate_id": None}),
     url(r"^structurings/add/$", structuring.edit, {"structuring_id": None}),
-    url(r"^layer_thickness_measurements/add/$", LayerThicknessView.as_view(), {"layer_thickness_measurement_id": None}),
-    url(r"^layer_thickness_measurements/(?P<layer_thickness_measurement_id>.+)/edit/$", LayerThicknessView.as_view()),
+    url(r"^pds_measurements/add/$", PDSMeasurementView.as_view(), {"number": None}),
+    url(r"^pds_measurements/(?P<number>.+)/edit/$", PDSMeasurementView.as_view()),
 ]
 
 
@@ -73,7 +73,7 @@ urlpatterns = [
 pattern_generator = PatternGenerator(urlpatterns, "institute.views.samples")
 pattern_generator.deposition("ClusterToolDeposition", views={"add", "edit"})
 pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")
-pattern_generator.physical_process("PDSMeasurement", "number")
+#pattern_generator.physical_process("PDSMeasurement", "number")
 pattern_generator.physical_process("Substrate", views={"edit"})
 pattern_generator.physical_process("Structuring", views={"edit"})
 pattern_generator.physical_process("SolarsimulatorMeasurement")
