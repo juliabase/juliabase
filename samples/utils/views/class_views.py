@@ -14,29 +14,17 @@
 
 
 from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-from django.utils.six.moves import cStringIO as StringIO
 
-import copy, re, csv
-from django.conf import settings
-from django.core.cache import cache
-from django.db.models import Q, Max
-from django.http import Http404, HttpResponse
-from django.utils.translation import ugettext as _, ugettext_lazy
-from django.contrib.contenttypes.models import ContentType
-from django.template import defaultfilters
-from jb_common import mimeparse
-from jb_common.utils.base import camel_case_to_underscores
-from samples import models, permissions
-from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
-    ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
-import jb_common.utils.base
+from django.db.models import Max
+from django.contrib.auth.decorators import login_required
+from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
+from jb_common.utils.base import camel_case_to_underscores
+from samples import permissions
 from . import forms as utils
 from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
-from django.contrib.auth.decorators import login_required
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin")
