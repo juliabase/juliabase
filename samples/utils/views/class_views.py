@@ -43,6 +43,7 @@ __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixi
 
 
 class ProcessWithoutSamplesView(TemplateView):
+    # Never derive from that; pointless.
 
     def __init__(self, **kwargs):
         self.class_name = camel_case_to_underscores(self.model.__name__)
@@ -151,6 +152,7 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
 
 
 class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
+    # Must be derived from first
 
     def build_forms(self):
         super(RemoveFromMySamplesMixin, self).build_forms()
