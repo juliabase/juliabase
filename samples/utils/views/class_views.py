@@ -200,6 +200,13 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
         else:
             self.forms["subprocesses"] = []
 
+    def is_referentially_valid(self):
+        referentially_valid = super(SubprocessesMixin, self).is_referentially_valid()
+        if not self.forms["subprocesses"]:
+            self.forms["process"].add_error(None, _("No subprocesses given."))
+            referentially_valid = False
+        return referentially_valid
+
     def save_to_database(self):
         process = super(SubprocessesMixin, self).save_to_database()
         getattr(self.process, self.subprocess_field).all().delete()

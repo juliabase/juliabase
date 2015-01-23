@@ -49,12 +49,5 @@ class SolarsimulatorMeasurementView(utils.SubprocessesMixin, utils.ProcessView):
     subform_class = SolarsimulatorCellForm
     process_field, subprocess_field = "measurement", "cells"
 
-    def is_referentially_valid(self):
-        referentially_valid = super(SolarsimulatorMeasurementView, self).is_referentially_valid()
-        if not self.forms["subprocesses"]:
-            self.forms["process"].add_error(None, _("No measurenents given."))
-            referentially_valid = False
-        return referentially_valid
-
 
 _ = ugettext
