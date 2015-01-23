@@ -19,39 +19,39 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 <form method="post">{% csrf_token %}
-  {% error_list solarsimulator_measurement _("Error in solarsimulator measurements") %}
+  {% error_list process _("Error in solarsimulator measurements") %}
   {% error_list sample _("Error in sample") %}
   {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
   <table class="padding5">
     <tbody>
       <tr>
-        {% input_field solarsimulator_measurement.timestamp %}
+        {% input_field process.timestamp %}
       </tr>
       <tr>
         {% input_field sample.sample %}
       </tr>
       <tr>
-        {% input_field solarsimulator_measurement.irradiation %}
+        {% input_field process.irradiation %}
       </tr>
       <tr>
-        {% input_field solarsimulator_measurement.temperature %}
+        {% input_field process.temperature %}
       </tr>
-      {% if solarsimulator_measurement.user.is_staff %}
+      {% if process.user.is_staff %}
         <tr>
-          {% input_field solarsimulator_measurement.operator %}
+          {% input_field process.operator %}
         </tr>
         <tr>
-          {% input_field solarsimulator_measurement.external_operator %}
+          {% input_field process.external_operator %}
         </tr>
       {% else %}
         <tr>
-          {% input_field solarsimulator_measurement.combined_operator %}
+          {% input_field process.combined_operator %}
         </tr>
       {% endif %}
       <tr>
-        <td class="label"><label for="id_{{ solarsimulator_measurement.comments.html_name }}">
-          {{ solarsimulator_measurement.comments.label }}:</label><br/>{% markdown_hint %}</td>
-        <td class="input" colspan="3">{{ solarsimulator_measurement.comments }}</td>
+        <td class="label"><label for="id_{{ process.comments.html_name }}">
+          {{ process.comments.label }}:</label><br/>{% markdown_hint %}</td>
+        <td class="input" colspan="3">{{ process.comments }}</td>
       </tr>
     </tbody>
   </table>
@@ -91,7 +91,7 @@ copyright holder, you must destroy it immediately and completely.
 
   <div style="display: none">
     {# Hidden so that it's only set/changed by the remote client. #}
-    {{ solarsimulator_measurement.timestamp_inaccuracy }}
+    {{ process.timestamp_inaccuracy }}
   </div>
 
   {% include "samples/edit_description.html" %}

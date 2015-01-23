@@ -139,6 +139,11 @@ def is_referentially_valid(solarsimulator_measurement_form, solarsimulator_cell_
     return referentially_valid
 
 
+class SolarsimulatorMeasurementView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
+    model = SolarsimulatorMeasurement
+    form_class = SolarsimulatorMeasurementForm
+
+
 @login_required
 def edit(request, solarsimulator_measurement_id):
     """Create or edit an existing solarsimulator measurement.

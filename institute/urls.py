@@ -33,6 +33,7 @@ from django.views.generic import TemplateView
 from samples.utils.urls import PatternGenerator
 from institute.views.samples import sample, claim, stack, layout, json_client, substrate, structuring
 from institute.views.samples.pds_measurement import PDSMeasurementView
+from institute.views.samples.solarsimulator_measurement import SolarsimulatorMeasurementView
 
 
 urlpatterns = [
@@ -65,6 +66,10 @@ urlpatterns = [
     url(r"^structurings/add/$", structuring.edit, {"structuring_id": None}),
     url(r"^pds_measurements/add/$", PDSMeasurementView.as_view(), {"number": None}),
     url(r"^pds_measurements/(?P<number>.+)/edit/$", PDSMeasurementView.as_view()),
+    url(r"^solarsimulator_measurements/add/$", SolarsimulatorMeasurementView.as_view(),
+        {"solarsimulator_measurement_id": None}),
+    url(r"^solarsimulator_measurements/(?P<solarsimulator_measurement_id>.+)/edit/$",
+        SolarsimulatorMeasurementView.as_view()),
 ]
 
 
