@@ -39,7 +39,7 @@ from .base import successful_response, extract_preset_sample, remove_samples_fro
 from django.contrib.auth.decorators import login_required
 
 
-__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin")
+__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -102,7 +102,9 @@ class ProcessWithoutSamplesView(TemplateView):
     def post(self, request, *args, **kwargs):
         self.startup()
         self.build_forms()
-        if self.is_all_valid() and self.is_referentially_valid():
+        all_valid = self.is_all_valid()
+        referentially_valid = self.is_referentially_valid()
+        if all_valid and referentially_valid:
             self.process = self.save_to_database()
             Reporter(request.user).report_physical_process(
                 self.process, self.forms["edit_description"].cleaned_data if self.forms["edit_description"] else None)
@@ -174,4 +176,35 @@ class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
         if self.forms["remove_from_my_samples"] and \
            self.forms["remove_from_my_samples"].cleaned_data["remove_from_my_samples"]:
             remove_samples_from_my_samples(process.samples.all(), self.request.user)
+        return process
+
+
+class SubprocessesMixin(ProcessWithoutSamplesView):
+    # Must be derived from first
+
+    def build_forms(self):
+        super(SubprocessesMixin, self).build_forms()
+        if self.id:
+            subprocesses = getattr(self.process, self.subprocess_field)
+            if not self.sub_model._meta.ordering:
+                subprocesses = subprocesses.order_by("id")
+            if self.request.method == "POST":
+                indices = utils.collect_subform_indices(self.data)
+                number_of_instances = subprocesses.count()
+                instances = list(subprocesses.all()) + (len(indices) - number_of_instances) * [None]
+                self.forms["subprocesses"] = [self.subform_class(self.data, prefix=str(index), instance=instance)
+                                              for index, instance in zip(indices, instances)]
+            else:
+                self.forms["subprocesses"] = [self.subform_class(prefix=str(index), instance=subprocess)
+                                              for index, subprocess in enumerate(subprocesses.all())]
+        else:
+            self.forms["subprocesses"] = []
+
+    def save_to_database(self):
+        process = super(SubprocessesMixin, self).save_to_database()
+        getattr(self.process, self.subprocess_field).all().delete()
+        for form in self.forms["subprocesses"]:
+            subprocess = form.save(commit=False)
+            setattr(subprocess, self.process_field, self.process)
+            subprocess.save()
         return process
