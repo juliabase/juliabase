@@ -63,7 +63,7 @@ class ProcessWithoutSamplesView(TemplateView):
 
     def build_forms(self):
         self.forms.update({"process": self.form(self.request.user, self.data, instance=self.process),
-                           "edit_description": utils.EditDescriptionForm(self.data) if self.process else None})
+                           "edit_description": utils.EditDescriptionForm(self.data) if self.id else None})
 
     def _check_validity(self, forms):
         all_valid = True
@@ -93,18 +93,18 @@ class ProcessWithoutSamplesView(TemplateView):
         self.startup()
         self.build_forms()
         if self.is_all_valid() and self.is_referentially_valid():
-            saved_process = self.save_to_database()
+            self.process = self.save_to_database()
             Reporter(request.user).report_physical_process(
-                saved_process, self.forms["edit_description"].cleaned_data if self.forms["edit_description"] else None)
+                self.process, self.forms["edit_description"].cleaned_data if self.forms["edit_description"] else None)
             success_report = _("{process} was successfully changed in the database."). \
-                format(process=saved_process) if self.process else \
-                _("{measurement} was successfully added to the database.").format(measurement=saved_process)
-            return successful_response(request, success_report, json_response=saved_process.pk)
+                format(process=self.process) if self.id else \
+                _("{measurement} was successfully added to the database.").format(measurement=self.process)
+            return successful_response(request, success_report, json_response=self.process.pk)
         else:
             return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
 
     def get_title(self):
-        return _("Edit {process}").format(process=self.process) if self.process else \
+        return _("Edit {process}").format(process=self.process) if self.id else \
             _("Add {class_name}").format(class_name=self.model._meta.verbose_name)
 
     def get_context_data(self, **kwargs):
