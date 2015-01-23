@@ -20,7 +20,7 @@ from django.utils.six.moves import cStringIO as StringIO
 import copy, re, csv
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext as _, ugettext_lazy
 from django.contrib.contenttypes.models import ContentType
@@ -53,18 +53,27 @@ class ProcessWithoutSamplesView(TemplateView):
 
     def startup(self):
         try:
-            field_name = parameter_name = self.JBMeta.identifying_field
+            self.identifying_field = parameter_name = self.model.JBMeta.identifying_field
         except AttributeError:
-            field_name, parameter_name = "id", self.class_name + "_id"
+            self.identifying_field, parameter_name = "id", self.class_name + "_id"
         self.id = self.kwargs[parameter_name]
-        self.process = self.model.objects.get(**{field_name: self.id}) if self.id else None
+        self.process = self.model.objects.get(**{self.identifying_field: self.id}) if self.id else None
         permissions.assert_can_add_edit_physical_process(self.request.user, self.process, self.model)
         self.preset_sample = extract_preset_sample(self.request) if not self.process else None
         self.data = self.request.POST or None
 
+    def get_next_id(self):
+        return (self.model.objects.aggregate(Max(self.identifying_field))[self.identifying_field + "__max"] or 0) + 1
+
     def build_forms(self):
-        self.forms.update({"process": self.form_class(self.request.user, self.data, instance=self.process),
-                           "edit_description": utils.EditDescriptionForm(self.data) if self.id else None})
+        if "process" not in self.forms:
+            initial = {}
+            if not self.id:
+                next_id = self.get_next_id()
+                if next_id:
+                    initial[self.identifying_field] = next_id
+            self.forms["process"] = self.form_class(self.request.user, self.data, instance=self.process, initial=initial)
+        self.forms["edit_description"] = utils.EditDescriptionForm(self.data) if self.id else None
 
     def _check_validity(self, forms):
         all_valid = True
@@ -125,7 +134,8 @@ class ProcessView(ProcessWithoutSamplesView):
 
     def build_forms(self):
         super(ProcessView, self).build_forms()
-        self.forms["sample"] = utils.SampleSelectForm(self.request.user, self.process, self.preset_sample, self.data)
+        if "sample" not in self.forms:
+            self.forms["sample"] = utils.SampleSelectForm(self.request.user, self.process, self.preset_sample, self.data)
 
     def is_referentially_valid(self):
         referentially_valid = super(ProcessView, self).is_referentially_valid()
@@ -142,8 +152,9 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
 
     def build_forms(self):
         super(ProcessMultipleSamplesView, self).build_forms()
-        self.forms["samples"] = utils.MultipleSamplesSelectForm(self.request.user, self.process, self.preset_sample,
-                                                                self.data)
+        if "samples" not in self.forms:
+            self.forms["samples"] = utils.MultipleSamplesSelectForm(self.request.user, self.process, self.preset_sample,
+                                                                    self.data)
 
     def save_to_database(self):
         process = super(ProcessMultipleSamplesView, self).save_to_database()
