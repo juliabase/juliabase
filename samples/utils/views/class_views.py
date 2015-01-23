@@ -63,7 +63,7 @@ class ProcessWithoutSamplesView(TemplateView):
         self.data = self.request.POST or None
 
     def build_forms(self):
-        self.forms.update({"process": self.form(self.request.user, self.data, instance=self.process),
+        self.forms.update({"process": self.form_class(self.request.user, self.data, instance=self.process),
                            "edit_description": utils.EditDescriptionForm(self.data) if self.id else None})
 
     def _check_validity(self, forms):
