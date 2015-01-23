@@ -35,11 +35,11 @@ from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from . import forms as utils
 from .feed import Reporter
-from .base import successful_response, extract_preset_sample
+from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
 from django.contrib.auth.decorators import login_required
 
 
-__all__ = ("ProcessView", "ProcessMultipleSamplesView")
+__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -147,4 +147,18 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
     def save_to_database(self):
         process = super(ProcessMultipleSamplesView, self).save_to_database()
         process.samples = self.forms["samples"].cleaned_data["sample_list"]
+        return process
+
+
+class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
+
+    def build_forms(self):
+        super(RemoveFromMySamplesMixin, self).build_forms()
+        self.forms["remove_from_my_samples"] = utils.RemoveFromMySamplesForm(self.data) if not self.id else None
+
+    def save_to_database(self):
+        process = super(RemoveFromMySamplesMixin, self).save_to_database()
+        if self.forms["remove_from_my_samples"] and \
+           self.forms["remove_from_my_samples"].cleaned_data["remove_from_my_samples"]:
+            remove_samples_from_my_samples(process.samples.all(), self.request.user)
         return process
