@@ -115,7 +115,7 @@ class OverwriteForm(forms.Form):
     overwrite_from_file = forms.BooleanField(label=_("Overwrite with file data"), required=False)
 
 
-class PDSMeasurementView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
+class EditView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
     model = institute_models.PDSMeasurement
     form_class = PDSMeasurementForm
 

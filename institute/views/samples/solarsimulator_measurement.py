@@ -42,7 +42,7 @@ class SolarsimulatorCellForm(forms.ModelForm):
         super(SolarsimulatorCellForm, self).__init__(*args, **kwargs)
 
 
-class SolarsimulatorMeasurementView(utils.SubprocessesMixin, utils.ProcessView):
+class EditView(utils.SubprocessesMixin, utils.ProcessView):
     model = SolarsimulatorMeasurement
     sub_model = SolarsimulatorCellMeasurement
     form_class = SolarsimulatorMeasurementForm
