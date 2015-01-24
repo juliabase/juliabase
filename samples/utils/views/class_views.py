@@ -20,6 +20,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
+import django.forms as forms
 from jb_common.utils.base import camel_case_to_underscores
 from samples import permissions
 from . import forms as utils
@@ -167,6 +168,10 @@ class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
         return process
 
 
+class NumberForm(forms.Form):
+    number = forms.IntegerField(label=_("number of subprocesses"), min_value=1)
+
+
 class SubprocessesMixin(ProcessWithoutSamplesView):
     # Must be derived from first
 
@@ -178,11 +183,21 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
                 subprocesses = subprocesses.order_by("id")
             if self.request.method == "POST":
                 indices = utils.collect_subform_indices(self.data)
-                number_of_instances = subprocesses.count()
-                instances = list(subprocesses.all()) + (len(indices) - number_of_instances) * [None]
+                self.forms["number"] = NumberForm(self.data)
+                if self.forms["number"].is_valid():
+                    new_number_of_forms = self.forms["number"].cleaned_data["number"]
+                    indices = indices[:new_number_of_forms]
+                else:
+                    new_number_of_forms = len(indices)
+                instances = list(subprocesses.all()) + (len(indices) - subprocesses.count()) * [None]
                 self.forms["subprocesses"] = [self.subform_class(self.data, prefix=str(index), instance=instance)
                                               for index, instance in zip(indices, instances)]
+                number_of_new_forms = new_number_of_forms - len(indices)
+                if number_of_new_forms > 0:
+                    self.forms["subprocesses"].extend([self.subform_class(prefix=str(index))
+                                                       for index in range(max(indices) + 1, max(indices) + 1 + number_of_new_forms)])
             else:
+                self.forms["number"] = NumberForm(initial={"number": subprocesses.count()})
                 self.forms["subprocesses"] = [self.subform_class(prefix=str(index), instance=subprocess)
                                               for index, subprocess in enumerate(subprocesses.all())]
         else:

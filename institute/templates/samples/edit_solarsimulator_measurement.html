@@ -55,6 +55,9 @@ copyright holder, you must destroy it immediately and completely.
       </tr>
     </tbody>
   </table>
+
+  {{ number.as_p }}
+
   {% if subprocesses %}
     <table style="width: 100%">
       <tbody>
@@ -84,9 +87,6 @@ copyright holder, you must destroy it immediately and completely.
         {% endfor %}
       </tbody>
     </table>
-  {% endif %}
-  {% if remove_from_my_samples %}
-    {{ remove_from_my_samples.as_p }}
   {% endif %}
 
   <div style="display: none">
