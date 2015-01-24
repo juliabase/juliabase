@@ -218,7 +218,6 @@ class Process(PolymorphicModel):
                 sample.save(with_relations=False)
 
     def __str__(self):
-        _ = ugettext
         self = self.actual_instance
         samples = self.samples.values_list("name", flat=True)
         try:
@@ -996,7 +995,6 @@ class SampleSplit(Process):
         verbose_name_plural = _("sample splits")
 
     def __str__(self):
-        _ = ugettext
         return _("split of {parent_name}").format(parent_name=self.parent.name)
 
     def get_cache_key(self, user_settings_hash, local_context):
@@ -1055,7 +1053,6 @@ class Clearance(models.Model):
         verbose_name_plural = _("clearances")
 
     def __str__(self):
-        _ = ugettext
         return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
 
 
@@ -1074,7 +1071,6 @@ class SampleClaim(models.Model):
         verbose_name_plural = _("sample claims")
 
     def __str__(self):
-        _ = ugettext
         return _("sample claim #{number}").format(number=self.pk)
 
     def get_absolute_url(self):
@@ -1151,7 +1147,6 @@ class Result(Process):
                 sample_series.save(touch_samples=True)
 
     def __str__(self):
-        _ = ugettext
         try:
             # Translators: experimental result
             return _("result for {sample}").format(sample=self.samples.get())
@@ -1258,7 +1253,6 @@ class Result(Process):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        _ = ugettext
         data_node = super(Result, self).get_data_for_table_export()
         remove_data_item(self, data_node, "quantities_and_values")
         data_node.name = data_node.descriptive_name = self.title
@@ -1526,7 +1520,6 @@ class StatusMessage(models.Model):
         verbose_name_plural = _("status messages")
 
     def __str__(self):
-        _ = ugettext
         return _("status message #{number}").format(number=self.pk)
 
 
@@ -1567,7 +1560,6 @@ class Task(models.Model):
         verbose_name_plural = _("tasks")
 
     def __str__(self):
-        _ = ugettext
         return _("task of {process_class} from {datetime}". format(
                 process_class=self.process_class.name, datetime=self.creating_timestamp))
 
@@ -1632,3 +1624,6 @@ class ProcessWithSamplePositions(models.Model):
         hash_.update(user_settings_hash.encode("utf-8"))
         hash_.update("\x04{0}".format(local_context.get("sample", "")).encode("utf-8"))
         return "process:{0}-{1}".format(self.id, hash_.hexdigest())
+
+
+_ = ugettext

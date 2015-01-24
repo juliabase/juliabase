@@ -24,7 +24,7 @@ import re, datetime, calendar, copy
 from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -859,3 +859,6 @@ class DetailsSearchTreeNode(SearchTreeNode):
                     self.details_node.children.append((None, node))
         result = result.filter(pk__in=self.details_node.get_query_set())
         return result.only("pk")
+
+
+_ = ugettext

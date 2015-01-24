@@ -19,7 +19,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 class Match(models.Model):
@@ -95,3 +95,6 @@ class UserDetails(models.Model):
 
     def __str__(self):
         return six.text_type(self.user)
+
+
+_ = ugettext

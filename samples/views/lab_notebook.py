@@ -31,7 +31,7 @@ from django.shortcuts import render
 import django.core.urlresolvers
 from django.template import loader, RequestContext
 import django.forms as forms
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
 from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, capitalize_first_letter
@@ -43,7 +43,6 @@ class YearMonthForm(forms.Form):
     """Form for the year/month fields in which the user can see which month is
     currently selected, and also change it.
     """
-    _ = ugettext_lazy
     year = forms.IntegerField(label=_("year"), min_value=1990)
     month = forms.IntegerField(label=_("month"), min_value=1, max_value=12)
 
@@ -215,3 +214,6 @@ def export(request, process_name, year_and_month):
                                                          "rows": list(zip(table, switch_row_forms)) if table else None,
                                                          "old_data": old_data_form,
                                                          "backlink": request.GET.get("next", "")})
+
+
+_ = ugettext

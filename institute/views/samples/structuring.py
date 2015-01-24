@@ -18,7 +18,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 import samples.utils.views as utils
 import institute.utils.views as form_utils
 import institute.models as institute_models
@@ -146,3 +146,6 @@ def edit(request, structuring_id):
                                                              "sample": sample_form,
                                                              "remove_from_my_samples": remove_from_my_samples_form,
                                                              "edit_description": edit_description_form})
+
+
+_ = ugettext

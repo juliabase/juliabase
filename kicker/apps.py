@@ -15,7 +15,7 @@
 from __future__ import absolute_import, unicode_literals, division
 
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 class KickerConfig(AppConfig):
@@ -24,3 +24,6 @@ class KickerConfig(AppConfig):
 
     def ready(self):
         import kicker.signals
+
+
+_ = ugettext

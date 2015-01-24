@@ -28,7 +28,7 @@ from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext, ungettext, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 import jb_common.utils.base
 from samples import models
 import samples.utils.views as utils
@@ -36,7 +36,6 @@ import institute.utils.views as form_utils
 import institute.utils.base
 import institute.models as institute_models
 
-_ = ugettext
 
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
     def render(self):
@@ -55,7 +54,6 @@ class AddLayersForm(forms.Form):
 
     Alternatively, the user can give a layer nickname from “My Layers”.
     """
-    _ = ugettext_lazy
     layer_to_be_added = forms.ChoiceField(label=_("Layer to be added"), required=False,
                                           widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer),
                                           choices=new_layer_choices)
@@ -102,7 +100,6 @@ class DepositionForm(utils.DepositionForm):
         return form_utils.clean_deposition_number_field(number, "C")
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(DepositionForm, self).clean()
         if "number" in cleaned_data and "timestamp" in cleaned_data:
             if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
@@ -222,14 +219,12 @@ class ChangeLayerForm(forms.Form):
     """Form for manipulating a layer.  Duplicating it (appending the
     duplicate), deleting it, and moving it up- or downwards.
     """
-    _ = ugettext_lazy
     duplicate_this_layer = forms.BooleanField(label=_("duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_("remove this layer"), required=False)
     move_this_layer = forms.ChoiceField(label=_("move this layer"), required=False,
                                         choices=(("", "---------"), ("up", _("up")), ("down", _("down"))))
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(ChangeLayerForm, self).clean()
         operations = 0
         if cleaned_data["duplicate_this_layer"]:
@@ -628,3 +623,6 @@ def edit(request, number):
     """
     return form_utils.edit_depositions(request, number, FormSet(request, number), institute_models.ClusterToolDeposition,
                                        "samples/edit_cluster_tool_deposition.html")
+
+
+_ = ugettext

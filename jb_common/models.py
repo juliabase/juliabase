@@ -25,7 +25,7 @@ import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 import jb_common.search
 
 
@@ -255,3 +255,6 @@ class ErrorPage(models.Model):
     class Meta:
         verbose_name = _("error page")
         verbose_name_plural = _("error pages")
+
+
+_ = ugettext

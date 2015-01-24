@@ -21,7 +21,7 @@ from django.shortcuts import get_object_or_404
 from samples import models
 from django import forms
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _, ugettext_lazy, ugettext, ungettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ugettext, ungettext
 from jb_common.utils.base import is_json_requested, format_enumeration
 import samples.utils.views as utils
 import institute.utils.views as form_utils
@@ -44,7 +44,6 @@ class DepositionForm(utils.DepositionForm):
         return form_utils.clean_deposition_number_field(number, "S")
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(DepositionForm, self).clean()
         if "number" in cleaned_data and "timestamp" in cleaned_data:
             if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
@@ -74,14 +73,12 @@ class ChangeLayerForm(forms.Form):
     """Form for manipulating a layer.  Duplicating it (appending the
     duplicate), deleting it, and moving it up- or downwards.
     """
-    _ = ugettext_lazy
     duplicate_this_layer = forms.BooleanField(label=_("duplicate this layer"), required=False)
     remove_this_layer = forms.BooleanField(label=_("remove this layer"), required=False)
     move_this_layer = forms.ChoiceField(label=_("move this layer"), required=False,
                                         choices=(("", "---------"), ("up", _("up")), ("down", _("down"))))
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(ChangeLayerForm, self).clean()
         operations = 0
         if cleaned_data["duplicate_this_layer"]:
@@ -443,3 +440,6 @@ def edit(request, number):
     """
     return form_utils.edit_depositions(request, number, FormSet(request, number), institute_models.FiveChamberDeposition,
                                        "samples/edit_five_chamber_deposition.html")
+
+
+_ = ugettext

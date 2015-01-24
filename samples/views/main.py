@@ -27,7 +27,7 @@ import django.core.urlresolvers
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
     camel_case_to_underscores
 from jb_common.models import Topic
@@ -135,7 +135,6 @@ class SearchDepositionsForm(forms.Form):
     search.  Currently, the search is case-insensitive, and arbitrary parts of
     the deposition number are matched.
     """
-    _ = ugettext_lazy
     number_pattern = forms.CharField(label=_("Deposition number pattern"), max_length=30, required=False)
 
 
@@ -240,3 +239,6 @@ def show_process(request, process_id, process_name="Process"):
     template_context = {"title": six.text_type(process), "samples": process.samples.all(), "process": process}
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)
+
+
+_ = ugettext

@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -31,7 +31,6 @@ import samples.utils.views as utils
 class MergeSamplesForm(forms.Form):
     """The merge samples form class.
     """
-    _ = ugettext_lazy
     from_sample = utils.SampleField(label=_("merge sample"), required=False)
     to_sample = utils.SampleField(label=_("into sample"), required=False)
 
@@ -190,3 +189,6 @@ def merge(request):
                                for index in range(number_of_pairs)]
     return render(request, "samples/merge_samples.html", {"title": _("Merge samples"),
                                                           "merge_forms": merge_samples_forms})
+
+
+_ = ugettext

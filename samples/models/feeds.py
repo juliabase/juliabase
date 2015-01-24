@@ -60,7 +60,6 @@ class FeedEntry(PolymorphicModel):
         ordering = ["-timestamp"]
 
     def __str__(self):
-        _ = ugettext
         return _("feed entry #{number}").format(number=self.id)
 
     def save(self, *args, **kwargs):
@@ -135,7 +134,6 @@ class FeedNewSamples(FeedEntry):
         verbose_name_plural = _("new samples feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         result = {}
         result["title"] = ungettext("New sample in “{topic}”", "New samples in “{topic}”", self.samples.count()).format(
             topic=self.topic)
@@ -161,7 +159,6 @@ class FeedMovedSamples(FeedEntry):
         verbose_name_plural = _("moved samples feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         result = {}
         result["title"] = ungettext("New sample moved to “{topic}”", "New samples moved to “{topic}”",
                                     self.samples.count()).format(topic=self.topic)
@@ -183,7 +180,6 @@ class FeedNewPhysicalProcess(FeedEntry):
         verbose_name_plural = _("new physical process feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         result = {}
         process = self.process.actual_instance
         result["title"] = _("New {process}").format(process=process)
@@ -207,7 +203,6 @@ class FeedEditedPhysicalProcess(FeedEntry):
         verbose_name_plural = _("edited physical process feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         process = self.process.actual_instance
         metadata["title"] = _("Edited {process}").format(process=process)
@@ -235,7 +230,6 @@ class FeedResult(FeedEntry):
         verbose_name_plural = _("result feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         if self.is_new:
             metadata["title"] = _("New: {result_title}").format(result_title=self.result.title)
@@ -268,7 +262,6 @@ class FeedCopiedMySamples(FeedEntry):
         verbose_name_plural = _("copied My Samples feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("{name} copied samples to you").format(name=get_really_full_name(self.originator))
         metadata["category term"] = "copied samples"
@@ -292,7 +285,6 @@ class FeedEditedSamples(FeedEntry):
         verbose_name_plural = _("edited samples feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         if self.samples.count() == 1:
             metadata["title"] = _("Sample {sample} was edited").format(sample=self.samples.get())
@@ -316,7 +308,6 @@ class FeedSampleSplit(FeedEntry):
         verbose_name_plural = _("sample split feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("Sample “{parent_sample}” was split").format(parent_sample=self.sample_split.parent)
         metadata["category term"] = "split sample"
@@ -338,7 +329,6 @@ class FeedEditedSampleSeries(FeedEntry):
         verbose_name_plural = _("edited sample series feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("Sample series {name} was edited").format(name=self.sample_series)
         metadata["category term"] = "edited sample series"
@@ -359,7 +349,6 @@ class FeedNewSampleSeries(FeedEntry):
         verbose_name_plural = _("new sample series feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("New sample series “{sample_series}” in topic “{topic}”").format(
             sample_series=self.sample_series, topic=self.topic)
@@ -387,7 +376,6 @@ class FeedMovedSampleSeries(FeedEntry):
         verbose_name_plural = _("moved sample series feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("Sample series {sample_series} was moved to topic “{topic}”").format(
             sample_series=self.sample_series, topic=self.topic)
@@ -417,7 +405,6 @@ class FeedChangedTopic(FeedEntry):
         verbose_name_plural = _("changed topic feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         if self.action == "added":
             metadata["title"] = _("Now in topic “{name}”").format(name=self.topic)
@@ -439,7 +426,6 @@ class FeedStatusMessage(FeedEntry):
         verbose_name_plural = _("status message feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("New status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
@@ -460,7 +446,6 @@ class FeedWithdrawnStatusMessage(FeedEntry):
         verbose_name_plural = _("withdrawn status message feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("Withdrawn status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
@@ -479,7 +464,6 @@ class FeedNewTask(FeedEntry):
         verbose_name_plural = _("new task feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("New task for {process_class}").format(
             process_class=self.task.process_class.model_class()._meta.verbose_name)
@@ -499,7 +483,6 @@ class FeedEditedTask(FeedEntry):
         verbose_name_plural = _("edited task feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("Edited task for {process_class}").format(
             process_class=self.task.process_class.model_class()._meta.verbose_name)
@@ -520,10 +503,12 @@ class FeedRemovedTask(FeedEntry):
         verbose_name_plural = _("removed task feed entries")
 
     def get_metadata(self):
-        _ = ugettext
         metadata = {}
         metadata["title"] = _("Removed a task for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "removed task"
         metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
         return metadata
+
+
+_ = ugettext

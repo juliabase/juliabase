@@ -27,7 +27,7 @@ from django.http import Http404
 import django.utils.http
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.forms.util import ValidationError
 from django.contrib import messages
 from jb_common.utils.base import format_enumeration
@@ -42,7 +42,6 @@ class PrefixesForm(forms.Form):
 
     Prefixes may be ``10-TB-`` or ``ACME-`` (for external operators).
     """
-    _ = ugettext_lazy
     prefix = forms.ChoiceField(label=_("Prefix"))
 
     def __init__(self, available_prefixes, *args, **kwargs):
@@ -53,7 +52,6 @@ class PrefixesForm(forms.Form):
 class NewNameForm(forms.Form):
     """Form for the new name of one sample.
     """
-    _ = ugettext_lazy
     name = forms.CharField(label=_("New name"), max_length=22)
 
     def __init__(self, user, prefix_, sample, *args, **kwargs):
@@ -241,3 +239,6 @@ def bulk_rename(request):
                   {"title": _("Rename samples"),
                    "prefixes": prefixes_form, "single_prefix": single_prefix,
                    "samples": list(zip(samples, new_name_forms))})
+
+
+_ = ugettext

@@ -108,7 +108,7 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 import django.forms as forms
 
@@ -429,7 +429,6 @@ class ColumnGroupsForm(forms.Form):
     """Form for the columns choice.  It has only one field, ``column_groups``,
     the result of which is a set with the selected column group names.
     """
-    _ = ugettext_lazy
     column_groups = forms.MultipleChoiceField(label=_("Column groups"))
 
     def __init__(self, column_groups, *args, **kwargs):
@@ -446,7 +445,6 @@ class ColumnsForm(forms.Form):
     """Form for the columns choice.  It has only one field, ``columns``, the
     result of which is a set with the selected column indices as ints.
     """
-    _ = ugettext_lazy
     columns = forms.MultipleChoiceField(label=_("Columns"))
 
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
@@ -511,3 +509,6 @@ class SwitchRowForm(forms.Form):
     def __init__(self, *args, **kwargs):
         kwargs["prefix"] = kwargs.get("prefix", "") + "__"
         super(SwitchRowForm, self).__init__(*args, **kwargs)
+
+
+_ = ugettext

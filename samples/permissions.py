@@ -38,7 +38,7 @@ from __future__ import absolute_import, unicode_literals
 import hashlib, re
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 import jb_common.utils.base as utils
@@ -75,9 +75,9 @@ def translate_permission(permission_codename):
     else:
         match = _permission_name_regex.match(name)
         if match:
-            return ugettext(match.group("prefix") + "{class_name}").format(class_name=ugettext(match.group("class_name")))
+            return _(match.group("prefix") + "{class_name}").format(class_name=_(match.group("class_name")))
         else:
-            return ugettext(name)
+            return _(name)
 
 
 def get_user_permissions(user):
@@ -834,3 +834,6 @@ all_assertion_functions = [func for func in _globals.values()
 for func in all_assertion_functions:
     new_name = "has_permission_to_" + func.__name__[len("assert_can_"):]
     globals()[new_name] = generate_permission_function(func)
+
+
+_ = ugettext

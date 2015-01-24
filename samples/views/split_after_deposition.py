@@ -23,7 +23,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime, json
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.forms import Form
@@ -39,7 +39,6 @@ class OriginalDataForm(Form):
     """Form holding the old sample, the new name for the unsplit sample, and
     the number of pieces it is about to be split into.
     """
-    _ = ugettext_lazy
     sample = forms.CharField(label=_("Old sample name"), max_length=30,
                              widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
     new_name = forms.CharField(label=_("New name"), max_length=30)
@@ -101,7 +100,6 @@ class OriginalDataForm(Form):
 class NewNameForm(Form):
     """Form holding the newly given name of a sample.
     """
-    _ = ugettext_lazy
     new_name = forms.CharField(label=_("New sample name"), max_length=30)
 
     def __init__(self, user, readonly, data=None, **kwargs):
@@ -123,7 +121,6 @@ class GlobalNewDataForm(Form):
     """Form for holding new data which applies to all samples and overrides
     local settings.
     """
-    _ = ugettext_lazy
     new_location = forms.CharField(label=_("New current location"), max_length=50, required=False,
                                    help_text=_("(for all samples; leave empty for no change)"))
 
@@ -497,3 +494,6 @@ def split_and_rename_after_deposition(request, deposition_number):
                   {"title": _("Bulk sample rename for {deposition}").format(deposition=deposition),
                    "samples": list(zip(original_data_forms, new_name_form_lists)),
                    "new_sample_data": global_new_data_form})
+
+
+_ = ugettext

@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 from os import path
 import datetime
 from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ugettext
 from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
@@ -132,3 +132,6 @@ def edit(request, layer_thickness_measurement_id):
     return render(request, "samples/edit_layer_thickness_measurement.html",
                   {"title": title, "process": layer_thickness_form, "sample": sample_form,
                    "edit_description": edit_description_form})
+
+
+_ = ugettext

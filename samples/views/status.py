@@ -28,7 +28,7 @@ from django.shortcuts import render, get_object_or_404
 import django.core.urlresolvers
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst
 import django.forms as forms
 from jb_common.utils.base import check_markdown
@@ -47,7 +47,6 @@ class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
 class StatusForm(forms.ModelForm):
     """The status message model form class.
     """
-    _ = ugettext_lazy
     operator = utils.FixedOperatorField(label=capfirst(_("operator")))
     status_level = forms.ChoiceField(label=capfirst(_("status level")), choices=models.status_level_choices,
                                      widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
@@ -201,3 +200,6 @@ def withdraw(request, id_):
     for process_class in status_message.process_classes.all():
         utils.Reporter(request.user).report_withdrawn_status_message(process_class, status_message)
     return utils.successful_response(request, _("The status message was successfully withdrawn."), show)
+
+
+_ = ugettext

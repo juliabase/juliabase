@@ -21,7 +21,7 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.views.decorators.cache import cache_control
 from django.views.i18n import javascript_catalog
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from jb_common import models
 import jb_common.utils.base as utils
@@ -58,7 +58,6 @@ def show_user(request, login_name):
 class SandboxForm(forms.Form):
     """Form for entering Markdown markup just for testing it.
     """
-    _ = ugettext_lazy
     sandbox = forms.CharField(label=_("Sandbox"), widget=forms.Textarea, required=False)
 
     def clean_sandbox(self):
@@ -149,3 +148,6 @@ def cached_javascript_catalog(request, domain="djangojs", packages=None):
     delivered after at most one hour, is absolutely bearable.
     """
     return javascript_catalog(request, domain, packages)
+
+
+_ = ugettext

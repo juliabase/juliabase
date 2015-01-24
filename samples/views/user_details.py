@@ -25,7 +25,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
 import django.core.urlresolvers
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -40,7 +40,6 @@ import samples.utils.views as utils
 class UserDetailsForm(forms.ModelForm):
     """Model form for user preferences.
     """
-    _ = ugettext_lazy
     subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_("subscribed newsfeeds")), required=False)
     default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_("folded processes")), required=False)
     show_users_from_departments = forms.MultipleChoiceField(label=capfirst(_("show users from department")), required=False)
@@ -158,3 +157,6 @@ def topics_and_permissions(request, login_name):
                    "permissions": permissions.get_user_permissions(user),
                    "full_user_name": get_really_full_name(request.user),
                    "permissions_url": django.core.urlresolvers.reverse("samples.views.permissions.list_")})
+
+
+_ = ugettext

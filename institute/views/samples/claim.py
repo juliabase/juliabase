@@ -27,7 +27,7 @@ import django.forms as forms
 from django.forms.util import ValidationError
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from django.utils.translation import ugettext, ugettext_lazy, ungettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.conf import settings
 from jb_common.utils.base import help_link, send_email, get_really_full_name, format_enumeration
 from jb_common.models import Topic
@@ -44,7 +44,6 @@ from institute import models
 
 
 class SamplesForm(forms.Form):
-    _ = ugettext_lazy
     samples = forms.CharField(label=_("Samples"), help_text=_("Comma-separated"), widget=forms.widgets.Textarea)
 
     def __init__(self, *args, **kwargs):
@@ -52,7 +51,6 @@ class SamplesForm(forms.Form):
         self.fields["samples"].widget.attrs.update({"cols": 30, "rows": 5})
 
     def clean_samples(self):
-        _ = ugettext
         sample_names = self.cleaned_data["samples"].split(",")
         valid_names = []
         invalid_names = []
@@ -95,7 +93,6 @@ class SubstrateForm(forms.ModelForm):
         self.fields["comments"].widget.attrs.update({"cols": 30, "rows": 5})
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(SubstrateForm, self).clean()
         if "material" in cleaned_data and "comments" in cleaned_data:
             if cleaned_data["material"] == "custom" and not cleaned_data["comments"]:
@@ -144,7 +141,6 @@ def add_oldstyle(request, username):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _("You are not allowed to add a claim in another user's name."))
@@ -196,3 +192,6 @@ JuliaBase.
         reviewer_form = ReviewerForm()
     return render(request, "samples/add_claim_oldstyle.html", {"title": _("Assert claim"), "samples": samples_form,
                                                                "substrate": substrate_form, "reviewer": reviewer_form})
+
+
+_ = ugettext

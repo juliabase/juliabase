@@ -27,7 +27,7 @@ from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
-from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.conf import settings
 from jb_common.utils.base import help_link, send_email, get_really_full_name
 import samples.utils.views as utils
@@ -35,7 +35,6 @@ from samples import permissions, models
 
 
 class SamplesForm(forms.Form):
-    _ = ugettext_lazy
     samples = utils.MultipleSamplesField(label=_("Claimed samples"), help_text=_("“My Samples” are eligible."))
 
     def __init__(self, user, *args, **kwargs):
@@ -56,7 +55,6 @@ class ReviewerChoiceField(forms.ModelChoiceField):
 class ReviewerForm(forms.Form):
     """Form giving the user who should approve the claim.
     """
-    _ = ugettext_lazy
     reviewer = ReviewerChoiceField(label=_("Requested reviewer"), queryset=None)
     def __init__(self, *args, **kwargs):
         super(ReviewerForm, self).__init__(*args, **kwargs)
@@ -87,7 +85,6 @@ def add(request, username):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _("You are not allowed to add a claim in another user's name."))
@@ -157,7 +154,6 @@ def list_(request, username):
 
 
 class CloseForm(forms.Form):
-    _ = ugettext_lazy
     close = forms.BooleanField(required=False)
 
     def __init__(self, label, *args, **kwargs):
@@ -203,7 +199,6 @@ def show(request, claim_id):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
     claim = get_object_or_404(models.SampleClaim, pk=utils.convert_id_to_int(claim_id))
     is_reviewer = request.user == claim.reviewer or request.user.is_staff
     is_requester = request.user == claim.requester
@@ -253,3 +248,6 @@ JuliaBase.
                                                        "claim": claim, "is_reviewer": is_reviewer,
                                                        "is_requester": is_requester,
                                                        "withdraw": withdraw_form, "approve": approve_form})
+
+
+_ = ugettext

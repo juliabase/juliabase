@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 ADD_SAMPLES_VIEW = ""
 CACHE_ROOT = str("/tmp/juliabase_cache")
@@ -46,3 +46,6 @@ THUMBNAIL_WIDTH = 400
 # STATIC_URL
 # INSTALLED_APPS
 # CACHES
+
+
+_ = ugettext

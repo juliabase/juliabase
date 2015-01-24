@@ -16,7 +16,7 @@
 """Default values of jb_common settings."""
 
 import sys, os
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.crypto import get_random_string
 
 
@@ -71,3 +71,6 @@ def get_secret_key_from_file(filepath):
             outfile.write(secret_key)
         os.chmod(filepath, 0o600)
     return secret_key
+
+
+_ = ugettext

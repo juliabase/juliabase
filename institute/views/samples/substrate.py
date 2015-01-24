@@ -19,7 +19,7 @@
 from __future__ import unicode_literals
 import datetime
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ugettext
 from django.contrib.auth.decorators import login_required
 from institute import models as institute_models
 from samples import permissions
@@ -34,7 +34,6 @@ class SubstrateForm(utils.ProcessForm):
         fields = "__all__"
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(SubstrateForm, self).clean()
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
             self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
@@ -123,3 +122,6 @@ def edit(request, substrate_id):
     return render(request, "samples/edit_substrate.html", {"title": title, "substrate": substrate_form,
                                                            "samples": samples_form,
                                                            "edit_description": edit_description_form})
+
+
+_ = ugettext

@@ -753,3 +753,6 @@ def camel_case_to_human_text(value):
     """See `jb_common.utils.base.camel_case_to_human_text` for documentation.
     """
     return jb_common.utils.base.camel_case_to_human_text(value)
+
+
+_ = ugettext

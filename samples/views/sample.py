@@ -35,7 +35,7 @@ from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.http import urlquote_plus
-from django.utils.translation import ugettext as _, ugettext_lazy, ungettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
 from django.forms.util import ValidationError
@@ -53,7 +53,6 @@ class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
     amongst “My Samples”.
     """
-    _ = ugettext_lazy
     is_my_sample = forms.BooleanField(label=_("is amongst My Samples"), required=False)
 
 
@@ -62,7 +61,6 @@ class SampleForm(forms.ModelForm):
     `samples.models.Sample.currently_responsible_person` in oder to be able to see
     *full* person names (not just the login name).
     """
-    _ = ugettext_lazy
     currently_responsible_person = UserField(label=_("Currently responsible person"))
     topic = TopicField(label=_("Topic"), required=False)
 
@@ -742,13 +740,11 @@ class SearchSamplesForm(forms.Form):
     """Form for searching for samples.  So far, you can only enter a name
     substring for looking for samples.
     """
-    _ = ugettext_lazy
     name_pattern = forms.CharField(label=_("Name pattern"), max_length=30, required=False)
     aliases = forms.BooleanField(label=_("Include alias names"), required=False)
 
 
 class AddToMySamplesForm(forms.Form):
-    _ = ugettext_lazy
     add_to_my_samples = forms.BooleanField(required=False)
 
 
@@ -991,7 +987,6 @@ def data_matrix_code(request):
 class SampleRenameForm(forms.Form):
     """Form for rename a sample.
     """
-    _ = ugettext_lazy
     old_name = forms.CharField(label=capfirst(_("old sample name")), max_length=30, required=True)
     new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30, required=True)
     create_alias = forms.BooleanField(label=capfirst(_("keep old name as sample alias name")),
@@ -1070,3 +1065,6 @@ def rename_sample(request):
         sample_rename_form = SampleRenameForm(request.user, initial={"old_name": sample.name if sample else ""})
     title = _("Rename sample") + " “{sample}”".format(sample=sample) if sample else ""
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
+
+
+_ = ugettext

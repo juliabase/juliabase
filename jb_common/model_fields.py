@@ -15,7 +15,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 class DecimalQuantityField(models.DecimalField):
@@ -95,3 +95,5 @@ class PositiveSmallIntegerQuantityField(models.PositiveSmallIntegerField):
         result.unit = self.unit
         return result
 
+
+_ = ugettext

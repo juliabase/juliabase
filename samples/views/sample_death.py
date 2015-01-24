@@ -23,7 +23,7 @@ from django.shortcuts import render
 from django.http import Http404
 from django.forms.util import ValidationError
 from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from jb_common.utils.base import unquote_view_parameters
 from samples import models, permissions
@@ -97,3 +97,6 @@ def new(request, sample_name):
         sample_death_form = SampleDeathForm(sample)
     return render(request, "samples/edit_sample_death.html", {"title": _("Kill sample “{sample}”").format(sample=sample),
                                                               "sample_death": sample_death_form})
+
+
+_ = ugettext

@@ -17,7 +17,7 @@ from __future__ import absolute_import, unicode_literals
 import os, re
 from django.apps import AppConfig
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 
 class SamplesConfig(AppConfig):
@@ -49,3 +49,6 @@ class SamplesConfig(AppConfig):
         settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose_name", _("provisional"))
         for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
             properties.setdefault("verbose_name", name_format)
+
+
+_ = ugettext

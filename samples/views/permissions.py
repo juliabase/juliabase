@@ -25,7 +25,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core
 from django.conf import settings
 from jb_common.models import Topic
@@ -146,7 +146,6 @@ class PermissionsModels(object):
 class UserListForm(forms.Form):
     """Form class for selecting the user to change the permissions for him/her.
     """
-    _ = ugettext_lazy
     selected_user = UserField(label=_("Change the permissions of"))
 
     def __init__(self, user, *args, **kwargs):
@@ -256,7 +255,6 @@ class PermissionsForm(forms.Form):
     """Form class for setting the permission triplets of a single model
     class and a single user.  See `edit` for further information.
     """
-    _ = ugettext_lazy
     can_add = forms.BooleanField(label="Can add", required=False)
     can_view_all = forms.BooleanField(label="Can view all", required=False)
     can_edit_all = forms.BooleanField(label="Can edit all", required=False)
@@ -343,3 +341,6 @@ def edit(request, username):
     return render(request, "samples/edit_permissions.html",
                   {"title": _("Change permissions of {name}").format(name=get_really_full_name(edited_user)),
                    "permissions_list": permissions_list})
+
+
+_ = ugettext

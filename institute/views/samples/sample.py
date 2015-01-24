@@ -76,7 +76,6 @@ class AddSamplesForm(forms.Form):
     cleaning_number = forms.CharField(label=_("Cleaning number"), max_length=8, required=False)
 
     def __init__(self, user, data=None, **kwargs):
-        _ = ugettext
         super(AddSamplesForm, self).__init__(data, **kwargs)
         self.fields["timestamp"].initial = datetime.datetime.now()
         self.fields["topic"].set_topics(user)
@@ -95,7 +94,6 @@ class AddSamplesForm(forms.Form):
     def clean_timestamp(self):
         """Forbid timestamps that are in the future.
         """
-        _ = ugettext
         timestamp = self.cleaned_data["timestamp"]
         if timestamp > datetime.datetime.now():
             raise ValidationError(_("The timestamp must not be in the future."))
@@ -111,7 +109,6 @@ class AddSamplesForm(forms.Form):
         return models.ExternalOperator.objects.get(pk=int(key))
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(AddSamplesForm, self).clean()
         if cleaned_data["substrate"] == "custom" and not cleaned_data.get("substrate_comments"):
             self.add_error("substrate_comments", _("For a custom substrate, you must give substrate comments."))
@@ -137,7 +134,6 @@ def add_samples_to_database(add_samples_form, user):
 
     :rtype: list of unicode
     """
-    _ = ugettext
     cleaned_data = add_samples_form.cleaned_data
     cleaning_number = cleaned_data.get("cleaning_number")
     substrate = institute_models.Substrate.objects.create(operator=user, timestamp=cleaned_data["timestamp"],
@@ -200,7 +196,6 @@ def add(request):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
     user = request.user
     if request.method == "POST":
         add_samples_form = AddSamplesForm(user, request.POST)
@@ -272,7 +267,6 @@ def copy_informal_stack(request, sample_name):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
     sample, __ = utils.lookup_sample(sample_name, request.user, with_clearance=True)
     if request.method == "POST":
         destination_samples_form = DestinationSamplesForm(request.user, sample, request.POST)
@@ -324,3 +318,6 @@ def printer_label(request, sample_id):
     response["Content-Type"] = "application/pdf"
     response["Content-Length"] = len(pdf_output)
     return response
+
+
+_ = ugettext

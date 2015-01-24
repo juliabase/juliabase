@@ -171,7 +171,6 @@ class Layer(models.Model):
         verbose_name_plural = _("layers")
 
     def __str__(self):
-        _ = ugettext
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 
     def get_data(self):
@@ -193,7 +192,6 @@ class Layer(models.Model):
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
         data_node = DataNode(self, _("layer {number}").format(number=self.number))
         fields_to_data_items(self, data_node, {"deposition"})
         return data_node
@@ -210,3 +208,6 @@ class Layer(models.Model):
         """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)
+
+
+_ = ugettext

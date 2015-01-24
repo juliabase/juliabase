@@ -35,7 +35,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.decorators import available_attrs
-from django.utils.translation import ugettext as _, ugettext, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext_lazy, ugettext
 from django.utils.functional import allow_lazy
 from jb_common import mimeparse
 
@@ -983,6 +983,7 @@ _permissions = {"add": ("add_{class_name}", _("Can add {class_name}")),
                 "change": ("change_{class_name}", _("Can edit every {class_name}")),
                 "view_every": ("view_every_{class_name}", _("Can view every {class_name}")),
                 "edit_permissions": ("edit_permissions_for_{class_name}", _("Can edit permissions for {class_name}"))}
+_ = ugettext_lazy
 
 def generate_permissions(permissions, class_name):
     """Auto-generates model permissions.  It may be used in physical process
@@ -1019,3 +1020,6 @@ def generate_permissions(permissions, class_name):
         name = name.format(class_name=class_name_human)
         result.append((codename, name))
     return tuple(result)
+
+
+_ = ugettext

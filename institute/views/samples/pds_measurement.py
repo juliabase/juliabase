@@ -27,7 +27,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 import django.contrib.auth.models
 from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import is_json_requested, respond_in_json, check_filepath
 import samples.utils.views as utils
 from samples import models, permissions
@@ -92,7 +92,6 @@ class PDSMeasurementForm(utils.ProcessForm):
     """Model form for the core PDS measurement data.
     """
     class Meta:
-        _ = ugettext_lazy
         model = institute_models.PDSMeasurement
         fields = "__all__"
         error_messages = {
@@ -117,7 +116,6 @@ class OverwriteForm(forms.Form):
     """Form for the checkbox whether the form data should be taken from the
     datafile.
     """
-    _ = ugettext_lazy
     overwrite_from_file = forms.BooleanField(label=_("Overwrite with file data"), required=False)
 
 
@@ -247,3 +245,6 @@ def edit(request, number):
                   {"title": title, "pds_measurement": pds_measurement_form, "overwrite": overwrite_form,
                    "sample": sample_form, "remove_from_my_samples": remove_from_my_samples_form,
                    "edit_description": edit_description_form})
+
+
+_ = ugettext

@@ -191,7 +191,6 @@ class ProcessForm(ModelForm):
     def clean_timestamp(self):
         """Forbid timestamps that are in the future.
         """
-        _ = ugettext
         timestamp = clean_timestamp_field(self.cleaned_data["timestamp"])
         if self.process and self.process.timestamp > timestamp:
             raise ValidationError(_("The timestamp was older than the one in the database.  Probably someone else has "
@@ -207,7 +206,6 @@ class ProcessForm(ModelForm):
         return True
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(ProcessForm, self).clean()
         final_operator = cleaned_data.get("operator")
         final_external_operator = cleaned_data.get("external_operator")
@@ -262,7 +260,6 @@ class DepositionForm(ProcessForm):
             self.fields["number"].widget.attrs.update({"readonly": "readonly"})
 
     def clean_number(self):
-        _ = ugettext
         number = self.cleaned_data["number"]
         if self.process and self.process.finished:
             if self.process.number != number:
@@ -365,7 +362,6 @@ class InitialsForm(forms.Form):
             self.fields["initials"].initial = initials
 
     def clean_initials(self):
-        _ = ugettext
         initials = self.cleaned_data["initials"]
         if not initials or self.readonly:
             return initials
@@ -586,7 +582,6 @@ class SamplePositionForm(forms.Form):
             return models.Sample.objects.get(name=sample_name)
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(SamplePositionForm, self).clean()
         sample = cleaned_data.get("sample")
         place = cleaned_data.get("position")
@@ -625,7 +620,6 @@ def clean_time_field(value):
 
     :raises ValidationError: if the value given was not a valid duration time.
     """
-    _ = ugettext
     if not value:
         return ""
     match = time_pattern.match(value)
@@ -661,7 +655,6 @@ def clean_timestamp_field(value):
     :raises ValidationError: if the specified timestamp lies in the future or
         to far in the past.
     """
-    _ = ugettext
     if isinstance(value, datetime.datetime):
         # Allow mis-sychronisation of clocks of up to one minute.
         if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
@@ -695,7 +688,6 @@ def clean_quantity_field(value, units):
     :raises ValidationError: if the value given was not a valid physical
         quantity.
     """
-    _ = ugettext
     if not value:
         return ""
     value = six.text_type(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
@@ -891,7 +883,6 @@ def check_sample_name(match, user, is_new=True):
     :raises ValidationError: if the sample name (represented by the match object)
         contained invalid fields.
     """
-    _ = ugettext
     groups = {key: value for key, value in match.groupdict().items() if value is not None}
     if "year" in groups:
         if int(groups["year"]) != datetime.datetime.now().year:
@@ -945,3 +936,6 @@ class SampleSelectForm(forms.Form):
             samples.append(preset_sample)
             self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples, user)
+
+
+_ = ugettext

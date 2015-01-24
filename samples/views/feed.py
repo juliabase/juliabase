@@ -24,7 +24,7 @@ import django.contrib.auth.models
 from django.template import Context, loader
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 import django.core.urlresolvers
@@ -202,3 +202,6 @@ def show(request, username, user_hash):
                         """<?xml-stylesheet type="text/xsl" href="/media/samples/xslt/atom2html.xslt"?>\n"""
                         + ElementTree.tostring(feed, "utf-8").decode("utf-8"),
                         content_type="application/xml; charset=utf-8")
+
+
+_ = ugettext

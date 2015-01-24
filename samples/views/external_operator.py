@@ -22,7 +22,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django import forms
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 import django.contrib.auth.models
 from jb_common.utils.views import MultipleUsersField
 from samples import models, permissions
@@ -85,7 +85,6 @@ class EditExternalOperatorForm(forms.ModelForm):
     """Model form for editing an existing external operator.  Here, you can
     also change the contact person.
     """
-    _ = ugettext_lazy
     contact_persons = MultipleUsersField(label=_("Contact persons"))
 
     class Meta:
@@ -194,3 +193,6 @@ def list_(request):
         raise Http404("You have no external contacts.")
     return render(request, "samples/list_external_operators.html",
                   {"title": _("All you external contacts"), "external_operators": external_operators})
+
+
+_ = ugettext

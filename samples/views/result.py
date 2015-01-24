@@ -31,7 +31,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext, ugettext_lazy, pgettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 import django.forms as forms
 import jb_common.utils.base
 from jb_common.utils.base import help_link
@@ -101,7 +101,6 @@ class RelatedDataForm(forms.Form):
     result process.  Since all these things are not part of the result process
     model itself, they are in a form of its own.
     """
-    _ = ugettext_lazy
     samples = utils.MultipleSamplesField(label=_("Samples"), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", "Sample series"), queryset=None,
                                                    required=False)
@@ -175,7 +174,6 @@ class DimensionsForm(forms.Form):
     read-in the table value given by the user.  (The table had the previous
     dimensions after all.)
     """
-    _ = ugettext_lazy
     number_of_quantities = forms.IntegerField(label=_("Number of quantities"), min_value=0, max_value=100)
     number_of_values = forms.IntegerField(label=_("Number of values"), min_value=0, max_value=100)
 
@@ -201,7 +199,6 @@ class QuantityForm(forms.Form):
     pendant (i.e., the conversion is not delayed until display, as with
     Markdown content).  Furthermore, all whitespace is normalised.
     """
-    _ = ugettext_lazy
     quantity = forms.CharField(label=_("Quantity name"), max_length=50)
 
     def __init__(self, *args, **kwargs):
@@ -219,7 +216,6 @@ class ValueForm(forms.Form):
     like here.  Whitespace is not normalised, and no other conversion takes
     place.
     """
-    _ = ugettext_lazy
     value = forms.CharField(label=_("Value"), max_length=50, required=False)
 
     def __init__(self, *args, **kwargs):
@@ -644,3 +640,6 @@ def export(request, process_id):
                                                          "rows": list(zip(table, switch_row_forms)) if table else None,
                                                          "old_data": old_data_form,
                                                          "backlink": request.GET.get("next", "")})
+
+
+_ = ugettext

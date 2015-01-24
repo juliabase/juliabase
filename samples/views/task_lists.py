@@ -20,7 +20,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy, ugettext
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
@@ -37,7 +37,6 @@ import samples.utils.views as utils
 class SamplesForm(forms.Form):
     """Form for the list selection of samples.
     """
-    _ = ugettext_lazy
     sample_list = utils.MultipleSamplesField(label=_("Samples"))
 
     def __init__(self, user, preset_sample, task, data=None, **kwargs):
@@ -63,8 +62,6 @@ class SamplesForm(forms.Form):
 class TaskForm(forms.ModelForm):
     """Model form for a task.
     """
-    _ = ugettext_lazy
-
     operator = forms.ChoiceField(label=capfirst(_("operator")), required=False)
     process_class = forms.ChoiceField(label=capfirst(_("process class")))
     finished_process = forms.ChoiceField(label=capfirst(_("finished process")), required=False)
@@ -172,7 +169,6 @@ class TaskForm(forms.ModelForm):
             return User.objects.get(pk=int(pk))
 
     def clean(self):
-        _ = ugettext
         cleaned_data = super(TaskForm, self).clean()
         if cleaned_data.get("status") in ["2 accepted", "3 in progress", "0 finished"]:
             if not cleaned_data.get("operator"):
@@ -183,7 +179,6 @@ class TaskForm(forms.ModelForm):
 class ChooseTaskListsForm(forms.Form):
     """Form for the task lists multiple selection list.
     """
-    _ = ugettext_lazy
     visible_task_lists = forms.MultipleChoiceField(label=capfirst(_("show task lists for")), required=False)
 
     def __init__(self, user, data=None, **kwargs):
@@ -377,3 +372,6 @@ def remove(request, task_id):
     utils.Reporter(request.user).report_removed_task(task)
     task.delete()
     return utils.successful_response(request, _("The task was successfully removed."), show)
+
+
+_ = ugettext

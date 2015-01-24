@@ -72,12 +72,14 @@ All variables and source code comments should be in English.
 
 .. _`ReST format`: http://sphinx-doc.org/rest.html
 
-Internationalization is a very important point in JuliaBase.  All strings exposed
-to the user should be marked as translatable by putting them in ``_("...")``
-unless you have very good reason not to do so (e.g. for some proper names).
-Note that in code which is executed at module load time (e.g. model and form
-fields), ``_`` should stand for ``ugettext_lazy``, whereas within functions and
-methods which are executed on each request, it should be ``ugettext``.
+Internationalization is a very important point in JuliaBase.  All strings
+exposed to the user should be marked as translatable by putting them in
+``_("...")`` unless you have very good reason not to do so (e.g. for some
+proper names).  Note that in code which is executed at module load time
+(e.g. model and form fields), ``_`` should stand for ``ugettext_lazy``, whereas
+within functions and methods which are executed on each request, it should be
+``ugettext``.  You may achieve this by setting ``_`` to ``ugettext_lazy`` at
+the beginning of the module, and to ``ugettext`` at the end.
 
 
 .. index:: Python 3

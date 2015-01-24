@@ -100,7 +100,6 @@ class PDSMeasurement(PhysicalProcess):
         identifying_field = "number"
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
-        _ = ugettext
         x_values, y_values = numpy.loadtxt(filename, comments="#", unpack=True)
         axes.semilogy(x_values, y_values)
         axes.set_xlabel(_("energy in eV"))
@@ -167,14 +166,12 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
-        _ = ugettext
         data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
         best_eta = self.cells.aggregate(models.Max("eta"))["eta__max"]
         data_node.items.append(DataItem(_("η of best cell") + "/%", jb_common.utils.base.round(best_eta, 3)))
         return data_node
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
-        _ = ugettext
         x_values, y_values = institute.utils.base.read_solarsimulator_plot_file(filename, position=plot_id)
         y_values = 1000 * numpy.array(y_values)
         related_cell = self.cells.get(position=plot_id)
@@ -242,7 +239,6 @@ class SolarsimulatorCellMeasurement(models.Model):
         unique_together = (("measurement", "position"), ("position", "data_file"))
 
     def __str__(self):
-        _ = ugettext
         return _("cell {position} of {solarsimulator_measurement}").format(
             position=self.position, solarsimulator_measurement=self.measurement)
 
@@ -329,3 +325,6 @@ class LayerThicknessMeasurement(PhysicalProcess):
 
     class JBMeta:
         editable_status = False
+
+
+_ = ugettext

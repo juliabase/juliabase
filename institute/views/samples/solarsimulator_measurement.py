@@ -19,7 +19,7 @@ import datetime
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import is_json_requested, \
     respond_in_json
 from samples import permissions
@@ -221,3 +221,6 @@ def edit(request, solarsimulator_measurement_id):
                    "sample": sample_form,
                    "remove_from_my_samples": remove_from_my_samples_form,
                    "edit_description": edit_description_form})
+
+
+_ = ugettext

@@ -24,7 +24,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 import django.utils.http
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 import django.forms as forms
 from django.forms.util import ValidationError
 from django.utils.text import capfirst
@@ -40,7 +40,6 @@ class NewTopicForm(forms.Form):
     """Form for adding a new topic.  I need only its new name and restriction
     status.
     """
-    _ = ugettext_lazy
     new_topic_name = forms.CharField(label=_("Name of new topic"), max_length=80)
     # Translators: Topic which is not open to senior members
     confidential = forms.BooleanField(label=_("confidential"), required=False)
@@ -162,7 +161,6 @@ class EditTopicForm(forms.Form):
     no members at all in a topic.  However, if the topic is confidential, the
     currently logged-in user must remain a member of the topic.
     """
-    _ = ugettext_lazy
     members = MultipleUsersField(label=_("Members"), required=False)
     confidential = forms.BooleanField(label=_("confidential"), required=False)
     topic_manager = UserField(label=capfirst(_("topic manager")))
@@ -243,3 +241,6 @@ def edit(request, id):
                                                         "topic_manager": topic.manager.pk})
     return render(request, "samples/edit_topic.html", {"title": _("Change topic memberships of “{0}”").format(topic.name),
                                                        "edit_topic": edit_topic_form})
+
+
+_ = ugettext

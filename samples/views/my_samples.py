@@ -26,7 +26,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
 from django.forms.util import ValidationError
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown
 from jb_common.utils.views import UserField, MultipleUsersField, TopicField
 from samples import permissions
@@ -34,7 +34,6 @@ import samples.utils.views as utils
 
 
 class MySamplesForm(forms.Form):
-    _ = ugettext_lazy
     samples = utils.MultipleSamplesField(label=_("My Samples"))
 
     def __init__(self, user, *args, **kwargs):
@@ -46,7 +45,6 @@ class MySamplesForm(forms.Form):
 class ActionForm(forms.Form):
     """Form for all the things you can do with the selected samples.
     """
-    _ = ugettext_lazy
     new_currently_responsible_person = UserField(label=_("New currently responsible person"), required=False)
     new_topic = TopicField(label=_("New Topic"), required=False)
     new_current_location = forms.CharField(label=_("New current location"), required=False, max_length=50)
@@ -270,3 +268,6 @@ def edit(request, username):
     return render(request, "samples/edit_my_samples.html",
                   {"title": _("Edit “My Samples” of {user_name}").format(user_name=get_really_full_name(user)),
                    "my_samples": my_samples_form, "action": action_form})
+
+
+_ = ugettext

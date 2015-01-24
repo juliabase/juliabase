@@ -21,7 +21,7 @@ Layers” field.
 from __future__ import absolute_import, unicode_literals
 
 import re, json
-from django.utils.translation import ugettext as _, ugettext_lazy
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
@@ -35,7 +35,6 @@ import samples.utils.views as utils
 class MyLayerForm(forms.Form):
     """Form for editing the “My Layers” structure.
     """
-    _ = ugettext_lazy
     nickname = forms.CharField(label=_("Nickname"))
     deposition_and_layer = forms.CharField(label=_("Layer identifier"),
                                            help_text=_("in the form \"deposition number\"-\"layer number\""))
@@ -188,3 +187,6 @@ def edit(request, login_name):
         my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
     return render(request, "samples/edit_my_layers.html", {"title": _("My Layers"), "my_layers": my_layer_forms})
+
+
+_ = ugettext

@@ -112,7 +112,6 @@ class ClusterToolLayer(samples.models.Layer, jb_common_models.PolymorphicModel):
         verbose_name_plural = _("cluster tool layers")
 
     def __str__(self):
-        _ = ugettext
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 
 
@@ -212,14 +211,12 @@ class FiveChamberLayer(samples.models.Layer):
         verbose_name_plural = _("5-chamber layers")
 
     def __str__(self):
-        _ = ugettext
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 
     def get_data_for_table_export(self):
         # See `Layer.get_data_for_table_export` for the documentation.  This is
         # a good example for adding an additional field to the table output
         # which is not a field but calculated from fields.
-        _ = ugettext
         data_node = super(FiveChamberLayer, self).get_data_for_table_export()
         if self.sih4 and self.h2:
             silane_normalized = 0.6 * float(self.sih4)
@@ -228,3 +225,6 @@ class FiveChamberLayer(samples.models.Layer):
             silane_concentration = 0
         data_node.items.append(DataItem("SC/%", "{0:5.2f}".format(silane_concentration)))
         return data_node
+
+
+_ = ugettext

@@ -130,7 +130,6 @@ class SampleDetails(models.Model):
 
         :rtype: dict mapping str to ``object``
         """
-        _ = ugettext
         context = old_context.copy()
         context["sample_details"] = self
         plot_locations = self.get_stack_diagram_locations()
@@ -386,3 +385,6 @@ InformalLayerFormSet = inlineformset_factory(SampleDetails, InformalLayer, extra
 """Form set class for the informal layers.  You cannot shuffle the indices
 arbitrarily, though, to inserting a new layer in the middle is a bit tricky.
 """
+
+
+_ = ugettext
