@@ -17,7 +17,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from jb_common.utils.base import camel_case_to_underscores
@@ -203,3 +203,6 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             setattr(subprocess, self.process_field, self.process)
             subprocess.save()
         return process
+
+
+_ = ugettext
