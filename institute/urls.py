@@ -61,7 +61,7 @@ urlpatterns = [
     # prevent an “add” link on the main menu page; they are used only by the
     # remote client.
     url(r"^substrates/add/$", substrate.edit, {"substrate_id": None}),
-    url(r"^structurings/add/$", structuring.edit, {"structuring_id": None}),
+    url(r"^structurings/add/$", structuring.EditView.as_view(), {"structuring_id": None}),
 ]
 
 
