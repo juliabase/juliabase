@@ -75,7 +75,8 @@ def translate_permission(permission_codename):
     else:
         match = _permission_name_regex.match(name)
         if match:
-            return _(match.group("prefix") + "{class_name}").format(class_name=_(match.group("class_name")))
+            class_name_pattern = "{class_name}"
+            return _(match.group("prefix") + class_name_pattern).format(class_name=_(match.group("class_name")))
         else:
             return _(name)
 
