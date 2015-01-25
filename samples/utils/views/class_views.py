@@ -20,6 +20,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
+from django.utils.text import capfirst
 import django.forms as forms
 from jb_common.utils.base import camel_case_to_underscores
 from samples import permissions
@@ -105,8 +106,8 @@ class ProcessWithoutSamplesView(TemplateView):
             return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
 
     def get_title(self):
-        return _("Edit {process}").format(process=self.process) if self.id else \
-            _("Add {class_name}").format(class_name=self.model._meta.verbose_name)
+        return capfirst(_("edit {process}").format(process=self.process)) if self.id else \
+            capfirst(_("add {class_name}").format(class_name=self.model._meta.verbose_name))
 
     def get_context_data(self, **kwargs):
         context = {}
