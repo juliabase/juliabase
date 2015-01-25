@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-21 00:04+0100\n"
-"PO-Revision-Date: 2015-01-20 22:34+0100\n"
+"POT-Creation-Date: 2015-01-25 19:44+0100\n"
+"PO-Revision-Date: 2015-01-25 16:53+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -37,6 +37,26 @@ msgstr "Festkommazahl in Einheiten von %(unit)s"
 #, python-format
 msgid "Floating-Point number in the unit of %(unit)s"
 msgstr "Gleitkommazahl in Einheiten von %(unit)s"
+
+#: jb_common/model_fields.py:48
+#, python-format
+msgid "Integer in the unit of %(unit)s"
+msgstr "Ganzzahl in Einheiten von %(unit)s"
+
+#: jb_common/model_fields.py:61
+#, python-format
+msgid "Positive integer in the unit of %(unit)s"
+msgstr "Positive Ganzzahl in Einheiten von %(unit)s"
+
+#: jb_common/model_fields.py:74
+#, python-format
+msgid "Small integer in the unit of %(unit)s"
+msgstr "Kleine Ganzzahl in Einheiten von %(unit)s"
+
+#: jb_common/model_fields.py:87
+#, python-format
+msgid "Positive small integer in the unit of %(unit)s"
+msgstr "Positive kleine Ganzzahl in Einheiten von %(unit)s"
 
 #: jb_common/models.py:38 jb_common/models.py:125
 msgid "name"
@@ -385,59 +405,59 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: jb_common/utils/base.py:164
+#: jb_common/utils/base.py:166
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: jb_common/utils/base.py:193
+#: jb_common/utils/base.py:195
 #, python-brace-format
 msgid "Couldn't open {filename}."
 msgstr "Konnte {filename} nicht öffnen."
 
-#: jb_common/utils/base.py:207
+#: jb_common/utils/base.py:209
 msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #. Translators: Intended as a separator in an enumeration of three or more items
-#: jb_common/utils/base.py:781
+#: jb_common/utils/base.py:783
 msgid ", "
 msgstr ", "
 
-#: jb_common/utils/base.py:781
+#: jb_common/utils/base.py:783
 msgid ", and "
 msgstr " und "
 
 #. Translators: Intended to be used in an enumeration of exactly two items
-#: jb_common/utils/base.py:784
+#: jb_common/utils/base.py:786
 msgid " and "
 msgstr " und "
 
-#: jb_common/utils/base.py:978
+#: jb_common/utils/base.py:982
 #, python-brace-format
 msgid "Can add {class_name}"
 msgstr "Darf {class_name} hinzufügen"
 
-#: jb_common/utils/base.py:979
+#: jb_common/utils/base.py:983
 #, python-brace-format
 msgid "Can edit every {class_name}"
 msgstr "Darf jede(n/s) {class_name} ändern"
 
-#: jb_common/utils/base.py:980
+#: jb_common/utils/base.py:984
 #, python-brace-format
 msgid "Can view every {class_name}"
 msgstr "Darf jede(n/s) {class_name} sehen"
 
-#: jb_common/utils/base.py:981
+#: jb_common/utils/base.py:985
 #, python-brace-format
 msgid "Can edit permissions for {class_name}"
 msgstr "Darf die Berechtigungen für {class_name} ändern"
 
-#: jb_common/views.py:62
+#: jb_common/views.py:61
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: jb_common/views.py:94
+#: jb_common/views.py:93
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
 
