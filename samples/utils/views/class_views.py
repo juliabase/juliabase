@@ -99,7 +99,7 @@ class ProcessWithoutSamplesView(TemplateView):
                 self.process, self.forms["edit_description"].cleaned_data if self.forms["edit_description"] else None)
             success_report = _("{process} was successfully changed in the database."). \
                 format(process=self.process) if self.id else \
-                _("{measurement} was successfully added to the database.").format(measurement=self.process)
+                _("{process} was successfully added to the database.").format(process=self.process)
             return successful_response(request, success_report, json_response=self.process.pk)
         else:
             return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
