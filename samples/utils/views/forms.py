@@ -950,6 +950,8 @@ class MultipleSamplesSelectForm(forms.Form):
         if process_instance:
             samples.extend(process_instance.samples.all())
             self.fields["sample_list"].initial = process_instance.samples.values_list("pk", flat=True)
+        else:
+            self.fields["sample_list"].initial = []
         if preset_sample:
             samples.append(preset_sample)
             self.fields["sample_list"].initial.append(preset_sample.pk)
