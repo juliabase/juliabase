@@ -61,32 +61,19 @@ class DepositionForm(utils.DepositionForm):
         return cleaned_data
 
 
-class HotWireLayerForm(forms.ModelForm):
-    """Model form for a hot-wire layer in the cluster tool."""
+class ClusterToolLayerForm(forms.ModelForm):
+    """Abstract model form for both layer types in the cluster tool."""
 
-    layer_type = forms.CharField(widget=forms.HiddenInput, initial="clustertoolhotwirelayer")
+    layer_type = forms.CharField(widget=forms.HiddenInput)
     """This is for being able to distinguish the form types; it is not given
     by the user, however, it is given by the remote client."""
 
     class Meta:
-        model = institute_models.ClusterToolHotWireLayer
         exclude = ("deposition",)
-        widgets = {
-            "number": forms.TextInput(attrs={"readonly": "readonly", "size": 2,
-                                            "style": "text-align: center; font-size: xx-large"}),
-            "comments": forms.Textarea(attrs={"cols": 70, "rows": 18}),
-            "time": forms.TextInput(attrs={"size": 10}),
-            "base_pressure": forms.TextInput(attrs={"size": 10}),
-            "h2": forms.TextInput(attrs={"size": 15}),
-            "sih4": forms.TextInput(attrs={"size": 15}),
-            }
 
     def __init__(self, view, data=None, **kwargs):
-        super(HotWireLayerForm, self).__init__(data, **kwargs)
-        self.type = "clustertoolhotwirelayer"
-        if not view.request.user.is_staff:
-            self.fields["wire_material"].choices = \
-                [choice for choice in self.fields["wire_material"].choices if choice[0] != "unknown"]
+        super(ClusterToolLayerForm, self).__init__(data, **kwargs)
+        self.fields["layer_type"].initial = self.type = self.Meta.model.__name__.lower()
 
     def clean_time(self):
         return utils.clean_time_field(self.cleaned_data["time"])
@@ -104,21 +91,38 @@ class HotWireLayerForm(forms.ModelForm):
         should always be the case, no matter what the user does.  However, it
         must be checked nevertheless because other clients may send wrong data.
         """
-        if self.cleaned_data["layer_type"] != "clustertoolhotwirelayer":
+        if self.cleaned_data["layer_type"] != self.type:
             raise ValidationError("Layer type must be “hot-wire”.")
         return self.cleaned_data["layer_type"]
 
 
-class PECVDLayerForm(forms.ModelForm):
+class HotWireLayerForm(ClusterToolLayerForm):
+    """Model form for a hot-wire layer in the cluster tool."""
+
+    class Meta(ClusterToolLayerForm.Meta):
+        model = institute_models.ClusterToolHotWireLayer
+        widgets = {
+            "number": forms.TextInput(attrs={"readonly": "readonly", "size": 2,
+                                            "style": "text-align: center; font-size: xx-large"}),
+            "comments": forms.Textarea(attrs={"cols": 70, "rows": 18}),
+            "time": forms.TextInput(attrs={"size": 10}),
+            "base_pressure": forms.TextInput(attrs={"size": 10}),
+            "h2": forms.TextInput(attrs={"size": 15}),
+            "sih4": forms.TextInput(attrs={"size": 15}),
+            }
+
+    def __init__(self, view, data=None, **kwargs):
+        super(HotWireLayerForm, self).__init__(view, data, **kwargs)
+        if not view.request.user.is_staff:
+            self.fields["wire_material"].choices = \
+                [choice for choice in self.fields["wire_material"].choices if choice[0] != "unknown"]
+
+
+class PECVDLayerForm(ClusterToolLayerForm):
     """Model form for a PECVD layer in a cluster tool deposition."""
 
-    layer_type = forms.CharField(widget=forms.HiddenInput, initial="clustertoolpecvdlayer")
-    """This is for being able to distinguish the form types; it is not given
-    by the user, however, it is given by the remote client."""
-
-    class Meta:
+    class Meta(ClusterToolLayerForm.Meta):
         model = institute_models.ClusterToolPECVDLayer
-        exclude = ("deposition",)
         widgets = {"number": forms.TextInput(attrs={"readonly": "readonly" , "size": 2,
                                                     "style": "text-align: center; font-size: xx-large"}),
                    "comments": forms.Textarea(attrs={"cols": 70, "rows": 18}),
@@ -126,25 +130,6 @@ class PECVDLayerForm(forms.ModelForm):
                    "deposition_power": forms.TextInput(attrs={"size": 10}),
                    "h2": forms.TextInput(attrs={"size": 15}),
                    "sih4": forms.TextInput(attrs={"size": 15})}
-
-    def __init__(self, view, data=None, **kwargs):
-        # Note that the `view` parameter is not used here but this constructor
-        # must share its signature with that of :py:class:`HotWireLayerForm`.
-        super(PECVDLayerForm, self).__init__(data, **kwargs)
-        self.type = "clustertoolpecvdlayer"
-
-    def clean_time(self):
-        return utils.clean_time_field(self.cleaned_data["time"])
-
-    def clean_comments(self):
-        comments = self.cleaned_data["comments"]
-        jb_common.utils.base.check_markdown(comments)
-        return comments
-
-    def clean_layer_type(self):
-        if self.cleaned_data["layer_type"] != "clustertoolpecvdlayer":
-            raise ValidationError("Layer type must be “PECVD”.")
-        return self.cleaned_data["layer_type"]
 
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionMultipleTypeView):
