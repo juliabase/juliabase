@@ -410,6 +410,9 @@ class DepositionView(ProcessWithoutSamplesView):
             else:
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
 
+    def get_layer_form(self, prefix):
+        return self.layer_form_class(self.data, prefix=prefix)
+
     def _read_layer_forms(self, source_deposition):
         """Generate a set of layer forms from database data.  Note that the layers are
         not returned – instead, they are written directly into
@@ -434,7 +437,7 @@ class DepositionView(ProcessWithoutSamplesView):
         self.forms["add_layers"] = AddLayersForm(self, self.data)
         if self.request.method == "POST":
             indices = utils.collect_subform_indices(self.data)
-            self.forms["layers"] = [self.layer_form_class(self.data, prefix=str(layer_index)) for layer_index in indices]
+            self.forms["layers"] = [self.get_layer_form(prefix=str(layer_index)) for layer_index in indices]
             self.forms["change_layers"] = [ChangeLayerForm(self.data, prefix=str(change_layer_index))
                                            for change_layer_index in indices]
         else:
