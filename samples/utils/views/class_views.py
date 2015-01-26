@@ -176,7 +176,7 @@ class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
 
 
 class NumberForm(forms.Form):
-    number = forms.IntegerField(label=_("number of subprocesses"), min_value=1, max_value=100)
+    number = forms.IntegerField(label=_("number of subprocesses"), min_value=1, max_value=100, required=False)
 
 
 class SubprocessesMixin(ProcessWithoutSamplesView):
@@ -194,7 +194,7 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             indices = utils.collect_subform_indices(self.data)
             self.forms["number"] = NumberForm(self.data)
             if self.forms["number"].is_valid():
-                new_number_of_forms = self.forms["number"].cleaned_data["number"]
+                new_number_of_forms = self.forms["number"].cleaned_data["number"] or len(indices)
                 indices = indices[:new_number_of_forms]
             else:
                 new_number_of_forms = len(indices)
