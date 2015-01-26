@@ -253,7 +253,7 @@ class AddMyLayersForm(forms.Form):
 
     def __init__(self, view, data=None, **kwargs):
         super(AddMyLayersForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = get_my_layers(view.request.user.samples_user_details, model)
+        self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(view.request.user.samples_user_details, view.model)
         self.model = view.model
 
     def clean_my_layer_to_be_added(self):
