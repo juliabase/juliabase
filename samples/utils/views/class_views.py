@@ -188,28 +188,28 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             subprocesses = getattr(self.process, self.subprocess_field)
             if not self.sub_model._meta.ordering:
                 subprocesses = subprocesses.order_by("id")
-            if self.request.method == "POST":
-                indices = utils.collect_subform_indices(self.data)
-                self.forms["number"] = NumberForm(self.data)
-                if self.forms["number"].is_valid():
-                    new_number_of_forms = self.forms["number"].cleaned_data["number"]
-                    indices = indices[:new_number_of_forms]
-                else:
-                    new_number_of_forms = len(indices)
-                instances = list(subprocesses.all()) + (len(indices) - subprocesses.count()) * [None]
-                self.forms["subprocesses"] = [self.subform_class(self.data, prefix=str(index), instance=instance)
-                                              for index, instance in zip(indices, instances)]
-                number_of_new_forms = new_number_of_forms - len(indices)
-                if number_of_new_forms > 0:
-                    self.forms["subprocesses"].extend([self.subform_class(prefix=str(index))
-                                                       for index in range(max(indices) + 1,
-                                                                          max(indices) + 1 + number_of_new_forms)])
-            else:
-                self.forms["number"] = NumberForm(initial={"number": subprocesses.count()})
-                self.forms["subprocesses"] = [self.subform_class(prefix=str(index), instance=subprocess)
-                                              for index, subprocess in enumerate(subprocesses.all())]
         else:
-            self.forms["subprocesses"] = []
+            subprocesses = self.sub_model.objects.none()
+        if self.request.method == "POST":
+            indices = utils.collect_subform_indices(self.data)
+            self.forms["number"] = NumberForm(self.data)
+            if self.forms["number"].is_valid():
+                new_number_of_forms = self.forms["number"].cleaned_data["number"]
+                indices = indices[:new_number_of_forms]
+            else:
+                new_number_of_forms = len(indices)
+            instances = list(subprocesses.all()) + (len(indices) - subprocesses.count()) * [None]
+            self.forms["subprocesses"] = [self.subform_class(self.data, prefix=str(index), instance=instance)
+                                          for index, instance in zip(indices, instances)]
+            number_of_new_forms = new_number_of_forms - len(indices)
+            if number_of_new_forms > 0:
+                self.forms["subprocesses"].extend([self.subform_class(prefix=str(index))
+                                                   for index in range(max(indices) + 1,
+                                                                      max(indices) + 1 + number_of_new_forms)])
+        else:
+            self.forms["number"] = NumberForm(initial={"number": subprocesses.count()})
+            self.forms["subprocesses"] = [self.subform_class(prefix=str(index), instance=subprocess)
+                                          for index, subprocess in enumerate(subprocesses.all())]
 
     def is_referentially_valid(self):
         referentially_valid = super(SubprocessesMixin, self).is_referentially_valid()
