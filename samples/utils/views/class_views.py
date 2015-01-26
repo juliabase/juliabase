@@ -15,6 +15,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import datetime
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
@@ -72,7 +73,7 @@ class ProcessWithoutSamplesView(TemplateView):
             if isinstance(form, (list, tuple)):
                 all_valid = self._check_validity(form) and all_valid
             elif form is not None:
-                all_valid = form.is_valid() and all_valid
+                all_valid = (not form.is_bound or form.is_valid()) and all_valid
         return all_valid
         
     def is_all_valid(self):
@@ -363,7 +364,7 @@ class DepositionView(ProcessWithoutSamplesView):
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
         return structure_changed
 
-    def _read_layer_forms(source_deposition):
+    def _read_layer_forms(self, source_deposition):
         """Generate a set of layer forms from database data.  Note that the layers are
         not returned – instead, they are written directly into
         ``self.layer_forms``.
