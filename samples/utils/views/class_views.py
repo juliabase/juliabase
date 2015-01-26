@@ -248,7 +248,7 @@ class ChangeLayerForm(forms.Form):
 
 class DepositionView(ProcessWithoutSamplesView):
 
-    def __change_structure(self):
+    def _change_structure(self):
         """Apply any layer-based rearrangements the user has requested.  This
         is layer duplication, order changes, appending of layers, and deletion.
 
@@ -424,7 +424,7 @@ class DepositionView(ProcessWithoutSamplesView):
 
         :rtype: bool
         """
-        all_valid = not self.__change_structure() if not is_json_requested(self.request) else True
+        all_valid = not self._change_structure() if not is_json_requested(self.request) else True
         all_valid = super(DepositionView, self).is_all_valid() and all_valid
         return all_valid
 
