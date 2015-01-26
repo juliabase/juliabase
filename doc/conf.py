@@ -120,7 +120,7 @@ pygments_style = 'sphinx'
 # -----------------------
 
 html_theme = 'sphinxdoc'
-html_extra_path = ['robots.txt', 'juliabase.pdf']
+html_extra_path = ['juliabase.pdf']
 
 # The style sheet to use for HTML and HTML Help pages. A file of that name
 # must exist either in Sphinx' static/ path, or in one of the custom paths
