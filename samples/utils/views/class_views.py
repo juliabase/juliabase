@@ -17,19 +17,20 @@ from __future__ import absolute_import, unicode_literals
 
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.text import capfirst
 import django.forms as forms
-from jb_common.utils.base import camel_case_to_underscores
+from django.forms.util import ValidationError
+from jb_common.utils.base import camel_case_to_underscores, is_json_requested, format_enumeration
 from samples import permissions
 from . import forms as utils
 from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
 
 
-__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin")
+__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin", "DepositionView")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -219,6 +220,272 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             setattr(subprocess, self.process_field, self.process)
             subprocess.save()
         return process
+
+
+class ChangeLayerForm(forms.Form):
+    """Form for manipulating a layer.  Duplicating it (appending the
+    duplicate), deleting it, and moving it up- or downwards.
+    """
+    duplicate_this_layer = forms.BooleanField(label=_("duplicate this layer"), required=False)
+    remove_this_layer = forms.BooleanField(label=_("remove this layer"), required=False)
+    move_this_layer = forms.ChoiceField(label=_("move this layer"), required=False,
+                                        choices=(("", "---------"), ("up", _("up")), ("down", _("down"))))
+
+    def clean(self):
+        cleaned_data = super(ChangeLayerForm, self).clean()
+        operations = 0
+        if cleaned_data["duplicate_this_layer"]:
+            operations += 1
+        if cleaned_data["remove_this_layer"]:
+            operations += 1
+        if cleaned_data.get("move_this_layer"):
+            operations += 1
+        if operations > 1:
+            raise ValidationError(_("You can't duplicate, move, or remove a layer at the same time."))
+        return cleaned_data
+
+
+class DepositionView(ProcessWithoutSamplesView):
+
+    def __change_structure(self):
+        """Apply any layer-based rearrangements the user has requested.  This
+        is layer duplication, order changes, appending of layers, and deletion.
+
+        The method has two parts: First, the changes are collected in a data
+        structure called ``new_layers``.  Then, I walk through ``new_layers``
+        and build a new list ``self.forms["layers"]`` from it.
+
+        ``new_layers`` is a list of small lists.  Every small list has a string
+        as its zeroth element which may be ``"original"``, ``"duplicate"``, or
+        ``"new"``, denoting the origin of that layer form.  The remainding
+        elements are parameters: the (old) layer and change-layer form for
+        ``"original"``; the source layer form for ``"duplicate"``; and the
+        initial layer form data for ``"new"``.
+
+        Of course, the new layer forms are not validated.  Therefore,
+        `__is_all_valid` is called *after* this routine in `save_to_database`.
+
+        Note that – as usual – the numbers of depositions and layers are called
+        *number*, whereas the internal numbers used as prefixes in the HTML
+        names are called *indices*.  The index (and thus prefix) of a layer
+        form does never change (in contrast to the 6-chamber deposition, see
+        :py:func:`samples.views.form_utils.normalize_prefixes`), not even
+        across many “post cycles”.  Only the layer numbers are used for
+        determining the order of layers.
+
+        :return:
+          whether the structure was changed in any way.
+
+        :rtype: bool
+        """
+        structure_changed = False
+        new_layers = [["original", layer_form, change_layer_form]
+                      for layer_form, change_layer_form in zip(self.forms["layers"], self.forms["change_layers"])]
+
+        # Move layers
+        for i in range(len(new_layers)):
+            layer_form, change_layer_form = new_layers[i][1:3]
+            if change_layer_form.is_valid():
+                movement = change_layer_form.cleaned_data["move_this_layer"]
+                if movement:
+                    new_layers[i][2] = ChangeLayerForm(prefix=layer_form.prefix)
+                    structure_changed = True
+                    if movement == "up" and i > 0:
+                        temp = new_layers[i - 1]
+                        new_layers[i - 1] = new_layers[i]
+                        new_layers[i] = temp
+                    elif movement == "down" and i < len(new_layers) - 1:
+                        temp = new_layers[i]
+                        new_layers[i] = new_layers[i + 1]
+                        new_layers[i + 1] = temp
+
+        # Duplicate layers
+        for i in range(len(new_layers)):
+            layer_form, change_layer_form = new_layers[i][1:3]
+            if layer_form.is_valid() and \
+                    change_layer_form.is_valid() and change_layer_form.cleaned_data["duplicate_this_layer"]:
+                new_layers.append(("duplicate", layer_form))
+                new_layers[i][2] = ChangeLayerForm(prefix=layer_form.prefix)
+                structure_changed = True
+
+        # Add layers
+        if self.forms["add_layers"].is_valid():
+            for i in range(self.forms["add_layers"].cleaned_data["number_of_layers_to_add"]):
+                new_layers.append(("new", {}))
+                structure_changed = True
+            # Add MyLayer
+            my_layer_data = self.forms["add_layers"].cleaned_data["my_layer_to_be_added"]
+            if my_layer_data is not None:
+                new_layers.append(("new", my_layer_data))
+                structure_changed = True
+            self.forms["add_layers"] = utils.AddLayersForm(
+                self.request.user.samples_user_details, self.model)
+
+        # Delete layers
+        for i in range(len(new_layers) - 1, -1, -1):
+            if len(new_layers[i]) == 3:
+                change_layer_form = new_layers[i][2]
+                if change_layer_form.is_valid() and change_layer_form.cleaned_data["remove_this_layer"]:
+                    del new_layers[i]
+                    structure_changed = True
+
+        # Apply changes
+        next_layer_number = 1
+        old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
+        next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
+        self.forms["layers"] = []
+        self.forms["change_layers"] = []
+        for new_layer in new_layers:
+            if new_layer[0] == "original":
+                post_data = self.data.copy() if self.data is not None else {}
+                prefix = new_layer[1].prefix
+                post_data[prefix + "-number"] = next_layer_number
+                next_layer_number += 1
+                self.forms["layers"].append(self.layer_form_class(post_data, prefix=prefix))
+                self.forms["change_layers"].append(new_layer[2])
+            elif new_layer[0] == "duplicate":
+                original_layer = new_layer[1]
+                if original_layer.is_valid():
+                    layer_data = original_layer.cleaned_data
+                    layer_data["number"] = next_layer_number
+                    next_layer_number += 1
+                    self.forms["layers"].append(self.layer_form_class(initial=layer_data, prefix=str(next_prefix)))
+                    self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                    next_prefix += 1
+            elif new_layer[0] == "new":
+                initial = new_layer[1]
+                initial["number"] = next_layer_number
+                self.forms["layers"].append(self.layer_form_class(initial=initial, prefix=str(next_prefix)))
+                self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                next_layer_number += 1
+                next_prefix += 1
+            else:
+                raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
+        return structure_changed
+
+    def _read_layer_forms(source_deposition):
+        """Generate a set of layer forms from database data.  Note that the layers are
+        not returned – instead, they are written directly into
+        ``self.layer_forms``.
+
+        :param source_deposition: the deposition from which the layers should
+            be taken.  Note that this may be the deposition which is currently
+            edited, or the deposition which is duplicated to create a new
+            deposition.
+
+        :type source_deposition: `samples.models.Depositions`
+        :type destination_deposition_number: unicode
+        """
+        self.forms["layers"] = [self.layer_form_class(prefix=str(layer_index), instance=layer,
+                                                      initial={"number": layer_index + 1})
+                                for layer_index, layer in enumerate(source_deposition.layers.all())]
+
+    def build_forms(self):
+        if "samples" not in self.forms:
+            self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
+                                                                self.data)
+        self.forms["add_layers"] = utils.AddLayersForm(self.request.user.samples_user_details, self.model, self.data)
+        if self.request.method == "POST":
+            indices = utils.collect_subform_indices(self.data)
+            self.forms["layers"] = [self.layer_form_class(self.data, prefix=str(layer_index)) for layer_index in indices]
+            self.forms["change_layers"] = [ChangeLayerForm(self.data, prefix=str(change_layer_index))
+                                           for change_layer_index in indices]
+        else:
+            copy_from = self.request.GET.get("copy_from")
+            if not self.id and copy_from:
+                # Duplication of a deposition
+                source_deposition_query = self.model.objects.filter(number=copy_from)
+                if source_deposition_query.count() == 1:
+                    deposition_data = source_deposition_query.values()[0]
+                    deposition_data["timestamp"] = datetime.datetime.now()
+                    deposition_data["timestamp_inaccuracy"] = 0
+                    deposition_data["operator"] = self.request.user.pk
+                    deposition_data["number"] = self.get_next_id()
+                    self.forms["process"] = self.form_class(self.request.user, initial=deposition_data)
+                    self._read_layer_forms(source_deposition_query[0])
+            if "layers" not in self.forms:
+                if self.id:
+                    # Normal edit of existing deposition
+                    self._read_layer_forms(self.process)
+                else:
+                    # New deposition, or duplication has failed
+                    self.forms["layers"] = []
+            self.forms["change_layers"] = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.forms["layers"]))]
+        super(DepositionView, self).build_forms()
+
+    def is_all_valid(self):
+        """Tests the “inner” validity of all forms belonging to this view.  This
+        function calls the ``is_valid()`` method of all forms, even if one of
+        them returns ``False`` (and makes the return value clear prematurely).
+
+        :return:
+          whether all forms are valid.
+
+        :rtype: bool
+        """
+        all_valid = not self.__change_structure() if not is_json_requested(self.request) else True
+        all_valid = super(DepositionView, self).is_all_valid() and all_valid
+        return all_valid
+
+    def is_referentially_valid(self):
+        """Test whether all forms are consistent with each other and with the
+        database.  For example, no layer number must occur twice, and the
+        deposition number must not exist within the database.
+
+        Note that I test many situations here that cannot be achieved with
+        using the browser because all number fields are read-only and thus
+        inherently referentially valid.  However, the remote client (or a
+        manipulated HTTP client) may be used in a malicious way, thus I have to
+        test for *all* cases.
+
+        :return:
+          whether all forms are consistent with each other and the database
+
+        :rtype: bool
+        """
+        referentially_valid = super(DepositionView, self).is_referentially_valid()
+        if not self.forms["layers"]:
+            self.forms["process"].add_error(None, _("No layers given."))
+            referentially_valid = False
+        if self.forms["process"].is_valid():
+            if self.forms["samples"].is_valid():
+                dead_samples = utils.dead_samples(self.forms["samples"].cleaned_data["sample_list"],
+                                                  self.forms["process"].cleaned_data["timestamp"])
+                if dead_samples:
+                    error_message = ungettext(
+                        "The sample {samples} is already dead at this time.",
+                        "The samples {samples} are already dead at this time.", len(dead_samples)).format(
+                        samples=format_enumeration([sample.name for sample in dead_samples]))
+                    self.forms["process"].add_error("timestamp", error_message)
+                    referentially_valid = False
+        return referentially_valid
+
+    def get_context_data(self, **kwargs):
+        context = super(DepositionView, self).get_context_data(**kwargs)
+        context["layers_and_change_layers"] = list(zip(self.forms["layers"], self.forms["change_layers"]))
+        return context
+
+    def save_to_database(self):
+        """Apply all layer changes, check the whole validity of the data, and
+        save the forms to the database.  Only the deposition is just updated if
+        it already existed.  However, the layers are completely deleted and
+        re-constructed from scratch.
+
+        :return:
+          The saved deposition object, or ``None`` if validation failed
+
+        :rtype: `institute.models.FiveChamberDeposition` or NoneType
+        """
+        deposition = super(DepositionView, self).save_to_database()
+        if not self.id:
+            # Change sample list only for *new* depositions
+            deposition.samples = self.forms["samples"].cleaned_data["sample_list"]
+        deposition.layers.all().delete()
+        for layer_form in self.forms["layers"]:
+            layer = layer_form.save(commit=False)
+            layer.deposition = deposition
+            layer.save()
+        return deposition
 
 
 _ = ugettext
