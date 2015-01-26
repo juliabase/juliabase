@@ -47,7 +47,6 @@ class SubstrateForm(utils.ProcessForm):
 
 
 class EditView(utils.ProcessMultipleSamplesView):
-    model = institute_models.Substrate
     form_class = SubstrateForm
 
     def is_referentially_valid(self):

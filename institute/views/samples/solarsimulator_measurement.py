@@ -51,7 +51,6 @@ class SolarsimulatorCellForm(forms.ModelForm):
 
 
 class EditView(utils.SubprocessesMixin, utils.ProcessView):
-    model = SolarsimulatorMeasurement
     sub_model = SolarsimulatorCellMeasurement
     form_class = SolarsimulatorMeasurementForm
     subform_class = SolarsimulatorCellForm

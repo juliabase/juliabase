@@ -36,7 +36,6 @@ class StructuringForm(utils.ProcessForm):
 
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
-    model = institute_models.Structuring
     form_class = StructuringForm
 
 

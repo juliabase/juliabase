@@ -45,8 +45,10 @@ __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixi
 
 class ProcessWithoutSamplesView(TemplateView):
     # Never derive from that; pointless.
+    model = None
 
     def __init__(self, **kwargs):
+        self.model = self.model or self.form_class.Meta.model
         self.class_name = camel_case_to_underscores(self.model.__name__)
         self.template_name = "samples/edit_{}.html".format(self.class_name)
         super(ProcessWithoutSamplesView, self).__init__(**kwargs)

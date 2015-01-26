@@ -124,7 +124,6 @@ class OverwriteForm(forms.Form):
 
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
-    model = institute_models.PDSMeasurement
     form_class = PDSMeasurementForm
 
     def build_forms(self):

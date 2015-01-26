@@ -148,7 +148,6 @@ class PECVDLayerForm(forms.ModelForm):
 
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionMultipleTypeView):
-    model = institute_models.ClusterToolDeposition
     form_class = DepositionForm
     layer_form_classes = (HotWireLayerForm, PECVDLayerForm)
     short_labels = {HotWireLayerForm: _("hot-wire"), PECVDLayerForm: _("PECVD")}

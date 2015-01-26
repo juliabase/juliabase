@@ -70,7 +70,6 @@ class LayerForm(forms.ModelForm):
 
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):
-    model = institute_models.FiveChamberDeposition
     form_class = DepositionForm
     layer_form_class = LayerForm
 

@@ -35,5 +35,4 @@ class LayerThicknessForm(utils.ProcessForm):
 
 
 class EditView(utils.ProcessView):
-    model = LayerThicknessMeasurement
     form_class = LayerThicknessForm
