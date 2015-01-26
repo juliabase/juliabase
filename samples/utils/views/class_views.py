@@ -595,8 +595,10 @@ class DepositionMultipleTypeView(DepositionView):
     def _read_layer_forms(self, source_deposition):
         self.forms["layers"] = []
         for index, layer in enumerate(source_deposition.layers.all()):
-            LayerFormClass = self.layer_types[layer.content_type.model_class().__name__.lower()]
-            self.forms["layers"] = LayerFormClass(self, prefix=str(index), instance=layer, initial={"number": index + 1})
+            layer = layer.actual_instance
+            LayerFormClass = self.layer_types[layer.__class__.__name__.lower()]
+            self.forms["layers"].append(
+                LayerFormClass(self, prefix=str(index), instance=layer, initial={"number": index + 1}))
 
     def get_layer_form(self, prefix):
         layer_form = self.LayerForm(self.data, prefix=prefix)
