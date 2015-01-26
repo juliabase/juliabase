@@ -377,7 +377,7 @@ class DepositionView(ProcessWithoutSamplesView):
         self._apply_changes(new_layers)
         return structure_changed
 
-    def _apply_changes(self, new_layers)
+    def _apply_changes(self, new_layers):
         next_layer_number = 1
         old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
         next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
