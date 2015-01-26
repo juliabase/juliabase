@@ -299,6 +299,7 @@ class AddLayersForm(AddMyLayersForm):
 
 
 class DepositionView(ProcessWithoutSamplesView):
+    add_layers_form_class = AddLayersForm
 
     def _change_structure(self):
         """Apply any layer-based rearrangements the user has requested.  This
@@ -364,7 +365,7 @@ class DepositionView(ProcessWithoutSamplesView):
         # Add layers
         if self.forms["add_layers"].is_valid():
             structure_changed, new_layers = self.forms["add_layers"].change_structure(structure_changed, new_layers)
-            self.forms["add_layers"] = AddLayersForm(self)
+            self.forms["add_layers"] = self.add_layers_form_class(self)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -434,7 +435,7 @@ class DepositionView(ProcessWithoutSamplesView):
         if "samples" not in self.forms:
             self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
                                                                 self.data)
-        self.forms["add_layers"] = AddLayersForm(self, self.data)
+        self.forms["add_layers"] = self.add_layers_form_class(self, self.data)
         if self.request.method == "POST":
             indices = utils.collect_subform_indices(self.data)
             self.forms["layers"] = [self.get_layer_form(prefix=str(layer_index)) for layer_index in indices]
