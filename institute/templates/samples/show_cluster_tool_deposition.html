@@ -51,7 +51,7 @@ copyright holder, you must destroy it immediately and completely.
                                  border-color: black; float: right; clear: left">{{ layer.number }}</div>
                       </td>
                       <td style="vertical-align: top; padding-left: 2em">
-                        {% if layer.type == "PECVD" %}
+                        {% if layer.type == "clustertoolpecvdlayer" %}
                           <span class="label">{% verbose_name ClusterToolPECVDLayer.chamber %}:</span
                                 ><span class="value">{{ layer.chamber }}</span>
                         {% else %}
@@ -67,17 +67,17 @@ copyright holder, you must destroy it immediately and completely.
                 </td>
                  <td class="label">{% verbose_name ClusterToolHotWireLayer.time %}:</td>
                  <td class="value"> {{ layer.time|depostion_time }}</td>
-                 {% if layer.type == "PECVD" %}
+                 {% if layer.type == "clustertoolpecvdlayer" %}
                     {% value_field layer.plasma_start_with_shutter "yes/no" %}
-                 {% elif layer.type == "hot-wire" %}
+                 {% elif layer.type == "clustertoolhotwirelayer" %}
                     <td class="label">{% verbose_name ClusterToolHotWireLayer.wire_material %}:</td>
                     <td class="value">{{ layer.get_wire_material_display }}</td>
                  {% endif %}
               </tr>
               <tr>
-                  {% if layer.type == "hot-wire" %}
+                  {% if layer.type == "clustertoolhotwirelayer" %}
                     {% value_field layer.base_pressure %}
-                  {% elif layer.type == "PECVD" %}
+                  {% elif layer.type == "clustertoolpecvdlayer" %}
                     {% value_field layer.deposition_power %}
                   {% endif %}
               </tr>
