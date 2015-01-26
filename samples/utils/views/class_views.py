@@ -276,6 +276,17 @@ class AddLayersForm(forms.Form):
                 if layer_query.count() == 1:
                     return layer_query.values()[0]
 
+    def change_structure(self, structure_changed, new_layers):
+        for i in range(self.cleaned_data["number_of_layers_to_add"]):
+            new_layers.append(("new", {}))
+            structure_changed = True
+        # Add MyLayer
+        my_layer_data = self.cleaned_data["my_layer_to_be_added"]
+        if my_layer_data is not None:
+            new_layers.append(("new", my_layer_data))
+            structure_changed = True
+        return structure_changed, new_layers
+
 
 class DepositionView(ProcessWithoutSamplesView):
 
@@ -342,14 +353,7 @@ class DepositionView(ProcessWithoutSamplesView):
 
         # Add layers
         if self.forms["add_layers"].is_valid():
-            for i in range(self.forms["add_layers"].cleaned_data["number_of_layers_to_add"]):
-                new_layers.append(("new", {}))
-                structure_changed = True
-            # Add MyLayer
-            my_layer_data = self.forms["add_layers"].cleaned_data["my_layer_to_be_added"]
-            if my_layer_data is not None:
-                new_layers.append(("new", my_layer_data))
-                structure_changed = True
+            structure_changed, new_layers = self.forms["add_layers"].change_structure(structure_changed, new_layers)
             self.forms["add_layers"] = AddLayersForm(self)
 
         # Delete layers
