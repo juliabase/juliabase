@@ -20,15 +20,12 @@ processes.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
-from django.shortcuts import get_object_or_404
 from django import forms
 from django.forms import widgets
 from django.forms.util import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
-from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import ugettext_lazy as _, ugettext
 import jb_common.utils.base
 from samples import models
 import samples.utils.views as utils
