@@ -241,7 +241,7 @@ class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):
             if new_layer[0] == "original":
                 original_layer = new_layer[1]
                 LayerFormClass = self.layer_types[original_layer.type]
-                post_data = self.post_data.copy()
+                post_data = self.data.copy() if self.data else {}
                 prefix = new_layer[1].prefix
                 post_data[prefix + "-number"] = str(i + 1)
                 self.forms["layers"].append(LayerFormClass(self.request.user, post_data, prefix=prefix))
