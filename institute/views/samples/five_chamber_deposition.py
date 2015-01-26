@@ -69,6 +69,15 @@ class LayerForm(forms.ModelForm):
         self.fields["temperature_2"].widget.attrs["size"] = "5"
 
 
+class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):
+    model = institute_models.FiveChamberDeposition
+    form_class = DepositionForm
+    layer_form_class = LayerForm
+
+    def get_next_id(self):
+        return institute.utils.base.get_next_deposition_number("S")
+
+
 class ChangeLayerForm(forms.Form):
     """Form for manipulating a layer.  Duplicating it (appending the
     duplicate), deleting it, and moving it up- or downwards.
