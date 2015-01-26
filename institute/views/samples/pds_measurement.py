@@ -134,7 +134,7 @@ class EditView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
                 self.forms["sample"] = utils.SampleSelectForm(self.request.user, self.process, self.preset_sample,
                                                               initial=initial)
                 self.forms["overwrite"] = OverwriteForm()
-        super(PDSMeasurementView, self).build_forms()
+        super(EditView, self).build_forms()
 
 
 _ = ugettext
