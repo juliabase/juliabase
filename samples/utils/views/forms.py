@@ -36,7 +36,7 @@ from samples import models
 from . import base as utils
 
 
-__all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_layers", "AddLayersForm", "InitialsForm",
+__all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_layers", "InitialsForm",
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
            "SamplePositionForm", "RemoveFromMySamplesForm", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
@@ -308,35 +308,6 @@ def get_my_layers(user_details, deposition_model):
             # any type and needn't be strings.
             choices.append(("{0}-{1}".format(process_id, layer_number), nickname))
     return choices
-
-
-class AddLayersForm(forms.Form):
-    number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
-                                                 required=False)
-    my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
-
-    def __init__(self, user_details, model, data=None, **kwargs):
-        super(AddLayersForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
-        self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
-        self.model = model
-
-    def clean_number_of_layers_to_add(self):
-        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
-
-    def clean_my_layer_to_be_added(self):
-        nickname = self.cleaned_data["my_layer_to_be_added"]
-        if nickname and "-" in nickname:
-            process_id, layer_number = self.cleaned_data["my_layer_to_be_added"].split("-")
-            process_id, layer_number = int(process_id), int(layer_number)
-            try:
-                deposition = self.model.objects.get(pk=process_id)
-            except self.model.DoesNotExist:
-                pass
-            else:
-                layer_query = deposition.layers.filter(number=layer_number)
-                if layer_query.count() == 1:
-                    return layer_query.values()[0]
 
 
 class InitialsForm(forms.Form):

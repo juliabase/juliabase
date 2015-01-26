@@ -31,7 +31,8 @@ from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
 
 
-__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin", "DepositionView")
+__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin", "AddLayersForm",
+           "DepositionView")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -246,6 +247,35 @@ class ChangeLayerForm(forms.Form):
         return cleaned_data
 
 
+class AddLayersForm(forms.Form):
+    number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
+                                                 required=False)
+    my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
+
+    def __init__(self, user_details, model, data=None, **kwargs):
+        super(AddLayersForm, self).__init__(data, **kwargs)
+        self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
+        self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
+        self.model = model
+
+    def clean_number_of_layers_to_add(self):
+        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
+
+    def clean_my_layer_to_be_added(self):
+        nickname = self.cleaned_data["my_layer_to_be_added"]
+        if nickname and "-" in nickname:
+            process_id, layer_number = self.cleaned_data["my_layer_to_be_added"].split("-")
+            process_id, layer_number = int(process_id), int(layer_number)
+            try:
+                deposition = self.model.objects.get(pk=process_id)
+            except self.model.DoesNotExist:
+                pass
+            else:
+                layer_query = deposition.layers.filter(number=layer_number)
+                if layer_query.count() == 1:
+                    return layer_query.values()[0]
+
+
 class DepositionView(ProcessWithoutSamplesView):
 
     def _change_structure(self):
@@ -319,8 +349,7 @@ class DepositionView(ProcessWithoutSamplesView):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.forms["add_layers"] = utils.AddLayersForm(
-                self.request.user.samples_user_details, self.model)
+            self.forms["add_layers"] = AddLayersForm(self.request.user.samples_user_details, self.model)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -385,7 +414,7 @@ class DepositionView(ProcessWithoutSamplesView):
         if "samples" not in self.forms:
             self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
                                                                 self.data)
-        self.forms["add_layers"] = utils.AddLayersForm(self.request.user.samples_user_details, self.model, self.data)
+        self.forms["add_layers"] = AddLayersForm(self.request.user.samples_user_details, self.model, self.data)
         if self.request.method == "POST":
             indices = utils.collect_subform_indices(self.data)
             self.forms["layers"] = [self.layer_form_class(self.data, prefix=str(layer_index)) for layer_index in indices]
