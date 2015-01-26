@@ -374,7 +374,10 @@ class DepositionView(ProcessWithoutSamplesView):
                     del new_layers[i]
                     structure_changed = True
 
-        # Apply changes
+        self._apply_changes(new_layers)
+        return structure_changed
+
+    def _apply_changes(self, new_layers)
         next_layer_number = 1
         old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
         next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
@@ -406,7 +409,6 @@ class DepositionView(ProcessWithoutSamplesView):
                 next_prefix += 1
             else:
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
-        return structure_changed
 
     def _read_layer_forms(self, source_deposition):
         """Generate a set of layer forms from database data.  Note that the layers are
