@@ -52,7 +52,7 @@ class LayerForm(forms.ModelForm):
         model = institute_models.FiveChamberLayer
         exclude = ("deposition",)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, view, *args, **kwargs):
         """I only tweak the HTML layout slightly.
         """
         super(LayerForm, self).__init__(*args, **kwargs)

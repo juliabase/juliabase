@@ -393,7 +393,7 @@ class DepositionView(ProcessWithoutSamplesView):
                 prefix = new_layer[1].prefix
                 post_data[prefix + "-number"] = next_layer_number
                 next_layer_number += 1
-                self.forms["layers"].append(self.layer_form_class(post_data, prefix=prefix))
+                self.forms["layers"].append(self.layer_form_class(self, post_data, prefix=prefix))
                 self.forms["change_layers"].append(new_layer[2])
             elif new_layer[0] == "duplicate":
                 original_layer = new_layer[1]
@@ -401,13 +401,13 @@ class DepositionView(ProcessWithoutSamplesView):
                     layer_data = original_layer.cleaned_data
                     layer_data["number"] = next_layer_number
                     next_layer_number += 1
-                    self.forms["layers"].append(self.layer_form_class(initial=layer_data, prefix=str(next_prefix)))
+                    self.forms["layers"].append(self.layer_form_class(self, initial=layer_data, prefix=str(next_prefix)))
                     self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
                     next_prefix += 1
             elif new_layer[0] == "new":
                 initial = new_layer[1]
                 initial["number"] = next_layer_number
-                self.forms["layers"].append(self.layer_form_class(initial=initial, prefix=str(next_prefix)))
+                self.forms["layers"].append(self.layer_form_class(self, initial=initial, prefix=str(next_prefix)))
                 self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_layer_number += 1
                 next_prefix += 1
@@ -415,7 +415,7 @@ class DepositionView(ProcessWithoutSamplesView):
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
 
     def get_layer_form(self, prefix):
-        return self.layer_form_class(self.data, prefix=prefix)
+        return self.layer_form_class(self, self.data, prefix=prefix)
 
     def _read_layer_forms(self, source_deposition):
         """Generate a set of layer forms from database data.  Note that the layers are
@@ -430,7 +430,7 @@ class DepositionView(ProcessWithoutSamplesView):
         :type source_deposition: `samples.models.Depositions`
         :type destination_deposition_number: unicode
         """
-        self.forms["layers"] = [self.layer_form_class(prefix=str(layer_index), instance=layer,
+        self.forms["layers"] = [self.layer_form_class(self, prefix=str(layer_index), instance=layer,
                                                       initial={"number": layer_index + 1})
                                 for layer_index, layer in enumerate(source_deposition.layers.all())]
 
@@ -596,7 +596,7 @@ class DepositionMultipleTypeView(DepositionView):
         self.forms["layers"] = []
         for index, layer in enumerate(source_deposition.layers.all()):
             LayerFormClass = self.layer_types[layer.content_type.model_class().__name__.lower()]
-            self.forms["layers"] = LayerFormClass(prefix=str(index), instance=layer, initial={"number": index + 1})
+            self.forms["layers"] = LayerFormClass(self, prefix=str(index), instance=layer, initial={"number": index + 1})
 
     def get_layer_form(self, prefix):
         layer_form = self.LayerForm(self.data, prefix=prefix)
@@ -607,7 +607,7 @@ class DepositionMultipleTypeView(DepositionView):
                 LayerFormClass = self.layer_types[layer_type]
             except KeyError:
                 pass
-        return LayerFormClass(self.request.user, self.data, prefix=prefix)
+        return LayerFormClass(self, self.data, prefix=prefix)
 
     def _apply_changes(self, new_layers):
         old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
@@ -621,7 +621,7 @@ class DepositionMultipleTypeView(DepositionView):
                 post_data = self.data.copy() if self.data else {}
                 prefix = new_layer[1].prefix
                 post_data[prefix + "-number"] = str(i + 1)
-                self.forms["layers"].append(LayerFormClass(self.request.user, post_data, prefix=prefix))
+                self.forms["layers"].append(LayerFormClass(self, post_data, prefix=prefix))
                 self.forms["change_layers"].append(new_layer[2])
             elif new_layer[0] == "duplicate":
                 original_layer = new_layer[1]
@@ -629,8 +629,7 @@ class DepositionMultipleTypeView(DepositionView):
                     LayerFormClass = self.layer_types[original_layer.type]
                     layer_data = original_layer.cleaned_data
                     layer_data["number"] = i + 1
-                    self.forms["layers"].append(LayerFormClass(self.request.user, initial=layer_data,
-                                                               prefix=str(next_prefix)))
+                    self.forms["layers"].append(LayerFormClass(self, initial=layer_data, prefix=str(next_prefix)))
                     self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
                     next_prefix += 1
             elif new_layer[0] == "new":
@@ -641,12 +640,12 @@ class DepositionMultipleTypeView(DepositionView):
                 LayerFormClass = self.layer_types[layer_class.__name__.lower()]
                 initial = layer_class.objects.filter(id=id_).values()[0]
                 initial["number"] = i + 1
-                self.forms["layers"].append(LayerFormClass(self.request.user, initial=initial, prefix=str(next_prefix)))
+                self.forms["layers"].append(LayerFormClass(self, initial=initial, prefix=str(next_prefix)))
                 self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_prefix += 1
             elif new_layer[0].startswith("new "):
                 LayerFormClass = self.layer_types[new_layer[0][len("new "):]]
-                self.forms["layers"].append(LayerFormClass(self.request.user, initial={"number": "{0}".format(i + 1)},
+                self.forms["layers"].append(LayerFormClass(self, initial={"number": "{0}".format(i + 1)},
                                                            prefix=str(next_prefix)))
                 self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
                 next_prefix += 1

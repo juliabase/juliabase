@@ -64,7 +64,7 @@ class HotWireLayerForm(forms.ModelForm):
         model = institute_models.ClusterToolHotWireLayer
         exclude = ("deposition",)
 
-    def __init__(self, user, data=None, **kwargs):
+    def __init__(self, view, data=None, **kwargs):
         """I do additional initialisation here, but very harmless: It's only about
         visual appearance and numerical limits.
         """
@@ -79,7 +79,7 @@ class HotWireLayerForm(forms.ModelForm):
         for fieldname in ["h2", "sih4"]:
             self.fields[fieldname].help_text = ""
             self.fields[fieldname].widget.attrs["size"] = "15"
-        if not user.is_staff:
+        if not view.request.user.is_staff:
             self.fields["wire_material"].choices = \
                 [choice for choice in self.fields["wire_material"].choices if choice[0] != "unknown"]
         # FixMe: Min/Max values?
@@ -116,7 +116,7 @@ class PECVDLayerForm(forms.ModelForm):
         model = institute_models.ClusterToolPECVDLayer
         exclude = ("deposition",)
 
-    def __init__(self, user, data=None, **kwargs):
+    def __init__(self, view, data=None, **kwargs):
         """I do additional initialisation here, but very harmless: It's only about
         visual appearance and numerical limits.
 
