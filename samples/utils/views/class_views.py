@@ -220,10 +220,10 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
 
     def save_to_database(self):
         process = super(SubprocessesMixin, self).save_to_database()
-        getattr(self.process, self.subprocess_field).all().delete()
+        getattr(process, self.subprocess_field).all().delete()
         for form in self.forms["subprocesses"]:
             subprocess = form.save(commit=False)
-            setattr(subprocess, self.process_field, self.process)
+            setattr(subprocess, self.process_field, process)
             subprocess.save()
         return process
 
