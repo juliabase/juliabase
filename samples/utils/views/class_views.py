@@ -252,11 +252,11 @@ class AddLayersForm(forms.Form):
                                                  required=False)
     my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
 
-    def __init__(self, user_details, model, data=None, **kwargs):
+    def __init__(self, view, data=None, **kwargs):
         super(AddLayersForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
+        self.fields["my_layer_to_be_added"].choices = get_my_layers(view.request.user.samples_user_details, model)
         self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
-        self.model = model
+        self.model = view.model
 
     def clean_number_of_layers_to_add(self):
         return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
@@ -349,7 +349,7 @@ class DepositionView(ProcessWithoutSamplesView):
             if my_layer_data is not None:
                 new_layers.append(("new", my_layer_data))
                 structure_changed = True
-            self.forms["add_layers"] = AddLayersForm(self.request.user.samples_user_details, self.model)
+            self.forms["add_layers"] = AddLayersForm(self)
 
         # Delete layers
         for i in range(len(new_layers) - 1, -1, -1):
@@ -414,7 +414,7 @@ class DepositionView(ProcessWithoutSamplesView):
         if "samples" not in self.forms:
             self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
                                                                 self.data)
-        self.forms["add_layers"] = AddLayersForm(self.request.user.samples_user_details, self.model, self.data)
+        self.forms["add_layers"] = AddLayersForm(self, self.data)
         if self.request.method == "POST":
             indices = utils.collect_subform_indices(self.data)
             self.forms["layers"] = [self.layer_form_class(self.data, prefix=str(layer_index)) for layer_index in indices]
