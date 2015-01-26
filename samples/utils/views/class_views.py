@@ -31,8 +31,8 @@ from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
 
 
-__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin", "AddLayersForm",
-           "DepositionView")
+__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin",
+           "AddMyLayersForm", "AddLayersForm", "DepositionView")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -248,19 +248,13 @@ class ChangeLayerForm(forms.Form):
         return cleaned_data
 
 
-class AddLayersForm(forms.Form):
-    number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
-                                                 required=False)
+class AddMyLayersForm(forms.Form):
     my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
 
     def __init__(self, view, data=None, **kwargs):
-        super(AddLayersForm, self).__init__(data, **kwargs)
+        super(AddMyLayersForm, self).__init__(data, **kwargs)
         self.fields["my_layer_to_be_added"].choices = get_my_layers(view.request.user.samples_user_details, model)
-        self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
         self.model = view.model
-
-    def clean_number_of_layers_to_add(self):
-        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
 
     def clean_my_layer_to_be_added(self):
         nickname = self.cleaned_data["my_layer_to_be_added"]
@@ -277,13 +271,29 @@ class AddLayersForm(forms.Form):
                     return layer_query.values()[0]
 
     def change_structure(self, structure_changed, new_layers):
-        for i in range(self.cleaned_data["number_of_layers_to_add"]):
-            new_layers.append(("new", {}))
-            structure_changed = True
-        # Add MyLayer
         my_layer_data = self.cleaned_data["my_layer_to_be_added"]
         if my_layer_data is not None:
             new_layers.append(("new", my_layer_data))
+            structure_changed = True
+        return structure_changed, new_layers
+
+
+class AddLayersForm(AddMyLayersForm):
+    number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
+                                                 required=False)
+
+    def __init__(self, view, data=None, **kwargs):
+        super(AddLayersForm, self).__init__(view, data, **kwargs)
+        self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
+        self.model = view.model
+
+    def clean_number_of_layers_to_add(self):
+        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
+
+    def change_structure(self, structure_changed, new_layers):
+        structure_changed, new_layers = super(AddLayersForm, self).change_structure(structure_changed, new_layers)
+        for i in range(self.cleaned_data["number_of_layers_to_add"]):
+            new_layers.append(("new", {}))
             structure_changed = True
         return structure_changed, new_layers
 
