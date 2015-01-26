@@ -22,6 +22,8 @@ from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.text import capfirst
+from django.utils.safestring import mark_safe
+from django.utils.encoding import force_text
 import django.forms as forms
 from django.forms.util import ValidationError
 from jb_common.utils.base import camel_case_to_underscores, is_json_requested, format_enumeration
@@ -32,7 +34,8 @@ from .base import successful_response, extract_preset_sample, remove_samples_fro
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin",
-           "ChangeLayerForm", "AddMyLayersForm", "AddLayersForm", "DepositionView")
+           "ChangeLayerForm", "AddMyLayersForm", "AddLayersForm", "DepositionView", "AddMultipleTypeLayersForm",
+           "DepositionMultipleTypeView")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -537,6 +540,118 @@ class DepositionView(ProcessWithoutSamplesView):
             layer.deposition = deposition
             layer.save()
         return deposition
+
+
+class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
+    def render(self):
+        return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
+                    "<li>{0}</li>".format(force_text(w)) for w in self)))
+
+
+class AddMultipleTypeLayersForm(AddMyLayersForm):
+    """Form for adding a new layer.  The user can choose between hot-wire
+    layer, PECVD layer, Sputter layer and no layer, using a radio button.
+
+    Alternatively, the user can give a layer nickname from “My Layers”.
+    """
+    layer_to_be_added = forms.ChoiceField(label=_("Layer to be added"), required=False,
+                                          widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+
+    def __init__(self, view, data=None, **kwargs):
+        super(AddMultipleTypeLayersForm, self).__init__(view, data, **kwargs)
+        # Translators: No further layer
+        self.fields["layer_to_be_added"].choices = view.new_layer_choices + (("none", _("none")),)
+        self.new_layer_choices = view.new_layer_choices
+
+    def change_structure(self, structure_changed, new_layers):
+        structure_changed, new_layers = super(AddMultipleTypeLayersForm, self).change_structure(structure_changed, new_layers)
+        new_layer_type = self.cleaned_data["layer_to_be_added"]
+        if new_layer_type:
+            new_layers.append(("new " + new_layer_type, {}))
+            structure_changed = True
+        return structure_changed, new_layers
+
+
+class DepositionMultipleTypeView(DepositionView):
+    model = None
+    form_class = None
+    layer_form_classes = ()
+    short_labels = None
+    add_layers_form_class = AddMultipleTypeLayersForm
+
+    class LayerForm(forms.Form):
+        """Dummy form class for detecting the actual layer type.  It is used
+        only in `from_post_data`."""
+        layer_type = forms.CharField()
+
+    def __init__(self, **kwargs):
+        super(DepositionMultipleTypeView, self).__init__(**kwargs)
+        if not self.short_labels:
+            self.short_labels = {cls: cls.Meta.model._meta.verbose_name for cls in self.layer_form_classes}
+        self.new_layer_choices = tuple((cls.Meta.model.__name__.lower(), self.short_labels[cls])
+                                       for cls in self.layer_form_classes)
+        self.layer_types = {cls.Meta.model.__name__.lower(): cls for cls in self.layer_form_classes}
+
+    def _read_layer_forms(self, source_deposition):
+        self.forms["layers"] = []
+        for index, layer in enumerate(source_deposition.layers.all()):
+            LayerFormClass = self.layer_types[layer.content_type.model_class().__name__.lower()]
+            self.forms["layers"] = LayerFormClass(prefix=str(index), instance=layer, initial={"number": index + 1})
+
+    def get_layer_form(self, prefix):
+        layer_form = self.LayerForm(self.data, prefix=prefix)
+        LayerFormClass = self.layer_form_classes[0]   # default
+        if layer_form.is_valid():
+            layer_type = layer_form.cleaned_data["layer_type"]
+            try:
+                LayerFormClass = self.layer_types[layer_type]
+            except KeyError:
+                pass
+        return LayerFormClass(self.request.user, self.data, prefix=prefix)
+
+    def _apply_changes(self, new_layers):
+        old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
+        next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
+        self.forms["layers"] = []
+        self.forms["change_layers"] = []
+        for i, new_layer in enumerate(new_layers):
+            if new_layer[0] == "original":
+                original_layer = new_layer[1]
+                LayerFormClass = self.layer_types[original_layer.type]
+                post_data = self.data.copy() if self.data else {}
+                prefix = new_layer[1].prefix
+                post_data[prefix + "-number"] = str(i + 1)
+                self.forms["layers"].append(LayerFormClass(self.request.user, post_data, prefix=prefix))
+                self.forms["change_layers"].append(new_layer[2])
+            elif new_layer[0] == "duplicate":
+                original_layer = new_layer[1]
+                if original_layer.is_valid():
+                    LayerFormClass = self.layer_types[original_layer.type]
+                    layer_data = original_layer.cleaned_data
+                    layer_data["number"] = i + 1
+                    self.forms["layers"].append(LayerFormClass(self.request.user, initial=layer_data,
+                                                               prefix=str(next_prefix)))
+                    self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                    next_prefix += 1
+            elif new_layer[0] == "new":
+                # New MyLayer
+                initial = {}
+                id_ = new_layer[1]["id"]
+                layer_class = models.Layer.objects.get(id=id_).content_type.model_class()
+                LayerFormClass = self.layer_types[layer_class.__name__.lower()]
+                initial = layer_class.objects.filter(id=id_).values()[0]
+                initial["number"] = i + 1
+                self.forms["layers"].append(LayerFormClass(self.request.user, initial=initial, prefix=str(next_prefix)))
+                self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                next_prefix += 1
+            elif new_layer[0].startswith("new "):
+                LayerFormClass = self.layer_types[new_layer[0][len("new "):]]
+                self.forms["layers"].append(LayerFormClass(self.request.user, initial={"number": "{0}".format(i + 1)},
+                                                           prefix=str(next_prefix)))
+                self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                next_prefix += 1
+            else:
+                raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
 
 
 _ = ugettext
