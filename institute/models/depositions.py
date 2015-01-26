@@ -60,12 +60,8 @@ class ClusterToolDeposition(samples.models.Deposition):
         context = old_context.copy()
         layers = []
         for layer in self.layers.all():
-            try:
-                layer = layer.clustertoolhotwirelayer
-                layer.type = "hot-wire"
-            except ClusterToolHotWireLayer.DoesNotExist:
-                layer = layer.clustertoolpecvdlayer
-                layer.type = "PECVD"
+            layer = layer.actual_instance
+            layer.type = layer.__class__.__name__.lower()
             layers.append(layer)
         context["layers"] = layers
         if permissions.has_permission_to_add_physical_process(user, self.__class__):

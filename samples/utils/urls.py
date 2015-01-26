@@ -91,17 +91,21 @@ class PatternGenerator(object):
                                       url(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
                                           lab_notebook.show, {"process_name": class_name},
                                           "lab_notebook_" + class_name_with_underscores)])
+        if "add" in views or "edit" in views or "custom_view" in views:
+            module = importlib.import_module(self.views_prefix + class_name_with_underscores)
+            if "add" in views or "edit" in views:
+                try:
+                    edit_view_callable = module.EditView.as_view()
+                except AttributeError:
+                    edit_view_callable = module.edit
         if "add" in views:
-            self.url_patterns.append(url(r"^{}/add/$".format(url_name),
-                                         get_callable(self.views_prefix + class_name_with_underscores + ".edit"),
+            self.url_patterns.append(url(r"^{}/add/$".format(url_name), edit_view_callable,
                                          {normalized_id_field: None}, "add_" + class_name_with_underscores))
         if "edit" in views:
-            self.url_patterns.append(url(r"^{}/(?P<{}>.+)/edit/$".format(url_name, normalized_id_field),
-                                         get_callable(self.views_prefix + class_name_with_underscores + ".edit"),
+            self.url_patterns.append(url(r"^{}/(?P<{}>.+)/edit/$".format(url_name, normalized_id_field), edit_view_callable,
                                          name="edit_" + class_name_with_underscores))
         if "custom_show" in views:
-            self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field),
-                                         get_callable(self.views_prefix + class_name_with_underscores + ".show"),
+            self.url_patterns.append(url(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field), module.show,
                                          name="show_" + class_name_with_underscores))
         else:
             self.url_patterns.append(url(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),

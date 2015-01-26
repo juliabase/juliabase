@@ -36,11 +36,11 @@ from samples import models
 from . import base as utils
 
 
-__all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_layers", "AddLayersForm", "InitialsForm",
+__all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_layers", "InitialsForm",
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
            "SamplePositionForm", "RemoveFromMySamplesForm", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
-           "choices_of_content_types", "check_sample_name", "SampleSelectForm")
+           "choices_of_content_types", "check_sample_name", "SampleSelectForm", "MultipleSamplesSelectForm")
 
 
 class OperatorField(forms.ChoiceField):
@@ -167,9 +167,10 @@ class ProcessForm(ModelForm):
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
         if not self.process or self.unfinished:
-            kwargs.setdefault("initial", {}).update({"timestamp": datetime.datetime.now()})
+            kwargs.setdefault("initial", {}).setdefault("timestamp", datetime.datetime.now())
         if not self.process:
-            kwargs.setdefault("initial", {}).update({"operator": user.pk, "combined_operator": user.pk})
+            kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
+            kwargs["initial"].setdefault("combined_operator", user.pk)
         super(ProcessForm, self).__init__(*args, **kwargs)
         if self.process and self.process.finished:
             self.fields["finished"].widget.attrs["disabled"] = "disabled"
@@ -307,35 +308,6 @@ def get_my_layers(user_details, deposition_model):
             # any type and needn't be strings.
             choices.append(("{0}-{1}".format(process_id, layer_number), nickname))
     return choices
-
-
-class AddLayersForm(forms.Form):
-    number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
-                                                 required=False)
-    my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
-
-    def __init__(self, user_details, model, data=None, **kwargs):
-        super(AddLayersForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = get_my_layers(user_details, model)
-        self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
-        self.model = model
-
-    def clean_number_of_layers_to_add(self):
-        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
-
-    def clean_my_layer_to_be_added(self):
-        nickname = self.cleaned_data["my_layer_to_be_added"]
-        if nickname and "-" in nickname:
-            process_id, layer_number = self.cleaned_data["my_layer_to_be_added"].split("-")
-            process_id, layer_number = int(process_id), int(layer_number)
-            try:
-                deposition = self.model.objects.get(pk=process_id)
-            except self.model.DoesNotExist:
-                pass
-            else:
-                layer_query = deposition.layers.filter(number=layer_number)
-                if layer_query.count() == 1:
-                    return layer_query.values()[0]
 
 
 class InitialsForm(forms.Form):
@@ -936,6 +908,26 @@ class SampleSelectForm(forms.Form):
             samples.append(preset_sample)
             self.fields["sample"].initial = preset_sample.pk
         self.fields["sample"].set_samples(samples, user)
+
+
+class MultipleSamplesSelectForm(forms.Form):
+    """Form for the list selection of samples that took part in a process.
+    """
+    sample_list = MultipleSamplesField(label=capfirst(_("samples")))
+
+    def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
+        super(MultipleSamplesSelectForm, self).__init__(*args, **kwargs)
+        samples = list(user.my_samples.all())
+        if process_instance:
+            samples.extend(process_instance.samples.all())
+            self.fields["sample_list"].initial = process_instance.samples.values_list("pk", flat=True)
+        else:
+            self.fields["sample_list"].initial = []
+        if preset_sample:
+            samples.append(preset_sample)
+            self.fields["sample_list"].initial.append(preset_sample.pk)
+        self.fields["sample_list"].set_samples(samples, user)
+        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 
 _ = ugettext

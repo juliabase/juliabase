@@ -237,6 +237,7 @@ class SolarsimulatorCellMeasurement(models.Model):
         verbose_name = _("solarsimulator cell measurement")
         verbose_name_plural = _("solarsimulator cell measurements")
         unique_together = (("measurement", "position"), ("position", "data_file"))
+        ordering = ("measurement", "position")
 
     def __str__(self):
         return _("cell {position} of {solarsimulator_measurement}").format(
