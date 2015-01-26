@@ -58,13 +58,14 @@ class EditView(utils.ProcessMultipleSamplesView):
                 if processes.exists():
                     earliest_timestamp = processes.aggregate(Max("timestamp"))["timestamp__max"]
                     if earliest_timestamp < self.forms["process"].cleaned_data["timestamp"]:
-                        self.forms["samples"].add_error("sample_list",
-                                                        _("Sample {0} has already processes before the timestamp of this substrate, "
-                                                          "namely from {1}.").format(sample, earliest_timestamp))
+                        self.forms["samples"].add_error(
+                            "sample_list", _("Sample {0} has already processes before the timestamp of this substrate, "
+                                             "namely from {1}.").format(sample, earliest_timestamp))
                         referentially_valid = False
                     for process in processes.all():
                         if process.content_type.model_class() == institute_models.Substrate:
-                            self.forms["samples"].add_error("sample_list", _("Sample {0} has already a substrate.").format(sample))
+                            self.forms["samples"].add_error(
+                                "sample_list", _("Sample {0} has already a substrate.").format(sample))
                             referentially_valid = False
                             break
         return referentially_valid
