@@ -52,11 +52,13 @@ hosted on a server owned by Bronger.
 - For Usenet fans, this mailing list is also available on Gmane as a
   `newsgroup`_.
 - On irc.freenode.net is our IRC chat room called #juliabase.
+- The translations are coordinated on `Transifex`_
 
 .. _`public source code repository`: https://github.com/juliabase
 .. _`bug and feature tracker`: https://github.com/juliabase/juliabase/issues
 .. _`mailing list`: https://groups.google.com/forum/?hl=de#!forum/juliabase
 .. _`newsgroup`: http://dir.gmane.org/gmane.comp.db.juliabase
+.. _`Transifex`: https://www.transifex.com/organization/juliabase/dashboard/juliabase
 
 
 .. index:: license
