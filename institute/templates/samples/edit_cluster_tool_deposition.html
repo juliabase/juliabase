@@ -26,43 +26,43 @@ copyright holder, you must destroy it immediately and completely.
 
 {% block frame_content %}
 <form method="post">{% csrf_token %}
-  {% error_list deposition _("Error in deposition") %}
+  {% error_list process _("Error in deposition") %}
   {% error_list samples _("Error in sample list") %}
   <table class="padding5">
     <tbody>
       <tr>
-        {% input_field deposition.number %}
+        {% input_field process.number %}
         <td rowspan="4" style="padding-left: 2em">
           <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
                                >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
       </tr>
-      {% if deposition.user.is_staff %}
+      {% if process.user.is_staff %}
         <tr>
-          {% input_field deposition.operator %}
+          {% input_field process.operator %}
           <td></td>
         </tr>
         <tr>
-          {% input_field deposition.external_operator %}
+          {% input_field process.external_operator %}
           <td></td>
         </tr>
       {% else %}
         <tr>
-          {% input_field deposition.combined_operator %}
+          {% input_field process.combined_operator %}
           <td></td>
         </tr>
       {% endif %}
       <tr>
-        {% input_field deposition.carrier %}
+        {% input_field process.carrier %}
       </tr>
       <tr>
-        {% input_field deposition.timestamp %}
+        {% input_field process.timestamp %}
       </tr>
     </tbody>
   </table>
 
   <p>
-    <label for="id_{{ deposition.comments.html_name }}">{{ deposition.comments.label }}:</label
-       ><br/>{% markdown_hint %}<br/>{{ deposition.comments }}
+    <label for="id_{{ process.comments.html_name }}">{{ process.comments.label }}:</label
+       ><br/>{% markdown_hint %}<br/>{{ process.comments }}
   </p>
 
   {% if layers_and_change_layers %}
@@ -203,7 +203,7 @@ copyright holder, you must destroy it immediately and completely.
 
   <div style="display: none">
     {# Hidden so that it's only set/changed by the remote client. #}
-    {{ deposition.timestamp_inaccuracy }}
+    {{ process.timestamp_inaccuracy }}
   </div>
 
   <p class="submit-button"><input type="submit"/></p>
