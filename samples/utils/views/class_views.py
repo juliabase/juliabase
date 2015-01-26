@@ -32,7 +32,7 @@ from .base import successful_response, extract_preset_sample, remove_samples_fro
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin",
-           "AddMyLayersForm", "AddLayersForm", "DepositionView")
+           "ChangeLayerForm", "AddMyLayersForm", "AddLayersForm", "DepositionView")
 
 
 class ProcessWithoutSamplesView(TemplateView):
