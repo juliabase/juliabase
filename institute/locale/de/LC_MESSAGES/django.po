@@ -1,21 +1,29 @@
 # German translations for JuliaBase-institute
 #
-# This file is part of JuliaBase, the samples database.
+# This file is part of JuliaBase-Institute, see http://www.juliabase.org.
+# Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
 #
-# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
-#                       Marvin Goblet <m.goblet@fz-juelich.de>,
-#                       Torsten Bronger <t.bronger@fz-juelich.de>
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
 #
-# You must not use, install, pass on, offer, sell, analyse, modify, or
-# distribute this software without explicit permission of the copyright holder.
-# If you have received a copy of this software without the explicit permission
-# of the copyright holder, you must destroy it immediately and completely.
+# In particular, you may modify this file freely and even remove this license,
+# and offer it as part of a web service, as long as you do not distribute it.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-25 19:44+0100\n"
+"POT-Creation-Date: 2015-01-20 15:14+0100\n"
 "PO-Revision-Date: 2015-01-20 15:16+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -50,74 +58,92 @@ msgstr "Cluster-Tool-Deposition"
 msgid "cluster tool depositions"
 msgstr "Cluster-Tool-Depositionen"
 
-#: institute/models/depositions.py:95
+#: institute/models/depositions.py:54
+msgid "Can add cluster tool depositions"
+msgstr "Darf Cluster-Tool-Depositionen hinzufügen"
+
+#. Translators: Don't abbreviate "perms" in translation
+#. (not even to English)
+#: institute/models/depositions.py:58
+msgid "Can edit perms for cluster tool I depositions"
+msgstr "Darf die Berechtigungen für Cluster-Tool-I-Depositionen ändern"
+
+#: institute/models/depositions.py:59
+msgid "Can view all cluster tool depositions"
+msgstr "Darf alle Cluster-Tool-Depositionen sehen"
+
+#: institute/models/depositions.py:60
+msgid "Can edit all cluster tool depositions"
+msgstr "Darf alle Cluster-Tool-Depositionen ändern"
+
+#: institute/models/depositions.py:105
 msgid "cluster tool deposition lab"
 msgstr "Labor des Cluster-Tools"
 
-#: institute/models/depositions.py:107 institute/models/depositions.py:198
+#: institute/models/depositions.py:117 institute/models/depositions.py:215
 msgid "deposition"
 msgstr "Deposition"
 
-#: institute/models/depositions.py:111
+#: institute/models/depositions.py:121
 msgid "cluster tool layer"
 msgstr "Schicht des Cluster-Tools"
 
-#: institute/models/depositions.py:112
+#: institute/models/depositions.py:122
 msgid "cluster tool layers"
 msgstr "Schichten des Cluster-Tools"
 
-#: institute/models/depositions.py:115 institute/models/depositions.py:214
+#: institute/models/depositions.py:126 institute/models/depositions.py:232
 #, python-brace-format
 msgid "layer {number} of {deposition}"
 msgstr "Schicht {number} von {deposition}"
 
-#: institute/models/depositions.py:119
+#: institute/models/depositions.py:130
 msgid "unknown"
 msgstr "unbekannt"
 
-#: institute/models/depositions.py:120
+#: institute/models/depositions.py:131
 msgid "rhenium"
 msgstr "Rhenium"
 
-#: institute/models/depositions.py:121
+#: institute/models/depositions.py:132
 msgid "tantalum"
 msgstr "Tantal"
 
-#: institute/models/depositions.py:122
+#: institute/models/depositions.py:133
 msgid "tungsten"
 msgstr "Wolfram"
 
-#: institute/models/depositions.py:128 institute/models/depositions.py:147
+#: institute/models/depositions.py:139 institute/models/depositions.py:158
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: institute/models/depositions.py:128 institute/models/depositions.py:147
+#: institute/models/depositions.py:139 institute/models/depositions.py:158
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
-#: institute/models/depositions.py:129 institute/models/depositions.py:148
-#: institute/models/sample_details.py:282
+#: institute/models/depositions.py:140 institute/models/depositions.py:159
+#: institute/models/sample_details.py:283
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:33
 msgid "comments"
 msgstr "Kommentare"
 
-#: institute/models/depositions.py:130
+#: institute/models/depositions.py:141
 msgid "wire material"
 msgstr "Drahtmaterial"
 
-#: institute/models/depositions.py:131
+#: institute/models/depositions.py:142
 msgid "base pressure"
 msgstr "Basisdruck"
 
-#: institute/models/depositions.py:134
+#: institute/models/depositions.py:145
 msgid "cluster tool hot-wire layer"
 msgstr "Hot-Wire-Schicht im Cluster-Tool"
 
-#: institute/models/depositions.py:135
+#: institute/models/depositions.py:146
 msgid "cluster tool hot-wire layers"
 msgstr "Hot-Wire-Schichten im Cluster-Tool"
 
-#: institute/models/depositions.py:146 institute/models/depositions.py:200
+#: institute/models/depositions.py:157 institute/models/depositions.py:217
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:28
 msgid "chamber"
 msgstr "Kammer"

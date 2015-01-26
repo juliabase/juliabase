@@ -1,22 +1,26 @@
 .. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
-.. This file is part of JuliaBase, the samples database.
+.. This file is part of JuliaBase, see http://www.juliabase.org.
+.. Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
 ..
-.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
-..                       Marvin Goblet <m.goblet@fz-juelich.de>,
-..                       Torsten Bronger <t.bronger@fz-juelich.de>
+.. This program is free software: you can redistribute it and/or modify it under
+.. the terms of the GNU Affero General Public License as published by the Free
+.. Software Foundation, either version 3 of the License, or (at your option) any
+.. later version.
 ..
-.. You must not use, install, pass on, offer, sell, analyse, modify, or
-.. distribute this software without explicit permission of the copyright
-.. holder.  If you have received a copy of this software without the explicit
-.. permission of the copyright holder, you must destroy it immediately and
-.. completely.
+.. This program is distributed in the hope that it will be useful, but WITHOUT
+.. ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.. FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+.. details.
+..
+.. You should have received a copy of the GNU Affero General Public License
+.. along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 .. meta::
-   :description: JuliaBase is a web framework written in Python for creating
-                 databases for samples or specimens as used in research and
-                 development.
+   :description: JuliaBase is an open-source web framework written in Python
+                 for creating databases for samples or specimens as used in
+                 research and development.
    :robots: noindex
 
 
@@ -24,7 +28,9 @@
 Introduction
 =============
 
-JuliaBase is a database solution for samples, their processing and their
+Your scientific institute or working group creates lots of samples, and your
+team needs a tool to keep track of them?  JuliaBase is made for exactly that!
+It is a database solution for samples, their processing and their
 characterization, with the following features:
 
 - intuitive browser-based interface, fully working even on mobile devices
@@ -89,7 +95,7 @@ If you consider actually using JuliaBase, have a look at the full :doc:`table
 of contents <toc>`.  This documentation also exists `in PDF format`_.
 
 Finally, see :doc:`project` for how to get in touch with the JuliaBase
-maintainers.
+community.
 
 .. _in PDF format: http://www.juliabase.org/juliabase.pdf
 

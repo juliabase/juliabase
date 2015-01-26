@@ -1,16 +1,20 @@
 .. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
 ..
-.. This file is part of JuliaBase, the samples database.
+.. This file is part of JuliaBase, see http://www.juliabase.org.
+.. Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
 ..
-.. Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
-..                       Marvin Goblet <m.goblet@fz-juelich.de>,
-..                       Torsten Bronger <t.bronger@fz-juelich.de>
+.. This program is free software: you can redistribute it and/or modify it under
+.. the terms of the GNU Affero General Public License as published by the Free
+.. Software Foundation, either version 3 of the License, or (at your option) any
+.. later version.
 ..
-.. You must not use, install, pass on, offer, sell, analyse, modify, or
-.. distribute this software without explicit permission of the copyright
-.. holder.  If you have received a copy of this software without the explicit
-.. permission of the copyright holder, you must destroy it immediately and
-.. completely.
+.. This program is distributed in the hope that it will be useful, but WITHOUT
+.. ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.. FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+.. details.
+..
+.. You should have received a copy of the GNU Affero General Public License
+.. along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 .. index:: installation
 
@@ -124,13 +128,13 @@ instructions`_.  Not further configuration is necessary.
 JuliaBase
 ===========
 
-JuliaBase is organized in a `Git`_ repository.  So far, there is no public
-release of JuliaBase 1.0.  However, the master branch in the repository is a
-release candidate, which can be cloned locally with
+JuliaBase is organized in a public `Git`_ `repository on GitHub`_.  So far,
+there is no public release of JuliaBase 1.0.  However, the master branch in the
+repository is a release candidate, which can be cloned locally with
 
 .. code-block:: shell-session
 
-    username@server:~$ git clone git@bob.ipv.kfa-juelich.de:juliabase
+    username@server:~$ git clone https://github.com/juliabase/juliabase.git
 
 It contains three Django apps:
 
@@ -145,6 +149,8 @@ department or work group that wants to use JuliaBase.  “institute” implement
 *generic* institute.  You will replace “institute” with your own app.
 
 .. _Git: http://git-scm.com/
+
+.. _repository on GitHub: https://github.com/juliabase
 
 
 .. index::

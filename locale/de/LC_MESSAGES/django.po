@@ -1,21 +1,26 @@
 # German translations for JuliaBase-common.
 #
-# This file is part of JuliaBase, the samples database.
+# This file is part of JuliaBase, see http://www.juliabase.org.
+# Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
 #
-# Copyright © 2008–2014 Forschungszentrum Jülich, Germany,
-#                       Marvin Goblet <m.goblet@fz-juelich.de>,
-#                       Torsten Bronger <t.bronger@fz-juelich.de>
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option) any
+# later version.
 #
-# You must not use, install, pass on, offer, sell, analyse, modify, or
-# distribute this software without explicit permission of the copyright holder.
-# If you have received a copy of this software without the explicit permission
-# of the copyright holder, you must destroy it immediately and completely.
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-settings\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-25 19:44+0100\n"
+"POT-Creation-Date: 2015-01-20 15:14+0100\n"
 "PO-Revision-Date: 2015-01-02 22:56+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
