@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-25 19:44+0100\n"
+"POT-Creation-Date: 2015-01-26 15:42+0100\n"
 "PO-Revision-Date: 2015-01-02 22:56+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -29,140 +29,140 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: kicker/apps.py:23
+#: kicker/apps.py:28
 msgid "Kicker"
 msgstr "Kicker"
 
-#: kicker/models.py:26
+#: kicker/models.py:31
 msgid "player 1 of team A"
 msgstr "Spieler 1 von Team A"
 
-#: kicker/models.py:28
+#: kicker/models.py:33
 msgid "player 2 of team A"
 msgstr "Spieler 2 von Team A"
 
-#: kicker/models.py:30
+#: kicker/models.py:35
 msgid "player 1 of team B"
 msgstr "Spieler 1 von Team B"
 
-#: kicker/models.py:32
+#: kicker/models.py:37
 msgid "player 2 of team B"
 msgstr "Spieler 2 von Team B"
 
-#: kicker/models.py:34
+#: kicker/models.py:39
 msgid "goals of team A"
 msgstr "Tore von Team A"
 
-#: kicker/models.py:35
+#: kicker/models.py:40
 msgid "goals of team B"
 msgstr "Tore von Team B"
 
-#: kicker/models.py:36
+#: kicker/models.py:41
 msgid "seconds"
 msgstr "Sekunden"
 
-#: kicker/models.py:36
+#: kicker/models.py:41
 msgid "duration of the match"
 msgstr "Dauer des Matches"
 
-#: kicker/models.py:37 kicker/models.py:52 kicker/models.py:62
-#: kicker/models.py:73
+#: kicker/models.py:42 kicker/models.py:57 kicker/models.py:67
+#: kicker/models.py:78
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: kicker/models.py:38
+#: kicker/models.py:43
 msgid "finished"
 msgstr "beendet"
 
-#: kicker/models.py:39
+#: kicker/models.py:44
 msgid "reporter"
 msgstr "Berichter"
 
-#: kicker/models.py:43
+#: kicker/models.py:48
 msgid "match"
 msgstr "Match"
 
-#: kicker/models.py:44
+#: kicker/models.py:49
 msgid "matches"
 msgstr "Matches"
 
-#: kicker/models.py:48
+#: kicker/models.py:53
 msgid "owner"
 msgstr "Besitzer"
 
-#: kicker/models.py:49
+#: kicker/models.py:54
 msgid "bought person"
 msgstr "Gekaufte Person"
 
-#: kicker/models.py:51
+#: kicker/models.py:56
 msgid "number of shares"
 msgstr "Aktienanzahl"
 
-#: kicker/models.py:55
+#: kicker/models.py:60
 msgid "shares"
 msgstr "Aktie"
 
-#: kicker/models.py:56
+#: kicker/models.py:61
 msgid "shareses"
 msgstr "Aktien"
 
-#: kicker/models.py:60
+#: kicker/models.py:65
 msgid "player"
 msgstr "Spieler"
 
-#: kicker/models.py:61 kicker/models.py:66
+#: kicker/models.py:66 kicker/models.py:71
 msgid "kicker number"
 msgstr "Kickerzahl"
 
-#: kicker/models.py:67 kicker/templates/kicker/summary.html:26
+#: kicker/models.py:72 kicker/templates/kicker/summary.html:31
 msgid "kicker numbers"
 msgstr "Kickerzahlen"
 
-#: kicker/models.py:71
+#: kicker/models.py:76
 msgid "gambler"
 msgstr "Spieler"
 
-#: kicker/models.py:72 kicker/models.py:77
+#: kicker/models.py:77 kicker/models.py:82
 msgid "stock value"
 msgstr "Aktienkurs"
 
-#: kicker/models.py:78
+#: kicker/models.py:83
 msgid "stock values"
 msgstr "Aktienkurse"
 
-#: kicker/models.py:87
+#: kicker/models.py:92
 msgid "user"
 msgstr "Benutzer"
 
-#: kicker/models.py:89
+#: kicker/models.py:94
 msgid "nickname"
 msgstr "Spitzname"
 
-#: kicker/models.py:90
+#: kicker/models.py:95
 msgid "shortkey"
 msgstr "Tastenkürzel"
 
-#: kicker/models.py:93 kicker/models.py:94
+#: kicker/models.py:98 kicker/models.py:99
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: kicker/views.py:356
+#: kicker/views.py:362
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:375
+#: kicker/views.py:381
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:381
+#: kicker/views.py:387
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
-#: kicker/views.py:395
+#: kicker/views.py:401
 msgid "The preferences were successfully updated."
 msgstr "Die Einstellungen wurden erfolgreich geändert."
 
-#: kicker/views.py:399
+#: kicker/views.py:405
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"
