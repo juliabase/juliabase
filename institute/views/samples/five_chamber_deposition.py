@@ -59,16 +59,14 @@ class LayerForm(forms.ModelForm):
     class Meta:
         model = institute_models.FiveChamberLayer
         exclude = ("deposition",)
+        widgets = {"number": forms.TextInput(attrs={"readonly": "readonly", "size": "5", "style": "font-size: large"}),
+                   "h2": forms.TextInput(attrs={"size": 10}),
+                   "sih4": forms.TextInput(attrs={"size": 10}),
+                   "temperature_1": forms.TextInput(attrs={"size": 5}),
+                   "temperature_2": forms.TextInput(attrs={"size": 5})}
 
     def __init__(self, view, *args, **kwargs):
-        """I only tweak the HTML layout slightly.
-        """
         super(LayerForm, self).__init__(*args, **kwargs)
-        self.fields["number"].widget.attrs.update({"readonly": "readonly", "size": "5", "style": "font-size: large"})
-        for fieldname in ["sih4", "h2", ]:
-            self.fields[fieldname].widget.attrs["size"] = "10"
-        self.fields["temperature_1"].widget.attrs["size"] = "5"
-        self.fields["temperature_2"].widget.attrs["size"] = "5"
 
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):

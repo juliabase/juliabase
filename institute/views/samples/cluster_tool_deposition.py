@@ -71,26 +71,22 @@ class HotWireLayerForm(forms.ModelForm):
     class Meta:
         model = institute_models.ClusterToolHotWireLayer
         exclude = ("deposition",)
+        widgets = {
+            "number": forms.TextInput(attrs={"readonly": "readonly", "size": 2,
+                                            "style": "text-align: center; font-size: xx-large"}),
+            "comments": forms.Textarea(attrs={"cols": 70, "rows": 18}),
+            "time": forms.TextInput(attrs={"size": 10}),
+            "base_pressure": forms.TextInput(attrs={"size": 10}),
+            "h2": forms.TextInput(attrs={"size": 15}),
+            "sih4": forms.TextInput(attrs={"size": 15}),
+            }
 
     def __init__(self, view, data=None, **kwargs):
-        """I do additional initialisation here, but very harmless: It's only about
-        visual appearance and numerical limits.
-        """
         super(HotWireLayerForm, self).__init__(data, **kwargs)
         self.type = "clustertoolhotwirelayer"
-        self.fields["comments"].widget.attrs["cols"] = "70"
-        self.fields["comments"].widget.attrs["rows"] = "18"
-        self.fields["number"].widget.attrs.update({"readonly": "readonly" , "size": "2",
-                                                   "style": "text-align: center; font-size: xx-large"})
-        for fieldname in ["time", "base_pressure"]:
-            self.fields[fieldname].widget.attrs["size"] = "10"
-        for fieldname in ["h2", "sih4"]:
-            self.fields[fieldname].help_text = ""
-            self.fields[fieldname].widget.attrs["size"] = "15"
         if not view.request.user.is_staff:
             self.fields["wire_material"].choices = \
                 [choice for choice in self.fields["wire_material"].choices if choice[0] != "unknown"]
-        # FixMe: Min/Max values?
 
     def clean_time(self):
         return utils.clean_time_field(self.cleaned_data["time"])
@@ -104,9 +100,9 @@ class HotWireLayerForm(forms.ModelForm):
 
     def clean_layer_type(self):
         """Assure that the hidden fixed string ``layer_type`` truely is
-        ``"clustertoolhotwirelayer"``.  When using a working browser, this should always be
-        the case, no matter what the user does.  However, it must be checked
-        nevertheless because other clients may send wrong data.
+        ``"clustertoolhotwirelayer"``.  When using a working browser, this
+        should always be the case, no matter what the user does.  However, it
+        must be checked nevertheless because other clients may send wrong data.
         """
         if self.cleaned_data["layer_type"] != "clustertoolhotwirelayer":
             raise ValidationError("Layer type must be “hot-wire”.")
@@ -123,47 +119,29 @@ class PECVDLayerForm(forms.ModelForm):
     class Meta:
         model = institute_models.ClusterToolPECVDLayer
         exclude = ("deposition",)
+        widgets = {"number": forms.TextInput(attrs={"readonly": "readonly" , "size": 2,
+                                                    "style": "text-align: center; font-size: xx-large"}),
+                   "comments": forms.Textarea(attrs={"cols": 70, "rows": 18}),
+                   "time": forms.TextInput(attrs={"size": 10}),
+                   "deposition_power": forms.TextInput(attrs={"size": 10}),
+                   "h2": forms.TextInput(attrs={"size": 15}),
+                   "sih4": forms.TextInput(attrs={"size": 15})}
 
     def __init__(self, view, data=None, **kwargs):
-        """I do additional initialisation here, but very harmless: It's only about
-        visual appearance and numerical limits.
-
-        Note that the `user` parameter is not used here but this constructor
-        must share its signature with that of :py:class:`HotWireLayerForm`.
-        """
+        # Note that the `view` parameter is not used here but this constructor
+        # must share its signature with that of :py:class:`HotWireLayerForm`.
         super(PECVDLayerForm, self).__init__(data, **kwargs)
         self.type = "clustertoolpecvdlayer"
-        self.fields["comments"].widget.attrs["cols"] = "70"
-        self.fields["comments"].widget.attrs["rows"] = "18"
-        self.fields["number"].widget.attrs.update({"readonly": "readonly" , "size": "2",
-                                                   "style": "text-align: center; font-size: xx-large"})
-        for fieldname in ["time", "deposition_power"]:
-            self.fields[fieldname].widget.attrs["size"] = "10"
-
-        for fieldname in ["h2", "sih4"]:
-            self.fields[fieldname].help_text = ""
-            self.fields[fieldname].widget.attrs["size"] = "15"
-
-        for fieldname, min_value, max_value in [("deposition_power", 0, 1000)]:
-            self.fields[fieldname].min_value = min_value
-            self.fields[fieldname].max_value = max_value
 
     def clean_time(self):
         return utils.clean_time_field(self.cleaned_data["time"])
 
     def clean_comments(self):
-        """Forbid image and headings syntax in Markdown markup.
-        """
         comments = self.cleaned_data["comments"]
         jb_common.utils.base.check_markdown(comments)
         return comments
 
     def clean_layer_type(self):
-        """Assure that the hidden fixed string ``layer_type`` truely is
-        ``"clustertoolpecvdlayer"``.  When using a working browser, this should always be the
-        case, no matter what the user does.  However, it must be checked
-        nevertheless because other clients may send wrong data.
-        """
         if self.cleaned_data["layer_type"] != "clustertoolpecvdlayer":
             raise ValidationError("Layer type must be “PECVD”.")
         return self.cleaned_data["layer_type"]
