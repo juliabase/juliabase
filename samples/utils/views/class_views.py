@@ -198,7 +198,12 @@ class SubprocessForm(forms.ModelForm):
 
 class SubprocessesMixin(ProcessWithoutSamplesView):
     # Must be derived from first
+    sub_model = None
 
+    def __init__(self, **kwargs):
+        super(SubprocessesMixin, self).__init__(**kwargs)
+        self.sub_model = self.sub_model or self.subform_class.Meta.model
+        
     def build_forms(self):
         super(SubprocessesMixin, self).build_forms()
         if self.id:

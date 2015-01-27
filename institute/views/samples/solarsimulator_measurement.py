@@ -47,7 +47,6 @@ class SolarsimulatorCellForm(utils.SubprocessForm):
 
 
 class EditView(utils.SubprocessesMixin, utils.ProcessView):
-    sub_model = SolarsimulatorCellMeasurement
     form_class = SolarsimulatorMeasurementForm
     subform_class = SolarsimulatorCellForm
     process_field, subprocess_field = "measurement", "cells"
