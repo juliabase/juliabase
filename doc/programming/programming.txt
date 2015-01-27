@@ -231,7 +231,7 @@ The following steps are necessary for creating a physical process:
 #. Create a database model in ``institute/models.py``.
 #. Create links in ``urls.py``.
 #. Create a view module in ``samples/views/``.  Fill the view module with an
-   “edit” and a “show” function.
+   “EditView” class.
 #. Create an “edit” and a “show” template in ``templates/``.
 #. *(Optional)* Create an electronic lab notebook.
 #. *(Optional)* Create support for the new process in the Remote Client.
@@ -239,8 +239,7 @@ The following steps are necessary for creating a physical process:
 
 In general, you will not do all of this from scratch.  Instead, you will
 copy-and-paste from an already existing process which is as similar to the new
-one as possible.  (By the way, a little bit of code duplication in this area is
-not really bad.)
+one as possible.
 
 
 Creating the database models
@@ -324,11 +323,10 @@ Creating the view
 Typically, the view is the most complex task when creating a new kind of
 process.  The Python file containing it must be called
 :file:`{process_class}.py`, thus in the current example,
-:file:`layer_thickness_measurement.py`.  It contains three parts:
+:file:`layer_thickness_measurement.py`.  It contains two parts:
 
 #. The form(s).
-#. The validation routines.
-#. The ``def edit(request, ...)`` function.  This is mandatory.
+#. The ``class EditView`` function.  This is mandatory.
 
 
 The form
@@ -342,84 +340,22 @@ For such a simple process class, this is simple::
             fields = "__all__"
 
 
-Validation
+View class
 ..........
 
-The validation function have turned out to be a practical approach to structure
-the view module, but you may do it completely differently.  We usually define
-two functions.  This first one,
-
-::
-
-    def is_all_valid(sample_form, layer_thickness_form, edit_description_form):
-        all_valid = layer_thickness_form.is_valid()
-        all_valid = sample_form.is_valid() and all_valid
-        if edit_description_form:
-            all_valid = edit_description_form.is_valid() and all_valid
-        return all_valid
-
-returns ``True`` if all forms validate.  For some processes, there is a lot of
-forms, however for thickness measurements, ``is_all_valid`` is pretty
-tractable.
-
-The second function,
-
-::
-
-    def is_referentially_valid(layer_thickness_form, sample_form):
-        return layer_thickness_form.is_referentially_valid(sample_form)
-
-returns ``True`` if the data of all forms is valid in relation to each other
-(for example, the deposition has at least one layer).  Here, we can rely solely
-on :py:meth:`~samples.utils.views.ProcessForm.is_referentially_valid`.
-
-
-View function
-.............
-
-You only need to create a view function for *editing*, which can also be used
-to *adding*.  (The *display* of an existing process is handled by JuliaBase.)
+You only need to create a view class for *editing*, which can also be used to
+*adding*.  (The *display* of an existing process is handled by JuliaBase.)
 This view function must be defined like this::
 
-    def edit(request, layer_thickness_measurement_id):
-        ...
+    class EditView(ProcessView):
+        form_class = LayerThicknessForm
 
-The name of the second parameter must be adapted to the respective process, and
-in general takes the form :samp:`{process_class}_id`.  If the process class
-defines an “identifying field”, the second parameter must be called like it.
-See the PDS measurement as an example for the latter.
-
-
-.. note:: Django discourages conventions, and instead has “explicit is better
-   than implicit” as its mantra.  JuliaBase respects this, however for views of
-   processes, it introduces the naming conventions explained here.  Processes
-   are similar enough to each other that one would get too much redundancy
-   otherwise.
-
-The general outline of a view function is:
-
-#. Look up process in the DB
-#. Check for sufficient permissions
-#. If HTTP method is POST:
-    #. Build forms from POST data
-    #. If forms are valid:
-        #. Save everything
-        #. Generate feed notification
-        #. Return by calling :py:func:`~samples.utils.views.successful_response`
-#. If HTTP method is GET:
-    #. Build forms, maybe with initial values
-#. Return by calling :py:func:`django.shortcuts.render`
-
-.. raw:: latex
-
-         \bgroup\raggedright
-
-You can see this outline in action in
-:py:func:`institute.views.samples.layer_thickness_measurement.edit`.
-
-.. raw:: latex
-
-         \par\egroup
+For such a simple process like layer thickness measurement, that's it!  For
+more complex processes, you may have to define further form classes, or do
+additional validation in an :py:meth:`is_referentially_valid` method in the
+view class.  For the full API reference, see :doc:`class-based_views`.  For
+more examples, see the view modules of the ``institute`` app in JuliaBase's
+source distribution.
 
 
 .. index::
@@ -519,6 +455,40 @@ dictionary sent to the :file:`show_{process_class}.html` template.  This way,
 additional program logic can be used to generate the HTML.  In case of
 depositions, a “duplicate” button can be added, depending on the user's
 permissions.
+
+
+The view
+--------
+
+In the view module which must be called :file:`five_chamber_deposition.py`, the
+main form gets additional cleaning methods::
+
+    class DepositionForm(samples.utils.views.DepositionForm):
+
+        class Meta:
+            model = institute.models.FiveChamberDeposition
+            fields = "__all__"
+
+        def clean_number(self):
+            number = super(DepositionForm, self).clean_number()
+            return form_utils.clean_deposition_number_field(number, "S")
+
+        def clean(self):
+            cleaned_data = super(DepositionForm, self).clean()
+            if "number" in cleaned_data and "timestamp" in cleaned_data:
+                if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
+                    self.add_error("number", _("The first two digits must match the year of the deposition."))
+            return cleaned_data
+
+The view class must override :py:meth:`get_next_id` because the ID of a
+deposition (its number) is non-numberical in the INM::
+
+    class EditView(RemoveFromMySamplesMixin, DepositionView):
+        form_class = DepositionForm
+        layer_form_class = LayerForm
+
+        def get_next_id(self):
+            return institute.utils.base.get_next_deposition_number("S")
 
 
 .. index:: lab notebook

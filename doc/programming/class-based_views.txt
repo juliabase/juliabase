@@ -1,0 +1,70 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
+..
+.. This file is part of JuliaBase, see http://www.juliabase.org.
+.. Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+..
+.. This program is free software: you can redistribute it and/or modify it under
+.. the terms of the GNU Affero General Public License as published by the Free
+.. Software Foundation, either version 3 of the License, or (at your option) any
+.. later version.
+..
+.. This program is distributed in the hope that it will be useful, but WITHOUT
+.. ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.. FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+.. details.
+..
+.. You should have received a copy of the GNU Affero General Public License
+.. along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+====================
+Class-based views
+====================
+
+
+Class-based views are highly practical for the add/edit view of physical
+processes because they keep code duplication at a minimum.  In some cases, you
+get away with only a few lines of code.  Mixin classes reduce the redundancy
+further.  Although it is still possible to have ordinary view *functions* for
+physical processes, we do not recommend this.  If you follow the convention of
+calling your view class “:py:class:`EditView`” and place it in a module called
+:file:`class_name.py`, the :py:class:`~samples.utils.urls.PatternGenerator`
+will detect it and create the URL dispatch for it.
+
+
+The API
+=========
+
+The API of JuliaBase's class-based view classes is best described by discussing
+the attributes and methods of the common base class
+:py:class:`~samples.utils.views.class_views.ProcessWithoutSamplesView`.  Not
+only if you derive your views, but also if you need to define your own
+*abstract* view class, you should derive it from one of the concrete classes
+presented in the next section, though, because you probably want to re-use part
+of their functionality.
+
+This class is found in the module :py:mod:`samples.utils.views.class_views`.
+
+.. autoclass:: samples.utils.views.class_views.ProcessWithoutSamplesView
+               :members: startup, get_next_id, build_forms, is_all_valid,
+                         is_referentially_valid, save_to_database, get_title,
+                         get_context_data
+
+
+Main classes
+==============
+
+The following names are found in the module :py:mod:`samples.utils.views`.
+
+.. autoclass:: samples.utils.views.ProcessView
+.. autoclass:: samples.utils.views.ProcessMultipleSamplesView
+.. autoclass:: samples.utils.views.DepositionView
+.. autoclass:: samples.utils.views.DepositionMultipleTypeView
+.. autoclass:: samples.utils.views.SubprocessForm
+
+
+Mixins
+=======
+
+.. autoclass:: samples.utils.views.RemoveFromMySamplesMixin
+.. autoclass:: samples.utils.views.SubprocessesMixin

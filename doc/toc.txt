@@ -31,6 +31,7 @@ JuliaBase
    programming/installation
    programming/programming
    programming/permissions
+   programming/class-based_views
    programming/remote_client
    programming/settings
    programming/sample_names

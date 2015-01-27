@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Support for classed-based add and edit views for processes.
+"""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -39,12 +41,74 @@ from .base import successful_response, extract_preset_sample, remove_samples_fro
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
-           "ChangeLayerForm", "AddMyLayersForm", "AddLayersForm", "DepositionView", "AddMultipleTypeLayersForm",
-           "DepositionMultipleTypeView")
+           "DepositionView", "DepositionMultipleTypeView")
 
 
 class ProcessWithoutSamplesView(TemplateView):
-    # Never derive from that; pointless.
+    """Abstract base class for the classed-based views.  It deals only with the
+    process per se, and in partuclar, with no samples associated with this
+    process.  This is done in the concrete derived classes
+    :py:class:`~samples.utils.views.ProcessView` (one sample) and
+    :py:class:`ProcessMultipleSamplesView` (multiple samples).  So, you should
+    never instantiate this one.
+
+    The methods that you most likely want to redefine in you own concrete class
+    are, with decreasing probability:
+
+    - :py:meth:`is_referentially_valid`
+    - :py:meth:`save_to_database`
+    - :py:meth:`get_next_id`
+    - :py:meth:`build_forms`
+    - :py:meth:`get_title`
+    - :py:meth:`get_context_data`
+
+    Note that for :py:meth:`is_referentially_valid`,
+    :py:meth:`save_to_database`, :py:meth:`build_forms`, and
+    :py:meth:`get_context_data`, it is necessary to call the inherited method.
+
+    Since you connect forms with the view class, the view class expects certain
+    constructor signatures of the forms.  As for the process model form, it
+    must accept the logged-in user as the first argument.  This is the case for
+    :py:class:`~samples.utils.views.ProcessForm` and
+    :py:class:`~samples.utils.views.DepositionForm`, so this should not be a
+    problem.  The derived class (see below) may impose constrains on their
+    external forms either.
+
+    :ivar form_class: The model form class of the process of this view.
+
+    :ivar model: The model class of the view.  If not given, it is derived from
+      the process form class.
+
+    :ivar class_name: The name of the model class,
+      e.g. ``"clustertooldeposition"``.
+
+    :ivar process: The process instance this view is about.  If we are about to
+      add a new process, this is ``None`` until the respective form is saved.
+
+    :ivar forms: A dictionary mapping template context names to forms, or lists
+      of forms.  Mandatory keys in this dictionary are ``"process"`` and
+      ``"edit_description"``.  (Derived classes add ``"sample"``,
+      ``"samples"``, ``"remove_from_my_samples"``, ``"layers"``, etc.)
+
+    :ivar data: The POST data if we have a POST request, or ``None`` otherwise.
+
+    :ivar id: The ID of the process to edit, or ``None`` if we are about to add
+      a new one.  This is the recommended way to distinguish between editing
+      and adding.
+
+    :ivar preset_sample: The sample with which the process should be connected
+      by default.  May be ``None``.
+
+    :ivar request: The current request object.  This is inherited from Django's
+      view classes.
+
+    :ivar template_name: The file name of the rendering template, with the same
+      path syntax as in the ``render()`` function.
+
+    :ivar identifying_field: The name of the field in the process which is the
+      poor man's primary key for this process, e.g. the deposition number.  It
+      is taken from the model class.
+    """
     model = None
 
     def __init__(self, **kwargs):
@@ -55,6 +119,10 @@ class ProcessWithoutSamplesView(TemplateView):
         self.forms = {}
 
     def startup(self):
+        """Fetch the process to-be-edited from the database and check permissions.
+        This method has no parameters and no return values, ``self`` is
+        modified in-situ.
+        """
         try:
             self.identifying_field = parameter_name = self.model.JBMeta.identifying_field
         except AttributeError:
@@ -66,9 +134,29 @@ class ProcessWithoutSamplesView(TemplateView):
         self.data = self.request.POST or None
 
     def get_next_id(self):
+        """Gets the next identifying value for the process class.  In its default
+        implementation, it just takes the maximal existing value and adds 1.
+        This needs to be overridden if the identifying field is non-numeric.
+
+        :Return:
+          The next untaken of the identifying field, e.g. the next free
+          depostion number.
+
+        :rtype: object
+        """
         return (self.model.objects.aggregate(Max(self.identifying_field))[self.identifying_field + "__max"] or 0) + 1
 
     def build_forms(self):
+        """Fills the :py:attr:`forms` dictionary with the forms, or lists of them.  In
+        this base class, we only add ``"process"`` itself and
+        ``"edit_description"``.  Note that the dictionary key is later used in
+        the template as context variable.
+
+        This method has no parameters and no return values, ``self`` is
+        modified in-situ.  It is good habit to check for a key before setting
+        it, allowing derived methods to set it themselves without doing double
+        work.
+        """
         if "process" not in self.forms:
             initial = {}
             if not self.id:
@@ -79,6 +167,9 @@ class ProcessWithoutSamplesView(TemplateView):
         self.forms["edit_description"] = utils.EditDescriptionForm(self.data) if self.id else None
 
     def _check_validity(self, forms):
+        """Helper for :py:meth:`is_all_valid` for allowing recursion through
+        nested lists of forms.
+        """
         all_valid = True
         for form in forms:
             if isinstance(form, (list, tuple)):
@@ -88,21 +179,77 @@ class ProcessWithoutSamplesView(TemplateView):
         return all_valid
         
     def is_all_valid(self):
+        """Checks whether all forms are valid.  Unbound forms – which may occur also in
+        POST requests – are not checked.  Moreover, this method guarantees that
+        the :py:meth:`is_valid` method of every bound form is called in order
+        to collect all error messages.
+
+        :Return:
+          whether all forms are valid
+
+        :rtype: bool
+        """
         return self._check_validity(self.forms.values())
 
     def is_referentially_valid(self):
+        """Checks whether the data of all forms is consistent with each other
+        and with the database.  This is the partner of :py:meth:`is_all_valid`
+        but checks the inter-relations of data.
+
+        This method is frequently overriden in concrete view classes.
+
+        Note that a ``True`` here does not imply a ``True`` from
+        :py:meth:`is_all_valid`.  Both methods are independent of each other.
+        In particular, you must check the validity of froms that you use here.
+
+        :Return:
+          whether the data submitted to the view is valid
+
+        :rtype: bool
+        """
         return True
 
     def save_to_database(self):
+        """Saves the data to the database.
+
+        :Return:
+          the saved process instance
+
+        :rtype: `samples.models.PhysicalProcess`
+        """
         process = self.forms["process"].save()
         return process
 
     def get(self, request, *args, **kwargs):
+        """Processes a GET request.  This method is part of the Django API for
+        class-based views.
+
+        :param request: the HTTP request object
+
+        :type request: ``django.http.HttpRequest``
+
+        :Return:
+          the HTTP response
+
+        :rtype: ``django.http.HttpResponse``
+        """
         self.startup()
         self.build_forms()
         return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        """Processes a POST request.  This method is part of the Django API for
+        class-based views.
+
+        :param request: the HTTP request object
+
+        :type request: ``django.http.HttpRequest``
+
+        :Return:
+          the HTTP response
+
+        :rtype: ``django.http.HttpResponse``
+        """
         self.startup()
         self.build_forms()
         all_valid = self.is_all_valid()
@@ -119,10 +266,27 @@ class ProcessWithoutSamplesView(TemplateView):
             return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
 
     def get_title(self):
+        """Creates the title of the response.  This is used in the ``<title>``
+        tag and the ``<h1>`` tag at the top of the page.
+
+        :Return:
+          the title of the response
+
+        :rtype: unicode
+        """
         return capfirst(_("edit {process}").format(process=self.process)) if self.id else \
             capfirst(_("add {class_name}").format(class_name=self.model._meta.verbose_name))
 
     def get_context_data(self, **kwargs):
+        """Generates the template context.  In particular, we inject the forms and the
+        title here into the context.  This method is part of the official
+        Django API.
+
+        :Return:
+          the context dict
+
+        :rtype: dict
+        """
         context = {}
         context["title"] = self.get_title()
         context.update(kwargs)
@@ -131,11 +295,28 @@ class ProcessWithoutSamplesView(TemplateView):
 
     @classmethod
     def as_view(cls, **initkwargs):
+        """Return the callable for the URL patterns.  This is part of the official
+        Django API.  We override it to add a login check.
+        """
         view = super(ProcessWithoutSamplesView, cls).as_view(**initkwargs)
         return login_required(view)
 
 
 class ProcessView(ProcessWithoutSamplesView):
+    """View class for physical processes with one sample each.  The HTML form for
+    the sample is called ``sample`` in the template.  Typical usage can be very
+    short::
+
+        from samples.utils.views import ProcessForm, ProcessView
+
+        class LayerThicknessForm(ProcessForm):
+            class Meta:
+                model = LayerThicknessMeasurement
+                fields = "__all__"
+
+        class EditView(ProcessView):
+            form_class = LayerThicknessForm
+    """
 
     def build_forms(self):
         super(ProcessView, self).build_forms()
@@ -154,6 +335,10 @@ class ProcessView(ProcessWithoutSamplesView):
 
 
 class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
+    """View class for physical processes with one or more samples each.  The HTML
+    form for the sample list is called ``samples`` in the template.  The usage
+    is analogous to :py:class:`~samples.utils.views.ProcessView`.
+    """
 
     def build_forms(self):
         super(ProcessMultipleSamplesView, self).build_forms()
@@ -168,7 +353,13 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
 
 
 class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
-    # Must be derived from first
+    """Mixin for views that like to offer a “Remove from my samples” button.  In
+    the template, they may add the following code::
+
+        {{ remove_from_my_samples.as_p }}
+
+    This mixin must come before the main view class in the list of parents.
+    """
 
     def build_forms(self):
         super(RemoveFromMySamplesMixin, self).build_forms()
@@ -197,7 +388,33 @@ class SubprocessForm(forms.ModelForm):
 
 
 class SubprocessesMixin(ProcessWithoutSamplesView):
-    # Must be derived from first
+    """Mixing for views that represent processes with subprocesses.  Have a look at
+    :py:mod:`institute.views.samples.solarsimulator_measurement` for an
+    example.  For this to work, you must define the followin additional class
+    variables:
+
+    - :py:attr:`subform_class`: the model form class for the subprocesses
+    - :py:attr:`process_field`: the name of the field of the parent process in
+      the subprocess model
+    - :py:attr:`subprocess_field`: the ``related_name`` parameter in the field
+      of the parent process in the subprocess model
+
+    You should derive the model form class of the subprocess from
+    :py:class:`~samples.utils.views.SubprocessForm`.  This is not mandatory but
+    convenient, see there.
+
+    In the template, the forms of the subprocesses are available in a list
+    called ``subprocesses``.  Furthermore, you should include
+
+    ::
+
+        {{ number.as_p }}
+
+    in the template so that the user can set the number of subprocesses.
+
+    This mixin must come before the main view class in the list of parents.
+    """
+
     sub_model = None
 
     def __init__(self, **kwargs):
@@ -274,6 +491,10 @@ class ChangeLayerForm(forms.Form):
 
 
 class AddMyLayersForm(forms.Form):
+    """Form for adding a pre-defined layer from the “My Layers” list.  At the
+    same time, this serves as the base class for other add-layers forms since
+    adding “My Layers” should be *always* possible.
+    """
     my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
 
     def __init__(self, view, data=None, **kwargs):
@@ -296,6 +517,28 @@ class AddMyLayersForm(forms.Form):
                     return layer_query.values()[0]
 
     def change_structure(self, structure_changed, new_layers):
+        """Apply the changes introduced by adding layers to the data structures of the
+        caller.  This caller is the :py:meth:`_change_structure` method of a
+        view class, which in turn is usually called shortly before validating
+        all forms.
+
+        :param structure_changed: whether the caller has already performed
+          layer-list-changing operations, e.g. deleting of a layer.
+
+        :param new_layers: a list of the layers after the structure changes.
+          It is a list of tuples with three elements, a string denoting the
+          change, a dict with the initial layer data, and possibly a
+          :py:class:`ChangeLayerForm`.  The latter is optional, however, and
+          not added here.
+
+        :type structure_changed: bool
+        :type new_layers: list of (str, dict, ChangeLayerForm) or (str, dict)
+
+        :Return:
+          the updated values for ``structure_changed`` and ``new_layers``
+
+        :rtype: bool, list of (str, dict, ChangeLayerForm) or (str, dict)
+        """
         my_layer_data = self.cleaned_data["my_layer_to_be_added"]
         if my_layer_data is not None:
             new_layers.append(("new", my_layer_data))
@@ -304,6 +547,8 @@ class AddMyLayersForm(forms.Form):
 
 
 class AddLayersForm(AddMyLayersForm):
+    """Add-layers form with additional number of layers to add.
+    """
     number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
                                                  required=False)
 
@@ -324,6 +569,14 @@ class AddLayersForm(AddMyLayersForm):
 
 
 class DepositionView(ProcessWithoutSamplesView):
+    """View class for depositions.  The layers of the deposition must always be of
+    the same type.  If they are now, you must use
+    :py:class:`DepositionMultipleTypeView` instead.  Additionally to
+    :py:attr:`form_class`, you must set the :py:attr:`layer_form_class` class
+    variable to the form class to be used for the layers.
+
+    The layer form should be a subclass of :py:class:`~samples.utils.views.SubprocessForm`.
+    """
     add_layers_form_class = AddLayersForm
 
     def _change_structure(self):
@@ -331,7 +584,7 @@ class DepositionView(ProcessWithoutSamplesView):
         is layer duplication, order changes, appending of layers, and deletion.
 
         The method has two parts: First, the changes are collected in a data
-        structure called ``new_layers``.  Then, I walk through ``new_layers``
+        structure called ``new_layers``.  Then, we walk through ``new_layers``
         and build a new list ``self.forms["layers"]`` from it.
 
         ``new_layers`` is a list of small lists.  Every small list has a string
@@ -404,6 +657,16 @@ class DepositionView(ProcessWithoutSamplesView):
         return structure_changed
 
     def _apply_changes(self, new_layers):
+        """Applies the collected changes in the layer forms by building a new list of
+        layer forms.  This method abstracts something that needs to be made
+        differently in
+        :py:class:`samples.utils.views.DepositionMultipleTypeView`.
+
+        :params new_layers: the list of the new layers, see
+          :py:meth:`AddMyLayersForm.change_structure`.
+
+        :type new_layers: list of (str, dict, ChangeLayerForm) or (str, dict)
+        """
         next_layer_number = 1
         old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
         next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
@@ -437,6 +700,19 @@ class DepositionView(ProcessWithoutSamplesView):
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
 
     def get_layer_form(self, prefix):
+        """Returns the layer form with the given prefix.  This method abstracts
+        something that needs to be made differently in
+        :py:class:`samples.utils.views.DepositionMultipleTypeView`.
+
+        :param prefix: the prefix of the resulting form
+
+        :type prefix: unicode
+
+        :Return:
+          the layer form
+
+        :rtype: :py:class:`~samples.utils.views.SubprocessForm`
+        """
         return self.layer_form_class(self, self.data, prefix=prefix)
 
     def _read_layer_forms(self, source_deposition):
@@ -508,11 +784,11 @@ class DepositionView(ProcessWithoutSamplesView):
         database.  For example, no layer number must occur twice, and the
         deposition number must not exist within the database.
 
-        Note that I test many situations here that cannot be achieved with
+        Note that we test many situations here that cannot be achieved with
         using the browser because all number fields are read-only and thus
         inherently referentially valid.  However, the remote client (or a
-        manipulated HTTP client) may be used in a malicious way, thus I have to
-        test for *all* cases.
+        manipulated HTTP client) may be used in a malicious way, thus we have
+        to test for *all* cases.
 
         :return:
           whether all forms are consistent with each other and the database
@@ -571,10 +847,7 @@ class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
 
 
 class AddMultipleTypeLayersForm(AddMyLayersForm):
-    """Form for adding a new layer.  The user can choose between hot-wire
-    layer, PECVD layer, Sputter layer and no layer, using a radio button.
-
-    Alternatively, the user can give a layer nickname from “My Layers”.
+    """Form for adding a new layer in case of layers of different types.
     """
     layer_to_be_added = forms.ChoiceField(label=_("Layer to be added"), required=False,
                                           widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
@@ -595,6 +868,22 @@ class AddMultipleTypeLayersForm(AddMyLayersForm):
 
 
 class DepositionMultipleTypeView(DepositionView):
+    """View class for depositions the layers of which are of different types (i.e.,
+    different models).  You can see it in action in the module
+    :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
+    the class variable :py:attr:`form_class`, you must set:
+
+    :ivar layer_form_classes: This is a tuple of the form classes for the layers
+    
+    :ivar short_labels: *(optional)* This is a dict mapping a layer form class
+      to a concise name of that layer type.  It is used in the selection widget
+      of the add-layer form.
+
+    :type layer_form_classes: tuple of
+      :py:class:`~samples.utils.views.SubprocessForm`
+    :type short_labels: dict mapping
+      :py:class:`~samples.utils.views.SubprocessForm` to unicode.
+    """
     model = None
     form_class = None
     layer_form_classes = ()
