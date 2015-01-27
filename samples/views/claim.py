@@ -32,6 +32,7 @@ from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.conf import settings
 from jb_common.utils.base import help_link, send_email, get_really_full_name
