@@ -46,9 +46,6 @@ class DepositionForm(utils.DepositionForm):
         model = institute_models.ClusterToolDeposition
         fields = "__all__"
 
-    def __init__(self, user, data=None, **kwargs):
-        super(DepositionForm, self).__init__(user, data, **kwargs)
-
     def clean_number(self):
         number = super(DepositionForm, self).clean_number()
         return form_utils.clean_deposition_number_field(number, "C")

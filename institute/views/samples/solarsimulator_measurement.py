@@ -46,9 +46,6 @@ class SolarsimulatorCellForm(forms.ModelForm):
         model = SolarsimulatorCellMeasurement
         exclude = ("measurement",)
 
-    def __init__(self, *args, **kwargs):
-        super(SolarsimulatorCellForm, self).__init__(*args, **kwargs)
-
 
 class EditView(utils.SubprocessesMixin, utils.ProcessView):
     sub_model = SolarsimulatorCellMeasurement
