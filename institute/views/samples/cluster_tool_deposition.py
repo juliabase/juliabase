@@ -57,7 +57,7 @@ class DepositionForm(utils.DepositionForm):
         return cleaned_data
 
 
-class ClusterToolLayerForm(forms.ModelForm):
+class ClusterToolLayerForm(utils.SubprocessForm):
     """Abstract model form for both layer types in the cluster tool."""
 
     layer_type = forms.CharField(widget=forms.HiddenInput)
@@ -68,7 +68,7 @@ class ClusterToolLayerForm(forms.ModelForm):
         exclude = ("deposition",)
 
     def __init__(self, view, data=None, **kwargs):
-        super(ClusterToolLayerForm, self).__init__(data, **kwargs)
+        super(ClusterToolLayerForm, self).__init__(view, data, **kwargs)
         self.fields["layer_type"].initial = self.type = self.Meta.model.__name__.lower()
 
     def clean_time(self):

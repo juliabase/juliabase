@@ -49,7 +49,7 @@ class DepositionForm(utils.DepositionForm):
         return cleaned_data
 
 
-class LayerForm(forms.ModelForm):
+class LayerForm(utils.SubprocessForm):
 
     class Meta:
         model = institute_models.FiveChamberLayer
@@ -59,9 +59,6 @@ class LayerForm(forms.ModelForm):
                    "sih4": forms.TextInput(attrs={"size": 10}),
                    "temperature_1": forms.TextInput(attrs={"size": 5}),
                    "temperature_2": forms.TextInput(attrs={"size": 5})}
-
-    def __init__(self, view, *args, **kwargs):
-        super(LayerForm, self).__init__(*args, **kwargs)
 
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):

@@ -40,7 +40,7 @@ class SolarsimulatorMeasurementForm(utils.ProcessForm):
         self.fields["temperature"].widget.attrs.update({"size": "5"})
 
 
-class SolarsimulatorCellForm(forms.ModelForm):
+class SolarsimulatorCellForm(utils.SubprocessForm):
     class Meta:
         model = SolarsimulatorCellMeasurement
         exclude = ("measurement",)

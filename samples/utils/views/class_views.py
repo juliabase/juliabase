@@ -38,7 +38,7 @@ from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
 
 
-__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessesMixin",
+__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
            "ChangeLayerForm", "AddMyLayersForm", "AddLayersForm", "DepositionView", "AddMultipleTypeLayersForm",
            "DepositionMultipleTypeView")
 
@@ -186,6 +186,16 @@ class NumberForm(forms.Form):
     number = forms.IntegerField(label=_("number of subprocesses"), min_value=1, max_value=100, required=False)
 
 
+class SubprocessForm(forms.ModelForm):
+    """Model form class for subprocesses and deposition layers.  Its only purpose
+    is to eat up the ``view`` parameter to the constructor so that you need not
+    redefine the constructor every time.
+    """
+    def __init__(self, view, *args, **kwargs):
+        super(SubprocessForm, self).__init__(*args, **kwargs)
+        self.view = view
+
+
 class SubprocessesMixin(ProcessWithoutSamplesView):
     # Must be derived from first
 
@@ -206,16 +216,16 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             else:
                 new_number_of_forms = len(indices)
             instances = list(subprocesses.all()) + (len(indices) - subprocesses.count()) * [None]
-            self.forms["subprocesses"] = [self.subform_class(self.data, prefix=str(index), instance=instance)
+            self.forms["subprocesses"] = [self.subform_class(self, self.data, prefix=str(index), instance=instance)
                                           for index, instance in zip(indices, instances)]
             number_of_new_forms = new_number_of_forms - len(indices)
             if number_of_new_forms > 0:
-                self.forms["subprocesses"].extend([self.subform_class(prefix=str(index))
+                self.forms["subprocesses"].extend([self.subform_class(self, prefix=str(index))
                                                    for index in range(max(indices) + 1,
                                                                       max(indices) + 1 + number_of_new_forms)])
         else:
             self.forms["number"] = NumberForm(initial={"number": subprocesses.count()})
-            self.forms["subprocesses"] = [self.subform_class(prefix=str(index), instance=subprocess)
+            self.forms["subprocesses"] = [self.subform_class(self, prefix=str(index), instance=subprocess)
                                           for index, subprocess in enumerate(subprocesses.all())]
 
     def is_referentially_valid(self):
