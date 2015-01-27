@@ -32,8 +32,7 @@ import institute.models as institute_models
 
 
 class DepositionForm(utils.DepositionForm):
-    """Model form for the basic deposition data.
-    """
+
     class Meta:
         model = institute_models.FiveChamberDeposition
         fields = "__all__"
@@ -51,12 +50,11 @@ class DepositionForm(utils.DepositionForm):
 
 
 class LayerForm(forms.ModelForm):
-    """Model form for a single layer.
-    """
+
     class Meta:
         model = institute_models.FiveChamberLayer
         exclude = ("deposition",)
-        widgets = {"number": forms.TextInput(attrs={"readonly": "readonly", "size": "5", "style": "font-size: large"}),
+        widgets = {"number": forms.TextInput(attrs={"readonly": "readonly", "size": 5, "style": "font-size: large"}),
                    "h2": forms.TextInput(attrs={"size": 10}),
                    "sih4": forms.TextInput(attrs={"size": 10}),
                    "temperature_1": forms.TextInput(attrs={"size": 5}),

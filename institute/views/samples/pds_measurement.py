@@ -93,8 +93,7 @@ def get_data_from_file(number):
 
 
 class PDSMeasurementForm(utils.ProcessForm):
-    """Model form for the core PDS measurement data.
-    """
+
     class Meta:
         model = institute_models.PDSMeasurement
         fields = "__all__"
@@ -103,11 +102,8 @@ class PDSMeasurementForm(utils.ProcessForm):
                 "unique": _("This PDS number exists already.")
                 }
             }
-
-    def __init__(self, user, *args, **kwargs):
-        super(PDSMeasurementForm, self).__init__(user, *args, **kwargs)
-        self.fields["raw_datafile"].widget.attrs["size"] = "50"
-        self.fields["number"].widget.attrs["size"] = "10"
+        widgets = {"number": forms.TextInput(attrs={"size": 10}),
+                   "raw_datafile": forms.TextInput(attrs={"size": 50})}
 
     def clean_raw_datafile(self):
         """Check whether the raw datafile name points to a readable file.

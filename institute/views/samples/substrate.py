@@ -33,8 +33,7 @@ import samples.utils.views as utils
 
 
 class SubstrateForm(utils.ProcessForm):
-    """Model form class for a substrate.
-    """
+
     class Meta:
         model = institute_models.Substrate
         fields = "__all__"
@@ -50,8 +49,8 @@ class EditView(utils.ProcessMultipleSamplesView):
     form_class = SubstrateForm
 
     def is_referentially_valid(self):
-        """Test whether all forms are consistent with each other and with the
-        database.  For example, no sample must get more than one substrate.
+        """Test whether a sample has more than one substrate or whether the substrate
+        is not the very first process.
 
         :return:
           whether all forms are consistent with each other and the database

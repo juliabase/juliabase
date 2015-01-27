@@ -40,8 +40,7 @@ import institute.models as institute_models
 
 
 class DepositionForm(utils.DepositionForm):
-    """Model form for the basic deposition data.
-    """
+
     class Meta:
         model = institute_models.ClusterToolDeposition
         fields = "__all__"
@@ -94,7 +93,6 @@ class ClusterToolLayerForm(forms.ModelForm):
 
 
 class HotWireLayerForm(ClusterToolLayerForm):
-    """Model form for a hot-wire layer in the cluster tool."""
 
     class Meta(ClusterToolLayerForm.Meta):
         model = institute_models.ClusterToolHotWireLayer
@@ -116,7 +114,6 @@ class HotWireLayerForm(ClusterToolLayerForm):
 
 
 class PECVDLayerForm(ClusterToolLayerForm):
-    """Model form for a PECVD layer in a cluster tool deposition."""
 
     class Meta(ClusterToolLayerForm.Meta):
         model = institute_models.ClusterToolPECVDLayer

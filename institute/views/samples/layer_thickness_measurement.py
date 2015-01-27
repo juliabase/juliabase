@@ -27,8 +27,6 @@ from institute.models import LayerThicknessMeasurement
 
 
 class LayerThicknessForm(utils.ProcessForm):
-    """Form for the layer thickness measurement.
-    """
     class Meta:
         model = LayerThicknessMeasurement
         fields = "__all__"

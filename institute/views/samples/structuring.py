@@ -29,7 +29,6 @@ import institute.models as institute_models
 
 
 class StructuringForm(utils.ProcessForm):
-
     class Meta:
         model = institute_models.Structuring
         fields = "__all__"

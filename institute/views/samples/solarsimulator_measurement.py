@@ -41,7 +41,6 @@ class SolarsimulatorMeasurementForm(utils.ProcessForm):
 
 
 class SolarsimulatorCellForm(forms.ModelForm):
-
     class Meta:
         model = SolarsimulatorCellMeasurement
         exclude = ("measurement",)
