@@ -149,6 +149,7 @@ def add_oldstyle(request, username):
 
     :rtype: HttpResponse
     """
+    _ = ugettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _("You are not allowed to add a claim in another user's name."))

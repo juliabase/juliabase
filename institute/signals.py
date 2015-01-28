@@ -34,7 +34,7 @@ from django.db.models import signals
 from django.dispatch import receiver
 from django.contrib.contenttypes.models import ContentType
 import django.contrib.auth.models
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ugettext
 from jb_common.signals import maintain
 import jb_common.utils.base as utils
 from samples.models import Result, PhysicalProcess, Sample, SampleAlias
@@ -54,6 +54,7 @@ def inform_process_supervisors(sender, instance, **kwargs):
     # is abstract, this line must stay, and this function must be connected
     # with senders of ``Process`` only.  The check ``raw==False`` must stay,
     # though.
+    _ = ugettext
     if not kwargs.get("raw") and isinstance(instance, PhysicalProcess) and instance.finished:
         user = instance.operator
         process_class = instance.__class__
