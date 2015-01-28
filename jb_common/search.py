@@ -34,6 +34,7 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Q
 import jb_common.utils.base as utils
+from jb_common import model_fields
 
 
 def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
@@ -70,6 +71,10 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
                                  models.DecimalField, models.PositiveIntegerField, models.PositiveSmallIntegerField,
                                  models.SmallIntegerField]:
                 search_fields.append(IntervalSearchField(cls, field))
+            elif type(field) in [model_fields.DecimalQuantityField, model_fields.FloatQuantityField,
+                                 model_fields.IntegerQuantityField, model_fields.PositiveIntegerQuantityField,
+                                 model_fields.PositiveSmallIntegerQuantityField, model_fields.SmallIntegerQuantityField]:
+                search_fields.append(IntervalQuantitySearchField(cls, field))
             elif type(field) == models.DateTimeField:
                 search_fields.append(DateTimeSearchField(cls, field))
             elif type(field) == models.BooleanField:
@@ -292,6 +297,20 @@ class IntervalSearchField(RangeSearchField):
             label=six.text_type(self.field.verbose_name), required=False, help_text=self.field.help_text)
         self.form.fields[self.field.name + "_max"] = forms.DecimalField(
             label=six.text_type(self.field.verbose_name), required=False, help_text=self.field.help_text)
+
+
+class IntervalQuantitySearchField(RangeSearchField):
+    """Class for search fields containing numerical values (integer, decimal,
+    float) with units.  Its peculiarity is that it exposes a minimal and a maximal value.
+    The user can fill out one of them, or both, or none.
+    """
+
+    def parse_data(self, data, prefix):
+        self.form = forms.Form(data, prefix=prefix)
+        self.form.fields[self.field.name + "_min"] = self.field.formfield()
+        self.form.fields[self.field.name + "_min"].required = False
+        self.form.fields[self.field.name + "_max"] = self.field.formfield()
+        self.form.fields[self.field.name + "_max"].required = False
 
 
 class ChoiceSearchField(SearchField):

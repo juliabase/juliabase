@@ -586,10 +586,12 @@ def display_search_tree(tree):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
             field_max = [field for field in search_field.form if field.name.endswith("_max")][0]
             help_text = """ <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else ""
+            unit = """ <span class="help">{0}</span>""".format(search_field.field.unit) if hasattr(search_field.field, "unit") \
+                and search_field.field.unit else ""
             result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
-                """<td class="input">{field_min} – {field_max}{help_text}</td></tr>""".format(
+                """<td class="input">{field_min} – {field_max}{unit}{help_text}</td></tr>""".format(
                 label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
-                help_text=help_text)
+                unit=unit, help_text=help_text)
         elif isinstance(search_field, jb_common.search.TextNullSearchField):
             field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
