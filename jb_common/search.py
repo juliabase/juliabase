@@ -250,7 +250,7 @@ class TextNullSearchField(SearchField):
 
     class TextNullForm(forms.Form):
         def clean(self):
-            cleaned_data = super(TextNullForm, self).clean()
+            cleaned_data = super(TextNullSearchField.TextNullForm, self).clean()
             text = [value for key, value in self.cleaned_data.items() if key.endswith("_main")][0]
             explicitly_empty = [value for key, value in self.cleaned_data.items() if key.endswith("_null")][0]
             if explicitly_empty and text:
