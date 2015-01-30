@@ -872,3 +872,5 @@ class DetailsSearchTreeNode(SearchTreeNode):
         result = result.filter(pk__in=self.details_node.get_query_set())
         return result.only("pk")
 
+
+_ = ugettext
