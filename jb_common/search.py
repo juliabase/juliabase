@@ -509,7 +509,10 @@ def get_search_results(search_tree, max_results, base_query=None):
     too_many_results = results.count() > max_results
     if too_many_results:
         results = results[:max_results]
-    results = search_tree.model_class.objects.filter(pk__in=results)
+    # FixMe: This intermediate ``pks`` variable is necessary until
+    # https://code.djangoproject.com/ticket/24254 isn't fixed.
+    pks = list(results.values_list("pk", flat=True))
+    results = search_tree.model_class.objects.filter(pk__in=pks)
     if isinstance(search_tree, AbstractSearchTreeNode):
         results = [result.actual_instance for result in results]
     return results, too_many_results
