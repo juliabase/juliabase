@@ -41,7 +41,7 @@ sample series, JuliaBase converts it to a clickable link automatically.  Within
 names, prepending a backslash to »_« is not necessary.
 
 If you like to test JuliaBase's comment syntax, visit the `Markdown sandbox
-<http://demo.juliabase.org/markdown>`_ on the demo site.
+<https://demo.juliabase.org/markdown>`_ on the demo site.
 
 
 Paragraphs
