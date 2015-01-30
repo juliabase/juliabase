@@ -234,8 +234,7 @@ class TextSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.CharField(label=six.text_type(self.field.verbose_name), required=False,
-                                                            help_text=self.field.help_text)
+        self.form.fields[self.field.name] = self.field.formfield(required=False)
 
     def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
@@ -259,8 +258,7 @@ class TextNullSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = self.TextNullForm(data, prefix=prefix)
-        self.form.fields[self.field.name + "_main"] = forms.CharField(label=six.text_type(self.field.verbose_name),
-                                                                      required=False, help_text=self.field.help_text)
+        self.form.fields[self.field.name + "_main"] = self.field.formfield(required=False)
         self.form.fields[self.field.name + "_null"] = forms.BooleanField(label=_("explicitly empty"), required=False)
 
     def get_values(self, query_paths={}):
@@ -281,8 +279,7 @@ class IntegerSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.IntegerField(label=six.text_type(self.field.verbose_name), required=False,
-                                                               help_text=self.field.help_text)
+        self.form.fields[self.field.name] = self.field.formfield(required=False)
 
 
 class IntervalSearchField(RangeSearchField):
@@ -293,11 +290,8 @@ class IntervalSearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = forms.DecimalField(
-            label=six.text_type(self.field.verbose_name), required=False, help_text=self.field.help_text)
-        self.form.fields[self.field.name + "_max"] = forms.DecimalField(
-            label=six.text_type(self.field.verbose_name), required=False, help_text=self.field.help_text)
-
+        self.form.fields[self.field.name + "_min"] = self.field.formfield(required=False)
+        self.form.fields[self.field.name + "_max"] = self.field.formfield(required=False)
 
 class IntervalQuantitySearchField(RangeSearchField):
     """Class for search fields containing numerical values (integer, decimal,
@@ -307,10 +301,8 @@ class IntervalQuantitySearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = self.field.formfield()
-        self.form.fields[self.field.name + "_min"].required = False
-        self.form.fields[self.field.name + "_max"] = self.field.formfield()
-        self.form.fields[self.field.name + "_max"].required = False
+        self.form.fields[self.field.name + "_min"] = self.field.formfield(required=False)
+        self.form.fields[self.field.name + "_max"] = self.field.formfield(required=False)
 
 
 class ChoiceSearchField(SearchField):
@@ -321,10 +313,8 @@ class ChoiceSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        field = forms.ChoiceField(label=six.text_type(self.field.verbose_name), required=False,
-                                  help_text=self.field.help_text)
-        field.choices = [("", "---------")] + list(self.field.choices)
-        self.form.fields[self.field.name] = field
+        self.form.fields[self.field.name] = self.field.formfield(required=False,
+                                                                 choices=[("", "---------")] + list(self.field.choices))
 
     def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
@@ -396,12 +386,8 @@ class DateTimeSearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = DateTimeField(label=six.text_type(self.field.verbose_name),
-                                                                   required=False, help_text=self.field.help_text,
-                                                                   start=True)
-        self.form.fields[self.field.name + "_max"] = DateTimeField(label=six.text_type(self.field.verbose_name),
-                                                                   required=False, help_text=self.field.help_text,
-                                                                   start=False)
+        self.form.fields[self.field.name + "_min"] = self.field.formfield(form_class=DateTimeField, required=False, start=True)
+        self.form.fields[self.field.name + "_max"] = self.field.formfield(form_class=DateTimeField, required=False, start=False)
 
 
 class BooleanSearchField(SearchField):
@@ -417,10 +403,9 @@ class BooleanSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = forms.ChoiceField(
-            label=six.text_type(self.field.verbose_name), required=False,
-            choices=(("", _("doesn't matter")), ("yes", _("yes")), ("no", _("no"))),
-            widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer), help_text=self.field.help_text)
+        self.form.fields[self.field.name] = self.field.formfield(form_class=forms.ChoiceField, required=False,
+                                                choices=(("", _("doesn't matter")), ("yes", _("yes")), ("no", _("no"))),
+                                                widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer))
 
     def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
@@ -884,5 +869,3 @@ class DetailsSearchTreeNode(SearchTreeNode):
         result = result.filter(pk__in=self.details_node.get_query_set())
         return result.only("pk")
 
-
-_ = ugettext
