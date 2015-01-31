@@ -53,7 +53,7 @@ class HttpResponseUnauthorized(django.http.HttpResponse):
     status_code = 401
 
 
-class HttpResponseSeeOther(django.http.HttpResponse):
+class HttpResponseSeeOther(django.http.response.HttpResponseRedirectBase):
     """Response class for HTTP 303 redirects.  Unfortunately, Django does the same
     wrong thing as most other web frameworks: it knows only one type of
     redirect, with the HTTP status code 302.  However, this is very often not
@@ -67,7 +67,7 @@ class HttpResponseSeeOther(django.http.HttpResponse):
     status_code = 303
 
     def __init__(self, redirect_to):
-        super(HttpResponseSeeOther, self).__init__()
+        super(HttpResponseSeeOther, self).__init__(redirect_to)
         self["Location"] = iri_to_uri(redirect_to)
 
 
