@@ -34,9 +34,9 @@ import jb_common.urls, samples.urls, institute.urls
 
 
 urlpatterns = [
+    url(r"", include(institute.urls)),
     url(r"", include(jb_common.urls)),
     url(r"", include(samples.urls)),
-    url(r"", include(institute.urls)),
 ]
 
 urlpatterns += [
