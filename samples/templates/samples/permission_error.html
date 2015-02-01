@@ -24,8 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <p>
     {% blocktrans with exception.description as description %}
       Sorry, you can't access this resource.  {{ description }}
-      Please contact the administrator if you think you ought to have the permission.
     {% endblocktrans %}
+    {% if not exception.user.is_superuser %}
+      {% trans "Please contact the administrator if you think you ought to have the permission." %}
+    {% endif %}
     {% if exception.new_topic_would_help %}
       {% blocktrans %}
         Also note that the head of your institute group may add you to the
