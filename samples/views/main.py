@@ -37,6 +37,7 @@ from jb_common.utils.base import help_link, is_json_requested, respond_in_json, 
     camel_case_to_underscores
 from jb_common.models import Topic
 import samples.utils.views as utils
+from samples.models import ExternalOperator
 
 
 class MySeries(object):
@@ -129,7 +130,8 @@ def main_menu(request):
                    "can_edit_topics": any(permissions.has_permission_to_edit_topic(request.user, topic)
                                           for topic in Topic.objects.all()),
                    "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
-                   "has_external_contacts": request.user.external_contacts.exists() or request.user.is_superuser,
+                   "has_external_contacts": request.user.external_contacts.exists() or
+                                            (ExternalOperator.objects.exists() and request.user.is_superuser),
                    "can_rename_samples": request.user.has_perm("samples.rename_samples") or request.user.is_superuser,
                    "physical_processes": allowed_physical_processes,
                    "lab_notebooks": lab_notebooks})
