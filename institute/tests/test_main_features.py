@@ -85,7 +85,7 @@ class MainFeaturesTest(TestCase):
 
     def test_add_topic(self):
         response = self.client.get("/topics/add/")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 303)
 
     def test_change_topic_members(self):
         response = self.client.get("/topics/")
