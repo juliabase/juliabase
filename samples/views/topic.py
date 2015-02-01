@@ -84,11 +84,12 @@ class NewTopicForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(NewTopicForm, self).clean()
-        topic_name = cleaned_data["new_topic_name"]
-        parent_topic = self.cleaned_data.get("parent_topic", None)
-        if Topic.objects.filter(name=topic_name, department=self.user.jb_user_details.department,
-                                parent_topic=parent_topic).exists():
-            self.add_error("new_topic_name", _("This topic name is already used."))
+        if "new_topic_name" in cleaned_data:
+            topic_name = cleaned_data["new_topic_name"]
+            parent_topic = self.cleaned_data.get("parent_topic", None)
+            if Topic.objects.filter(name=topic_name, department=self.user.jb_user_details.department,
+                                    parent_topic=parent_topic).exists():
+                self.add_error("new_topic_name", _("This topic name is already used."))
         if parent_topic and parent_topic.manager != cleaned_data.get("topic_manager"):
             self.add_error("topic_manager", _("The topic manager must be the topic manager from the upper topic."))
         return cleaned_data
