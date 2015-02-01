@@ -109,6 +109,11 @@ def add(request):
     :rtype: HttpResponse
     """
     permissions.assert_can_edit_users_topics(request.user)
+    if not request.user.jb_user_details.department:
+        description = _("You cannot add topics here because you are not in any department.")
+        if request.user.is_superuser:
+            description += "  " + _("Since you are an administrator, you may use the admin pages to add topics.")
+        raise permissions.PermissionError(request.user, description)
     if request.method == "POST":
         new_topic_form = NewTopicForm(request.user, request.POST)
         if new_topic_form.is_valid():
