@@ -93,25 +93,21 @@ function showCellData{{ process.id }}(process_id, position) {
   </tbody>
 </table>
 <div id="solarsimulator-{{ process.id }}">
-{% for cell in cells %}
-  <table style="display: {% if cell.position == default_cell.0 %}table{% else %}none{% endif %}"
-         id="cell_table_{{ process.id }}_{{ cell.position }}">
-    <tbody>
-    <tr>{% value_field cell.position %}</tr>
-    <tr>{% value_field cell.area "" 3 %}</tr>
-    <tr>{% value_field cell.eta "" 3 %}</tr>
-    <tr>{% value_field cell.isc "" 3 %}</tr>
-    <tr>
-      <td class="label" style="font-weight: normal">
-          {% verbose_name SolarsimulatorCellMeasurement.data_file %}:
-      </td>
-      <td class="value" style="font-weight: normal">
-        {% if browser_system == "windows" %}
-          <a href="file:///P:/inm_nas/lab_data/solarsimulator_raw_data/{{ cell.data_file|urlquote }}">
-        {% else %}
-          <a href="file:///mnt/P/inm_nas/lab_data/solarsimulator_raw_data/{{ cell.data_file|urlquote }}">
-        {% endif %}
-            {{ cell.data_file }}</a></td>
+  {% for cell in cells %}
+    <table style="display: {% if cell.position == default_cell.0 %}table{% else %}none{% endif %}"
+           id="cell_table_{{ process.id }}_{{ cell.position }}">
+      <tbody>
+        <tr>{% value_field cell.position %}</tr>
+        <tr>{% value_field cell.area "" 3 %}</tr>
+        <tr>{% value_field cell.eta "" 3 %}</tr>
+        <tr>{% value_field cell.isc "" 3 %}</tr>
+        <tr>
+          <td class="label" style="font-weight: normal">
+            {% verbose_name SolarsimulatorCellMeasurement.data_file %}:
+          </td>
+          <td class="value" style="font-weight: normal">
+            {{ cell.data_file }}
+          </td>
         </tr>
       </tbody>
     </table>
