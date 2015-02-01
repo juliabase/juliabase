@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-01 19:41+0100\n"
+"POT-Creation-Date: 2015-02-01 20:04+0100\n"
 "PO-Revision-Date: 2015-02-01 19:43+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -72,7 +72,7 @@ msgstr "Kontaktpersonen im Institut"
 
 #. Translators: Topic which is not open to senior members
 #: samples/models/common.py:128 samples/views/topic.py:50
-#: samples/views/topic.py:175
+#: samples/views/topic.py:176
 msgid "confidential"
 msgstr "vertraulich"
 
@@ -2141,7 +2141,7 @@ msgstr "Laborbücher"
 msgid "Edit topics"
 msgstr "Themen ändern"
 
-#: samples/templates/samples/main_menu.html:118 samples/views/topic.py:143
+#: samples/templates/samples/main_menu.html:118 samples/views/topic.py:144
 msgid "Add new topic"
 msgstr "Neues Thema hinzufügen"
 
@@ -2257,7 +2257,9 @@ msgstr ""
 msgid ""
 "Please contact the administrator if you think you ought to have the "
 "permission."
-msgstr "Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie die Berechtigung haben sollten."
+msgstr ""
+"Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie die "
+"Berechtigung haben sollten."
 
 #: samples/templates/samples/permission_error.html:32
 msgid ""
@@ -3995,7 +3997,7 @@ msgstr "Name des neuen Themas"
 msgid "Upper topic"
 msgstr "Überthema"
 
-#: samples/views/topic.py:52 samples/views/topic.py:176
+#: samples/views/topic.py:52 samples/views/topic.py:177
 msgid "topic manager"
 msgstr "Themenmanager"
 
@@ -4018,33 +4020,26 @@ msgstr "Dieser Themenname ist bereits vergeben."
 msgid "The topic manager must be the topic manager from the upper topic."
 msgstr "Der Themenmanager muß der Manager des Überthemas sein."
 
-#: samples/views/topic.py:113
+#: samples/views/topic.py:117
 msgid "You cannot add topics here because you are not in any department."
 msgstr ""
 "Sie können hier keine neuen Themen anlegen, weil Sie keiner Abteilung "
 "angehören."
 
-#: samples/views/topic.py:115
-msgid ""
-"Since you are an administrator, you may use the admin pages to add topics."
-msgstr ""
-"Da Sie Administrator sind, können Sie die Admin-Seiten nutzen, um neue "
-"Themen anzulegen."
-
-#: samples/views/topic.py:139
+#: samples/views/topic.py:140
 #, python-brace-format
 msgid "Topic {name} was successfully created."
 msgstr "Das Thema {name} wurde erfolgreich angelegt."
 
-#: samples/views/topic.py:166
+#: samples/views/topic.py:167
 msgid "List of all topics"
 msgstr "Liste aller Themen"
 
-#: samples/views/topic.py:174
+#: samples/views/topic.py:175
 msgid "Members"
 msgstr "Mitglieder"
 
-#: samples/views/topic.py:193
+#: samples/views/topic.py:194
 msgid ""
 "In confidential topics, at least one member must have permission to edit the "
 "topic."
@@ -4052,14 +4047,14 @@ msgstr ""
 "Wenigstens ein Mitglied in eines vertraulichen Themas muss die Berechtigung "
 "haben, das Thema zu ändern."
 
-#: samples/views/topic.py:247
+#: samples/views/topic.py:248
 #, python-brace-format
 msgid "Members of topic “{name}” were successfully updated."
 msgstr ""
 "Die Mitglieder des Themas „{name}“ wurden erfolgreich auf den neuesten Stand "
 "gebracht."
 
-#: samples/views/topic.py:252
+#: samples/views/topic.py:253
 #, python-brace-format
 msgid "Change topic memberships of “{0}”"
 msgstr "Mitglieder des Themas “{0}” ändern"
@@ -4088,6 +4083,12 @@ msgstr ""
 #, python-brace-format
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
+
+#~ msgid ""
+#~ "Since you are an administrator, you may use the admin pages to add topics."
+#~ msgstr ""
+#~ "Da Sie Administrator sind, können Sie die Admin-Seiten nutzen, um neue "
+#~ "Themen anzulegen."
 
 #~ msgid "{measurement} was successfully added to the database."
 #~ msgstr "{measurement} wurde erfolgreich zur Datenbank hinzugefügt."
