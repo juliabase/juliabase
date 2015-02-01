@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-01 19:28+0100\n"
-"PO-Revision-Date: 2015-02-01 19:29+0100\n"
+"POT-Creation-Date: 2015-02-01 19:41+0100\n"
+"PO-Revision-Date: 2015-02-01 19:43+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -2247,16 +2247,19 @@ msgstr "roter Pfeil"
 msgid ""
 "\n"
 "      Sorry, you can't access this resource.  %(description)s\n"
-"      Please contact the administrator if you think you ought to have the "
-"permission.\n"
 "    "
 msgstr ""
 "\n"
-"Leider dürfen Sie nicht auf diese Ressource zugreifen.  %(description)s  "
-"Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie die "
-"Berechtigung haben sollten."
+"Leider dürfen Sie nicht auf diese Ressource zugreifen.  %(description)s\n"
+"    "
 
-#: samples/templates/samples/permission_error.html:30
+#: samples/templates/samples/permission_error.html:29
+msgid ""
+"Please contact the administrator if you think you ought to have the "
+"permission."
+msgstr "Bitte kontaktieren Sie den Administrator, wenn Sie glauben, dass Sie die Berechtigung haben sollten."
+
+#: samples/templates/samples/permission_error.html:32
 msgid ""
 "\n"
 "        Also note that the head of your institute group may add you to the\n"
@@ -2268,7 +2271,7 @@ msgstr ""
 "Thema hinzufügen könnte, das Sie benötigen, um auf diese Ressource "
 "zuzugreifen."
 
-#: samples/templates/samples/permission_error.html:37
+#: samples/templates/samples/permission_error.html:39
 msgid "This occurence isn't reported to anyone, and it is not logged."
 msgstr ""
 "Dieses Ereignis wird niemandem gemeldet und in keine Logdatei geschrieben."
@@ -4017,12 +4020,16 @@ msgstr "Der Themenmanager muß der Manager des Überthemas sein."
 
 #: samples/views/topic.py:113
 msgid "You cannot add topics here because you are not in any department."
-msgstr "Sie können hier keine neuen Themen anlegen, weil Sie keiner Abteilung angehören."
+msgstr ""
+"Sie können hier keine neuen Themen anlegen, weil Sie keiner Abteilung "
+"angehören."
 
 #: samples/views/topic.py:115
 msgid ""
 "Since you are an administrator, you may use the admin pages to add topics."
-msgstr "Da Sie Administrator sind, können Sie die Admin-Seiten nutzen, um neue Themen anzulegen."
+msgstr ""
+"Da Sie Administrator sind, können Sie die Admin-Seiten nutzen, um neue "
+"Themen anzulegen."
 
 #: samples/views/topic.py:139
 #, python-brace-format
@@ -4315,10 +4322,6 @@ msgstr "Themen und Berechtigungen von {user_name}"
 #~ msgstr ""
 #~ "Der Leiter Ihrer Institutsgruppe ist berechtigt, Sie zu Themen "
 #~ "hinzuzufügen."
-
-#~ msgid "Only the administrators can change the special permissions."
-#~ msgstr ""
-#~ "Nur die Administratoren dürfen die besonderen Berechtigungen ändern."
 
 #~ msgid "Can add"
 #~ msgstr "Darf hinzufügen"
