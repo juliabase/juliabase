@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-26 15:42+0100\n"
+"POT-Creation-Date: 2015-02-01 19:28+0100\n"
 "PO-Revision-Date: 2015-01-25 16:53+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -160,44 +160,44 @@ msgstr "Fehlerseite"
 msgid "error pages"
 msgstr "Fehlerseiten"
 
-#: jb_common/search.py:252
+#: jb_common/search.py:256
 msgid "You can't search for empty values while giving a non-empty value."
 msgstr ""
 "Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen "
 "nicht-leeren Wert angeben."
 
-#: jb_common/search.py:259
+#: jb_common/search.py:262
 msgid "explicitly empty"
 msgstr "explizit leer"
 
-#: jb_common/search.py:341
+#: jb_common/search.py:350
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 "Der Zeitstempel passte nicht in das Muster JJJJ-MM-TT HH:MM:SS oder einem "
 "vorderen Teil davon."
 
-#: jb_common/search.py:369
+#: jb_common/search.py:378
 msgid "Invalid date or time."
 msgstr "Ungültiges Datum oder ungültige Zeit."
 
-#: jb_common/search.py:403
+#: jb_common/search.py:407
 msgid "doesn't matter"
 msgstr "egal"
 
-#: jb_common/search.py:403
+#: jb_common/search.py:407
 msgid "yes"
 msgstr "ja"
 
-#: jb_common/search.py:403
+#: jb_common/search.py:407
 msgid "no"
 msgstr "nein"
 
-#: jb_common/search.py:425
+#: jb_common/search.py:429
 msgid "containing"
 msgstr "enthaltend"
 
-#: jb_common/search.py:759
+#: jb_common/search.py:765
 msgid "restrict to"
 msgstr "beschränken auf"
 

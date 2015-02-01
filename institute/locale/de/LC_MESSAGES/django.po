@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-26 15:42+0100\n"
+"POT-Creation-Date: 2015-02-01 19:28+0100\n"
 "PO-Revision-Date: 2015-01-26 15:38+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -544,12 +544,12 @@ msgstr ""
 "Sie dürfen kein Substrat hinzufügen, weil Sie nicht alle beteiligten Proben "
 "ändern dürfen."
 
-#: institute/signals.py:71
+#: institute/signals.py:72
 #, python-brace-format
 msgid "{user_name} uses {apparatus}"
 msgstr "{user_name} benutzt {apparatus}"
 
-#: institute/signals.py:72
+#: institute/signals.py:73
 #, python-brace-format
 msgid ""
 "Dear supervisors of {apparatus_plural},\n"
@@ -859,7 +859,7 @@ msgid "Material"
 msgstr "Material"
 
 #: institute/templatetags/institute_extras.py:80
-#: institute/views/samples/cluster_tool_deposition.py:176
+#: institute/views/samples/cluster_tool_deposition.py:132
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
@@ -927,24 +927,24 @@ msgstr[0] "Der Name {existing_names} existiert schon."
 msgstr[1] "Die Namen {existing_names} existieren schon."
 
 #: institute/views/samples/claim.py:107 institute/views/samples/sample.py:122
-#: institute/views/samples/substrate.py:45
+#: institute/views/samples/substrate.py:44
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: institute/views/samples/claim.py:154
+#: institute/views/samples/claim.py:155
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: institute/views/samples/claim.py:164
+#: institute/views/samples/claim.py:165
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: institute/views/samples/claim.py:165
+#: institute/views/samples/claim.py:166
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -973,29 +973,29 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: institute/views/samples/claim.py:195
+#: institute/views/samples/claim.py:196
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: institute/views/samples/claim.py:201
+#: institute/views/samples/claim.py:202
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: institute/views/samples/cluster_tool_deposition.py:60
-#: institute/views/samples/five_chamber_deposition.py:52
+#: institute/views/samples/cluster_tool_deposition.py:56
+#: institute/views/samples/five_chamber_deposition.py:48
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
-#: institute/views/samples/cluster_tool_deposition.py:176
+#: institute/views/samples/cluster_tool_deposition.py:132
 msgid "PECVD"
 msgstr "PECVD"
 
-#: institute/views/samples/pds_measurement.py:103
+#: institute/views/samples/pds_measurement.py:102
 msgid "This PDS number exists already."
 msgstr "Diese PDS-Nummer ist schon vergeben."
 
-#: institute/views/samples/pds_measurement.py:123
+#: institute/views/samples/pds_measurement.py:119
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
@@ -1114,7 +1114,7 @@ msgstr "Informellen Stapel von „{sample}“ kopieren"
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: institute/views/samples/substrate.py:70
+#: institute/views/samples/substrate.py:68
 #, python-brace-format
 msgid ""
 "Sample {0} has already processes before the timestamp of this substrate, "
@@ -1123,7 +1123,7 @@ msgstr ""
 "Probe {0} hat bereits Prozesse vor dem Zeitstempel dieses Substrates, "
 "nämlich von {1}."
 
-#: institute/views/samples/substrate.py:76
+#: institute/views/samples/substrate.py:74
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."

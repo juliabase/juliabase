@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-26 15:42+0100\n"
-"PO-Revision-Date: 2015-01-26 16:39+0100\n"
+"POT-Creation-Date: 2015-02-01 19:28+0100\n"
+"PO-Revision-Date: 2015-02-01 19:29+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -72,7 +72,7 @@ msgstr "Kontaktpersonen im Institut"
 
 #. Translators: Topic which is not open to senior members
 #: samples/models/common.py:128 samples/views/topic.py:50
-#: samples/views/topic.py:170
+#: samples/views/topic.py:175
 msgid "confidential"
 msgstr "vertraulich"
 
@@ -356,7 +356,7 @@ msgstr "Beendigungen der Existenz"
 #: samples/models/common.py:1113
 #: samples/templates/samples/topics_and_permissions.html:101
 #: samples/templates/samples/topics_and_permissions.html:114
-#: samples/utils/views/class_views.py:568
+#: samples/utils/views/class_views.py:858
 msgid "none"
 msgstr "keine"
 
@@ -2141,7 +2141,7 @@ msgstr "Laborbücher"
 msgid "Edit topics"
 msgstr "Themen ändern"
 
-#: samples/templates/samples/main_menu.html:118 samples/views/topic.py:138
+#: samples/templates/samples/main_menu.html:118 samples/views/topic.py:143
 msgid "Add new topic"
 msgstr "Neues Thema hinzufügen"
 
@@ -2447,7 +2447,10 @@ msgstr[0] ""
 "\n"
 "Diese Probe gehört zur Probenserie „<a href=\"%(first_url)s\">"
 "%(first_series)s</a>“."
-msgstr[1] "\nDiese Probe gehört zu folgenden Probenserien: <!-- %(first_url)s  %(first_series)s -->"
+msgstr[1] ""
+"\n"
+"Diese Probe gehört zu folgenden Probenserien: <!-- %(first_url)s  "
+"%(first_series)s -->"
 
 #: samples/templates/samples/show_sample.html:197
 msgid "show process"
@@ -2835,87 +2838,87 @@ msgstr "%b %Y"
 msgid "date unknown"
 msgstr "Datum unbekannt"
 
-#: samples/templatetags/samples_extras.py:717
+#: samples/templatetags/samples_extras.py:719
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"
 msgstr ""
 "(Diese Serie enthält weitere Proben, die nicht zu Ihrer „Meine-Proben“-Liste "
 "gehören.)"
 
-#: samples/utils/views/class_views.py:112
+#: samples/utils/views/class_views.py:261
 #, python-brace-format
 msgid "{process} was successfully changed in the database."
 msgstr "{process} wurde erfolgreich in der Datenbank geändert."
 
-#: samples/utils/views/class_views.py:114
+#: samples/utils/views/class_views.py:263
 #, python-brace-format
 msgid "{process} was successfully added to the database."
 msgstr "{process} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: samples/utils/views/class_views.py:120
+#: samples/utils/views/class_views.py:277
 #, python-brace-format
 msgid "edit {process}"
 msgstr "{process} ändern"
 
-#: samples/utils/views/class_views.py:121
+#: samples/utils/views/class_views.py:278
 #, python-brace-format
 msgid "add {class_name}"
 msgstr "{class_name} hinzufügen"
 
-#: samples/utils/views/class_views.py:184
+#: samples/utils/views/class_views.py:377
 msgid "number of subprocesses"
 msgstr "Anzahl der Einzelprozesse"
 
-#: samples/utils/views/class_views.py:222
+#: samples/utils/views/class_views.py:456
 msgid "No subprocesses given."
 msgstr "Keine Einzelprozesse angegeben."
 
-#: samples/utils/views/class_views.py:240
+#: samples/utils/views/class_views.py:474
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: samples/utils/views/class_views.py:241
+#: samples/utils/views/class_views.py:475
 msgid "remove this layer"
 msgstr "diese Schicht entfernen"
 
-#: samples/utils/views/class_views.py:242
+#: samples/utils/views/class_views.py:476
 msgid "move this layer"
 msgstr "diese Schicht verschieben"
 
-#: samples/utils/views/class_views.py:243
+#: samples/utils/views/class_views.py:477
 msgid "up"
 msgstr "hoch"
 
-#: samples/utils/views/class_views.py:243
+#: samples/utils/views/class_views.py:477
 msgid "down"
 msgstr "runter"
 
-#: samples/utils/views/class_views.py:255
+#: samples/utils/views/class_views.py:489
 msgid "You can't duplicate, move, or remove a layer at the same time."
 msgstr ""
 "Sie können nicht gleichzeitig dieselbe Schicht duplizieren, entfernen oder "
 "verschieben."
 
-#: samples/utils/views/class_views.py:260
+#: samples/utils/views/class_views.py:498
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: samples/utils/views/class_views.py:290
+#: samples/utils/views/class_views.py:552
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
-#: samples/utils/views/class_views.py:507
+#: samples/utils/views/class_views.py:800
 msgid "No layers given."
 msgstr "Keine Schichten angegeben."
 
-#: samples/utils/views/class_views.py:515
+#: samples/utils/views/class_views.py:808
 #, python-brace-format
 msgid "The sample {samples} is already dead at this time."
 msgid_plural "The samples {samples} are already dead at this time."
 msgstr[0] "Die Probe {samples} ist zu diesem Zeitpunkt schon tot."
 msgstr[1] "Die Proben {samples} sind zu diesem Zeitpunkt schon tot."
 
-#: samples/utils/views/class_views.py:562
+#: samples/utils/views/class_views.py:852
 msgid "Layer to be added"
 msgstr "Schicht, die hinzugefügt werden soll"
 
@@ -3060,30 +3063,30 @@ msgstr "Proben erfolgreich umbenannt."
 msgid "Rename samples"
 msgstr "Proben umbenennen"
 
-#: samples/views/claim.py:43
+#: samples/views/claim.py:44
 msgid "Claimed samples"
 msgstr "Beanspruchte Proben"
 
-#: samples/views/claim.py:43
+#: samples/views/claim.py:44
 msgid "“My Samples” are eligible."
 msgstr "„Meine Proben“ sind auswählbar."
 
-#: samples/views/claim.py:63
+#: samples/views/claim.py:64
 msgid "Requested reviewer"
 msgstr "Gewünschter Reviewer"
 
-#: samples/views/claim.py:95
+#: samples/views/claim.py:97
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: samples/views/claim.py:104
+#: samples/views/claim.py:106
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: samples/views/claim.py:105
+#: samples/views/claim.py:107
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -3112,49 +3115,49 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: samples/views/claim.py:122
+#: samples/views/claim.py:124
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: samples/views/claim.py:127
+#: samples/views/claim.py:129
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: samples/views/claim.py:154
+#: samples/views/claim.py:156
 msgid "You are not allowed to see claims of another user."
 msgstr "Sie dürfen beine Probenansprüche anderer Benutzer sehen."
 
-#: samples/views/claim.py:156
+#: samples/views/claim.py:158
 #, python-brace-format
 msgid "Claims for {user}"
 msgstr "Ansprüche von {user}"
 
-#: samples/views/claim.py:183
+#: samples/views/claim.py:185
 msgid "You can't withdraw and approve at the same time."
 msgstr "Sie konnen nicht gleichzeitig zurückziehen und genehmigen."
 
-#: samples/views/claim.py:187
+#: samples/views/claim.py:189
 msgid "You must select exactly one option, or leave this page."
 msgstr "Sie müssen genau eine Option wählen, oder die Seite verlassen."
 
-#: samples/views/claim.py:211
+#: samples/views/claim.py:214
 msgid "You are neither the requester nor the reviewer of this claim."
 msgstr "Sie sind weder der Antragssteller noch der Reviewer dieses Anspruchs."
 
-#: samples/views/claim.py:213 samples/views/claim.py:250
+#: samples/views/claim.py:216 samples/views/claim.py:253
 msgid "withdraw claim"
 msgstr "Anspruch zurückziehen"
 
-#: samples/views/claim.py:214 samples/views/claim.py:251
+#: samples/views/claim.py:217 samples/views/claim.py:254
 msgid "approve claim"
 msgstr "Anspruch genehmigen"
 
-#: samples/views/claim.py:228
+#: samples/views/claim.py:231
 msgid "Sample request approved"
 msgstr "Probenanspruch genemigt"
 
-#: samples/views/claim.py:229
+#: samples/views/claim.py:232
 #, python-brace-format
 msgid ""
 "Hello {requester},\n"
@@ -3175,17 +3178,17 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: samples/views/claim.py:241
+#: samples/views/claim.py:244
 #, python-brace-format
 msgid "Sample claim {id_} was successfully approved."
 msgstr "Der Anspruch {id_} wurde erfolgreich genemigt."
 
-#: samples/views/claim.py:247
+#: samples/views/claim.py:250
 #, python-brace-format
 msgid "Sample claim {id_} was successfully withdrawn."
 msgstr "Der Anspruch {id_} wurde erfolgreich zurückgezogen."
 
-#: samples/views/claim.py:252
+#: samples/views/claim.py:255
 #, python-brace-format
 msgid "Claim #{number}"
 msgstr "Anspruch Nr. {number}"
@@ -3989,7 +3992,7 @@ msgstr "Name des neuen Themas"
 msgid "Upper topic"
 msgstr "Überthema"
 
-#: samples/views/topic.py:52 samples/views/topic.py:171
+#: samples/views/topic.py:52 samples/views/topic.py:176
 msgid "topic manager"
 msgstr "Themenmanager"
 
@@ -4012,20 +4015,29 @@ msgstr "Dieser Themenname ist bereits vergeben."
 msgid "The topic manager must be the topic manager from the upper topic."
 msgstr "Der Themenmanager muß der Manager des Überthemas sein."
 
-#: samples/views/topic.py:134
+#: samples/views/topic.py:113
+msgid "You cannot add topics here because you are not in any department."
+msgstr "Sie können hier keine neuen Themen anlegen, weil Sie keiner Abteilung angehören."
+
+#: samples/views/topic.py:115
+msgid ""
+"Since you are an administrator, you may use the admin pages to add topics."
+msgstr "Da Sie Administrator sind, können Sie die Admin-Seiten nutzen, um neue Themen anzulegen."
+
+#: samples/views/topic.py:139
 #, python-brace-format
 msgid "Topic {name} was successfully created."
 msgstr "Das Thema {name} wurde erfolgreich angelegt."
 
-#: samples/views/topic.py:161
+#: samples/views/topic.py:166
 msgid "List of all topics"
 msgstr "Liste aller Themen"
 
-#: samples/views/topic.py:169
+#: samples/views/topic.py:174
 msgid "Members"
 msgstr "Mitglieder"
 
-#: samples/views/topic.py:188
+#: samples/views/topic.py:193
 msgid ""
 "In confidential topics, at least one member must have permission to edit the "
 "topic."
@@ -4033,14 +4045,14 @@ msgstr ""
 "Wenigstens ein Mitglied in eines vertraulichen Themas muss die Berechtigung "
 "haben, das Thema zu ändern."
 
-#: samples/views/topic.py:242
+#: samples/views/topic.py:247
 #, python-brace-format
 msgid "Members of topic “{name}” were successfully updated."
 msgstr ""
 "Die Mitglieder des Themas „{name}“ wurden erfolgreich auf den neuesten Stand "
 "gebracht."
 
-#: samples/views/topic.py:247
+#: samples/views/topic.py:252
 #, python-brace-format
 msgid "Change topic memberships of “{0}”"
 msgstr "Mitglieder des Themas “{0}” ändern"
