@@ -855,7 +855,7 @@ class AddMultipleTypeLayersForm(AddMyLayersForm):
     def __init__(self, view, data=None, **kwargs):
         super(AddMultipleTypeLayersForm, self).__init__(view, data, **kwargs)
         # Translators: No further layer
-        self.fields["layer_to_be_added"].choices = view.new_layer_choices + (("none", _("none")),)
+        self.fields["layer_to_be_added"].choices = view.new_layer_choices + (("", _("none")),)
         self.new_layer_choices = view.new_layer_choices
 
     def change_structure(self, structure_changed, new_layers):
