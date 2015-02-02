@@ -332,7 +332,7 @@ def show(request):
         if choose_task_lists_form.is_valid():
             request.user.samples_user_details.visible_task_lists = \
                 [ContentType.objects.get_for_id(int(id_))
-                 for id_ in choose_task_lists_form.cleaned_data["visible_task_lists"]]
+                 for id_ in choose_task_lists_form.cleaned_data["visible_task_lists"] if id_]
             # In order to have a GET instead of a POST as the last request
             return utils.successful_response(request, view=show)
     else:
