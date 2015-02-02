@@ -33,10 +33,10 @@ levels of permissions, add samples, processes, tasks etc., have a look at
 sample data sheets or a lab notebook, and much more.
 
 However, since this site is accessable to everyone, it may become chaotic over
-time.  In order to prevent that, all the data is reset every hour on the
-hour.  So, don't be surprised if you have to log in again after some time – all
-session data is reset, too.  There is nothing to worry though as you may log
-in as often as you wish.
+time.  In order to prevent that, all the data is reset every night at central
+european midnight.  So, don't be surprised if you have to log in again after
+some time – all session data is reset, too.  There is nothing to worry though
+as you may log in as often as you wish.
 
 This demo site is also the default target of the remote client code shipped
 with JuliaBase.  You are encouraged to use the demo as a test bed for your
