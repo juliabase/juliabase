@@ -443,8 +443,8 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             number_of_new_forms = new_number_of_forms - len(indices)
             if number_of_new_forms > 0:
                 self.forms["subprocesses"].extend([self.subform_class(self, prefix=str(index))
-                                                   for index in range(max(indices) + 1,
-                                                                      max(indices) + 1 + number_of_new_forms)])
+                                                   for index in range(max(indices or [-1]) + 1,
+                                                                      max(indices or [-1]) + 1 + number_of_new_forms)])
         else:
             self.forms["number"] = NumberForm(initial={"number": subprocesses.count()})
             self.forms["subprocesses"] = [self.subform_class(self, prefix=str(index), instance=subprocess)
