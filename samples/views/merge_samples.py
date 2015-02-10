@@ -40,10 +40,20 @@ class MergeSamplesForm(forms.Form):
     to_sample = utils.SampleField(label=_("into sample"), required=False)
 
     def __init__(self, user, my_samples, *args, **kwargs):
+        """You may pass a ``choices`` keyword argument.  If given, it is used to
+        initialize the choices of both fields instead of calling their
+        :py:meth:`set_samples` methods.  This makes the constructor
+        *drastically* faster.
+        """
+        choices = kwargs.pop("choices", None)
         super(MergeSamplesForm, self).__init__(*args, **kwargs)
         self.user = user
-        self.fields["from_sample"].set_samples(my_samples, user)
-        self.fields["to_sample"].set_samples(my_samples, user)
+        if choices is None:
+            self.fields["from_sample"].set_samples(my_samples, user)
+            choices = self.fields["from_sample"].choices
+        else:
+            self.fields["from_sample"].choices = choices
+        self.fields["to_sample"].choices = choices
 
     def clean_from_sample(self):
         from_sample = self.cleaned_data["from_sample"]
@@ -122,6 +132,7 @@ def merge_samples(from_sample, to_sample):
         cleanup_after_merge(from_sample, to_sample)
     from_sample.delete()
 
+
 def is_referentially_valid(merge_samples_forms):
     """Test whether all forms are consistent with each other.
 
@@ -176,10 +187,15 @@ def merge(request):
 
     :rtype: HttpResponse
     """
+    def build_merge_forms(data=None):
+        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, data, prefix=str(0))]
+        choices = merge_samples_forms[0].fields["from_sample"].choices
+        merge_samples_forms += [MergeSamplesForm(request.user, my_samples, data, prefix=str(index), choices=choices)
+                                for index in range(1, number_of_pairs)]
+        return merge_samples_forms
     my_samples = list(request.user.my_samples.all())
     if request.method == "POST":
-        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, request.POST, prefix=str(index))
-                               for index in range(number_of_pairs)]
+        merge_samples_forms = build_merge_forms(request.POST)
         all_valid = all([merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms])
         referentially_valid = is_referentially_valid(merge_samples_forms)
         if all_valid and referentially_valid:
@@ -190,8 +206,7 @@ def merge(request):
                     merge_samples(from_sample, to_sample)
             return utils.successful_response(request, _("Samples were successfully merged."))
     else:
-        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, prefix=str(index))
-                               for index in range(number_of_pairs)]
+        merge_samples_forms = build_merge_forms()
     return render(request, "samples/merge_samples.html", {"title": _("Merge samples"),
                                                           "merge_forms": merge_samples_forms})
 
