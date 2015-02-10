@@ -724,6 +724,10 @@ class Sample(models.Model):
             if keys:
                 cache.delete_many(keys)
             cache.delete(keys_list_key)
+        now = datetime.datetime.now()
+        for user_details in UserDetails.objects.filter(user__in=self.watchers.all()):
+            user_details.my_samples_list_timestamp = now
+            user_details.save()
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
         super(Sample, self).save(*args, **kwargs)
@@ -1444,6 +1448,14 @@ class UserDetails(models.Model):
     my_samples_timestamp = models.DateTimeField(_("My Samples last modified"), auto_now_add=True)
     """This timestamp denotes when My Samples were changed most recently.  It
     is used for expiring sample datasheet caching.
+    """
+    my_samples_list_timestamp = models.DateTimeField(_("My Samples list last modified"), auto_now_add=True)
+    """This timestamp denotes when the My Samples list was changed most recently.
+    In contrast to ``my_samples_timestamp``, this also includes things like
+    sample series memberships, topic memberships – everything that influences
+    the appearance of the samples list in the main menu.  It is used for
+    expiring the caching of the results of
+    :py:func:`samples.utils.views.build_structured_sample_list`.
     """
     identifying_data_hash = models.CharField(_("identifying data hash"), max_length=40)
     """Contains the SHA1 hash of the username, first name, and family name of

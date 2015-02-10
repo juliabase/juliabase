@@ -190,9 +190,10 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
     Samples”.  But the gain would be small and the code significantly more
     complex.
     """
+    now = datetime.datetime.now()
     def touch_my_samples(user):
         user_details = user.samples_user_details
-        user_details.my_samples_timestamp = datetime.datetime.now()
+        user_details.my_samples_timestamp = user_details.my_samples_list_timestamp = now
         user_details.save()
     if reverse:
         # `instance` is django.contrib.auth.models.User
@@ -361,6 +362,45 @@ def touch_sample_series_results(sender, instance, action, reverse, model, pk_set
     else:
         # `instance` is a sample series
         instance.save()
+
+
+@receiver(signals.post_save, sender=jb_common_app.Topic)
+def touch_my_samples_list_by_topic(sender, instance, created, **kwargs):
+    """Considers the “My Samples” lists of *all* users as changed because the topic
+    may have changed its “confidential” status, so its name may appear
+    differently on the “My Samples” lists.
+
+    Note this is may be called redundantly multiple times in case of subtopics.
+    This is unfortunate but difficult to fix – we don't know whether we are in
+    the genuine ``save()`` call.  However, it should not be too costly either,
+    and topics are changed seldomly.
+    """
+    if not created:
+        samples_app.UserDetails.update(my_samples_list_timestamp=datetime.datetime.now())
+
+
+@receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
+def touch_my_samples_list_by_topic_memberships(sender, instance, action, reverse, model, pk_set, **kwargs):
+    """Considers the “My Samples” lists of such users as changed if the topic is
+    confidential because then, the topic's appearance in the “My Samples” list
+    changes.
+    """
+    now = datetime.datetime.now()
+    def touch_my_samples_list(user):
+        user_details = user.samples_user_details
+        user_details.my_samples_list_timestamp = now
+        user_details.save()
+    if reverse:
+        # `instance` is a user
+        touch_my_samples_list(instance)
+    else:
+        # `instance` is a topic
+        if action == "pre_clear":
+            for user in instance.members.all():
+                touch_my_samples_list(user)
+        elif action in ["post_add", "post_remove"]:
+            for user in User.objects.in_bulk(pk_set).values():
+                touch_my_samples_list(user)
 
 
 @receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
