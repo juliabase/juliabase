@@ -443,6 +443,12 @@ def build_structured_sample_list(samples, user):
             structured_topic.sort_sample_series()
         return structured_topics
 
+    cache_key = "my-samples:{0}-{1}".format(
+        user.pk, user.samples_user_details.my_samples_list_timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+    result = cache.get(cache_key)
+    if result:
+        return result
+
     structured_series = {}
     structured_topics = {}
     topicless_samples = []
@@ -474,6 +480,7 @@ def build_structured_sample_list(samples, user):
             continue
     structured_topics = sorted(structured_topics.values(),
                                key=lambda structured_topic: structured_topic.topic.name)
+    cache.set(cache_key, (structured_topics, topicless_samples))
     return structured_topics, topicless_samples
 
 
