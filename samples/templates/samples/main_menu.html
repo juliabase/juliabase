@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load i18n %}
 {% load samples_extras %}
 {% load staticfiles %}
+{% load cache %}
 
 {% block local_scripts %}
 <script type="text/javascript">
@@ -54,27 +55,29 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
 {% endblock %}
 
 {% block frame_content %}
-  {% if topicless_samples or my_topics %}
-    <div class="my-samples">
-      <h2>{% trans 'My Samples' %}<a class="edit-icon"
-                             href="{% url 'samples.views.my_samples.edit' username=user.username %}"
-                             ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% trans 'edit' %}"
-                                   width="16" height="16"/></a></h2>
+  {% cache 9999999 mysamples user.username user.samples_user_details.my_samples_list_timestamp %}
+    {% if topicless_samples or my_topics %}
+      <div class="my-samples">
+        <h2>{% trans 'My Samples' %}<a class="edit-icon"
+                               href="{% url 'samples.views.my_samples.edit' username=user.username %}"
+                               ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% trans 'edit' %}"
+                                     width="16" height="16"/></a></h2>
 
-      {% if topicless_samples %}
-        <ul class="sample-list">
-          {% for sample in topicless_samples %}
-            <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}</li>
+        {% if topicless_samples %}
+          <ul class="sample-list">
+            {% for sample in topicless_samples %}
+              <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        <div class="my-samples-topics">
+          {% for topic in my_topics %}
+            {% expand_topic topic user %}
           {% endfor %}
-        </ul>
-      {% endif %}
-      <div class="my-samples-topics">
-        {% for topic in my_topics %}
-          {% expand_topic topic user %}
-        {% endfor %}
+        </div>
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
+  {% endcache %}
 
   <h2>{% trans 'Add things' %}</h2>
 
