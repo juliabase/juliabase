@@ -191,22 +191,20 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
     complex.
     """
     now = datetime.datetime.now()
-    def touch_my_samples(user):
-        user_details = user.samples_user_details
-        user_details.my_samples_timestamp = user_details.my_samples_list_timestamp = now
-        user_details.save()
     if reverse:
         # `instance` is django.contrib.auth.models.User
         if action in ["post_add", "post_remove", "post_clear"]:
-            touch_my_samples(instance)
+            user_details = instance.samples_user_details
+            user_details.my_samples_timestamp = user_details.my_samples_list_timestamp = now
+            user_details.save()
     else:
         # `instance` is ``Sample``.
         if action == "pre_clear":
-            for user in instance.watchers.all():
-                touch_my_samples(user)
+            samples_app.UserDetails.objects.filter(user__in=instance.watchers.all()).update(
+                my_samples_timestamp=now, my_samples_list_timestamp=now)
         elif action in ["post_add", "post_remove"]:
-            for user in User.objects.in_bulk(pk_set).values():
-                touch_my_samples(user)
+            samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(
+                my_samples_timestamp=now, my_samples_list_timestamp=now)
 
 
 
@@ -386,21 +384,17 @@ def touch_my_samples_list_by_topic_memberships(sender, instance, action, reverse
     changes.
     """
     now = datetime.datetime.now()
-    def touch_my_samples_list(user):
-        user_details = user.samples_user_details
-        user_details.my_samples_list_timestamp = now
-        user_details.save()
     if reverse:
         # `instance` is a user
-        touch_my_samples_list(instance)
+        user_details = instance.samples_user_details
+        user_details.my_samples_list_timestamp = now
+        user_details.save()
     else:
         # `instance` is a topic
         if action == "pre_clear":
-            for user in instance.members.all():
-                touch_my_samples_list(user)
+            samples_app.UserDetails.objects.filter(user__in=instance.members.all()).update(my_samples_timestamp=now)
         elif action in ["post_add", "post_remove"]:
-            for user in User.objects.in_bulk(pk_set).values():
-                touch_my_samples_list(user)
+            samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(my_samples_timestamp=now)
 
 
 @receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)

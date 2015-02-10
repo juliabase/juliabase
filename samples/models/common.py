@@ -724,10 +724,7 @@ class Sample(models.Model):
             if keys:
                 cache.delete_many(keys)
             cache.delete(keys_list_key)
-        now = datetime.datetime.now()
-        for user_details in UserDetails.objects.filter(user__in=self.watchers.all()):
-            user_details.my_samples_list_timestamp = now
-            user_details.save()
+        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=datetime.datetime.now())
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
         super(Sample, self).save(*args, **kwargs)
