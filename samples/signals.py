@@ -385,6 +385,10 @@ def touch_my_samples_list_by_topic_memberships(sender, instance, action, reverse
     confidential because then, the topic's appearance in the “My Samples” list
     changes.
     """
+    # FixMe: This also affects users whose topic memberships haven't changed
+    # but who just happen to be in a topic the memberships of which has
+    # changed.  Could be possibly fixed by not assigning just a list to
+    # ``topic.members`` in the "edit topic" view.
     now = datetime.datetime.now()
     if reverse:
         # `instance` is a user
@@ -406,6 +410,10 @@ def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk
     changed because we must invalidate the browser cache for those users (the
     permissions may have changed).
     """
+    # FixMe: This also affects users whose topic memberships haven't changed
+    # but who just happen to be in a topic the memberships of which has
+    # changed.  Could be possibly fixed by not assigning just a list to
+    # ``topic.members`` in the "edit topic" view.
     if reverse:
         # `instance` is a user
         instance.samples_user_details.touch_display_settings()
