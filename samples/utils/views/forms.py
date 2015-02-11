@@ -427,7 +427,7 @@ class GeneralSampleField(object):
         folded_topics_and_sample_series = []
         folded_topics_and_sample_series.extend(json.loads(user.samples_user_details.folded_series))
         folded_topics_and_sample_series.extend(json.loads(user.samples_user_details.folded_topics))
-        topics, topicless_samples = utils.build_structured_sample_list(samples, user)
+        topics, topicless_samples = utils.build_structured_sample_list(user, samples)
         self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
         for topic in topics:
             get_samples_from_topic(topic, folded_topics_and_sample_series)

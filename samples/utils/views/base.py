@@ -401,7 +401,7 @@ class StructuredTopic(object):
                                      key=lambda structured_topic: structured_topic.topic.name)
 
 
-def build_structured_sample_list(samples, user):
+def build_structured_sample_list(user, samples=None):
     """Generate a nested datastructure which contains the given samples in a
     handy way to be layouted in a certain way.  This routine is used for the
     “My Samples” list in the main menu, and for the multiple-selection box for
@@ -411,12 +411,13 @@ def build_structured_sample_list(samples, user):
     As far as sorting is concerned, all topics are sorted by alphabet, all
     sample series by reverse timestamp of origin, and all samples by name.
 
-    :param samples: the samples to be processed; it doesn't matter if a sample
-        occurs twice because this list is made unique first
     :param user: the user which sees the sample list eventually
+    :param samples: the samples to be processed; it doesn't matter if a sample
+        occurs twice because this list is made unique first; it defaults to the
+        “My Samples” of ``user``.
 
-    :type samples: list of `samples.models.Sample`
     :type user: django.contrib.auth.models.User
+    :type samples: list of `samples.models.Sample`
 
     :return:
       all topics of the user with his series and samples in them, all
@@ -443,11 +444,15 @@ def build_structured_sample_list(samples, user):
             structured_topic.sort_sample_series()
         return structured_topics
 
-    cache_key = "my-samples:{0}-{1}".format(
-        user.pk, user.samples_user_details.my_samples_list_timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f"))
-    result = cache.get(cache_key)
-    if result:
-        return result
+    if samples is None:
+        cache_key = "my-samples:{0}-{1}".format(
+            user.pk, user.samples_user_details.my_samples_list_timestamp.strftime("%Y-%m-%d-%H-%M-%S-%f"))
+        result = cache.get(cache_key)
+        if result:
+            return result
+        samples = user.my_samples.all()
+    else:
+        cache_key = None
 
     structured_series = {}
     structured_topics = {}
@@ -480,7 +485,8 @@ def build_structured_sample_list(samples, user):
             continue
     structured_topics = sorted(structured_topics.values(),
                                key=lambda structured_topic: structured_topic.topic.name)
-    cache.set(cache_key, (structured_topics, topicless_samples))
+    if cache_key:
+        cache.set(cache_key, (structured_topics, topicless_samples))
     return structured_topics, topicless_samples
 
 
