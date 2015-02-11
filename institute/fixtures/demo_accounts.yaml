@@ -163,6 +163,7 @@
     show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
+    my_samples_list_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 3
 - fields:
@@ -170,6 +171,7 @@
     show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
+    my_samples_list_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 4
 - fields:
@@ -177,6 +179,7 @@
     show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
+    my_samples_list_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 5
 - fields:
@@ -184,6 +187,7 @@
     show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
+    my_samples_list_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 6
 - fields:
@@ -191,6 +195,7 @@
     show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
+    my_samples_list_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 7
 - fields:
@@ -198,6 +203,7 @@
     show_users_from_departments: [1]
     display_settings_timestamp: 1990-01-01 00:00:00
     my_samples_timestamp: 1990-01-01 00:00:00
+    my_samples_list_timestamp: 1990-01-01 00:00:00
   model: samples.userdetails
   pk: 8
 
