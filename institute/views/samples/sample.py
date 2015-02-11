@@ -256,7 +256,7 @@ class DestinationSamplesForm(forms.Form):
         super(DestinationSamplesForm, self).__init__(*args, **kwargs)
         samples = [sample for sample in user.my_samples.exclude(pk=current_sample.pk)
                    if permissions.has_permission_to_edit_sample(user, sample)]
-        self.fields["samples"].set_samples(samples, user)
+        self.fields["samples"].set_samples(user, samples)
         self.fields["samples"].widget.attrs["size"] = "20"
 
 

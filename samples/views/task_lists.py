@@ -60,7 +60,7 @@ class SamplesForm(forms.Form):
             if preset_sample:
                 samples.append(preset_sample)
                 self.fields["sample_list"].initial.append(preset_sample.pk)
-        self.fields["sample_list"].set_samples(samples, user)
+        self.fields["sample_list"].set_samples(user, samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 

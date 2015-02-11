@@ -39,7 +39,7 @@ class MergeSamplesForm(forms.Form):
     from_sample = utils.SampleField(label=_("merge sample"), required=False)
     to_sample = utils.SampleField(label=_("into sample"), required=False)
 
-    def __init__(self, user, my_samples, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         """You may pass a ``choices`` keyword argument.  If given, it is used to
         initialize the choices of both fields instead of calling their
         :py:meth:`set_samples` methods.  This makes the constructor
@@ -49,7 +49,7 @@ class MergeSamplesForm(forms.Form):
         super(MergeSamplesForm, self).__init__(*args, **kwargs)
         self.user = user
         if choices is None:
-            self.fields["from_sample"].set_samples(my_samples, user)
+            self.fields["from_sample"].set_samples(user)
             choices = self.fields["from_sample"].choices
         else:
             self.fields["from_sample"].choices = choices
@@ -188,12 +188,11 @@ def merge(request):
     :rtype: HttpResponse
     """
     def build_merge_forms(data=None):
-        merge_samples_forms = [MergeSamplesForm(request.user, my_samples, data, prefix=str(0))]
+        merge_samples_forms = [MergeSamplesForm(request.user, data, prefix=str(0))]
         choices = merge_samples_forms[0].fields["from_sample"].choices
-        merge_samples_forms += [MergeSamplesForm(request.user, my_samples, data, prefix=str(index), choices=choices)
+        merge_samples_forms += [MergeSamplesForm(request.user, data, prefix=str(index), choices=choices)
                                 for index in range(1, number_of_pairs)]
         return merge_samples_forms
-    my_samples = list(request.user.my_samples.all())
     if request.method == "POST":
         merge_samples_forms = build_merge_forms(request.POST)
         all_valid = all([merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms])

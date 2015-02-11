@@ -43,7 +43,7 @@ class MySamplesForm(forms.Form):
 
     def __init__(self, user, *args, **kwargs):
         super(MySamplesForm, self).__init__(*args, **kwargs)
-        self.fields["samples"].set_samples(user.my_samples.all(), user)
+        self.fields["samples"].set_samples(user)
         self.fields["samples"].widget.attrs["size"] = "30"
 
 

@@ -397,21 +397,21 @@ class GeneralSampleField(object):
     because of this; you may select both without a negative effect.
     """
 
-    def set_samples(self, samples, user):
+    def set_samples(self, user, samples=None):
         """Set the sample list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
         otherwise the selection box will remain emtpy.
 
-        :param samples: Samples to be included into the list.  Typically, these
-            are the current user's “My Samples”, plus the samples that were
-            already connected with the deposition or measurement when you edit
-            it.
         :param user: the user for which this field is generated; he may not be
             allowed to see all topic names, therefore it is necessary to know
             who it is
+        :param samples: Samples to be included into the list.  Typically, these
+            are the current user's “My Samples”, plus the samples that were
+            already connected with the deposition or measurement when you edit
+            it.  It defaults to the user's “My Samples”.
 
-        :type samples: iterable of `samples.models.Sample`
         :type user: django.contrib.auth.models.User
+        :type samples: iterable of `samples.models.Sample`
         """
         def get_samples_from_topic(topic, folded_topics_and_sample_series):
             if not topic.topic.id in folded_topics_and_sample_series:
@@ -525,7 +525,7 @@ class DepositionSamplesForm(forms.Form):
             if preset_sample:
                 samples.append(preset_sample)
                 self.fields["sample_list"].initial.append(preset_sample.pk)
-        self.fields["sample_list"].set_samples(samples, user)
+        self.fields["sample_list"].set_samples(user, samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 
@@ -912,7 +912,7 @@ class SampleSelectForm(forms.Form):
         if preset_sample:
             samples.append(preset_sample)
             self.fields["sample"].initial = preset_sample.pk
-        self.fields["sample"].set_samples(samples, user)
+        self.fields["sample"].set_samples(user, samples)
 
 
 class MultipleSamplesSelectForm(forms.Form):
@@ -931,7 +931,7 @@ class MultipleSamplesSelectForm(forms.Form):
         if preset_sample:
             samples.append(preset_sample)
             self.fields["sample_list"].initial.append(preset_sample.pk)
-        self.fields["sample_list"].set_samples(samples, user)
+        self.fields["sample_list"].set_samples(user, samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 

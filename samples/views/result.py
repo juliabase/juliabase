@@ -148,7 +148,7 @@ class RelatedDataForm(forms.Form):
             if "sample_series" in query_string_dict:
                 self.fields["sample_series"].initial = \
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
-        self.fields["samples"].set_samples(samples, user)
+        self.fields["samples"].set_samples(user, samples)
 
     def clean(self):
         """Global clean method for the related data.  I check whether at least

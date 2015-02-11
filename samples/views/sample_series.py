@@ -68,7 +68,7 @@ class SampleSeriesForm(forms.ModelForm):
         samples = user.my_samples.all()
         if sample_series:
             samples = list(samples) + list(sample_series.samples.all())
-        self.fields["samples"].set_samples(samples, user)
+        self.fields["samples"].set_samples(user, samples)
         self.fields["samples"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
         self.fields["short_name"].widget.attrs.update({"size": "50"})
         if sample_series:
