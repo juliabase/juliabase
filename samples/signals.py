@@ -362,19 +362,21 @@ def touch_sample_series_results(sender, instance, action, reverse, model, pk_set
         instance.save()
 
 
-@receiver(signals.post_save, sender=jb_common_app.Topic)
-def touch_my_samples_list_by_topic(sender, instance, created, **kwargs):
-    """Considers the “My Samples” lists of *all* users as changed because the topic
-    may have changed its “confidential” status, so its name may appear
-    differently on the “My Samples” lists.
+@receiver(signals.pre_save, sender=jb_common_app.Topic)
+def touch_my_samples_list_by_topic(sender, instance, raw, **kwargs):
+    """Considers the “My Samples” lists of *all* users as changed if the topic has
+    changed its “confidential” status, so its name may appear differently on
+    the “My Samples” lists.
 
     Note this is may be called redundantly multiple times in case of subtopics.
     This is unfortunate but difficult to fix – we don't know whether we are in
     the genuine ``save()`` call.  However, it should not be too costly either,
     and topics are changed seldomly.
     """
-    if not created:
-        samples_app.UserDetails.update(my_samples_list_timestamp=datetime.datetime.now())
+    if not raw and instance.pk:
+        old_instance = jb_common_app.Topic.objects.get(pk=instance.pk)
+        if old_instance.name != instance.name or old_instance.confidential != instance.confidential:
+            samples_app.UserDetails.objects.update(my_samples_list_timestamp=datetime.datetime.now())
 
 
 @receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
@@ -391,10 +393,11 @@ def touch_my_samples_list_by_topic_memberships(sender, instance, action, reverse
         user_details.save()
     else:
         # `instance` is a topic
-        if action == "pre_clear":
-            samples_app.UserDetails.objects.filter(user__in=instance.members.all()).update(my_samples_timestamp=now)
-        elif action in ["post_add", "post_remove"]:
-            samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(my_samples_timestamp=now)
+        if instance.confidential:
+            if action == "pre_clear":
+                samples_app.UserDetails.objects.filter(user__in=instance.members.all()).update(my_samples_list_timestamp=now)
+            elif action in ["post_add", "post_remove"]:
+                samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(my_samples_list_timestamp=now)
 
 
 @receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
