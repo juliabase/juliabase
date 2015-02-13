@@ -75,7 +75,8 @@ changes.  Instead, you make a structure according to this::
 
 Thus, follow these steps:
 
-#. Create the directory :file:`myproject/`
+#. Create the directory :file:`myproject/`.  (Don't use Django's
+   ``startproject`` command here or in the following.)
 #. Copy a JuliaBase release to :file:`myproject/juliabase`
 #. Copy the file :file:`myproject/juliabase/manage.py` to :file:`myproject/`.
 #. Create :file:`myproject/mysite/`

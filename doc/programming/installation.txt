@@ -149,8 +149,12 @@ department or work group that wants to use JuliaBase.  “institute” implement
 *generic* institute.  You will replace “institute” with your own app.
 
 .. _Git: http://git-scm.com/
-
 .. _repository on GitHub: https://github.com/juliabase
+
+While the naked Git repo is suitable to get JuliaBase up and running quickly,
+in the section :ref:`“Organizing your source code” <Organizing your source
+code>`, we'll explain the directory structure that you should use if you plan
+to actually using JuliaBase.
 
 
 .. index::
