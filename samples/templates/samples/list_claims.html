@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </ul>
   {% endif %}
   {% block claim_links %}
-    <p><a href="{% url 'samples.views.claim.add username=user.username' %}">{% trans 'Assert a new claim to samples' %}</a></p>
+    <p><a href="{% url 'samples.views.claim.add' username=user.username %}">{% trans 'Assert a new claim to samples' %}</a></p>
   {% endblock %}
   {% if claims_as_reviewer %}
     <h2>{% trans 'Claims with you being the reviewer' %}</h2>
