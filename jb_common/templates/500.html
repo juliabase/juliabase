@@ -22,10 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load juliabase %}
 
 {% block extrahead %}
-  <link rel="stylesheet" type="text/css" media="screen" href="/media/juliabase/css/main.css"/>
-  <link rel="stylesheet" type="text/css" media="print" href="/media/juliabase/css/print.css"/>
+  <link rel="stylesheet" type="text/css" media="screen" href="/static/juliabase/css/main.css"/>
+  <link rel="stylesheet" type="text/css" media="print" href="/static/juliabase/css/print.css"/>
   <!-- FixMe: We have no favicon yet. -->
-  <link rel="shortcut icon" href="/media/juliabase/favicon.ico" type="image/x-icon"/>
+  <link rel="shortcut icon" href="/static/juliabase/favicon.ico" type="image/x-icon"/>
 {% endblock %}
 
 {% block title %}{% trans 'Internal JuliaBase error' %}{% endblock %}
@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="info">
       </td>
       <td class="login-data">
-        <a href="/"><img src="/media/juliabase/icons/house.png" alt="log-in icon" title="{% trans 'Log in' %}"
+        <a href="/"><img src="/static/juliabase/icons/house.png" alt="log-in icon" title="{% trans 'Log in' %}"
                          width="16" height="16"/></a>
       </td>
     </tr>

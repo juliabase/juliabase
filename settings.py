@@ -71,14 +71,14 @@ DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
 
 
-STATIC_ROOT = str("/var/www/juliabase/media/")
+STATIC_ROOT = str("/var/www/juliabase/static/")
 MEDIA_ROOT = str("/var/www/juliabase/uploads")
 
 
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-STATIC_URL = str("/media/")
+# Make sure to use a trailing slash if there is a path component (optional in
+# other cases).  Examples: "http://media.lawrence.com",
+# "http://example.com/static/"
+STATIC_URL = str("/static/")
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + str("admin/")
 

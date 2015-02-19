@@ -24,8 +24,8 @@ table.edit-description { border: inset 2px black; padding: 0.5ex 1ex; background
 div.my-samples-topics { margin-left: 2em }
 div.my-samples-series { margin-left: 2em }
 
-ul.sample-series-list { list-style-image: url("/media/juliabase/icons/chart_organisation.png") }
-ul.sample-list { list-style-image: url("/media/juliabase/icons/ruby.png") }
+ul.sample-series-list { list-style-image: url("/static/juliabase/icons/chart_organisation.png") }
+ul.sample-list { list-style-image: url("/static/juliabase/icons/ruby.png") }
 
 div.my-samples { width: 50%; float: right }
 div.my-samples h2 { margin-top: 0pt }

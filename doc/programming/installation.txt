@@ -173,7 +173,7 @@ Add to your Apache configuration something like the following:
     WSGIScriptAlias / /home/username/myproject/mysite/wsgi.py
     XSendFile on
     XSendFilePath /
-    Alias /media /var/www/juliabase/media
+    Alias /static /var/www/juliabase/static
     <Directory /home/username/myproject/mysite>
       <Files wsgi.py>
         Require all granted
