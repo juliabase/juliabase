@@ -149,6 +149,7 @@ class RelatedDataForm(forms.Form):
                 self.fields["sample_series"].initial = \
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
         self.fields["samples"].set_samples(user, samples)
+        self.fields["samples"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
     def clean(self):
         """Global clean method for the related data.  I check whether at least
