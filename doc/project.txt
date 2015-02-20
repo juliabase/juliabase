@@ -33,11 +33,10 @@ public JuliaBase code.  This way, everyone can benefit from the improvements of
 everyone else!
 
 The home of JuliaBase is its `home page`_.  The domain name “juliabase.org” is
-registered to Torsten Bronger.  However, the content of the home page,
-including all logos, is part of JuliaBase's source code and licensed as Free
-Software.  The current maintainer of JuliaBase is Torsten Bronger,
-bronger@physik.rwth-aachen.de.  The home page is hosted on a server owned by
-the Research Centre Jülich, Germany.
+registered to the Research Centre Jülich, Germany, which also hosts the site.
+However, the content of the home page, including all logos, is part of
+JuliaBase's source code and licensed as Free Software.  The current maintainer
+of JuliaBase is Torsten Bronger, bronger@physik.rwth-aachen.de.
 
 .. _`home page`: http://www.juliabase.org
 
