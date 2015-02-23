@@ -43,7 +43,7 @@ from . import base as utils
 
 __all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_layers", "InitialsForm",
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
-           "SamplePositionForm", "RemoveFromMySamplesForm", "clean_time_field", "clean_timestamp_field",
+           "SamplePositionForm", "RemoveFromMySamplesForm", "time_pattern", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
            "choices_of_content_types", "check_sample_name", "SampleSelectForm", "MultipleSamplesSelectForm")
 
