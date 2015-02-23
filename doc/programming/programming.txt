@@ -309,10 +309,13 @@ should be added to your repository.
 Creating the URLs
 -----------------
 
-The following work is done in :file:`institute/urls.py`.  This step is fairly
-simple.  For the thickness measurement, you add::
+This work is done in :file:`institute/urls.py`, and it is fairly simple.  For
+the thickness measurement, you add::
 
     pattern_generator.physical_process("LayerThicknessMeasurement")
+
+See the methods of the class :py:class:`~samples.utils.urls.PatternGenerator`
+for further details.
 
 
 .. index::
