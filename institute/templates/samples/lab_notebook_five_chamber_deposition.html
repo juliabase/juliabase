@@ -53,23 +53,21 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       {% for deposition in processes %}
         {% lab_notebook_comments deposition "before" %}
         {% for layer in deposition.layers.all %}
-          <tr style="vertical-align: top">
+          <tr style="vertical-align: top"{% if forloop.first %} class="topline"{% endif %}>
             {% if forloop.first %}
-              <td rowspan="{{ deposition.layers.count }}" class="top"{% if forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
+              <td rowspan="{{ deposition.layers.count }}">
                 <a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a>
-                {% if not deposition.finished %}
-                  <br/><span style="color: red">{% trans "(not finished)" %}</span>
-                {% endif %}
               </td>
             {% endif %}
-            <td{% if forloop.first %} class="top"{% endif %}{% if forloop.last and forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>{{ layer.get_chamber_display }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.sih4|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.h2|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: '.'{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer|calculate_silane_concentration|quantity|default_if_none:" " }}</td>
-            <td{% if forloop.first %} class="top"{% endif %} style="text-align: center{% if forloop.last and forloop.parentloop.last %}; border-bottom: 2px solid{% endif %}">{{ layer.temperature_1|quantity|default_if_none:"–" }} / {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
+            <td>{{ layer.get_chamber_display }}</td>
+            <td style="text-align: '.'">{{ layer.sih4|quantity|default_if_none:" " }}</td>
+            <td style="text-align: '.'">{{ layer.h2|quantity|default_if_none:" " }}</td>
+            <td style="text-align: '.'">{{ layer|calculate_silane_concentration|quantity|default_if_none:" " }}</td>
+            <td style="text-align: center">{{ layer.temperature_1|quantity|default_if_none:"–" }} /
+                                           {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
             {% if forloop.first %}
-              <td rowspan="{{ deposition.layers.count }}"{% if forloop.first %} class="top"{% endif %}{% if forloop.parentloop.last %} style="border-bottom: 2px solid"{% endif %}>
-                <div style="float: right; marging-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
+              <td rowspan="{{ deposition.layers.count }}">
+                <div style="float: right; margin-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
                             border-bottom: 1px solid" class="timestamp">
                   {{ deposition|timestamp:"3" }}</div>{{ deposition.comments|markdown_samples:"collapse" }}</td>
             {% endif %}

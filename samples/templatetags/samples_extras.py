@@ -668,7 +668,8 @@ def lab_notebook_comments(process, position):
         end_index = len(process.comments)
     else:
         return ""
-    notebook_comment = """<tr style="vertical-align: top"><td colspan="100" class="top" style="text-align: center">{0}</td></tr>""" \
+    notebook_comment = """<tr style="vertical-align: top" class="topline">
+                            <td colspan="100" style="text-align: center">{0}</td></tr>""" \
         .format(markdown_samples(process.comments[start_index: end_index].strip()))
     return mark_safe(notebook_comment)
 

@@ -124,6 +124,5 @@ table.padding5 th, table.padding5 td { padding: 5px }
 table.padding8 th, table.padding8 td { padding: 8px }
 table.padding10 th, table.padding10 td { padding: 10px }
 
-/* FixMe: "border-color: black" is necessary only for IE7. */
-table.lab-notebook { margin-top: 2ex; border-collapse: collapse; border-color: black }
+table.lab-notebook { margin-top: 2ex; border-top: 2px solid; border-bottom: 2px solid; border-collapse: collapse }
 table.lab-notebook th, table.lab-notebook td { padding: 6px }

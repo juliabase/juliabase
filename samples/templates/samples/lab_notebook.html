@@ -27,9 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <style type="text/css">
   div.timestamp + p { margin-top: 0pt }
   td p { margin-bottom: 0pt }
-  th.top { border-top: 2px solid }
-  td.top, td.topbottom { border-top: 1px solid }
-  td.topbottom { border-bottom: 2px solid }
+  tr.topline { border-top: 1px solid black }
 </style>
 {% endblock %}
 
@@ -47,8 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <input type="submit"/><br/>
       <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %}>
         <img src="{% static "juliabase/icons/book_previous.png" %}" alt="previous month icon"
-             title="{% trans 'previous month' %}" width="16" height="16"/>
-      </a>
+             title="{% trans 'previous month' %}" width="16" height="16"/></a>
             
       <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %}>
         <img src="{% static "juliabase/icons/book_next.png" %}" alt="next month icon" title="{% trans 'next month' %}"
