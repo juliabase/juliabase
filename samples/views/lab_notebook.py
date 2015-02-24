@@ -39,7 +39,8 @@ import django.forms as forms
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from django.utils.http import urlquote_plus
-from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, capitalize_first_letter
+from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, \
+    capitalize_first_letter
 from samples import permissions
 import samples.utils.views as utils
 
@@ -48,13 +49,13 @@ class YearMonthForm(forms.Form):
     """Form for the year/month fields in which the user can see which month is
     currently selected, and also change it.
     """
-    year = forms.IntegerField(label=_("year"), min_value=1990)
+    year = forms.IntegerField(label=_("year"), min_value=1990, max_value=9999)
     month = forms.IntegerField(label=_("month"), min_value=1, max_value=12)
 
     def __init__(self, *args, **kwargs):
         super(YearMonthForm, self).__init__(*args, **kwargs)
-        self.fields["year"].widget.attrs["size"] = 3
-        self.fields["month"].widget.attrs["size"] = 3
+        self.fields["year"].widget.attrs["size"] = 4
+        self.fields["month"].widget.attrs["size"] = 4
 
 
 year_and_month_pattern = re.compile(r"(?P<year>\d{4})/(?P<month>\d{1,2})$")
