@@ -312,8 +312,6 @@ class Structuring(PhysicalProcess):
         verbose_name_plural = _("structurings")
 
 
-
-
 method_choices = (("profilers&edge", _("profilometer + edge")),
                   ("ellipsometer", _("ellipsometer")),
                   ("calculated", _("calculated from deposition parameters")),
