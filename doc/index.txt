@@ -94,7 +94,7 @@ you may visit the `source code repository on GitHub`_.
 - `JuliaBase 1.0`_ (2015/02/26)
 
 .. _source code repository on GitHub: https://github.com/juliabase
-.. _JuliaBase 1.0: downloads/juliabase-1.9.tar.gz
+.. _JuliaBase 1.0: http://www.juliabase.org/downloads/juliabase-1.9.tar.gz
 
 
 Getting started
