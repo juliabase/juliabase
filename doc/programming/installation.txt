@@ -129,15 +129,16 @@ instructions`_.  Not further configuration is necessary.
 JuliaBase
 ===========
 
-JuliaBase is organized in a public `Git`_ `repository on GitHub`_.  So far,
-there is no public release of JuliaBase 1.0.  However, the master branch in the
-repository is a release candidate, which can be cloned locally with
+See the :ref:`Public releases` for download links for JuliaBase.  Moreover,
+JuliaBase's source code is hosted in a public `Git`_ `repository on GitHub`_.
+So if you want to use the cutting-edge JuliaBase (which probably is less
+reliable than the latest release), you can clone it locally with
 
 .. code-block:: shell-session
 
     username@server:~$ git clone https://github.com/juliabase/juliabase.git
 
-It contains three Django apps:
+In any case, the JuliaBase source code contains three Django apps:
 
 1. jb_common
 2. samples

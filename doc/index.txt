@@ -83,6 +83,20 @@ JuliaBase:
 .. _Django web framework: https://www.djangoproject.com/
 
 
+.. _Public releases:
+
+Public releases
+=================
+
+You can download the current version as a .tar.gz file here.  Alternatively,
+you may visit the `source code repository on GitHub`_.
+
+- `JuliaBase 1.0`_ (2015/02/26)
+
+.. _source code repository on GitHub: https://github.com/juliabase
+.. _JuliaBase 1.0: downloads/juliabase-1.9.tar.gz
+
+
 Getting started
 ====================
 
