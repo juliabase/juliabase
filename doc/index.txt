@@ -97,6 +97,6 @@ of contents <toc>`.  This documentation also exists `in PDF format`_.
 Finally, see :doc:`project` for how to get in touch with the JuliaBase
 community.
 
-.. _in PDF format: http://www.juliabase.org/juliabase.pdf
+.. _in PDF format: http://www.juliabase.org/downloads/juliabase.pdf
 
 ..  LocalWords:  toc
