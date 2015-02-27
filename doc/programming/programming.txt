@@ -87,18 +87,18 @@ Thus, follow these steps:
    :file:`myproject/`.
 
 
-.. index:: git
-
 Settings
 --------
 
-Adjust :file:`myproject/mysite/settings.py` to your needs. In particular, you
-have to change the default database username and password to what you used
-during :doc:`installation` (look for ``DATABASES``). In addition, you might
-want to change the
-``ALLOWED_HOSTS`` to ``["127.0.0.1"]`` for testing and configure different paths
-for ``STATIC_ROOT`` and ``MEDIA_ROOT``. Please take a look at the
-:doc:`settings`.
+Adjust :file:`myproject/mysite/settings.py` to your needs.  In particular, you
+probably have to change the default database username and password to what you
+used in the :ref:`database setup <PostgreSQL>` (look for ``DATABASES``).  In
+addition, you might want to change the ``ALLOWED_HOSTS`` to ``["127.0.0.1"]``
+for testing, and change the values of ``STATIC_ROOT`` and ``MEDIA_ROOT``.  For
+further information, take a look at the :doc:`settings`.
+
+
+.. index:: git
 
 Git subtree
 -----------

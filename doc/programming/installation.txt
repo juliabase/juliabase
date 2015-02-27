@@ -74,6 +74,8 @@ operating system by default anyway, you must install:
 - Python modules for YAML and markdown
 
 
+.. _PostgreSQL:
+
 .. index::
    pair: PostgreSQL; configuration
 
