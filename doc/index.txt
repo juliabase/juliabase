@@ -88,13 +88,12 @@ JuliaBase:
 Public releases
 =================
 
-You can download the current version as a .tar.gz file here.  Alternatively,
-you may visit the `source code repository on GitHub`_.
+You can `download JuliaBase`_ from GitHub as .tar.gz or zip files.
+Alternatively, you may visit the current state of the `source code repository`_
+there.
 
-- `JuliaBase 1.0`_ (2015/02/26)
-
-.. _source code repository on GitHub: https://github.com/juliabase
-.. _JuliaBase 1.0: http://www.juliabase.org/downloads/juliabase-1.0.tar.gz
+.. _source code repository: https://github.com/juliabase
+.. _download JuliaBase: https://github.com/juliabase/juliabase/releases
 
 
 Getting started
