@@ -120,8 +120,10 @@ Django
 =========
 
 A certain version of JuliaBase works only with a certain version of Django.
-Currently, this is Django 1.7.  Install it according to `Django's own
-instructions`_.  Not further configuration is necessary.
+For the JuliaBase 1.0 release, this is Django 1.7.  For later releases, the
+appropriate Django versions will be mentioned in the release notes.  Install it
+according to `Django's own instructions`_.  No further configuration is
+necessary.
 
 .. _Django's own instructions: https://www.djangoproject.com/download/
 
