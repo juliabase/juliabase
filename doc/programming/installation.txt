@@ -134,9 +134,9 @@ JuliaBase
 ===========
 
 Download the `latest public release`_ of JuliaBase.  Moreover, JuliaBase's
-source code is hosted in a public `Git`_ `repository on GitHub`_.  So if you
-want to use the cutting-edge JuliaBase (which probably is less reliable than
-the latest release), you can clone it locally with
+source code is hosted in a public Git `repository on GitHub`_.  So if you want
+to use the cutting-edge JuliaBase (which probably is less reliable than the
+latest release), you can clone it locally with
 
 .. code-block:: shell-session
 
@@ -155,6 +155,7 @@ department or work group that wants to use JuliaBase.  “institute” implement
 *generic* institute.  You will replace “institute” with your own app.
 
 .. _Git: http://git-scm.com/
+.. _repository on GitHub: https://github.com/juliabase/juliabase
 .. _latest public release: https://github.com/juliabase/juliabase/releases
 
 While the naked Git repo is suitable to get JuliaBase up and running quickly,

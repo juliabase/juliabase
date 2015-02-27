@@ -92,7 +92,7 @@ You can `download JuliaBase`_ from GitHub as .tar.gz or zip files.
 Alternatively, you may visit the current state of the `source code repository`_
 there.
 
-.. _source code repository: https://github.com/juliabase
+.. _source code repository: https://github.com/juliabase/juliabase
 .. _download JuliaBase: https://github.com/juliabase/juliabase/releases
 
 
