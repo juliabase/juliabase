@@ -509,7 +509,7 @@ class DepositionSamplesForm(forms.Form):
     This form has the special behaviour that it prevents changing the samples
     when editing an *existing* process.
     """
-    sample_list = MultipleSamplesField(label=_("Samples"))
+    sample_list = MultipleSamplesField(label=_("samples"))
 
     def __init__(self, user, deposition, preset_sample, data=None, **kwargs):
         samples = list(user.my_samples.all())
