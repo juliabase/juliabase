@@ -348,7 +348,7 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
                                                                     self.data)
 
     def is_referentially_valid(self):
-        referentially_valid = super(ProcessView, self).is_referentially_valid()
+        referentially_valid = super(ProcessMultipleSamplesView, self).is_referentially_valid()
         referentially_valid = referentially_valid and self.forms["process"].is_referentially_valid(self.forms["samples"])
         return referentially_valid
 
