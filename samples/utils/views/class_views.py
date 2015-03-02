@@ -325,7 +325,7 @@ class ProcessView(ProcessWithoutSamplesView):
 
     def is_referentially_valid(self):
         referentially_valid = super(ProcessView, self).is_referentially_valid()
-        referentially_valid = referentially_valid and self.forms["process"].is_referentially_valid(self.forms["sample"])
+        referentially_valid = self.forms["process"].is_referentially_valid(self.forms["sample"]) and referentially_valid
         return referentially_valid
 
     def save_to_database(self):
