@@ -575,7 +575,7 @@ class AddLayersForm(AddMyLayersForm):
         return structure_changed, new_layers
 
 
-class DepositionView(ProcessWithoutSamplesView):
+class DepositionView(ProcessMultipleSamplesView):
     """View class for depositions.  The layers of the deposition must always be of
     the same type.  If they are not, you must use
     :py:class:`DepositionMultipleTypeView` instead.  Additionally to
@@ -787,15 +787,8 @@ class DepositionView(ProcessWithoutSamplesView):
         return all_valid
 
     def is_referentially_valid(self):
-        """Test whether all forms are consistent with each other and with the
-        database.  For example, no layer number must occur twice, and the
-        deposition number must not exist within the database.
-
-        Note that we test many situations here that cannot be achieved with
-        using the browser because all number fields are read-only and thus
-        inherently referentially valid.  However, the remote client (or a
-        manipulated HTTP client) may be used in a malicious way, thus we have
-        to test for *all* cases.
+        """Test whether all forms are consistent with each other and with the database.
+        In particular, we assure that the user has given at least one layer.
 
         :return:
           whether all forms are consistent with each other and the database
@@ -806,17 +799,6 @@ class DepositionView(ProcessWithoutSamplesView):
         if not self.forms["layers"]:
             self.forms["process"].add_error(None, _("No layers given."))
             referentially_valid = False
-        if self.forms["process"].is_valid():
-            if self.forms["samples"].is_valid():
-                dead_samples = utils.dead_samples(self.forms["samples"].cleaned_data["sample_list"],
-                                                  self.forms["process"].cleaned_data["timestamp"])
-                if dead_samples:
-                    error_message = ungettext(
-                        "The sample {samples} is already dead at this time.",
-                        "The samples {samples} are already dead at this time.", len(dead_samples)).format(
-                        samples=format_enumeration([sample.name for sample in dead_samples]))
-                    self.forms["process"].add_error("timestamp", error_message)
-                    referentially_valid = False
         return referentially_valid
 
     def get_context_data(self, **kwargs):
@@ -836,9 +818,6 @@ class DepositionView(ProcessWithoutSamplesView):
         :rtype: `institute.models.FiveChamberDeposition` or NoneType
         """
         deposition = super(DepositionView, self).save_to_database()
-        if not self.id:
-            # Change sample list only for *new* depositions
-            deposition.samples = self.forms["samples"].cleaned_data["sample_list"]
         deposition.layers.all().delete()
         for layer_form in self.forms["layers"]:
             layer = layer_form.save(commit=False)
