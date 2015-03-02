@@ -330,7 +330,8 @@ class ProcessView(ProcessWithoutSamplesView):
 
     def save_to_database(self):
         process = super(ProcessView, self).save_to_database()
-        process.samples = [self.forms["sample"].cleaned_data["sample"]]
+        if self.forms["sample"].is_bound:
+            process.samples = [self.forms["sample"].cleaned_data["sample"]]
         return process
 
 
@@ -353,7 +354,8 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
 
     def save_to_database(self):
         process = super(ProcessMultipleSamplesView, self).save_to_database()
-        process.samples = self.forms["samples"].cleaned_data["sample_list"]
+        if self.forms["samples"].is_bound:
+            process.samples = self.forms["samples"].cleaned_data["sample_list"]
         return process
 
 
