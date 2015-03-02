@@ -575,7 +575,7 @@ class AddLayersForm(AddMyLayersForm):
 
 class DepositionView(ProcessWithoutSamplesView):
     """View class for depositions.  The layers of the deposition must always be of
-    the same type.  If they are now, you must use
+    the same type.  If they are not, you must use
     :py:class:`DepositionMultipleTypeView` instead.  Additionally to
     :py:attr:`form_class`, you must set the :py:attr:`layer_form_class` class
     variable to the form class to be used for the layers.
