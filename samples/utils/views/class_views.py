@@ -346,6 +346,11 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
             self.forms["samples"] = utils.MultipleSamplesSelectForm(self.request.user, self.process, self.preset_sample,
                                                                     self.data)
 
+    def is_referentially_valid(self):
+        referentially_valid = super(ProcessView, self).is_referentially_valid()
+        referentially_valid = referentially_valid and self.forms["process"].is_referentially_valid(self.forms["samples"])
+        return referentially_valid
+
     def save_to_database(self):
         process = super(ProcessMultipleSamplesView, self).save_to_database()
         process.samples = self.forms["samples"].cleaned_data["sample_list"]
