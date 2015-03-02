@@ -30,13 +30,13 @@ from django.db.models import Q
 from django.conf import settings
 from django.forms.util import ValidationError
 from django.http import QueryDict
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _, ungettext_lazy, ugettext
 from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
-from jb_common.utils.base import get_really_full_name, check_markdown, int_or_zero
+from jb_common.utils.base import get_really_full_name, check_markdown, int_or_zero, format_enumeration
 from samples import models
 from . import base as utils
 
@@ -235,14 +235,14 @@ class ProcessForm(ModelForm):
         cleaned_data["operator"], cleaned_data["external_operator"] = final_operator, final_external_operator
         return cleaned_data
 
-    def is_referentially_valid(self, sample_form):
+    def is_referentially_valid(self, samples_form):
         """Test whether the forms are consistent with each other and with the database.
         In its current form, it only checks whether the sample is still “alive”
         at the time of the measurement.
 
-        :param sample_form: a bound sample selection form
+        :param samples_form: a bound samples selection form
 
-        :type sample_form: `SampleForm`
+        :type samples_form: `SampleSelectForm` or `MultipleSamplesSelectForm`
 
         :return:
           whether the forms are consistent with each other and the database
@@ -250,10 +250,18 @@ class ProcessForm(ModelForm):
         :rtype: bool
         """
         referentially_valid = True
-        if self.is_valid() and sample_form.is_valid() and \
-           dead_samples([sample_form.cleaned_data["sample"]], self.cleaned_data["timestamp"]):
-            self.add_error("timestamp", _("Sample is already dead at this time."))
-            referentially_valid = False
+        if self.is_valid() and samples_form.is_valid():
+            if isinstance(samples_form, SampleSelectForm):
+                samples = [samples_form.cleaned_data["sample"]]
+            else:
+                samples = samples_form.cleaned_data["sample_list"]
+            dead_samples_list = dead_samples(samples, self.cleaned_data["timestamp"])
+            if dead_samples_list:
+                samples_list = format_enumeration(dead_samples_list)
+                self.add_error("timestamp", ungettext_lazy("The sample {samples} is already dead at this time.",
+                                                           "The samples {samples} are already dead at this time.",
+                                                           len(dead_samples_list)).format(samples=samples_list))
+                referentially_valid = False
         return referentially_valid
 
 
