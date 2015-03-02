@@ -504,39 +504,6 @@ class FixedOperatorField(forms.ChoiceField):
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
 
-class DepositionSamplesForm(forms.Form):
-    """Form for the list selection of samples that took part in the deposition.
-    This form has the special behaviour that it prevents changing the samples
-    when editing an *existing* process.
-    """
-    sample_list = MultipleSamplesField(label=_("samples"))
-
-    def __init__(self, user, deposition, preset_sample, data=None, **kwargs):
-        samples = list(user.my_samples.all())
-        if deposition:
-            kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
-            if deposition.finished:
-                # If editing a finished, existing deposition, always have an
-                # *unbound* form so that the samples are set although sample
-                # selection is "disabled" and thus never successful when
-                # submitting.  This is necessary for depositions because they can
-                # change the name of samples, and so changing the affected samples
-                # afterwards is a source of big trouble.
-                super(DepositionSamplesForm, self).__init__(**kwargs)
-                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
-            else:
-                super(DepositionSamplesForm, self).__init__(data, **kwargs)
-            samples.extend(deposition.samples.all())
-        else:
-            super(DepositionSamplesForm, self).__init__(data, **kwargs)
-            self.fields["sample_list"].initial = []
-            if preset_sample:
-                samples.append(preset_sample)
-                self.fields["sample_list"].initial.append(preset_sample.pk)
-        self.fields["sample_list"].set_samples(user, samples)
-        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
-
-
 class SamplePositionForm(forms.Form):
     sample = forms.CharField(label=capfirst(_("sample")))
     position = forms.CharField(label=capfirst(_("sample position")), required=False)
@@ -923,11 +890,17 @@ class SampleSelectForm(forms.Form):
         self.fields["sample"].set_samples(user, samples)
 
 
-class MultipleSamplesSelectForm(forms.Form):
-    """Form for the list selection of samples that took part in a process.
+class GenericMultipleSamplesSelectForm(forms.Form):
+    """Abstract parent form class for the list selection of samples that took part
+    in a process.  It is just to ensure that there is a field called
+    ``sample_list``.
     """
     sample_list = MultipleSamplesField(label=capfirst(_("samples")))
 
+
+class MultipleSamplesSelectForm(GenericMultipleSamplesSelectForm):
+    """Form for the list selection of samples that took part in a process.
+    """
     def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
         super(MultipleSamplesSelectForm, self).__init__(*args, **kwargs)
         samples = list(user.my_samples.all())
@@ -939,6 +912,37 @@ class MultipleSamplesSelectForm(forms.Form):
         if preset_sample:
             samples.append(preset_sample)
             self.fields["sample_list"].initial.append(preset_sample.pk)
+        self.fields["sample_list"].set_samples(user, samples)
+        self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
+
+
+class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
+    """Form for the list selection of samples that took part in the deposition.
+    This form has the special behaviour that it prevents changing the samples
+    when editing an *existing* process.
+    """
+    def __init__(self, user, deposition, preset_sample, data=None, **kwargs):
+        samples = list(user.my_samples.all())
+        if deposition:
+            kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
+            if deposition.finished:
+                # If editing a finished, existing deposition, always have an
+                # *unbound* form so that the samples are set although sample
+                # selection is "disabled" and thus never successful when
+                # submitting.  This is necessary for depositions because they can
+                # change the name of samples, and so changing the affected samples
+                # afterwards is a source of big trouble.
+                super(DepositionSamplesForm, self).__init__(**kwargs)
+                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+            else:
+                super(DepositionSamplesForm, self).__init__(data, **kwargs)
+            samples.extend(deposition.samples.all())
+        else:
+            super(DepositionSamplesForm, self).__init__(data, **kwargs)
+            self.fields["sample_list"].initial = []
+            if preset_sample:
+                samples.append(preset_sample)
+                self.fields["sample_list"].initial.append(preset_sample.pk)
         self.fields["sample_list"].set_samples(user, samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
