@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-02-01 20:04+0100\n"
+"POT-Creation-Date: 2015-03-02 11:35+0100\n"
 "PO-Revision-Date: 2015-01-26 15:38+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -355,39 +355,39 @@ msgstr "Strukturierung"
 msgid "structurings"
 msgstr "Strukturierungen"
 
-#: institute/models/physical_processes.py:317
+#: institute/models/physical_processes.py:315
 msgid "profilometer + edge"
 msgstr "Profilometer + Kante"
 
-#: institute/models/physical_processes.py:318
+#: institute/models/physical_processes.py:316
 msgid "ellipsometer"
 msgstr "Ellipsometer"
 
-#: institute/models/physical_processes.py:319
+#: institute/models/physical_processes.py:317
 msgid "calculated from deposition parameters"
 msgstr "berechnet aus Depo-Parametern."
 
-#: institute/models/physical_processes.py:320
+#: institute/models/physical_processes.py:318
 msgid "estimate"
 msgstr "Schätzung"
 
-#: institute/models/physical_processes.py:321
+#: institute/models/physical_processes.py:319
 msgid "other"
 msgstr "anderes"
 
-#: institute/models/physical_processes.py:328
+#: institute/models/physical_processes.py:326
 msgid "layer thickness"
 msgstr "Schichtdicke"
 
-#: institute/models/physical_processes.py:329
+#: institute/models/physical_processes.py:327
 msgid "measurement method"
 msgstr "Messmethode"
 
-#: institute/models/physical_processes.py:332
+#: institute/models/physical_processes.py:330
 msgid "layer thickness measurement"
 msgstr "Schichtdickenmessung"
 
-#: institute/models/physical_processes.py:333
+#: institute/models/physical_processes.py:331
 msgid "layer thickness measurements"
 msgstr "Schichtdickenmessungen"
 
@@ -776,11 +776,7 @@ msgstr "Fehler mit der Probenliste"
 msgid "number"
 msgstr "Nummer"
 
-#: institute/templates/samples/lab_notebook_five_chamber_deposition.html:61
-msgid "(not finished)"
-msgstr "(nicht ab­ge­schlos­sen)"
-
-#: institute/templates/samples/lab_notebook_five_chamber_deposition.html:83
+#: institute/templates/samples/lab_notebook_five_chamber_deposition.html:81
 msgid "No data found for this time range."
 msgstr "Keine Daten aus diesen Zeitraum gefunden."
 
@@ -1097,6 +1093,9 @@ msgstr ""
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
+
+#~ msgid "(not finished)"
+#~ msgstr "(nicht ab­ge­schlos­sen)"
 
 #~ msgid ""
 #~ "\n"
