@@ -90,6 +90,16 @@ class GlobalDataForm(forms.Form):
         self.fields["sample_series"].queryset = permissions.get_editable_sample_series(user_details.user)
 
 
+class AutomaticSplitForm(forms.Form):
+    """Form for entering data for automatic splitting.  Currently, JuliaBase only
+    supports entering a number, and the pieces are generated and automatically
+    numbers up to that number.
+    """
+    number = forms.IntegerField(label=_("Number of pieces"), required=False, max_value=100, min_value=1,
+                                widget=forms.NumberInput(attrs={"size": "3"}),
+                                help_text=_("the pieces are automatically added, and an index – starting at 1 – is appended"))
+
+
 def forms_from_post_data(post_data, parent, user):
     """Interpret the POST data sent by the user through his browser and create
     forms from it.  This function also performs the so-called “structural
@@ -112,17 +122,17 @@ def forms_from_post_data(post_data, parent, user):
       structure was changed by the user, the prefix suitable for the
       “add-new-name” form
 
-    :rtype: list of `NewNameForm`, `GlobalDataForm`, bool, str
+    :rtype: list of `NewNameForm`, `GlobalDataForm`, `AutomaticSplitForm`, bool, str
     """
     try:
         indices = [int(key.partition("-")[0]) for key in post_data if key.endswith("-new_name")]
     except ValueError:
         indices = []
     indices.sort()
-    next_prefix = str(indices[-1] + 1 if indices else 0)
     last_name = None
     new_name_forms = []
     structure_changed = False
+    index = 0
     for index in indices:
         if "{0}-delete".format(index) in post_data:
             structure_changed = True
@@ -135,8 +145,17 @@ def forms_from_post_data(post_data, parent, user):
             del new_name_forms[-1]
         else:
             structure_changed = True
+    automatic_split_form = AutomaticSplitForm(post_data)
+    if automatic_split_form.is_valid():
+        number = automatic_split_form.cleaned_data["number"] or 0
+        for piece_number in range(1, number + 1):
+            index += 1
+            new_name_forms.append(NewNameForm(user, parent.name, None, prefix=str(index),
+                                              initial={"new_name": "{}-{}".format(parent.name, piece_number)}))
+        automatic_split_form = AutomaticSplitForm()
+    next_prefix = str(index + 1)
     global_data_form = GlobalDataForm(parent, user.samples_user_details, post_data)
-    return new_name_forms, global_data_form, structure_changed, next_prefix
+    return new_name_forms, global_data_form, automatic_split_form, structure_changed, next_prefix
 
 
 def forms_from_database(parent, user):
@@ -150,16 +169,18 @@ def forms_from_database(parent, user):
     :type user: django.contrib.auth.models.User
 
     :return:
-      the initial ``new_name_forms``, the initial ``global_data_form``
+      the initial ``new_name_forms``, the initial ``global_data_form``,
+      the initial ``automatic_split_form``
 
-    :rtype: list of `NewNameForm`, list of `GlobalDataForm`
+    :rtype: list of `NewNameForm`, `GlobalDataForm`, `AutomaticSplitForm`
     """
     new_name_forms = []
     global_data_form = GlobalDataForm(parent, user.samples_user_details)
-    return new_name_forms, global_data_form
+    automatic_split_form = AutomaticSplitForm()
+    return new_name_forms, global_data_form, automatic_split_form
 
 
-def is_all_valid(new_name_forms, global_data_form):
+def is_all_valid(new_name_forms, global_data_form, automatic_split_form):
     """Tests the “inner” validity of all forms belonging to this view.  This
     function calls the ``is_valid()`` method of all forms, even if one of them
     returns ``False`` (and makes the return value clear prematurely).
@@ -167,9 +188,11 @@ def is_all_valid(new_name_forms, global_data_form):
     :param new_name_forms: all “new name forms”, but not the dummy one for new
         pieces (the one in darker grey).
     :param global_data_form: the global data form
+    :param automatic_split_form: the form for automatic pieces generation
 
     :type new_name_forms: list of `NewNameForm`
     :type global_data_form: `GlobalDataForm`
+    :type automatic_split_form: `AutomaticSplitForm`
 
     :return:
       whether all forms are valid
@@ -178,6 +201,7 @@ def is_all_valid(new_name_forms, global_data_form):
     """
     all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
     all_valid = global_data_form.is_valid() and all_valid  # Ordering important: .is_valid() must be called
+    all_valid = automatic_split_form.is_valid() and all_valid
     return all_valid
 
 
@@ -311,10 +335,11 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         if parent.last_process_if_split() != old_split:
             raise Http404("This split is not the last one in the sample's process list.")
     number_of_old_pieces = old_split.pieces.count() if old_split else 0
+    automatic_split_form = AutomaticSplitForm(request.POST)
     if request.method == "POST":
-        new_name_forms, global_data_form, structure_changed, next_prefix = \
+        new_name_forms, global_data_form, automatic_split_form, structure_changed, next_prefix = \
             forms_from_post_data(request.POST, parent, request.user)
-        all_valid = is_all_valid(new_name_forms, global_data_form)
+        all_valid = is_all_valid(new_name_forms, global_data_form, automatic_split_form)
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces)
         if all_valid and referentially_valid and not structure_changed:
             sample_split, new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
@@ -324,7 +349,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                 request, _("Sample “{sample}” was successfully split.").format(sample=parent),
                 "show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
-        new_name_forms, global_data_form = forms_from_database(parent, request.user)
+        new_name_forms, global_data_form, automatic_split_form = forms_from_database(parent, request.user)
         next_prefix = "0"
     new_name_forms.append(NewNameForm(request.user, parent.name,
                                       initial={"new_name": parent.name, "new_purpose": parent.purpose},
@@ -334,6 +359,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                    "new_names": list(zip(range(number_of_old_pieces + 1,
                                                number_of_old_pieces + 1 + len(new_name_forms)),
                                          new_name_forms)),
+                   "automatic_split": automatic_split_form,
                    "global_data": global_data_form,
                    "old_split": old_split})
 

@@ -72,6 +72,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tbody>
   </table>
 
+  {% error_list automatic_split _("General error") %}
+  <table style="border-collapse: collapse">
+    <tbody>
+      <tr>
+        {% input_field automatic_split.number %}
+      </tr>
+    </tbody>
+  </table>
+
   <p>
     <label for="id_{{ global_data.sample_completely_split.html_name }}"
            >{{ global_data.sample_completely_split.label }}:</label>
