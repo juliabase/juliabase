@@ -41,7 +41,7 @@ from .base import successful_response, extract_preset_sample, remove_samples_fro
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
-           "DepositionView", "DepositionMultipleTypeView")
+           "DepositionView", "DepositionMultipleTypeView", "SimpleRadioSelectRenderer")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -177,7 +177,7 @@ class ProcessWithoutSamplesView(TemplateView):
             elif form is not None:
                 all_valid = (not form.is_bound or form.is_valid()) and all_valid
         return all_valid
-        
+
     def is_all_valid(self):
         """Checks whether all forms are valid.  Unbound forms – which may occur also in
         POST requests – are not checked.  Moreover, this method guarantees that
@@ -427,7 +427,7 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
     def __init__(self, **kwargs):
         super(SubprocessesMixin, self).__init__(**kwargs)
         self.sub_model = self.sub_model or self.subform_class.Meta.model
-        
+
     def build_forms(self):
         super(SubprocessesMixin, self).build_forms()
         if self.id:
@@ -860,7 +860,7 @@ class DepositionMultipleTypeView(DepositionView):
     the class variable :py:attr:`form_class`, you must set:
 
     :ivar layer_form_classes: This is a tuple of the form classes for the layers
-    
+
     :ivar short_labels: *(optional)* This is a dict mapping a layer form class
       to a concise name of that layer type.  It is used in the selection widget
       of the add-layer form.
@@ -899,7 +899,7 @@ class DepositionMultipleTypeView(DepositionView):
 
     def get_layer_form(self, prefix):
         layer_form = self.LayerForm(self.data, prefix=prefix)
-        LayerFormClass = self.layer_form_classes[0]   # default
+        LayerFormClass = self.layer_form_classes[0]  # default
         if layer_form.is_valid():
             layer_type = layer_form.cleaned_data["layer_type"]
             try:
