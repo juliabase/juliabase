@@ -32,17 +32,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% endif %}
 </p>
 
-<ul class="sample-list">
-  {% for piece in process.pieces.all %}
-    {% if piece != original_sample %}
-      <li>
-        <a href="{{ piece.get_absolute_url }}">{{ piece.name }}</a>
-        {% if piece == latest_descendant %}
-          {% trans '(the ancestor of this one)' %}
-        {% endif %}
-      </li>
-    {% else %}
-      <li>{{ piece.name }} {% trans '(this one)' %}</li>
-    {% endif %}
-  {% endfor %}
-</ul>
+{% with number=process.pieces.count %}
+  <ul class="sample-list"{% if number > 10 %} style="list-style-position: inside; padding-left: 0pt"{% endif %}>
+    {% for piece in process.pieces.all %}
+      {% if piece != original_sample %}
+        <li{% if number > 10 %} style="float: left; margin-left: 1em"{% endif %}>
+          <a href="{{ piece.get_absolute_url }}">{{ piece.name }}</a>
+          {% if piece == latest_descendant %}
+            {% trans '(the ancestor of this one)' %}
+          {% endif %}
+        </li>
+      {% else %}
+        <li{% if number > 10 %} style="float: left; margin-left: 1em"{% endif %}>{{ piece.name }}
+        {% trans '(this one)' %}</li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+{% endwith %}
