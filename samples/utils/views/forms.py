@@ -198,10 +198,6 @@ class ProcessForm(ModelForm):
         """Forbid timestamps that are in the future.
         """
         timestamp = clean_timestamp_field(self.cleaned_data["timestamp"])
-        if self.process and self.process.timestamp > timestamp:
-            raise ValidationError(_("The timestamp was older than the one in the database.  Probably someone else has "
-                                    "edited the process by now.  If so, open the process in another tab and combine the "
-                                    "changes."))
         return timestamp
 
     def clean_finished(self):
