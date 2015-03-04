@@ -54,8 +54,8 @@ class YearMonthForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super(YearMonthForm, self).__init__(*args, **kwargs)
-        self.fields["year"].widget.attrs["size"] = 4
-        self.fields["month"].widget.attrs["size"] = 4
+        self.fields["year"].widget.attrs["style"] = "width: 4em"
+        self.fields["month"].widget.attrs["style"] = "width: 4em"
 
 
 year_and_month_pattern = re.compile(r"(?P<year>\d{4})/(?P<month>\d{1,2})$")
