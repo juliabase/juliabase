@@ -78,7 +78,7 @@ urlpatterns = [
 pattern_generator = PatternGenerator(urlpatterns, "institute.views.samples")
 pattern_generator.deposition("ClusterToolDeposition", views={"add", "edit"})
 pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")
-pattern_generator.physical_process("PDSMeasurement", "number")
+pattern_generator.physical_process("PDSMeasurement")
 pattern_generator.physical_process("Substrate", views={"edit"})
 pattern_generator.physical_process("Structuring", views={"edit"})
 pattern_generator.physical_process("SolarsimulatorMeasurement")

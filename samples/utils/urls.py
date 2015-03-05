@@ -76,7 +76,8 @@ class PatternGenerator(object):
         :param identifying_field: If applicable, name of the model field which
             serves as “poor man's” primary key.  If not given, the field name
             is derived from the model's ``JBMeta`` class, and if this fails,
-            ``id`` is used.
+            ``id`` is used.  This parameter is deprecated and will be removed
+            in JuliaBase 1.2.
         :param url_name: The URL path component to be used for this process.  By
             default, this is the class name converted to underscores notation,
             with an “s” appended, e.g. ``"thickness_measurements"``.  It may
