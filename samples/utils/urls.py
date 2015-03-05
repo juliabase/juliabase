@@ -21,6 +21,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import importlib
+from django.apps import apps
 from django.conf.urls import url
 from django.core.urlresolvers import get_callable
 from jb_common.utils.base import camel_case_to_underscores
@@ -40,17 +41,24 @@ class PatternGenerator(object):
         pattern_generator.physical_process("Substrate", views={"edit"})
     """
 
-    def __init__(self, url_patterns, views_prefix):
+    def __init__(self, url_patterns, views_prefix, app_label=None):
         """
         :param url_patterns: The URL patterns to populate in situ.
         :param views_prefix: the prefix for the view functions as a Python path,
             e.g. ``"my_app.views.samples"``
+        :param app_label: The label of the app to which the generated URLs will
+            belong to.  Defaults to the first component of ``views_prefix``.
 
         :type url_patterns: list of `url()` instances
         :type views_prefix: unicode
+        :type app_label: unicode
         """
         self.views_prefix = views_prefix + "."
         self.url_patterns = url_patterns
+        # FixMe: This is only an assumption.  ``app_label`` should become an
+        # optional parameter.
+        self.app_label = app_label or self.views_prefix.partition(".")[0]
+        apps.get_app_config(self.app_label)
 
     def physical_process(self, class_name, identifying_field=None, url_name=None, views={"add", "edit"}):
         """Add URLs for the views of the physical process `class_name`.  For the “add”
@@ -66,8 +74,9 @@ class PatternGenerator(object):
         :param class_name: Name of the physical process class,
             e.g. ``"ThicknessMeasurement"``.
         :param identifying_field: If applicable, name of the model field which
-            serves as “poor man's” primary key.  If not given, the ``id`` is
-            used.
+            serves as “poor man's” primary key.  If not given, the field name
+            is derived from the model's ``JBMeta`` class, and if this fails,
+            ``id`` is used.
         :param url_name: The URL path component to be used for this process.  By
             default, this is the class name converted to underscores notation,
             with an “s” appended, e.g. ``"thickness_measurements"``.  It may
@@ -88,7 +97,13 @@ class PatternGenerator(object):
             else:
                 url_name = class_name_with_underscores + "s"
         assert not views - {"add", "edit", "custom_show", "lab_notebook"}
-        normalized_id_field = identifying_field or class_name_with_underscores + "_id"
+        normalized_id_field = identifying_field
+        if not normalized_id_field:
+            model = apps.get_model(self.app_label, class_name)
+            try:
+                normalized_id_field = model.JBMeta.identifying_field
+            except AttributeError:
+                normalized_id_field = class_name_with_underscores + "_id"
         if "lab_notebook" in views:
             self.url_patterns.extend([url(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
                                           lab_notebook.export, {"process_name": class_name},
