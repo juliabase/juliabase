@@ -1580,6 +1580,26 @@ class Task(models.Model):
     def get_absolute_url(self):
         return "{0}#task_{1}".format(django.core.urlresolvers.reverse("samples.views.task_lists.show"), self.id)
 
+    @classmethod
+    def get_search_tree_node(cls):
+        """Class method for generating the search tree node for this model
+        instance.
+
+        :return:
+          the tree node for this model instance
+
+        :rtype: `jb_common.search.SearchTreeNode`
+        """
+        search_fields = [search.TextSearchField(cls, "status"),
+                         search.TextSearchField(cls, "customer", "username"),
+                         search.TextNullSearchField(cls, "operator", "username"),
+                         search.TextSearchField(cls, "comments"), search.TextSearchField(cls, "priority"),
+                         search.DateTimeSearchField(cls, "creating_timestamp"),
+                         search.DateTimeSearchField(cls, "last_modified")]
+        related_models = dict((model, "finished_process") for model in get_all_searchable_physical_processes())
+        related_models[Sample] = "samples"
+        return search.SearchTreeNode(cls, related_models, search_fields)
+
 
 class ProcessWithSamplePositions(models.Model):
     """An abstract mixin class for saving the positions of the samples in an
