@@ -201,7 +201,7 @@ def is_all_valid(new_name_forms, global_data_form, automatic_split_form):
     """
     all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms])
     all_valid = global_data_form.is_valid() and all_valid  # Ordering important: .is_valid() must be called
-    all_valid = automatic_split_form.is_valid() and all_valid
+    all_valid = (not automatic_split_form.is_bound or automatic_split_form.is_valid()) and all_valid
     return all_valid
 
 
