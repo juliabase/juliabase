@@ -66,6 +66,17 @@ code for each apparatus.  JuliaBase contains code for typical processing and
 measurement setups that you can use as a starting point.
 
 
+Contact
+=========
+
+See :doc:`project` for how to find the right contact person and how to get in
+touch with the JuliaBase community.
+
+See also the `impressum`_ of JuliaBase's website.
+
+.. _impressum: http://www.juliabase.org/downloads/impressum.html
+
+
 Technical overview
 ======================
 
@@ -106,9 +117,6 @@ have immediately something up and running, and you can evaluate it even better.
 
 If you consider actually using JuliaBase, have a look at the full :doc:`table
 of contents <toc>`.  This documentation also exists `in PDF format`_.
-
-Finally, see :doc:`project` for how to get in touch with the JuliaBase
-community.
 
 .. _in PDF format: http://www.juliabase.org/downloads/juliabase.pdf
 
