@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-11 04:01+0100\n"
-"PO-Revision-Date: 2015-03-11 04:02+0100\n"
+"POT-Creation-Date: 2015-03-11 09:46+0100\n"
+"PO-Revision-Date: 2015-03-11 09:47+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -114,7 +114,7 @@ msgstr "Spieler"
 msgid "kicker number"
 msgstr "Kickerzahl"
 
-#: kicker/models.py:76 kicker/templates/kicker/summary.html:30
+#: kicker/models.py:76 kicker/templates/kicker/summary.html:31
 msgid "kicker numbers"
 msgstr "Kickerzahlen"
 
@@ -145,6 +145,10 @@ msgstr "Tastenkürzel"
 #: kicker/models.py:103 kicker/models.py:104
 msgid "user details"
 msgstr "Benutzerdetails"
+
+#: kicker/templates/kicker/summary.html:59
+msgid "Edit your Kicker user details"
+msgstr "Ihre Kicker-Benutzerdetails ändern"
 
 #: kicker/templates/kicker/user_details.html:27
 msgid "Already taken shortkeys:"
@@ -178,23 +182,23 @@ msgstr "Sekunden müssen eine positive Zahl sein."
 msgid "A finished match can't be canceled."
 msgstr "Ein beendetes Match kann nicht abgebrochen werden."
 
-#: kicker/views.py:352
+#: kicker/views.py:353
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:371
+#: kicker/views.py:372
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:377
+#: kicker/views.py:378
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
-#: kicker/views.py:391
+#: kicker/views.py:392
 msgid "The preferences were successfully updated."
 msgstr "Die Einstellungen wurden erfolgreich geändert."
 
-#: kicker/views.py:395
+#: kicker/views.py:396
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"
