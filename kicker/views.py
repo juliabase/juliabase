@@ -26,6 +26,7 @@ from matplotlib.figure import Figure
 import matplotlib.dates
 from django import forms
 from django.forms.util import ValidationError
+from django.http import Http404
 from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
@@ -35,7 +36,7 @@ import django.contrib.auth.models
 from django.http import Http404
 from django.utils.translation import ugettext as _
 from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs, \
-    int_or_zero, static_file_response
+    int_or_zero, static_file_response, is_update_necessary
 from jb_common.signals import storage_changed
 import samples.utils.views as utils
 from kicker import models
@@ -320,34 +321,41 @@ def plot_commands(axes, plot_data):
 
 @login_required
 def plot(request, image_format):
-    plot_filepath = os.path.join(settings.CACHE_ROOT, "plots", basename + "." + image_format)
-    eligible_players = [entry[0] for entry in get_eligible_players()]
-    hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
-    plot_data = []
-    for player in eligible_players:
-        x_values, y_values = [], []
-        latest_day = None
-        kicker_numbers = list(models.KickerNumber.objects.filter(player=player, timestamp__gt=hundred_days_ago))
-        for i, kicker_number in enumerate(kicker_numbers):
-            if i == len(kicker_numbers) - 1 or \
-                    kicker_numbers[i + 1].timestamp.toordinal() != kicker_number.timestamp.toordinal():
-                x_values.append(kicker_number.timestamp)
-                y_values.append(kicker_number.number)
-        plot_data.append((x_values, y_values, player.kicker_user_details.nickname or player.username))
-    if image_format == "png":
-        figsize, position, legend_loc, legend_bbox, ncol = (8, 12), (0.1, 0.5, 0.8, 0.45), "upper center", [0.5, -0.1], 1
-    else:
-        figsize, position, legend_loc, legend_bbox, ncol = (10, 7), (0.1, 0.1, 0.6, 0.8), "best", [1, 1], 3
-    figure = Figure(frameon=False, figsize=figsize)
-    canvas = FigureCanvasAgg(figure)
-    axes = figure.add_subplot(111)
-    axes.set_position(position)
-    plot_commands(axes, plot_data)
-    axes.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, ncol=ncol, shadow=True)
-    mkdirs(plot_filepath)
-    canvas.print_figure(plot_filepath)
-    figure.clf()
-    storage_changed.send(models.KickerNumber)
+    plot_filepath = os.path.join(settings.CACHE_ROOT, "kicker", "kicker." + image_format)
+    try:
+        timestamps = [models.KickerNumber.objects.latest().timestamp]
+    except models.KickerNumber.DoesNotExist:
+        timestamps = []
+    if is_update_necessary(plot_filepath, timestamps=timestamps):
+        eligible_players = [entry[0] for entry in get_eligible_players()]
+        hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
+        plot_data = []
+        for player in eligible_players:
+            x_values, y_values = [], []
+            latest_day = None
+            kicker_numbers = list(models.KickerNumber.objects.filter(player=player, timestamp__gt=hundred_days_ago))
+            for i, kicker_number in enumerate(kicker_numbers):
+                if i == len(kicker_numbers) - 1 or \
+                        kicker_numbers[i + 1].timestamp.toordinal() != kicker_number.timestamp.toordinal():
+                    x_values.append(kicker_number.timestamp)
+                    y_values.append(kicker_number.number)
+            plot_data.append((x_values, y_values, player.kicker_user_details.nickname or player.username))
+        if image_format == "png":
+            figsize, position, legend_loc, legend_bbox, ncol = (8, 12), (0.1, 0.5, 0.8, 0.45), "upper center", [0.5, -0.1], 1
+        else:
+            figsize, position, legend_loc, legend_bbox, ncol = (10, 7), (0.1, 0.1, 0.6, 0.8), "best", [1, 1], 3
+        figure = Figure(frameon=False, figsize=figsize)
+        canvas = FigureCanvasAgg(figure)
+        axes = figure.add_subplot(111)
+        axes.set_position(position)
+        plot_commands(axes, plot_data)
+        axes.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, ncol=ncol, shadow=True)
+        mkdirs(plot_filepath)
+        canvas.print_figure(plot_filepath)
+        figure.clf()
+        storage_changed.send(models.KickerNumber)
+    if not os.path.exists(plot_filepath):
+        raise Http404("No kicker data available.")
     return static_file_response(plot_filepath, "kicker.pdf" if image_format == "pdf" else None)
     
 

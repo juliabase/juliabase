@@ -45,6 +45,7 @@ class Match(models.Model):
 
     class Meta:
         ordering = ["timestamp"]
+        get_latest_by = "timestamp"
         verbose_name = _("match")
         verbose_name_plural = _("matches")
 
@@ -68,6 +69,7 @@ class KickerNumber(models.Model):
 
     class Meta:
         ordering = ["timestamp"]
+        get_latest_by = "timestamp"
         verbose_name = _("kicker number")
         verbose_name_plural = _("kicker numbers")
 

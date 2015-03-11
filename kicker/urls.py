@@ -25,7 +25,7 @@ the Django application “kicker”.
 from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
-from kicker.views import edit_match, cancel_match, set_start_kicker_number, edit_user_details, get_player, summary
+from kicker.views import edit_match, cancel_match, set_start_kicker_number, edit_user_details, get_player, summary, plot
 
 
 urlpatterns = [
