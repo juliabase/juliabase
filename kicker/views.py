@@ -306,19 +306,6 @@ def get_eligible_players():
     return [(entry[1], int(round(entry[0]))) for entry in result]
 
 
-def plot_commands(axes, plot_data):
-    for line in plot_data:
-        if len(line[0]) == 1:
-            line[0].append(line[0][0] - datetime.timedelta(days=1))
-            line[1].append(line[1][0])
-        axes.plot(line[0], line[1], label=line[2], linewidth=2)
-    months_locator = matplotlib.dates.MonthLocator()
-    axes.xaxis.set_major_locator(months_locator)
-    months_formatter = matplotlib.dates.DateFormatter('%b')
-    axes.xaxis.set_major_formatter(months_formatter)
-    axes.grid(True)
-
-
 @login_required
 def plot(request, image_format):
     plot_filepath = os.path.join(settings.CACHE_ROOT, "kicker", "kicker." + image_format)
@@ -348,7 +335,16 @@ def plot(request, image_format):
         canvas = FigureCanvasAgg(figure)
         axes = figure.add_subplot(111)
         axes.set_position(position)
-        plot_commands(axes, plot_data)
+        for line in plot_data:
+            if len(line[0]) == 1:
+                line[0].append(line[0][0] - datetime.timedelta(days=1))
+                line[1].append(line[1][0])
+            axes.plot(line[0], line[1], label=line[2], linewidth=2)
+        months_locator = matplotlib.dates.MonthLocator()
+        axes.xaxis.set_major_locator(months_locator)
+        months_formatter = matplotlib.dates.DateFormatter('%b')
+        axes.xaxis.set_major_formatter(months_formatter)
+        axes.grid(True)
         axes.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, ncol=ncol, shadow=True)
         mkdirs(plot_filepath)
         canvas.print_figure(plot_filepath)
