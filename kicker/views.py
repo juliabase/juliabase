@@ -374,8 +374,11 @@ class UserDetailsForm(forms.ModelForm):
 
     def clean_shortkey(self):
         shortkey = self.cleaned_data["shortkey"]
-        if shortkey and models.UserDetails.objects.exclude(user=self.user).filter(shortkey=shortkey).exists():
-            raise ValidationError(_("This shortkey is already given."))
+        if shortkey:
+            if models.UserDetails.objects.exclude(user=self.user).filter(shortkey=shortkey).exists():
+                raise ValidationError(_("This shortkey is already given."))
+            if shortkey in "sykmGQ!":
+                raise ValidationError(_("This shortkey is invalid."))
         return shortkey
 
 
