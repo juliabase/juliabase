@@ -392,8 +392,9 @@ def edit_user_details(request, username):
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
     return render(request, "kicker/user_details.html", {
-            "title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(user)),
-            "user_details": user_details_form})
+        "title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(user)),
+        "user_details": user_details_form,
+        "shortkeys": " ".join(models.UserDetails.objects.exclude(shortkey="").values_list("shortkey", flat=True))})
 
 
 @login_required
