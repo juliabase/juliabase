@@ -191,7 +191,7 @@ class MatchResult(object):
 def edit_match(request, id_=None):
     match = get_object_or_404(models.Match, pk=int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
-        raise JSONRequestException(3005, "You must be the original reporter of this match.")
+        raise JSONRequestException(3005, _("You must be the original reporter of this match."))
     try:
         if not match:
             player_a_1 = get_object_or_404(django.contrib.auth.models.User, username=request.POST["player_a_1"])
@@ -209,20 +209,20 @@ def edit_match(request, id_=None):
         raise JSONRequestException(5, error.args[0])
     if not match:
         if player_a_1 == player_a_2 and player_b_1 != player_b_2 or player_a_1 != player_a_2 and player_b_1 == player_b_2:
-            raise JSONRequestException(3000, "Games with three players can't be processed.")
+            raise JSONRequestException(3000, _("Matches with three players can't be processed."))
         if player_a_1 == player_a_2 == player_b_1 == player_b_2:
-            raise JSONRequestException(3001, "All players are the same person.")
+            raise JSONRequestException(3001, _("All players are the same person."))
         models.Match.objects.filter(finished=False, reporter=request.user).delete()
     else:
         if match.finished:
-            raise JSONRequestException(3003, "A finished match can't be edited anymore.")
+            raise JSONRequestException(3003, _("A finished match can't be edited anymore."))
         player_a_1 = match.player_a_1
         player_a_2 = match.player_a_2
         player_b_1 = match.player_b_1
         player_b_2 = match.player_b_2
     try:
         if finished and models.KickerNumber.objects.latest().timestamp > timestamp:
-            raise JSONRequestException(3002, "This game is older than the most recent kicker numbers.")
+            raise JSONRequestException(3002, _("This match is older than the most recent kicker numbers."))
     except models.KickerNumber.DoesNotExist:
         pass
     if match:
@@ -243,7 +243,7 @@ def edit_match(request, id_=None):
             reporter=request.user)
     if match.finished:
         if seconds <= 0:
-            raise JSONRequestException(5, "Seconds must be positive.")
+            raise JSONRequestException(5, _("Seconds must be positive."))
         match_result = MatchResult(match)
         match_result.add_kicker_numbers()
         match_result.add_stock_values()
@@ -258,9 +258,9 @@ def edit_match(request, id_=None):
 def cancel_match(request, id_):
     match = get_object_or_404(models.Match, pk=int_or_zero(id_)) if id_ else None
     if match and match.reporter != request.user:
-        raise JSONRequestException(3005, "You must be the original reporter of this match.")
+        raise JSONRequestException(3005, _("You must be the original reporter of this match."))
     if match.finished:
-        raise JSONRequestException(3003, "A finished match can't be canceled.")
+        raise JSONRequestException(3003, _("A finished match can't be canceled."))
     match.delete()
     return respond_in_json(True)
 
