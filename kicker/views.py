@@ -318,9 +318,9 @@ def plot(request, image_format):
                     y_values.append(kicker_number.number)
             plot_data.append((x_values, y_values, player.kicker_user_details.nickname or player.username))
         if image_format == "png":
-            figsize, position, legend_loc, legend_bbox, ncol = (8, 12), (0.1, 0.5, 0.8, 0.45), "upper center", [0.5, -0.1], 1
+            figsize, position, legend_loc, legend_bbox, ncol = (8, 12), (0.1, 0.5, 0.8, 0.45), "upper center", [0.5, -0.1], 3
         else:
-            figsize, position, legend_loc, legend_bbox, ncol = (10, 7), (0.1, 0.1, 0.6, 0.8), "best", [1, 1], 3
+            figsize, position, legend_loc, legend_bbox, ncol = (10, 7), (0.1, 0.1, 0.6, 0.8), "best", [1, 1], 1
         figure = Figure(frameon=False, figsize=figsize)
         canvas = FigureCanvasAgg(figure)
         axes = figure.add_subplot(111)
