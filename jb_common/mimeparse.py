@@ -35,7 +35,7 @@ def parse_mime_type(mime_type):
     # Java URLConnection class sends an Accept header that includes a single "*"
     # Turn it into a legal wildcard.
     if full_type == '*': full_type = '*/*'
-    (type, subtype) = full_type.split("/")
+    type, __, subtype = full_type.partition("/")
     return (type.strip(), subtype.strip(), params)
 
 def parse_media_range(range):
