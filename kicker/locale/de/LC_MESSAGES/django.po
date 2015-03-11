@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-10 15:53+0100\n"
-"PO-Revision-Date: 2015-01-02 22:56+0100\n"
+"POT-Creation-Date: 2015-03-11 04:01+0100\n"
+"PO-Revision-Date: 2015-03-11 04:02+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -65,8 +65,8 @@ msgstr "Sekunden"
 msgid "duration of the match"
 msgstr "Dauer des Matches"
 
-#: kicker/models.py:42 kicker/models.py:57 kicker/models.py:67
-#: kicker/models.py:78
+#: kicker/models.py:42 kicker/models.py:58 kicker/models.py:70
+#: kicker/models.py:82
 msgid "timestamp"
 msgstr "Zeitstempel"
 
@@ -78,94 +78,123 @@ msgstr "beendet"
 msgid "reporter"
 msgstr "Berichter"
 
-#: kicker/models.py:48
+#: kicker/models.py:49
 msgid "match"
 msgstr "Match"
 
-#: kicker/models.py:49
+#: kicker/models.py:50
 msgid "matches"
 msgstr "Matches"
 
-#: kicker/models.py:53
+#: kicker/models.py:54
 msgid "owner"
 msgstr "Besitzer"
 
-#: kicker/models.py:54
+#: kicker/models.py:55
 msgid "bought person"
 msgstr "Gekaufte Person"
 
-#: kicker/models.py:56
+#: kicker/models.py:57
 msgid "number of shares"
 msgstr "Aktienanzahl"
 
-#: kicker/models.py:60
+#: kicker/models.py:63
 msgid "shares"
 msgstr "Aktie"
 
-#: kicker/models.py:61
+#: kicker/models.py:64
 msgid "shareses"
 msgstr "Aktien"
 
-#: kicker/models.py:65
+#: kicker/models.py:68
 msgid "player"
 msgstr "Spieler"
 
-#: kicker/models.py:66 kicker/models.py:71
+#: kicker/models.py:69 kicker/models.py:75
 msgid "kicker number"
 msgstr "Kickerzahl"
 
-#: kicker/models.py:72 kicker/templates/kicker/summary.html:31
+#: kicker/models.py:76 kicker/templates/kicker/summary.html:30
 msgid "kicker numbers"
 msgstr "Kickerzahlen"
 
-#: kicker/models.py:76
+#: kicker/models.py:80
 msgid "gambler"
 msgstr "Spieler"
 
-#: kicker/models.py:77 kicker/models.py:82
+#: kicker/models.py:81 kicker/models.py:87
 msgid "stock value"
 msgstr "Aktienkurs"
 
-#: kicker/models.py:83
+#: kicker/models.py:88
 msgid "stock values"
 msgstr "Aktienkurse"
 
-#: kicker/models.py:92
+#: kicker/models.py:97
 msgid "user"
 msgstr "Benutzer"
 
-#: kicker/models.py:94
+#: kicker/models.py:99
 msgid "nickname"
 msgstr "Spitzname"
 
-#: kicker/models.py:95
+#: kicker/models.py:100
 msgid "shortkey"
 msgstr "Tastenkürzel"
 
-#: kicker/models.py:98 kicker/models.py:99
+#: kicker/models.py:103 kicker/models.py:104
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: kicker/views.py:362
+#: kicker/templates/kicker/user_details.html:27
+msgid "Already taken shortkeys:"
+msgstr "Bereits vergebene Tastenkürzel:"
+
+#: kicker/views.py:194 kicker/views.py:261
+msgid "You must be the original reporter of this match."
+msgstr "Sie müssen der ursprüngliche Berichter des Matches sein."
+
+#: kicker/views.py:212
+msgid "Matches with three players can't be processed."
+msgstr "Matches mit drei Spielern können nicht verarbeitet werden."
+
+#: kicker/views.py:214
+msgid "All players are the same person."
+msgstr "Alle Spieler sind dieselbe Person."
+
+#: kicker/views.py:218
+msgid "A finished match can't be edited anymore."
+msgstr "Ein beendetes Match kann nicht mehr geändert werden."
+
+#: kicker/views.py:225
+msgid "This match is older than the most recent kicker numbers."
+msgstr "Dieses Match ist älter als die letzten Kickerzahlen."
+
+#: kicker/views.py:246
+msgid "Seconds must be positive."
+msgstr "Sekunden müssen eine positive Zahl sein."
+
+#: kicker/views.py:263
+msgid "A finished match can't be canceled."
+msgstr "Ein beendetes Match kann nicht abgebrochen werden."
+
+#: kicker/views.py:352
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:381
+#: kicker/views.py:371
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:387
+#: kicker/views.py:377
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
-#: kicker/views.py:401
+#: kicker/views.py:391
 msgid "The preferences were successfully updated."
 msgstr "Die Einstellungen wurden erfolgreich geändert."
 
-#: kicker/views.py:405
+#: kicker/views.py:395
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"
-
-#~ msgid "IEF-5 logo"
-#~ msgstr "IEF-5-Logo"

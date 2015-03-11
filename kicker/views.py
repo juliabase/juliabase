@@ -34,7 +34,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
 from django.http import Http404
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs, \
     int_or_zero, static_file_response, is_update_necessary
 from jb_common.signals import storage_changed
@@ -453,3 +453,6 @@ def replay():
         models.KickerNumber.objects.create(player=player, number=start_number, timestamp=zero_timestamp)
     for match in models.Match.objects.iterator():
         MatchResult(match).add_kicker_numbers()
+
+
+_ = ugettext
