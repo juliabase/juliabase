@@ -38,6 +38,7 @@ from samples import permissions
 from . import forms as utils
 from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
+from samples import models
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
@@ -585,6 +586,7 @@ class DepositionView(ProcessMultipleSamplesView):
     The layer form should be a subclass of :py:class:`~samples.utils.views.SubprocessForm`.
     """
     add_layers_form_class = AddLayersForm
+    change_layer_form_class = ChangeLayerForm
 
     def _change_structure(self):
         """Apply any layer-based rearrangements the user has requested.  This
@@ -627,7 +629,7 @@ class DepositionView(ProcessMultipleSamplesView):
             if change_layer_form.is_valid():
                 movement = change_layer_form.cleaned_data["move_this_layer"]
                 if movement:
-                    new_layers[i][2] = ChangeLayerForm(prefix=layer_form.prefix)
+                    new_layers[i][2] = self.change_layer_form_class(prefix=layer_form.prefix)
                     structure_changed = True
                     if movement == "up" and i > 0:
                         temp = new_layers[i - 1]
@@ -644,7 +646,7 @@ class DepositionView(ProcessMultipleSamplesView):
             if layer_form.is_valid() and \
                     change_layer_form.is_valid() and change_layer_form.cleaned_data["duplicate_this_layer"]:
                 new_layers.append(("duplicate", layer_form))
-                new_layers[i][2] = ChangeLayerForm(prefix=layer_form.prefix)
+                new_layers[i][2] = self.change_layer_form_class(prefix=layer_form.prefix)
                 structure_changed = True
 
         # Add layers
@@ -694,13 +696,13 @@ class DepositionView(ProcessMultipleSamplesView):
                     layer_data["number"] = next_layer_number
                     next_layer_number += 1
                     self.forms["layers"].append(self.layer_form_class(self, initial=layer_data, prefix=str(next_prefix)))
-                    self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                    self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
                     next_prefix += 1
             elif new_layer[0] == "new":
                 initial = new_layer[1]
                 initial["number"] = next_layer_number
                 self.forms["layers"].append(self.layer_form_class(self, initial=initial, prefix=str(next_prefix)))
-                self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
                 next_layer_number += 1
                 next_prefix += 1
             else:
@@ -747,7 +749,7 @@ class DepositionView(ProcessMultipleSamplesView):
         if self.request.method == "POST":
             indices = utils.collect_subform_indices(self.data)
             self.forms["layers"] = [self.get_layer_form(prefix=str(layer_index)) for layer_index in indices]
-            self.forms["change_layers"] = [ChangeLayerForm(self.data, prefix=str(change_layer_index))
+            self.forms["change_layers"] = [self.change_layer_form_class(self.data, prefix=str(change_layer_index))
                                            for change_layer_index in indices]
         else:
             copy_from = self.request.GET.get("copy_from")
@@ -769,7 +771,7 @@ class DepositionView(ProcessMultipleSamplesView):
                 else:
                     # New deposition, or duplication has failed
                     self.forms["layers"] = []
-            self.forms["change_layers"] = [ChangeLayerForm(prefix=str(index)) for index in range(len(self.forms["layers"]))]
+            self.forms["change_layers"] = [self.change_layer_form_class(prefix=str(index)) for index in range(len(self.forms["layers"]))]
         super(DepositionView, self).build_forms()
 
     def is_all_valid(self):
@@ -929,7 +931,7 @@ class DepositionMultipleTypeView(DepositionView):
                     layer_data = original_layer.cleaned_data
                     layer_data["number"] = i + 1
                     self.forms["layers"].append(LayerFormClass(self, initial=layer_data, prefix=str(next_prefix)))
-                    self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                    self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
                     next_prefix += 1
             elif new_layer[0] == "new":
                 # New MyLayer
@@ -940,13 +942,13 @@ class DepositionMultipleTypeView(DepositionView):
                 initial = layer_class.objects.filter(id=id_).values()[0]
                 initial["number"] = i + 1
                 self.forms["layers"].append(LayerFormClass(self, initial=initial, prefix=str(next_prefix)))
-                self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
                 next_prefix += 1
             elif new_layer[0].startswith("new "):
                 LayerFormClass = self.layer_types[new_layer[0][len("new "):]]
                 self.forms["layers"].append(LayerFormClass(self, initial={"number": "{0}".format(i + 1)},
                                                            prefix=str(next_prefix)))
-                self.forms["change_layers"].append(ChangeLayerForm(prefix=str(next_prefix)))
+                self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
                 next_prefix += 1
             else:
                 raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
