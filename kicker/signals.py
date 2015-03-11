@@ -49,7 +49,7 @@ def expire_shortkeys(sender, **kwargs):
     one_year_ago = datetime.datetime.now() - datetime.timedelta(356)
     for details in kicker_app.UserDetails.objects.exclude(shortkey=""):
         try:
-            too_old = kicker_app.KickerNumber(player=details.user).latest().timestamp < one_year_ago
+            too_old = kicker_app.KickerNumber.objects.filter(player=details.user).latest().timestamp < one_year_ago
         except kicker_app.KickerNumber.DoesNotExist:
             too_old = False
         if too_old or not details.user.is_active:
