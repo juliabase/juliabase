@@ -349,8 +349,9 @@ def plot(request, image_format):
 @require_http_methods(["GET"])
 def summary(request):
     eligible_players = get_eligible_players()
-    return render(request, "kicker/summary.html", {"title": _("Kicker summary"), "kicker_numbers": eligible_players,
-                                                   "latest_matches": models.Match.objects.reverse()[:20]})
+    return render(request, "kicker/summary.html",
+                  {"title": _("Kicker summary"), "kicker_numbers": eligible_players, "username": request.user.username,
+                   "latest_matches": models.Match.objects.reverse()[:20]})
 
 
 class UserDetailsForm(forms.ModelForm):
