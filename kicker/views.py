@@ -212,13 +212,7 @@ def edit_match(request, id_=None):
             raise JSONRequestException(3000, "Games with three players can't be processed.")
         if player_a_1 == player_a_2 == player_b_1 == player_b_2:
             raise JSONRequestException(3001, "All players are the same person.")
-        unfinished_matches = models.Match.objects.filter(finished=False)
-        if unfinished_matches.exists():
-            if unfinished_matches.exclude(reporter=request.user).exists():
-                raise JSONRequestException(3004,
-                                           "You can't add a match if another one of another reporter is not yet finished.")
-            for match in unfinished_matches.all():
-                match.delete()
+        models.Match.objects.filter(finished=False, reporter=request.user).delete()
     else:
         if match.finished:
             raise JSONRequestException(3003, "A finished match can't be edited anymore.")
@@ -227,13 +221,9 @@ def edit_match(request, id_=None):
         player_b_1 = match.player_b_1
         player_b_2 = match.player_b_2
     try:
-        seconds_since_most_recent = (timestamp - models.Match.objects.latest().timestamp).total_seconds()
-        if seconds_since_most_recent <= 0:
-            if seconds_since_most_recent < -10:
-                raise JSONRequestException(3002, "This game is not the most recent one.")
-            else:
-                timestamp = models.Match.objects.latest().timestamp + datetime.timedelta(seconds=1)
-    except models.Match.DoesNotExist:
+        if finished and models.KickerNumber.objects.latest().timestamp > timestamp:
+            raise JSONRequestException(3002, "This game is older than the most recent kicker numbers.")
+    except models.KickerNumber.DoesNotExist:
         pass
     if match:
         match.player_a_1 = player_a_1
