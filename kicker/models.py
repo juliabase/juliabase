@@ -58,6 +58,8 @@ class Shares(models.Model):
     timestamp = models.DateTimeField(_("timestamp"), auto_now_add=True)
 
     class Meta:
+        ordering = ["timestamp"]
+        get_latest_by = "timestamp"
         verbose_name = _("shares")
         verbose_name_plural = _("shareses")
 
@@ -81,6 +83,7 @@ class StockValue(models.Model):
 
     class Meta:
         ordering = ["timestamp"]
+        get_latest_by = "timestamp"
         verbose_name = _("stock value")
         verbose_name_plural = _("stock values")
 

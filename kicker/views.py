@@ -48,7 +48,7 @@ class NoKickerNumber(Exception):
 
 def get_current_kicker_number(player):
     try:
-        return models.KickerNumber.objects.filter(player=player).latest("timestamp").number
+        return models.KickerNumber.objects.filter(player=player).latest().number
     except models.KickerNumber.DoesNotExist:
         raise NoKickerNumber
 
@@ -119,7 +119,7 @@ def get_k(player=None):
 
 def get_old_stock_value(player):
     try:
-        return models.StockValue.objects.filter(gambler=player).latest("timestamp")
+        return models.StockValue.objects.filter(gambler=player).latest()
     except models.StockValue.DoesNotExist:
         return 100
 
@@ -227,12 +227,12 @@ def edit_match(request, id_=None):
         player_b_1 = match.player_b_1
         player_b_2 = match.player_b_2
     try:
-        seconds_since_most_recent = (timestamp - models.Match.objects.latest("timestamp").timestamp).total_seconds()
+        seconds_since_most_recent = (timestamp - models.Match.objects.latest().timestamp).total_seconds()
         if seconds_since_most_recent <= 0:
             if seconds_since_most_recent < -10:
                 raise JSONRequestException(3002, "This game is not the most recent one.")
             else:
-                timestamp = models.Match.objects.latest("timestamp").timestamp + datetime.timedelta(seconds=1)
+                timestamp = models.Match.objects.latest().timestamp + datetime.timedelta(seconds=1)
     except models.Match.DoesNotExist:
         pass
     if match:
