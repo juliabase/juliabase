@@ -34,7 +34,8 @@ from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
 from django.http import Http404
 from django.utils.translation import ugettext as _
-from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs, int_or_zero
+from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs, \
+    int_or_zero, static_file_response
 from jb_common.signals import storage_changed
 import samples.utils.views as utils
 from kicker import models
@@ -317,10 +318,9 @@ def plot_commands(axes, plot_data):
     axes.grid(True)
 
 
-def update_plot():
-    path = os.path.join(settings.STATIC_ROOT, "kicker/")
-#    if os.path.exists(os.path.join(path, "kicker.pdf")) and os.path.exists(os.path.join(path, "kicker.png")):
-#        return
+@login_required
+def plot(request, image_format):
+    plot_filepath = os.path.join(settings.CACHE_ROOT, "plots", basename + "." + image_format)
     eligible_players = [entry[0] for entry in get_eligible_players()]
     hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
     plot_data = []
@@ -334,30 +334,26 @@ def update_plot():
                 x_values.append(kicker_number.timestamp)
                 y_values.append(kicker_number.number)
         plot_data.append((x_values, y_values, player.kicker_user_details.nickname or player.username))
-    figure = Figure(frameon=False, figsize=(8, 12))
+    if image_format == "png":
+        figsize, position, legend_loc, legend_bbox, ncol = (8, 12), (0.1, 0.5, 0.8, 0.45), "upper center", [0.5, -0.1], 1
+    else:
+        figsize, position, legend_loc, legend_bbox, ncol = (10, 7), (0.1, 0.1, 0.6, 0.8), "best", [1, 1], 3
+    figure = Figure(frameon=False, figsize=figsize)
     canvas = FigureCanvasAgg(figure)
     axes = figure.add_subplot(111)
-    axes.set_position((0.1, 0.5, 0.8, 0.45))
+    axes.set_position(position)
     plot_commands(axes, plot_data)
-    axes.legend(loc="upper center", bbox_to_anchor=[0.5, -0.1], ncol=3, shadow=True)
-    mkdirs(path)
-    canvas.print_figure(os.path.join(path, "kicker.png"))
-    figure.clf()
-    figure = Figure(frameon=False, figsize=(10, 7))
-    canvas = FigureCanvasAgg(figure)
-    axes = figure.add_subplot(111)
-    axes.set_position((0.1, 0.1, 0.6, 0.8))
-    plot_commands(axes, plot_data)
-    axes.legend(loc="best", bbox_to_anchor=[1, 1], shadow=True)
-    canvas.print_figure(os.path.join(path, "kicker.pdf"))
+    axes.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, ncol=ncol, shadow=True)
+    mkdirs(plot_filepath)
+    canvas.print_figure(plot_filepath)
     figure.clf()
     storage_changed.send(models.KickerNumber)
-
+    return static_file_response(plot_filepath, "kicker.pdf" if image_format == "pdf" else None)
+    
 
 @login_required
 @require_http_methods(["GET"])
 def summary(request):
-    update_plot()
     eligible_players = get_eligible_players()
     return render(request, "kicker/summary.html", {"title": _("Kicker summary"), "kicker_numbers": eligible_players,
                                                    "latest_matches": models.Match.objects.reverse()[:20]})

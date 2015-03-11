@@ -34,6 +34,7 @@ urlpatterns = [
     url(r"^matches/(?P<id_>\d+)/cancel/$", cancel_match),
     url(r"^starting_numbers/(?P<username>.+)/add/$", set_start_kicker_number),
     url(r"^details/(?P<username>.+)", edit_user_details),
+    url(r"^kicker\.(?P<image_format>png|pdf)$", plot),
     url(r"^player", get_player),
     url(r"^$", summary),
 ]

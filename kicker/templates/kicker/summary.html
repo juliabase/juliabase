@@ -21,14 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load i18n %}
 {% load juliabase %}
 {% load kicker %}
-{% load staticfiles %}
 
 {% block content_title %}<h1>{{ title }}</h1>{% endblock %}
 
 {% block frame_content %}
 <div style="float:right">
-  <a href="{% static "kicker/kicker.pdf" %}"
-     ><img src="{% static "kicker/kicker.png" %}" alt='{% trans "kicker numbers" %}'/></a>
+  <a href="{% url 'kicker.views.plot' image_format='pdf' %}"
+     ><img src="{% url 'kicker.views.plot' image_format='png' %}" alt='{% trans "kicker numbers" %}'/></a>
 </div>
 <table style="border: 2px solid gray" cellspacing="10">
   <tbody>
