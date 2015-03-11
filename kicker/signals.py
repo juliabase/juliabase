@@ -19,9 +19,11 @@
 
 from __future__ import absolute_import, unicode_literals, division
 
+import datetime
 from django.db.models import signals
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from jb_common.signals import maintain
 from kicker import models as kicker_app
 
 
@@ -40,3 +42,21 @@ def add_all_user_details(sender, **kwargs):
     """
     for user in User.objects.filter(kicker_user_details=None):
         add_user_details(User, user, created=True)
+
+
+@receiver(maintain)
+def expire_shortkeys(sender, **kwargs):
+    one_year_ago = datetime.datetime.now() - datetime.timedelta(356)
+    for details in kicker_app.UserDetails.objects.exclude(shortkey=""):
+        try:
+            too_old = kicker_app.KickerNumber(player=details.user).latest().timestamp < one_year_ago
+        except kicker_app.KickerNumber.DoesNotExist:
+            too_old = False
+        if too_old or not details.user.is_active:
+            details.shortkey = ""
+            details.save()
+
+@receiver(maintain)
+def expire_matches(sender, **kwargs):
+    one_day_ago = datetime.datetime.now() - datetime.timedelta(1)
+    kicker_app.Match.objects.filter(finished=False, timestamp__lt=one_day_ago).delete()
