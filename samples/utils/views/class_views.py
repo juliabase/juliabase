@@ -141,7 +141,7 @@ class ProcessWithoutSamplesView(TemplateView):
 
         :Return:
           The next untaken of the identifying field, e.g. the next free
-          depostion number.
+          deposition number.
 
         :rtype: object
         """
