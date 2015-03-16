@@ -145,7 +145,7 @@ class ProcessWithoutSamplesView(TemplateView):
 
         :rtype: object
         """
-        return (self.model.objects.aggregate(Max(self.identifying_field))[self.identifying_field + "__max"] or 0) + 1
+        return int(self.model.objects.aggregate(Max(self.identifying_field))[self.identifying_field + "__max"] or 0) + 1
 
     def build_forms(self):
         """Fills the :py:attr:`forms` dictionary with the forms, or lists of them.  In
@@ -771,7 +771,8 @@ class DepositionView(ProcessMultipleSamplesView):
                 else:
                     # New deposition, or duplication has failed
                     self.forms["layers"] = []
-            self.forms["change_layers"] = [self.change_layer_form_class(prefix=str(index)) for index in range(len(self.forms["layers"]))]
+            self.forms["change_layers"] = [self.change_layer_form_class(prefix=str(index))
+                                           for index in range(len(self.forms["layers"]))]
         super(DepositionView, self).build_forms()
 
     def is_all_valid(self):
