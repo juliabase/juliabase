@@ -148,10 +148,12 @@ def forms_from_post_data(post_data, parent, user):
     automatic_split_form = AutomaticSplitForm(post_data)
     if automatic_split_form.is_valid():
         number = automatic_split_form.cleaned_data["number"] or 0
+        number_of_digits = len(str(number))
+        format_string = "{{}}-{{:0{}}}".format(number_of_digits)
         for piece_number in range(1, number + 1):
             index += 1
             new_name_forms.append(NewNameForm(user, parent.name, None, prefix=str(index),
-                                              initial={"new_name": "{}-{}".format(parent.name, piece_number)}))
+                                              initial={"new_name": format_string.format(parent.name, piece_number)}))
         automatic_split_form = AutomaticSplitForm()
     next_prefix = str(index + 1)
     global_data_form = GlobalDataForm(parent, user.samples_user_details, post_data)
