@@ -20,7 +20,7 @@
 
 from __future__ import division, absolute_import, unicode_literals
 
-import datetime, os, math
+import datetime, os
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
@@ -65,7 +65,7 @@ def get_elo_delta(goals_a, goals_b, number_player_a_1, number_player_a_2, number
                   seconds, two_player_game):
     S = 1 / 2 + 1 / 2 * (goals_a - goals_b) / (seconds * average_goal_frequency(two_player_game))
     E = 1 / (1 + 10 ** ((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
-    delta = math.sqrt(seconds / average_match_duration(two_player_game)) * (S - E)
+    delta = seconds / average_match_duration(two_player_game) * (S - E)
     return delta
 
 
