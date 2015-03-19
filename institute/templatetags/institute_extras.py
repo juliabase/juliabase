@@ -30,7 +30,6 @@ import os.path
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext as _
-import institute.utils.views as form_utils
 from institute import models
 from django.template.defaultfilters import stringfilter
 
@@ -42,7 +41,7 @@ def three_digits(number):
     """Filter for padding an integer with zeros so that it has at least three
     digits.
     """
-    return mark_safe(form_utils.three_digits(number))
+    return mark_safe("{0:03}".format(number))
 
 
 @register.filter
