@@ -181,16 +181,16 @@ class ProcessWithoutSamplesView(TemplateView):
 
     def is_all_valid(self):
         """Checks whether all forms are valid.  Unbound forms – which may occur also in
-        POST requests – are not checked.  Moreover, this method guarantees that
-        the :py:meth:`is_valid` method of every bound form is called in order
-        to collect all error messages.
+        POST requests – are not checked, except for the process form.
+        Moreover, this method guarantees that the :py:meth:`is_valid` method of
+        every bound form is called in order to collect all error messages.
 
         :Return:
           whether all forms are valid
 
         :rtype: bool
         """
-        return self._check_validity(self.forms.values())
+        return self._check_validity(self.forms.values()) and self.forms["process"].is_bound
 
     def is_referentially_valid(self):
         """Checks whether the data of all forms is consistent with each other
