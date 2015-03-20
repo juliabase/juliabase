@@ -103,7 +103,7 @@ class ActionForm(forms.Form):
             self.add_error("copy_to_user", _("If you set a clearance, you must copy samples to another user."))
             del cleaned_data["clearance"]
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
-            cleaned_data["new_current_location"]) and not cleaned_data["comment"]:
+            cleaned_data["new_current_location"]) and not cleaned_data.get("comment"):
             raise ValidationError(_("If you edit samples, you must enter a short comment."))
         return cleaned_data
 
