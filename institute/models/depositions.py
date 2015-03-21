@@ -84,7 +84,7 @@ class ClusterToolDeposition(samples.models.Deposition):
         """Class method for generating the search tree node for this model
         instance.  I must override the inherited method because I want to offer
         the layer models directly instead of the proxy class
-        `OldClusterToolLayer`.
+        `ClusterToolLayer`.
 
         :return:
           the tree node for this model instance
