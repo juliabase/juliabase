@@ -33,7 +33,7 @@ import datetime
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.forms import widgets
 from django.http import HttpResponse
 from django.utils.safestring import mark_safe

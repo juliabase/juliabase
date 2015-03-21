@@ -30,7 +30,7 @@ from django.http import Http404
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters, help_link
 from samples import models, permissions
 import samples.utils.views as utils

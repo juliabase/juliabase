@@ -26,7 +26,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from django.shortcuts import render
 from django.http import Http404
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django import forms
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required

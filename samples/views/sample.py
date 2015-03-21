@@ -43,7 +43,7 @@ from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, \

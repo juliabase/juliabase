@@ -35,7 +35,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
 from django.conf import settings
 from django.utils.encoding import iri_to_uri
-from django.forms.util import ErrorList, ValidationError
+from django.forms.utils import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
