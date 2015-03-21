@@ -1558,7 +1558,7 @@ class Task(models.Model):
     customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_("customer"))
     creating_timestamp = models.DateTimeField(_("created at"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now_add=True)
     last_modified = models.DateTimeField(_("last modified"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now=True)
-    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated tasks",
+    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated_tasks",
                                  verbose_name=_("operator"), null=True, blank=True)
     process_class = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_("process class"))
     finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True,
