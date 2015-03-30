@@ -28,7 +28,7 @@ import django.utils.six as six
 import re, datetime, json
 from django.db.models import Q
 from django.conf import settings
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.http import QueryDict
 from django.utils.translation import ugettext_lazy as _, ungettext_lazy, ugettext
 from django.forms import ModelForm

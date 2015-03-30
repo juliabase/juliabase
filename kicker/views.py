@@ -25,7 +25,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
 from django import forms
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.http import Http404
 from django.conf import settings
 from django.db.models import Q

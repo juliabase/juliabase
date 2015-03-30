@@ -184,7 +184,7 @@ class Process(PolymorphicModel):
     external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
                                           related_name="processes")
     comments = models.TextField(_("comments"), blank=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True, editable=False)
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
     finished = models.BooleanField(_("finished"), default=True)
     """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
@@ -585,8 +585,9 @@ class Process(PolymorphicModel):
             search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "last_modified", "finished"]))
         related_models = {Sample: "samples"}
         related_models.update(
-            (related_object.model, related_object.get_accessor_name()) for related_object
-            in cls._meta.get_all_related_objects() if not related_object.model.__name__.startswith("Feed"))
+            (related_object.related_model, related_object.get_accessor_name()) for related_object
+            in cls._meta.get_fields() if related_object.one_to_many and related_object.auto_created
+            and not related_object.related_model.__name__.startswith("Feed"))
         return search.SearchTreeNode(cls, related_models, search_fields)
 
 
@@ -688,7 +689,7 @@ class Sample(models.Model):
                                      verbose_name=_("split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
     topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True, editable=False)
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _("sample")
@@ -1051,7 +1052,7 @@ class Clearance(models.Model):
     user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("user"), related_name="clearances")
     sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True)
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         unique_together = ("user", "sample")
@@ -1291,7 +1292,7 @@ class SampleSeries(models.Model):
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_("samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_("results"))
     topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_("topic"))
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True, auto_now_add=True, editable=False)
+    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _("sample series")
@@ -1556,11 +1557,9 @@ class Task(models.Model):
     """
     status = models.CharField(_("status"), max_length=15, choices=status_choices, default="1 new")
     customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_("customer"))
-    creating_timestamp = models.DateTimeField(_("created at"), help_text=_("YYYY-MM-DD HH:MM:SS"),
-                                              auto_now_add=True, editable=False)
-    last_modified = models.DateTimeField(_("last modified"), help_text=_("YYYY-MM-DD HH:MM:SS"),
-                                         auto_now=True, auto_now_add=True, editable=False)
-    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated tasks",
+    creating_timestamp = models.DateTimeField(_("created at"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now_add=True)
+    last_modified = models.DateTimeField(_("last modified"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now=True)
+    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated_tasks",
                                  verbose_name=_("operator"), null=True, blank=True)
     process_class = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_("process class"))
     finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True,

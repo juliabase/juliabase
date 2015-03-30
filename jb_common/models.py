@@ -28,7 +28,7 @@ from django.utils.encoding import python_2_unicode_compatible
 import hashlib, datetime
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
 import jb_common.search
@@ -230,7 +230,7 @@ class PolymorphicModel(models.Model):
     """
     content_type = models.ForeignKey(ContentType, null=True, blank=True, editable=False)
     actual_object_id = models.PositiveIntegerField(null=True, blank=True, editable=False)
-    actual_instance = generic.GenericForeignKey("content_type", "actual_object_id")
+    actual_instance = GenericForeignKey("content_type", "actual_object_id")
 
     def save(self, *args, **kwargs):
         """Saves the instance and assures that `actual_instance` is set.

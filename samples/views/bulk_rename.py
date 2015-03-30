@@ -33,7 +33,7 @@ import django.utils.http
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.contrib import messages
 from jb_common.utils.base import format_enumeration
 from samples import models, permissions

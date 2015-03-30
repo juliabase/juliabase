@@ -32,7 +32,7 @@ from django.utils.text import capfirst
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 import django.forms as forms
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from jb_common.utils.base import camel_case_to_underscores, is_json_requested, format_enumeration, int_or_zero
 from samples import permissions
 from . import forms as utils

@@ -32,7 +32,7 @@ import datetime
 import django.contrib.auth.models
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext

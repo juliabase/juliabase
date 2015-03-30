@@ -112,7 +112,7 @@ strightforward).
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
 import django.forms as forms

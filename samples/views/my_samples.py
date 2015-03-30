@@ -30,7 +30,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown
 from jb_common.utils.views import UserField, MultipleUsersField, TopicField

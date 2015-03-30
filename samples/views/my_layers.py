@@ -30,7 +30,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 import django.contrib.auth.models
 from django.contrib import messages
 from samples import models, permissions

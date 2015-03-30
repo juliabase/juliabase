@@ -31,7 +31,7 @@ import django.utils.http
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.forms as forms
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 from django.utils.text import capfirst
 from jb_common.models import Topic
 from jb_common.utils.base import int_or_zero, HttpResponseSeeOther

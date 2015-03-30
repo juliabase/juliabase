@@ -30,7 +30,7 @@ from __future__ import absolute_import, unicode_literals
 
 import re
 from django.utils.translation import ugettext as _
-from django.forms.util import ValidationError
+from django.forms.utils import ValidationError
 
 
 deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")
