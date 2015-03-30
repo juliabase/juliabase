@@ -585,8 +585,9 @@ class Process(PolymorphicModel):
             search.convert_fields_to_search_fields(cls, ["timestamp_inaccuracy", "last_modified", "finished"]))
         related_models = {Sample: "samples"}
         related_models.update(
-            (related_object.model, related_object.get_accessor_name()) for related_object
-            in cls._meta.get_all_related_objects() if not related_object.model.__name__.startswith("Feed"))
+            (related_object.related_model, related_object.get_accessor_name()) for related_object
+            in cls._meta.get_fields() if related_object.one_to_many and related_object.auto_created
+            and not related_object.related_model.__name__.startswith("Feed"))
         return search.SearchTreeNode(cls, related_models, search_fields)
 
 
