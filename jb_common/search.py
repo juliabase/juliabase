@@ -837,7 +837,7 @@ class DetailsSearchTreeNode(SearchTreeNode):
         """
         super(DetailsSearchTreeNode, self).__init__(model_class, related_models, search_fields)
         self.details_model_attribute = details_model_attribute
-        self.details_model_class = getattr(model_class, details_model_attribute).related.model
+        self.details_model_class = getattr(model_class, details_model_attribute).related.related_model
         self.details_node = self.details_model_class.get_search_tree_node()
         self.related_models.update(self.details_node.related_models)
         self.search_fields.extend(self.details_node.search_fields)
