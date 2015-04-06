@@ -105,6 +105,10 @@ TEMPLATES = [
             }
     }
 ]
+if DEBUG:
+    # Switch off caching, so that edits are active immediately
+    TEMPLATES[0]["OPTIONS"]["loaders"] = ["django.template.loaders.app_directories.Loader",
+                                          "django.template.loaders.filesystem.Loader"]
 
 MIDDLEWARE_CLASSES = (
     "django.middleware.common.CommonMiddleware",
