@@ -17,7 +17,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 @import url('main.css');
-@import url('../../juliabase/css/print.css');
 
 ul.sample-series-list { list-style-image: none }
 ul.sample-list { list-style-image: none }

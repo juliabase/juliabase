@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load staticfiles %}
 
 {% block css_inclusions %}
+  {{ block.super }}
   <link rel="stylesheet" type="text/css" media="screen" href="{% static "samples/css/main.css" %}"/>
   <link rel="stylesheet" type="text/css" media="print" href="{% static "samples/css/print.css" %}"/>
 {% endblock %}

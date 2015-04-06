@@ -16,8 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-@import url('../../juliabase/css/main.css');
-
 table.edit-description { border: inset 2px black; padding: 0.5ex 1ex; background-color: #f0eee1; float: right;
 			 margin: 1em 0px 1em 1em; clear: left }
 
