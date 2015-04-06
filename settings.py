@@ -41,7 +41,6 @@ if not os.path.exists(os.path.join(BASE_DIR, "jb_common")) and os.path.exists(os
 
 ALLOWED_HOSTS = ["0.0.0.0"]
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 
 DEFAULT_FROM_EMAIL = ""
@@ -87,10 +86,25 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 # The reason why we use ``django.template.loaders.filesystem.Loader`` and
 # ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
 # template.  This is used in institute's "sample claim" views, for example.
-TEMPLATE_DIRS = (BASE_DIR,)
-TEMPLATE_LOADERS = (
-    ("django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
-                                               "django.template.loaders.filesystem.Loader")),)
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR],
+        "OPTIONS": {
+            "context_processors": ["django.contrib.auth.context_processors.auth",
+                                   "django.template.context_processors.debug",
+                                   "django.template.context_processors.i18n",
+                                   "django.template.context_processors.media",
+                                   "django.template.context_processors.static",
+                                   "django.template.context_processors.tz",
+                                   "django.contrib.messages.context_processors.messages",
+                                   "jb_common.context_processors.default",
+                                   "institute.context_processors.default"],
+            "loaders": ["django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
+                                                                  "django.template.loaders.filesystem.Loader")]
+            }
+    }
+]
 
 MIDDLEWARE_CLASSES = (
     "django.middleware.common.CommonMiddleware",
@@ -117,16 +131,6 @@ INSTALLED_APPS = (
     "samples",
     "jb_common"
 )
-
-TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
-                               "django.template.context_processors.debug",
-                               "django.template.context_processors.i18n",
-                               "django.template.context_processors.media",
-                               "django.template.context_processors.static",
-                               "django.template.context_processors.tz",
-                               "django.contrib.messages.context_processors.messages",
-                               "jb_common.context_processors.default",
-                               "institute.context_processors.default")
 
 JAVASCRIPT_I18N_APPS += ("institute",)
 
