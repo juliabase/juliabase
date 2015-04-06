@@ -83,9 +83,9 @@ ADMIN_MEDIA_PREFIX = STATIC_URL + str("admin/")
 
 SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 
-# The reason why we use ``django.template.loaders.filesystem.Loader`` and
-# ``TEMPLATE_DIRS`` is that we want to be able to extend the overridden
-# template.  This is used in institute's "sample claim" views, for example.
+# The reason why we use both ``django.template.loaders.filesystem.Loader`` and
+# ``DIRS`` is that we want to be able to extend the overridden template.  This
+# is used in institute's "sample claim" views, for example.
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

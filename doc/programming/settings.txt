@@ -487,24 +487,30 @@ Of course, alternatively, you may set the ``SECRET_KEY`` in a completely
 different way.
 
 
-.. index:: TEMPLATE_CONTEXT_PROCESSORS
+.. index:: TEMPLATES
 
-TEMPLATE_CONTEXT_PROCESSORS
----------------------------
+TEMPLATES
+---------
+
+JuliaBase uses Django's template engine.
 
 Make sure that you add ``"jb_common.context_processors.default"`` to the list
-of context processors.
+of ``"context processors"``.
 
 
-.. index:: TEMPLATE_DIRS
-
-TEMPLATE_DIRS
--------------
+DIRS
+....
 
 So that your can override JuliaBase's templates with own templates, you should
-set::
+set in the template backend dictionary::
 
-    TEMPLATE_DIRS = (os.path.abspath(os.path.join(os.path.dirname(__file__), "../juliabase")),)
+    "DIRS": [os.path.abspath(os.path.join(os.path.dirname(__file__), "../juliabase"))]
+
+If you don't override ``BASE_DIR``, you can write simply
+
+::
+
+    "DIRS": [BASE_DIR]
 
 You may add further paths, but if your project layout is structured according
 to :ref:`Organizing your source code`, this one must be present.  Then, you can
@@ -515,24 +521,23 @@ extend Juliabase templates by beginning your template with e.g.
     {% extends "samples/templates/samples/list_claims.html" %}
 
 
-.. index:: TEMPLATE_LOADERS
+loaders
+.......
 
-TEMPLATE_LOADERS
-----------------
-
-In conjunction with `TEMPLATE_DIRS`_ you must make sure that Django will look
+In conjunction with ``DIRS`` you must make sure that Django will look
 for templates first in the app directories, and then in the filesystem.  With
-activated template caching, this looks like::
+activated template caching, this looks like
 
-    TEMPLATE_LOADERS = (
-        ("django.template.loaders.cached.Loader",
-         ("django.template.loaders.app_directories.Loader",
-          "django.template.loaders.filesystem.Loader")),)
+::
 
-and without caching, like::
+    "loaders": ["django.template.loaders.cached.Loader",
+                ("django.template.loaders.app_directories.Loader",
+                 "django.template.loaders.filesystem.Loader")]
 
-    TEMPLATE_LOADERS = ("django.template.loaders.app_directories.Loader",
-                        "django.template.loaders.filesystem.Loader")
+in the ``"OPTIONS"`` dictionary, and without caching, like::
+
+    "loaders": ["django.template.loaders.app_directories.Loader",
+                "django.template.loaders.filesystem.Loader"]
 
 
 .. index:: USE_TZ

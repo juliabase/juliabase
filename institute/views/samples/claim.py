@@ -120,11 +120,10 @@ def add_oldstyle(request, username):
 
     The important step is the template.  This is the hook for your extensions.
     You override the template from “samples” by creating a file called the same
-    in :file:`institute/templates/samples/`.  Because ``TEMPLATE_DIRS`` and
-    ``TEMPLATE_LOADERS`` are defined as recommended in
-    :doc:`/programming/settings`, it shadows its counterpart.  By giving the
-    full path, you can still access the original.  Thus, you may start your
-    template with
+    in :file:`institute/templates/samples/`.  Because ``DIRS`` and ``loaders``
+    are defined as recommended in :doc:`/programming/settings`, it shadows its
+    counterpart.  By giving the full path, you can still access the original.
+    Thus, you may start your template with
 
     ::
 
