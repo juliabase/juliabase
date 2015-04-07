@@ -35,12 +35,13 @@ class JBCommonConfig(AppConfig):
         import jb_common.signals
 
     def build_menu(self, menu, request):
-        user_menu = menu.setdefault(_("Add"), MenuItem())
-        user_menu.sub_items[_("Edit preferences")] = MenuItem(
-            reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}), "wrench")
-        user_menu = menu.setdefault(utils.get_really_full_name(request.user), MenuItem(position="right"))
-        user_menu.sub_items[_("Edit preferences")] = MenuItem(
-            reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}), "wrench")
+        add_menu = menu.setdefault(_("Add"), MenuItem())
+        if request.user.is_authenticated():
+            user_menu = menu.setdefault(utils.get_really_full_name(request.user), MenuItem(position="right"))
+            user_menu.sub_items[_("Edit preferences")] = MenuItem(
+                reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}),
+                "wrench")
+            user_menu.sub_items[_("Logout")] = MenuItem(reverse("django.contrib.auth.views.logout"), "log-out")
 
 
 _ = ugettext
