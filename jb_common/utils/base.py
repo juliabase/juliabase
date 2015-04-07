@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import, division, unicode_literals
 import django.utils.six as six
-from django.utils.six.moves import urllib_parse
+from django.utils.six.moves import urllib
 
 import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string
 from contextlib import contextmanager
@@ -808,12 +808,12 @@ def unquote_view_parameters(view):
     def unquoting_view(request, *args, **kwargs):
         if six.PY2:
             return view(request,
-                        *[urllib_parse.unquote(six.binary_type(value)).decode("utf-8") for value in args],
-                        **dict((key, urllib_parse.unquote(six.binary_type(value)).decode("utf-8"))
+                        *[urllib.parse.unquote(six.binary_type(value)).decode("utf-8") for value in args],
+                        **dict((key, urllib.parse.unquote(six.binary_type(value)).decode("utf-8"))
                                for key, value in kwargs.items()))
         return view(request,
-                    *[urllib_parse.unquote(value) for value in args],
-                    **dict((key, urllib_parse.unquote(value)) for key, value in kwargs.items()))
+                    *[urllib.parse.unquote(value) for value in args],
+                    **dict((key, urllib.parse.unquote(value)) for key, value in kwargs.items()))
     return unquoting_view
 
 
