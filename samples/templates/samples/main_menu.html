@@ -177,7 +177,7 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
         <a href="{% url 'samples.views.claim.list_' username=user.username %}">{% trans 'Sample claims' %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/exclamation.png" %}")'>
         <a href="{% url 'samples.views.log_viewer.list' %}">{% trans 'Inspect crawler logs' %}</a></li>
-      <!-- FixMe: These menu items must not be links from here but from another menue page. -->
+      <!-- FixMe: These menu items must not be links from here but from another menu page. -->
       <li style='list-style-image: url("{% static "juliabase/icons/server_lightning.png" %}")'>
         <a href="{% url 'samples.views.statistics.about' %}">{% trans 'About JuliaBase' %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/server_chart.png" %}")'>
