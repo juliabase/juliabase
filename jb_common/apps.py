@@ -19,8 +19,12 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import collections
 from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.core.urlresolvers import reverse
+import jb_common.utils.base as utils
+from jb_common.nav_menu import MenuItem
 
 
 class JBCommonConfig(AppConfig):
@@ -29,6 +33,14 @@ class JBCommonConfig(AppConfig):
 
     def ready(self):
         import jb_common.signals
+
+    def build_menu(self, menu, request):
+        user_menu = menu.setdefault(_("Add"), MenuItem())
+        user_menu.sub_items[_("Edit preferences")] = MenuItem(
+            reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}), "wrench")
+        user_menu = menu.setdefault(utils.get_really_full_name(request.user), MenuItem(position="right"))
+        user_menu.sub_items[_("Edit preferences")] = MenuItem(
+            reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}), "wrench")
 
 
 _ = ugettext
