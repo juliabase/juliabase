@@ -43,6 +43,7 @@ from __future__ import absolute_import, unicode_literals
 import hashlib, re
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
+import django.core.urlresolvers
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
@@ -209,6 +210,36 @@ def get_allowed_physical_processes(user):
             allowed_physical_processes.append(add_data.copy())
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())
     return allowed_physical_processes
+
+
+def get_lab_notebooks(user):
+    """Get a list of all lab notebooks the user can see.
+
+    :param user: the user whose allowed lab notebooks should be collected
+
+    :type user: django.contrib.auth.models.User
+
+    :return:
+      List of all lab notebooks the user is allowed to see.  Every lab book is
+      represented by a dictionary with two keys, namely ``"url"`` with the url
+      to the lab book, and ``"label"`` with the name of the process (starting
+      lowercase).
+
+    :rtype: list of dict mapping str to unicode
+    """
+    lab_notebooks = []
+    for process_class, process in get_all_addable_physical_process_models().items():
+        try:
+            url = django.core.urlresolvers.reverse("lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                                                   kwargs={"year_and_month": ""})
+        except django.core.urlresolvers.NoReverseMatch:
+            pass
+        else:
+            if has_permission_to_view_lab_notebook(user, process_class):
+                lab_notebooks.append({"label": process["label_plural"], "url": url})
+    if lab_notebooks:
+        lab_notebooks.sort(key=lambda process: process["label"].lower())
+    return lab_notebooks
 
 
 def get_all_adders(process_class):

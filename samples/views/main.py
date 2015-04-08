@@ -33,8 +33,7 @@ import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext
-from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
-    camel_case_to_underscores
+from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters
 from jb_common.models import Topic
 import samples.utils.views as utils
 from samples.models import ExternalOperator
@@ -108,18 +107,7 @@ def main_menu(request):
     """
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user)
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
-    lab_notebooks = []
-    for process_class, process in permissions.get_all_addable_physical_process_models().items():
-        try:
-            url = django.core.urlresolvers.reverse("lab_notebook_" + camel_case_to_underscores(process["type"]),
-                                                   kwargs={"year_and_month": ""})
-        except django.core.urlresolvers.NoReverseMatch:
-            pass
-        else:
-            if permissions.has_permission_to_view_lab_notebook(request.user, process_class):
-                lab_notebooks.append({"label": process["label_plural"], "url": url})
-    if lab_notebooks:
-        lab_notebooks.sort(key=lambda process: process["label"].lower())
+    lab_notebooks = permissions.get_lab_notebooks(request.user)
     return render(request, "samples/main_menu.html",
                   {"title": _("Main menu"),
                    "my_topics": my_topics,
