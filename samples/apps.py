@@ -61,5 +61,6 @@ class SamplesConfig(AppConfig):
         if request.user.is_authenticated():
             add_menu = menu.get_or_create(_("Add"))
             add_menu.add(_("Samples"), reverse(settings.ADD_SAMPLES_VIEW), "stop")
+            add_menu.add(_("Sample series"), reverse("samples.views.sample_series.new"), "th")
 
 _ = ugettext
