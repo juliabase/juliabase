@@ -65,11 +65,14 @@ class MenuItem(object):
             self.sub_items = [items] + [item for item in self.sub_items if item.label != items.label]
 
     def __getitem__(self, key):
-        for item in self.sub_items:
-            if item.label == key:
-                return item
+        if isinstance(key, int):
+            return self.sub_items[key]
         else:
-            raise KeyError(key)
+            for item in self.sub_items:
+                if item.label == key:
+                    return item
+            else:
+                raise KeyError(key)
 
     def __iter__(self):
         return self.sub_items.__iter__()
