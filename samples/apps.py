@@ -23,6 +23,8 @@ import os, re
 from django.apps import AppConfig
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.core.urlresolvers import reverse
+from jb_common.nav_menu import MenuItem
 
 
 class SamplesConfig(AppConfig):
@@ -55,5 +57,9 @@ class SamplesConfig(AppConfig):
         for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
             properties.setdefault("verbose_name", name_format)
 
+    def build_menu(self, menu, request):
+        if request.user.is_authenticated():
+            add_menu = menu.setdefault(_("Add"), MenuItem())
+            add_menu.sub_items[_("Samples")] = MenuItem(reverse(settings.ADD_SAMPLES_VIEW), "stop")
 
 _ = ugettext

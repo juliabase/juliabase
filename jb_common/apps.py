@@ -37,6 +37,9 @@ class JBCommonConfig(AppConfig):
         import jb_common.signals
 
     def build_menu(self, menu, request):
+        menu.setdefault(_("Add"), MenuItem())
+        menu.setdefault(_("Search"), MenuItem())
+        menu.setdefault(_("Manage"), MenuItem())
         if request.user.is_authenticated():
             user_menu = menu.setdefault(utils.get_really_full_name(request.user), MenuItem(position="right"))
             user_menu.sub_items[_("Edit preferences")] = MenuItem(
