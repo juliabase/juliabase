@@ -44,6 +44,8 @@ class JBCommonConfig(AppConfig):
                 "wrench")
             user_menu.sub_items[_("Logout")] = MenuItem(reverse("django.contrib.auth.views.logout"), "log-out")
         jb_menu = menu.setdefault("JuliaBase", MenuItem())
+        jb_menu.sub_items[_("Statistics")] = MenuItem(reverse("samples.views.statistics.statistics"), "stats")
+        jb_menu.sub_items[_("About")] = MenuItem(reverse("samples.views.statistics.about"), "info-sign")
         if request.user.is_authenticated() and request.method == "GET":
             first = True
             for code, name in settings.LANGUAGES:
