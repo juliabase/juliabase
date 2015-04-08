@@ -27,6 +27,7 @@ import collections
 
 
 class MenuItem(object):
-    def __init__(self, url="", icon_name=None, position="left"):
-        self.url, self.icon_name, self.position = url, icon_name, position
+    def __init__(self, url="", icon_name=None, icon_url=None, icon_description=None, position="left"):
+        self.url, self.icon_name, self.icon_url, self.icon_description, self.position = \
+                        url, icon_name, icon_url, icon_description, position
         self.sub_items = collections.OrderedDict()
