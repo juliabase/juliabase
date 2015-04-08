@@ -42,25 +42,25 @@ class JBCommonConfig(AppConfig):
         menu.get_or_create(_("Manage"))
         if request.user.is_authenticated():
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
-            user_menu.add(MenuItem(
+            user_menu.add(
                 _("Edit preferences"),
                 reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}),
-                "wrench"))
-            user_menu.add(MenuItem(_("Logout"), reverse("django.contrib.auth.views.logout"), "log-out"))
+                "wrench")
+            user_menu.add(_("Logout"), reverse("django.contrib.auth.views.logout"), "log-out")
         jb_menu = menu.get_or_create("JuliaBase")
-        jb_menu.add(MenuItem(_("Statistics"), reverse("samples.views.statistics.statistics"), "stats"))
-        jb_menu.add(MenuItem(_("About"), reverse("samples.views.statistics.about"), "info-sign"))
+        jb_menu.add(_("Statistics"), reverse("samples.views.statistics.statistics"), "stats")
+        jb_menu.add(_("About"), reverse("samples.views.statistics.about"), "info-sign")
         if request.user.is_authenticated() and request.method == "GET":
             first = True
             for code, name in settings.LANGUAGES:
                 back_url = request.path
                 if request.GET:
                     back_url += "?" + request.GET.urlencode()
-                jb_menu.add(MenuItem(name, "{}?lang={}&amp;next={}".format(reverse("jb_common.views.switch_language"), code,
-                                                                           urllib.parse.quote_plus(back_url)),
-                    icon_url=urllib.parse.urljoin(settings.STATIC_URL, "juliabase/flags/{}.png".format(code)),
-                    icon_description=_("switch to {language}").format(language=name),
-                    rule_before=first))
+                jb_menu.add(name, "{}?lang={}&amp;next={}".format(reverse("jb_common.views.switch_language"), code,
+                                                                  urllib.parse.quote_plus(back_url)),
+                            icon_url=urllib.parse.urljoin(settings.STATIC_URL, "juliabase/flags/{}.png".format(code)),
+                            icon_description=_("switch to {language}").format(language=name),
+                            rule_before=first)
                 first = False
 
 

@@ -36,7 +36,8 @@ class MenuItem(object):
     def contains_icons(self):
         return any(item.icon_name or item.icon_url for item in self)
 
-    def add(self, new_item):
+    def add(self, *args, **kwargs):
+        new_item = MenuItem(*args, **kwargs)
         label = new_item.label
         for i, item in enumerate(self.sub_items):
             if item.label == label:
