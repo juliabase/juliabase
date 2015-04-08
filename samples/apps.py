@@ -62,5 +62,6 @@ class SamplesConfig(AppConfig):
             add_menu = menu.get_or_create(_("add"))
             add_menu.add(_("samples"), reverse(settings.ADD_SAMPLES_VIEW), "stop")
             add_menu.add(_("sample series"), reverse("samples.views.sample_series.new"), "th")
+            add_menu.add(_("result"), reverse("add_result"), "scale", rule_after=True)
 
 _ = ugettext
