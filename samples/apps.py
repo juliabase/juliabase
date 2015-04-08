@@ -66,9 +66,9 @@ class SamplesConfig(AppConfig):
             permissions = importlib.import_module("samples.permissions")
             for physical_process in permissions.get_allowed_physical_processes(request.user):
                 add_menu.add(physical_process["label"], physical_process["url"])
-            search_menu = menu.get_or_create(_("search"))
+            search_menu = menu.get_or_create(_("explore"))
             search_menu.add(_("advanced search"), reverse("samples.views.sample.advanced_search"), "search")
-            search_menu.add(_("samples by name"), reverse("samples.views.sample.advanced_search"), "stop", rule_after=True)
+            search_menu.add(_("samples by name"), reverse("samples.views.sample.search"), "stop", rule_after=True)
             lab_notebooks = permissions.get_lab_notebooks(request.user)
             if lab_notebooks:
                 for lab_notebook in lab_notebooks:

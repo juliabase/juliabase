@@ -38,7 +38,7 @@ class JBCommonConfig(AppConfig):
 
     def build_menu(self, menu, request):
         menu.get_or_create(_("add"))
-        menu.get_or_create(_("search"))
+        menu.get_or_create(_("explore"))
         menu.get_or_create(_("manage"))
         if request.user.is_authenticated():
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
