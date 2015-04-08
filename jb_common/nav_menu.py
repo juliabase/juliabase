@@ -76,3 +76,6 @@ class MenuItem(object):
 
     def __iter__(self):
         return self.sub_items.__iter__()
+
+    def __len__(self):
+        return len(self.sub_items)
