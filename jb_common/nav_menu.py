@@ -28,9 +28,10 @@ import collections
 
 class MenuItem(object):
 
-    def __init__(self, label, url="", icon_name=None, icon_url=None, icon_description=None, position="left", rule_before=False):
-        self.label, self.url, self.icon_name, self.icon_url, self.icon_description, self.position, self.rule_before = \
-                        label, url, icon_name, icon_url, icon_description, position, rule_before
+    def __init__(self, label, url="", icon_name=None, icon_url=None, icon_description=None, position="left", rule_before=False,
+                 rule_after=False):
+        self.label, self.url, self.icon_name, self.icon_url, self.icon_description, self.position, self.rule_before, \
+            self.rule_after = label, url, icon_name, icon_url, icon_description, position, rule_before, rule_after
         self.sub_items = []
 
     def contains_icons(self):
