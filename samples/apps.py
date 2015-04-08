@@ -59,7 +59,7 @@ class SamplesConfig(AppConfig):
 
     def build_menu(self, menu, request):
         if request.user.is_authenticated():
-            add_menu = menu.setdefault(_("Add"), MenuItem())
-            add_menu.sub_items[_("Samples")] = MenuItem(reverse(settings.ADD_SAMPLES_VIEW), "stop")
+            add_menu = menu.get_or_create(_("Add"))
+            add_menu.add(MenuItem(_("Samples"), reverse(settings.ADD_SAMPLES_VIEW), "stop"))
 
 _ = ugettext

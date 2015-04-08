@@ -37,30 +37,30 @@ class JBCommonConfig(AppConfig):
         import jb_common.signals
 
     def build_menu(self, menu, request):
-        menu.setdefault(_("Add"), MenuItem())
-        menu.setdefault(_("Search"), MenuItem())
-        menu.setdefault(_("Manage"), MenuItem())
+        menu.get_or_create(_("Add"))
+        menu.get_or_create(_("Search"))
+        menu.get_or_create(_("Manage"))
         if request.user.is_authenticated():
-            user_menu = menu.setdefault(utils.get_really_full_name(request.user), MenuItem(position="right"))
-            user_menu.sub_items[_("Edit preferences")] = MenuItem(
+            user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
+            user_menu.add(MenuItem(
+                _("Edit preferences"),
                 reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}),
-                "wrench")
-            user_menu.sub_items[_("Logout")] = MenuItem(reverse("django.contrib.auth.views.logout"), "log-out")
-        jb_menu = menu.setdefault("JuliaBase", MenuItem())
-        jb_menu.sub_items[_("Statistics")] = MenuItem(reverse("samples.views.statistics.statistics"), "stats")
-        jb_menu.sub_items[_("About")] = MenuItem(reverse("samples.views.statistics.about"), "info-sign")
+                "wrench"))
+            user_menu.add(MenuItem(_("Logout"), reverse("django.contrib.auth.views.logout"), "log-out"))
+        jb_menu = menu.get_or_create("JuliaBase")
+        jb_menu.add(MenuItem(_("Statistics"), reverse("samples.views.statistics.statistics"), "stats"))
+        jb_menu.add(MenuItem(_("About"), reverse("samples.views.statistics.about"), "info-sign"))
         if request.user.is_authenticated() and request.method == "GET":
             first = True
             for code, name in settings.LANGUAGES:
                 back_url = request.path
                 if request.GET:
                     back_url += "?" + request.GET.urlencode()
-                jb_menu.sub_items[name] = MenuItem(
-                    "{}?lang={}&amp;next={}".format(reverse("jb_common.views.switch_language"), code,
-                                                    urllib.parse.quote_plus(back_url)),
+                jb_menu.add(MenuItem(name, "{}?lang={}&amp;next={}".format(reverse("jb_common.views.switch_language"), code,
+                                                                           urllib.parse.quote_plus(back_url)),
                     icon_url=urllib.parse.urljoin(settings.STATIC_URL, "juliabase/flags/{}.png".format(code)),
                     icon_description=_("switch to {language}").format(language=name),
-                    rule_before=first)
+                    rule_before=first))
                 first = False
 
 

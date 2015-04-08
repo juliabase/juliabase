@@ -27,7 +27,47 @@ import collections
 
 
 class MenuItem(object):
-    def __init__(self, url="", icon_name=None, icon_url=None, icon_description=None, position="left", rule_before=False):
-        self.url, self.icon_name, self.icon_url, self.icon_description, self.position, self.rule_before = \
-                        url, icon_name, icon_url, icon_description, position, rule_before
-        self.sub_items = collections.OrderedDict()
+
+    def __init__(self, label, url="", icon_name=None, icon_url=None, icon_description=None, position="left", rule_before=False):
+        self.label, self.url, self.icon_name, self.icon_url, self.icon_description, self.position, self.rule_before = \
+                        label, url, icon_name, icon_url, icon_description, position, rule_before
+        self.sub_items = []
+
+    def contains_icons(self):
+        return any(item.icon_name or item.icon_url for item in self)
+
+    def add(self, new_item):
+        label = new_item.label
+        for i, item in enumerate(self.sub_items):
+            if item.label == label:
+                self.sub_items[i] = new_item
+                break
+        else:
+            self.sub_items.append(new_item)
+        return new_item
+
+    def get_or_create(self, item_or_label):
+        label = item_or_label.label if isinstance(item_or_label, MenuItem) else item_or_label
+        try:
+            return self[label]
+        except KeyError:
+            new_item = item_or_label if isinstance(item_or_label, MenuItem) else MenuItem(item_or_label)
+            self.sub_items.append(new_item)
+            return new_item
+
+    def prepend(self, items):
+        if isinstance(items, (tuple, list)):
+            labels = {item.label for item in items}
+            self.sub_items = items + [item for item in self.sub_items if item.label not in labels]
+        else:
+            self.sub_items = [items] + [item for item in self.sub_items if item.label != items.label]
+
+    def __getitem__(self, key):
+        for item in self.sub_items:
+            if item.label == key:
+                return item
+        else:
+            raise KeyError(key)
+
+    def __iter__(self):
+        return self.sub_items.__iter__()
