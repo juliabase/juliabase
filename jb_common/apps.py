@@ -18,8 +18,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import, unicode_literals
+from django.utils.six.moves import urllib
 
 import collections
+from django.conf import settings
 from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.core.urlresolvers import reverse
@@ -35,13 +37,23 @@ class JBCommonConfig(AppConfig):
         import jb_common.signals
 
     def build_menu(self, menu, request):
-        add_menu = menu.setdefault(_("Add"), MenuItem())
         if request.user.is_authenticated():
             user_menu = menu.setdefault(utils.get_really_full_name(request.user), MenuItem(position="right"))
             user_menu.sub_items[_("Edit preferences")] = MenuItem(
                 reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}),
                 "wrench")
             user_menu.sub_items[_("Logout")] = MenuItem(reverse("django.contrib.auth.views.logout"), "log-out")
+        jb_menu = menu.setdefault("JuliaBase", MenuItem())
+        if request.method == "GET":
+            for code, name in settings.LANGUAGES:
+                back_url = request.path
+                if request.GET:
+                    back_url += "?" + request.GET.urlencode()
+                jb_menu.sub_items[name] = MenuItem(
+                    "{}?lang={}&amp;next={}".format(reverse("jb_common.views.switch_language"), code,
+                                                    urllib.parse.quote_plus(back_url)),
+                    icon_url=urllib.parse.urljoin(settings.STATIC_URL, "juliabase/flags/{}.png".format(code)),
+                    icon_description=_("switch to {language}").format(language=name))
 
 
 _ = ugettext
