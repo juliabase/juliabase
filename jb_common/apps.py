@@ -45,6 +45,7 @@ class JBCommonConfig(AppConfig):
             user_menu.sub_items[_("Logout")] = MenuItem(reverse("django.contrib.auth.views.logout"), "log-out")
         jb_menu = menu.setdefault("JuliaBase", MenuItem())
         if request.user.is_authenticated() and request.method == "GET":
+            first = True
             for code, name in settings.LANGUAGES:
                 back_url = request.path
                 if request.GET:
@@ -53,7 +54,9 @@ class JBCommonConfig(AppConfig):
                     "{}?lang={}&amp;next={}".format(reverse("jb_common.views.switch_language"), code,
                                                     urllib.parse.quote_plus(back_url)),
                     icon_url=urllib.parse.urljoin(settings.STATIC_URL, "juliabase/flags/{}.png".format(code)),
-                    icon_description=_("switch to {language}").format(language=name))
+                    icon_description=_("switch to {language}").format(language=name),
+                    rule_before=first)
+                first = False
 
 
 _ = ugettext
