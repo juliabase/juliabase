@@ -37,19 +37,19 @@ class JBCommonConfig(AppConfig):
         import jb_common.signals
 
     def build_menu(self, menu, request):
-        menu.get_or_create(_("Add"))
-        menu.get_or_create(_("Search"))
-        menu.get_or_create(_("Manage"))
+        menu.get_or_create(_("add"))
+        menu.get_or_create(_("search"))
+        menu.get_or_create(_("manage"))
         if request.user.is_authenticated():
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
             user_menu.add(
-                _("Edit preferences"),
+                _("edit preferences"),
                 reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}),
                 "wrench")
-            user_menu.add(_("Logout"), reverse("django.contrib.auth.views.logout"), "log-out")
+            user_menu.add(_("logout"), reverse("django.contrib.auth.views.logout"), "log-out")
         jb_menu = menu.get_or_create("JuliaBase")
-        jb_menu.add(_("Statistics"), reverse("samples.views.statistics.statistics"), "stats")
-        jb_menu.add(_("About"), reverse("samples.views.statistics.about"), "info-sign")
+        jb_menu.add(_("statistics"), reverse("samples.views.statistics.statistics"), "stats")
+        jb_menu.add(_("about"), reverse("samples.views.statistics.about"), "info-sign")
         if request.user.is_authenticated() and request.method == "GET":
             first = True
             for code, name in settings.LANGUAGES:
