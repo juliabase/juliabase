@@ -27,16 +27,56 @@ import collections
 
 
 class MenuItem(object):
+    """Class which represents one main menu item and – if available – its subitems
+    in the instance attribute ``sub_items`` (a list of `MenuItem`).  This
+    yields a nested data structure which may be interpreted to create a main
+    menu.  It is created by the ``build_menu`` methods of the ``AppConfig``s of
+    the apps.  They are called in the reverse order of ``INSTALLED_APPS``.
+    """
 
     def __init__(self, label, url="", icon_name=None, icon_url=None, icon_description=None, position="left"):
+        """
+        :param label: the translated menu label
+        :param url: the URL this menu item directs to
+        :param icon_name: symbolic name of the icon to be used; you may *either*
+          use this *or* the ``icon_url``/``icon_description`` combination
+        :param icon_url: URL path to the icon
+        :param icon_description: content of the "``alt``" attribute of the
+          ``<img>`` tag of the icon
+        :param position: the position of the menu, e.g. left-flushed or
+          right-flushed
+
+        :type label: unicode
+        :type url: str
+        :type icon_name: unicode
+        :type icon_url: str
+        :type icon_description: unicode
+        :type position: str
+        """
         self.label, self.url, self.icon_name, self.icon_url, self.icon_description, self.position = \
                     label, url, icon_name, icon_url, icon_description, position
         self.sub_items = []
 
     def contains_icons(self):
+        """Returns whether the menu contains a direct subitem with an icon.
+
+        :return:
+          whether the menu contains an item with an icon
+
+        :rtype: bool
+        """
         return any(item.icon_name or item.icon_url for item in self)
 
     def add(self, *args, **kwargs):
+        """Adds a subitem to the menu.  If a subitem with the label already exists, it
+        is replaced at the same position.  All parameters for this method are
+        passed to the constructor of `MenuItem` to create the new item.
+
+        :return:
+          the newly created and inserted item
+
+        :rtype: `MenuItem`
+        """
         new_item = MenuItem(*args, **kwargs)
         label = new_item.label
         for i, item in enumerate(self.sub_items):
@@ -48,9 +88,29 @@ class MenuItem(object):
         return new_item
 
     def add_separator(self):
+        """Appends a item separator to the list of subitems.  This may result in a
+        horizontal rule in the output.
+        """
         self.sub_items.append(MenuSeparator())
 
     def get_or_create(self, item_or_label):
+        """Retrieves a menu item from this menu with the given label.  If it doesn't
+        exist yet, it is created.  This comes in handy if an app wants to
+        extend a menu that may haven been already created by another app.
+
+        :param item_or_label: the item to be returned if an item with that
+          label already exists in this menu.  Alternatively, only the label of
+          it, if no other constructor parameters of `MenuItem` are needed.  The
+          latter is senseful for top-level menus that have only subitems, but no
+          URL or icon.
+
+        :type item_or_label: `MenuItem` or unicode
+
+        :return:
+          the found item, or newly created and inserted item
+
+        :rtype: `MenuItem`
+        """
         label = item_or_label.label if isinstance(item_or_label, MenuItem) else item_or_label
         try:
             return self[label]
@@ -60,6 +120,12 @@ class MenuItem(object):
             return new_item
 
     def prepend(self, items):
+        """Prepends the given item(s) to the list of subitems.
+
+        :param items: the item(s) to be prepended
+
+        :type items: list of `MenuItem` or `MenuItem`
+        """
         if isinstance(items, (tuple, list)):
             labels = {item.label for item in items}
             self.sub_items = items + [item for item in self.sub_items if item.label not in labels]
@@ -67,6 +133,8 @@ class MenuItem(object):
             self.sub_items = [items] + [item for item in self.sub_items if item.label != items.label]
 
     def __getitem__(self, key):
+        """Gets the subitem with the given key.
+        """
         if isinstance(key, int):
             return self.sub_items[key]
         else:
@@ -77,12 +145,18 @@ class MenuItem(object):
                 raise KeyError(key)
 
     def __iter__(self):
+        """Lets you iterate over the `MenuItem` by iterating over its subitems.
+        """
         return self.sub_items.__iter__()
 
     def __len__(self):
+        """Returns the number of subitems.
+        """
         return len(self.sub_items)
 
 
 class MenuSeparator(MenuItem):
+    """Special `MenuItem` which results in a separator, usually a horizontal rule.
+    """
     def __init__(self):
         super(MenuSeparator, self).__init__("")

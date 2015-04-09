@@ -37,6 +37,9 @@ class JBCommonConfig(AppConfig):
         import jb_common.signals
 
     def build_menu(self, menu, request):
+        """Contribute to the menu.  See :py:mod:`jb_common.nav_menu` for further
+        information.
+        """
         menu.get_or_create(_("add"))
         menu.get_or_create(pgettext("top-level menu item", "explore"))
         menu.get_or_create(_("manage"))

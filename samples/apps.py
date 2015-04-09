@@ -59,6 +59,9 @@ class SamplesConfig(AppConfig):
             properties.setdefault("verbose_name", name_format)
 
     def build_menu(self, menu, request):
+        """Contribute to the menu.  See :py:mod:`jb_common.nav_menu` for further
+        information.
+        """
         if request.user.is_authenticated():
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
             user_menu.prepend(MenuItem(_("my topics and permissions"),
