@@ -259,6 +259,23 @@ def can_edit_any_topics(user):
     return any(has_permission_to_edit_topic(user, topic) for topic in jb_common.models.Topic.objects.all())
 
 
+def can_edit_any_external_contacts(user):
+    """Returns whether the user can edit any external operators.  It is used to
+    decide whether or not a link to the “choose external operator for edit”
+    page should be shown.
+
+    :param user: the user whose external operator permissions should be checked
+
+    :type user: django.contrib.auth.models.User
+
+    :return:
+      whether the user can edit at least one external operator
+
+    :rtype: bool
+    """
+    return user.external_contacts.exists() or (samples.models.ExternalOperator.objects.exists() and request.user.is_superuser)
+
+
 def get_all_adders(process_class):
     """Returns all operators for a given process class.  “Operators” means
     people who are allowed to add new processes of this class.  Note that if
