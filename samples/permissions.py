@@ -48,6 +48,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 import jb_common.utils.base as utils
+import jb_common.models
 import samples.models
 
 
@@ -240,6 +241,22 @@ def get_lab_notebooks(user):
     if lab_notebooks:
         lab_notebooks.sort(key=lambda process: process["label"].lower())
     return lab_notebooks
+
+
+def can_edit_any_topics(user):
+    """Returns whether the user can edit any topics.  It is used to decide whether
+    or not a link to the “choose topic for edit” page should be shown.
+
+    :param user: the user whose topic permissions should be checked
+
+    :type user: django.contrib.auth.models.User
+
+    :return:
+      whether the user can edit at least one topic
+
+    :rtype: bool
+    """
+    return any(has_permission_to_edit_topic(user, topic) for topic in jb_common.models.Topic.objects.all())
 
 
 def get_all_adders(process_class):
