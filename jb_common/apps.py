@@ -46,6 +46,8 @@ class JBCommonConfig(AppConfig):
                 _("edit preferences"),
                 reverse("samples.views.user_details.edit_preferences", kwargs={"login_name": request.user.username}),
                 "wrench")
+            if request.user.has_usable_password():
+                user_menu.add(_("change password"), reverse("django.contrib.auth.views.password_change"), "option-horizontal")
             user_menu.add(_("logout"), reverse("django.contrib.auth.views.logout"), "log-out")
         jb_menu = menu.get_or_create("JuliaBase")
         jb_menu.add(_("statistics"), reverse("samples.views.statistics.statistics"), "stats")

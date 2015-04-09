@@ -24,6 +24,7 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.core.urlresolvers import reverse
+import jb_common.utils.base as utils
 from jb_common.nav_menu import MenuItem
 
 
@@ -59,6 +60,10 @@ class SamplesConfig(AppConfig):
 
     def build_menu(self, menu, request):
         if request.user.is_authenticated():
+            user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
+            user_menu.prepend(MenuItem(_("my topics and permissions"),
+                                       reverse("samples.views.user_details.topics_and_permissions",
+                                               kwargs={"login_name": request.user.username})))
             add_menu = menu.get_or_create(_("add"))
             add_menu.add(_("samples"), reverse(settings.ADD_SAMPLES_VIEW), "stop")
             add_menu.add(_("sample series"), reverse("samples.views.sample_series.new"), "th")
@@ -75,6 +80,32 @@ class SamplesConfig(AppConfig):
             if lab_notebooks:
                 for lab_notebook in lab_notebooks:
                     search_menu.add(lab_notebook["label"], lab_notebook["url"], "book")
+            manage_menu = menu.get_or_create(_("manage"))
+            if request.user.has_perm("samples.rename_samples"):
+                manage_menu.add(_("rename sample"), reverse("samples.views.sample.rename_sample"))
+            manage_menu.add(_("merge samples"), reverse("samples.views.merge_samples.merge"))
+            manage_menu.add(_("sample claims"), reverse("samples.views.claim.list_",
+                                                        kwargs={"username": request.user.username}))
+            manage_menu.add_separator()
+            if permissions.has_permission_to_edit_users_topics(request.user):
+                manage_menu.add(_("add new topic"), reverse("samples.views.topic.add"))
+            if permissions.can_edit_any_topics(request.user):
+                manage_menu.add(_("change topic memberships"), reverse("samples.views.topic.list_"))
+            manage_menu.add_separator()
+            if permissions.has_permission_to_add_external_operator(request.user):
+                manage_menu.add(_("add external operator"), reverse("samples.views.external_operator.new"))
+            if permissions.can_edit_any_external_contacts(request.user):
+                manage_menu.add(_("edit external operator"), reverse("samples.views.external_operator.list_"))
+            manage_menu.add_separator()
+            manage_menu.add(_("permissions"), reverse("samples.views.permissions.list_"))
+            manage_menu.add(_("task lists"), reverse("samples.views.task_lists.show"))
+            manage_menu.add(_("newsfeed"),
+                            reverse("samples.views.feed.show", kwargs={"username": request.user,
+                                                                       "user_hash": permissions.get_user_hash(request.user)}))
+            manage_menu.add(_("status messages"), reverse("samples.views.status.show"))
+            manage_menu.add(_("inspect crawler logs"), reverse("samples.views.log_viewer.list"))
+            if request.user.is_superuser:
+                manage_menu.add(_("administration"), "admin/")
 
 
 _ = ugettext
