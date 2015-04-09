@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-04-09 15:09+0200\n"
-"PO-Revision-Date: 2015-01-25 16:53+0100\n"
+"PO-Revision-Date: 2015-04-09 15:42+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -35,46 +35,41 @@ msgstr "JuliaBase – Verwaltung"
 
 #: jb_common/apps.py:40
 msgid "add"
-msgstr ""
+msgstr "hinzufügen"
 
 #: jb_common/apps.py:41
 msgctxt "top-level menu item"
 msgid "explore"
-msgstr ""
+msgstr "nachschlagen"
 
 #: jb_common/apps.py:42
-#, fuzzy
-#| msgid "topic manager"
 msgid "manage"
-msgstr "Themenmanager"
+msgstr "verwalten"
 
 #: jb_common/apps.py:46
 msgid "edit preferences"
-msgstr ""
+msgstr "Einstellungen ändern"
 
 #: jb_common/apps.py:50
-#, fuzzy
-#| msgid "Change my password"
 msgid "change password"
-msgstr "Mein Passwort ändern"
+msgstr "Passwort ändern"
 
 #: jb_common/apps.py:51
 msgid "logout"
-msgstr ""
+msgstr "Logout"
 
 #: jb_common/apps.py:53
 msgid "statistics"
-msgstr ""
+msgstr "Statistiken"
 
 #: jb_common/apps.py:54
 msgid "about"
-msgstr ""
+msgstr "über"
 
 #: jb_common/apps.py:64
-#, fuzzy, python-brace-format
-#| msgid "switch to %(language)s"
+#, python-brace-format
 msgid "switch to {language}"
-msgstr "wechsle zu %(language)s"
+msgstr "wechsle zu {language}"
 
 #: jb_common/model_fields.py:27
 #, python-format
