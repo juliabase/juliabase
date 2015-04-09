@@ -37,7 +37,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
     <tr>
       {% input_field process.timestamp %}
     </tr>
-    {% if process.user.is_staff %}
+    {% if process.user.is_superuser %}
       <tr>
         {% input_field process.operator %}
       </tr>

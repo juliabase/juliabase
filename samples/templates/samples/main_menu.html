@@ -143,7 +143,7 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
 
   <h2>{% trans 'miscellaneous'|capfirst %}</h2>
   <ul>
-    {% if user.is_staff %}
+    {% if user.is_superuser %}
       <li style='list-style-image: url("{% static "juliabase/icons/user_suit.png" %}")'><a href="admin/">{% trans 'administration'|capfirst %}</a></li>
     {% endif %}
     {% if can_rename_samples %}

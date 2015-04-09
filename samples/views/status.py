@@ -75,7 +75,7 @@ class StatusForm(forms.ModelForm):
     def __init__(self, user, *args, **kwargs):
         super(StatusForm, self).__init__(*args, **kwargs)
         self.user = user
-        self.fields["operator"].set_operator(user, user.is_staff)
+        self.fields["operator"].set_operator(user, user.is_superuser)
         self.fields["operator"].initial = user.pk
         self.fields["timestamp"].initial = datetime.datetime.now()
         self.fields["process_classes"].choices = utils.choices_of_content_types(

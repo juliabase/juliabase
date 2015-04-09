@@ -107,7 +107,7 @@ class OperatorField(forms.ChoiceField):
         :type old_process: `samples.models.Process`
         """
         self.user = user
-        if user.is_staff:
+        if user.is_superuser:
             self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
             external_operators = set(models.ExternalOperator.objects.all())
         else:
@@ -180,7 +180,7 @@ class ProcessForm(ModelForm):
         if self.process and self.process.finished:
             self.fields["finished"].widget.attrs["disabled"] = "disabled"
         self.fields["combined_operator"].set_choices(user, self.process)
-        if not user.is_staff:
+        if not user.is_superuser:
             self.fields["external_operator"].choices = []
             self.fields["operator"].choices = []
             self.fields["operator"].required = False
@@ -475,7 +475,7 @@ class FixedOperatorField(forms.ChoiceField):
     Important: This field must *always* be made required!
     """
 
-    def set_operator(self, operator, is_staff=False):
+    def set_operator(self, operator, is_superuser=False):
         """Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
         the selection box will remain emtpy.  The selection list will consist
@@ -484,13 +484,13 @@ class FixedOperatorField(forms.ChoiceField):
 
         :param operator: operator to be included into the list.  Typically, it
             is the current user.
-        :param is_staff: whether the currently logged-in user is an
+        :param is_superuser: whether the currently logged-in user is an
             administrator
 
         :type operator: django.contrib.auth.models.User
-        :type is_staff: bool
+        :type is_superuser: bool
         """
-        if not is_staff:
+        if not is_superuser:
             self.choices = ((operator.pk, operator.username),)
         else:
             self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")

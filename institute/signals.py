@@ -66,7 +66,7 @@ def inform_process_supervisors(sender, instance, **kwargs):
             except django.contrib.auth.models.Permission.DoesNotExist:
                 return
             recipients = list(django.contrib.auth.models.User.objects.filter(user_permissions=permission)) or \
-                list(django.contrib.auth.models.User.objects.filter(is_staff=True).exclude(email=""))
+                list(django.contrib.auth.models.User.objects.filter(is_superuser=True).exclude(email=""))
             if recipients:
                 _ = lambda x: x
                 utils.send_email(_(u"{user_name} uses {apparatus}"),

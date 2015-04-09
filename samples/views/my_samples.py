@@ -131,7 +131,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
     referentially_valid = True
     if my_samples_form.is_valid() and action_form.is_valid():
         action_data = action_form.cleaned_data
-        if not current_user.is_staff:
+        if not current_user.is_superuser:
             if action_data["new_currently_responsible_person"] or action_data["new_topic"] or \
                         action_data["new_current_location"]:
                 try:
@@ -259,7 +259,7 @@ def edit(request, username):
     :rtype: HttpResponse
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    if not request.user.is_staff and request.user != user:
+    if not request.user.is_superuser and request.user != user:
         raise permissions.PermissionError(request.user, _("You can't access the “My Samples” section of another user."))
     if request.method == "POST":
         my_samples_form = MySamplesForm(user, request.POST)

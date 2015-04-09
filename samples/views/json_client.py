@@ -76,7 +76,8 @@ def add_sample(request):
         raise JSONRequestException(5, "The sample name is too long.")
     name_format = utils.sample_name_format(name)
     if name_format is None or \
-       not request.user.is_staff and name_format not in settings.SAMPLE_NAME_FORMATS["provisional"].get("possible_renames", set()):
+       not request.user.is_superuser and \
+       name_format not in settings.SAMPLE_NAME_FORMATS["provisional"].get("possible_renames", set()):
         raise JSONRequestException(5, "The sample name is invalid.")
     eligible_users = django.contrib.auth.models.User.objects.filter(is_active=True, jb_user_details__department__isnull=False)
     try:
@@ -84,7 +85,7 @@ def add_sample(request):
     except django.contrib.auth.models.User.DoesNotExist:
         raise Http404("Currently reponsible user not found.")
     if topic:
-        all_topics = Topic.objects.all() if request.user.is_staff else \
+        all_topics = Topic.objects.all() if request.user.is_superuser else \
                      Topic.objects.filter(Q(confidential=False) | Q(members=request.user))
         try:
             topic = all_topics.get(pk=utils.convert_id_to_int(topic))
@@ -100,7 +101,7 @@ def add_sample(request):
         models.SampleAlias.objects.filter(name=name).delete()
     except IntegrityError as error:
         error_message = "The sample with this data could not be added."
-        if request.user.is_staff:
+        if request.user.is_superuser:
             error_message += " {}".format(error)
         raise JSONRequestException(5, error_message)
     sample.watchers.add(request.user)
@@ -146,7 +147,7 @@ def primary_keys(request):
     """
     result_dict = {}
     if "topics" in request.GET:
-        all_topics = Topic.objects.all() if request.user.is_staff else \
+        all_topics = Topic.objects.all() if request.user.is_superuser else \
                      Topic.objects.filter(Q(confidential=False) | Q(members=request.user))
         if request.GET["topics"] == "*":
             topics = all_topics
@@ -170,7 +171,7 @@ def primary_keys(request):
         result_dict["depositions"] = dict(models.Deposition.objects.
                                           filter(number__in=deposition_numbers).values_list("number", "id"))
     if "users" in request.GET:
-        eligible_users = django.contrib.auth.models.User.objects.all() if request.user.is_staff else \
+        eligible_users = django.contrib.auth.models.User.objects.all() if request.user.is_superuser else \
                 django.contrib.auth.models.User.objects.filter(is_active=True, jb_user_details__department__isnull=False)
         if request.GET["users"] == "*":
             result_dict["users"] = dict(eligible_users.values_list("username", "id"))
@@ -178,7 +179,7 @@ def primary_keys(request):
             user_names = request.GET["users"].split(",")
             result_dict["users"] = dict(eligible_users.filter(username__in=user_names).values_list("username", "id"))
     if "external_operators" in request.GET:
-        if request.user.is_staff:
+        if request.user.is_superuser:
             all_external_operators = models.ExternalOperator.objects.all()
         else:
             all_external_operators = models.ExternalOperator.objects.filter(Q(confidential=False) | Q(contact_persons=request.user))
@@ -215,7 +216,7 @@ def available_items(request, model_name):
 
     :rtype: HttpResponse
     """
-    if not request.user.is_staff:
+    if not request.user.is_superuser:
         raise permissions.PermissionError(request.user, _("Only the administrator can access this resource."))
     # FixMe: This must be revisited; it is ugly.
     for app_name in settings.INSTALLED_APPS:
@@ -306,7 +307,7 @@ def add_alias(request):
 
     :rtype: HttpResponse
     """
-    if not request.user.is_staff:
+    if not request.user.is_superuser:
         return respond_in_json(False)
     try:
         sample_pk = request.POST["sample"]

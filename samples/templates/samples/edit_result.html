@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {{ related_data.sample_series }}
       </td>
 
-      {% if result.user.is_staff %}
+      {% if result.user.is_superuser %}
         <td rowspan="3" style="vertical-align: top"><label for="id_{{ result.operator.html_name }}"
                                   >{{ result.operator.label }}:</label><br/>
           {{ result.operator }}

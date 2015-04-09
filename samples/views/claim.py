@@ -152,7 +152,7 @@ def list_(request, username):
     :rtype: HttpResponse
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    if user != request.user and not user.is_staff:
+    if user != request.user and not user.is_superuser:
         raise permissions.PermissionError(request.user, _("You are not allowed to see claims of another user."))
     return render(request, "samples/list_claims.html",
                   {"title": _("Claims for {user}").format(user=get_really_full_name(user)),
@@ -208,7 +208,7 @@ def show(request, claim_id):
     """
     _ = ugettext
     claim = get_object_or_404(models.SampleClaim, pk=utils.convert_id_to_int(claim_id))
-    is_reviewer = request.user == claim.reviewer or request.user.is_staff
+    is_reviewer = request.user == claim.reviewer or request.user.is_superuser
     is_requester = request.user == claim.requester
     if not is_reviewer and not is_requester:
         raise permissions.PermissionError(request.user, _("You are neither the requester nor the reviewer of this claim."))

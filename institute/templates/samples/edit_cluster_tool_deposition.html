@@ -44,7 +44,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
           <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
                                >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
       </tr>
-      {% if process.user.is_staff %}
+      {% if process.user.is_superuser %}
         <tr>
           {% input_field process.operator %}
           <td></td>

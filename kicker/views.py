@@ -385,7 +385,7 @@ class UserDetailsForm(forms.ModelForm):
 @login_required
 def edit_user_details(request, username):
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
-    if not request.user.is_staff and request.user != user:
+    if not request.user.is_superuser and request.user != user:
         raise Http404("You can't access the user details of another user.")
     user_details = user.kicker_user_details
     if request.method == "POST":

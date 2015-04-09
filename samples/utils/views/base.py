@@ -577,7 +577,7 @@ def restricted_samples_query(user):
 
     :rtype: QuerySet
     """
-    if user.is_staff:
+    if user.is_superuser:
         return models.Sample.objects.all().order_by("name")
     return models.Sample.objects.filter(Q(topic__confidential=False) | Q(topic__members=user) |
                                         Q(currently_responsible_person=user) | Q(clearances__user=user) |

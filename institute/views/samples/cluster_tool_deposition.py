@@ -108,7 +108,7 @@ class HotWireLayerForm(ClusterToolLayerForm):
 
     def __init__(self, view, data=None, **kwargs):
         super(HotWireLayerForm, self).__init__(view, data, **kwargs)
-        if not view.request.user.is_staff:
+        if not view.request.user.is_superuser:
             self.fields["wire_material"].choices = \
                 [choice for choice in self.fields["wire_material"].choices if choice[0] != "unknown"]
 

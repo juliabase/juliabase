@@ -77,7 +77,7 @@ class JSONRequestException(Exception):
     a JSON-encoded :samp:`({error code}, {error message})` body.  For example,
     in a JSON-only view function, you might say::
 
-        if not request.user.is_staff:
+        if not request.user.is_superuser:
             raise JSONRequestException(6, "Only admins can access this ressource.")
 
     The ranges for the error codes are:

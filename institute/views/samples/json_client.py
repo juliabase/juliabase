@@ -103,7 +103,7 @@ def substrate_by_sample(request, sample_id):
 
     :rtype: HttpResponse
     """
-    if not request.user.is_staff:
+    if not request.user.is_superuser:
         return respond_in_json(False)
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     substrate = get_substrate(sample)

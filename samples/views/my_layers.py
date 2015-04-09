@@ -177,7 +177,7 @@ def edit(request, login_name):
     :rtype: HttpResponse
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
-    if not request.user.is_staff and request.user != user:
+    if not request.user.is_superuser and request.user != user:
         raise permissions.PermissionError(request.user, _("You can't access the “My Layers” section of another user."))
     if request.method == "POST":
         my_layer_forms, structure_changed = forms_from_post_data(request.POST)

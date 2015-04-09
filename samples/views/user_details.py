@@ -124,7 +124,7 @@ def edit_preferences(request, login_name):
         user.samples_user_details.save()
 
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
-    if not request.user.is_staff and request.user != user:
+    if not request.user.is_superuser and request.user != user:
         raise permissions.PermissionError(request.user, _("You can't access the preferences of another user."))
     initials_mandatory = request.GET.get("initials_mandatory") == "True"
     user_details = user.samples_user_details
@@ -153,7 +153,7 @@ def edit_preferences(request, login_name):
 @login_required
 def topics_and_permissions(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
-    if not request.user.is_staff and request.user != user:
+    if not request.user.is_superuser and request.user != user:
         raise permissions.PermissionError(
             request.user, _("You can't access the list of topics and permissions of another user."))
     return render(request, "samples/topics_and_permissions.html",
