@@ -118,7 +118,7 @@ def main_menu(request):
                    "can_edit_topics": permissions.can_edit_any_topics(request.user),
                    "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
                    "has_external_contacts": permissions.can_edit_any_external_contacts(request.user),
-                   "can_rename_samples": request.user.has_perm("samples.rename_samples") or request.user.is_superuser,
+                   "can_rename_samples": request.user.has_perm("samples.rename_samples"),
                    "physical_processes": allowed_physical_processes,
                    "lab_notebooks": lab_notebooks})
 
