@@ -50,8 +50,8 @@ class JBCommonConfig(AppConfig):
         jb_menu = menu.get_or_create("JuliaBase")
         jb_menu.add(_("statistics"), reverse("samples.views.statistics.statistics"), "stats")
         jb_menu.add(_("about"), reverse("samples.views.statistics.about"), "info-sign")
-        if request.user.is_authenticated() and request.method == "GET":
-            first = True
+        if request.user.is_authenticated() and request.method == "GET" and settings.LANGUAGES:
+            jb_menu.add_separator()
             for code, name in settings.LANGUAGES:
                 back_url = request.path
                 if request.GET:
@@ -59,9 +59,7 @@ class JBCommonConfig(AppConfig):
                 jb_menu.add(name, "{}?lang={}&amp;next={}".format(reverse("jb_common.views.switch_language"), code,
                                                                   urllib.parse.quote_plus(back_url)),
                             icon_url=urllib.parse.urljoin(settings.STATIC_URL, "juliabase/flags/{}.png".format(code)),
-                            icon_description=_("switch to {language}").format(language=name),
-                            rule_before=first)
-                first = False
+                            icon_description=_("switch to {language}").format(language=name))
 
 
 _ = ugettext

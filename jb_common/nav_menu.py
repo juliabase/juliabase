@@ -28,10 +28,9 @@ import collections
 
 class MenuItem(object):
 
-    def __init__(self, label, url="", icon_name=None, icon_url=None, icon_description=None, position="left", rule_before=False,
-                 rule_after=False):
-        self.label, self.url, self.icon_name, self.icon_url, self.icon_description, self.position, self.rule_before, \
-            self.rule_after = label, url, icon_name, icon_url, icon_description, position, rule_before, rule_after
+    def __init__(self, label, url="", icon_name=None, icon_url=None, icon_description=None, position="left"):
+        self.label, self.url, self.icon_name, self.icon_url, self.icon_description, self.position = \
+                    label, url, icon_name, icon_url, icon_description, position
         self.sub_items = []
 
     def contains_icons(self):
@@ -47,6 +46,9 @@ class MenuItem(object):
         else:
             self.sub_items.append(new_item)
         return new_item
+
+    def add_separator(self):
+        self.sub_items.append(MenuSeparator())
 
     def get_or_create(self, item_or_label):
         label = item_or_label.label if isinstance(item_or_label, MenuItem) else item_or_label
@@ -79,3 +81,8 @@ class MenuItem(object):
 
     def __len__(self):
         return len(self.sub_items)
+
+
+class MenuSeparator(MenuItem):
+    def __init__(self):
+        super(MenuSeparator, self).__init__("")
