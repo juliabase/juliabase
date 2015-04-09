@@ -175,7 +175,7 @@ def show(request):
         for process_class in status_message.process_classes.all():
             further_status_messages.setdefault(process_class.model_class()._meta.verbose_name, []).append(status_message)
     further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())
-    return render(request, "samples/show_status.html", {"title": _("Status messages"),
+    return render(request, "samples/show_status.html", {"title": capfirst(_("status messages")),
                                                         "status_messages": status_messages,
                                                         "further_status_messages": further_status_messages})
 

@@ -31,6 +31,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django import forms
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.text import capfirst
 import django.core
 from django.conf import settings
 from jb_common.models import Topic
@@ -252,7 +253,7 @@ def list_(request):
     else:
         topic_managers = None
     return render(request, "samples/list_permissions.html",
-                  {"title": _("Permissions"), "addable_models": addable_models,
+                  {"title": capfirst(_("permissions")), "addable_models": addable_models,
                    "user_list": user_list_form, "topic_managers": topic_managers})
 
 

@@ -29,6 +29,7 @@ import datetime, json
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.text import capfirst
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.forms import Form
@@ -44,7 +45,7 @@ class OriginalDataForm(Form):
     """Form holding the old sample, the new name for the unsplit sample, and
     the number of pieces it is about to be split into.
     """
-    sample = forms.CharField(label=_("Old sample name"), max_length=30,
+    sample = forms.CharField(label=capfirst(_("old sample name")), max_length=30,
                              widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
     new_name = forms.CharField(label=_("New name"), max_length=30)
     number_of_pieces = forms.IntegerField(label=_("Pieces"), initial="1",
@@ -105,7 +106,7 @@ class OriginalDataForm(Form):
 class NewNameForm(Form):
     """Form holding the newly given name of a sample.
     """
-    new_name = forms.CharField(label=_("New sample name"), max_length=30)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30)
 
     def __init__(self, user, readonly, data=None, **kwargs):
         super(NewNameForm, self).__init__(data, **kwargs)

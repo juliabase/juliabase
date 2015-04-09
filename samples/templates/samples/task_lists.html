@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <h3>{{ process_class|contenttype_name|capfirst }}<a
        class="edit-icon"
        href="{% url 'samples.views.task_lists.edit' %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
-        <img src="{% static "juliabase/icons/layout_add.png" %}" alt="add icon" title="{% trans 'Add task' %}"
+        <img src="{% static "juliabase/icons/layout_add.png" %}" alt="add icon" title="{% trans 'add task'|capfirst %}"
              width="16" height="16"/></a></h3>
   {% endspaceless %}
 

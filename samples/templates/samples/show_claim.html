@@ -29,11 +29,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="padding5">
     <tbody>
     <tr>
-      <td>{% trans "Requester" %}:</td>
+      <td>{% trans "requester"|capfirst %}:</td>
       <td>{{ claim.requester|get_really_full_name }}</td>
     </tr>
     <tr>
-      <td>{% trans "Reviewer" %}:</td>
+      <td>{% trans "reviewer"|capfirst %}:</td>
       <td>{{ claim.reviewer|get_really_full_name }}</td>
     </tr>
     </tbody>

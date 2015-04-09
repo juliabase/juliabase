@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {{ originator }} has added the sample series “<a href="{{ url }}">{{ sample_series }}</a>” to the topic 
     “{{ topic }}”.
   {% endblocktrans %}
-  <p>{% trans 'Description' %}:</p>
+  <p>{% trans 'description'|capfirst %}:</p>
   <blockquote>{{ entry.sample_series.description|markdown_samples }}</blockquote>
   {% if subscribed %}
     {% trans 'You are subscribed to this sample series because you have at least one of its samples amongst “My Samples”.' %}

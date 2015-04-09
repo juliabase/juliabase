@@ -66,8 +66,8 @@ class SampleForm(forms.ModelForm):
     `samples.models.Sample.currently_responsible_person` in oder to be able to see
     *full* person names (not just the login name).
     """
-    currently_responsible_person = UserField(label=_("Currently responsible person"))
-    topic = TopicField(label=_("Topic"), required=False)
+    currently_responsible_person = UserField(label=capfirst(_("currently responsible person")))
+    topic = TopicField(label=capfirst(_("topic")), required=False)
 
     class Meta:
         model = models.Sample
@@ -892,7 +892,7 @@ def advanced_search(request):
     else:
         root_form = jb_common.search.SearchModelForm(model_list)
     root_form.fields["_model"].label = ""
-    content_dict = {"title": _("Advanced search"), "search_root": root_form, "search_tree": search_tree,
+    content_dict = {"title": capfirst(_("advanced search")), "search_root": root_form, "search_tree": search_tree,
                     "results": list(zip(results, add_forms)), "search_performed": search_performed,
                     "something_to_add": any(add_forms), "too_many_results": too_many_results, "max_results": max_results,
                     "column_groups": column_groups_form, "columns": columns_form, "old_data": old_data_form,
@@ -1068,7 +1068,7 @@ def rename_sample(request):
                 request, _("Sample {sample} was successfully changed in the database.").format(sample=sample))
     else:
         sample_rename_form = SampleRenameForm(request.user, initial={"old_name": sample.name if sample else ""})
-    title = _("Rename sample") + " “{sample}”".format(sample=sample) if sample else ""
+    title = capfirst(_("rename sample")) + " “{sample}”".format(sample=sample) if sample else ""
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
 
 

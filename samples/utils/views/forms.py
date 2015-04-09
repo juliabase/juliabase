@@ -160,7 +160,7 @@ class ProcessForm(ModelForm):
     :py:class:`OperatorField`.  In the HTML template, you should offer this
     field to non-staff, and the usual operator/external operator to staff.
     """
-    combined_operator = OperatorField(label=_("Operator"))
+    combined_operator = OperatorField(label=capfirst(_("operator")))
 
     def __init__(self, user, *args, **kwargs):
         """

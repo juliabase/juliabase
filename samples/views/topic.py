@@ -142,7 +142,7 @@ def add(request):
                 next_view, kwargs=next_view_kwargs)
     else:
         new_topic_form = NewTopicForm(request.user)
-    return render(request, "samples/add_topic.html", {"title": _("Add new topic"), "new_topic": new_topic_form})
+    return render(request, "samples/add_topic.html", {"title": capfirst(_("add new topic")), "new_topic": new_topic_form})
 
 
 @login_required

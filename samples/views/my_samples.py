@@ -32,6 +32,7 @@ import django.contrib.auth.models
 from django import forms
 from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.text import capfirst
 from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown
 from jb_common.utils.views import UserField, MultipleUsersField, TopicField
 from samples import permissions
@@ -51,12 +52,12 @@ class ActionForm(forms.Form):
     """Form for all the things you can do with the selected samples.
     """
     new_currently_responsible_person = UserField(label=_("New currently responsible person"), required=False)
-    new_topic = TopicField(label=_("New Topic"), required=False)
+    new_topic = TopicField(label=capfirst(_("new topic")), required=False)
     new_current_location = forms.CharField(label=_("New current location"), required=False, max_length=50)
     new_tags = forms.CharField(label=_("New sample tags"), required=False, max_length=255,
                                help_text=_("separated with commas, no whitespace"))
     copy_to_user = MultipleUsersField(label=_("Copy to user"), required=False)
-    clearance = forms.ChoiceField(label=_("Clearance"), required=False)
+    clearance = forms.ChoiceField(label=capfirst(_("clearance")), required=False)
     comment = forms.CharField(label=_("Comment for recipient"), widget=forms.Textarea, required=False)
     remove_from_my_samples = forms.BooleanField(label=_("Remove from “My Samples”"), required=False)
 

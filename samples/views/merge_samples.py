@@ -23,6 +23,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.text import capfirst
 from django import forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -206,7 +207,7 @@ def merge(request):
             return utils.successful_response(request, _("Samples were successfully merged."))
     else:
         merge_samples_forms = build_merge_forms()
-    return render(request, "samples/merge_samples.html", {"title": _("Merge samples"),
+    return render(request, "samples/merge_samples.html", {"title": capfirst(_("merge samples")),
                                                           "merge_forms": merge_samples_forms})
 
 

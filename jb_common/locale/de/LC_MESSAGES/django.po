@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-11 10:00+0100\n"
+"POT-Creation-Date: 2015-04-09 15:09+0200\n"
 "PO-Revision-Date: 2015-01-25 16:53+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -29,9 +29,52 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: jb_common/apps.py:28
+#: jb_common/apps.py:34
 msgid "JuliaBase – administration"
 msgstr "JuliaBase – Verwaltung"
+
+#: jb_common/apps.py:40
+msgid "add"
+msgstr ""
+
+#: jb_common/apps.py:41
+msgctxt "top-level menu item"
+msgid "explore"
+msgstr ""
+
+#: jb_common/apps.py:42
+#, fuzzy
+#| msgid "topic manager"
+msgid "manage"
+msgstr "Themenmanager"
+
+#: jb_common/apps.py:46
+msgid "edit preferences"
+msgstr ""
+
+#: jb_common/apps.py:50
+#, fuzzy
+#| msgid "Change my password"
+msgid "change password"
+msgstr "Mein Passwort ändern"
+
+#: jb_common/apps.py:51
+msgid "logout"
+msgstr ""
+
+#: jb_common/apps.py:53
+msgid "statistics"
+msgstr ""
+
+#: jb_common/apps.py:54
+msgid "about"
+msgstr ""
+
+#: jb_common/apps.py:64
+#, fuzzy, python-brace-format
+#| msgid "switch to %(language)s"
+msgid "switch to {language}"
+msgstr "wechsle zu %(language)s"
 
 #: jb_common/model_fields.py:27
 #, python-format
@@ -72,6 +115,7 @@ msgid "app label"
 msgstr "App-Label"
 
 #: jb_common/models.py:48 jb_common/models.py:70 jb_common/models.py:134
+#: jb_common/templates/jb_common/show_user.html:37
 msgid "department"
 msgstr "Abteilung"
 
@@ -185,11 +229,11 @@ msgstr "Ungültiges Datum oder ungültige Zeit."
 msgid "doesn't matter"
 msgstr "egal"
 
-#: jb_common/search.py:407
+#: jb_common/search.py:407 jb_common/templatetags/juliabase.py:164
 msgid "yes"
 msgstr "ja"
 
-#: jb_common/search.py:407
+#: jb_common/search.py:407 jb_common/templatetags/juliabase.py:164
 msgid "no"
 msgstr "nein"
 
@@ -220,19 +264,19 @@ msgstr ""
 "Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
 "der angegebene Prozess, Zitation etc. schon in der Datenbank existiert.\n"
 
-#: jb_common/templates/500.html:31
+#: jb_common/templates/500.html:30
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: jb_common/templates/500.html:40 jb_common/templates/jb_base.html:87
+#: jb_common/templates/500.html:39 jb_common/templates/jb_base.html:87
 msgid "Log in"
 msgstr "Anmelden"
 
-#: jb_common/templates/500.html:54
+#: jb_common/templates/500.html:53
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: jb_common/templates/500.html:55
+#: jb_common/templates/500.html:54
 msgid ""
 "\n"
 "You experienced an internal error in the JuliaBase server software.  The\n"
@@ -393,22 +437,10 @@ msgstr "Ihr Passwort wurde geändert."
 msgid "Email address"
 msgstr "Email-Adresse"
 
-#: jb_common/templates/jb_common/show_user.html:37
-msgid "Department"
-msgstr "Abteilung"
-
-#: jb_common/templatetags/juliabase.py:154
+#: jb_common/templatetags/juliabase.py:155
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
-
-#: jb_common/templatetags/juliabase.py:163
-msgid "Yes"
-msgstr "Ja"
-
-#: jb_common/templatetags/juliabase.py:163
-msgid "No"
-msgstr "Nein"
 
 #: jb_common/utils/base.py:171
 msgid "You mustn't use image and headings syntax in Markdown markup."
@@ -465,6 +497,15 @@ msgstr "Sandkasten"
 #: jb_common/views.py:98
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
+
+#~ msgid "Department"
+#~ msgstr "Abteilung"
+
+#~ msgid "Yes"
+#~ msgstr "Ja"
+
+#~ msgid "No"
+#~ msgstr "Nein"
 
 #~ msgid "MarkdownMarkup"
 #~ msgstr "MarkdownMarkup"

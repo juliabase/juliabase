@@ -42,7 +42,7 @@ import samples.utils.views as utils
 class SamplesForm(forms.Form):
     """Form for the list selection of samples.
     """
-    sample_list = utils.MultipleSamplesField(label=_("Samples"))
+    sample_list = utils.MultipleSamplesField(label=capfirst(_("samples")))
 
     def __init__(self, user, preset_sample, task, data=None, **kwargs):
         samples = list(user.my_samples.all())
@@ -308,7 +308,7 @@ def edit(request, task_id):
         if "process_class" in request.GET:
             initial["process_class"] = request.GET["process_class"]
         task_form = TaskForm(request.user, instance=task, initial=initial)
-    title = _("Edit task") if task else _("Add task")
+    title = capfirst(_("edit task")) if task else capfirst(_("add task"))
     return render(request, "samples/edit_task.html", {"title": title, "task": task_form, "samples": samples_form})
 
 
@@ -352,7 +352,7 @@ def show(request):
         assert len(department_names) == 1
         department_name = department_names.pop()
         task_lists_for_department.setdefault(department_name, {}).update({process_content_type: tasks})
-    return render(request, "samples/task_lists.html", {"title": _("Task lists"),
+    return render(request, "samples/task_lists.html", {"title": capfirst(_("task lists")),
                                                        "choose_task_lists": choose_task_lists_form,
                                                        "task_lists": task_lists_for_department})
 

@@ -32,6 +32,7 @@ from django.utils.html import conditional_escape, escape
 import django.utils.http
 import markdown as markup
 from django.utils.translation import ugettext as _, pgettext
+from django.utils.text import capfirst
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
 import jb_common.utils.base as utils
@@ -160,7 +161,7 @@ def markdown_hint():
 def fancy_bool(boolean):
     """Filter for coverting a bool into a translated “Yes” or “No”.
     """
-    result = _("Yes") if boolean else _("No")
+    result = capfirst(_("yes")) if boolean else capfirst(_("no"))
     return mark_safe(result)
 
 

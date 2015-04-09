@@ -79,31 +79,30 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
     {% endif %}
   {% endcache %}
 
-  <h2>{% trans 'Add things' %}</h2>
+  <h2>{% trans 'add things'|capfirst %}</h2>
 
-  {# FixMe: make translated strings lowercase and use |capfirst #}
   <ul style='list-style-image: url("{% static "juliabase/icons/add.png" %}")'>
     <li style='list-style-image: url("{% static "juliabase/icons/ruby_add.png" %}")'>
-      <a href="{{ add_sample_url }}">{% trans 'Samples' %}</a></li>
+      <a href="{{ add_sample_url }}">{% trans 'samples'|capfirst %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/chart_organisation_add.png" %}")'>
-      <a href="{% url 'samples.views.sample_series.new' %}">{% trans 'Sample series' %}</a></li>
+      <a href="{% url 'samples.views.sample_series.new' %}">{% trans 'sample series'|capfirst %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/lightbulb_add.png" %}")'>
-      <a href="{% url 'add_result' %}">{% trans 'Result' %}</a></li>
+      <a href="{% url 'add_result' %}">{% trans 'result'|capfirst %}</a></li>
     {% block add_things_extras %}{% endblock %}
     {% for physical_process in physical_processes %}
       <li><a href="{{ physical_process.url }}">{{ physical_process.label|capfirst }}</a></li>
     {% endfor %}
   </ul>
 
-  <h2>{% trans 'Search for things' %}</h2>
+  <h2>{% trans 'search for things'|capfirst %}</h2>
   <ul style='list-style-image: url("{% static "juliabase/icons/find.png" %}")'>
-    <li><a href="{% url 'samples.views.sample.advanced_search' %}">{% trans 'Advanced search' %}</a></li>
-    <li><a href="{% url 'samples.views.sample.search' %}">{% trans 'Samples by name' %}</a></li>
+    <li><a href="{% url 'samples.views.sample.advanced_search' %}">{% trans 'advanced search'|capfirst %}</a></li>
+    <li><a href="{% url 'samples.views.sample.search' %}">{% trans 'samples by name'|capfirst %}</a></li>
     {% block search_things_extras %}{% endblock %}
   </ul>
 
   {% if lab_notebooks %}
-    <h2>{% trans 'Lab notebooks' %}</h2>
+    <h2>{% trans 'lab notebooks'|capfirst %}</h2>
 
     <ul style='list-style-image: url("{% static "juliabase/icons/book.png" %}")'>
       {% for lab_notebook in lab_notebooks %}
@@ -113,75 +112,76 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
   {% endif %}
 
   {% if can_add_topic or can_edit_topics %}
-    <h2>{% trans 'Edit topics' %}</h2>
+    <h2>{% trans 'edit topics'|capfirst %}</h2>
 
     <ul>
       {% if can_add_topic %}
         <li style='list-style-image: url("{% static "juliabase/icons/group_add.png" %}")'>
-          <a href="{% url 'samples.views.topic.add' %}">{% trans 'Add new topic' %}</a></li>
+          <a href="{% url 'samples.views.topic.add' %}">{% trans 'add new topic'|capfirst %}</a></li>
       {% endif %}
       {% if can_edit_topics %}
         <li style='list-style-image: url("{% static "juliabase/icons/group_gear.png" %}")'>
-          <a href="{% url 'samples.views.topic.list_' %}">{% trans 'Change topic memberships' %}</a></li>
+          <a href="{% url 'samples.views.topic.list_' %}">{% trans 'change topic memberships'|capfirst %}</a></li>
       {% endif %}
     </ul>
   {% endif %}
 
   {% if can_add_external_operator or has_external_contacts %}
-    <h2>{% trans 'External operators' %}</h2>
+    <h2>{% trans 'external operators'|capfirst %}</h2>
 
     <ul style='list-style-image: url("{% static "juliabase/icons/user_gray.png" %}")'>
       {% if can_add_external_operator %}
-        <li><a href="{% url 'samples.views.external_operator.new' %}">{% trans 'Add external operator' %}</a></li>
+        <li><a href="{% url 'samples.views.external_operator.new' %}">{% trans 'add external operator'|capfirst %}</a></li>
       {% endif %}
       {% if has_external_contacts %}
-        <li><a href="{% url 'samples.views.external_operator.list_' %}">{% trans 'Edit external operator' %}</a></li>
+        <li><a href="{% url 'samples.views.external_operator.list_' %}">{% trans 'edit external operator'|capfirst %}</a></li>
       {% endif %}
     </ul>
   {% endif %}
 
   {% block menu_extras %}{% endblock %}
 
-  <h2>{% trans 'Miscellaneous' %}</h2>
+  <h2>{% trans 'miscellaneous'|capfirst %}</h2>
   <ul>
     {% if user.is_staff %}
-      <li style='list-style-image: url("{% static "juliabase/icons/user_suit.png" %}")'><a href="admin/">{% trans 'Administration' %}</a></li>
+      <li style='list-style-image: url("{% static "juliabase/icons/user_suit.png" %}")'><a href="admin/">{% trans 'administration'|capfirst %}</a></li>
     {% endif %}
     {% if can_rename_samples %}
       <li style='list-style-image: url("{% static "juliabase/icons/tag_red.png" %}")'>
-        <a href="{% url 'samples.views.sample.rename_sample' %}">{% trans 'Rename sample' %}</a></li>
+        <a href="{% url 'samples.views.sample.rename_sample' %}">{% trans 'rename sample'|capfirst %}</a></li>
     {% endif %}
     <li style='list-style-image: url("{% static "juliabase/icons/user_edit.png" %}")'>
       <a href="{% url 'samples.views.user_details.edit_preferences' login_name=user.username %}"
-         >{% trans 'Edit preferences' %}</a></li>
+         >{% trans 'edit preferences'|capfirst %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/key.png" %}")'>
       <a href="{% url 'samples.views.user_details.topics_and_permissions' login_name=user.username %}"
-         >{% trans 'My topics and permissions' %}</a></li>
+         >{% trans 'my topics and permissions'|capfirst %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/webcam.png" %}")'>
       <a href="{% url 'samples.views.permissions.list_' %}"
-         >{% trans "Permissions" %}</a></li>
+         >{% trans "permissions"|capfirst %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/layout.png" %}")'>
-      <a href="{% url 'samples.views.task_lists.show' %}">{% trans 'Task lists' %}</a></li>
+      <a href="{% url 'samples.views.task_lists.show' %}">{% trans 'task lists'|capfirst %}</a></li>
     {% if user.has_usable_password %}
       <li style='list-style-image: url("{% static "juliabase/icons/lock_edit.png" %}")'>
-        <a href="{% url 'django.contrib.auth.views.password_change' %}">{% trans 'Change password' %}</a></li>
+        <a href="{% url 'django.contrib.auth.views.password_change' %}">{% trans 'change password'|capfirst %}</a></li>
     {% endif %}
     <li style='list-style-image: url("{% static "juliabase/icons/feed.png" %}")'>
-      <a href="{% url 'samples.views.feed.show' username=user.username user_hash=user_hash %}">{% trans 'Newsfeed' %}</a></li>
+      <a href="{% url 'samples.views.feed.show' username=user.username user_hash=user_hash %}"
+         >{% trans 'newsfeed'|capfirst %}</a></li>
     {% block miscellaneous_extras %}
       <li style='list-style-image: url("{% static "juliabase/icons/table.png" %}")'>
-        <a href="{% url 'samples.views.status.show' %}">{% trans 'Status messages' %}</a></li>
+        <a href="{% url 'samples.views.status.show' %}">{% trans 'status messages'|capfirst %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/arrow_merge.png" %}")'>
-        <a href="{% url 'samples.views.merge_samples.merge' %}">{% trans 'Merge samples' %}</a></li>
+        <a href="{% url 'samples.views.merge_samples.merge' %}">{% trans 'merge samples'|capfirst %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/flag_blue.png" %}")'>
-        <a href="{% url 'samples.views.claim.list_' username=user.username %}">{% trans 'Sample claims' %}</a></li>
+        <a href="{% url 'samples.views.claim.list_' username=user.username %}">{% trans 'sample claims'|capfirst %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/exclamation.png" %}")'>
-        <a href="{% url 'samples.views.log_viewer.list' %}">{% trans 'Inspect crawler logs' %}</a></li>
+        <a href="{% url 'samples.views.log_viewer.list' %}">{% trans 'inspect crawler logs'|capfirst %}</a></li>
       <!-- FixMe: These menu items must not be links from here but from another menu page. -->
       <li style='list-style-image: url("{% static "juliabase/icons/server_lightning.png" %}")'>
-        <a href="{% url 'samples.views.statistics.about' %}">{% trans 'About JuliaBase' %}</a></li>
+        <a href="{% url 'samples.views.statistics.about' %}">{% trans 'about JuliaBase'|capfirst %}</a></li>
       <li style='list-style-image: url("{% static "juliabase/icons/server_chart.png" %}")'>
-        <a href="{% url 'samples.views.statistics.statistics' %}">{% trans 'Server statistics' %}</a></li>
+        <a href="{% url 'samples.views.statistics.statistics' %}">{% trans 'server statistics'|capfirst %}</a></li>
     {% endblock %}
   </ul>
 {% endblock %}

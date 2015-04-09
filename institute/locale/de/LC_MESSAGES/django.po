@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-11 10:00+0100\n"
+"POT-Creation-Date: 2015-04-09 15:09+0200\n"
 "PO-Revision-Date: 2015-01-26 15:38+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -215,6 +215,8 @@ msgid "substrate material"
 msgstr "Substratmaterial"
 
 #: institute/models/physical_processes.py:78
+#: institute/templates/samples/add_claim_oldstyle.html:33
+#: institute/views/samples/sample.py:73
 msgid "substrate"
 msgstr "Substrat"
 
@@ -664,11 +666,6 @@ msgstr "Institut für pfiffige neue<br/>Materialien (INM)"
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
-#: institute/templates/samples/add_claim_oldstyle.html:33
-#: institute/views/samples/sample.py:72
-msgid "Substrate"
-msgstr "Substrat"
-
 #: institute/templates/samples/copy_informal_stack.html:29
 msgid ""
 "Attention: The informal stacks of the selected destination samples will be "
@@ -824,43 +821,17 @@ msgstr "Zelllayout"
 msgid "Material"
 msgstr "Material"
 
-#: institute/templatetags/institute_extras.py:80
+#: institute/templatetags/institute_extras.py:79
 #: institute/views/samples/cluster_tool_deposition.py:132
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
-#: institute/utils/views.py:105
-#, python-brace-format
-msgid "Deposition {number} was successfully changed in the database."
-msgstr "Die Deposition {number} wurde erfolgreich in der Datenbank geändert."
-
-#: institute/utils/views.py:109
-#, python-brace-format
-msgid "Deposition {number} was successfully added to the database."
-msgstr "Die Deposition {number} wurde erfolgreich zur Datenbank hinzugefügt."
-
-#: institute/utils/views.py:114
-msgid "The deposition was not saved due to incorrect or missing data."
-msgstr ""
-"Die Deposition wurde nicht gespeichert, weil noch Angaben fehlen oder "
-"inkorrekt sind."
-
-#: institute/utils/views.py:118
-#, python-brace-format
-msgid "Edit {name} “{number}”"
-msgstr "{name} „{number}“ ändern"
-
-#: institute/utils/views.py:119
-#, python-brace-format
-msgid "Add {name}"
-msgstr "{name} hinzufügen"
-
 #. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: institute/utils/views.py:166
+#: institute/utils/views.py:60
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr "Ungültige Depositionsnummer.  Sie muss von der Form JJB-NNN sein."
 
-#: institute/utils/views.py:169 institute/utils/views.py:172
+#: institute/utils/views.py:63 institute/utils/views.py:67
 #, python-brace-format
 msgid "The deposition letter must be an uppercase “{letter}”."
 msgstr "Der Anlangen-Buchstabe muss ein großes „{letter}“ sein."
@@ -892,25 +863,25 @@ msgid_plural "The names {existing_names} are already existing."
 msgstr[0] "Der Name {existing_names} existiert schon."
 msgstr[1] "Die Namen {existing_names} existieren schon."
 
-#: institute/views/samples/claim.py:107 institute/views/samples/sample.py:122
+#: institute/views/samples/claim.py:107 institute/views/samples/sample.py:123
 #: institute/views/samples/substrate.py:44
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: institute/views/samples/claim.py:155
+#: institute/views/samples/claim.py:154
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: institute/views/samples/claim.py:165
+#: institute/views/samples/claim.py:164
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: institute/views/samples/claim.py:166
+#: institute/views/samples/claim.py:165
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -939,12 +910,12 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: institute/views/samples/claim.py:196
+#: institute/views/samples/claim.py:195
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: institute/views/samples/claim.py:202
+#: institute/views/samples/claim.py:201
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
@@ -965,79 +936,75 @@ msgstr "Diese PDS-Nummer ist schon vergeben."
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
-#: institute/views/samples/sample.py:58
+#: institute/views/samples/sample.py:59
 msgid "no names"
 msgstr "keine Namen"
 
 #. Translators: "new-style" names
-#: institute/views/samples/sample.py:60
+#: institute/views/samples/sample.py:61
 msgid "new-style"
 msgstr "neue Art"
 
-#: institute/views/samples/sample.py:61
+#: institute/views/samples/sample.py:62 institute/views/samples/sample.py:85
 msgid "cleaning number"
 msgstr "Reinigungsnummer"
 
-#: institute/views/samples/sample.py:71
+#: institute/views/samples/sample.py:72
 msgid "Number of samples"
 msgstr "Anzahl der Proben"
 
-#: institute/views/samples/sample.py:73
+#: institute/views/samples/sample.py:74
 msgid "Substrate comments"
 msgstr "Substrat-Kommentare"
 
-#: institute/views/samples/sample.py:74
+#: institute/views/samples/sample.py:75
 msgid "Substrate originator"
 msgstr "Substrat-Urheber"
 
-#: institute/views/samples/sample.py:75
+#: institute/views/samples/sample.py:76
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: institute/views/samples/sample.py:77
+#: institute/views/samples/sample.py:78
 msgid "Current location"
 msgstr "Aktueller Probenort"
 
-#: institute/views/samples/sample.py:78
+#: institute/views/samples/sample.py:79
 msgid "Purpose"
 msgstr "Zweck"
 
-#: institute/views/samples/sample.py:79
+#: institute/views/samples/sample.py:80
 msgid "Tags"
 msgstr "Tags"
 
-#: institute/views/samples/sample.py:80
+#: institute/views/samples/sample.py:81
 msgid "separated with commas, no whitespace"
 msgstr "getrennt durch Kommas, keine Leerzeichen"
 
-#: institute/views/samples/sample.py:81
+#: institute/views/samples/sample.py:82
 msgid "Topic"
 msgstr "Thema"
 
-#: institute/views/samples/sample.py:82
+#: institute/views/samples/sample.py:83
 msgid "Rename"
 msgstr "Namen vergeben"
 
-#: institute/views/samples/sample.py:84
-msgid "Cleaning number"
-msgstr "Reinigungsnummer"
-
-#: institute/views/samples/sample.py:91
+#: institute/views/samples/sample.py:92
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: institute/views/samples/sample.py:107
+#: institute/views/samples/sample.py:108
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: institute/views/samples/sample.py:124
+#: institute/views/samples/sample.py:125
 msgid "You must provide a cleaning number if you want to use it for the names."
 msgstr ""
 "Sie müssen eine Renigungsnummer angeben, wenn Sie diese für die Namen "
 "verwenden wollen."
 
-#: institute/views/samples/sample.py:234
+#: institute/views/samples/sample.py:235
 #, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
@@ -1046,31 +1013,31 @@ msgstr ""
 "Ihre Proben haben die Namen {first_name} bis {last_name}.  Sie wurden zu "
 "„Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:237
+#: institute/views/samples/sample.py:238
 #, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den Namen {name}.  Sie wurde zu „Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:247
+#: institute/views/samples/sample.py:248
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: institute/views/samples/sample.py:253
+#: institute/views/samples/sample.py:254
 msgid "Destination samples"
 msgstr "Zielproben"
 
-#: institute/views/samples/sample.py:291
+#: institute/views/samples/sample.py:292
 #, python-brace-format
 msgid "Informal stack was copied from sample {sample}."
 msgstr "Der informelle Stapel von Probe {sample} wurde übernommen."
 
-#: institute/views/samples/sample.py:295
+#: institute/views/samples/sample.py:296
 #, python-brace-format
 msgid "Informal stack of {sample} was successfully copied."
 msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 
-#: institute/views/samples/sample.py:299
+#: institute/views/samples/sample.py:300
 #, python-brace-format
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
@@ -1093,6 +1060,31 @@ msgstr ""
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
+
+#~ msgid "Substrate"
+#~ msgstr "Substrat"
+
+#~ msgid "Cleaning number"
+#~ msgstr "Reinigungsnummer"
+
+#~ msgid "Deposition {number} was successfully changed in the database."
+#~ msgstr ""
+#~ "Die Deposition {number} wurde erfolgreich in der Datenbank geändert."
+
+#~ msgid "Deposition {number} was successfully added to the database."
+#~ msgstr ""
+#~ "Die Deposition {number} wurde erfolgreich zur Datenbank hinzugefügt."
+
+#~ msgid "The deposition was not saved due to incorrect or missing data."
+#~ msgstr ""
+#~ "Die Deposition wurde nicht gespeichert, weil noch Angaben fehlen oder "
+#~ "inkorrekt sind."
+
+#~ msgid "Edit {name} “{number}”"
+#~ msgstr "{name} „{number}“ ändern"
+
+#~ msgid "Add {name}"
+#~ msgstr "{name} hinzufügen"
 
 #~ msgid "(not finished)"
 #~ msgstr "(nicht ab­ge­schlos­sen)"

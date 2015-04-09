@@ -30,6 +30,7 @@ from django.http import Http404
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters, help_link
 from samples import models, permissions
@@ -39,7 +40,7 @@ import samples.utils.views as utils
 class NewNameForm(forms.Form):
     """Form for data of one new sample piece.
     """
-    new_name = forms.CharField(label=_("New sample name"), max_length=30)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30)
     new_purpose = forms.CharField(label=_("New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_("Delete"), required=False)
 
@@ -80,8 +81,9 @@ class GlobalDataForm(forms.Form):
     checkbox.
     """
     finished = forms.BooleanField(label=_("All pieces completely entered"), required=False)
-    sample_completely_split = forms.BooleanField(label=_("Sample was completely split"), initial=True, required=False)
-    sample_series = forms.ModelChoiceField(label=_("Sample series"), queryset=None, required=False)
+    sample_completely_split = forms.BooleanField(label=capfirst(_("sample was completely split")), initial=True,
+                                                 required=False)
+    sample_series = forms.ModelChoiceField(label=capfirst(_("sample series")), queryset=None, required=False)
 
     def __init__(self, parent, user_details, data=None, **kwargs):
         super(GlobalDataForm, self).__init__(data, **kwargs)

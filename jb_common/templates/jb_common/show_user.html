@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% endif %}
   {% if department %}
     <tr>
-      <td class="label">{% trans 'Department' %}:</td><td class="value">{{ department }}</td>
+      <td class="label">{% trans 'department'|capfirst %}:</td><td class="value">{{ department }}</td>
     </tr>
   {% endif %}
   </tbody>

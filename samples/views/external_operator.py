@@ -28,6 +28,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django import forms
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.text import capfirst
 import django.contrib.auth.models
 from jb_common.utils.views import MultipleUsersField
 from samples import models, permissions
@@ -81,7 +82,7 @@ def new(request):
     else:
         external_operator_form = AddExternalOperatorForm(request.user)
         initials_form = utils.InitialsForm(person=None, initials_mandatory=True)
-    return render(request, "samples/edit_external_operator.html", {"title": _("Add external operator"),
+    return render(request, "samples/edit_external_operator.html", {"title": capfirst(_("add external operator")),
                                                                    "external_operator": external_operator_form,
                                                                    "initials": initials_form})
 

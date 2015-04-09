@@ -1431,7 +1431,7 @@ class UserDetails(models.Model):
         Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
         help_text=_("new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_("get only important news"), default=False)
-    my_layers = models.TextField(_("my layers"), blank=True, help_text=_("in JSON format"))
+    my_layers = models.TextField(_("My Layers"), blank=True, help_text=_("in JSON format"))
     """This string is the JSON serialisation of the list with contains
     3-tuples of the the form ``(nickname, deposition, layer)``, where
     “deposition” is the *process id* (``Process.id``, not the deposition

@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 <form method="post">{% csrf_token %}
-  {% error_list new_topic _("New topic") %}
+  {% error_list new_topic _("new topic")|capfirst %}
   <table>
     <tbody>
     <tr>

@@ -37,6 +37,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
+from django.utils.text import capfirst
 import django.forms as forms
 import jb_common.utils.base
 from jb_common.utils.base import help_link
@@ -106,10 +107,10 @@ class RelatedDataForm(forms.Form):
     result process.  Since all these things are not part of the result process
     model itself, they are in a form of its own.
     """
-    samples = utils.MultipleSamplesField(label=_("Samples"), required=False)
-    sample_series = forms.ModelMultipleChoiceField(label=pgettext_lazy("plural", "Sample series"), queryset=None,
+    samples = utils.MultipleSamplesField(label=capfirst(_("samples")), required=False)
+    sample_series = forms.ModelMultipleChoiceField(label=capfirst(pgettext_lazy("plural", "sample series")), queryset=None,
                                                    required=False)
-    image_file = forms.FileField(label=_("Image file"), required=False)
+    image_file = forms.FileField(label=capfirst(_("image file")), required=False)
 
     def __init__(self, user, query_string_dict, old_result, data=None, files=None, **kwargs):
         """I have to initialise a couple of things here in

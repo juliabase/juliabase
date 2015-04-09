@@ -39,6 +39,7 @@ from django.http import HttpResponse
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.text import capfirst
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from jb_common.utils.base import help_link, get_really_full_name, int_or_zero
@@ -69,7 +70,7 @@ class AddSamplesForm(forms.Form):
     #
     # Besides, we have massive code duplication to substrate.SubstrateForm.
     number_of_samples = forms.IntegerField(label=_("Number of samples"), min_value=1, max_value=100)
-    substrate = forms.ChoiceField(label=_("Substrate"), choices=institute_models.substrate_materials, required=True)
+    substrate = forms.ChoiceField(label=capfirst(_("substrate")), choices=institute_models.substrate_materials, required=True)
     substrate_comments = forms.CharField(label=_("Substrate comments"), required=False)
     substrate_originator = forms.ChoiceField(label=_("Substrate originator"), required=False)
     timestamp = forms.DateTimeField(label=_("timestamp"))
@@ -81,7 +82,7 @@ class AddSamplesForm(forms.Form):
     topic = TopicField(label=_("Topic"), required=False)
     rename = forms.ChoiceField(label=_("Rename"), choices=rename_choices, required=False,
                                widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
-    cleaning_number = forms.CharField(label=_("Cleaning number"), max_length=8, required=False)
+    cleaning_number = forms.CharField(label=capfirst(_("cleaning number")), max_length=8, required=False)
 
     def __init__(self, user, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)

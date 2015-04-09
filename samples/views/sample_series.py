@@ -37,6 +37,7 @@ from django.forms.utils import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.text import capfirst
 from django.views.decorators.http import condition
 import django.contrib.auth.models
 import jb_common.utils.base
@@ -49,10 +50,10 @@ import samples.utils.views as utils
 class SampleSeriesForm(forms.ModelForm):
     """Form for editing and creating sample series.
     """
-    short_name = forms.CharField(label=_("Name"), max_length=50)
-    currently_responsible_person = UserField(label=_("Currently responsible person"))
-    topic = TopicField(label=_("Topic"))
-    samples = utils.MultipleSamplesField(label=_("Samples"))
+    short_name = forms.CharField(label=capfirst(_("name")), max_length=50)
+    currently_responsible_person = UserField(label=capfirst(_("currently responsible person")))
+    topic = TopicField(label=capfirst(_("topic")))
+    samples = utils.MultipleSamplesField(label=capfirst(_("samples")))
 
     class Meta:
         model = models.SampleSeries

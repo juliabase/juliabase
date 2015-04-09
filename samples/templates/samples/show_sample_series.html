@@ -55,7 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <p>{% trans "This sample series doesn't contain samples yet." %}</p>
 {% endif %}
 
-<p>{% trans 'Topic' %}: <strong>{{ sample_series.topic }}</strong>,
+<p>{% trans 'topic'|capfirst %}: <strong>{{ sample_series.topic }}</strong>,
   {% trans 'currently responsible person' %}:
   {{ sample_series.currently_responsible_person|get_really_full_name }}
 </p>
