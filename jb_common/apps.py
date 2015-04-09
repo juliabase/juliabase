@@ -23,7 +23,7 @@ from django.utils.six.moves import urllib
 import collections
 from django.conf import settings
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
 from django.core.urlresolvers import reverse
 import jb_common.utils.base as utils
 from jb_common.nav_menu import MenuItem
@@ -38,7 +38,7 @@ class JBCommonConfig(AppConfig):
 
     def build_menu(self, menu, request):
         menu.get_or_create(_("add"))
-        menu.get_or_create(_("explore"))
+        menu.get_or_create(pgettext("top-level menu item", "explore"))
         menu.get_or_create(_("manage"))
         if request.user.is_authenticated():
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
