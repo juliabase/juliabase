@@ -273,7 +273,7 @@ def can_edit_any_external_contacts(user):
 
     :rtype: bool
     """
-    return user.external_contacts.exists() or (samples.models.ExternalOperator.objects.exists() and request.user.is_superuser)
+    return user.external_contacts.exists() or (samples.models.ExternalOperator.objects.exists() and user.is_superuser)
 
 
 def get_all_adders(process_class):
