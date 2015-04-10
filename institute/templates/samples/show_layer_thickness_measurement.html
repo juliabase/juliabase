@@ -30,12 +30,12 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr>
     <tr>
       <td class="field-label" style="padding-left: 2em">{% verbose_name LayerThicknessMeasurement.method %}:</td>
-      <td class="value" style="padding-right: 2em">{{ process.get_method_display }}</td>
+      <td class="field-value" style="padding-right: 2em">{{ process.get_method_display }}</td>
     </tr>
     {% if process.comments %}
       <tr>
         <td class="field-label" style="vertical-align: top">{% verbose_name LayerThicknessMeasurement.comments %}:</td>
-        <td class="value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
+        <td class="field-value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
       </tr>
     {% endif %}
   </tbody>

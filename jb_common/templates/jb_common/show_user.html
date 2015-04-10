@@ -24,17 +24,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <table class="padding10" style="margin-bottom: 2ex">
   <tbody>
   <tr>
-    <td class="field-label">{% trans 'Username' %}:</td><td class="value">{{ shown_user.username }}</td>
+    <td class="field-label">{% trans 'Username' %}:</td><td class="field-value">{{ shown_user.username }}</td>
   </tr>
   {% if shown_user.email %}
     <tr>
       <td class="field-label">{% trans 'Email address' %}:</td>
-      <td class="value" style="font-weight: normal"><a href="mailto:{{ shown_user.email }}">{{ shown_user.email }}</a></td>
+      <td class="field-value" style="font-weight: normal"><a href="mailto:{{ shown_user.email }}">{{ shown_user.email }}</a></td>
     </tr>
   {% endif %}
   {% if department %}
     <tr>
-      <td class="field-label">{% trans 'department'|capfirst %}:</td><td class="value">{{ department }}</td>
+      <td class="field-label">{% trans 'department'|capfirst %}:</td><td class="field-value">{{ department }}</td>
     </tr>
   {% endif %}
   </tbody>

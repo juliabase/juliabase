@@ -85,7 +85,7 @@ function showCellData{{ process.id }}(process_id, position) {
   <tbody>
     <tr>
       <td class="field-label">{% verbose_name SolarsimulatorMeasurement.irradiation %}:</td>
-      <td class="value">{{ process.get_irradiation_display }}</td>
+      <td class="field-value">{{ process.get_irradiation_display }}</td>
     </tr>
     <tr>
         {% value_field process.temperature %}
@@ -105,7 +105,7 @@ function showCellData{{ process.id }}(process_id, position) {
           <td class="field-label" style="font-weight: normal">
             {% verbose_name SolarsimulatorCellMeasurement.data_file %}:
           </td>
-          <td class="value" style="font-weight: normal">
+          <td class="field-value" style="font-weight: normal">
             {{ cell.data_file }}
           </td>
         </tr>
@@ -118,7 +118,7 @@ function showCellData{{ process.id }}(process_id, position) {
     <tbody>
     <tr>
       <td class="field-label" style="vertical-align: top">{% verbose_name SolarsimulatorMeasurement.comments %}:</td>
-      <td class="value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
+      <td class="field-value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
     </tr>
     </tbody>
   </table>

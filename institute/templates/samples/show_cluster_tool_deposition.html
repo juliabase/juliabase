@@ -25,9 +25,9 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load institute_extras %}
 
 <p>
-  <span class="field-label">{% verbose_name Deposition.number %}:</span><span class="value"
+  <span class="field-label">{% verbose_name Deposition.number %}:</span><span class="field-value"
     style="margin-right: 4em">{{ process.number }}</span>
-  <span class="field-label">{% verbose_name ClusterToolDeposition.carrier %}:</span><span class="value">{{ process.carrier|default:"—" }}</span>
+  <span class="field-label">{% verbose_name ClusterToolDeposition.carrier %}:</span><span class="field-value">{{ process.carrier|default:"—" }}</span>
 </p>
 
 {% if process.comments %}
@@ -61,7 +61,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                       <td style="vertical-align: top; padding-left: 2em">
                         {% if layer.type == "clustertoolpecvdlayer" %}
                           <span class="field-label">{% verbose_name ClusterToolPECVDLayer.chamber %}:</span
-                                ><span class="value">{{ layer.chamber }}</span>
+                                ><span class="field-value">{{ layer.chamber }}</span>
                         {% else %}
                            
                         {% endif %}
@@ -74,12 +74,12 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                   </table>
                 </td>
                  <td class="field-label">{% verbose_name ClusterToolHotWireLayer.time %}:</td>
-                 <td class="value"> {{ layer.time|depostion_time }}</td>
+                 <td class="field-value"> {{ layer.time|depostion_time }}</td>
                  {% if layer.type == "clustertoolpecvdlayer" %}
                     {% value_field layer.plasma_start_with_shutter "yes/no" %}
                  {% elif layer.type == "clustertoolhotwirelayer" %}
                     <td class="field-label">{% verbose_name ClusterToolHotWireLayer.wire_material %}:</td>
-                    <td class="value">{{ layer.get_wire_material_display }}</td>
+                    <td class="field-value">{{ layer.get_wire_material_display }}</td>
                  {% endif %}
               </tr>
               <tr>

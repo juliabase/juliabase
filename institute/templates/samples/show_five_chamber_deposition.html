@@ -26,7 +26,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load institute_extras %}
 
 <p>
-  <span class="field-label">{% verbose_name Deposition.number %}:</span><span class="value">{{ process.number }}</span>
+  <span class="field-label">{% verbose_name Deposition.number %}:</span><span class="field-value">{{ process.number }}</span>
 </p>
 
 {% if process.comments %}
@@ -45,7 +45,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
         <tbody>
         <tr>
           <td class="field-label">{% verbose_name FiveChamberLayer.number %}:</td>
-          <td class="value">{{ layer.number|three_digits }}</td>
+          <td class="field-value">{{ layer.number|three_digits }}</td>
           {% value_field layer.sih4 %}
         </tr>
         <tr>
@@ -54,9 +54,9 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
         </tr>
         <tr>
           <td class="field-label">{% verbose_name FiveChamberLayer.chamber %}:</td>
-          <td class="value">{{ layer.get_chamber_display }}</td>
+          <td class="field-value">{{ layer.get_chamber_display }}</td>
           <td class="field-label">{% trans 'Silane conc.' %}:</td>
-          <td class="value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
+          <td class="field-value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
         </tr>
         <tr>
           {% value_split_field layer.temperature_1 layer.temperature_2 %}

@@ -408,7 +408,7 @@ class ValueFieldNode(template.Node):
             unit = self.unit
         if self.significant_digits and field != "—":
             field = jb_common.utils.base.round(field, self.significant_digits)
-        return """<td class="field-label">{label}:</td><td class="value">{value}</td>""".format(
+        return """<td class="field-label">{label}:</td><td class="field-value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 
 
@@ -537,7 +537,7 @@ class ValueSplitFieldNode(template.Node):
                 else:
                     values += quantity(field) + " / "
             values += fields[-1] if fields[-1] == "—" else quantity(fields[-1], unit)
-        return """<td class="field-label">{label}:</td><td class="value">{values}</td>""".format(
+        return """<td class="field-label">{label}:</td><td class="field-value">{values}</td>""".format(
             label=verbose_name, values=values)
 
 
