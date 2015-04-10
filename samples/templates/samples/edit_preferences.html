@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="padding5">
     {% if has_topics %}
       <tr>
-        <td class="label">
+        <td class="field-label">
           <label for="id_{{ user_details.auto_addition_topics.html_name }}"
                  >{{ user_details.auto_addition_topics.label }}:</label>
           <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </tr>
     {% endif %}
     <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ initials.initials.html_name }}">{{ initials.initials.label }}:</label>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}(Once set, you can't change this anymore.){% endblocktrans %}</div>
@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% input_field user_details.only_important_news %}
     </tr>
     <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ user_details.subscribed_feeds.html_name }}" style="margin-right: 0.5em; vertical-align: top">
           {{ user_details.subscribed_feeds.label }}:
         </label>
@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </td>
     </tr>
     <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ user_details.default_folded_process_classes.html_name }}" style="margin-right: 0.5em; vertical-align: top">
           {{ user_details.default_folded_process_classes.label }}:
         </label>
@@ -82,7 +82,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr>
 
      <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ user_details.show_users_from_departments.html_name }}" style="margin-right: 0.5em; vertical-align: top">
           {{ user_details.show_users_from_departments.label }}:
         </label>

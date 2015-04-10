@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tbody>
     {% if is_new %}
       <tr>
-        <td class="label"><label for="id_{{ sample_series.short_name.html_name }}"
+        <td class="field-label"><label for="id_{{ sample_series.short_name.html_name }}"
              >{{ sample_series.short_name.label }}:</label></td>
         <td class="input">{{ name_prefix }}-{{ sample_series.short_name }}</td>
       </tr>
@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% input_field sample_series.topic %}
     </tr>
     <tr>
-      <td class="label"><label for="id_{{ sample_series.description.html_name }}"
+      <td class="field-label"><label for="id_{{ sample_series.description.html_name }}"
            >{{ sample_series.description.label }}:</label><br/>{% markdown_hint %}</td>
       <td class="input">{{ sample_series.description }}</td>
     </tr>

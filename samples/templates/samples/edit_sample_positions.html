@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% for sample_position in sample_positions %}
         {% error_list sample_position _("General error") "<tr>" %}
         <tr>
-          <td class="label">
+          <td class="field-label">
            <label for="id_{{ sample_position.sample.html_name }}"
                >{{ sample_position.sample }}:</label>
           </td>

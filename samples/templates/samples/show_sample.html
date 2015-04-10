@@ -111,7 +111,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
               {% if sample.topic %}
                 {% value_field sample.topic %}
               {% else %}
-                <td class="label">{% verbose_name Sample.topic %}:</td>
+                <td class="field-label">{% verbose_name Sample.topic %}:</td>
                 <td class="value">— <span style="color: red; font-weight: normal; margin-left: 1em"
                                           >({% trans 'Attention: Topicless samples may be viewed and edited by anyone.' %})</span></td>
               {% endif %}

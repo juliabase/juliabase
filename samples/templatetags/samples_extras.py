@@ -408,7 +408,7 @@ class ValueFieldNode(template.Node):
             unit = self.unit
         if self.significant_digits and field != "—":
             field = jb_common.utils.base.round(field, self.significant_digits)
-        return """<td class="label">{label}:</td><td class="value">{value}</td>""".format(
+        return """<td class="field-label">{label}:</td><td class="value">{value}</td>""".format(
             label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
 
 
@@ -475,7 +475,7 @@ def split_field(field1, field2, field3=None):
     """
     from_to_field = not field3 and field2.html_name.endswith("_end")
     separator = " – " if from_to_field else " / "
-    result = """<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
+    result = """<td class="field-label"><label for="id_{html_name}">{label}:</label></td>""".format(
         html_name=field1.html_name, label=field1.label if from_to_field else field1.label.rpartition(" ")[0])
     help_text = """ <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else ""
     fields = [field1, field2, field3]
@@ -537,7 +537,7 @@ class ValueSplitFieldNode(template.Node):
                 else:
                     values += quantity(field) + " / "
             values += fields[-1] if fields[-1] == "—" else quantity(fields[-1], unit)
-        return """<td class="label">{label}:</td><td class="value">{values}</td>""".format(
+        return """<td class="field-label">{label}:</td><td class="value">{values}</td>""".format(
             label=verbose_name, values=values)
 
 
@@ -588,7 +588,7 @@ def display_search_tree(tree):
             help_text = """ <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else ""
             unit = """ <span class="help">{0}</span>""".format(search_field.field.unit) if hasattr(search_field.field, "unit") \
                 and search_field.field.unit else ""
-            result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+            result += """<tr><td class="field-label"><label for="id_{html_name}">{label}:</label></td>""" \
                 """<td class="input">{field_min} – {field_max}{unit}{help_text}</td></tr>""".format(
                 label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
                 unit=unit, help_text=help_text)
@@ -596,7 +596,7 @@ def display_search_tree(tree):
             field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
             help_text = """ <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else ""
-            result += """<tr><td class="label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
+            result += """<tr><td class="field-label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
                 """<td class="input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
                 """{field_null}{help_text}</td></tr>""".format(
                 label_main=field_main.label, label_null=field_null.label,
@@ -605,7 +605,7 @@ def display_search_tree(tree):
         else:
             for field in search_field.form:
                 help_text = """ <span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
-                result += """<tr><td class="label"><label for="id_{html_name}">{label}:</label></td>""" \
+                result += """<tr><td class="field-label"><label for="id_{html_name}">{label}:</label></td>""" \
                     """<td class="input">{field}{help_text}</td></tr>""".format(
                     label=field.label, html_name=field.html_name, field=field, help_text=help_text)
     if tree.children:

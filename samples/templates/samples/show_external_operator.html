@@ -49,13 +49,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	    {% value_field external_operator.institution %}
 	  </tr>
 	  <tr>
-	    <td class="label">{% verbose_name ExternalOperator.email %}:</td>
+	    <td class="field-label">{% verbose_name ExternalOperator.email %}:</td>
 	    <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.email }}"
 	                                                     >{{ external_operator.email }}</a></td>
 	  </tr>
 	  {% if external_operator.alternative_email %}
 	    <tr>
-	      <td class="label">{% verbose_name ExternalOperator.alternative_email %}:</td>
+	      <td class="field-label">{% verbose_name ExternalOperator.alternative_email %}:</td>
 	      <td class="value" style="font-weight: normal"><a href="mailto:{{ external_operator.alternative_email }}"
 	                                                       >{{ external_operator.alternative_email }}</a></td>
 	    </tr>
@@ -67,7 +67,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	  {% endif %}
   {% endif %}
   <tr>
-    <td class="label">{% verbose_name ExternalOperator.contact_persons %}:</td>
+    <td class="field-label">{% verbose_name ExternalOperator.contact_persons %}:</td>
     <td class="value" style="font-weight: normal">
     <ul>
     {% for person in contact_persons %}
@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </tr>
   {% if initials %}
     <tr>
-      <td class="label">{% verbose_name Initials.initials %}:</td>
+      <td class="field-label">{% verbose_name Initials.initials %}:</td>
       <td class="value">{{ initials }}</td>
     </tr>
   {% endif %}

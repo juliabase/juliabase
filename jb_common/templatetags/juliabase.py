@@ -209,7 +209,7 @@ def input_field(field):
 
         {% input_field deposition.number %}
     """
-    result = """<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
+    result = """<td class="field-label"><label for="id_{html_name}">{label}:</label></td>""".format(
         html_name=field.html_name, label=field.label)
     help_text = """<span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
     try:

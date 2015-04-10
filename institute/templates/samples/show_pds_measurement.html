@@ -35,12 +35,12 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
     {% value_field process.number %}
   </tr>
   <tr>
-    <td class="label">{% verbose_name PDSMeasurement.apparatus %}:</td>
+    <td class="field-label">{% verbose_name PDSMeasurement.apparatus %}:</td>
     <td class="value">{{ process.get_apparatus_display }}</td>
   </tr>
   {% if process.raw_datafile %}
     <tr>
-      <td class="label">{% verbose_name PDSMeasurement.raw_datafile %}:</td>
+      <td class="field-label">{% verbose_name PDSMeasurement.raw_datafile %}:</td>
       <td class="value" style="font-weight: normal">
         {{ process.raw_datafile }}
       </td>
@@ -48,7 +48,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% endif %}
   {% if process.comments %}
     <tr>
-      <td class="label" style="vertical-align: top">{% verbose_name PDSMeasurement.comments %}:</td>
+      <td class="field-label" style="vertical-align: top">{% verbose_name PDSMeasurement.comments %}:</td>
       <td class="value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
     </tr>
   {% endif %}
