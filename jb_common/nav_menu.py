@@ -132,6 +132,32 @@ class MenuItem(object):
         else:
             self.sub_items = [items] + [item for item in self.sub_items if item.label != items.label]
 
+    def insert_after(self, label, items, after_separator=False):
+        """Inserts item(s) after an already existing item.  This item is
+        identified by its label.  If it is not found, the item(s) are appended
+        to the end of the menu.
+
+        :param label: the label of the item after which should be inserted
+        :param items: the item(s) to be inserted
+        :param after_separator: whether separators after the found item should
+           be skipped
+
+        :type label: unicode
+        :type items: list of `MenuItem` or `MenuItem`
+        :type after_separator: bool
+        """
+        if not isinstance(items, (tuple, list)):
+            items = [items]
+        i = 0
+        for i, item in enumerate(self.sub_items):
+            if item.label == label:
+                break
+        i += 1
+        if after_separator:
+            while i < len(self.sub_items) and isinstance(self.sub_items[i], MenuSeparator):
+                i += 1
+        self.sub_items[i:i] = items
+
     def __getitem__(self, key):
         """Gets the subitem with the given key.
         """
