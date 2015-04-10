@@ -479,7 +479,7 @@ def split_field(field1, field2, field3=None):
         html_name=field1.html_name, label=field1.label if from_to_field else field1.label.rpartition(" ")[0])
     help_text = """ <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else ""
     fields = [field1, field2, field3]
-    result += """<td class="input">{fields_string}{help_text}</td>""".format(
+    result += """<td class="field-input">{fields_string}{help_text}</td>""".format(
         fields_string=separator.join(six.text_type(field) for field in fields if field), help_text=help_text)
     return result
 
@@ -589,7 +589,7 @@ def display_search_tree(tree):
             unit = """ <span class="help">{0}</span>""".format(search_field.field.unit) if hasattr(search_field.field, "unit") \
                 and search_field.field.unit else ""
             result += """<tr><td class="field-label"><label for="id_{html_name}">{label}:</label></td>""" \
-                """<td class="input">{field_min} – {field_max}{unit}{help_text}</td></tr>""".format(
+                """<td class="field-input">{field_min} – {field_max}{unit}{help_text}</td></tr>""".format(
                 label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
                 unit=unit, help_text=help_text)
         elif isinstance(search_field, jb_common.search.TextNullSearchField):
@@ -597,7 +597,7 @@ def display_search_tree(tree):
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
             help_text = """ <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else ""
             result += """<tr><td class="field-label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
-                """<td class="input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
+                """<td class="field-input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
                 """{field_null}{help_text}</td></tr>""".format(
                 label_main=field_main.label, label_null=field_null.label,
                 html_name_main=field_main.html_name, html_name_null=field_null.html_name,
@@ -606,7 +606,7 @@ def display_search_tree(tree):
             for field in search_field.form:
                 help_text = """ <span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
                 result += """<tr><td class="field-label"><label for="id_{html_name}">{label}:</label></td>""" \
-                    """<td class="input">{field}{help_text}</td></tr>""".format(
+                    """<td class="field-input">{field}{help_text}</td></tr>""".format(
                     label=field.label, html_name=field.html_name, field=field, help_text=help_text)
     if tree.children:
         result += """<tr><td colspan="2">"""

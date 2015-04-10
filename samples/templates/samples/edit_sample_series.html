@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <tr>
         <td class="field-label"><label for="id_{{ sample_series.short_name.html_name }}"
              >{{ sample_series.short_name.label }}:</label></td>
-        <td class="input">{{ name_prefix }}-{{ sample_series.short_name }}</td>
+        <td class="field-input">{{ name_prefix }}-{{ sample_series.short_name }}</td>
       </tr>
     {% endif %}
     <tr {% if is_new %}style="display: none"{% endif %}>
@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tr>
       <td class="field-label"><label for="id_{{ sample_series.description.html_name }}"
            >{{ sample_series.description.label }}:</label><br/>{% markdown_hint %}</td>
-      <td class="input">{{ sample_series.description }}</td>
+      <td class="field-input">{{ sample_series.description }}</td>
     </tr>
     </tbody>
   </table>

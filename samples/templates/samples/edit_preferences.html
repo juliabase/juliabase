@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             all topics you are a member of.  You can mark those topics that you want all new samples of which to be
             implicitly added to “My Samples”.){% endblocktrans %}</div>
         </td>
-        <td class="input">{{ user_details.auto_addition_topics }}</td>
+        <td class="field-input">{{ user_details.auto_addition_topics }}</td>
       </tr>
     {% endif %}
     <tr>
@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}(Once set, you can't change this anymore.){% endblocktrans %}</div>
       </td>
-      <td class="input">{{ initials.initials }}</td>
+      <td class="field-input">{{ initials.initials }}</td>
     </tr>
     <tr>
       {% input_field user_details.only_important_news %}
@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             about everything that happens to samples.)
           {% endblocktrans %}</div>
       </td>
-      <td class="input">
+      <td class="field-input">
         {{ user_details.subscribed_feeds }}
       </td>
     </tr>
@@ -76,7 +76,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             (With this setting, it is possible to fold less interesting processes in the sample data sheet by default.)
           {% endblocktrans %}</div>
       </td>
-      <td class="input">
+      <td class="field-input">
         {{ user_details.default_folded_process_classes }}
       </td>
     </tr>
@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             (Select the departments from which you want to see the members in the selection lists.)
           {% endblocktrans %}</div>
       </td>
-      <td class="input">
+      <td class="field-input">
         {{ user_details.show_users_from_departments }}
       </td>
     </tr>

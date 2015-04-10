@@ -218,7 +218,7 @@ def input_field(field):
         unit = ""
     else:
         unit = """<span class="unit-of-measurement">{unit}</span>""".format(unit=unit)
-    result += """<td class="input">{field}{unit}{help_text}</td>""".format(field=field, unit=unit, help_text=help_text)
+    result += """<td class="field-input">{field}{unit}{help_text}</td>""".format(field=field, unit=unit, help_text=help_text)
     return result
 
 
