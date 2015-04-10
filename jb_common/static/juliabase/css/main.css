@@ -83,12 +83,12 @@ div.report-info { background-color: mediumpurple }
 
 h1 { margin-top: 0pt }
 
-span.label { margin-right: 0.5em }
-span.value { font-weight: bold }
-td.value, td.input { text-align: left }
-td.value { font-weight: bold; vertical-align: text-top }
-td.input { vertical-align: top }
-td.label { text-align: right; vertical-align: text-top; padding-right: 0.3em; padding-left: 0px }
+span.field-label { margin-right: 0.5em }
+span.field-value { font-weight: bold }
+td.field-value, td.field-input { text-align: left }
+td.field-value { font-weight: bold; vertical-align: text-top }
+td.field-input { vertical-align: top }
+td.field-label { text-align: right; vertical-align: text-top; padding-right: 0.3em; padding-left: 0px }
 span.help { font-size: small; font-weight: normal; margin-left: 0.6em }
 span.unit-of-measurement { padding-left: 0.3em }
 

@@ -62,15 +62,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% input_field result.comments %}
     </tr>
     <tr>
-      <td class="label"><label for="id_{{ related_data.image_file.html_name }}"
+      <td class="field-label"><label for="id_{{ related_data.image_file.html_name }}"
                  >{{ related_data.image_file.label }}:</label></td>
-      <td class="input" colspan="3">{{ related_data.image_file }}</td>
+      <td class="field-input" colspan="3">{{ related_data.image_file }}</td>
     </tr>
     {% error_list dimensions _("Error in dimensions") "<tr>" 2 %}
     <tr>
-      <td class="label"><label for="id_{{ dimensions.number_of_quantities.html_name }}"
+      <td class="field-label"><label for="id_{{ dimensions.number_of_quantities.html_name }}"
                  >{% trans 'Number of quantities × values' %}:</label></td>
-      <td class="input" colspan="3">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
+      <td class="field-input" colspan="3">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
     </tr>
     </tbody>
   </table>

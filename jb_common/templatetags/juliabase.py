@@ -209,7 +209,7 @@ def input_field(field):
 
         {% input_field deposition.number %}
     """
-    result = """<td class="label"><label for="id_{html_name}">{label}:</label></td>""".format(
+    result = """<td class="field-label"><label for="id_{html_name}">{label}:</label></td>""".format(
         html_name=field.html_name, label=field.label)
     help_text = """<span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
     try:
@@ -218,7 +218,7 @@ def input_field(field):
         unit = ""
     else:
         unit = """<span class="unit-of-measurement">{unit}</span>""".format(unit=unit)
-    result += """<td class="input">{field}{unit}{help_text}</td>""".format(field=field, unit=unit, help_text=help_text)
+    result += """<td class="field-input">{field}{unit}{help_text}</td>""".format(field=field, unit=unit, help_text=help_text)
     return result
 
 

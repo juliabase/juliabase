@@ -55,7 +55,7 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
 {% endblock %}
 
 {% block frame_content %}
-  {% cache 9999999 mysamples user.username user.samples_user_details.my_samples_list_timestamp %}
+  {% cache 9999999 mysamples user.username user.jb_user_details.layout_last_modified user.samples_user_details.my_samples_list_timestamp %}
     {% if topicless_samples or my_topics %}
       <div class="my-samples">
         <h2>{% trans 'My Samples' %}<a class="edit-icon"

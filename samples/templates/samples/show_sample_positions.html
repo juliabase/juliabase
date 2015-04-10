@@ -34,11 +34,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr>
         {% for sample, position in sample_positions.items %}
             <tr>
-              <td class="label" style="border-right: 2px solid"">
+              <td class="field-label" style="border-right: 2px solid">
                <label for="id_{{ sample_position.sample.html_name }}"
                    ><a href="{{ sample.get_absolute_url }}">{{ sample }}</label>
               </td>
-              <td class="value">
+              <td class="field-value">
                <label for="id_{{ sample_position.position.html_name }}"
                    >{{ position }}
               </td>

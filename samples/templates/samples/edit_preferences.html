@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="padding5">
     {% if has_topics %}
       <tr>
-        <td class="label">
+        <td class="field-label">
           <label for="id_{{ user_details.auto_addition_topics.html_name }}"
                  >{{ user_details.auto_addition_topics.label }}:</label>
           <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
@@ -37,22 +37,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             all topics you are a member of.  You can mark those topics that you want all new samples of which to be
             implicitly added to “My Samples”.){% endblocktrans %}</div>
         </td>
-        <td class="input">{{ user_details.auto_addition_topics }}</td>
+        <td class="field-input">{{ user_details.auto_addition_topics }}</td>
       </tr>
     {% endif %}
     <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ initials.initials.html_name }}">{{ initials.initials.label }}:</label>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}(Once set, you can't change this anymore.){% endblocktrans %}</div>
       </td>
-      <td class="input">{{ initials.initials }}</td>
+      <td class="field-input">{{ initials.initials }}</td>
     </tr>
     <tr>
       {% input_field user_details.only_important_news %}
     </tr>
     <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ user_details.subscribed_feeds.html_name }}" style="margin-right: 0.5em; vertical-align: top">
           {{ user_details.subscribed_feeds.label }}:
         </label>
@@ -62,12 +62,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             about everything that happens to samples.)
           {% endblocktrans %}</div>
       </td>
-      <td class="input">
+      <td class="field-input">
         {{ user_details.subscribed_feeds }}
       </td>
     </tr>
     <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ user_details.default_folded_process_classes.html_name }}" style="margin-right: 0.5em; vertical-align: top">
           {{ user_details.default_folded_process_classes.label }}:
         </label>
@@ -76,13 +76,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             (With this setting, it is possible to fold less interesting processes in the sample data sheet by default.)
           {% endblocktrans %}</div>
       </td>
-      <td class="input">
+      <td class="field-input">
         {{ user_details.default_folded_process_classes }}
       </td>
     </tr>
 
      <tr>
-      <td class="label">
+      <td class="field-label">
         <label for="id_{{ user_details.show_users_from_departments.html_name }}" style="margin-right: 0.5em; vertical-align: top">
           {{ user_details.show_users_from_departments.label }}:
         </label>
@@ -91,7 +91,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             (Select the departments from which you want to see the members in the selection lists.)
           {% endblocktrans %}</div>
       </td>
-      <td class="input">
+      <td class="field-input">
         {{ user_details.show_users_from_departments }}
       </td>
     </tr>
