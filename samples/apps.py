@@ -75,14 +75,14 @@ class SamplesConfig(AppConfig):
             permissions = importlib.import_module("samples.permissions")
             for physical_process in permissions.get_allowed_physical_processes(request.user):
                 add_menu.add(physical_process["label"], physical_process["url"])
-            search_menu = menu.get_or_create(pgettext("top-level menu item", "explore"))
-            search_menu.add(_("advanced search"), reverse("samples.views.sample.advanced_search"), "search")
-            search_menu.add(_("samples by name"), reverse("samples.views.sample.search"), "stop")
-            search_menu.add_separator()
+            explore_menu = menu.get_or_create(pgettext("top-level menu item", "explore"))
+            explore_menu.add(_("advanced search"), reverse("samples.views.sample.advanced_search"), "search")
+            explore_menu.add(_("samples by name"), reverse("samples.views.sample.search"), "stop")
+            explore_menu.add_separator()
             lab_notebooks = permissions.get_lab_notebooks(request.user)
             if lab_notebooks:
                 for lab_notebook in lab_notebooks:
-                    search_menu.add(lab_notebook["label"], lab_notebook["url"], "book")
+                    explore_menu.add(lab_notebook["label"], lab_notebook["url"], "book")
             manage_menu = menu.get_or_create(_("manage"))
             if request.user.has_perm("samples.rename_samples"):
                 manage_menu.add(_("rename sample"), reverse("samples.views.sample.rename_sample"))
