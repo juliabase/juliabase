@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
         {% spaceless %}
-          <h1>
+          <div class="page-header"><h1>
             {{ title }}{% if edit_url %}<a class="edit-icon"
                                              href="{{ edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             {% endif %}
             {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% trans "(not finished)" %}</span>{% endif %}
-          </h1>
+          </h1></div>
         {% endspaceless %}
   <div class="process">
     {% if samples or sample_series %}
