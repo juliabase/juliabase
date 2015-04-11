@@ -81,6 +81,7 @@ class SamplesConfig(AppConfig):
             explore_menu.add_separator()
             lab_notebooks = permissions.get_lab_notebooks(request.user)
             if lab_notebooks:
+                explore_menu.add_heading(_("lab notebooks"))
                 for lab_notebook in lab_notebooks:
                     explore_menu.add(lab_notebook["label"], lab_notebook["url"], "book")
             manage_menu = menu.get_or_create(_("manage"))

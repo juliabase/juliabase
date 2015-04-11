@@ -93,6 +93,15 @@ class MenuItem(object):
         """
         self.sub_items.append(MenuSeparator())
 
+    def add_heading(self, label):
+        """Appends a heading to the list of subitems.
+
+        :param label: the text of the heading
+
+        :type label: unicode
+        """
+        self.sub_items.append(MenuHeading(label))
+
     def get_or_create(self, item_or_label):
         """Retrieves a menu item from this menu with the given label.  If it doesn't
         exist yet, it is created.  This comes in handy if an app wants to
@@ -186,3 +195,12 @@ class MenuSeparator(MenuItem):
     """
     def __init__(self):
         super(MenuSeparator, self).__init__("")
+
+
+class MenuHeading(MenuItem):
+    """Special `MenuItem` which results in a heading within a dopdown menu.
+    The label is the text of the heading.  All other attributes of `MenuItem`
+    are ignored.
+    """
+    def __init__(self, label):
+        super(MenuHeading, self).__init__(label)
