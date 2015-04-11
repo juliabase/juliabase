@@ -192,6 +192,7 @@ class MenuItem(object):
 
 class MenuSeparator(MenuItem):
     """Special `MenuItem` which results in a separator, usually a horizontal rule.
+    All other attributes of `MenuItem` are ignored.
     """
     def __init__(self):
         super(MenuSeparator, self).__init__("")
