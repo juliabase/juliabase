@@ -168,7 +168,7 @@ class MenuItem(object):
         self.sub_items[i:i] = items
 
     def __getitem__(self, key):
-        """Gets the subitem with the given key.
+        """Gets the subitem with the given key or index.
         """
         if isinstance(key, int):
             return self.sub_items[key]
