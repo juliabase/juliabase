@@ -179,6 +179,19 @@ class MenuItem(object):
             else:
                 raise KeyError(key)
 
+    def __delitem__(self, key):
+        """Removes the subitem with the given key or index.
+        """
+        if isinstance(key, int):
+            del self.sub_items[key]
+        else:
+            for i, item in enumerate(self.sub_items):
+                if item.label == key:
+                    del self.sub_items[i]
+                    break
+            else:
+                raise KeyError(key)
+
     def __iter__(self):
         """Lets you iterate over the `MenuItem` by iterating over its subitems.
         """
