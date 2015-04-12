@@ -54,6 +54,12 @@ class JBCommonConfig(AppConfig):
             user_menu.add(_("logout"), reverse("django.contrib.auth.views.logout"), "log-out")
         jb_menu = menu.get_or_create("JuliaBase")
         jb_menu.add(_("main menu"), reverse("samples.views.main.main_menu"), "home")
+        try:
+            help_link = request.juliabase_help_link
+        except AttributeError:
+            pass
+        else:
+            jb_menu.add(_("help"), help_link, "question-sign")
         jb_menu.add(_("statistics"), reverse("samples.views.statistics.statistics"), "stats")
         jb_menu.add(_("about"), reverse("samples.views.statistics.about"), "info-sign")
         if request.user.is_authenticated() and request.method == "GET" and settings.LANGUAGES:
