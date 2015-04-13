@@ -46,6 +46,7 @@ Portions of this module are inspired by
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import datetime
 from django.contrib.auth.models import User, Permission
@@ -57,6 +58,10 @@ from jb_common.models import Department
 from jb_common.signals import maintain
 from django.dispatch import receiver
 
+if six.PY2:
+    decode = lambda s: s.decode("utf-8")
+else:
+    decode = lambda s: s
 
 class ActiveDirectoryBackend:
 
@@ -203,7 +208,7 @@ class LDAPConnection(object):
         attributes = self.get_ad_data(username)
         return attributes is not None and (
             not settings.LDAP_DEPARTMENTS or
-            attributes.get("department", [""])[0].encode('ascii', 'ignore').decode("utf-8") in settings.LDAP_DEPARTMENTS
+            decode(attributes.get("department", [""])[0]) in settings.LDAP_DEPARTMENTS
             or username in settings.LDAP_ADDITIONAL_USERS)
 
     @staticmethod
@@ -223,7 +228,7 @@ class LDAPConnection(object):
 
         :rtype: set of str
         """
-        group_paths = [path.encode('ascii', 'ignore').decode("utf-8") for path in attributes.get("memberOf", [])]
+        group_paths = [decode(path) for path in attributes.get("memberOf", [])]
         group_common_names = set()
         for path in group_paths:
             for part in path.split(","):
@@ -258,11 +263,11 @@ class LDAPConnection(object):
         if self.is_eligible_ldap_member(user.username):
             attributes = self.get_ad_data(user.username)
             if "givenName" in attributes:
-                user.first_name = attributes["givenName"][0].encode('ascii', 'ignore').decode("utf-8")
+                user.first_name = decode(attributes["givenName"][0])
             if "sn" in attributes:
-                user.last_name = attributes["sn"][0].encode('ascii', 'ignore').decode("utf-8")
+                user.last_name = decode(attributes["sn"][0])
             if "department" in attributes:
-                jb_department_name = settings.LDAP_DEPARTMENTS[attributes["department"][0].encode('ascii', 'ignore').decode("utf-8")]
+                jb_department_name = settings.LDAP_DEPARTMENTS[decode(attributes["department"][0])]
                 try:
                     user.jb_user_details.department = settings.LDAP_ADDITIONAL_USERS[user.username]
                 except KeyError:
