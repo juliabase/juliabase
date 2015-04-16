@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load staticfiles %}
 
 {% block local_scripts %}
+{{ block.super }}
 <script type="text/javascript">
 // <![CDATA[
 $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_processes' sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:"," }}",
