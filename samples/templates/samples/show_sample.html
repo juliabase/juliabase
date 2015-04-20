@@ -177,7 +177,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
         {% spaceless %}
           <h2 style="float: left">
             <span id="process-heading-{{ process.process.id }}" class="process-heading"
-                  >{{ process.name }}</span>{% if process.edit_url %}<a class="edit-icon"
+                  >{{ process.name }}</span>{% block process_icons %}{% if process.edit_url %}<a class="edit-icon"
                        href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
@@ -195,7 +195,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
             {% endif %}
             <a class="edit-icon" href="{{ process.process.get_absolute_url|urlquote_plus }}"
             ><img src="{% static "juliabase/icons/zoom.png" %}" alt="show icon" title="{% trans 'show process' %}"
-                width="16" height="16"/></a>
+                width="16" height="16"/></a>{% endblock process_icons %}
             {% if not process.process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>
