@@ -128,6 +128,7 @@ def add(request):
             if parent_topic:
                 new_topic.parent_topic = parent_topic
                 new_topic.confidential = parent_topic.confidential
+                new_topic.members = parent_topic.members.all()
                 new_topic.save()
                 next_view = None
                 next_view_kwargs = {}
