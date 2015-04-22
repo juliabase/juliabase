@@ -440,7 +440,8 @@ def build_structured_sample_list(user, samples=None):
                     return create_topic_tree(structured_topics)
                 parent_structured_topic.sub_topics.append(structured_topic)
                 parent_structured_topic.sort_sub_topics()
-                sub_topics.append(structured_topic.topic.id)
+                if structured_topic.topic.id in structured_topics:
+                    del structured_topics[structured_topic.topic.id]
             structured_topic.sort_sample_series()
         return structured_topics
 
@@ -457,7 +458,6 @@ def build_structured_sample_list(user, samples=None):
     structured_series = {}
     structured_topics = {}
     topicless_samples = []
-    sub_topics = []
     for sample in sorted(set(samples), key=lambda sample: (sample.tags, sample.name)):
         containing_series = sample.series.all()
         if containing_series:
@@ -477,12 +477,6 @@ def build_structured_sample_list(user, samples=None):
         else:
             topicless_samples.append(sample)
     structured_topics = create_topic_tree(structured_topics)
-    for topic_id in sub_topics:
-        # FixMe: This try block hides a bug in the above code.  Remove both.
-        try:
-            del structured_topics[topic_id]
-        except KeyError:
-            continue
     structured_topics = sorted(structured_topics.values(),
                                key=lambda structured_topic: structured_topic.topic.name)
     if cache_key:
@@ -531,7 +525,7 @@ def digest_process(process, user, local_context={}):
     :param user: current user
     :param local_context: the local sample context; for example, this is
       relevant to ``SampleSplit``, see
-      :py:meth:`samples.models.SampleSplit.get_cache_key`. 
+      :py:meth:`samples.models.SampleSplit.get_cache_key`.
 
     :type process: `samples.models.Process`
     :type user: django.contrib.auth.models.User
