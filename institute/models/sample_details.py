@@ -199,8 +199,11 @@ class SampleDetails(models.Model):
 
         :rtype: dict mapping str to object, bool
         """
-        informal_layer_forms = InformalLayerFormSet(post_data, instance=self)
-        return {"informal_layers": informal_layer_forms}, informal_layer_forms.is_valid()
+        try:
+            informal_layer_forms = InformalLayerFormSet(post_data, instance=self)
+            return {"informal_layers": informal_layer_forms}, informal_layer_forms.is_valid()
+        except ValidationError:
+            return {}, False
 
     def save_form_data(self, sample_details_context):
         """Saves the POST data related to sample details to the database.
