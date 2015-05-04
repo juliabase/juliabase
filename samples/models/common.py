@@ -894,7 +894,6 @@ class Sample(models.Model):
             sample_details = self.get_sample_details()
             if sample_details:
                 sample_details_data = sample_details.get_data()
-                del sample_details_data["sample"]
                 data.update(sample_details_data)
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
