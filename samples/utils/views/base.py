@@ -429,6 +429,7 @@ def build_structured_sample_list(user, samples=None):
         """Goes through all given topics and makes sure that all parent
         topics are also included.
         """
+        structured_topics = structured_topics.copy()
         for structured_topic in structured_topics.values():
             if structured_topic.topic.has_parent():
                 try:
