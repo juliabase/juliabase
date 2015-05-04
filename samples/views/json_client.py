@@ -172,7 +172,7 @@ def primary_keys(request):
                                           filter(number__in=deposition_numbers).values_list("number", "id"))
     if "users" in request.GET:
         eligible_users = django.contrib.auth.models.User.objects.all() if request.user.is_superuser else \
-                django.contrib.auth.models.User.objects.filter(is_active=True, jb_user_details__department__isnull=False)
+                django.contrib.auth.models.User.objects.filter(jb_user_details__department__isnull=False)
         if request.GET["users"] == "*":
             result_dict["users"] = dict(eligible_users.values_list("username", "id"))
         else:
