@@ -61,8 +61,8 @@ def get_data_from_file(number):
     """
     result = {"number": six.text_type(number)}
     sample = None
+    result["raw_datafile"] = "measurement-{}.dat".format(number)
     try:
-        result["raw_datafile"] = "measurement-{}.dat".format(number)
         for i, line in enumerate(open(os.path.join(settings.PDS_ROOT_DIR, result["raw_datafile"]))):
             if i > 5:
                 break
