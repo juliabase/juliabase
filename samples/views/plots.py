@@ -100,5 +100,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
             storage_changed.send(models.Process)
         except PlotError as e:
             raise Http404(six.text_type(e) or "Plot could not be generated.")
+        except ValueError as e:
+            raise Http404("Plot could not be generated: " + e.args[0])
     return jb_common.utils.base.static_file_response(plot_filepath,
                                                      None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf")
