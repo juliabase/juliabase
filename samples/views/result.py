@@ -398,6 +398,7 @@ class FormSet(object):
                 quantity = quantity_form.cleaned_data["quantity"]
                 if quantity in quantities:
                     quantity_form.add_error("quantity", _("This quantity is already used in this table."))
+                    referentially_valid = False
                 else:
                     quantities.add(quantity)
         return referentially_valid
