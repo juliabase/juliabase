@@ -46,17 +46,22 @@ Portions of this module are inspired by
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 import datetime
 from django.contrib.auth.models import User, Permission
 from django.contrib.sessions.models import Session
 from django.conf import settings
 from django.core.mail import mail_admins
-import ldap
+import ldap3
 from jb_common.models import Department
 from jb_common.signals import maintain
 from django.dispatch import receiver
 
+if six.PY2:
+    decode = lambda s: s.decode("utf-8")
+else:
+    decode = lambda s: s
 
 class ActiveDirectoryBackend:
 
@@ -130,13 +135,14 @@ class LDAPConnection(object):
         """
         for ad_ldap_url in settings.LDAP_URLS:
             try:
-                bound_connection = ldap.initialize(ad_ldap_url)
-                bound_connection.simple_bind_s(settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
-                                               password.encode("utf-8"))
-                bound_connection.unbind_s()
-            except ldap.INVALID_CREDENTIALS:
+                server = ldap3.Server(ad_ldap_url, use_ssl=True)
+                connection = ldap3.Connection(server, user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
+                                              password=password.encode("utf-8"), raise_exceptions=True, read_only=True)
+                connection.bind()
+                connection.unbind()
+            except ldap3.LDAPInvalidCredentialsResult:
                 return False
-            except ldap.LDAPError as e:
+            except ldap3.LDAPException as e:
                 latest_error = e
                 continue
             if not self.is_eligible_ldap_member(username):
@@ -162,23 +168,24 @@ class LDAPConnection(object):
         try:
             ad_data = self.cached_ad_data[username]
         except KeyError:
-            found = False
             for ad_ldap_url in settings.LDAP_URLS:
-                connection = ldap.initialize(ad_ldap_url)
-                connection.set_option(ldap.OPT_REFERRALS, 0)
+                server = ldap3.Server(ad_ldap_url, use_ssl=True)
+                connection = ldap3.Connection(server, raise_exceptions=True, read_only=True)
                 try:
-                    found, attributes = connection.search_ext_s(
-                        settings.LDAP_SEARCH_DN, ldap.SCOPE_SUBTREE,
-                        "(&(sAMAccountName={0}){1})".format(username, settings.LDAP_ACCOUNT_FILTER),
-                        list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
-                            settings.LDAP_ADDITIONAL_ATTRIBUTES)))[0][:2]
-                except ldap.LDAPError as e:
+                    connection.bind()
+                    connection.search(search_base=settings.LDAP_SEARCH_DN,
+                                      search_scope=ldap3.SUBTREE,
+                                      search_filter="(&(sAMAccountName={0}){1})".format(username, settings.LDAP_ACCOUNT_FILTER),
+                                      attributes=list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
+                                                    settings.LDAP_ADDITIONAL_ATTRIBUTES)))
+                except ldap3.LDAPException as e:
                     if settings.LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.LDAP_URLS):
                         mail_admins("JuliaBase LDAP error", message=e.message["desc"])
                     else:
                         continue
-                ad_data = attributes if found else None
+                ad_data = connection.response[0]["attributes"] if connection.response[0]["type"] == "searchResEntry" else None
                 self.cached_ad_data[username] = ad_data
+                connection.unbind()
                 break
         return ad_data
 
@@ -201,7 +208,7 @@ class LDAPConnection(object):
         attributes = self.get_ad_data(username)
         return attributes is not None and (
             not settings.LDAP_DEPARTMENTS or
-            attributes.get("department", [""])[0].decode("utf-8") in settings.LDAP_DEPARTMENTS
+            decode(attributes.get("department", [""])[0]) in settings.LDAP_DEPARTMENTS
             or username in settings.LDAP_ADDITIONAL_USERS)
 
     @staticmethod
@@ -221,7 +228,7 @@ class LDAPConnection(object):
 
         :rtype: set of str
         """
-        group_paths = [path.decode("utf-8") for path in attributes.get("memberOf", [])]
+        group_paths = [decode(path) for path in attributes.get("memberOf", [])]
         group_common_names = set()
         for path in group_paths:
             for part in path.split(","):
@@ -256,11 +263,11 @@ class LDAPConnection(object):
         if self.is_eligible_ldap_member(user.username):
             attributes = self.get_ad_data(user.username)
             if "givenName" in attributes:
-                user.first_name = attributes["givenName"][0].decode("utf-8")
+                user.first_name = decode(attributes["givenName"][0])
             if "sn" in attributes:
-                user.last_name = attributes["sn"][0].decode("utf-8")
+                user.last_name = decode(attributes["sn"][0])
             if "department" in attributes:
-                jb_department_name = settings.LDAP_DEPARTMENTS[attributes["department"][0].decode("utf-8")]
+                jb_department_name = settings.LDAP_DEPARTMENTS[decode(attributes["department"][0])]
                 try:
                     user.jb_user_details.department = settings.LDAP_ADDITIONAL_USERS[user.username]
                 except KeyError:
