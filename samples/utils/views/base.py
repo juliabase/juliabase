@@ -471,14 +471,12 @@ def build_structured_sample_list(user, samples=None):
             structured_topics[topic_id].samples.append(sample)
         else:
             topicless_samples.append(sample)
-    subtopic_ids = []
-    for topic_id, structured_topic in structured_topics.iteritems():
+    _structured_topics = structured_topics.copy()
+    for topic_id, structured_topic in _structured_topics.iteritems():
         if structured_topic.topic.has_parent():
             parent_structured_topic = create_topic_tree(structured_topic)
             structured_topics[parent_structured_topic.topic.id] = parent_structured_topic
-            subtopic_ids.append(topic_id)
-    for subtopic_id in subtopic_ids:
-        del structured_topics[subtopic_id]
+            del structured_topics[subtopic_id]
     structured_topics = sorted(structured_topics.values(),
                                key=lambda structured_topic: structured_topic.topic.name)
     if cache_key:
