@@ -476,7 +476,7 @@ def build_structured_sample_list(user, samples=None):
         if structured_topic.topic.has_parent():
             parent_structured_topic = create_topic_tree(structured_topic)
             structured_topics[parent_structured_topic.topic.id] = parent_structured_topic
-            del structured_topics[subtopic_id]
+            del structured_topics[topic_id]
     structured_topics = sorted(structured_topics.values(),
                                key=lambda structured_topic: structured_topic.topic.name)
     if cache_key:
