@@ -425,26 +425,20 @@ def build_structured_sample_list(user, samples=None):
 
     :rtype: list of `StructuredTopic`, list of `samples.models.Sample`
     """
-    def create_topic_tree(structured_topics):
+    def create_topic_tree(structured_topic):
         """Goes through all given topics and makes sure that all parent
         topics are also included.
         """
-        structured_topics = structured_topics.copy()
-        for structured_topic in structured_topics.values():
-            if structured_topic.topic.has_parent():
-                try:
-                    parent_structured_topic = structured_topics[structured_topic.topic.parent_topic.id]
-                except KeyError:
-                    structured_topics[structured_topic.topic.parent_topic.id] = \
-                        StructuredTopic(structured_topic.topic.parent_topic, user)
-                    # i must recall the function because the size of the dictionary has changed
-                    return create_topic_tree(structured_topics)
-                parent_structured_topic.sub_topics.append(structured_topic)
-                parent_structured_topic.sort_sub_topics()
-                if structured_topic.topic.id in structured_topics:
-                    del structured_topics[structured_topic.topic.id]
-            structured_topic.sort_sample_series()
-        return structured_topics
+        try:
+            parent_structured_topic = structured_topics[structured_topic.topic.parent_topic.id]
+        except KeyError:
+            parent_structured_topic = StructuredTopic(structured_topic.topic.parent_topic, user)
+        parent_structured_topic.sub_topics.append(structured_topic)
+        parent_structured_topic.sort_sub_topics()
+        structured_topic.sort_sample_series()
+        if parent_structured_topic.topic.has_parent():
+            create_topic_tree(parent_structured_topic)
+        return parent_structured_topic
 
     if samples is None:
         cache_key = "my-samples:{0}-{1}".format(
@@ -477,7 +471,14 @@ def build_structured_sample_list(user, samples=None):
             structured_topics[topic_id].samples.append(sample)
         else:
             topicless_samples.append(sample)
-    structured_topics = create_topic_tree(structured_topics)
+    subtopic_ids = []
+    for topic_id, structured_topic in structured_topics.iteritems():
+        if structured_topic.topic.has_parent():
+            parent_structured_topic = create_topic_tree(structured_topic)
+            structured_topics[parent_structured_topic.topic.id] = parent_structured_topic
+            subtopic_ids.append(topic_id)
+    for subtopic_id in subtopic_ids:
+        del structured_topics[subtopic_id]
     structured_topics = sorted(structured_topics.values(),
                                key=lambda structured_topic: structured_topic.topic.name)
     if cache_key:
