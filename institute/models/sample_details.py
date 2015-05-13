@@ -231,7 +231,8 @@ class SampleDetails(models.Model):
 
         :rtype: dict
         """
-        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data = {field.name: getattr(self, field.name) for field in self._meta.get_fields()
+                if field.concrete and not field.name == "sample"}
         data.update(("informal layer #{}".format(layer.index), layer.get_data()) for layer in self.informal_layers.all())
         return data
 
