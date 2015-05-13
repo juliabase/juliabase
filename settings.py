@@ -119,6 +119,7 @@ MIDDLEWARE_CLASSES = (
     "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
+    "jb_common.middleware.UserTracebackMiddleware",
 )
 APPEND_SLASH = False
 
