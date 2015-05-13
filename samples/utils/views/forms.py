@@ -892,15 +892,15 @@ class SampleSelectForm(forms.Form):
         :type preset_sample: `samples.models.Sample`
         """
         super(SampleSelectForm, self).__init__(*args, **kwargs)
-        samples = list(user.my_samples.all())
+        samples = user.my_samples.all()
+        important_samples = set()
         if process_instance:
-            sample = process_instance.samples.get()
-            samples.append(sample)
+            important_samples.add(process_instance.samples.get())
             self.fields["sample"].initial = sample.pk
         if preset_sample:
-            samples.append(preset_sample)
+            important_samples.add(preset_sample)
             self.fields["sample"].initial = preset_sample.pk
-        self.fields["sample"].set_samples(user, samples)
+        self.fields["sample"].set_samples(user, samples, important_samples)
 
 
 class GenericMultipleSamplesSelectForm(forms.Form):
@@ -916,16 +916,17 @@ class MultipleSamplesSelectForm(GenericMultipleSamplesSelectForm):
     """
     def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
         super(MultipleSamplesSelectForm, self).__init__(*args, **kwargs)
-        samples = list(user.my_samples.all())
+        samples = user.my_samples.all()
+        important_samples = set()
         if process_instance:
-            samples.extend(process_instance.samples.all())
+            important_samples.update(process_instance.samples.all())
             self.fields["sample_list"].initial = process_instance.samples.values_list("pk", flat=True)
         else:
             self.fields["sample_list"].initial = []
         if preset_sample:
-            samples.append(preset_sample)
+            important_samples.add(preset_sample)
             self.fields["sample_list"].initial.append(preset_sample.pk)
-        self.fields["sample_list"].set_samples(user, samples)
+        self.fields["sample_list"].set_samples(user, samples, important_samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 
@@ -935,7 +936,8 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
     when editing an *existing* process.
     """
     def __init__(self, user, deposition, preset_sample, data=None, **kwargs):
-        samples = list(user.my_samples.all())
+        samples = user.my_samples.all()
+        important_samples = set()
         if deposition:
             kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
             if deposition.finished:
@@ -949,14 +951,14 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
                 self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             else:
                 super(DepositionSamplesForm, self).__init__(data, **kwargs)
-            samples.extend(deposition.samples.all())
+            important_samples.update(deposition.samples.all())
         else:
             super(DepositionSamplesForm, self).__init__(data, **kwargs)
             self.fields["sample_list"].initial = []
             if preset_sample:
-                samples.append(preset_sample)
+                important_samples.add(preset_sample)
                 self.fields["sample_list"].initial.append(preset_sample.pk)
-        self.fields["sample_list"].set_samples(user, samples)
+        self.fields["sample_list"].set_samples(user, samples, important_samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 

@@ -126,9 +126,10 @@ class RelatedDataForm(forms.Form):
         self.user = user
         now = datetime.datetime.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
-        samples = list(user.my_samples.all())
+        samples = user.my_samples.all()
+        important_samples = set()
         if old_result:
-            samples.extend(old_result.samples.all())
+            important_samples.update(old_result.samples.all())
             self.fields["sample_series"].queryset = \
                 models.SampleSeries.objects.filter(
                 Q(samples__watchers=user) | (Q(currently_responsible_person=user) &
@@ -140,7 +141,7 @@ class RelatedDataForm(forms.Form):
             if "sample" in query_string_dict:
                 preset_sample = get_object_or_404(models.Sample, name=query_string_dict["sample"])
                 self.fields["samples"].initial = [preset_sample.pk]
-                samples.append(preset_sample)
+                important_samples.add(preset_sample)
             self.fields["sample_series"].queryset = \
                 models.SampleSeries.objects.filter(Q(samples__watchers=user) |
                                                    (Q(currently_responsible_person=user) &
@@ -149,7 +150,7 @@ class RelatedDataForm(forms.Form):
             if "sample_series" in query_string_dict:
                 self.fields["sample_series"].initial = \
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
-        self.fields["samples"].set_samples(user, samples)
+        self.fields["samples"].set_samples(user, samples, important_samples)
         self.fields["samples"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
     def clean(self):

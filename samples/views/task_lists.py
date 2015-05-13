@@ -45,7 +45,8 @@ class SamplesForm(forms.Form):
     sample_list = utils.MultipleSamplesField(label=capfirst(_("samples")))
 
     def __init__(self, user, preset_sample, task, data=None, **kwargs):
-        samples = list(user.my_samples.all())
+        samples = user.my_samples.all()
+        important_samples = set()
         if task:
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
             if user != task.customer or task.status != "1 new":
@@ -53,14 +54,14 @@ class SamplesForm(forms.Form):
                 self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
             else:
                 super(SamplesForm, self).__init__(data, **kwargs)
-            samples.extend(task.samples.all())
+            important_samples.update(task.samples.all())
         else:
             super(SamplesForm, self).__init__(data, **kwargs)
             self.fields["sample_list"].initial = []
             if preset_sample:
-                samples.append(preset_sample)
+                important_samples.add(preset_sample)
                 self.fields["sample_list"].initial.append(preset_sample.pk)
-        self.fields["sample_list"].set_samples(user, samples)
+        self.fields["sample_list"].set_samples(user, samples, important_samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 
