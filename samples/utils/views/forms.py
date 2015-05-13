@@ -895,7 +895,8 @@ class SampleSelectForm(forms.Form):
         samples = user.my_samples.all()
         important_samples = set()
         if process_instance:
-            important_samples.add(process_instance.samples.get())
+            sample = process_instance.samples.get()
+            important_samples.add(sample)
             self.fields["sample"].initial = sample.pk
         if preset_sample:
             important_samples.add(preset_sample)
