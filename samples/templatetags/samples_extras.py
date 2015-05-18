@@ -459,11 +459,11 @@ def value_field(parser, token):
 
 
 @register.simple_tag
-def split_field(field1, field2, field3=None):
-    """Tag for combining two or three input fields wich have the same label
-    and help text.  It consists of two or three ``<td>`` elements, one for the
-    label and one for the input fields, so it spans multiple columns.  This tag
-    is primarily used in templates of edit views.  Example::
+def split_field(*fields):
+    """Tag for combining two or three input fields wich have the same label and
+    help text.  It consists of three or more ``<td>`` elements, one for the
+    label and one for the input fields (at least two), so it spans multiple
+    columns.  This tag is primarily used in templates of edit views.  Example::
 
         {% split_field layer.voltage1 layer.voltage2 %}
 
@@ -473,14 +473,13 @@ def split_field(field1, field2, field3=None):
     example, the verbose names may be ``"voltage 1"``, ``"voltage 2"``, and
     ``"voltage 3"``.
     """
-    from_to_field = not field3 and field2.html_name.endswith("_end")
+    from_to_field = len(fields) == 2 and fields[1].html_name.endswith("_end")
     separator = " – " if from_to_field else " / "
     result = """<td class="field-label"><label for="id_{html_name}">{label}:</label></td>""".format(
-        html_name=field1.html_name, label=field1.label if from_to_field else field1.label.rpartition(" ")[0])
-    help_text = """ <span class="help">({0})</span>""".format(field1.help_text) if field1.help_text else ""
-    fields = [field1, field2, field3]
+        html_name=fields[0].html_name, label=fields[0].label if from_to_field else fields[0].label.rpartition(" ")[0])
+    help_text = """ <span class="help">({0})</span>""".format(fields[0].help_text) if fields[0].help_text else ""
     result += """<td class="field-input">{fields_string}{help_text}</td>""".format(
-        fields_string=separator.join(six.text_type(field) for field in fields if field), help_text=help_text)
+        fields_string=separator.join(six.text_type(field) for field in fields), help_text=help_text)
     return result
 
 
