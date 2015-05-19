@@ -24,7 +24,7 @@
 from __future__ import division, unicode_literals
 import django.utils.six as six
 
-import re, sys, decimal
+import re, sys, decimal, math
 import markdown
 from django.template.defaultfilters import stringfilter
 from django import template
@@ -73,10 +73,11 @@ def quantity(value, unit=None, autoescape=False):
         """Pretty-print a single value.  For the from–to notation, this
         function is called twice.
         """
-        if isinstance(number, float):
-            value_string = "{0:g}".format(number)
-        elif isinstance(number, decimal.Decimal):
-            value_string = "{0:g}".format(float(number))
+        if isinstance(number, (float, decimal.Decimal)):
+            if -2 <= math.log10(number) < 5:
+                value_string = "{0:f}".format(number)
+            else:
+                value_string = "{0:e}".format(number)
         else:
             value_string = six.text_type(number)
         if autoescape:
@@ -107,7 +108,7 @@ def quantity(value, unit=None, autoescape=False):
     if autoescape:
         unit = conditional_escape(unit) if unit else None
     if unit:
-        if unit[0].isdigit():
+        if unit[0] in "0123456789":
             result += " · " + unit
         else:
             result += " " + unit
