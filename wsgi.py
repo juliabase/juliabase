@@ -21,13 +21,17 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os
-import sys
+# For a proper configuration you need to add your projeckt and the
+# juliabase package to the python path.
+#import os
+#import sys
+#sys.path.append("/home/username/myproject")
+#sys.path.append("/home/username/myproject/juliabase")
 
-sys.path.append("/home/username/myproject")
-sys.path.append("/home/username/myproject/juliabase")
-
-os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"
+# When the WSGI server loads your projeckt, Django needs to import your
+# settings module. So you have to add the settinge module to your server
+# configuration or uncomment the following statement.
+#os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings"
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
