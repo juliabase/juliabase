@@ -74,7 +74,7 @@ def quantity(value, unit=None, autoescape=False):
         function is called twice.
         """
         if isinstance(number, (float, decimal.Decimal)):
-            if -2 <= math.log10(number) < 5:
+            if number == 0 or -2 <= math.log10(abs(number)) < 5:
                 value_string = "{0:f}".format(number)
             else:
                 value_string = "{0:e}".format(number)
