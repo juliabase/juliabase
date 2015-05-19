@@ -107,7 +107,7 @@ def quantity(value, unit=None, autoescape=False):
     if autoescape:
         unit = conditional_escape(unit) if unit else None
     if unit:
-        if unit[0] in "0123456789":
+        if unit[0].isdigit():
             result += " · " + unit
         else:
             result += " " + unit
