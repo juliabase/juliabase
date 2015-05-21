@@ -458,6 +458,15 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             self.forms["subprocesses"] = [self.subform_class(self, prefix=str(index), instance=subprocess)
                                           for index, subprocess in enumerate(subprocesses.all())]
 
+    def is_all_valid(self):
+        """Assures – on top of inherited validity checking – that no new subprocess
+        have been added.  Their forms are unbound and thus not checked by the
+        parent class.
+        """
+        all_valid = super(SubprocessesMixin, self).is_all_valid()
+        all_valid = all(form.is_bound for form in self.forms["subprocesses"]) and all_valid
+        return all_valid
+
     def is_referentially_valid(self):
         referentially_valid = super(SubprocessesMixin, self).is_referentially_valid()
         if not self.forms["subprocesses"]:
