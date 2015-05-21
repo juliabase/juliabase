@@ -61,7 +61,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 from samples.views import statistics, main, feed, my_samples, split_after_deposition, sample, split_and_rename, \
-    sample_death, bulk_rename, sample_series, result, plots, external_operator, user_details, my_layers, permissions, topic, \
+    sample_death, bulk_rename, sample_series, result, plots, external_operator, user_details, permissions, topic, \
     claim, json_client, status, merge_samples, log_viewer, task_lists
 
 
@@ -121,7 +121,6 @@ urlpatterns = [
 
     url(r"^preferences/(?P<login_name>.+)", user_details.edit_preferences),
     url(r"^topics_and_permissions/(?P<login_name>.+)", user_details.topics_and_permissions),
-    url(r"^my_layers/(?P<login_name>.+)", my_layers.edit),
 
     url(r"^permissions/$", permissions.list_),
     url(r"^permissions/(?P<username>.+)", permissions.edit),
