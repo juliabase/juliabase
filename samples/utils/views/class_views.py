@@ -398,7 +398,7 @@ class SubprocessForm(forms.ModelForm):
 class SubprocessesMixin(ProcessWithoutSamplesView):
     """Mixing for views that represent processes with subprocesses.  Have a look at
     :py:mod:`institute.views.samples.solarsimulator_measurement` for an
-    example.  For this to work, you must define the followin additional class
+    example.  For this to work, you must define the following additional class
     variables:
 
     - :py:attr:`subform_class`: the model form class for the subprocesses
