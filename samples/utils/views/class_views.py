@@ -827,7 +827,7 @@ class DepositionView(ProcessMultipleSamplesView):
         :return:
           The saved deposition object, or ``None`` if validation failed
 
-        :rtype: `institute.models.FiveChamberDeposition` or NoneType
+        :rtype: `samples.models.Deposition` or NoneType
         """
         deposition = super(DepositionView, self).save_to_database()
         deposition.layers.all().delete()
