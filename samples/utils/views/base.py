@@ -254,7 +254,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     The latter is appended to the URL as a query string with the ``next`` key,
     e.g.::
 
-        /juliabase/6-chamber_deposition/08B410/edit/?next=/juliabase/samples/08B410a
+        /juliabase/5-chamber_deposition/08S-410/edit/?next=/juliabase/samples/08S-410a
 
     This routine generated the proper HttpResponse object that contains the
     redirection.  It always has HTTP status code 303 (“see other”).
