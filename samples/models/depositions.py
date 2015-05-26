@@ -69,6 +69,7 @@ class Deposition(PhysicalProcess):
 
     class JBMeta:
         identifying_field = "number"
+        steps = lambda process: process.layers
 
     def _get_layers(self):
         """Retrieves all layers of this deposition.  This function can deal with

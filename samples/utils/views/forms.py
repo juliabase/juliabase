@@ -26,6 +26,7 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 import re, datetime, json
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.conf import settings
 from django.forms.utils import ValidationError
@@ -42,7 +43,7 @@ from samples import models
 from . import base as utils
 
 
-__all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_layers", "InitialsForm",
+__all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_steps", "InitialsForm",
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
            "SamplePositionForm", "RemoveFromMySamplesForm", "time_pattern", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
@@ -281,42 +282,42 @@ class DepositionForm(ProcessForm):
         return number
 
 
-def get_my_layers(user_details, deposition_model):
-    """Parse the ``my_layers`` string of a user and convert it to valid input
-    for a form selection field (``ChoiceField``).  Notethat the user is not
-    forced to select a layer.  Instead, the result always includes a “nothing
-    selected” option.
+def get_my_steps(user_details, process_model):
+    """Parse the ``my_steps`` string of a user and convert it to valid input for a
+    form selection field (``ChoiceField``).  Note that the user is not forced to
+    select a step.  Instead, the result always includes a “nothing selected”
+    option.
 
     :param user_details: the details of the current user
-    :param deposition_model: the model class for which “MyLayers” should be
+    :param process_model: the model class for which “My Steps” should be
         generated
 
     :type user_details: `samples.models.UserDetails`
-    :type deposition_model: class, descendent of `samples.models.Deposition`
+    :type process_model: class, descendent of `samples.models.Process`
 
     :return:
       a list ready-for-use as the ``choices`` attribute of a ``ChoiceField``.
-      The MyLayer IDs are given as strings in the form “<deposition id>-<layer
+      The My-Steps IDs are given as strings in the form “<process id>-<step
       number>”.
 
-    :rtype: list of (MyLayer-ID, nickname)
+    :rtype: list of (My-Step ID, nickname)
     """
     choices = [("", "---------")]
-    if user_details.my_layers:
-        for nickname, process_id, layer_number in json.loads(user_details.my_layers):
+    if user_details.my_steps:
+        for nickname, process_id, step_number in json.loads(user_details.my_steps):
             try:
-                deposition = deposition_model.objects.get(pk=process_id)
-            except deposition_model.DoesNotExist:
+                process = process_model.objects.get(pk=process_id)
+            except process_model.DoesNotExist:
                 continue
             try:
-                layer = deposition.layers.get(number=layer_number)
-            except:
+                step = process.JBMeta.steps(process).get(number=layer_number)
+            except ObjectDoesNotExist:
                 continue
-            # FixMe: Maybe it is possible to avoid serialising the deposition ID
+            # FixMe: Maybe it is possible to avoid serialising the process ID
             # and layer number, so that change_structure() doesn't have to re-parse
             # it.  In other words: Maybe the first element of the tuples can be of
             # any type and needn't be strings.
-            choices.append(("{0}-{1}".format(process_id, layer_number), nickname))
+            choices.append(("{0}-{1}".format(process_id, step_number), nickname))
     return choices
 
 

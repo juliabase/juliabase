@@ -1122,7 +1122,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: c0721478e7f85a572679622a1660fffcfe49d6e0
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 2015-01-21 11:15:22.930176
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false
@@ -1142,7 +1142,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 2015-01-21 11:15:01.018055
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false
@@ -1162,7 +1162,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 1990-01-01 00:00:00
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false
@@ -1182,7 +1182,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 1990-01-01 00:00:00
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false
@@ -1202,7 +1202,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 2015-01-21 11:15:17.811089
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false
@@ -1222,7 +1222,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 1990-01-01 00:00:00
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false
@@ -1242,7 +1242,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 2015-01-21 11:15:09.051932
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false
@@ -1262,7 +1262,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
-    my_layers: ''
+    my_steps: ''
     my_samples_timestamp: 1990-01-01 00:00:00
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false

@@ -1430,12 +1430,14 @@ class UserDetails(models.Model):
         Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
         help_text=_("new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_("get only important news"), default=False)
-    my_layers = models.TextField(_("My Layers"), blank=True, help_text=_("in JSON format"))
-    """This string is the JSON serialisation of the list with contains
-    3-tuples of the the form ``(nickname, deposition, layer)``, where
-    “deposition” is the *process id* (``Process.id``, not the deposition
-    number!) of the deposition, and “layer” is the layer number
-    (`models.depositions.Layer.number`).
+    my_steps = models.TextField(_("My Steps"), blank=True, help_text=_("in JSON format"))
+    """This string is the JSON serialisation of the list with contains 3-tuples of
+    the the form ``(nickname, process, step)``, where “process” is the
+    process id (``Process.id``) of the process, and “step” is the step number
+    (the field name of which must always be called ``number``), for example the
+    layer number within a deposition (`models.depositions.Layer.number`).  In
+    this structure, a user can collect favourite sub-processes that they want
+    to re-use in new processes.
     """
     display_settings_timestamp = models.DateTimeField(_("display settings last modified"), auto_now_add=True)
     """This timestamp denotes when anything changed which influences the

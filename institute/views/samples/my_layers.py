@@ -19,8 +19,11 @@
 
 
 """View for editing the “My Layers” structure.  See
-:py:attr:`samples.models.UserDetails.my_layers` for the syntax of the “My
-Layers” field.
+:py:attr:`samples.models.UserDetails.my_steps` for the syntax of the “My Steps”
+field.  In the INM institute app, we use My Steps only for deposition layers,
+therefore, we call it My Layers.  However, you are free to add views for other
+“My …”, and filter the process classes as you need.  The ``my_steps`` field
+will always store the union of all these processes.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -83,8 +86,9 @@ def forms_from_database(user):
     :rtype: list of `MyLayerForm`
     """
     my_layer_forms = []
-    if user.samples_user_details.my_layers:
-        for nickname, process_id, layer_number in json.loads(user.samples_user_details.my_layers):
+    if user.samples_user_details.my_steps:
+        for nickname, process_id, layer_number in json.loads(user.samples_user_details.my_steps):
+            # We know that there are only depositions in ``my_steps``
             deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
             deposition_and_layer = "{0}-{1}".format(deposition_number, layer_number)
             my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
@@ -150,11 +154,11 @@ def save_to_database(my_layer_forms, user):
     """Save the new “My Layers” into the database.
     """
     user_details = user.samples_user_details
-    old_layers = user_details.my_layers
-    user_details.my_layers = json.dumps(
+    old_layers = user_details.my_steps
+    user_details.my_steps = json.dumps(
         [(form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms])
 
-    if not old_layers == user_details.my_layers:
+    if not old_layers == user_details.my_steps:
         user_details.save()
         return  _("Successfully changed “My Layers”")
     else:
