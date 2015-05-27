@@ -151,11 +151,14 @@ def edit_preferences(request, login_name):
 
 
 @login_required
+@require_http_methods(["GET"])
 def topics_and_permissions(request, login_name):
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
     if not request.user.is_superuser and request.user != user:
         raise permissions.PermissionError(
             request.user, _("You can't access the list of topics and permissions of another user."))
+    if is_json_requested(request):
+        return respond_in_json((user.topics.all(), user.managed_topics.all(), request.user.get_all_permissions()))
     return render(request, "samples/topics_and_permissions.html",
                   {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
                    "topics": user.topics.all(), "managed_topics": user.managed_topics.all(),
