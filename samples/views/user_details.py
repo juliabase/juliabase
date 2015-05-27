@@ -159,7 +159,8 @@ def topics_and_permissions(request, login_name):
         raise permissions.PermissionError(
             request.user, _("You can't access the list of topics and permissions of another user."))
     if jb_common_utils.is_json_requested(request):
-        return jb_common_utils.respond_in_json((user.topics.all(), user.managed_topics.all(),
+        return jb_common_utils.respond_in_json((user.topics.values_list("pk", flat=True),
+                                                user.managed_topics.values_list("pk", flat=True),
                                                 request.user.get_all_permissions()))
     return render(request, "samples/topics_and_permissions.html",
                   {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
