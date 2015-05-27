@@ -228,12 +228,7 @@ class User(object):
 
     @property
     def id(self):
-        """Return the user's ID.
-
-        :return:
-          the user's ID
-
-        :rtype: int
+        """Contains the user's ID as an ``int``.
         """
         return primary_keys["users"][self.username]
 
