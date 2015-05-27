@@ -88,8 +88,8 @@ this setup, and to check whether the sample names belong to valid and for the
 user accessible samples.
 
 The remote client is written in Python, however, it is easy to use it from
-programs written in other programming languages, and JuliaBase ships with a
-Delphi binding.
+programs written in other programming languages, and JuliaBase ships with
+bindings to Delphi, LabVIEW, and Visual Basic.
 
 
 Data mining and analysis
@@ -209,7 +209,8 @@ conveniently: If a new version of JuliaBase is released, you simply have to
 replace the :file:`jb_remote/` subdirectory with the new one.
 
 
-.. index:: Delphi
+.. index::
+   pair: bindings; language
 
 Other programming languages
 =================================
@@ -219,9 +220,14 @@ You can implement the HTTP communication directly in most modern languages.
 However, it is probably much easier to write a thin wrapper around the Python
 implementation.
 
-For Delphi, this has already been done in
-:file:`remote_client/delphi/juliabase.pas`.  The code is only 150 lines long.
-Using it is as simple as
+
+.. index:: Delphi
+
+Delphi
+------
+
+For Delphi, this has been done in :file:`remote_client/delphi/juliabase.pas`.
+In order to achieve the same as in the previous section, you just say
 
 .. code-block:: delphi
 
@@ -249,6 +255,45 @@ avoidance of code duplication makes up for it.
 
 See the top comment in :file:`remote_client/delphi/juliabase.pas` for further
 instructions.
+
+
+.. index:: Visual Basic
+
+Visual Basic
+------------
+
+The Visual Basic binding in :file:`remote_client/visual_basic/juliabase.vb` can
+be used equally easily:
+
+.. code-block:: vbnet
+
+    Imports System
+    Imports Juliabase
+
+    Public Module ModuleMain
+       Sub Main()
+          JB_Package_Path = "D:\JuliaBase\remote_client\"
+          JB_Module_Name = "jb_remote_inm"
+
+          Execute_JB("juliabase", "12345",
+                "sample = Sample('14-JS-1');" &
+                "sample.current_location = 'main lab';" &
+                "sample.edit_description = 'location changed';" &
+                "sample.submit()")
+       End Sub
+    End Module
+
+
+.. index:: LabVIEW
+
+LabVIEW
+-------
+
+The LabVIEW virtual instrument “send_command.vi” in
+:file:`remote_client/labview/juliabase.llb` is very different from the other
+bindings for obvious reasons, but the general method is the same: You pass
+login, password, and a Python snippet to the binding, and the result of the
+Python process is returned.
 
 
 Classes and functions
