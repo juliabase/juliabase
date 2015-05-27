@@ -218,7 +218,9 @@ Other programming languages
 You can communicate with a JuliaBase server using any programming language.
 You can implement the HTTP communication directly in most modern languages.
 However, it is probably much easier to write a thin wrapper around the Python
-implementation.
+implementation.  You must install the Python interpreter and the Python version
+of the remote client on the machine, but the avoidance of code duplication
+makes up for it.
 
 
 .. index:: Delphi
@@ -249,9 +251,7 @@ In order to achieve the same as in the previous section, you just say
     end.
 
 :code:`execute_jb` adds some boilerplate code and calls the Python interpreter,
-which executes the commands you passed as a string.  You must install the Python
-interpreter and the Python version of the remote client on the machine, but the
-avoidance of code duplication makes up for it.
+which executes the commands you passed as a string.
 
 See the top comment in :file:`remote_client/delphi/juliabase.pas` for further
 instructions.
@@ -282,6 +282,9 @@ be used equally easily:
                 "sample.submit()")
        End Sub
     End Module
+
+See the top comment in :file:`remote_client/visual_basic/juliabase.vb` for
+further instructions.
 
 
 .. index:: LabVIEW
