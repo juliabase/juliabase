@@ -11,16 +11,21 @@ Rem  use this program:
 Rem
 Rem  .. code-block:: visualbasic
 Rem
+Rem      Imports System
 Rem      Imports Juliabase
 Rem
-Rem      JB_Package_Path = "D:\JuliaBase\remote_client\"
-Rem      JB_Module_Name = "jb_remote_inm"
+Rem      Public Module ModuleMain
+Rem          Sub Main()
+Rem              JB_Package_Path = "D:\JuliaBase\remote_client\"
+Rem              JB_Module_Name = "jb_remote_inm"
 Rem
-Rem      Execute_JB("juliabase", "12345",
-Rem             "sample = Sample('14-JS-1');" &
-Rem             "sample.current_location = 'small lab';" &
-Rem             "sample.edit_description = 'location changed';" &
-Rem             "sample.submit()")
+Rem              Execute_JB("juliabase", "12345",
+Rem                     "sample = Sample('14-JS-1');" &
+Rem                     "sample.current_location = 'small lab';" &
+Rem                     "sample.edit_description = 'location changed';" &
+Rem                     "sample.submit()")
+Rem          End Sub
+Rem      End Module
 Rem  
 Rem  Additionally, there is a forth, optional parameter, which is boolean.  If
 Rem  it's true, the command is executed on the test server.  By default, it is
