@@ -50,6 +50,10 @@ if six.PY3:
 from . import settings
 
 
+__all__ = ["login", "logout", "connection", "primary_keys", "JuliaBaseError", "setup_logging",
+           "format_timestamp", "parse_timestamp", "as_json"]
+
+
 def setup_logging(destination=None):
     """If the user wants to call this in order to enable logging, he must do
     so before logging in.  Note that it is a no-op if called a second time.

@@ -23,6 +23,9 @@ import json
 from .common import connection, primary_keys, comma_separated_ids, double_urlquote, format_timestamp, parse_timestamp, logging
 
 
+__all__ = ["TemporaryMySamples", "Sample", "Result", "User"]
+
+
 primary_keys.components.add("external_operators=*")
 
 
