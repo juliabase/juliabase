@@ -220,8 +220,8 @@ begin
 end;
 
 begin
-  package_path := 'c:/JuliaBase/remote_client';
+  package_path := 'd:/JuliaBase/remote_client';
   module := 'jb_remote_inm'
-  python_path := 'c:/Python2.7/python.exe';
+  python_path := 'c:/Python34/python.exe';
   open_error_page_in_browser := false
 end.

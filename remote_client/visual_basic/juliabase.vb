@@ -36,7 +36,7 @@ Rem  that you can modifiy.
 Rem 
 Rem  ``JB_Package_Path``
 Rem    contains the directory of the institute's adaption of the remote client.
-Rem    Default: :file:'c:\JuliaBase\remote_client\'
+Rem    Default: :file:'d:\JuliaBase\remote_client\'
 Rem
 Rem  ``JB_Module_Name``
 Rem    contains the module name of the institute's adaption of the remote client.
