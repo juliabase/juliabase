@@ -1,5 +1,5 @@
-﻿Rem  Delphi wrapper for the remote client
-Rem  ====================================
+﻿Rem  Visual Basic wrapper for the remote client
+Rem  ==========================================
 Rem
 Rem  See also http://www.juliabase.org/programming/remote_client.html for further
 Rem  information.
