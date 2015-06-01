@@ -24,10 +24,10 @@ Talking to JuliaBase
 
 You have a measurement or processing setup, and you have access to the
 program(s) that run this setup?  This is the ideal situation to make a direct,
-bi-directional connection between your exterimental setup and the central
+bi-directional connection between your experimental setup and the central
 JuliaBase server.  This has many benefits:
 
-- You can assure that only people authorized for this apparatus can log in your
+- You can assure that only people authorised for this apparatus can log in your
   program.
 - You can assure that the header data in your data files is correct, in
   particular operator name and sample name.
@@ -50,13 +50,13 @@ can install on any lab or office computer and use it to talk to the central
 JuliaBase server.
 
 However, you needn't use Python to communicate with JuliaBase.  This is just
-the most natual way.  But JuliaBase's source code includes bindings to Delphi,
+the most natural way.  But JuliaBase's source code includes bindings to Delphi,
 Visual Basic, and LabVIEW.  Further bindings can be added very easily once the
 demand is there.
 
 Such a binding works by calling the Python interpreter in the background.  This
 indirection causes a very slight performance loss.  Moreover, you need to
-install a Python interpreter.  However, the simplicitly and maintainability of
+install a Python interpreter.  However, the simplicity and maintainability of
 this approach make up for it.
 
 
@@ -198,7 +198,7 @@ Then, :code:`topic` contains the topic of the sample.  Note that :code:`topic`
 is a string.  If you need other data types, you have to convert the result
 string yourself.
 
-For more complex return values, this converson can be cumbersome.  In languages
+For more complex return values, this conversion can be cumbersome.  In languages
 with `JSON`_ support, there is a convenience function defined in the remote
 client called :py:func:`as_json`.  It can be used instead of :py:func:`print`.
 It prints its argument in JSON format to standard output.  The `LabVIEW`_
@@ -210,9 +210,10 @@ example above demonstrates the usage of this function in the second VI call.
 The test server
 ---------------
 
-Your institution may prove a test server for easier developing.  This way, you
-do not manipulate valuable data on the production server.  You choose the test
-server by passing :code:`testserver=True` to the :py:func:`login` function::
+Your institution may provide a test server for easier developing.  This way,
+you do not manipulate valuable data on the production server.  You choose the
+test server by passing :code:`testserver=True` to the :py:func:`login`
+function::
 
     login("juliabase", "12345", testserver=True)
 
@@ -305,7 +306,7 @@ Then, you check whether the “add” permission occurs in this attribute.
 In Python::
 
     permissions = User(username).permissions
-    if "institute.add_pdsmeasurement" not in permisions:
+    if "institute.add_pdsmeasurement" not in permissions:
         print("You are not authorised to make PDS measurements!")
 
 In Visual Basic:
@@ -381,3 +382,6 @@ In Visual Basic:
 In order to know which instance attributes you need to set and how, look for
 documentation in the Python remote client module, or ask your local JuliaBase
 guru.
+
+..  LocalWords:  login juliabase JuliaBaseError EJuliaBaseError vbnet PDS meth
+..  LocalWords:  pdsmeasurement IndexOf pds yyyy
