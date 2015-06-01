@@ -89,7 +89,7 @@ out.
 
 In all non-Python languages, however, you cannot give the commands directly.
 Instead, you build a string that *contains* the Python commands and pass it to
-a special function.
+a special function called :code:`execute_jb` or similar.
 
 
 Python
@@ -198,11 +198,12 @@ Then, :code:`topic` contains the topic of the sample.  Note that :code:`topic`
 is a string.  If you need other data types, you have to convert the result
 string yourself.
 
-For more complex return values, this conversion can be cumbersome.  In languages
-with `JSON`_ support, there is a convenience function defined in the remote
-client called :py:func:`as_json`.  It can be used instead of :py:func:`print`.
-It prints its argument in JSON format to standard output.  The `LabVIEW`_
-example above demonstrates the usage of this function in the second VI call.
+For more complex return values, this conversion can be cumbersome.  In
+languages with `JSON`_ support, there is a convenience function defined in the
+remote client called :py:func:`~jb_remote.common.as_json`.  It can be used
+instead of :py:func:`print`.  It prints its argument in JSON format to standard
+output.  The `LabVIEW`_ example above demonstrates the usage of this function
+in the second VI call.
 
 .. _JSON: http://json.org/
 
@@ -300,8 +301,9 @@ In Visual Basic:
 … check whether the user is allowed to use my setup?
 ----------------------------------------------------
 
-You retrieve the :code:`permissions` attribute of a :py:class:`User` instance.
-Then, you check whether the “add” permission occurs in this attribute.
+You retrieve the :code:`permissions` attribute of a
+:py:class:`~jb_remote.samples.User` instance.  Then, you check whether the
+“add” permission occurs in this attribute.
 
 In Python::
 

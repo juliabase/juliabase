@@ -221,7 +221,8 @@ available by saying
 
 .. automodule:: jb_remote.common
                 :members: login, connection, JuliaBaseConnection, JuliaBaseError, logout, primary_keys, PrimaryKeys,
-                          setup_logging, parse_timestamp, double_urlquote, format_timestamp, sanitize_for_markdown
+                          setup_logging, parse_timestamp, double_urlquote, format_timestamp, sanitize_for_markdown,
+                          as_json
 
 .. automodule:: jb_remote.samples
                 :members:
