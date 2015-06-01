@@ -163,6 +163,8 @@ For Delphi, in order to achieve the same as in the previous sections, you say
            'sample.submit()');
     end.
 
+The necessary unit can be found in :file:`remote_client/delphi/juliabase.pas`.
+
 
 .. index:: LabVIEW
 
@@ -205,6 +207,19 @@ example above demonstrates the usage of this function in the second VI call.
 .. _JSON: http://json.org/
 
 
+The test server
+---------------
+
+Your institution may prove a test server for easier developing.  This way, you
+do not manipulate valuable data on the production server.  You choose the test
+server by passing :code:`testserver=True` to the :py:func:`login` function::
+
+    login("juliabase", "12345", testserver=True)
+
+In non-Python languages, you pass the same parameter to the :code:`execute_jb`
+function.
+
+
 Error handling
 ================
 
@@ -229,6 +244,15 @@ message.
 As usual, in LabVIEW, things are slightly different.  If an error occurs, it is
 set in the error output of the VI.  Error numbers greater than 6000 indicate
 JuliaBase errors.  The error message contains the details.
+
+
+Error pages in the browser
+--------------------------
+
+In case of JuliaBase errors, non-Python languages may open a browser
+automatically showing a detailed problem description.  You may turn off this
+behaviour by setting the global variable :code:`jb_open_error_page_in_browser`
+to :code:`false`.
 
 
 About passwords
