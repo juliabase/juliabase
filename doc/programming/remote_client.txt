@@ -109,7 +109,7 @@ series, and writes these plots back to the database.  There, one can see them
 on the series' pages, and in every sample's data sheet.
 
 
-.. `Extending the remote client`_
+.. _Extending the remote client:
 
 Extending the remote client
 =============================
@@ -117,7 +117,7 @@ Extending the remote client
 As for JuliaBase itself, also the remote client should be extended with the
 functionality special to your institution.  This is not absolutely necessary,
 but without it, you can only use the very basic functionality.  However,
-extending the remote client is *much* easier than extending JuliaBase.
+extending the remote client is much easier than extending JuliaBase.
 
 .. _remote-client-file-list:
 
@@ -209,96 +209,6 @@ conveniently: If a new version of JuliaBase is released, you simply have to
 replace the :file:`jb_remote/` subdirectory with the new one.
 
 
-.. index::
-   pair: bindings; language
-
-Other programming languages
-=================================
-
-You can communicate with a JuliaBase server using any programming language.
-You can implement the HTTP communication directly in most modern languages.
-However, it is probably much easier to write a thin wrapper around the Python
-implementation.  You must install the Python interpreter and the Python version
-of the remote client on the machine, but the avoidance of code duplication
-makes up for it.
-
-
-.. index:: Delphi
-
-Delphi
-------
-
-For Delphi, this has been done in :file:`remote_client/delphi/juliabase.pas`.
-In order to achieve the same as in the previous section, you just say
-
-.. code-block:: delphi
-
-    program juliabase_example;
-
-    {$APPTYPE CONSOLE}
-
-    uses
-      SysUtils, juliabase;
-    var
-      result : String
-
-    begin
-      execute_jb('juliabase', '12345',
-           'sample = Sample("14-JS-1");' +
-           'sample.current_location = "Sean''s office";' +
-           'sample.edit_description = "location changed";' +
-           'sample.submit()');
-    end.
-
-:code:`execute_jb` adds some boilerplate code and calls the Python interpreter,
-which executes the commands you passed as a string.
-
-See the top comment in :file:`remote_client/delphi/juliabase.pas` for further
-instructions.
-
-
-.. index:: Visual Basic
-
-Visual Basic
-------------
-
-The Visual Basic binding in :file:`remote_client/visual_basic/juliabase.vb` can
-be used equally easily:
-
-.. code-block:: vbnet
-
-    Imports System
-    Imports Juliabase
-
-    Public Module ModuleMain
-       Sub Main()
-          JB_Package_Path = "D:\JuliaBase\remote_client\"
-          JB_Module_Name = "jb_remote_inm"
-
-          Execute_JB("juliabase", "12345",
-                "sample = Sample('14-JS-1');" &
-                "sample.current_location = 'main lab';" &
-                "sample.edit_description = 'location changed';" &
-                "sample.submit()")
-       End Sub
-    End Module
-
-See the top comment in :file:`remote_client/visual_basic/juliabase.vb` for
-further instructions.
-
-
-.. index:: LabVIEW
-
-LabVIEW
--------
-
-The LabVIEW virtual instrument “send_command.vi” in
-:file:`remote_client/labview/juliabase.llb` is very different from the other
-bindings for obvious reasons, but the general method is the same: You pass
-login, password, and a Python snippet to the binding, and the result of the
-Python process is returned.
-
-
 Classes and functions
 ========================
 
@@ -310,8 +220,8 @@ available by saying
     from jb_remote import *
 
 .. automodule:: jb_remote.common
-                :members: login, connection, JuliaBaseConnection, JuliaBaseError, logout, primary_keys, PrimaryKeys, setup_logging,
-                          parse_timestamp, double_urlquote, format_timestamp, sanitize_for_markdown
+                :members: login, connection, JuliaBaseConnection, JuliaBaseError, logout, primary_keys, PrimaryKeys,
+                          setup_logging, parse_timestamp, double_urlquote, format_timestamp, sanitize_for_markdown
 
 .. automodule:: jb_remote.samples
                 :members:
