@@ -48,7 +48,7 @@ Rem    :file:'c:\Python34\python.exe'
 Rem
 Rem  ``JB_Open_Error_Page_In_Browser``
 Rem    If ``True``, in case of error the error page will be automatically opened
-Rem    in the browser.  Default: ``False``
+Rem    in the browser.  Default: ``True``
 Rem
 Rem  =======================================================================================
 

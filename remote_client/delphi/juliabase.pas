@@ -223,5 +223,5 @@ begin
   jb_package_path := 'c:/JuliaBase/remote_client';
   jb_module_name := 'jb_remote_inm'
   jb_interpreter_path := 'c:/Python34/python.exe';
-  jb_open_error_page_in_browser := false
+  jb_open_error_page_in_browser := true
 end.
