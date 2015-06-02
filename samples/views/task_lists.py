@@ -346,13 +346,14 @@ def show(request):
         task_lists[process_content_type] = [TaskForTemplate(task, request.user) for task in active_tasks]
     task_lists_for_department = {}
     for process_content_type, tasks in task_lists.items():
-        # FixMe: it is possible that some processes are in more then one department available
-        # maybe we need a better way to determine the department
-        department_names = {name for name, app_label in Department.objects.values_list("name", "app_label")
-                           if app_label == process_content_type.model_class()._meta.app_label}
+        # FixMe: It is possible that some processes are in more than one
+        # department available.  Maybe we need a better way to determine the
+        # department.
+        process_app_label = process_content_type.model_class()._meta.app_label
+        department_names = set(Department.objects.filter(app_label=process_app_label).values_list("name", flat=True))
         assert len(department_names) == 1
         department_name = department_names.pop()
-        task_lists_for_department.setdefault(department_name, {}).update({process_content_type: tasks})
+        task_lists_for_department.setdefault(department_name, {})[process_content_type] = tasks
     return render(request, "samples/task_lists.html", {"title": capfirst(_("task lists")),
                                                        "choose_task_lists": choose_task_lists_form,
                                                        "task_lists": task_lists_for_department})
