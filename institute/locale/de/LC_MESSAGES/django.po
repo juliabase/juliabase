@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-09 15:09+0200\n"
+"POT-Creation-Date: 2015-06-02 04:25+0200\n"
 "PO-Revision-Date: 2015-01-26 15:38+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -104,7 +104,7 @@ msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
 #: institute/models/depositions.py:133 institute/models/depositions.py:152
-#: institute/models/sample_details.py:290
+#: institute/models/sample_details.py:294
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:41
 msgid "comments"
 msgstr "Kommentare"
@@ -189,12 +189,12 @@ msgid "Corning glass"
 msgstr "Corning-Glas"
 
 #: institute/models/physical_processes.py:56
-#: institute/models/sample_details.py:276
+#: institute/models/sample_details.py:280
 msgid "glass"
 msgstr "Glas"
 
 #: institute/models/physical_processes.py:57
-#: institute/models/sample_details.py:275
+#: institute/models/sample_details.py:279
 msgid "silicon wafer"
 msgstr "Silizium-Wafer"
 
@@ -398,7 +398,7 @@ msgid "sample"
 msgstr "Probe"
 
 #: institute/models/sample_details.py:60
-#: institute/models/sample_details.py:286
+#: institute/models/sample_details.py:290
 msgid "sample details"
 msgstr "Probendetails"
 
@@ -407,125 +407,125 @@ msgctxt "plural"
 msgid "sample details"
 msgstr "Probendetails"
 
-#: institute/models/sample_details.py:269
+#: institute/models/sample_details.py:273
 msgid "black"
 msgstr "schwarz"
 
-#: institute/models/sample_details.py:269
+#: institute/models/sample_details.py:273
 msgid "blue"
 msgstr "blau"
 
-#: institute/models/sample_details.py:269
+#: institute/models/sample_details.py:273
 msgid "brown"
 msgstr "braun"
 
-#: institute/models/sample_details.py:269
+#: institute/models/sample_details.py:273
 msgid "darkgray"
 msgstr "dunkelgrau"
 
-#: institute/models/sample_details.py:270
+#: institute/models/sample_details.py:274
 msgid "green"
 msgstr "grün"
 
-#: institute/models/sample_details.py:270
+#: institute/models/sample_details.py:274
 msgid "lightblue"
 msgstr "hellblau"
 
-#: institute/models/sample_details.py:271
+#: institute/models/sample_details.py:275
 msgid "lightgreen"
 msgstr "hellgrün"
 
-#: institute/models/sample_details.py:271
+#: institute/models/sample_details.py:275
 msgid "magenta"
 msgstr "magenta"
 
-#: institute/models/sample_details.py:272
+#: institute/models/sample_details.py:276
 msgid "orange"
 msgstr "orange"
 
-#: institute/models/sample_details.py:272
+#: institute/models/sample_details.py:276
 msgid "red"
 msgstr "rot"
 
-#: institute/models/sample_details.py:272
+#: institute/models/sample_details.py:276
 msgctxt "color"
 msgid "silver"
 msgstr "silbern"
 
-#: institute/models/sample_details.py:273
+#: institute/models/sample_details.py:277
 msgid "white"
 msgstr "weiß"
 
-#: institute/models/sample_details.py:273
+#: institute/models/sample_details.py:277
 msgid "yellow"
 msgstr "gelb"
 
-#: institute/models/sample_details.py:276
+#: institute/models/sample_details.py:280
 msgctxt "metall"
 msgid "silver"
 msgstr "Silber"
 
-#: institute/models/sample_details.py:277
+#: institute/models/sample_details.py:281
 msgid "HF dip"
 msgstr "HF-Dipp"
 
-#: institute/models/sample_details.py:285
+#: institute/models/sample_details.py:289
 msgid "index"
 msgstr "Index"
 
-#: institute/models/sample_details.py:287
+#: institute/models/sample_details.py:291
 msgid "doping"
 msgstr "Dotierung"
 
-#: institute/models/sample_details.py:288
+#: institute/models/sample_details.py:292
 msgid "classification"
 msgstr "Klassifikation"
 
-#: institute/models/sample_details.py:291
+#: institute/models/sample_details.py:295
 msgid "color"
 msgstr "Farbe"
 
-#: institute/models/sample_details.py:292
+#: institute/models/sample_details.py:296
 msgid "thickness"
 msgstr "Dicke"
 
-#: institute/models/sample_details.py:293
+#: institute/models/sample_details.py:297
 msgid "thickness reliable"
 msgstr "Dicke zuverlässig"
 
-#: institute/models/sample_details.py:294
+#: institute/models/sample_details.py:298
 msgid "structured"
 msgstr "strukturiert"
 
-#: institute/models/sample_details.py:295
+#: institute/models/sample_details.py:299
 msgid "textured"
 msgstr "texturiert"
 
-#: institute/models/sample_details.py:296
+#: institute/models/sample_details.py:300
 msgid "always collapsed"
 msgstr "immer verkürzt"
 
-#: institute/models/sample_details.py:297
+#: institute/models/sample_details.py:301
 msgid "process"
 msgstr "Prozess"
 
-#: institute/models/sample_details.py:299
+#: institute/models/sample_details.py:303
 msgid "additional process data"
 msgstr "zuzätzliche Prozessdaten"
 
-#: institute/models/sample_details.py:300
+#: institute/models/sample_details.py:304
 msgid "verified"
 msgstr "überprüft"
 
-#: institute/models/sample_details.py:305
+#: institute/models/sample_details.py:309
 msgid "informal layer"
 msgstr "informelle Schicht"
 
-#: institute/models/sample_details.py:306
+#: institute/models/sample_details.py:310
 msgid "informal layers"
 msgstr "informelle Schichten"
 
-#: institute/models/sample_details.py:388
+#: institute/models/sample_details.py:392
 msgid "You must give a classification or comments or both."
 msgstr "Sie müssen eine Klassifikation oder Kommentare angeben, oder beides."
 

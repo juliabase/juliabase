@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-09 15:09+0200\n"
-"PO-Revision-Date: 2015-04-09 15:42+0200\n"
+"POT-Creation-Date: 2015-06-02 04:25+0200\n"
+"PO-Revision-Date: 2015-06-02 04:27+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -33,40 +33,48 @@ msgstr ""
 msgid "JuliaBase – administration"
 msgstr "JuliaBase – Verwaltung"
 
-#: jb_common/apps.py:40
+#: jb_common/apps.py:43
 msgid "add"
 msgstr "hinzufügen"
 
-#: jb_common/apps.py:41
+#: jb_common/apps.py:44
 msgctxt "top-level menu item"
 msgid "explore"
 msgstr "nachschlagen"
 
-#: jb_common/apps.py:42
+#: jb_common/apps.py:45
 msgid "manage"
 msgstr "verwalten"
 
-#: jb_common/apps.py:46
+#: jb_common/apps.py:49
 msgid "edit preferences"
 msgstr "Einstellungen ändern"
 
-#: jb_common/apps.py:50
+#: jb_common/apps.py:53
 msgid "change password"
 msgstr "Passwort ändern"
 
-#: jb_common/apps.py:51
+#: jb_common/apps.py:54
 msgid "logout"
 msgstr "Logout"
 
-#: jb_common/apps.py:53
+#: jb_common/apps.py:56
+msgid "main menu"
+msgstr "Hauptmenü"
+
+#: jb_common/apps.py:62
+msgid "help"
+msgstr "Hilfe"
+
+#: jb_common/apps.py:63
 msgid "statistics"
 msgstr "Statistiken"
 
-#: jb_common/apps.py:54
+#: jb_common/apps.py:64
 msgid "about"
 msgstr "über"
 
-#: jb_common/apps.py:64
+#: jb_common/apps.py:74
 #, python-brace-format
 msgid "switch to {language}"
 msgstr "wechsle zu {language}"
@@ -220,23 +228,23 @@ msgstr ""
 msgid "Invalid date or time."
 msgstr "Ungültiges Datum oder ungültige Zeit."
 
-#: jb_common/search.py:407
+#: jb_common/search.py:409
 msgid "doesn't matter"
 msgstr "egal"
 
-#: jb_common/search.py:407 jb_common/templatetags/juliabase.py:164
+#: jb_common/search.py:409 jb_common/templatetags/juliabase.py:164
 msgid "yes"
 msgstr "ja"
 
-#: jb_common/search.py:407 jb_common/templatetags/juliabase.py:164
+#: jb_common/search.py:409 jb_common/templatetags/juliabase.py:164
 msgid "no"
 msgstr "nein"
 
-#: jb_common/search.py:429
+#: jb_common/search.py:431
 msgid "containing"
 msgstr "enthaltend"
 
-#: jb_common/search.py:765
+#: jb_common/search.py:767
 msgid "restrict to"
 msgstr "beschränken auf"
 
