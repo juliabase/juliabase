@@ -272,7 +272,7 @@ def edit(request, username):
         my_samples_form = MySamplesForm(user)
         action_form = ActionForm(user)
     return render(request, "samples/edit_my_samples.html",
-                  {"title": _("Edit “My Samples” of {user_name}").format(user_name=get_really_full_name(user)),
+                  {"title": _("Manage “My Samples” of {user_name}").format(user_name=get_really_full_name(user)),
                    "my_samples": my_samples_form, "action": action_form})
 
 

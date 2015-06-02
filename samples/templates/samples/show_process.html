@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
         {% spaceless %}
           <div class="page-header"><h1>
-            {{ title }}{% if edit_url %}<a class="edit-icon"
+            {{ title }}{% block process_icons %}{% if edit_url %}<a class="edit-icon"
                                              href="{{ edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                      href="{{ resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
-            {% endif %}
+            {% endif %}{% endblock process_icons %}
             {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h1></div>

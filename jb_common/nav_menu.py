@@ -168,7 +168,7 @@ class MenuItem(object):
         self.sub_items[i:i] = items
 
     def __getitem__(self, key):
-        """Gets the subitem with the given key.
+        """Gets the subitem with the given key or index.
         """
         if isinstance(key, int):
             return self.sub_items[key]
@@ -176,6 +176,19 @@ class MenuItem(object):
             for item in self.sub_items:
                 if item.label == key:
                     return item
+            else:
+                raise KeyError(key)
+
+    def __delitem__(self, key):
+        """Removes the subitem with the given key or index.
+        """
+        if isinstance(key, int):
+            del self.sub_items[key]
+        else:
+            for i, item in enumerate(self.sub_items):
+                if item.label == key:
+                    del self.sub_items[i]
+                    break
             else:
                 raise KeyError(key)
 

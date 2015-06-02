@@ -85,6 +85,8 @@ class SamplesConfig(AppConfig):
                 for lab_notebook in lab_notebooks:
                     explore_menu.add(lab_notebook["label"], lab_notebook["url"], "book")
             manage_menu = menu.get_or_create(_("manage"))
+            manage_menu.add(_("manage “My Samples”"), reverse("samples.views.my_samples.edit",
+                                                              kwargs={"username": request.user.username}))
             if request.user.has_perm("samples.rename_samples"):
                 manage_menu.add(_("rename sample"), reverse("samples.views.sample.rename_sample"))
             manage_menu.add(_("merge samples"), reverse("samples.views.merge_samples.merge"))
