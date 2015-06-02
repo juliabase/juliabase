@@ -389,7 +389,7 @@ def _is_folded(process_id, folded_process_classes, exceptional_processes, switch
     :type switch: bool
 
     :Retruns:
-     True when the process is now folded else False.
+      True if the process is now folded else False.
 
     :rtype: bool
     """
@@ -420,7 +420,7 @@ def fold_process(request, sample_id):
     :type sample_id: unicode
 
     :return:
-      True when the process is now folded else False.
+      True if the process is now folded else False.
 
     :rtype: HttpResponse
     """
@@ -473,14 +473,13 @@ def get_folded_processes(request, sample_id):
 def fold_main_menu_element(request):
     """Fold a single topic or sample series from the main menu.
 
-    :param request: The current HTTP Request object.  It must contain the the topic ID or
-        sample series name.
-    :param element_id: The id from the topic or sample series
+    :param request: The current HTTP Request object.  It must contain the topic
+        ID or sample series name.
 
     :type request: HttpRequest
 
     :return:
-     True when the topic or sample series is now folded else False
+      True if the topic or sample series is now folded else False
 
     :rtype: HttpResponse
     """
