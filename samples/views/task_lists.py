@@ -313,6 +313,40 @@ def edit(request, task_id):
     return render(request, "samples/edit_task.html", {"title": title, "task": task_form, "samples": samples_form})
 
 
+def create_task_lists(user):
+    """Create the datastructure containing the tasks associated with a user.  This
+    can be used in the template to create a nested overview of the tasks.
+
+    :param user: the user for which the tasks should be generated
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :return:
+      the tasks as a mapping of department names to mappings of process content
+      types to task info objects
+
+    :rtype: dict mapping str to dict mapping ``ContentType`` to
+      `TaskForTemplate`
+    """
+    one_week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
+    task_lists = {}
+    for process_content_type in user.samples_user_details.visible_task_lists.all():
+        active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
+            exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
+        task_lists[process_content_type] = [TaskForTemplate(task, user) for task in active_tasks]
+    task_lists_for_department = {}
+    for process_content_type, tasks in task_lists.items():
+        # FixMe: It is possible that some processes are in more than one
+        # department available.  Maybe we need a better way to determine the
+        # department.
+        process_app_label = process_content_type.model_class()._meta.app_label
+        department_names = set(Department.objects.filter(app_label=process_app_label).values_list("name", flat=True))
+        assert len(department_names) == 1
+        department_name = department_names.pop()
+        task_lists_for_department.setdefault(department_name, {})[process_content_type] = tasks
+    return task_lists_for_department
+
+
 @help_link("demo.html#adding-a-task")
 @login_required
 def show(request):
@@ -338,22 +372,7 @@ def show(request):
             return utils.successful_response(request, view=show)
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
-    one_week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
-    task_lists = {}
-    for process_content_type in request.user.samples_user_details.visible_task_lists.all():
-        active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
-            exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
-        task_lists[process_content_type] = [TaskForTemplate(task, request.user) for task in active_tasks]
-    task_lists_for_department = {}
-    for process_content_type, tasks in task_lists.items():
-        # FixMe: It is possible that some processes are in more than one
-        # department available.  Maybe we need a better way to determine the
-        # department.
-        process_app_label = process_content_type.model_class()._meta.app_label
-        department_names = set(Department.objects.filter(app_label=process_app_label).values_list("name", flat=True))
-        assert len(department_names) == 1
-        department_name = department_names.pop()
-        task_lists_for_department.setdefault(department_name, {})[process_content_type] = tasks
+    task_lists_for_department = create_task_lists(request.user)
     return render(request, "samples/task_lists.html", {"title": capfirst(_("task lists")),
                                                        "choose_task_lists": choose_task_lists_form,
                                                        "task_lists": task_lists_for_department})
