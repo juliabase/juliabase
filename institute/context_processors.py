@@ -22,8 +22,8 @@
 
 
 """Additional context processors for JuliaBase.  These functions must be added
-to ``settings.TEMPLATE_CONTEXT_PROCESSORS``.  They add further data to the
-dictionary passed to the templates.
+to ``settings.TEMPLATES``.  They add further data to the dictionary passed to
+the templates.
 """
 
 from __future__ import absolute_import, unicode_literals
