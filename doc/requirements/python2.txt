@@ -15,7 +15,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-python-memcached==1.51
-mock==1.0.1
+python-memcached>=1.51,<1.60
 
 -r base.txt
