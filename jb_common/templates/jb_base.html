@@ -25,10 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block extrahead %}
   {% block css_inclusions %}
     <link rel="stylesheet" type="text/css" media="screen" href="{% static "juliabase/css/main.css" %}"/>
+
     <link rel="stylesheet" type="text/css" media="print" href="{% static "juliabase/css/print.css" %}"/>
   {% endblock %}
   {% block refresh_tag %}{% endblock %}
-  <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
+  {% block favicon %}
+    <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
+  {% endblock %}
   <script type="text/javascript" src="{% static "juliabase/js/jquery-1.11.1.min.js" %}"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="{% url 'jb_common_jsi18n' %}"></script>
