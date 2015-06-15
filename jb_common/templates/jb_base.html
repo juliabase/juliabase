@@ -101,12 +101,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% endif %}
 
   <div class="main">
-    <div class="screen-only">
-      {% block corporate_logo %}{% endblock %}
-      <img style="float: left; margin-right: 5px"
-           src="{% static "juliabase/juliabase_logo.png" %}" width="50" height="50" alt="{% trans "JuliaBase logo" %}"/>
-      <p class="logo-text">{% block app_title %}{% endblock %}</p>
-    </div>
+    {% block branding %}
+      <div class="screen-only">
+        <img style="float: left; margin-right: 5px"
+             src="{% static "juliabase/juliabase_logo.png" %}" width="50" height="50" alt="{% trans "JuliaBase logo" %}"/>
+        <p class="logo-text">{% block app_title %}{% endblock %}</p>
+      </div>
+    {% endblock %}
 
     <div class="outer-frame">
       <div class="inner-frame">

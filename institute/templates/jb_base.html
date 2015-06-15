@@ -24,11 +24,16 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load i18n %}
 {% load staticfiles %}
 
-{% block corporate_logo %}
-  <div style="float: right; vertical-align: top; width: 20em">
-    <img style="float: right; padding-left: 5px" src="{% static "institute/sun.png" %}" alt="{% trans "INM logo" %}"/>
-    <div style="text-align: right; color: #333333; font-weight: bold">
-      {% trans "Institute of Nifty New<br/>Materials (INM)" %}
+{% block branding %}
+  <div class="screen-only">
+    <div style="float: right; vertical-align: top; width: 20em">
+      <img style="float: right; padding-left: 5px" src="{% static "institute/sun.png" %}" alt="{% trans "INM logo" %}"/>
+      <div style="text-align: right; color: #333333; font-weight: bold">
+        {% trans "Institute of Nifty New<br/>Materials (INM)" %}
+      </div>
     </div>
+    <img style="float: left; margin-right: 5px"
+         src="{% static "juliabase/juliabase_logo.png" %}" width="50" height="50" alt="{% trans "JuliaBase logo" %}"/>
+    <p class="logo-text">{% block app_title %}{% endblock %}</p>
   </div>
 {% endblock %}
