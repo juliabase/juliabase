@@ -964,10 +964,13 @@ class MultipleStepsTypeMixin(MultipleStepsMixin):
                 raise AssertionError("Wrong first field in new_steps structure: " + new_step[0])
 
 
-class DepositionView(MultipleStepsMixin):
+class DepositionWithoutLayersView(ProcessMultipleSamplesView):
+    pass
+
+class DepositionView(MultipleStepsMixin, DepositionWithoutLayersView):
     error_message_no_steps = _("No layers given.")
 
-class DepositionMultipleTypeView(MultipleStepsTypeMixin):
+class DepositionMultipleTypeView(MultipleStepsTypeMixin, DepositionWithoutLayersView):
     error_message_no_steps = _("No layers given.")
 
 
