@@ -162,6 +162,15 @@ class ProcessWithoutSamplesView(TemplateView):
         if "process" not in self.forms:
             initial = {}
             if not self.id:
+                copy_from = self.request.GET.get("copy_from")
+                if copy_from:
+                    # Duplication of a process
+                    source_process_query = self.model.objects.filter(**{self.identifying_field: copy_from})
+                    if source_process_query.count() == 1:
+                        initial.update(source_process_query.values()[0])
+                        initial["timestamp"] = datetime.datetime.now()
+                        initial["timestamp_inaccuracy"] = 0
+                        initial["operator"] = self.request.user.pk
                 next_id = self.get_next_id()
                 if next_id:
                     initial[self.identifying_field] = next_id
