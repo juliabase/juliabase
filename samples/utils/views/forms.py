@@ -310,7 +310,7 @@ def get_my_steps(user_details, process_model):
             except process_model.DoesNotExist:
                 continue
             try:
-                step = process.JBMeta.steps(process).get(number=layer_number)
+                step = process.steps().get(number=layer_number)
             except ObjectDoesNotExist:
                 continue
             # FixMe: Maybe it is possible to avoid serialising the process ID
