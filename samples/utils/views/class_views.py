@@ -756,9 +756,6 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
                                for step_index, step in enumerate(source_process.steps().all())]
 
     def build_forms(self):
-        if "samples" not in self.forms:
-            self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
-                                                                self.data)
         self.forms["add_steps"] = self.add_steps_form_class(self, self.data)
         if self.request.method == "POST":
             indices = utils.collect_subform_indices(self.data)
@@ -965,7 +962,13 @@ class MultipleStepsTypeMixin(MultipleStepsMixin):
 
 
 class DepositionWithoutLayersView(ProcessMultipleSamplesView):
-    pass
+
+    def build_forms(self):
+        if "samples" not in self.forms:
+            self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
+                                                                self.data)
+        super(DepositionWithoutLayersView, self).build_forms()
+
 
 class DepositionView(MultipleStepsMixin, DepositionWithoutLayersView):
     error_message_no_steps = _("No layers given.")
