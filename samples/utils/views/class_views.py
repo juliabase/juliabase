@@ -768,7 +768,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
                     deposition_data["operator"] = self.request.user.pk
                     next_id = self.get_next_id()
                     try:
-                        deposition_data[model.JBMeta.identifying_field] = next_id
+                        deposition_data[self.identifying_field] = next_id
                     except AttributeError:
                         deposition_data["id"] = next_id
                     self.forms["process"] = self.form_class(self.request.user, initial=deposition_data)
