@@ -66,10 +66,10 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
     </tbody>
   </table>
 
-  {% if layers_and_change_layers %}
+  {% if steps_and_change_steps %}
     <table style="width: 100%">
       <tbody>
-      {% for layer, change_layer in layers_and_change_layers %}
+      {% for layer, change_layer in steps_and_change_steps %}
         <tr>
           <td style="border-style: solid; border-color: black; border-width: thin">
             <table style="width: 100%">
@@ -92,18 +92,14 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                 {% input_field layer.chamber %}
                 {% split_field layer.temperature_1 layer.temperature_2 %}
               </tr>
-
               <tr>
-                {% input_field change_layer.duplicate_this_layer %}
-               
+                {% input_field change_layer.duplicate_this_step %}
               </tr>
               <tr>
-                {% input_field change_layer.remove_this_layer %}
-                
+                {% input_field change_layer.remove_this_step %}
               </tr>
               <tr>
-                {% input_field change_layer.move_this_layer %}
-                
+                {% input_field change_layer.move_this_step %}
               </tr>
               </tbody>
             </table>
@@ -116,15 +112,15 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 
   {% include "samples/edit_description.html" %}
 
-  {% error_list add_layers _("Error with adding layers") %}
+  {% error_list add_steps _("Error with adding layers") %}
   {% error_list remove_from_my_samples _("Error with removing from My Samples") %}
   <table>
     <tbody>
     <tr>
-      {% input_field add_layers.number_of_layers_to_add %}
+      {% input_field add_steps.number_of_steps_to_add %}
     </tr>
     <tr>
-      {% input_field add_layers.my_layer_to_be_added %}
+      {% input_field add_steps.my_step_to_be_added %}
     </tr>
     {% if remove_from_my_samples %}
       <tr>

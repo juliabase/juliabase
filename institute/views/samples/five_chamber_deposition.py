@@ -63,7 +63,7 @@ class LayerForm(utils.SubprocessForm):
 
 class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):
     form_class = DepositionForm
-    layer_form_class = LayerForm
+    step_form_class = LayerForm
 
     def get_next_id(self):
         return institute.utils.base.get_next_deposition_number("S")
