@@ -768,19 +768,10 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         else:
             copy_from = self.request.GET.get("copy_from")
             if not self.id and copy_from:
-                # Duplication of a deposition
+                # Duplication of the layers of a deposition; the deposition
+                # itself is already duplicated.
                 source_deposition_query = self.model.objects.filter(number=copy_from)
                 if source_deposition_query.count() == 1:
-                    deposition_data = source_deposition_query.values()[0]
-                    deposition_data["timestamp"] = datetime.datetime.now()
-                    deposition_data["timestamp_inaccuracy"] = 0
-                    deposition_data["operator"] = self.request.user.pk
-                    next_id = self.get_next_id()
-                    try:
-                        deposition_data[self.identifying_field] = next_id
-                    except AttributeError:
-                        deposition_data["id"] = next_id
-                    self.forms["process"] = self.form_class(self.request.user, initial=deposition_data)
                     self._read_step_forms(source_deposition_query[0])
             if "steps" not in self.forms:
                 if self.id:
