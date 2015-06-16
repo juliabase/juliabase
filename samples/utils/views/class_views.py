@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Support for classed-based add and edit views for processes.
+"""Support for classed-based add and edit views for processes.  It defines base
+classes for processes with only one sample and multiple samples.  Moreover, it
+defines a couple of mixins that can be combined with the base classes.  The
+main difference between mixin and base class is that the latter instantiates a
+samples form, whereas the mixin class doesn't do this.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -599,6 +603,8 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
 
     The step form should be a subclass of
     :py:class:`~samples.utils.views.SubprocessForm`.
+
+    This mixin must come before the main view class in the list of parents.
     """
     add_steps_form_class = AddStepsForm
     change_step_form_class = ChangeStepForm
@@ -863,7 +869,7 @@ class AddMultipleTypeStepsForm(AddMyStepsForm):
 
 
 class MultipleStepsTypeMixin(MultipleStepsMixin):
-    """View class for depositions the steps of which are of different types (i.e.,
+    """Mixin class for depositions the steps of which are of different types (i.e.,
     different models).  You can see it in action in the module
     :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
     the class variable :py:attr:`form_class`, you must set:
@@ -878,6 +884,8 @@ class MultipleStepsTypeMixin(MultipleStepsMixin):
       :py:class:`~samples.utils.views.SubprocessForm`
     :type short_labels: dict mapping
       :py:class:`~samples.utils.views.SubprocessForm` to unicode.
+
+    This mixin must come before the main view class in the list of parents.
     """
     model = None
     form_class = None
@@ -962,6 +970,10 @@ class MultipleStepsTypeMixin(MultipleStepsMixin):
 
 
 class DepositionWithoutLayersView(ProcessMultipleSamplesView):
+    """Abstract base class for deposition views.  It contains common code for all
+    types of deposition views.  Since it sets a samples form, it is not a
+    mixin.
+    """
 
     def build_forms(self):
         if "samples" not in self.forms:
@@ -971,9 +983,37 @@ class DepositionWithoutLayersView(ProcessMultipleSamplesView):
 
 
 class DepositionView(MultipleStepsMixin, DepositionWithoutLayersView):
+    """View class for views for depositions with layers.  The layers of the process
+    must always be of the same type.  If they are not, you must use
+    :py:class:`DepositionMultipleTypeView` instead.  Additionally to
+    :py:attr:`form_class`, you must set the :py:attr:`step_form_class` class
+    variable to the form class to be used for the layers.
+
+    The layer form should be a subclass of
+    :py:class:`~samples.utils.views.SubprocessForm`.
+    """
+
     error_message_no_steps = _("No layers given.")
 
+
 class DepositionMultipleTypeView(MultipleStepsTypeMixin, DepositionWithoutLayersView):
+    """View class for depositions the layers of which are of different types (i.e.,
+    different models).  You can see it in action in the module
+    :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
+    the class variable :py:attr:`form_class`, you must set:
+
+    :ivar step_form_classes: This is a tuple of the form classes for the layers
+
+    :ivar short_labels: *(optional)* This is a dict mapping a layer form class
+      to a concise name of that layer type.  It is used in the selection widget
+      of the add-step form.
+
+    :type step_form_classes: tuple of
+      :py:class:`~samples.utils.views.SubprocessForm`
+    :type short_labels: dict mapping
+      :py:class:`~samples.utils.views.SubprocessForm` to unicode.
+    """
+
     error_message_no_steps = _("No layers given.")
 
 
