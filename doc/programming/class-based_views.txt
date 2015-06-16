@@ -69,4 +69,4 @@ Mixins
 .. autoclass:: samples.utils.views.RemoveFromMySamplesMixin
 .. autoclass:: samples.utils.views.SubprocessesMixin
 .. autoclass:: samples.utils.views.MultipleStepsMixin
-.. autoclass:: samples.utils.views.MultipleStepsTypeMixin
+.. autoclass:: samples.utils.views.MultipleStepTypesMixin

@@ -46,7 +46,7 @@ from samples import models
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
-           "MultipleStepsMixin", "MultipleStepsTypeMixin", "SimpleRadioSelectRenderer",
+           "MultipleStepsMixin", "MultipleStepTypesMixin", "SimpleRadioSelectRenderer",
            "DepositionView", "DepositionMultipleTypeView")
 
 
@@ -868,7 +868,7 @@ class AddMultipleTypeStepsForm(AddMyStepsForm):
         return structure_changed, new_steps
 
 
-class MultipleStepsTypeMixin(MultipleStepsMixin):
+class MultipleStepTypesMixin(MultipleStepsMixin):
     """Mixin class for depositions the steps of which are of different types (i.e.,
     different models).  You can see it in action in the module
     :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
@@ -899,7 +899,7 @@ class MultipleStepsTypeMixin(MultipleStepsMixin):
         step_type = forms.CharField()
 
     def __init__(self, **kwargs):
-        super(MultipleStepsTypeMixin, self).__init__(**kwargs)
+        super(MultipleStepTypesMixin, self).__init__(**kwargs)
         if not self.short_labels:
             self.short_labels = {cls: cls.Meta.model._meta.verbose_name for cls in self.step_form_classes}
         self.new_step_choices = tuple((cls.Meta.model.__name__.lower(), self.short_labels[cls])
@@ -996,7 +996,7 @@ class DepositionView(MultipleStepsMixin, DepositionWithoutLayersView):
     error_message_no_steps = _("No layers given.")
 
 
-class DepositionMultipleTypeView(MultipleStepsTypeMixin, DepositionWithoutLayersView):
+class DepositionMultipleTypeView(MultipleStepTypesMixin, DepositionWithoutLayersView):
     """View class for depositions the layers of which are of different types (i.e.,
     different models).  You can see it in action in the module
     :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
