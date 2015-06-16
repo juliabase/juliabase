@@ -17,10 +17,12 @@
 .. along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+.. index::
+   pair: class-based; views
+
 ====================
 Class-based views
 ====================
-
 
 Class-based views are highly practical for the add/edit view of physical
 processes because they keep code duplication at a minimum.  In some cases, you
@@ -70,3 +72,79 @@ Mixins
 .. autoclass:: samples.utils.views.SubprocessesMixin
 .. autoclass:: samples.utils.views.MultipleStepsMixin
 .. autoclass:: samples.utils.views.MultipleStepTypesMixin
+
+
+.. index:: sub-processes
+
+Sub-processes
+================
+
+Quite often, there is the need to divide a process further into sub-processes.
+JuliaBase realises this by special mixin classes.  In this section, I discuss
+the bigger picture of it.  Look at the reference above for the details and
+further information.
+
+There are three mixins that deal with sub-processes:
+
+- :py:class:`~samples.utils.views.SubprocessesMixin`
+- :py:class:`~samples.utils.views.MultipleStepsMixin`
+- :py:class:`~samples.utils.views.MultipleStepTypesMixin`
+
+
+``SubprocessesMixin``
+---------------------
+
+This is a lightweight solution if you just want to have the forms for
+sub-processes auto-generated.  It lets you create an edit/add view which allows
+the user to enter the number of sub-processes, and to enter the sub-processes'
+data.  This mixin does not enforce any ordering of the sub-processes – you may,
+howvever, enforce an ordering in the show view yourself, possibly by a model
+setting.
+
+Because of the lack of user convenience, this mixin is useful particularly for
+edit/add views which are primarily used by programs (e.g. crawlers) rather than
+by human beings.  The solar simulator of the INM institute app demonstrates how
+to use this mixin.
+
+
+.. index:: steps
+
+``MultipleStepsMixin``
+----------------------
+
+This mixin realises the JuliaBase concept of a *step*.  Steps are ordered
+sub-processes.  On the model layer, they are models *not* derived from
+``Process`` that contain an interger field ``number``.  This field is used to
+define the ordering, and helps JuliaBase to provide some convenience
+functionality: Re-ordering steps, duplicating them, deleting them.
+
+The ``MultipleStepsMixin`` is the main ingredient for the class
+:py:class:`~samples.utils.views.DepositionView`.  You can see the latter in
+action in the 5-chamber deposition views of the INM institute app.
+
+
+.. index:: My steps
+
+“My steps”
+..........
+
+Moreover with steps, your users can use something called “my steps”.  It is a
+list of favourite steps that occur frequently.  Every step in this list has a
+nickname, chosen by the user.  When composing a new process, the user can
+select from this list instead of entering the step data manually.  JuliaBase
+stores the “my steps” list for each user, however, you must add a view that
+lets the user set this list for each process class(es) that should be
+supported.  In JuliaBase's example app “institute”, a “my layers” view is
+included which realises this functionality for deposition layers.
+
+
+``MultipleStepTypesMixin``
+--------------------------
+
+This mixin is the same as above, but each step may be of a different model
+class.  Using this mixin is slightly more complicated but also more powerful
+for obvious reasons.
+
+This forms the basis of
+:py:class:`~samples.utils.views.DepositionMultipleTypeView`.  You can see the
+latter in action in the cluster-tool deposition views of the INM institute app.
