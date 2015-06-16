@@ -593,6 +593,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
     """
     add_steps_form_class = AddStepsForm
     change_step_form_class = ChangeStepForm
+    error_message_no_steps = _("No steps given.")
 
     def _change_structure(self):
         """Apply any step-based rearrangements the user has requested.  This is step
@@ -808,7 +809,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         """
         referentially_valid = super(MultipleStepsMixin, self).is_referentially_valid()
         if not self.forms["steps"]:
-            self.forms["process"].add_error(None, _("No steps given."))
+            self.forms["process"].add_error(None, self.error_message_no_steps)
             referentially_valid = False
         return referentially_valid
 
@@ -963,7 +964,11 @@ class MultipleStepsTypeMixin(MultipleStepsMixin):
                 raise AssertionError("Wrong first field in new_steps structure: " + new_step[0])
 
 
-DepositionView = MultipleStepsMixin
-DepositionMultipleTypeView = MultipleStepsTypeMixin
+class DepositionView(MultipleStepsMixin):
+    error_message_no_steps = _("No layers given.")
+
+class DepositionMultipleTypeView(MultipleStepsTypeMixin):
+    error_message_no_steps = _("No layers given.")
+
 
 _ = ugettext
