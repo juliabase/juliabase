@@ -51,9 +51,7 @@ class MainFeaturesTest(TestCase):
         response = self.client.get("/results/add/")
         self.assertEqual(response.status_code, 200)
 
-    def test_add_5_chamber_deposition(self):
-        response = self.client.get("/5-chamber_depositions/add/")
-        self.assertEqual(response.status_code, 200)
+    # The 5-chamber deposition has its own test suite.
 
     def test_add_cluster_tool_deposition(self):
         response = self.client.get("/cluster_tool_depositions/add/")
