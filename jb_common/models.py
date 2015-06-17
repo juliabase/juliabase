@@ -75,7 +75,7 @@ class UserDetails(models.Model):
     take care that if you compare this with another department which may also
     be ``None``, that in case both are ``None``, the result is ``False``.
     Every sensible JuliaBase installation will have at least one department."""
-    language = models.CharField(_("language"), max_length=10, choices=languages, default="de")
+    language = models.CharField(_("language"), max_length=10, choices=languages, default="en")
     browser_system = models.CharField(_("operating system"), max_length=10, default="windows")
     layout_last_modified = models.DateTimeField(_("layout last modified"), auto_now_add=True)
     """Timestamp at which the settings which affect appearance of the HTML were
