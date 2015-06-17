@@ -27,6 +27,22 @@ import re
 
 
 def assertContainsError(test_case, response, heading, message="This field is required."):
+    """Asserts that an error is reported in the response.  This error is shown
+    in white on red on the web page, so we scan the HTML for it.
+
+    :param test_case: current test case
+    :param response: response object of the test case's HTTP client
+    :param heading: The heading (a.k.a. label) of the error message.  For
+      single fields, this is the name of the field, starting with an uppercase
+      letter.  For non-field errors, it is the hardcoded label of the template,
+      usually something like “Error in …”.
+    :param message: the error message
+
+    :type test_case: ``TestCase``
+    :type response: ``django.http.HttpResponse``
+    :type heading: str
+    :type message: str
+    """
     test_case.assertRegexpMatches(response.content,
                                   r"""<p>{}</p><ul class="errorlist( nonfield)?"><li>{}</li></ul>""".format(
                                       re.escape(heading), re.escape(message)),
