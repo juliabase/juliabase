@@ -136,7 +136,7 @@ def show(request, username, user_hash):
     purpose.
 
     :param request: the current HTTP Request object
-    :param username: the login name of the user for whic the news should be
+    :param username: the login name of the user for which the news should be
         delivered
     :param user_hash: the secret user hash, which works as an ersatz password
         because the feed clients can't login.

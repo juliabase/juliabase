@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-09 15:09+0200\n"
-"PO-Revision-Date: 2015-04-09 15:02+0200\n"
+"POT-Creation-Date: 2015-06-02 04:25+0200\n"
+"PO-Revision-Date: 2015-06-02 04:27+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -94,64 +94,68 @@ msgstr "Laborbücher"
 msgid "manage"
 msgstr "verwalten"
 
-#: samples/apps.py:89 samples/templates/samples/main_menu.html:151
+#: samples/apps.py:88
+msgid "manage “My Samples”"
+msgstr "„Meine Proben“ verwalten"
+
+#: samples/apps.py:91 samples/templates/samples/main_menu.html:151
 #: samples/templates/samples/show_sample.html:88 samples/views/sample.py:1071
 msgid "rename sample"
 msgstr "Probe umbenennen"
 
-#: samples/apps.py:90 samples/templates/samples/main_menu.html:175
+#: samples/apps.py:92 samples/templates/samples/main_menu.html:175
 #: samples/views/merge_samples.py:210
 msgid "merge samples"
 msgstr "verschmelze Proben"
 
-#: samples/apps.py:91 samples/models/common.py:1077
+#: samples/apps.py:93 samples/models/common.py:1077
 #: samples/templates/samples/main_menu.html:177
 msgid "sample claims"
 msgstr "Beanspruchungen von Proben"
 
-#: samples/apps.py:95 samples/templates/samples/main_menu.html:120
+#: samples/apps.py:97 samples/templates/samples/main_menu.html:120
 #: samples/views/topic.py:146
 msgid "add new topic"
 msgstr "neues Thema hinzufügen"
 
-#: samples/apps.py:97 samples/templates/samples/main_menu.html:124
+#: samples/apps.py:99 samples/templates/samples/main_menu.html:124
 msgid "change topic memberships"
 msgstr "Mitglieder von Themen ändern"
 
-#: samples/apps.py:100 samples/templates/samples/main_menu.html:134
+#: samples/apps.py:102 samples/templates/samples/main_menu.html:134
 #: samples/views/external_operator.py:85
 msgid "add external operator"
 msgstr "neuen externen Operateur anlegen"
 
-#: samples/apps.py:102 samples/templates/samples/main_menu.html:137
+#: samples/apps.py:104 samples/templates/samples/main_menu.html:137
 msgid "edit external operator"
 msgstr "externen Operateur ändern"
 
-#: samples/apps.py:104 samples/templates/samples/main_menu.html:161
+#: samples/apps.py:106 samples/templates/samples/main_menu.html:161
 #: samples/templates/samples/topics_and_permissions.html:60
 #: samples/views/permissions.py:256
 msgid "permissions"
 msgstr "Berechtigungen"
 
-#: samples/apps.py:105 samples/templates/samples/main_menu.html:163
+#: samples/apps.py:107 samples/templates/samples/main_menu.html:163
 #: samples/views/task_lists.py:356
 msgid "task lists"
 msgstr "Auftragslisten"
 
-#: samples/apps.py:106 samples/templates/samples/main_menu.html:170
+#: samples/apps.py:108 samples/templates/samples/main_menu.html:170
 msgid "newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: samples/apps.py:109 samples/models/common.py:1534
+#: samples/apps.py:111 samples/models/common.py:1534
 #: samples/templates/samples/main_menu.html:173 samples/views/status.py:178
 msgid "status messages"
 msgstr "Statusmeldungen"
 
-#: samples/apps.py:110 samples/templates/samples/main_menu.html:179
+#: samples/apps.py:112 samples/templates/samples/main_menu.html:179
 msgid "inspect crawler logs"
 msgstr "Crawler-Logs überprüfen"
 
-#: samples/apps.py:112 samples/templates/samples/main_menu.html:147
+#: samples/apps.py:114 samples/templates/samples/main_menu.html:147
 msgid "administration"
 msgstr "Administration"
 
@@ -467,7 +471,7 @@ msgstr "Beendigungen der Existenz"
 #: samples/models/common.py:1114
 #: samples/templates/samples/topics_and_permissions.html:101
 #: samples/templates/samples/topics_and_permissions.html:114
-#: samples/utils/views/class_views.py:847
+#: samples/utils/views/class_views.py:856
 msgid "none"
 msgstr "keine"
 
@@ -559,7 +563,7 @@ msgstr ""
 msgid "get only important news"
 msgstr "nur wichtige Neuigkeiten"
 
-#: samples/models/common.py:1433
+#: samples/models/common.py:1433 samples/views/my_layers.py:194
 msgid "My Layers"
 msgstr "Meine Schichten"
 
@@ -579,12 +583,12 @@ msgstr "Meine-Proben-Liste zuletzt geändert"
 msgid "identifying data hash"
 msgstr "identifizierender Daten-Hash"
 
-#: samples/models/common.py:1467 samples/views/user_details.py:48
+#: samples/models/common.py:1467 samples/views/user_details.py:49
 msgid "subscribed newsfeeds"
 msgstr "abonnierte Newsfeeds"
 
 #: samples/models/common.py:1469 samples/models/common.py:1470
-#: samples/views/user_details.py:49
+#: samples/views/user_details.py:50
 msgid "folded processes"
 msgstr "eingefaltete Prozesse"
 
@@ -601,7 +605,7 @@ msgstr "eingefaltete Themen"
 msgid "folded sample series"
 msgstr "eingefaltete Probenserien"
 
-#: samples/models/common.py:1480 samples/views/user_details.py:50
+#: samples/models/common.py:1480 samples/views/user_details.py:51
 msgid "show users from department"
 msgstr "zeige Benutzer der Abteilung"
 
@@ -1510,6 +1514,10 @@ msgstr "Fehler im externen Operateur"
 #: samples/templates/samples/edit_preferences.html:28
 msgid "Error in initials"
 msgstr "Fehler im Kürzel"
+
+#: samples/templates/samples/edit_my_layers.html:35
+msgid "Error in My Layer"
+msgstr "Fehler in „Meinem Layer“"
 
 #: samples/templates/samples/edit_my_samples.html:28
 msgid "Error in “My Samples”"
@@ -2855,49 +2863,49 @@ msgstr "{class_name} hinzufügen"
 msgid "number of subprocesses"
 msgstr "Anzahl der Einzelprozesse"
 
-#: samples/utils/views/class_views.py:464
+#: samples/utils/views/class_views.py:473
 msgid "No subprocesses given."
 msgstr "Keine Einzelprozesse angegeben."
 
-#: samples/utils/views/class_views.py:482
+#: samples/utils/views/class_views.py:491
 msgid "duplicate this layer"
 msgstr "diese Schicht duplizieren"
 
-#: samples/utils/views/class_views.py:483
+#: samples/utils/views/class_views.py:492
 msgid "remove this layer"
 msgstr "diese Schicht entfernen"
 
-#: samples/utils/views/class_views.py:484
+#: samples/utils/views/class_views.py:493
 msgid "move this layer"
 msgstr "diese Schicht verschieben"
 
-#: samples/utils/views/class_views.py:485
+#: samples/utils/views/class_views.py:494
 msgid "up"
 msgstr "hoch"
 
-#: samples/utils/views/class_views.py:485
+#: samples/utils/views/class_views.py:494
 msgid "down"
 msgstr "runter"
 
-#: samples/utils/views/class_views.py:497
+#: samples/utils/views/class_views.py:506
 msgid "You can't duplicate, move, or remove a layer at the same time."
 msgstr ""
 "Sie können nicht gleichzeitig dieselbe Schicht duplizieren, entfernen oder "
 "verschieben."
 
-#: samples/utils/views/class_views.py:506
+#: samples/utils/views/class_views.py:515
 msgid "Nickname of My Layer to be added"
 msgstr "Spitzname Meiner Schicht, die hinzugefügt werden soll"
 
-#: samples/utils/views/class_views.py:560
+#: samples/utils/views/class_views.py:569
 msgid "Number of layers to be added"
 msgstr "Anzahl der Schichten, die hinzugefügt werden sollen"
 
-#: samples/utils/views/class_views.py:803
+#: samples/utils/views/class_views.py:812
 msgid "No layers given."
 msgstr "Keine Schichten angegeben."
 
-#: samples/utils/views/class_views.py:841
+#: samples/utils/views/class_views.py:850
 msgid "Layer to be added"
 msgstr "Schicht, die hinzugefügt werden soll"
 
@@ -3295,6 +3303,59 @@ msgstr "Keine Proben angegeben."
 msgid "Samples were successfully merged."
 msgstr "Die Proben wurden erfolgreich verschmolzen."
 
+#: samples/views/my_layers.py:43
+msgid "Nickname"
+msgstr "Spitzname"
+
+#: samples/views/my_layers.py:44
+msgid "Layer identifier"
+msgstr "Schicht-Bezeichnung"
+
+#: samples/views/my_layers.py:45
+msgid "in the form \"deposition number\"-\"layer number\""
+msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
+
+#: samples/views/my_layers.py:46 samples/views/split_and_rename.py:45
+msgid "Delete"
+msgstr "Löschen"
+
+#: samples/views/my_layers.py:54
+msgid "Deposition and layer number must be separated by \"-\"."
+msgstr "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
+
+#: samples/views/my_layers.py:59
+msgid "Deposition number doesn't exist."
+msgstr "Diese Deposition gibt es nicht."
+
+#: samples/views/my_layers.py:63
+msgid "Layer number isn't a number."
+msgstr "Die Schichtnummer ist keine Zahl."
+
+#: samples/views/my_layers.py:66
+msgid "This layer does not exist in this deposition."
+msgstr "In dieser Deposition gibt es diesen Layer nicht."
+
+#: samples/views/my_layers.py:142
+msgid "Nickname is already given."
+msgstr "Dieser Spitzname ist schon vergeben."
+
+#: samples/views/my_layers.py:159
+msgid "Successfully changed “My Layers”"
+msgstr "Erfolgreich „Meine Schichten“ geändert"
+
+#: samples/views/my_layers.py:161
+msgid "Nothing changed."
+msgstr "Es wurde nichts geändert."
+
+#: samples/views/my_layers.py:181
+msgid "You can't access the “My Layers” section of another user."
+msgstr ""
+"Sie düfen nicht auf „Meine Schichten“ eines anderen Benutzers zugreifen."
+
+#: samples/views/my_layers.py:190
+msgid "Changes did not saved yet."
+msgstr "Veränderungen wurden noch nicht gespeichert."
+
 #: samples/views/my_samples.py:54
 msgid "New currently responsible person"
 msgstr "Neuer aktuell Verantwortlicher"
@@ -3376,8 +3437,8 @@ msgstr "Erfolgreich „Meine Proben“ verarbeitet."
 
 #: samples/views/my_samples.py:275
 #, python-brace-format
-msgid "Edit “My Samples” of {user_name}"
-msgstr "„Meine Proben“ von {user_name} ändern"
+msgid "Manage “My Samples” of {user_name}"
+msgstr "„Meine Proben“ von {user_name} verwalten"
 
 #: samples/views/permissions.py:155
 msgid "Change the permissions of"
@@ -3721,10 +3782,6 @@ msgstr "Probenumbenennung für {deposition}"
 msgid "New sample purpose"
 msgstr "Neuer Probenzweck"
 
-#: samples/views/split_and_rename.py:45
-msgid "Delete"
-msgstr "Löschen"
-
 #: samples/views/split_and_rename.py:64
 msgid "The new sample name must start with the parent sample's name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
@@ -3943,70 +4000,30 @@ msgstr ""
 msgid "Change topic memberships of “{0}”"
 msgstr "Mitglieder des Themas “{0}” ändern"
 
-#: samples/views/user_details.py:128
+#: samples/views/user_details.py:129
 msgid "You can't access the preferences of another user."
 msgstr ""
 "Sie können nicht auf die Einstellungen eines anderen Benutzers zugreifen."
 
-#: samples/views/user_details.py:143
+#: samples/views/user_details.py:144
 msgid "The preferences were successfully updated."
 msgstr "Die persönlichen Einstellungen wurden erfolgreich geändert."
 
-#: samples/views/user_details.py:148
+#: samples/views/user_details.py:149
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Ändere Einstellungen für {user_name}"
 
-#: samples/views/user_details.py:158
+#: samples/views/user_details.py:160
 msgid "You can't access the list of topics and permissions of another user."
 msgstr ""
 "Sie können nicht auf die Themenliste und die Berechtigungen eines anderen "
 "Benutzers zugreifen."
 
-#: samples/views/user_details.py:160
+#: samples/views/user_details.py:166
 #, python-brace-format
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
-
-#~ msgid "Error in My Layer"
-#~ msgstr "Fehler in „Meinem Layer“"
-
-#~ msgid "Nickname"
-#~ msgstr "Spitzname"
-
-#~ msgid "Layer identifier"
-#~ msgstr "Schicht-Bezeichnung"
-
-#~ msgid "in the form \"deposition number\"-\"layer number\""
-#~ msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
-
-#~ msgid "Deposition and layer number must be separated by \"-\"."
-#~ msgstr ""
-#~ "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
-
-#~ msgid "Deposition number doesn't exist."
-#~ msgstr "Diese Deposition gibt es nicht."
-
-#~ msgid "Layer number isn't a number."
-#~ msgstr "Die Schichtnummer ist keine Zahl."
-
-#~ msgid "This layer does not exist in this deposition."
-#~ msgstr "In dieser Deposition gibt es diesen Layer nicht."
-
-#~ msgid "Nickname is already given."
-#~ msgstr "Dieser Spitzname ist schon vergeben."
-
-#~ msgid "Successfully changed “My Layers”"
-#~ msgstr "Erfolgreich „Meine Schichten“ geändert"
-
-#~ msgid "Nothing changed."
-#~ msgstr "Es wurde nichts geändert."
-
-#~ msgid "You can't access the “My Layers” section of another user."
-#~ msgstr "Sie düfen nicht auf „Meine Schichten“ eines anderen Benutzers zugreifen."
-
-#~ msgid "Changes did not saved yet."
-#~ msgstr "Veränderungen wurden noch nicht gespeichert."
 
 #~ msgid "Rename sample"
 #~ msgstr "Probe umbenennen"

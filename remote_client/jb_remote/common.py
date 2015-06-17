@@ -42,12 +42,16 @@ from __future__ import absolute_import, unicode_literals, division
 from . import six
 from .six.moves import urllib, http_cookiejar, _thread
 
-import mimetypes, json, logging, os, datetime, time, random, re
+import mimetypes, json, logging, os, datetime, time, random, re, decimal
 from io import IOBase
 if six.PY3:
     file = IOBase
 
 from . import settings
+
+
+__all__ = ["login", "logout", "connection", "primary_keys", "JuliaBaseError", "setup_logging",
+           "format_timestamp", "parse_timestamp", "as_json"]
 
 
 def setup_logging(destination=None):
@@ -514,3 +518,58 @@ def sanitize_for_markdown(text):
                 lines[j] += "  "
         paragraphs[i] = "\n".join(lines)
     return "\n\n".join(paragraphs) + "\n"
+
+
+class JSONEncoder(json.JSONEncoder):
+    """JSON encoding class which can handle way more than the basic datatypes the
+    default encoder of Python can handle.
+    """
+    def default(self, o):
+        try:
+            return float(o)
+        except (ValueError, TypeError):
+            try:
+                return list(o)
+            except (ValueError, TypeError):
+                try:
+                    if isinstance(o, datetime.datetime):
+                        r = o.isoformat()
+                        if o.microsecond:
+                            r = r[:23] + r[26:]
+                        if r.endswith("+00:00"):
+                            r = r[:-6] + "Z"
+                        return r
+                    elif isinstance(o, datetime.date):
+                        return o.isoformat()
+                    elif isinstance(o, datetime.time):
+                        if o.tzinfo is not None and o.tzinfo.utcoffset(o) is not None:
+                            raise ValueError("JSON can't represent timezone-aware times.")
+                        r = o.isoformat()
+                        if o.microsecond:
+                            r = r[:12]
+                        return r
+                    elif isinstance(o, decimal.Decimal):
+                        return str(o)
+                    else:
+                        return super(JSONEncoder, self).default(o)
+                except (ValueError, TypeError):
+                    return six.text_type(o)
+
+
+def as_json(value):
+    """Prints the value in JSON fromat to standard output.  This routine comes in
+    handy if Python is called from another program which parses the standard
+    output.  Then, you can say
+
+    ::
+
+        as_json(User("r.calvert").permissions)
+
+    and the calling program (written e.g. in Delphi or LabVIEW) just has to
+    convert JSON into its own data structures.
+
+    :param value: the data to be printed as JSON.
+
+    :type value: ``object`` (an arbitrary Python object)
+    """
+    print(json.dumps(value, cls=JSONEncoder))

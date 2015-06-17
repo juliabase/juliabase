@@ -36,7 +36,7 @@ because they will form the rows of the table, by being flattened.
 Every `DataNode` has not only children, but also key–value items containing the
 actual data.  key is unicode, value is a Python object.  Additionally, it has a
 ``name`` which denotes the type or class of the `DataNode`.  For example, the
-``name`` of a process may be “PDS measurement” or “6-chamber deposition”.
+``name`` of a process may be “PDS measurement” or “5-chamber deposition”.
 
 Making the node names unique
 ............................

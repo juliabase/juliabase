@@ -714,15 +714,15 @@ def collect_subform_indices(post_data, subform_key="number", prefix=""):
 level0_pattern = re.compile(r"(?P<level0_index>\d+)-(?P<id>.+)")
 level1_pattern = re.compile(r"(?P<level0_index>\d+)_(?P<level1_index>\d+)-(?P<id>.+)")
 def normalize_prefixes(post_data):
-    """Manipulates the prefixes of POST data keys for bringing them in
-    consecutive order.  It only works for at most two-level numeric prefixes,
-    which is sufficient for most purposes.  For example, in the 6-chamber
-    deposition view, top-level is the layer index, and second-level is the
-    channel index.
+    """Manipulates the prefixes of POST data keys for bringing them in consecutive
+    order.  It only works for at most two-level numeric prefixes, which is
+    sufficient for most purposes.  For example, in a more complex deposition
+    view with two nested sub-models (layer and gas), top-level may be the layer
+    index, and second-level may be the deposition gas index.
 
     The format of prefixes must be "1" for layers, and "1_1" for channels.
 
-    By deleting layers or channels, the indeces might be sparse, so this
+    By deleting layers or channels, the indices might be sparse, so this
     routine re-indexes everything so that the gaps are filled.
 
     :param post_data: the POST data as returned by ``request.POST``.

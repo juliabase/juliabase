@@ -234,7 +234,7 @@ class TextSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = self.field.formfield(required=False)
+        self.form.fields[self.field.name] = self.field.formfield(required=False, initial=None)
 
     def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
@@ -258,7 +258,7 @@ class TextNullSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = self.TextNullForm(data, prefix=prefix)
-        self.form.fields[self.field.name + "_main"] = self.field.formfield(required=False)
+        self.form.fields[self.field.name + "_main"] = self.field.formfield(required=False, initial=None)
         self.form.fields[self.field.name + "_null"] = forms.BooleanField(label=_("explicitly empty"), required=False)
 
     def get_values(self, query_paths={}):
@@ -279,7 +279,7 @@ class IntegerSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = self.field.formfield(required=False)
+        self.form.fields[self.field.name] = self.field.formfield(required=False, initial=None)
 
 
 class IntervalSearchField(RangeSearchField):
@@ -290,8 +290,8 @@ class IntervalSearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = self.field.formfield(required=False)
-        self.form.fields[self.field.name + "_max"] = self.field.formfield(required=False)
+        self.form.fields[self.field.name + "_min"] = self.field.formfield(required=False, initial=None)
+        self.form.fields[self.field.name + "_max"] = self.field.formfield(required=False, initial=None)
 
 class IntervalQuantitySearchField(RangeSearchField):
     """Class for search fields containing numerical values (integer, decimal,
@@ -301,8 +301,8 @@ class IntervalQuantitySearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = self.field.formfield(required=False)
-        self.form.fields[self.field.name + "_max"] = self.field.formfield(required=False)
+        self.form.fields[self.field.name + "_min"] = self.field.formfield(required=False, initial=None)
+        self.form.fields[self.field.name + "_max"] = self.field.formfield(required=False, initial=None)
 
 
 class ChoiceSearchField(SearchField):
@@ -313,7 +313,7 @@ class ChoiceSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = self.field.formfield(required=False,
+        self.form.fields[self.field.name] = self.field.formfield(required=False, initial="",
                                                                  choices=[("", "---------")] + list(self.field.choices))
 
     def get_values(self, query_paths={}):
@@ -386,8 +386,10 @@ class DateTimeSearchField(RangeSearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name + "_min"] = self.field.formfield(form_class=DateTimeField, required=False, start=True)
-        self.form.fields[self.field.name + "_max"] = self.field.formfield(form_class=DateTimeField, required=False, start=False)
+        self.form.fields[self.field.name + "_min"] = self.field.formfield(form_class=DateTimeField,
+                                                                          required=False, initial=None, start=True)
+        self.form.fields[self.field.name + "_max"] = self.field.formfield(form_class=DateTimeField,
+                                                                          required=False, initial=None, start=False)
 
 
 class BooleanSearchField(SearchField):
@@ -403,7 +405,7 @@ class BooleanSearchField(SearchField):
 
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
-        self.form.fields[self.field.name] = self.field.formfield(form_class=forms.ChoiceField, required=False,
+        self.form.fields[self.field.name] = self.field.formfield(form_class=forms.ChoiceField, required=False, initial="",
                                                 choices=(("", _("doesn't matter")), ("yes", _("yes")), ("no", _("no"))),
                                                 widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer))
 

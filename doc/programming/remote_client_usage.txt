@@ -1,0 +1,389 @@
+.. -*- mode: rst; coding: utf-8; ispell-local-dictionary: "english" -*-
+..
+.. This file is part of JuliaBase, see http://www.juliabase.org.
+.. Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+..
+.. This program is free software: you can redistribute it and/or modify it under
+.. the terms of the GNU Affero General Public License as published by the Free
+.. Software Foundation, either version 3 of the License, or (at your option) any
+.. later version.
+..
+.. This program is distributed in the hope that it will be useful, but WITHOUT
+.. ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+.. FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+.. details.
+..
+.. You should have received a copy of the GNU Affero General Public License
+.. along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+.. index:: remote client
+
+======================
+Talking to JuliaBase
+======================
+
+You have a measurement or processing setup, and you have access to the
+program(s) that run this setup?  This is the ideal situation to make a direct,
+bi-directional connection between your experimental setup and the central
+JuliaBase server.  This has many benefits:
+
+- You can assure that only people authorised for this apparatus can log in your
+  program.
+- You can assure that the header data in your data files is correct, in
+  particular operator name and sample name.
+- Each run is immediately available in the central database.
+- Operators needn't enter each run into the browser, which is inconvenient and
+  error-prone.
+- Operators can pick the affected sample(s) comfortably from a list instead of
+  typing the sample names explicitly.
+- If a run is connected with a task, this task can automatically updated.
+
+This chapter is intended as a gentle introduction to how to realise this.
+
+
+The big picture
+================
+
+JuliaBase is written in the Python programming language.  This is also true for
+the :doc:`Remote Client <remote_client>`, which is a Python library that you
+can install on any lab or office computer and use it to talk to the central
+JuliaBase server.
+
+However, you needn't use Python to communicate with JuliaBase.  This is just
+the most natural way.  But JuliaBase's source code includes bindings to Delphi,
+Visual Basic, and LabVIEW.  Further bindings can be added very easily once the
+demand is there.
+
+Such a binding works by calling the Python interpreter in the background.  This
+indirection causes a very slight performance loss.  Moreover, you need to
+install a Python interpreter.  However, the simplicity and maintainability of
+this approach make up for it.
+
+
+Installation
+============
+
+First, make sure that `Python`_ is installed on your computer.
+
+.. _Python: https://www.python.org/downloads/
+
+Then, install the remote client package (which is an :ref:`adaption <Extending
+the remote client>` of the original JuliaBase client to your institute or
+group).  Ask your local JuliaBase guru for how to do this.  Ideally, it is
+available in a shared directory, so that you don't have to do anything.  You
+should make sure that the remote client package's directory is in the
+PYTHONPATH.  In the following, I call the adapted module
+:code:`jb_institute_inm`; your name with probably be different.
+
+
+.. index::
+   pair: bindings; language
+
+Basic usage
+=============
+
+The next steps differ depending on the programming language you use.  The basic
+principle is always the same, though: You log in on server with user name and
+password, execute commands that read from or write to the database, and log
+out.
+
+In all non-Python languages, however, you cannot give the commands directly.
+Instead, you build a string that *contains* the Python commands and pass it to
+a special function called :code:`execute_jb` or similar.
+
+
+Python
+------
+
+In our example code, we read the data of sample “14-JS-1” and then change its
+current location:
+
+.. code-block:: python
+
+    from jb_remote_inm import *
+
+    login("juliabase", "12345")
+
+    sample = Sample("14-JS-1")
+    sample.current_location = "main lab"
+    sample.edit_description = "location changed"
+    sample.submit()
+
+    logout()
+
+
+.. index:: Visual Basic
+
+Visual Basic
+------------
+
+The Visual Basic binding in :file:`remote_client/visual_basic/juliabase.vb` can
+be used like the following:
+
+.. code-block:: vbnet
+
+    Imports System
+    Imports Juliabase
+
+    Public Module ModuleMain
+       Sub Main()
+          JB_Module_Name = "jb_remote_inm"
+
+          Execute_JB("juliabase", "12345",
+                "sample = Sample('14-JS-1');" &
+                "sample.current_location = 'main lab';" &
+                "sample.edit_description = 'location changed';" &
+                "sample.submit()")
+       End Sub
+    End Module
+
+
+.. index:: Delphi
+
+Delphi
+------
+
+For Delphi, in order to achieve the same as in the previous sections, you say
+
+.. code-block:: delphi
+
+    program juliabase_example;
+
+    {$APPTYPE CONSOLE}
+
+    uses
+      SysUtils, juliabase;
+
+    begin
+      jb_module_name := 'jb_remote_inm';
+      execute_jb('juliabase', '12345',
+           'sample = Sample("14-JS-1");' +
+           'sample.current_location = "main lab";' +
+           'sample.edit_description = "location changed";' +
+           'sample.submit()');
+    end.
+
+The necessary unit can be found in :file:`remote_client/delphi/juliabase.pas`.
+
+
+.. index:: LabVIEW
+
+LabVIEW
+-------
+
+The LabVIEW virtual instrument “execute jb.vi” in
+:file:`remote_client/labview/juliabase.llb` is very different from the other
+bindings for obvious reasons, but the general method is the same: You pass
+login, password, and the module name in a data structure called “settings” to
+the VI, and the result of the Python process is returned:
+
+.. image:: ../images/labview_demo.png
+   :alt: LabVIEW demo VI
+
+
+Getting data in non-Python languages
+------------------------------------
+
+In the non-Python languages, you don't have direct access to the results of the
+commands.  Instead, you may use Python's :py:func:`print` to send data to the
+standard output, which in turn is the return value of the :code:`execute_jb`
+function.  Then, you can extract the original data from this value.  For
+example in Delphi, you may write:
+
+.. code-block:: delphi
+
+    topic := execute_jb('juliabase', '12345', 'print(Sample("14-JS-1").topic)');
+
+Then, :code:`topic` contains the topic of the sample.  Note that :code:`topic`
+is a string.  If you need other data types, you have to convert the result
+string yourself.
+
+For more complex return values, this conversion can be cumbersome.  In
+languages with `JSON`_ support, there is a convenience function defined in the
+remote client called :py:func:`~jb_remote.common.as_json`.  It can be used
+instead of :py:func:`print`.  It prints its argument in JSON format to standard
+output.  The `LabVIEW`_ example above demonstrates the usage of this function
+in the second VI call.
+
+.. _JSON: http://json.org/
+
+
+The test server
+---------------
+
+Your institution may provide a test server for easier developing.  This way,
+you do not manipulate valuable data on the production server.  You choose the
+test server by passing :code:`testserver=True` to the :py:func:`login`
+function::
+
+    login("juliabase", "12345", testserver=True)
+
+In non-Python languages, you pass the same parameter to the :code:`execute_jb`
+function.
+
+
+Error handling
+================
+
+If something goes wrong while executing the commands, an exception is raised.
+If it is a JuliaBase-related error, this is a special exception class:
+
+============  ====================  =========================
+language      exception class name  error code attribute name
+============  ====================  =========================
+Python        JuliaBaseError        error_code
+Visual Basic  JuliabaseException    code
+Delphi        EJuliaBaseError       ErrorCode
+============  ====================  =========================
+
+Moreover, the error message is stored in the exception attribute typical of the
+respective language.
+
+If the error is not JuliaBase-related (for example, a syntax error), the
+language-typical basic exception class is raised, containing a proper error
+message.
+
+As usual, in LabVIEW, things are slightly different.  If an error occurs, it is
+set in the error output of the VI.  Error numbers greater than 6000 indicate
+JuliaBase errors.  The error message contains the details.
+
+
+Error pages in the browser
+--------------------------
+
+In case of JuliaBase errors, non-Python languages may open a browser
+automatically showing a detailed problem description.  You may turn off this
+behaviour by setting the global variable :code:`jb_open_error_page_in_browser`
+to :code:`false`.
+
+
+About passwords
+===================
+
+Passwords are sensitive data.  Never store them on the disk.  Assure that they
+never appear anywhere on the screen (use the •••• display).  Let the user input
+their password, store it in a variable, and use it to login to JuliaBase –
+that's all.
+
+
+How do I …
+=============
+
+
+… check whether the user is known to JuliaBase?
+-----------------------------------------------
+
+You login the user with the user name and password they give and check whether
+this raises a JuliaBase exception with error code 4.  If it does, the user name
+and/or the password is wrong.
+
+In Python::
+
+    try:
+        login(username, password)
+    except JuliaBaseError as error:
+        if error.error_code == 4:
+            print("Login and/or password is wrong!")
+
+In Visual Basic:
+
+.. code-block:: vbnet
+
+    Try
+        Execute_JB(login, password, "")
+    Catch e As JuliabaseException:
+        If e.code = 4 Then
+            MessageBox.Show("Login and/or password is wrong!")
+        End If
+    End Try
+
+
+… check whether the user is allowed to use my setup?
+----------------------------------------------------
+
+You retrieve the :code:`permissions` attribute of a
+:py:class:`~jb_remote.samples.User` instance.  Then, you check whether the
+“add” permission occurs in this attribute.
+
+In Python::
+
+    permissions = User(username).permissions
+    if "institute.add_pdsmeasurement" not in permissions:
+        print("You are not authorised to make PDS measurements!")
+
+In Visual Basic:
+
+.. code-block:: vbnet
+
+    Dim result As String
+    result = Execute_JB(login, password, "print(User('" & username & "').permissions)")
+    If result.IndexOf("'institute.add_pdsmeasurement'") = -1 Then
+        MessageBox.Show("You are not authorised to make PDS measurements!")
+    End If
+
+
+… check whether a sample exists?
+--------------------------------
+
+You retrieve the sample and check whether this raises an exception with error
+code 2.  If it does, a sample with that name was not found.
+
+In Python::
+
+    try:
+        Sample(sample_name)
+    except JuliaBaseError as error:
+        if error.error_code == 2:
+            print("A sample with this name does not exist!")
+
+In Visual Basic:
+
+.. code-block:: vbnet
+
+    Try
+        Execute_JB(login, password, "Sample('" & sample_name & "')")
+    Catch e As JuliabaseException:
+        If e.code = 2 Then
+            MessageBox.Show("A sample with this name does not exist!")
+        End If
+    End Try
+
+
+… add a new process?
+--------------------
+
+You instantiate the process class, set sample ID, operator, timestamp, and the
+process-specific attributes, and call the :py:meth:`submit` method of the
+process instance.
+
+In Python::
+
+    pds_measurement = PDSMeasurement()
+    pds_measurement.sample_id = Sample(sample_name).id
+    pds_measurement.operator = username
+    pds_measurement.timestamp = datetime.datetime.now()
+    pds_measurement.number = next_number
+    pds_measurement.apparatus = "pds1"
+    pds_measurement.raw_datafile = filepath
+    pds_measurement.submit()
+
+In Visual Basic:
+
+.. code-block:: vbnet
+
+    Execute_JB(login, password,
+         "pds_measurement = PDSMeasurement();" &
+         "pds_measurement.sample_id = Sample('" & sample_name & "').id;" &
+         "pds_measurement.operator = '" & login & "';" &
+         "pds_measurement.timestamp = '" & Format(Now, "yyyy-MM-dd HH:mm:ss") & "';" &
+         "pds_measurement.number = " & next_number & ";" &
+         "pds_measurement.apparatus = 'pds1';" &
+         "pds_measurement.raw_datafile = '" & filepath & "';" &
+         "pds_measurement.submit()")
+
+In order to know which instance attributes you need to set and how, look for
+documentation in the Python remote client module, or ask your local JuliaBase
+guru.
+
+..  LocalWords:  login juliabase JuliaBaseError EJuliaBaseError vbnet PDS meth
+..  LocalWords:  pdsmeasurement IndexOf pds yyyy

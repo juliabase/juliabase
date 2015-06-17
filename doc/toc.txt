@@ -33,6 +33,7 @@ JuliaBase
    programming/permissions
    programming/class-based_views
    programming/remote_client
+   programming/remote_client_usage
    programming/settings
    programming/sample_names
    programming/hacking_on_juliabase

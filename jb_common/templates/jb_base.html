@@ -25,10 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block extrahead %}
   {% block css_inclusions %}
     <link rel="stylesheet" type="text/css" media="screen" href="{% static "juliabase/css/main.css" %}"/>
+
     <link rel="stylesheet" type="text/css" media="print" href="{% static "juliabase/css/print.css" %}"/>
   {% endblock %}
   {% block refresh_tag %}{% endblock %}
-  <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
+  {% block favicon %}
+    <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
+  {% endblock %}
   <script type="text/javascript" src="{% static "juliabase/js/jquery-1.11.1.min.js" %}"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="{% url 'jb_common_jsi18n' %}"></script>
@@ -98,12 +101,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% endif %}
 
   <div class="main">
-    <div class="screen-only">
-      {% block corporate_logo %}{% endblock %}
-      <img style="float: left; margin-right: 5px"
-           src="{% static "juliabase/juliabase_logo.png" %}" width="50" height="50" alt="{% trans "JuliaBase logo" %}"/>
-      <p class="logo-text">{% block app_title %}{% endblock %}</p>
-    </div>
+    {% block branding %}
+      <div class="screen-only">
+        <img style="float: left; margin-right: 5px"
+             src="{% static "juliabase/juliabase_logo.png" %}" width="50" height="50" alt="{% trans "JuliaBase logo" %}"/>
+        <p class="logo-text">{% block app_title %}{% endblock %}</p>
+      </div>
+    {% endblock %}
 
     <div class="outer-frame">
       <div class="inner-frame">

@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-21 16:24+0200\n"
-"PO-Revision-Date: 2015-05-21 16:29+0200\n"
+"POT-Creation-Date: 2015-06-02 04:25+0200\n"
+"PO-Revision-Date: 2015-01-26 15:38+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -721,10 +721,6 @@ msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 msgid "Error in measurement"
 msgstr "Fehler in der Messung"
 
-#: institute/templates/samples/edit_my_layers.html:35
-msgid "Error in My Layer"
-msgstr "Fehler in „Meinem Layer“"
-
 #: institute/templates/samples/edit_pds_measurement.html:30
 msgid "Error in PDS data"
 msgstr "Fehler in den PDS-Daten"
@@ -931,62 +927,6 @@ msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 #: institute/views/samples/cluster_tool_deposition.py:132
 msgid "PECVD"
 msgstr "PECVD"
-
-#: institute/views/samples/my_layers.py:43
-msgid "Nickname"
-msgstr "Spitzname"
-
-#: institute/views/samples/my_layers.py:44
-msgid "Layer identifier"
-msgstr "Schicht-Bezeichnung"
-
-#: institute/views/samples/my_layers.py:45
-msgid "in the form \"deposition number\"-\"layer number\""
-msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
-
-#: institute/views/samples/my_layers.py:46
-msgid "Delete"
-msgstr "Löschen"
-
-#: institute/views/samples/my_layers.py:54
-msgid "Deposition and layer number must be separated by \"-\"."
-msgstr "Depositions- und Schichtnummer müssen mit einem \"-\" getrennt werden."
-
-#: institute/views/samples/my_layers.py:59
-msgid "Deposition number doesn't exist."
-msgstr "Diese Deposition gibt es nicht."
-
-#: institute/views/samples/my_layers.py:63
-msgid "Layer number isn't a number."
-msgstr "Die Schichtnummer ist keine Zahl."
-
-#: institute/views/samples/my_layers.py:66
-msgid "This layer does not exist in this deposition."
-msgstr "In dieser Deposition gibt es diesen Layer nicht."
-
-#: institute/views/samples/my_layers.py:142
-msgid "Nickname is already given."
-msgstr "Dieser Spitzname ist schon vergeben."
-
-#: institute/views/samples/my_layers.py:159
-msgid "Successfully changed “My Layers”"
-msgstr "Erfolgreich „Meine Schichten“ geändert"
-
-#: institute/views/samples/my_layers.py:161
-msgid "Nothing changed."
-msgstr "Es wurde nichts geändert."
-
-#: institute/views/samples/my_layers.py:181
-msgid "You can't access the “My Layers” section of another user."
-msgstr "Sie düfen nicht auf „Meine Schichten“ eines anderen Benutzers zugreifen."
-
-#: institute/views/samples/my_layers.py:190
-msgid "Changes did not saved yet."
-msgstr "Veränderungen wurden noch nicht gespeichert."
-
-#: institute/views/samples/my_layers.py:194
-msgid "My Layers"
-msgstr "Meine Schichten"
 
 #: institute/views/samples/pds_measurement.py:102
 msgid "This PDS number exists already."
@@ -1325,8 +1265,14 @@ msgstr "Die Probe {0} hat bereits ein Substrat."
 #~ msgid "{name} “{number}”"
 #~ msgstr "{name} „{number}“"
 
+#~ msgid "This number is already in use."
+#~ msgstr "Diese Nummer ist schon vergeben."
+
 #~ msgid "Operator"
 #~ msgstr "Operateur"
+
+#~ msgid "The deposition number must not be changed."
+#~ msgstr "Die Depositionsnummer darf nicht verändert werden."
 
 #~ msgid "time"
 #~ msgstr "Zeit"

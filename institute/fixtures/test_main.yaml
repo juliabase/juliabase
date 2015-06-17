@@ -1310,35 +1310,35 @@
 - fields: {number: 14C-006, split_done: false}
   model: samples.deposition
   pk: 24
-- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-21
+- fields: {browser_system: windows, department: null, language: en, layout_last_modified: ! '2015-01-21
       11:15:00.979187'}
   model: jb_common.userdetails
   pk: 1
-- fields: {browser_system: windows, department: null, language: de, layout_last_modified: ! '2015-01-21
+- fields: {browser_system: windows, department: null, language: en, layout_last_modified: ! '2015-01-21
       11:15:01.016460'}
   model: jb_common.userdetails
   pk: 2
-- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: ! '1990-01-01
       00:00:00'}
   model: jb_common.userdetails
   pk: 3
-- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: ! '1990-01-01
       00:00:00'}
   model: jb_common.userdetails
   pk: 4
-- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: ! '1990-01-01
       00:00:00'}
   model: jb_common.userdetails
   pk: 5
-- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: ! '1990-01-01
       00:00:00'}
   model: jb_common.userdetails
   pk: 6
-- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: ! '1990-01-01
       00:00:00'}
   model: jb_common.userdetails
   pk: 7
-- fields: {browser_system: windows, department: 1, language: de, layout_last_modified: ! '1990-01-01
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: ! '1990-01-01
       00:00:00'}
   model: jb_common.userdetails
   pk: 8

@@ -65,7 +65,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
     {% if sample_start %}
       {% spaceless %}<div class="page-header"><h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
       {% for alias in sample.sample.aliases.all %}
-        alias <strong>{{ alias }}</strong> {% endfor %}</span>{% if sample.can_edit %}<a class="edit-icon"
+        alias <strong>{{ alias }}</strong> {% endfor %}</span>{% block sample_icons %}{% if sample.can_edit %}<a class="edit-icon"
            href="{% url 'samples.views.sample.edit' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                           ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                                 width="16" height="16"/></a>
@@ -86,7 +86,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
       <a class="edit-icon"
            href="{% url 'samples.views.sample.rename_sample' %}?sample_id={{ sample.id_for_rename }}&amp;next={% url 'samples.views.sample.by_id' sample_id=sample.sample.id path_suffix='' %}"
     ><img src="{% static "juliabase/icons/tag_red.png" %}" alt="rename icon" title="{% trans 'rename sample' %}"
-          width="16" height="16"/></a>{% endif %}</h1></div>{% endspaceless %}
+          width="16" height="16"/></a>{% endif %}{% endblock sample_icons %}</h1></div>{% endspaceless %}
 
       {% block extra_sample_header %}
         {# This block may be overridden or expanded in derived templates #}
@@ -178,7 +178,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
         {% spaceless %}
           <h2 style="float: left">
             <span id="process-heading-{{ process.process.id }}" class="process-heading"
-                  >{{ process.name }}</span>{% if process.edit_url %}<a class="edit-icon"
+                  >{{ process.name }}</span>{% block process_icons %}{% if process.edit_url %}<a class="edit-icon"
                        href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
@@ -196,7 +196,7 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
             {% endif %}
             <a class="edit-icon" href="{{ process.process.get_absolute_url|urlquote_plus }}"
             ><img src="{% static "juliabase/icons/zoom.png" %}" alt="show icon" title="{% trans 'show process' %}"
-                width="16" height="16"/></a>
+                width="16" height="16"/></a>{% endblock process_icons %}
             {% if not process.process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% trans "(not finished)" %}</span>{% endif %}
           </h2>

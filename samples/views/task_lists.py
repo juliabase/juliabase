@@ -30,6 +30,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
 from django.utils.text import capfirst
+from django.utils.encoding import force_text
 from django.apps import apps
 import jb_common.utils.base as common_utils
 from jb_common.utils.base import help_link
@@ -313,6 +314,50 @@ def edit(request, task_id):
     return render(request, "samples/edit_task.html", {"title": title, "task": task_form, "samples": samples_form})
 
 
+def create_task_lists(user):
+    """Create the datastructure containing the tasks associated with a user.  This
+    can be used in the template to create a nested overview of the tasks.
+
+    :param user: the user for which the tasks should be generated
+
+    :type user: ``django.contrib.auth.models.User``
+
+    :return:
+      the tasks as list of (content type, verbose name, list of task info
+      objects)
+
+    :rtype: list of (``ContentType``, str, `TaskForTemplate`)
+    """
+    def get_department_name_of_type(content_type):
+        # FixMe: It is possible that some processes are in more than one
+        # department available.  Maybe we need a better way to determine the
+        # department.
+        app_label = content_type.model_class()._meta.app_label
+        department_names = set(Department.objects.filter(app_label=app_label).values_list("name", flat=True))
+        assert len(department_names) == 1
+        return department_names.pop()
+    one_week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
+    task_lists = []
+    seen_process_names = set()
+    ambiguous_process_names = set()
+    for process_content_type in user.samples_user_details.visible_task_lists.all():
+        process_name = capfirst(force_text(process_content_type.model_class()._meta.verbose_name))
+        active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
+            exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
+        task_lists.append((process_name, process_content_type, [TaskForTemplate(task, user) for task in active_tasks]))
+        if process_name in seen_process_names:
+            ambiguous_process_names.add(process_name)
+        else:
+            seen_process_names.add(process_name)
+    disambiguated_task_lists = []
+    for process_name, process_content_type, tasks in task_lists:
+        if process_name in ambiguous_process_names:
+            department_name = get_department_name_of_type(process_content_type)
+            process_name += " ({})".format(department_name)
+        disambiguated_task_lists.append((process_name, process_content_type, tasks))
+    return disambiguated_task_lists
+
+
 @help_link("demo.html#adding-a-task")
 @login_required
 def show(request):
@@ -338,24 +383,10 @@ def show(request):
             return utils.successful_response(request, view=show)
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
-    one_week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
-    task_lists = {}
-    for process_content_type in request.user.samples_user_details.visible_task_lists.all():
-        active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
-            exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
-        task_lists[process_content_type] = [TaskForTemplate(task, request.user) for task in active_tasks]
-    task_lists_for_department = {}
-    for process_content_type, tasks in task_lists.items():
-        # FixMe: it is possible that some processes are in more then one department available
-        # maybe we need a better way to determine the department
-        department_names = {name for name, app_label in Department.objects.values_list("name", "app_label")
-                           if app_label == process_content_type.model_class()._meta.app_label}
-        assert len(department_names) == 1
-        department_name = department_names.pop()
-        task_lists_for_department.setdefault(department_name, {}).update({process_content_type: tasks})
+    task_lists = create_task_lists(request.user)
     return render(request, "samples/task_lists.html", {"title": capfirst(_("task lists")),
                                                        "choose_task_lists": choose_task_lists_form,
-                                                       "task_lists": task_lists_for_department})
+                                                       "task_lists": task_lists})
 
 
 @login_required

@@ -23,6 +23,9 @@ import json
 from .common import connection, primary_keys, comma_separated_ids, double_urlquote, format_timestamp, parse_timestamp, logging
 
 
+__all__ = ["TemporaryMySamples", "Sample", "Result", "User"]
+
+
 primary_keys.components.add("external_operators=*")
 
 
@@ -212,3 +215,51 @@ class Result(object):
                 self.id = connection.open("results/add/", data)
                 logging.info("Added result {0}.".format(self.id))
         return self.id
+
+
+class User(object):
+    """Class representing a user.
+    """
+
+    def __init__(self, username):
+        """
+        :param username: the user's login name
+
+        :type username: str
+        """
+        self.username = username
+
+    @property
+    def id(self):
+        """Contains the user's ID as an ``int``.
+        """
+        return primary_keys["users"][self.username]
+
+    def _fetch_topics_and_permissions(self):
+        """This internal method makes the lazy fetching and caching of topics and
+        permissions possible.
+        """
+        self._topics, __, self._permissions = connection.open("topics_and_permissions/{}".format(self.username))
+        self._topics, self._permissions = set(self._topics), set(self._permissions)
+
+    @property
+    def topics(self):
+        """Contains the topics the user is a member of.  It is a set of topic IDs.  In
+        particular, it is not their names, as they are subject to change.
+        """
+        try:
+            return self._topics
+        except AttributeError:
+            self._fetch_topics_and_permissions()
+        return self._topics
+
+    @property
+    def permissions(self):
+        """Contains the user's permissions.  It is a set of names of the form
+        “app_label.codename”.
+        """
+        try:
+            return self._permissions
+        except AttributeError:
+            self._fetch_topics_and_permissions()
+        return self._permissions

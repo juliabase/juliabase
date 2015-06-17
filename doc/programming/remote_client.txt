@@ -88,8 +88,8 @@ this setup, and to check whether the sample names belong to valid and for the
 user accessible samples.
 
 The remote client is written in Python, however, it is easy to use it from
-programs written in other programming languages, and JuliaBase ships with a
-Delphi binding.
+programs written in other programming languages, and JuliaBase ships with
+bindings to Delphi, LabVIEW, and Visual Basic.
 
 
 Data mining and analysis
@@ -109,7 +109,7 @@ series, and writes these plots back to the database.  There, one can see them
 on the series' pages, and in every sample's data sheet.
 
 
-.. `Extending the remote client`_
+.. _Extending the remote client:
 
 Extending the remote client
 =============================
@@ -117,7 +117,7 @@ Extending the remote client
 As for JuliaBase itself, also the remote client should be extended with the
 functionality special to your institution.  This is not absolutely necessary,
 but without it, you can only use the very basic functionality.  However,
-extending the remote client is *much* easier than extending JuliaBase.
+extending the remote client is much easier than extending JuliaBase.
 
 .. _remote-client-file-list:
 
@@ -209,48 +209,6 @@ conveniently: If a new version of JuliaBase is released, you simply have to
 replace the :file:`jb_remote/` subdirectory with the new one.
 
 
-.. index:: Delphi
-
-Other programming languages
-=================================
-
-You can communicate with a JuliaBase server using any programming language.
-You can implement the HTTP communication directly in most modern languages.
-However, it is probably much easier to write a thin wrapper around the Python
-implementation.
-
-For Delphi, this has already been done in
-:file:`remote_client/delphi/juliabase.pas`.  The code is only 150 lines long.
-Using it is as simple as
-
-.. code-block:: delphi
-
-    program juliabase_example;
-
-    {$APPTYPE CONSOLE}
-
-    uses
-      SysUtils, juliabase;
-    var
-      result : String
-
-    begin
-      execute_jb('juliabase', '12345',
-           'sample = Sample("14-JS-1");' +
-           'sample.current_location = "Sean''s office";' +
-           'sample.edit_description = "location changed";' +
-           'sample.submit()');
-    end.
-
-:code:`execute_jb` adds some boilerplate code and calls the Python interpreter,
-which executes the commands you passed as a string.  You must install the Python
-interpreter and the Python version of the remote client on the machine, but the
-avoidance of code duplication makes up for it.
-
-See the top comment in :file:`remote_client/delphi/juliabase.pas` for further
-instructions.
-
-
 Classes and functions
 ========================
 
@@ -262,8 +220,9 @@ available by saying
     from jb_remote import *
 
 .. automodule:: jb_remote.common
-                :members: login, connection, JuliaBaseConnection, JuliaBaseError, logout, primary_keys, PrimaryKeys, setup_logging,
-                          parse_timestamp, double_urlquote, format_timestamp, sanitize_for_markdown
+                :members: login, connection, JuliaBaseConnection, JuliaBaseError, logout, primary_keys, PrimaryKeys,
+                          setup_logging, parse_timestamp, double_urlquote, format_timestamp, sanitize_for_markdown,
+                          as_json
 
 .. automodule:: jb_remote.samples
                 :members:

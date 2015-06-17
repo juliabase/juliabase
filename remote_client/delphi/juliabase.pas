@@ -55,19 +55,19 @@ unit juliabase;
   Moreover, this unit contains four global variables that serve as settings
   that you can modifiy.
  
-  ``package_path``
+  ``jb_package_path``
     contains the directory of the institute's adaption of the remote client.
     Default: :file:'c:/JuliaBase/remote_client'
 
-  ``module``
+  ``jb_module_name``
     contains the module name of the institute's adaption of the remote client.
     Default: ``jb_remote_inm``
 
-  ``python_path``
+  ``jb_interpreter_path``
     contains the path of the Python interpreter.  Default:
     :file:'c:/Python2.7/python.exe'
 
-  ``open_error_page_in_browser``
+  ``jb_open_error_page_in_browser``
     If ``true``, in case of error the error page will be automatically opened
     in the browser.  Default: ``false``
 
@@ -86,8 +86,8 @@ type
   end;
 
 var
-  package_path, module, python_path:String;
-  open_error_page_in_browser: boolean;
+  jb_package_path, jb_module_name, jb_interpreter_path:String;
+  jb_open_error_page_in_browser: boolean;
 
 function execute_jb(const login, password, commands: String; testserver:boolean=false): String;
 
@@ -178,7 +178,7 @@ var
 begin
   inherited Create(message_);
   self.ErrorCode := ErrorCode;
-  if open_error_page_in_browser and (ErrorCode = 1) then
+  if jb_open_error_page_in_browser and (ErrorCode = 1) then
   begin
     closing_brace := Pos(')', message_);
     url := copy(message_, closing_brace + 2, length(message_) - closing_brace - 1);
@@ -197,10 +197,10 @@ begin
   if testserver then testserver_string := 'True' else testserver_string := 'False';
   full_input := format('# -*- coding: utf-8 -*-'#13#10'import sys; sys.path.append("%s");from %s import *;' +
                        'login("%s", "%s", testserver=%s);%s;logout()'#26,
-		       [package_path, module, login, password, testserver_string, commands]);
-  if not ExecConsoleCommand(python_path, utf8encode(full_input), output, errors, exit_code) then
+		       [jb_package_path, jb_module_name, login, password, testserver_string, commands]);
+  if not ExecConsoleCommand(jb_interpreter_path, utf8encode(full_input), output, errors, exit_code) then
   begin
-    raise Exception.Create('error: Could not start ' + python_path)
+    raise Exception.Create('error: Could not start ' + jb_interpreter_path)
   end;
   if errors <> '' then
   begin
@@ -220,8 +220,8 @@ begin
 end;
 
 begin
-  package_path := 'c:/JuliaBase/remote_client';
-  module := 'jb_remote_inm'
-  python_path := 'c:/Python2.7/python.exe';
-  open_error_page_in_browser := false
+  jb_package_path := 'c:/JuliaBase/remote_client';
+  jb_module_name := 'jb_remote_inm'
+  jb_interpreter_path := 'c:/Python34/python.exe';
+  jb_open_error_page_in_browser := true
 end.
