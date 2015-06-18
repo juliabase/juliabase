@@ -71,3 +71,29 @@ class FiveChamberDepositionTest(TestCase):
         self.assertRedirects(response, "http://testserver/", 303)
         response = self.client.get("/5-chamber_depositions/" + self.deposition_number)
         self.assertEqual(response.status_code, 200)
+
+    def test_samples_list(self):
+        # Here, I check whether the selection of samples survive a failed POST.
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": "2015-06-18 13:53:38", "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001"})
+        self.assertEqual(response.status_code, 200)
+        self.assertInHTML('<option value="1" selected="selected">14S-001</option>', response.content)
+        self.assertInHTML('<option value="3" selected="selected">14S-003</option>', response.content)
+
+    def test_add_layer(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001", "number_of_layers_to_add": "1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 1)
+        self.assertEqual(response.context["layers_and_change_layers"][0][0].initial["number"], 1)
+
+    def test_too_many_added_layers(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001", "number_of_layers_to_add": "11"})
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, "add_layers", "number_of_layers_to_add",
+                             "Ensure this value is less than or equal to 10.")
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 0)
