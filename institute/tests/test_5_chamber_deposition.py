@@ -68,8 +68,8 @@ class FiveChamberDepositionTest(TestCase):
         response = self.client.post("/5-chamber_depositions/add/",
             {"number": self.deposition_number, "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
              "combined_operator": "7", "sample_list": ["1", "3"],
-             "1-number": "2", "0-chamber": "i1", "1-sih4": "2.000",
-             "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000"}, follow=True)
+             "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000",
+             "1-number": "2", "0-chamber": "i1", "1-sih4": "2.000"}, follow=True)
         self.assertRedirects(response, "http://testserver/", 303)
         response = self.client.get("/5-chamber_depositions/" + self.deposition_number, HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
