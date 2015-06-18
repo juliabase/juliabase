@@ -1,0 +1,89 @@
+# This file is part of JuliaBase-Institute, see http://www.juliabase.org.
+# Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the Free Software
+# Foundation, either version 3 of the License, or (at your option) any later
+# version.
+#
+# In particular, you may modify this file freely and even remove this license,
+# and offer it as part of a web service, as long as you do not distribute it.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+# details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# This fixture is used in unit tests to populate the “My Samples” of e.monroe.
+
+- fields: {}
+  model: institute.sampledetails
+  pk: 13
+- fields: {}
+  model: institute.sampledetails
+  pk: 14
+- fields: {}
+  model: institute.sampledetails
+  pk: 15
+- fields: {}
+  model: institute.sampledetails
+  pk: 16
+- fields:
+    current_location: Monroe's drawer
+    currently_responsible_person: [e.monroe]
+    last_modified: 2015-01-21 11:15:04.584448
+    name: 15-EM-1
+    processes: [1]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: null
+    watchers:
+    - [e.monroe]
+  model: samples.sample
+  pk: 13
+- fields:
+    current_location: Monroe's drawer
+    currently_responsible_person: [e.monroe]
+    last_modified: 2015-01-21 11:15:05.508435
+    name: 15-EM-2
+    processes: [1]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: null
+    watchers:
+    - [e.monroe]
+  model: samples.sample
+  pk: 14
+- fields:
+    current_location: Monroe's drawer
+    currently_responsible_person: [e.monroe]
+    last_modified: 2015-01-21 11:15:06.460807
+    name: 15-EM-3
+    processes: [1]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: null
+    watchers:
+    - [e.monroe]
+  model: samples.sample
+  pk: 15
+- fields:
+    current_location: Monroe's drawer
+    currently_responsible_person: [e.monroe]
+    last_modified: 2015-01-21 11:15:07.390776
+    name: 15-EM-4
+    processes: [1]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: null
+    watchers:
+    - [e.monroe]
+  model: samples.sample
+  pk: 16
