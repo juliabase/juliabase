@@ -54,12 +54,12 @@ class FiveChamberDepositionTest(TestCase):
     def test_missing_fields_and_no_layers(self):
         response = self.client.post("/5-chamber_depositions/add/", {"number": ""})
         self.assertEqual(response.status_code, 200)
-        self.assertContainsError(response, "Timestamp")
-        self.assertContainsError(response, "Timestamp inaccuracy")
-        self.assertContainsError(response, "Operator")
-        self.assertContainsError(response, "Deposition number")
-        self.assertContainsError(response, "Samples")
-        self.assertContainsError(response, "Error in deposition", "No layers given.")
+        self.assertFormError(response, "process", "timestamp", "This field is required.")
+        self.assertFormError(response, "process", "timestamp_inaccuracy", "This field is required.")
+        self.assertFormError(response, "process", "combined_operator", "This field is required.")
+        self.assertFormError(response, "process", "number", "This field is required.")
+        self.assertFormError(response, "samples", "sample_list", "This field is required.")
+        self.assertFormError(response, "process", None, "No layers given.")
 
     def test_correct_data(self):
         response = self.client.post("/5-chamber_depositions/add/",
