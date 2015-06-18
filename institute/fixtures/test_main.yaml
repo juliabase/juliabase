@@ -347,7 +347,7 @@
     is_superuser: true
     last_login: 2015-01-21 11:15:23.571307
     last_name: ''
-    password: pbkdf2_sha256$12000$chvBwzKZcaiQ$zbqWTPx1AKB8m+xaQkqaDcIKxrpAR4CAbsfBnGyqfV4=
+    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
     user_permissions: []
     username: juliabase
   model: auth.user
@@ -362,7 +362,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.010541
     last_name: Nobody
-    password: ''
+    password: !
     user_permissions: []
     username: nobody
   model: auth.user
@@ -377,7 +377,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.041415
     last_name: Burkhardt
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
     user_permissions:
     - [add_pdsmeasurement, institute, pdsmeasurement]
     - [edit_permissions_for_pdsmeasurement, institute, pdsmeasurement]
@@ -395,7 +395,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.086410
     last_name: Griffin
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
     user_permissions:
     - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
     - [edit_permissions_for_solarsimulatormeasurement, institute, solarsimulatormeasurement]
@@ -413,7 +413,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.122512
     last_name: Silverton
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
     user_permissions:
     - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
     username: j.silverton
@@ -429,7 +429,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.166741
     last_name: Monroe
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
     user_permissions:
     - [add_clustertooldeposition, institute, clustertooldeposition]
     - [change_clustertooldeposition, institute, clustertooldeposition]
@@ -448,7 +448,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.208121
     last_name: Calvert
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
     user_permissions:
     - [add_fivechamberdeposition, institute, fivechamberdeposition]
     - [change_fivechamberdeposition, institute, fivechamberdeposition]
@@ -467,7 +467,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.264577
     last_name: Renard
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
     user_permissions:
     - [add_topic, jb_common, topic]
     - [change_topic, jb_common, topic]
