@@ -127,14 +127,6 @@ class FiveChamberDepositionTest(TestCase):
                              "Ensure this value is less than or equal to 10.")
         self.assertEqual(len(response.context["layers_and_change_layers"]), 0)
 
-    def test_add_layer(self):
-        response = self.client.post("/5-chamber_depositions/add/",
-            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001", "number_of_layers_to_add": "1"})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context["layers_and_change_layers"]), 1)
-        self.assertEqual(response.context["layers_and_change_layers"][0][0]["number"].value(), 1)
-
     def test_move_layer_up(self):
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
