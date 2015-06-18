@@ -26,7 +26,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from django.test import TestCase
 from django.test.client import Client
-from . import tools
+from .tools import TestCase
 
 
 class FiveChamberDepositionTest(TestCase):
@@ -54,12 +54,12 @@ class FiveChamberDepositionTest(TestCase):
     def test_missing_fields_and_no_layers(self):
         response = self.client.post("/5-chamber_depositions/add/", {"number": ""})
         self.assertEqual(response.status_code, 200)
-        tools.assertContainsError(self, response, "Timestamp")
-        tools.assertContainsError(self, response, "Timestamp inaccuracy")
-        tools.assertContainsError(self, response, "Operator")
-        tools.assertContainsError(self, response, "Deposition number")
-        tools.assertContainsError(self, response, "Samples")
-        tools.assertContainsError(self, response, "Error in deposition", "No layers given.")
+        self.assertContainsError(response, "Timestamp")
+        self.assertContainsError(response, "Timestamp inaccuracy")
+        self.assertContainsError(response, "Operator")
+        self.assertContainsError(response, "Deposition number")
+        self.assertContainsError(response, "Samples")
+        self.assertContainsError(response, "Error in deposition", "No layers given.")
 
     def test_correct_data(self):
         response = self.client.post("/5-chamber_depositions/add/",
