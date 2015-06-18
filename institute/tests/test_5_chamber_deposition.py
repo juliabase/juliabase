@@ -75,7 +75,7 @@ class FiveChamberDepositionTest(TestCase):
         self.assertEqual(response["content-type"], "application/json")
         self.assertEqual(response.status_code, 200)
         self.assertJsonDictEqual(response,
-            {"id": 31, "number": "15S-001",
+            {"id": 31, "number": self.deposition_number,
              "content_type": "5-chamber deposition",
              "timestamp": self.timestamp_with_t, "timestamp_inaccuracy": 0,
              "operator": "r.calvert",
@@ -105,15 +105,15 @@ class FiveChamberDepositionTest(TestCase):
     def test_samples_list(self):
         # Here, I check whether the selection of samples survive a failed POST.
         response = self.client.post("/5-chamber_depositions/add/",
-            {"combined_operator": "7", "timestamp": "2015-06-18 13:53:38", "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001"})
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": self.deposition_number})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["samples"]["sample_list"].value(), ["1", "3"])
 
     def test_add_layer(self):
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001", "number_of_layers_to_add": "1"})
+             "sample_list": ["1", "3"], "number": self.deposition_number, "number_of_layers_to_add": "1"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context["layers_and_change_layers"]), 1)
         self.assertEqual(response.context["layers_and_change_layers"][0][0]["number"].value(), 1)
@@ -121,7 +121,7 @@ class FiveChamberDepositionTest(TestCase):
     def test_too_many_added_layers(self):
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001", "number_of_layers_to_add": "11"})
+             "sample_list": ["1", "3"], "number": self.deposition_number, "number_of_layers_to_add": "11"})
         self.assertEqual(response.status_code, 200)
         self.assertFormError(response, "add_layers", "number_of_layers_to_add",
                              "Ensure this value is less than or equal to 10.")
@@ -130,7 +130,7 @@ class FiveChamberDepositionTest(TestCase):
     def test_move_layer_up(self):
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001",
+             "sample_list": ["1", "3"], "number": self.deposition_number,
              "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
              "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-move_this_layer": "up",
              "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
@@ -146,7 +146,7 @@ class FiveChamberDepositionTest(TestCase):
         # Moving the first up must be a no-op
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001",
+             "sample_list": ["1", "3"], "number": self.deposition_number,
              "0-chamber": "i1", "0-number": "1", "0-sih4": "1", "0-move_this_layer": "up",
              "1-chamber": "i2", "1-number": "2", "1-sih4": "2",
              "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
@@ -160,7 +160,7 @@ class FiveChamberDepositionTest(TestCase):
     def test_move_layer_down(self):
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001",
+             "sample_list": ["1", "3"], "number": self.deposition_number,
              "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
              "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-move_this_layer": "down",
              "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
@@ -176,7 +176,7 @@ class FiveChamberDepositionTest(TestCase):
         # Moving the last down must be a no-op
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001",
+             "sample_list": ["1", "3"], "number": self.deposition_number,
              "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
              "1-chamber": "i2", "1-number": "2", "1-sih4": "2",
              "2-chamber": "i3", "2-number": "3", "2-sih4": "3", "2-move_this_layer": "down"})
@@ -190,7 +190,7 @@ class FiveChamberDepositionTest(TestCase):
     def test_duplicate_layer(self):
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001",
+             "sample_list": ["1", "3"], "number": self.deposition_number,
              "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
              "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-duplicate_this_layer": "on",
              "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
@@ -207,7 +207,7 @@ class FiveChamberDepositionTest(TestCase):
     def test_remove_layer(self):
         response = self.client.post("/5-chamber_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["1", "3"], "number": "15S-001",
+             "sample_list": ["1", "3"], "number": self.deposition_number,
              "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
              "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-remove_this_layer": "on",
              "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
