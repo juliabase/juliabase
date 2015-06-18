@@ -37,7 +37,9 @@ class FiveChamberDepositionTest(TestCase):
         self.client = Client()
         assert self.client.login(username="r.calvert", password="12345")
         self.deposition_number = datetime.datetime.now().strftime("%yS-001")
-        self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        timestamp = datetime.datetime.now()
+        self.timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        self.timestamp_with_t = timestamp.strftime("%Y-%m-%dT%H:%M:%S")
 
     def test_retrieve_add_view(self):
         response = self.client.get("/5-chamber_depositions/add/")
@@ -69,8 +71,21 @@ class FiveChamberDepositionTest(TestCase):
              "1-number": "2", "0-chamber": "i1", "1-sih4": "2.000",
              "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000"}, follow=True)
         self.assertRedirects(response, "http://testserver/", 303)
-        response = self.client.get("/5-chamber_depositions/" + self.deposition_number)
+        response = self.client.get("/5-chamber_depositions/" + self.deposition_number, HTTP_ACCEPT="application/json")
+        self.assertEqual(response["content-type"], "application/json")
         self.assertEqual(response.status_code, 200)
+        self.maxDiff = None
+        self.assertJsonDictEqual(response,
+            {"id": 31, "number": "15S-001",
+             "content_type": "5-chamber deposition",
+             "timestamp": self.timestamp_with_t, "timestamp_inaccuracy": 0,
+             "operator": "r.calvert",
+             "external_operator": None, "finished": True, "comments": "", "split_done": False,
+             "samples": [1, 3],
+             "layer 1": {"chamber": "i1", "h2": None, "id": 19, "layer_type": "", "number": 1, "sih4": 3.0, "temperature_1": None,
+                         "temperature_2": None},
+             "layer 2": {"chamber": "i2", "h2": None, "id": 20, "layer_type": "", "number": 2, "sih4": 2.0, "temperature_1": None,
+                         "temperature_2": None}})
 
     def test_samples_list(self):
         # Here, I check whether the selection of samples survive a failed POST.
