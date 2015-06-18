@@ -23,7 +23,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, decimal
+import datetime, decimal, json
 from django.test import TestCase
 from django.test.client import Client
 from .tools import TestCase
@@ -74,7 +74,6 @@ class FiveChamberDepositionTest(TestCase):
         response = self.client.get("/5-chamber_depositions/" + self.deposition_number, HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertEqual(response.status_code, 200)
-        self.maxDiff = None
         self.assertJsonDictEqual(response,
             {"id": 31, "number": "15S-001",
              "content_type": "5-chamber deposition",
@@ -86,6 +85,22 @@ class FiveChamberDepositionTest(TestCase):
                          "temperature_2": None},
              "layer 2": {"chamber": "i2", "h2": None, "id": 20, "layer_type": "", "number": 2, "sih4": 2.0, "temperature_1": None,
                          "temperature_2": None}})
+        response = self.client.get("/my_samples/r.calvert", HTTP_ACCEPT="application/json")
+        my_samples = json.loads(response.content)
+        self.assertIn(1, my_samples)
+        self.assertIn(3, my_samples)
+
+    def test_removal_from_my_samples(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"number": self.deposition_number, "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "combined_operator": "7", "sample_list": ["1", "3"],
+             "1-number": "2", "0-chamber": "i1", "1-sih4": "2.000",
+             "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000",
+             "remove_from_my_samples": "on"})
+        response = self.client.get("/my_samples/r.calvert", HTTP_ACCEPT="application/json")
+        my_samples = json.loads(response.content)
+        self.assertNotIn(1, my_samples)
+        self.assertNotIn(3, my_samples)
 
     def test_samples_list(self):
         # Here, I check whether the selection of samples survive a failed POST.
