@@ -30,7 +30,7 @@ from django.core.management import execute_from_command_line
 root = os.path.dirname(os.path.abspath(__file__))
 if os.path.isdir(os.path.join(root, "mysite")):
     sys.path.append(os.path.join(root, "juliabase"))
-if sys.argv[1] == "test":
+if sys.argv[1:2] == ["test"]:
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings_test")
 elif os.path.isdir(os.path.join(root, "mysite")):
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
