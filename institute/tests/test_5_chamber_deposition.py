@@ -23,7 +23,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
+import datetime, decimal
 from django.test import TestCase
 from django.test.client import Client
 from .tools import TestCase
@@ -96,3 +96,103 @@ class FiveChamberDepositionTest(TestCase):
         self.assertFormError(response, "add_layers", "number_of_layers_to_add",
                              "Ensure this value is less than or equal to 10.")
         self.assertEqual(len(response.context["layers_and_change_layers"]), 0)
+
+    def test_add_layer(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001", "number_of_layers_to_add": "1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 1)
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["number"].value(), 1)
+
+    def test_move_layer_up(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001",
+             "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
+             "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-move_this_layer": "up",
+             "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 3)
+        for i in range(3):
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["number"].value(), i + 1)
+            self.assertIsNone(response.context["layers_and_change_layers"][i][1]["move_this_layer"].value())
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["sih4"].value(), "2")
+        self.assertEqual(response.context["layers_and_change_layers"][1][0]["sih4"].value(), "1")
+        self.assertEqual(response.context["layers_and_change_layers"][2][0]["sih4"].value(), "3")
+
+        # Moving the first up must be a no-op
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001",
+             "0-chamber": "i1", "0-number": "1", "0-sih4": "1", "0-move_this_layer": "up",
+             "1-chamber": "i2", "1-number": "2", "1-sih4": "2",
+             "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 3)
+        for i in range(3):
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["number"].value(), i + 1)
+            self.assertIsNone(response.context["layers_and_change_layers"][i][1]["move_this_layer"].value())
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["sih4"].value(), str(i + 1))
+
+    def test_move_layer_down(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001",
+             "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
+             "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-move_this_layer": "down",
+             "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 3)
+        for i in range(3):
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["number"].value(), i + 1)
+            self.assertIsNone(response.context["layers_and_change_layers"][i][1]["move_this_layer"].value())
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["sih4"].value(), "1")
+        self.assertEqual(response.context["layers_and_change_layers"][1][0]["sih4"].value(), "3")
+        self.assertEqual(response.context["layers_and_change_layers"][2][0]["sih4"].value(), "2")
+
+        # Moving the last down must be a no-op
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001",
+             "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
+             "1-chamber": "i2", "1-number": "2", "1-sih4": "2",
+             "2-chamber": "i3", "2-number": "3", "2-sih4": "3", "2-move_this_layer": "down"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 3)
+        for i in range(3):
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["number"].value(), i + 1)
+            self.assertIsNone(response.context["layers_and_change_layers"][i][1]["move_this_layer"].value())
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["sih4"].value(), str(i + 1))
+
+    def test_duplicate_layer(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001",
+             "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
+             "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-duplicate_this_layer": "on",
+             "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 4)
+        for i in range(4):
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["number"].value(), i + 1)
+            self.assertFalse(response.context["layers_and_change_layers"][i][1]["duplicate_this_layer"].value())
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["sih4"].value(), "1")
+        self.assertEqual(response.context["layers_and_change_layers"][1][0]["sih4"].value(), "2")
+        self.assertEqual(response.context["layers_and_change_layers"][2][0]["sih4"].value(), "3")
+        self.assertEqual(response.context["layers_and_change_layers"][3][0]["sih4"].value(), decimal.Decimal("2"))
+
+    def test_remove_layer(self):
+        response = self.client.post("/5-chamber_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["1", "3"], "number": "15S-001",
+             "0-chamber": "i1", "0-number": "1", "0-sih4": "1",
+             "1-chamber": "i2", "1-number": "2", "1-sih4": "2", "1-remove_this_layer": "on",
+             "2-chamber": "i3", "2-number": "3", "2-sih4": "3"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 2)
+        for i in range(2):
+            self.assertEqual(response.context["layers_and_change_layers"][i][0]["number"].value(), i + 1)
+            self.assertFalse(response.context["layers_and_change_layers"][i][1]["remove_this_layer"].value())
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["sih4"].value(), "1")
+        self.assertEqual(response.context["layers_and_change_layers"][1][0]["sih4"].value(), "3")
