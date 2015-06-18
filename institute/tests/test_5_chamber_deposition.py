@@ -63,10 +63,10 @@ class FiveChamberDepositionTest(TestCase):
 
     def test_correct_data(self):
         response = self.client.post("/5-chamber_depositions/add/",
-            {"number": [self.deposition_number], "timestamp": ["2015-06-17 13:19:26"], "timestamp_inaccuracy": ["0"],
-             "combined_operator": ["7"], "sample_list": ["1", "3"],
-             "1-number": ["2"], "0-chamber": ["i1"], "1-sih4": ["2.000"],
-             "0-number": ["1"], "1-chamber": ["i2"], "0-sih4": ["3.000"]}, follow=True)
+            {"number": self.deposition_number, "timestamp": "2015-06-17 13:19:26", "timestamp_inaccuracy": "0",
+             "combined_operator": "7", "sample_list": ["1", "3"],
+             "1-number": "2", "0-chamber": "i1", "1-sih4": "2.000",
+             "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000"}, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, "http://testserver/", 303)
         response = self.client.get("/5-chamber_depositions/" + self.deposition_number)
