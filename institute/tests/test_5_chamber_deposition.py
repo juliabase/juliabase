@@ -37,6 +37,7 @@ class FiveChamberDepositionTest(TestCase):
         self.client = Client()
         assert self.client.login(username="r.calvert", password="12345")
         self.deposition_number = datetime.datetime.now().strftime("%yS-001")
+        self.timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     def test_retrieve_add_view(self):
         response = self.client.get("/5-chamber_depositions/add/")
@@ -63,7 +64,7 @@ class FiveChamberDepositionTest(TestCase):
 
     def test_correct_data(self):
         response = self.client.post("/5-chamber_depositions/add/",
-            {"number": self.deposition_number, "timestamp": "2015-06-17 13:19:26", "timestamp_inaccuracy": "0",
+            {"number": self.deposition_number, "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
              "combined_operator": "7", "sample_list": ["1", "3"],
              "1-number": "2", "0-chamber": "i1", "1-sih4": "2.000",
              "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000"}, follow=True)
