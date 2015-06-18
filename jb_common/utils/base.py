@@ -1027,4 +1027,43 @@ def generate_permissions(permissions, class_name):
     return tuple(result)
 
 
+def pretty_print_query_dict(query_dict):
+    """Pretty-prints a Django query dictionary.  This is intended to ease the
+    creation of unit tests: By adding temporary code that uses this function to
+    print the POST query dict to the screen, one can copy-paste it into the
+    unit test code where the POST data is supposed to be.
+
+    :param query_dict: POST query dictionary
+
+    :type query_dict: ``django.http.request.QueryDict``
+
+    :return:
+      the pretty-printed representation of the query dictionary
+
+    :rtype: unicode
+    """
+    def format_single_value(value):
+        return '"{}"'.format(value.encode("unicode_escape").decode("ascii").replace('"', r'\"').replace("\\'", "'"))
+    def key_function(key):
+        special_fields = ["operator", "combined_operator", "timestamp", "timestamp_inaccuracy", "sample", "sample_list",
+                          "number", "comments"]
+        try:
+            return special_fields.index(key) * " "
+        except ValueError:
+            return key
+    result = ["{"]
+    for key in sorted(query_dict.keys(), key=key_function):
+        values = query_dict.getlist(key)
+        if values not in ([], [""]):
+            if len(values) > 1:
+                value = "[" + ", ".join(format_single_value(value) for value in values) + "]"
+            else:
+                value = format_single_value(values[0])
+            result.extend(('"{}": {}'.format(key, value), ", "))
+    if len(result) > 1:
+        del result[-1]
+    result.append("}")
+    return "".join(result)
+
+
 _ = ugettext
