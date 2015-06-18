@@ -42,12 +42,12 @@ class FiveChamberDepositionTest(TestCase):
     def test_retrieve_add_view(self):
         response = self.client.get("/5-chamber_depositions/add/")
         self.assertEqual(response.status_code, 200)
-        initial = response.context["process"].initial
-        self.assertEqual(initial["operator"], 7)
-        self.assertEqual(initial["combined_operator"], 7)
-        self.assertEqual(initial["number"], self.deposition_number)
-        self.assertLess(abs((initial["timestamp"] - datetime.datetime.now()).total_seconds()), 1)
-        self.assertEqual(response.context["samples"].initial, {})
+        process_form = response.context["process"]
+        self.assertEqual(process_form["operator"].value(), 7)
+        self.assertEqual(process_form["combined_operator"].value(), 7)
+        self.assertEqual(process_form["number"].value(), self.deposition_number)
+        self.assertLess(abs((process_form["timestamp"].value() - datetime.datetime.now()).total_seconds()), 1)
+        self.assertEqual(response.context["samples"]["sample_list"].value(), [])
         self.assertEqual(response.context["samples"].fields["sample_list"].choices,
                          [("Cooperation with Paris University",
                            [(1, "14S-001"), (2, "14S-002"), (3, "14S-003"), (4, "14S-004"), (5, "14S-005"), (6, "14S-006")])])
@@ -78,8 +78,7 @@ class FiveChamberDepositionTest(TestCase):
             {"combined_operator": "7", "timestamp": "2015-06-18 13:53:38", "timestamp_inaccuracy": "0",
              "sample_list": ["1", "3"], "number": "15S-001"})
         self.assertEqual(response.status_code, 200)
-        self.assertInHTML('<option value="1" selected="selected">14S-001</option>', response.content)
-        self.assertInHTML('<option value="3" selected="selected">14S-003</option>', response.content)
+        self.assertEqual(response.context["samples"]["sample_list"].value(), ["1", "3"])
 
     def test_add_layer(self):
         response = self.client.post("/5-chamber_depositions/add/",
@@ -87,7 +86,7 @@ class FiveChamberDepositionTest(TestCase):
              "sample_list": ["1", "3"], "number": "15S-001", "number_of_layers_to_add": "1"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context["layers_and_change_layers"]), 1)
-        self.assertEqual(response.context["layers_and_change_layers"][0][0].initial["number"], 1)
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["number"].value(), 1)
 
     def test_too_many_added_layers(self):
         response = self.client.post("/5-chamber_depositions/add/",
