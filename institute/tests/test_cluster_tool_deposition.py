@@ -115,3 +115,15 @@ class ClusterToolDepositionTest(TestCase):
         self.assertEqual(response.context["layers_and_change_layers"][2][0]["sih4"].value(), "3")
         self.assertEqual(response.context["layers_and_change_layers"][3][0]["sih4"].value(), decimal.Decimal("2"))
         self.assertEqual(response.context["layers_and_change_layers"][4][0]["sih4"].value(), None)
+
+    def test_duplicate_deposition(self):
+        response = self.client.get("/cluster_tool_depositions/add/?copy_from=14C-001")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["samples"]["sample_list"].value(), [])
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 3)
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["sih4"].value(), decimal.Decimal("2"))
+        self.assertEqual(response.context["layers_and_change_layers"][1][0]["sih4"].value(), decimal.Decimal("3"))
+        self.assertEqual(response.context["layers_and_change_layers"][2][0]["sih4"].value(), decimal.Decimal("7"))
+        self.assertLess(abs((response.context["process"]["timestamp"].value() - datetime.datetime.now()).total_seconds()), 1)
+        self.assertEqual(response.context["process"]["operator"].value(), 6)
+        self.assertEqual(response.context["process"]["combined_operator"].value(), 6)
