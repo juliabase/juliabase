@@ -46,8 +46,8 @@ class ClusterToolDepositionTest(TestCase):
             {"number": self.deposition_number, "combined_operator": "6",
              "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
              "sample_list": ["13", "14"],
-             "0-layer_type": "clustertoolhotwirelayer", "0-number": "1", "0-wire_material": "rhenium",
-             "1-layer_type": "clustertoolpecvdlayer", "1-number": "2", "1-chamber": "#1"}, follow=True)
+             "0-step_type": "clustertoolhotwirelayer", "0-number": "1", "0-wire_material": "rhenium",
+             "1-step_type": "clustertoolpecvdlayer", "1-number": "2", "1-chamber": "#1"}, follow=True)
         self.assertRedirects(response, "http://testserver/", 303)
         response = self.client.get("/cluster_tool_depositions/" + self.deposition_number, HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
@@ -74,29 +74,29 @@ class ClusterToolDepositionTest(TestCase):
     def test_add_layer(self):
         response = self.client.post("/cluster_tool_depositions/add/",
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
-             "sample_list": ["13", "14"], "number": self.deposition_number, "layer_to_be_added": "clustertoolhotwirelayer"})
+             "sample_list": ["13", "14"], "number": self.deposition_number, "step_to_be_added": "clustertoolhotwirelayer"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context["layers_and_change_layers"]), 1)
-        self.assertEqual(response.context["layers_and_change_layers"][0][0]["number"].value(), "1")
-        # This checks whether the new layer really is a hot-wire layer.
-        self.assertEqual(response.context["layers_and_change_layers"][0][0]["wire_material"].value(), None)
+        self.assertEqual(len(response.context["steps_and_change_steps"]), 1)
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["number"].value(), "1")
+        # This checks whether the new step really is a hot-wire layer.
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["wire_material"].value(), None)
 
     def test_duplicate_layer(self):
         response = self.client.post("/cluster_tool_depositions/add/",
             {"combined_operator": "6", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
              "sample_list": ["13", "14"], "number": self.deposition_number,
-             "0-layer_type": "clustertoolhotwirelayer", "0-number": "1", "0-sih4": "1", "0-wire_material": "rhenium",
-             "1-chamber": "#1", "1-layer_type": "clustertoolpecvdlayer", "1-number": "2", "1-sih4": "2",
-             "1-duplicate_this_layer": "on",
-             "2-layer_type": "clustertoolhotwirelayer", "2-number": "3", "2-sih4": "3", "2-wire_material": "rhenium",
-             "layer_to_be_added": "clustertoolpecvdlayer"})
+             "0-step_type": "clustertoolhotwirelayer", "0-number": "1", "0-sih4": "1", "0-wire_material": "rhenium",
+             "1-chamber": "#1", "1-step_type": "clustertoolpecvdlayer", "1-number": "2", "1-sih4": "2",
+             "1-duplicate_this_step": "on",
+             "2-step_type": "clustertoolhotwirelayer", "2-number": "3", "2-sih4": "3", "2-wire_material": "rhenium",
+             "step_to_be_added": "clustertoolpecvdlayer"})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.context["layers_and_change_layers"]), 5)
+        self.assertEqual(len(response.context["steps_and_change_steps"]), 5)
         for i in range(5):
-            self.assertEqual(int(response.context["layers_and_change_layers"][i][0]["number"].value()), i + 1)
-            self.assertFalse(response.context["layers_and_change_layers"][i][1]["duplicate_this_layer"].value())
-        self.assertEqual(response.context["layers_and_change_layers"][0][0]["sih4"].value(), "1")
-        self.assertEqual(response.context["layers_and_change_layers"][1][0]["sih4"].value(), "2")
-        self.assertEqual(response.context["layers_and_change_layers"][2][0]["sih4"].value(), "3")
-        self.assertEqual(response.context["layers_and_change_layers"][3][0]["sih4"].value(), decimal.Decimal("2"))
-        self.assertEqual(response.context["layers_and_change_layers"][4][0]["sih4"].value(), None)
+            self.assertEqual(int(response.context["steps_and_change_steps"][i][0]["number"].value()), i + 1)
+            self.assertFalse(response.context["steps_and_change_steps"][i][1]["duplicate_this_step"].value())
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["sih4"].value(), "1")
+        self.assertEqual(response.context["steps_and_change_steps"][1][0]["sih4"].value(), "2")
+        self.assertEqual(response.context["steps_and_change_steps"][2][0]["sih4"].value(), "3")
+        self.assertEqual(response.context["steps_and_change_steps"][3][0]["sih4"].value(), decimal.Decimal("2"))
+        self.assertEqual(response.context["steps_and_change_steps"][4][0]["sih4"].value(), None)
