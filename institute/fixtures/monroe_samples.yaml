@@ -87,3 +87,26 @@
     - [e.monroe]
   model: samples.sample
   pk: 16
+
+# Here, I add my_steps
+
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: 2015-01-21 11:15:01.411968
+    folded_processes: '{}'
+    folded_series: '[]'
+    folded_topics: '[]'
+    identifying_data_hash: ''
+    my_steps: '[["standard-hotwire", 14, 1]]'
+    my_samples_timestamp: 1990-01-01 00:00:00
+    my_samples_list_timestamp: 1990-01-01 00:00:00
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 6

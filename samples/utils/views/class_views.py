@@ -29,6 +29,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
@@ -959,11 +960,10 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
                     next_prefix += 1
             elif new_step[0] == "new":
                 # New MyStep
-                initial = {}
-                id_ = new_step[1]["id"]
-                step_class = models.Step.objects.get(id=id_).content_type.model_class()
+                new_step_data = new_step[1]
+                step_class = ContentType.objects.get(id=new_step_data["content_type_id"]).model_class()
                 StepFormClass = self.step_types[step_class.__name__.lower()]
-                initial = step_class.objects.filter(id=id_).values()[0]
+                initial = step_class.objects.filter(id=new_step_data["id"]).values()[0]
                 initial["number"] = i + 1
                 self.forms["steps"].append(StepFormClass(self, initial=initial, prefix=str(next_prefix)))
                 self.forms["change_steps"].append(self.change_step_form_class(prefix=str(next_prefix)))

@@ -81,6 +81,21 @@ class ClusterToolDepositionTest(TestCase):
         # This checks whether the new step really is a hot-wire layer.
         self.assertEqual(response.context["steps_and_change_steps"][0][0]["wire_material"].value(), None)
 
+    def test_add_my_layer(self):
+        response = self.client.post("/cluster_tool_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["13", "14"], "number": self.deposition_number, "my_step_to_be_added": "14-1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["steps_and_change_steps"]), 1)
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["number"].value(), 1)
+        # This checks whether the new layer really is the hot-wire layer.
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["wire_material"].value(), "rhenium")
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["h2"].value(), decimal.Decimal("1"))
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["sih4"].value(), decimal.Decimal("2"))
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["base_pressure"].value(), decimal.Decimal("0"))
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["time"].value(), "10:00")
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["comments"].value(), "p-type layer")
+
     def test_duplicate_layer(self):
         response = self.client.post("/cluster_tool_depositions/add/",
             {"combined_operator": "6", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
@@ -100,3 +115,15 @@ class ClusterToolDepositionTest(TestCase):
         self.assertEqual(response.context["steps_and_change_steps"][2][0]["sih4"].value(), "3")
         self.assertEqual(response.context["steps_and_change_steps"][3][0]["sih4"].value(), decimal.Decimal("2"))
         self.assertEqual(response.context["steps_and_change_steps"][4][0]["sih4"].value(), None)
+
+    def test_duplicate_deposition(self):
+        response = self.client.get("/cluster_tool_depositions/add/?copy_from=14C-001")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["samples"]["sample_list"].value(), [])
+        self.assertEqual(len(response.context["steps_and_change_steps"]), 3)
+        self.assertEqual(response.context["steps_and_change_steps"][0][0]["sih4"].value(), decimal.Decimal("2"))
+        self.assertEqual(response.context["steps_and_change_steps"][1][0]["sih4"].value(), decimal.Decimal("3"))
+        self.assertEqual(response.context["steps_and_change_steps"][2][0]["sih4"].value(), decimal.Decimal("7"))
+        self.assertLess(abs((response.context["process"]["timestamp"].value() - datetime.datetime.now()).total_seconds()), 1)
+        self.assertEqual(response.context["process"]["operator"].value(), 6)
+        self.assertEqual(response.context["process"]["combined_operator"].value(), 6)
