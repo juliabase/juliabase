@@ -71,6 +71,13 @@ class Deposition(PhysicalProcess):
         identifying_field = "number"
 
     def steps(self):
+        """Returns all layers of this deposition as a query set.
+
+        :return:
+          all layers of this deposition
+
+        :rtype: ``django.db.models.query.QuerySet``
+        """
         return self.layers
 
     def _get_layers(self):

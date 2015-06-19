@@ -116,7 +116,12 @@ This mixin realises the JuliaBase concept of a *step*.  Steps are ordered
 sub-processes.  On the model layer, they are models *not* derived from
 ``Process`` that contain an interger field ``number``.  This field is used to
 define the ordering, and helps JuliaBase to provide some convenience
-functionality: Re-ordering steps, duplicating them, deleting them.
+functionality: Re-ordering steps, duplicating them, deleting them.  The parent
+model, for example the deposition process class, must define a method
+:py:meth:`steps` that returns a query set of all steps, as in::
+
+      def steps(self):
+          return self.layers
 
 The ``MultipleStepsMixin`` is the main ingredient for the class
 :py:class:`~samples.utils.views.DepositionView`.  You can see the latter in
@@ -143,7 +148,11 @@ included which realises this functionality for deposition layers.
 
 This mixin is the same as above, but each step may be of a different model
 class.  Using this mixin is slightly more complicated but also more powerful
-for obvious reasons.
+for obvious reasons.  The steps must be of a common base model class, of which
+the concrete model classes are derived.  Consequently, the base model class
+must inherit from :py:class:`jb_common.models.PolymorphicModel`.  The
+:py:meth:`steps` method may return instances of the base model class, because
+the class-based view already takes care of finding the actual instance.
 
 This forms the basis of
 :py:class:`~samples.utils.views.DepositionMultipleTypeView`.  You can see the
