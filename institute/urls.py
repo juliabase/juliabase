@@ -39,7 +39,7 @@ from __future__ import absolute_import, unicode_literals
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from samples.utils.urls import PatternGenerator
-from institute.views.samples import sample, claim, stack, layout, json_client, substrate, structuring
+from institute.views.samples import sample, claim, stack, layout, json_client, substrate, structuring, my_layers
 
 
 urlpatterns = [
@@ -48,6 +48,7 @@ urlpatterns = [
     url(r"^samples/add/$", sample.add),
     url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", sample.copy_informal_stack),
     url(r"^claims/(?P<username>.+)/add_oldstyle/$", claim.add_oldstyle),
+    url(r"^my_layers/(?P<login_name>.+)", my_layers.edit),
     url(r"^stacks/(?P<sample_id>\d+)$", stack.show_stack, {"thumbnail": False}, "stack_diagram"),
     url(r"^stacks/thumbnails/(?P<sample_id>\d+)$", stack.show_stack, {"thumbnail": True},
         "stack_diagram_thumbnail"),

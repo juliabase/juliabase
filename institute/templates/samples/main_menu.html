@@ -30,6 +30,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block miscellaneous_extras %}
   <li style='list-style-image: url("{% static "juliabase/icons/shape_square_edit.png" %}")'>
-    <a href="{% url 'samples.views.my_layers.edit' login_name=user.username %}">{% trans 'Edit “My Layers”' %}</a></li>
+    <a href="{% url 'institute.views.samples.my_layers.edit' login_name=user.username %}"
+       >{% trans 'Edit “My Layers”' %}</a></li>
   {{ block.super }}
 {% endblock %}

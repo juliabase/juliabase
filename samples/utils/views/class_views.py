@@ -17,7 +17,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""Support for classed-based add and edit views for processes.
+"""Support for classed-based add and edit views for processes.  It defines base
+classes for processes with only one sample and multiple samples.  Moreover, it
+defines a couple of mixins that can be combined with the base classes.  The
+main difference between mixin and base class is that the latter instantiates a
+samples form, whereas the mixin class doesn't do this.
 """
 
 from __future__ import absolute_import, unicode_literals
@@ -43,7 +47,8 @@ from samples import models
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
-           "DepositionView", "DepositionMultipleTypeView", "SimpleRadioSelectRenderer")
+           "MultipleStepsMixin", "MultipleStepTypesMixin", "SimpleRadioSelectRenderer",
+           "DepositionView", "DepositionMultipleTypeView")
 
 
 class ProcessWithoutSamplesView(TemplateView):
@@ -162,6 +167,15 @@ class ProcessWithoutSamplesView(TemplateView):
         if "process" not in self.forms:
             initial = {}
             if not self.id:
+                copy_from = self.request.GET.get("copy_from")
+                if copy_from:
+                    # Duplication of a process
+                    source_process_query = self.model.objects.filter(**{self.identifying_field: copy_from})
+                    if source_process_query.count() == 1:
+                        initial.update(source_process_query.values()[0])
+                        initial["timestamp"] = datetime.datetime.now()
+                        initial["timestamp_inaccuracy"] = 0
+                        initial["operator"] = self.request.user.pk
                 next_id = self.get_next_id()
                 if next_id:
                     initial[self.identifying_field] = next_id
@@ -387,9 +401,9 @@ class NumberForm(forms.Form):
 
 
 class SubprocessForm(forms.ModelForm):
-    """Model form class for subprocesses and deposition layers.  Its only purpose
-    is to eat up the ``view`` parameter to the constructor so that you need not
-    redefine the constructor every time.
+    """Model form class for subprocesses.  Its only purpose is to eat up the
+    ``view`` parameter to the constructor so that you need not redefine the
+    constructor every time.
     """
     def __init__(self, view, *args, **kwargs):
         super(SubprocessForm, self).__init__(*args, **kwargs)
@@ -399,7 +413,11 @@ class SubprocessForm(forms.ModelForm):
 class SubprocessesMixin(ProcessWithoutSamplesView):
     """Mixing for views that represent processes with subprocesses.  Have a look at
     :py:mod:`institute.views.samples.solarsimulator_measurement` for an
-    example.  For this to work, you must define the following additional class
+    example.  In a way, it is a light-weight variant of the
+    `MultipleStepsMixin` below.  In contrast to that, this mixin doesn't order
+    its subprocesses (you still may enforce ordering in the show template).
+
+    For this to work, you must define the following additional class
     variables:
 
     - :py:attr:`subform_class`: the model form class for the subprocesses
@@ -485,144 +503,148 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
         return process
 
 
-class ChangeLayerForm(forms.Form):
-    """Form for manipulating a layer.  Duplicating it (appending the
-    duplicate), deleting it, and moving it up- or downwards.
+class ChangeStepForm(forms.Form):
+    """Form for manipulating a step.  Duplicating it (appending the duplicate),
+    deleting it, and moving it up- or downwards.
     """
-    duplicate_this_layer = forms.BooleanField(label=_("duplicate this layer"), required=False)
-    remove_this_layer = forms.BooleanField(label=_("remove this layer"), required=False)
-    move_this_layer = forms.ChoiceField(label=_("move this layer"), required=False,
+    duplicate_this_step = forms.BooleanField(label=_("duplicate this step"), required=False)
+    remove_this_step = forms.BooleanField(label=_("remove this step"), required=False)
+    move_this_step = forms.ChoiceField(label=_("move this step"), required=False,
                                         choices=(("", "---------"), ("up", _("up")), ("down", _("down"))))
 
     def clean(self):
-        cleaned_data = super(ChangeLayerForm, self).clean()
+        cleaned_data = super(ChangeStepForm, self).clean()
         operations = 0
-        if cleaned_data["duplicate_this_layer"]:
+        if cleaned_data["duplicate_this_step"]:
             operations += 1
-        if cleaned_data["remove_this_layer"]:
+        if cleaned_data["remove_this_step"]:
             operations += 1
-        if cleaned_data.get("move_this_layer"):
+        if cleaned_data.get("move_this_step"):
             operations += 1
         if operations > 1:
-            raise ValidationError(_("You can't duplicate, move, or remove a layer at the same time."))
+            raise ValidationError(_("You can't duplicate, move, or remove a step at the same time."))
         return cleaned_data
 
 
-class AddMyLayersForm(forms.Form):
-    """Form for adding a pre-defined layer from the “My Layers” list.  At the
-    same time, this serves as the base class for other add-layers forms since
-    adding “My Layers” should be *always* possible.
+class AddMyStepsForm(forms.Form):
+    """Form for adding a pre-defined step from the “My Steps” list.  At the
+    same time, this serves as the base class for other add-steps forms since
+    adding “My Steps” should be *always* possible.
     """
-    my_layer_to_be_added = forms.ChoiceField(label=_("Nickname of My Layer to be added"), required=False)
+    my_step_to_be_added = forms.ChoiceField(label=_("Nickname of My Step to be added"), required=False)
 
     def __init__(self, view, data=None, **kwargs):
-        super(AddMyLayersForm, self).__init__(data, **kwargs)
-        self.fields["my_layer_to_be_added"].choices = utils.get_my_layers(view.request.user.samples_user_details, view.model)
+        super(AddMyStepsForm, self).__init__(data, **kwargs)
+        self.fields["my_step_to_be_added"].choices = utils.get_my_steps(view.request.user.samples_user_details, view.model)
         self.model = view.model
 
-    def clean_my_layer_to_be_added(self):
-        nickname = self.cleaned_data["my_layer_to_be_added"]
+    def clean_my_step_to_be_added(self):
+        nickname = self.cleaned_data["my_step_to_be_added"]
         if nickname and "-" in nickname:
-            process_id, layer_number = self.cleaned_data["my_layer_to_be_added"].split("-")
-            process_id, layer_number = int(process_id), int(layer_number)
+            process_id, step_number = self.cleaned_data["my_step_to_be_added"].split("-")
+            process_id, step_number = int(process_id), int(step_number)
             try:
                 deposition = self.model.objects.get(pk=process_id)
             except self.model.DoesNotExist:
                 pass
             else:
-                layer_query = deposition.layers.filter(number=layer_number)
-                if layer_query.count() == 1:
-                    return layer_query.values()[0]
+                step_query = deposition.steps().filter(number=step_number)
+                if step_query.count() == 1:
+                    return step_query.values()[0]
 
-    def change_structure(self, structure_changed, new_layers):
-        """Apply the changes introduced by adding layers to the data structures of the
+    def change_structure(self, structure_changed, new_steps):
+        """Apply the changes introduced by adding steps to the data structures of the
         caller.  This caller is the :py:meth:`_change_structure` method of a
         view class, which in turn is usually called shortly before validating
         all forms.
 
         :param structure_changed: whether the caller has already performed
-          layer-list-changing operations, e.g. deleting of a layer.
+          step-list-changing operations, e.g. deleting of a step.
 
-        :param new_layers: a list of the layers after the structure changes.
+        :param new_steps: a list of the steps after the structure changes.
           It is a list of tuples with three elements, a string denoting the
-          change, a dict with the initial layer data, and possibly a
-          :py:class:`ChangeLayerForm`.  The latter is optional, however, and
+          change, a dict with the initial step data, and possibly a
+          :py:class:`ChangeStepForm`.  The latter is optional, however, and
           not added here.
 
         :type structure_changed: bool
-        :type new_layers: list of (str, dict, ChangeLayerForm) or (str, dict)
+        :type new_steps: list of (str, dict, ChangeStepForm) or (str, dict)
 
         :Return:
-          the updated values for ``structure_changed`` and ``new_layers``
+          the updated values for ``structure_changed`` and ``new_steps``
 
-        :rtype: bool, list of (str, dict, ChangeLayerForm) or (str, dict)
+        :rtype: bool, list of (str, dict, ChangeStepForm) or (str, dict)
         """
-        my_layer_data = self.cleaned_data["my_layer_to_be_added"]
-        if my_layer_data is not None:
-            new_layers.append(("new", my_layer_data))
+        my_step_data = self.cleaned_data["my_step_to_be_added"]
+        if my_step_data is not None:
+            new_steps.append(("new", my_step_data))
             structure_changed = True
-        return structure_changed, new_layers
+        return structure_changed, new_steps
 
 
-class AddLayersForm(AddMyLayersForm):
-    """Add-layers form with additional number of layers to add.
+class AddStepsForm(AddMyStepsForm):
+    """Add-steps form with additional number of steps to add.
     """
-    number_of_layers_to_add = forms.IntegerField(label=_("Number of layers to be added"), min_value=0, max_value=10,
+    number_of_steps_to_add = forms.IntegerField(label=_("Number of steps to be added"), min_value=0, max_value=10,
                                                  required=False)
 
     def __init__(self, view, data=None, **kwargs):
-        super(AddLayersForm, self).__init__(view, data, **kwargs)
-        self.fields["number_of_layers_to_add"].widget.attrs["size"] = "5"
+        super(AddStepsForm, self).__init__(view, data, **kwargs)
+        self.fields["number_of_steps_to_add"].widget.attrs["size"] = "5"
         self.model = view.model
 
-    def clean_number_of_layers_to_add(self):
-        return int_or_zero(self.cleaned_data["number_of_layers_to_add"])
+    def clean_number_of_steps_to_add(self):
+        return int_or_zero(self.cleaned_data["number_of_steps_to_add"])
 
-    def change_structure(self, structure_changed, new_layers):
-        structure_changed, new_layers = super(AddLayersForm, self).change_structure(structure_changed, new_layers)
-        for i in range(self.cleaned_data["number_of_layers_to_add"]):
-            new_layers.append(("new", {}))
+    def change_structure(self, structure_changed, new_steps):
+        structure_changed, new_steps = super(AddStepsForm, self).change_structure(structure_changed, new_steps)
+        for i in range(self.cleaned_data["number_of_steps_to_add"]):
+            new_steps.append(("new", {}))
             structure_changed = True
-        return structure_changed, new_layers
+        return structure_changed, new_steps
 
 
-class DepositionView(ProcessMultipleSamplesView):
-    """View class for depositions.  The layers of the deposition must always be of
-    the same type.  If they are not, you must use
-    :py:class:`DepositionMultipleTypeView` instead.  Additionally to
-    :py:attr:`form_class`, you must set the :py:attr:`layer_form_class` class
-    variable to the form class to be used for the layers.
+class MultipleStepsMixin(ProcessWithoutSamplesView):
+    """Mixin class for views for processes with steps.  The steps of the process
+    must always be of the same type.  If they are not, you must use
+    :py:class:`MultipleTypeStepsMixin` instead.  Additionally to
+    :py:attr:`form_class`, you must set the :py:attr:`step_form_class` class
+    variable to the form class to be used for the steps.
 
-    The layer form should be a subclass of :py:class:`~samples.utils.views.SubprocessForm`.
+    The step form should be a subclass of
+    :py:class:`~samples.utils.views.SubprocessForm`.
+
+    This mixin must come before the main view class in the list of parents.
     """
-    add_layers_form_class = AddLayersForm
-    change_layer_form_class = ChangeLayerForm
+    add_steps_form_class = AddStepsForm
+    change_step_form_class = ChangeStepForm
+    error_message_no_steps = _("No steps given.")
 
     def _change_structure(self):
-        """Apply any layer-based rearrangements the user has requested.  This
-        is layer duplication, order changes, appending of layers, and deletion.
+        """Apply any step-based rearrangements the user has requested.  This is step
+        duplication, order changes, appending of steps, and deletion.
 
         The method has two parts: First, the changes are collected in a data
-        structure called ``new_layers``.  Then, we walk through ``new_layers``
-        and build a new list ``self.forms["layers"]`` from it.
+        structure called ``new_steps``.  Then, we walk through ``new_steps``
+        and build a new list ``self.forms["steps"]`` from it.
 
-        ``new_layers`` is a list of small lists.  Every small list has a string
+        ``new_steps`` is a list of small lists.  Every small list has a string
         as its zeroth element which may be ``"original"``, ``"duplicate"``, or
-        ``"new"``, denoting the origin of that layer form.  The remainding
-        elements are parameters: the (old) layer and change-layer form for
-        ``"original"``; the source layer form for ``"duplicate"``; and the
-        initial layer form data for ``"new"``.
+        ``"new"``, denoting the origin of that step form.  The remainding
+        elements are parameters: the (old) step and change-step form for
+        ``"original"``; the source step form for ``"duplicate"``; and the
+        initial step form data for ``"new"``.
 
-        Of course, the new layer forms are not validated.  Therefore,
+        Of course, the new step forms are not validated.  Therefore,
         `__is_all_valid` is called *after* this routine in `save_to_database`.
 
-        Note that – as usual – the numbers of depositions and layers are called
-        *number*, whereas the internal numbers used as prefixes in the HTML
-        names are called *indices*.  The index (and thus prefix) of a layer
-        form does never change (in contrast to the 6-chamber deposition, see
+        Note that – as usual – the numbers of steps are called *number*,
+        whereas the internal numbers used as prefixes in the HTML names are
+        called *indices*.  The index (and thus prefix) of a step form does
+        never change (in contrast to more complex deposition classes, see
         :py:func:`samples.views.form_utils.normalize_prefixes`), not even
-        across many “post cycles”.  Only the layer numbers are used for
-        determining the order of layers.
+        across many “post cycles”.  Only the step numbers are used for
+        determining the order of steps.
 
         :return:
           whether the structure was changed in any way.
@@ -630,160 +652,150 @@ class DepositionView(ProcessMultipleSamplesView):
         :rtype: bool
         """
         structure_changed = False
-        new_layers = [["original", layer_form, change_layer_form]
-                      for layer_form, change_layer_form in zip(self.forms["layers"], self.forms["change_layers"])]
+        new_steps = [["original", step_form, change_step_form]
+                      for step_form, change_step_form in zip(self.forms["steps"], self.forms["change_steps"])]
 
-        # Move layers
-        for i in range(len(new_layers)):
-            layer_form, change_layer_form = new_layers[i][1:3]
-            if change_layer_form.is_valid():
-                movement = change_layer_form.cleaned_data["move_this_layer"]
+        # Move steps
+        for i in range(len(new_steps)):
+            step_form, change_step_form = new_steps[i][1:3]
+            if change_step_form.is_valid():
+                movement = change_step_form.cleaned_data["move_this_step"]
                 if movement:
-                    new_layers[i][2] = self.change_layer_form_class(prefix=layer_form.prefix)
+                    new_steps[i][2] = self.change_step_form_class(prefix=step_form.prefix)
                     structure_changed = True
                     if movement == "up" and i > 0:
-                        temp = new_layers[i - 1]
-                        new_layers[i - 1] = new_layers[i]
-                        new_layers[i] = temp
-                    elif movement == "down" and i < len(new_layers) - 1:
-                        temp = new_layers[i]
-                        new_layers[i] = new_layers[i + 1]
-                        new_layers[i + 1] = temp
+                        temp = new_steps[i - 1]
+                        new_steps[i - 1] = new_steps[i]
+                        new_steps[i] = temp
+                    elif movement == "down" and i < len(new_steps) - 1:
+                        temp = new_steps[i]
+                        new_steps[i] = new_steps[i + 1]
+                        new_steps[i + 1] = temp
 
-        # Duplicate layers
-        for i in range(len(new_layers)):
-            layer_form, change_layer_form = new_layers[i][1:3]
-            if layer_form.is_valid() and \
-                    change_layer_form.is_valid() and change_layer_form.cleaned_data["duplicate_this_layer"]:
-                new_layers.append(("duplicate", layer_form))
-                new_layers[i][2] = self.change_layer_form_class(prefix=layer_form.prefix)
+        # Duplicate steps
+        for i in range(len(new_steps)):
+            step_form, change_step_form = new_steps[i][1:3]
+            if step_form.is_valid() and \
+                    change_step_form.is_valid() and change_step_form.cleaned_data["duplicate_this_step"]:
+                new_steps.append(("duplicate", step_form))
+                new_steps[i][2] = self.change_step_form_class(prefix=step_form.prefix)
                 structure_changed = True
 
-        # Add layers
-        if self.forms["add_layers"].is_valid():
-            structure_changed, new_layers = self.forms["add_layers"].change_structure(structure_changed, new_layers)
-            self.forms["add_layers"] = self.add_layers_form_class(self)
+        # Add steps
+        if self.forms["add_steps"].is_valid():
+            structure_changed, new_steps = self.forms["add_steps"].change_structure(structure_changed, new_steps)
+            self.forms["add_steps"] = self.add_steps_form_class(self)
 
-        # Delete layers
-        for i in range(len(new_layers) - 1, -1, -1):
-            if len(new_layers[i]) == 3:
-                change_layer_form = new_layers[i][2]
-                if change_layer_form.is_valid() and change_layer_form.cleaned_data["remove_this_layer"]:
-                    del new_layers[i]
+        # Delete steps
+        for i in range(len(new_steps) - 1, -1, -1):
+            if len(new_steps[i]) == 3:
+                change_step_form = new_steps[i][2]
+                if change_step_form.is_valid() and change_step_form.cleaned_data["remove_this_step"]:
+                    del new_steps[i]
                     structure_changed = True
 
-        self._apply_changes(new_layers)
+        self._apply_changes(new_steps)
         return structure_changed
 
-    def _apply_changes(self, new_layers):
-        """Applies the collected changes in the layer forms by building a new list of
-        layer forms.  This method abstracts something that needs to be made
-        differently in
-        :py:class:`samples.utils.views.DepositionMultipleTypeView`.
+    def _apply_changes(self, new_steps):
+        """Applies the collected changes in the step forms by building a new list of
+        step forms.  This method abstracts something that needs to be made
+        differently in :py:class:`samples.utils.views.MultipleTypeStepsMixin`.
 
-        :params new_layers: the list of the new layers, see
-          :py:meth:`AddMyLayersForm.change_structure`.
+        :params new_steps: the list of the new steps, see
+          :py:meth:`AddMyStepsForm.change_structure`.
 
-        :type new_layers: list of (str, dict, ChangeLayerForm) or (str, dict)
+        :type new_steps: list of (str, dict, ChangeStepForm) or (str, dict)
         """
-        next_layer_number = 1
-        old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
+        next_step_number = 1
+        old_prefixes = [int(step_form.prefix) for step_form in self.forms["steps"] if step_form.is_bound]
         next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
-        self.forms["layers"] = []
-        self.forms["change_layers"] = []
-        for new_layer in new_layers:
-            if new_layer[0] == "original":
+        self.forms["steps"] = []
+        self.forms["change_steps"] = []
+        for new_step in new_steps:
+            if new_step[0] == "original":
                 post_data = self.data.copy() if self.data is not None else {}
-                prefix = new_layer[1].prefix
-                post_data[prefix + "-number"] = next_layer_number
-                next_layer_number += 1
-                self.forms["layers"].append(self.layer_form_class(self, post_data, prefix=prefix))
-                self.forms["change_layers"].append(new_layer[2])
-            elif new_layer[0] == "duplicate":
-                original_layer = new_layer[1]
-                if original_layer.is_valid():
-                    layer_data = original_layer.cleaned_data
-                    layer_data["number"] = next_layer_number
-                    next_layer_number += 1
-                    self.forms["layers"].append(self.layer_form_class(self, initial=layer_data, prefix=str(next_prefix)))
-                    self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
+                prefix = new_step[1].prefix
+                post_data[prefix + "-number"] = next_step_number
+                next_step_number += 1
+                self.forms["steps"].append(self.step_form_class(self, post_data, prefix=prefix))
+                self.forms["change_steps"].append(new_step[2])
+            elif new_step[0] == "duplicate":
+                original_step = new_step[1]
+                if original_step.is_valid():
+                    step_data = original_step.cleaned_data
+                    step_data["number"] = next_step_number
+                    next_step_number += 1
+                    self.forms["steps"].append(self.step_form_class(self, initial=step_data, prefix=str(next_prefix)))
+                    self.forms["change_steps"].append(self.change_step_form_class(prefix=str(next_prefix)))
                     next_prefix += 1
-            elif new_layer[0] == "new":
-                initial = new_layer[1]
-                initial["number"] = next_layer_number
-                self.forms["layers"].append(self.layer_form_class(self, initial=initial, prefix=str(next_prefix)))
-                self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
-                next_layer_number += 1
+            elif new_step[0] == "new":
+                initial = new_step[1]
+                initial["number"] = next_step_number
+                self.forms["steps"].append(self.step_form_class(self, initial=initial, prefix=str(next_prefix)))
+                self.forms["change_steps"].append(self.change_step_form_class(prefix=str(next_prefix)))
+                next_step_number += 1
                 next_prefix += 1
             else:
-                raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
+                raise AssertionError("Wrong first field in new_steps structure: " + new_step[0])
 
-    def get_layer_form(self, prefix):
-        """Returns the layer form with the given prefix.  This method abstracts
+    def get_step_form(self, prefix):
+        """Returns the step form with the given prefix.  This method abstracts
         something that needs to be made differently in
-        :py:class:`samples.utils.views.DepositionMultipleTypeView`.
+        :py:class:`samples.utils.views.MultipleTypeStepsMixin`.
 
         :param prefix: the prefix of the resulting form
 
         :type prefix: unicode
 
         :Return:
-          the layer form
+          the step form
 
         :rtype: :py:class:`~samples.utils.views.SubprocessForm`
         """
-        return self.layer_form_class(self, self.data, prefix=prefix)
+        return self.step_form_class(self, self.data, prefix=prefix)
 
-    def _read_layer_forms(self, source_deposition):
-        """Generate a set of layer forms from database data.  Note that the layers are
+    def _read_step_forms(self, source_process):
+        """Generate a set of step forms from database data.  Note that the steps are
         not returned – instead, they are written directly into
-        ``self.layer_forms``.
+        ``self.forms``.
 
-        :param source_deposition: the deposition from which the layers should
-            be taken.  Note that this may be the deposition which is currently
-            edited, or the deposition which is duplicated to create a new
-            deposition.
+        :param source_process: the process from which the steps should be
+            taken.  Note that this may be the process which is currently
+            edited, or the process which is duplicated to create a new
+            process of the same class.
 
-        :type source_deposition: `samples.models.Depositions`
-        :type destination_deposition_number: unicode
+        :type source_process: `samples.models.PhysicalProcess`
         """
-        self.forms["layers"] = [self.layer_form_class(self, prefix=str(layer_index), instance=layer,
-                                                      initial={"number": layer_index + 1})
-                                for layer_index, layer in enumerate(source_deposition.layers.all())]
+        self.forms["steps"] = [self.step_form_class(self, prefix=str(step_index), instance=step,
+                                                    initial={"number": step_index + 1})
+                               for step_index, step in enumerate(source_process.steps().all())]
 
     def build_forms(self):
-        if "samples" not in self.forms:
-            self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
-                                                                self.data)
-        self.forms["add_layers"] = self.add_layers_form_class(self, self.data)
+        self.forms["add_steps"] = self.add_steps_form_class(self, self.data)
         if self.request.method == "POST":
             indices = utils.collect_subform_indices(self.data)
-            self.forms["layers"] = [self.get_layer_form(prefix=str(layer_index)) for layer_index in indices]
-            self.forms["change_layers"] = [self.change_layer_form_class(self.data, prefix=str(change_layer_index))
-                                           for change_layer_index in indices]
+            self.forms["steps"] = [self.get_step_form(prefix=str(step_index)) for step_index in indices]
+            self.forms["change_steps"] = [self.change_step_form_class(self.data, prefix=str(change_step_index))
+                                           for change_step_index in indices]
         else:
             copy_from = self.request.GET.get("copy_from")
             if not self.id and copy_from:
-                # Duplication of a deposition
+                # Duplication of the layers of a deposition; the deposition
+                # itself is already duplicated.
                 source_deposition_query = self.model.objects.filter(number=copy_from)
                 if source_deposition_query.count() == 1:
-                    deposition_data = source_deposition_query.values()[0]
-                    deposition_data["timestamp"] = datetime.datetime.now()
-                    deposition_data["timestamp_inaccuracy"] = 0
-                    deposition_data["operator"] = self.request.user.pk
-                    deposition_data["number"] = self.get_next_id()
-                    self.forms["process"] = self.form_class(self.request.user, initial=deposition_data)
-                    self._read_layer_forms(source_deposition_query[0])
-            if "layers" not in self.forms:
+                    self._read_step_forms(source_deposition_query[0])
+            if "steps" not in self.forms:
                 if self.id:
                     # Normal edit of existing deposition
-                    self._read_layer_forms(self.process)
+                    self._read_step_forms(self.process)
                 else:
                     # New deposition, or duplication has failed
-                    self.forms["layers"] = []
-            self.forms["change_layers"] = [self.change_layer_form_class(prefix=str(index))
-                                           for index in range(len(self.forms["layers"]))]
-        super(DepositionView, self).build_forms()
+                    self.forms["steps"] = []
+            self.forms["change_steps"] = [self.change_step_form_class(prefix=str(index))
+                                           for index in range(len(self.forms["steps"]))]
+        super(MultipleStepsMixin, self).build_forms()
 
     def is_all_valid(self):
         """Tests the “inner” validity of all forms belonging to this view.  This
@@ -796,46 +808,46 @@ class DepositionView(ProcessMultipleSamplesView):
         :rtype: bool
         """
         all_valid = not self._change_structure() if not is_json_requested(self.request) else True
-        all_valid = super(DepositionView, self).is_all_valid() and all_valid
+        all_valid = super(MultipleStepsMixin, self).is_all_valid() and all_valid
         return all_valid
 
     def is_referentially_valid(self):
         """Test whether all forms are consistent with each other and with the database.
-        In particular, we assure that the user has given at least one layer.
+        In particular, we assure that the user has given at least one step.
 
         :return:
           whether all forms are consistent with each other and the database
 
         :rtype: bool
         """
-        referentially_valid = super(DepositionView, self).is_referentially_valid()
-        if not self.forms["layers"]:
-            self.forms["process"].add_error(None, _("No layers given."))
+        referentially_valid = super(MultipleStepsMixin, self).is_referentially_valid()
+        if not self.forms["steps"]:
+            self.forms["process"].add_error(None, self.error_message_no_steps)
             referentially_valid = False
         return referentially_valid
 
     def get_context_data(self, **kwargs):
-        context = super(DepositionView, self).get_context_data(**kwargs)
-        context["layers_and_change_layers"] = list(zip(self.forms["layers"], self.forms["change_layers"]))
+        context = super(MultipleStepsMixin, self).get_context_data(**kwargs)
+        context["steps_and_change_steps"] = list(zip(self.forms["steps"], self.forms["change_steps"]))
         return context
 
     def save_to_database(self):
-        """Apply all layer changes, check the whole validity of the data, and
-        save the forms to the database.  Only the deposition is just updated if
-        it already existed.  However, the layers are completely deleted and
-        re-constructed from scratch.
+        """Apply all step changes, check the whole validity of the data, and save the
+        forms to the database.  Only the process is just updated if it already
+        existed.  However, the steps are completely deleted and re-constructed
+        from scratch.
 
         :return:
-          The saved deposition object, or ``None`` if validation failed
+          The saved process instance, or ``None`` if validation failed
 
-        :rtype: `samples.models.Deposition` or NoneType
+        :rtype: `samples.models.PhysicalProcess` or NoneType
         """
-        deposition = super(DepositionView, self).save_to_database()
-        deposition.layers.all().delete()
-        for layer_form in self.forms["layers"]:
-            layer = layer_form.save(commit=False)
-            layer.deposition = deposition
-            layer.save()
+        deposition = super(MultipleStepsMixin, self).save_to_database()
+        deposition.steps().all().delete()
+        for step_form in self.forms["steps"]:
+            step = step_form.save(commit=False)
+            step.deposition = deposition
+            step.save()
         return deposition
 
 
@@ -845,123 +857,173 @@ class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
                     "<li>{0}</li>".format(force_text(w)) for w in self)))
 
 
-class AddMultipleTypeLayersForm(AddMyLayersForm):
-    """Form for adding a new layer in case of layers of different types.
+class AddMultipleTypeStepsForm(AddMyStepsForm):
+    """Form for adding a new step in case of steps of different types.
     """
-    layer_to_be_added = forms.ChoiceField(label=_("Layer to be added"), required=False,
+    step_to_be_added = forms.ChoiceField(label=_("Step to be added"), required=False,
                                           widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
 
     def __init__(self, view, data=None, **kwargs):
-        super(AddMultipleTypeLayersForm, self).__init__(view, data, **kwargs)
-        # Translators: No further layer
-        self.fields["layer_to_be_added"].choices = view.new_layer_choices + (("", _("none")),)
-        self.new_layer_choices = view.new_layer_choices
+        super(AddMultipleTypeStepsForm, self).__init__(view, data, **kwargs)
+        # Translators: No further step
+        self.fields["step_to_be_added"].choices = view.new_step_choices + (("", _("none")),)
+        self.new_step_choices = view.new_step_choices
 
-    def change_structure(self, structure_changed, new_layers):
-        structure_changed, new_layers = super(AddMultipleTypeLayersForm, self).change_structure(structure_changed, new_layers)
-        new_layer_type = self.cleaned_data["layer_to_be_added"]
-        if new_layer_type:
-            new_layers.append(("new " + new_layer_type, {}))
+    def change_structure(self, structure_changed, new_steps):
+        structure_changed, new_steps = super(AddMultipleTypeStepsForm, self).change_structure(structure_changed, new_steps)
+        new_step_type = self.cleaned_data["step_to_be_added"]
+        if new_step_type:
+            new_steps.append(("new " + new_step_type, {}))
             structure_changed = True
-        return structure_changed, new_layers
+        return structure_changed, new_steps
 
 
-class DepositionMultipleTypeView(DepositionView):
+class MultipleStepTypesMixin(MultipleStepsMixin):
+    """Mixin class for depositions the steps of which are of different types (i.e.,
+    different models).  You can see it in action in the module
+    :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
+    the class variable :py:attr:`form_class`, you must set:
+
+    :ivar step_form_classes: This is a tuple of the form classes for the steps
+
+    :ivar short_labels: *(optional)* This is a dict mapping a step form class
+      to a concise name of that step type.  It is used in the selection widget
+      of the add-step form.
+
+    :type step_form_classes: tuple of
+      :py:class:`~samples.utils.views.SubprocessForm`
+    :type short_labels: dict mapping
+      :py:class:`~samples.utils.views.SubprocessForm` to unicode.
+
+    This mixin must come before the main view class in the list of parents.
+    """
+    model = None
+    form_class = None
+    step_form_classes = ()
+    short_labels = None
+    add_steps_form_class = AddMultipleTypeStepsForm
+
+    class StepForm(forms.Form):
+        """Dummy form class for detecting the actual step type.  It is used
+        only in `from_post_data`."""
+        step_type = forms.CharField()
+
+    def __init__(self, **kwargs):
+        super(MultipleStepTypesMixin, self).__init__(**kwargs)
+        if not self.short_labels:
+            self.short_labels = {cls: cls.Meta.model._meta.verbose_name for cls in self.step_form_classes}
+        self.new_step_choices = tuple((cls.Meta.model.__name__.lower(), self.short_labels[cls])
+                                       for cls in self.step_form_classes)
+        self.step_types = {cls.Meta.model.__name__.lower(): cls for cls in self.step_form_classes}
+
+    def _read_step_forms(self, source_deposition):
+        self.forms["steps"] = []
+        for index, step in enumerate(source_deposition.steps().all()):
+            step = step.actual_instance
+            StepFormClass = self.step_types[step.__class__.__name__.lower()]
+            self.forms["steps"].append(
+                StepFormClass(self, prefix=str(index), instance=step, initial={"number": index + 1}))
+
+    def get_step_form(self, prefix):
+        step_form = self.StepForm(self.data, prefix=prefix)
+        StepFormClass = self.step_form_classes[0]  # default
+        if step_form.is_valid():
+            step_type = step_form.cleaned_data["step_type"]
+            try:
+                StepFormClass = self.step_types[step_type]
+            except KeyError:
+                pass
+        return StepFormClass(self, self.data, prefix=prefix)
+
+    def _apply_changes(self, new_steps):
+        old_prefixes = [int(step_form.prefix) for step_form in self.forms["steps"] if step_form.is_bound]
+        next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
+        self.forms["steps"] = []
+        self.forms["change_steps"] = []
+        for i, new_step in enumerate(new_steps):
+            if new_step[0] == "original":
+                original_step = new_step[1]
+                StepFormClass = self.step_types[original_step.type]
+                post_data = self.data.copy() if self.data else {}
+                prefix = new_step[1].prefix
+                post_data[prefix + "-number"] = str(i + 1)
+                self.forms["steps"].append(StepFormClass(self, post_data, prefix=prefix))
+                self.forms["change_steps"].append(new_step[2])
+            elif new_step[0] == "duplicate":
+                original_step = new_step[1]
+                if original_step.is_valid():
+                    StepFormClass = self.step_types[original_step.type]
+                    step_data = original_step.cleaned_data
+                    step_data["number"] = i + 1
+                    self.forms["steps"].append(StepFormClass(self, initial=step_data, prefix=str(next_prefix)))
+                    self.forms["change_steps"].append(self.change_step_form_class(prefix=str(next_prefix)))
+                    next_prefix += 1
+            elif new_step[0] == "new":
+                # New MyStep
+                new_step_data = new_step[1]
+                step_class = ContentType.objects.get(id=new_step_data["content_type_id"]).model_class()
+                StepFormClass = self.step_types[step_class.__name__.lower()]
+                initial = step_class.objects.filter(id=new_step_data["id"]).values()[0]
+                initial["number"] = i + 1
+                self.forms["steps"].append(StepFormClass(self, initial=initial, prefix=str(next_prefix)))
+                self.forms["change_steps"].append(self.change_step_form_class(prefix=str(next_prefix)))
+                next_prefix += 1
+            elif new_step[0].startswith("new "):
+                StepFormClass = self.step_types[new_step[0][len("new "):]]
+                self.forms["steps"].append(StepFormClass(self, initial={"number": "{0}".format(i + 1)},
+                                                           prefix=str(next_prefix)))
+                self.forms["change_steps"].append(self.change_step_form_class(prefix=str(next_prefix)))
+                next_prefix += 1
+            else:
+                raise AssertionError("Wrong first field in new_steps structure: " + new_step[0])
+
+
+class DepositionWithoutLayersView(ProcessMultipleSamplesView):
+    """Abstract base class for deposition views.  It contains common code for all
+    types of deposition views.  Since it sets a samples form, it is not a
+    mixin.
+    """
+
+    def build_forms(self):
+        if "samples" not in self.forms:
+            self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
+                                                                self.data)
+        super(DepositionWithoutLayersView, self).build_forms()
+
+
+class DepositionView(MultipleStepsMixin, DepositionWithoutLayersView):
+    """View class for views for depositions with layers.  The layers of the process
+    must always be of the same type.  If they are not, you must use
+    :py:class:`DepositionMultipleTypeView` instead.  Additionally to
+    :py:attr:`form_class`, you must set the :py:attr:`step_form_class` class
+    variable to the form class to be used for the layers.
+
+    The layer form should be a subclass of
+    :py:class:`~samples.utils.views.SubprocessForm`.
+    """
+
+    error_message_no_steps = _("No layers given.")
+
+
+class DepositionMultipleTypeView(MultipleStepTypesMixin, DepositionWithoutLayersView):
     """View class for depositions the layers of which are of different types (i.e.,
     different models).  You can see it in action in the module
     :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
     the class variable :py:attr:`form_class`, you must set:
 
-    :ivar layer_form_classes: This is a tuple of the form classes for the layers
+    :ivar step_form_classes: This is a tuple of the form classes for the layers
 
     :ivar short_labels: *(optional)* This is a dict mapping a layer form class
       to a concise name of that layer type.  It is used in the selection widget
-      of the add-layer form.
+      of the add-step form.
 
-    :type layer_form_classes: tuple of
+    :type step_form_classes: tuple of
       :py:class:`~samples.utils.views.SubprocessForm`
     :type short_labels: dict mapping
       :py:class:`~samples.utils.views.SubprocessForm` to unicode.
     """
-    model = None
-    form_class = None
-    layer_form_classes = ()
-    short_labels = None
-    add_layers_form_class = AddMultipleTypeLayersForm
 
-    class LayerForm(forms.Form):
-        """Dummy form class for detecting the actual layer type.  It is used
-        only in `from_post_data`."""
-        layer_type = forms.CharField()
-
-    def __init__(self, **kwargs):
-        super(DepositionMultipleTypeView, self).__init__(**kwargs)
-        if not self.short_labels:
-            self.short_labels = {cls: cls.Meta.model._meta.verbose_name for cls in self.layer_form_classes}
-        self.new_layer_choices = tuple((cls.Meta.model.__name__.lower(), self.short_labels[cls])
-                                       for cls in self.layer_form_classes)
-        self.layer_types = {cls.Meta.model.__name__.lower(): cls for cls in self.layer_form_classes}
-
-    def _read_layer_forms(self, source_deposition):
-        self.forms["layers"] = []
-        for index, layer in enumerate(source_deposition.layers.all()):
-            layer = layer.actual_instance
-            LayerFormClass = self.layer_types[layer.__class__.__name__.lower()]
-            self.forms["layers"].append(
-                LayerFormClass(self, prefix=str(index), instance=layer, initial={"number": index + 1}))
-
-    def get_layer_form(self, prefix):
-        layer_form = self.LayerForm(self.data, prefix=prefix)
-        LayerFormClass = self.layer_form_classes[0]  # default
-        if layer_form.is_valid():
-            layer_type = layer_form.cleaned_data["layer_type"]
-            try:
-                LayerFormClass = self.layer_types[layer_type]
-            except KeyError:
-                pass
-        return LayerFormClass(self, self.data, prefix=prefix)
-
-    def _apply_changes(self, new_layers):
-        old_prefixes = [int(layer_form.prefix) for layer_form in self.forms["layers"] if layer_form.is_bound]
-        next_prefix = max(old_prefixes) + 1 if old_prefixes else 0
-        self.forms["layers"] = []
-        self.forms["change_layers"] = []
-        for i, new_layer in enumerate(new_layers):
-            if new_layer[0] == "original":
-                original_layer = new_layer[1]
-                LayerFormClass = self.layer_types[original_layer.type]
-                post_data = self.data.copy() if self.data else {}
-                prefix = new_layer[1].prefix
-                post_data[prefix + "-number"] = str(i + 1)
-                self.forms["layers"].append(LayerFormClass(self, post_data, prefix=prefix))
-                self.forms["change_layers"].append(new_layer[2])
-            elif new_layer[0] == "duplicate":
-                original_layer = new_layer[1]
-                if original_layer.is_valid():
-                    LayerFormClass = self.layer_types[original_layer.type]
-                    layer_data = original_layer.cleaned_data
-                    layer_data["number"] = i + 1
-                    self.forms["layers"].append(LayerFormClass(self, initial=layer_data, prefix=str(next_prefix)))
-                    self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
-                    next_prefix += 1
-            elif new_layer[0] == "new":
-                # New MyLayer
-                new_layer_data = new_layer[1]
-                layer_class = ContentType.objects.get(id=new_layer_data["content_type_id"]).model_class()
-                LayerFormClass = self.layer_types[layer_class.__name__.lower()]
-                initial = layer_class.objects.filter(id=new_layer_data["id"]).values()[0]
-                initial["number"] = i + 1
-                self.forms["layers"].append(LayerFormClass(self, initial=initial, prefix=str(next_prefix)))
-                self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
-                next_prefix += 1
-            elif new_layer[0].startswith("new "):
-                LayerFormClass = self.layer_types[new_layer[0][len("new "):]]
-                self.forms["layers"].append(LayerFormClass(self, initial={"number": "{0}".format(i + 1)},
-                                                           prefix=str(next_prefix)))
-                self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))
-                next_prefix += 1
-            else:
-                raise AssertionError("Wrong first field in new_layers structure: " + new_layer[0])
+    error_message_no_steps = _("No layers given.")
 
 
 _ = ugettext

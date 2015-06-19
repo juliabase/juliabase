@@ -88,7 +88,7 @@
   model: samples.sample
   pk: 16
 
-# Here, I add my_layers
+# Here, I add my_steps
 
 - fields:
     auto_addition_topics: []
@@ -98,7 +98,7 @@
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
-    my_layers: '[["standard-hotwire", 14, 1]]'
+    my_steps: '[["standard-hotwire", 14, 1]]'
     my_samples_timestamp: 1990-01-01 00:00:00
     my_samples_list_timestamp: 1990-01-01 00:00:00
     only_important_news: false

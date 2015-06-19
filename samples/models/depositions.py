@@ -70,6 +70,9 @@ class Deposition(PhysicalProcess):
     class JBMeta:
         identifying_field = "number"
 
+    def steps(self):
+        return self.layers
+
     def _get_layers(self):
         """Retrieves all layers of this deposition.  This function can deal with
         polymorphic layer classes as well as with the possibility that the
