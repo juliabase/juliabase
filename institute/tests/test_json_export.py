@@ -23,28 +23,12 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import json
-from django.test import TestCase
 from django.test.client import Client
 import jb_common.utils.base
+from .tools import TestCase
 
 
-class JsonTestCase(TestCase):
-
-    def remove_dynamic_fields(self, dictionary):
-        for key, value in list(dictionary.items()):
-            if key == "last_modified":
-                del dictionary[key]
-            elif isinstance(value, dict):
-                self.remove_dynamic_fields(value)
-
-    def assertJsonDictEqual(self, response, dictionary):
-        data = json.loads(response.content.decode("ascii"))
-        self.remove_dynamic_fields(data)
-        self.assertEqual(data, dictionary)
-
-
-class ExportTest(JsonTestCase):
+class ExportTest(TestCase):
     fixtures = ["test_main"]
     urls = "institute.tests.urls"
     maxDiff = None
@@ -107,7 +91,7 @@ class SharedUtilsTest(TestCase):
         self.assertEqual(jb_common.utils.base.capitalize_first_letter("ärgerlich"), "Ärgerlich")
 
 
-class AdminExportTest(JsonTestCase):
+class AdminExportTest(TestCase):
     fixtures = ["test_main"]
     urls = "institute.tests.urls"
 

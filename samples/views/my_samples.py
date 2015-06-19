@@ -33,7 +33,7 @@ from django import forms
 from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst
-from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown
+from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown, is_json_requested, respond_in_json
 from jb_common.utils.views import UserField, MultipleUsersField, TopicField
 from samples import permissions
 import samples.utils.views as utils
@@ -269,6 +269,8 @@ def edit(request, username):
             save_to_database(user, my_samples_form, action_form)
             return utils.successful_response(request, _("Successfully processed “My Samples”."))
     else:
+        if is_json_requested(request):
+            return respond_in_json(request.user.my_samples.values_list("id", flat=True))
         my_samples_form = MySamplesForm(user)
         action_form = ActionForm(user)
     return render(request, "samples/edit_my_samples.html",

@@ -21,24 +21,14 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+"""Django settings for the test runner.
+"""
+
 from __future__ import absolute_import, unicode_literals
 
-import re, json
-import django.test
+from settings import *
 
 
-class TestCase(django.test.TestCase):
-    """Test case class with additional JuliaBase functionality.
-    """
-
-    def _remove_dynamic_fields(self, dictionary):
-        for key, value in list(dictionary.items()):
-            if key == "last_modified":
-                del dictionary[key]
-            elif isinstance(value, dict):
-                self._remove_dynamic_fields(value)
-
-    def assertJsonDictEqual(self, response, dictionary):
-        data = json.loads(response.content.decode("ascii"))
-        self._remove_dynamic_fields(data)
-        self.assertEqual(data, dictionary)
+PASSWORD_HASHERS = (
+    "django.contrib.auth.hashers.MD5PasswordHasher",
+)
