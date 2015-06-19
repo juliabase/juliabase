@@ -43,7 +43,8 @@ class ClusterToolDepositionTest(TestCase):
 
     def test_correct_data(self):
         response = self.client.post("/cluster_tool_depositions/add/",
-            {"number": self.deposition_number, "combined_operator": "6", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+            {"number": self.deposition_number, "combined_operator": "6",
+             "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
              "sample_list": ["13", "14"],
              "0-layer_type": "clustertoolhotwirelayer", "0-number": "1", "0-wire_material": "rhenium",
              "1-layer_type": "clustertoolpecvdlayer", "1-number": "2", "1-chamber": "#1"}, follow=True)
@@ -60,7 +61,8 @@ class ClusterToolDepositionTest(TestCase):
              "external_operator": None, "finished": True, "comments": "", "split_done": False, "carrier": "",
              "samples": [13, 14],
              "layer 1": {"h2": None, "id": 19, "number": 1, "sih4": None, "base_pressure": None,
-                         "wire_material": "rhenium", "time": "", "comments": "", "content_type": "cluster tool hot-wire layer"},
+                         "wire_material": "rhenium", "time": "", "comments": "",
+                         "content_type": "cluster tool hot-wire layer"},
              "layer 2": {"chamber": "#1", "h2": None, "id": 20, "number": 2, "sih4": None, "comments": "",
                          "content_type": "cluster tool PECVD layer", "plasma_start_with_shutter": False, "time": "",
                          "deposition_power": None}})
