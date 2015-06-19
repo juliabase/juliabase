@@ -25,6 +25,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
@@ -945,11 +946,10 @@ class DepositionMultipleTypeView(DepositionView):
                     next_prefix += 1
             elif new_layer[0] == "new":
                 # New MyLayer
-                initial = {}
-                id_ = new_layer[1]["id"]
-                layer_class = models.Layer.objects.get(id=id_).content_type.model_class()
+                new_layer_data = new_layer[1]
+                layer_class = ContentType.objects.get(id=new_layer_data["content_type_id"]).model_class()
                 LayerFormClass = self.layer_types[layer_class.__name__.lower()]
-                initial = layer_class.objects.filter(id=id_).values()[0]
+                initial = layer_class.objects.filter(id=new_layer_data["id"]).values()[0]
                 initial["number"] = i + 1
                 self.forms["layers"].append(LayerFormClass(self, initial=initial, prefix=str(next_prefix)))
                 self.forms["change_layers"].append(self.change_layer_form_class(prefix=str(next_prefix)))

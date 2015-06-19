@@ -81,6 +81,21 @@ class ClusterToolDepositionTest(TestCase):
         # This checks whether the new layer really is a hot-wire layer.
         self.assertEqual(response.context["layers_and_change_layers"][0][0]["wire_material"].value(), None)
 
+    def test_add_my_layer(self):
+        response = self.client.post("/cluster_tool_depositions/add/",
+            {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+             "sample_list": ["13", "14"], "number": self.deposition_number, "my_layer_to_be_added": "14-1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.context["layers_and_change_layers"]), 1)
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["number"].value(), 1)
+        # This checks whether the new layer really is the hot-wire layer.
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["wire_material"].value(), "rhenium")
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["h2"].value(), decimal.Decimal("1"))
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["sih4"].value(), decimal.Decimal("2"))
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["base_pressure"].value(), decimal.Decimal("0"))
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["time"].value(), "10:00")
+        self.assertEqual(response.context["layers_and_change_layers"][0][0]["comments"].value(), "p-type layer")
+
     def test_duplicate_layer(self):
         response = self.client.post("/cluster_tool_depositions/add/",
             {"combined_operator": "6", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
