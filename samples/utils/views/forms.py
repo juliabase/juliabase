@@ -310,11 +310,11 @@ def get_my_steps(user_details, process_model):
             except process_model.DoesNotExist:
                 continue
             try:
-                step = process.steps().get(number=layer_number)
+                step = process.steps().get(number=step_number)
             except ObjectDoesNotExist:
                 continue
             # FixMe: Maybe it is possible to avoid serialising the process ID
-            # and layer number, so that change_structure() doesn't have to re-parse
+            # and step number, so that change_structure() doesn't have to re-parse
             # it.  In other words: Maybe the first element of the tuples can be of
             # any type and needn't be strings.
             choices.append(("{0}-{1}".format(process_id, step_number), nickname))
