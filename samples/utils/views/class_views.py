@@ -544,11 +544,11 @@ class AddMyStepsForm(forms.Form):
             process_id, step_number = self.cleaned_data["my_step_to_be_added"].split("-")
             process_id, step_number = int(process_id), int(step_number)
             try:
-                deposition = self.model.objects.get(pk=process_id)
+                process = self.model.objects.get(pk=process_id)
             except self.model.DoesNotExist:
                 pass
             else:
-                step_query = deposition.steps().filter(number=step_number)
+                step_query = process.steps().filter(number=step_number)
                 if step_query.count() == 1:
                     return step_query.values()[0]
 
@@ -781,17 +781,17 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         else:
             copy_from = self.request.GET.get("copy_from")
             if not self.id and copy_from:
-                # Duplication of the layers of a deposition; the deposition
-                # itself is already duplicated.
-                source_deposition_query = self.model.objects.filter(number=copy_from)
-                if source_deposition_query.count() == 1:
-                    self._read_step_forms(source_deposition_query[0])
+                # Duplication of the layers of a process; the process itself is
+                # already duplicated.
+                source_process_query = self.model.objects.filter(number=copy_from)
+                if source_process_query.count() == 1:
+                    self._read_step_forms(source_process_query[0])
             if "steps" not in self.forms:
                 if self.id:
-                    # Normal edit of existing deposition
+                    # Normal edit of existing process
                     self._read_step_forms(self.process)
                 else:
-                    # New deposition, or duplication has failed
+                    # New process, or duplication has failed
                     self.forms["steps"] = []
             self.forms["change_steps"] = [self.change_step_form_class(prefix=str(index))
                                            for index in range(len(self.forms["steps"]))]
@@ -842,13 +842,13 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
 
         :rtype: `samples.models.PhysicalProcess` or NoneType
         """
-        deposition = super(MultipleStepsMixin, self).save_to_database()
-        deposition.steps().all().delete()
+        process = super(MultipleStepsMixin, self).save_to_database()
+        process.steps().all().delete()
         for step_form in self.forms["steps"]:
             step = step_form.save(commit=False)
-            step.deposition = deposition
+            step.deposition = process
             step.save()
-        return deposition
+        return process
 
 
 class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
@@ -878,8 +878,27 @@ class AddMultipleTypeStepsForm(AddMyStepsForm):
         return structure_changed, new_steps
 
 
+class SubprocessMultipleTypesForm(SubprocessForm):
+    """Abstract model form for all step types in a process.  It is to be used in
+    conjunction with :py:class:`~samples.utils.views.MultipleStepTypesMixin`.
+    """
+
+    step_type = forms.CharField(widget=forms.HiddenInput)
+    """This is for being able to distinguish the form types; it is not given by the
+    user directy."""
+
+    def __init__(self, view, data=None, **kwargs):
+        super(SubprocessMultipleTypesForm, self).__init__(view, data, **kwargs)
+        self.fields["step_type"].initial = self.type = self.Meta.model.__name__.lower()
+
+    def clean_step_type(self):
+        if self.cleaned_data["step_type"] != self.type:
+            raise ValidationError("Layer type is invalid.")
+        return self.cleaned_data["step_type"]
+
+
 class MultipleStepTypesMixin(MultipleStepsMixin):
-    """Mixin class for depositions the steps of which are of different types (i.e.,
+    """Mixin class for processes the steps of which are of different types (i.e.,
     different models).  You can see it in action in the module
     :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
     the class variable :py:attr:`form_class`, you must set:
@@ -916,9 +935,9 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
                                        for cls in self.step_form_classes)
         self.step_types = {cls.Meta.model.__name__.lower(): cls for cls in self.step_form_classes}
 
-    def _read_step_forms(self, source_deposition):
+    def _read_step_forms(self, source_process):
         self.forms["steps"] = []
-        for index, step in enumerate(source_deposition.steps().all()):
+        for index, step in enumerate(source_process.steps().all()):
             step = step.actual_instance
             StepFormClass = self.step_types[step.__class__.__name__.lower()]
             self.forms["steps"].append(
