@@ -609,7 +609,9 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
     must always be of the same type.  If they are not, you must use
     :py:class:`MultipleTypeStepsMixin` instead.  Additionally to
     :py:attr:`form_class`, you must set the :py:attr:`step_form_class` class
-    variable to the form class to be used for the steps.
+    variable to the form class to be used for the steps.  Moreover, you must
+    set :py:attr:`process_field` to the name of the field of the parent process
+    in the step model.
 
     The step form should be a subclass of
     :py:class:`~samples.utils.views.SubprocessForm`.
@@ -846,7 +848,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         process.steps().all().delete()
         for step_form in self.forms["steps"]:
             step = step_form.save(commit=False)
-            step.deposition = process
+            setattr(step, self.process_field, process)
             step.save()
         return process
 
@@ -1021,6 +1023,7 @@ class DepositionView(MultipleStepsMixin, DepositionWithoutLayersView):
     :py:class:`~samples.utils.views.SubprocessForm`.
     """
 
+    process_field = "deposition"
     error_message_no_steps = _("No layers given.")
 
 
@@ -1042,6 +1045,7 @@ class DepositionMultipleTypeView(MultipleStepTypesMixin, DepositionWithoutLayers
       :py:class:`~samples.utils.views.SubprocessForm` to unicode.
     """
 
+    process_field = "deposition"
     error_message_no_steps = _("No layers given.")
 
 
