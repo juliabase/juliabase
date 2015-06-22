@@ -32,7 +32,6 @@ from django import forms
 from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext
 import jb_common.utils.base
-from samples import models
 import samples.utils.views as utils
 import institute.utils.views as form_utils
 import institute.utils.base
