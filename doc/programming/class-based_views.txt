@@ -154,6 +154,16 @@ must inherit from :py:class:`jb_common.models.PolymorphicModel`.  The
 :py:meth:`steps` method may return instances of the base model class, because
 the class-based view already takes care of finding the actual instance.
 
+In the view model, you must assure that each Step form class at least defines a
+field called ``step_type``.  This should be hidden from the user, as in::
+
+    step_type = forms.CharField(widget=forms.HiddenInput)
+
+It is used internally by ``MultipleStepTypesMixin`` to identify the step type
+in the HTTP POST data.  You may realise this field by defining it in a common
+parent form class – derived from
+:py:class:`~samples.utils.views.SubprocessForm` – for all step form classes.
+
 This forms the basis of
 :py:class:`~samples.utils.views.DepositionMultipleTypeView`.  You can see the
 latter in action in the cluster-tool deposition views of the INM institute app.
