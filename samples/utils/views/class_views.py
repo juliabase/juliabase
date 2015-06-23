@@ -47,7 +47,7 @@ from samples import models
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
-           "MultipleStepsMixin", "MultipleStepTypesMixin", "SimpleRadioSelectRenderer",
+           "MultipleStepsMixin", "SubprocessMultipleTypesForm", "MultipleStepTypesMixin", "SimpleRadioSelectRenderer",
            "DepositionView", "DepositionMultipleTypeView")
 
 

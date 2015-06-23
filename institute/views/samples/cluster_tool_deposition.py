@@ -56,19 +56,11 @@ class DepositionForm(utils.DepositionForm):
         return cleaned_data
 
 
-class ClusterToolLayerForm(utils.SubprocessForm):
+class ClusterToolLayerForm(utils.SubprocessMultipleTypesForm):
     """Abstract model form for both layer types in the cluster tool."""
-
-    step_type = forms.CharField(widget=forms.HiddenInput)
-    """This is for being able to distinguish the form types; it is not given
-    by the user, however, it is given by the remote client."""
 
     class Meta:
         exclude = ("deposition",)
-
-    def __init__(self, view, data=None, **kwargs):
-        super(ClusterToolLayerForm, self).__init__(view, data, **kwargs)
-        self.fields["step_type"].initial = self.type = self.Meta.model.__name__.lower()
 
     def clean_time(self):
         return utils.clean_time_field(self.cleaned_data["time"])
@@ -79,16 +71,6 @@ class ClusterToolLayerForm(utils.SubprocessForm):
         comments = self.cleaned_data["comments"]
         jb_common.utils.base.check_markdown(comments)
         return comments
-
-    def clean_step_type(self):
-        """Assure that the hidden fixed string ``step_type`` truely is
-        ``"clustertoolhotwirelayer"``.  When using a working browser, this
-        should always be the case, no matter what the user does.  However, it
-        must be checked nevertheless because other clients may send wrong data.
-        """
-        if self.cleaned_data["step_type"] != self.type:
-            raise ValidationError("Layer type must be “hot-wire”.")
-        return self.cleaned_data["step_type"]
 
 
 class HotWireLayerForm(ClusterToolLayerForm):
