@@ -205,7 +205,7 @@ def input_field(field):
     """Tag for inserting a field value into an HTML table as an editable
     field.  It consists of two ``<td>`` elements, one for the label and one for
     the value, so it spans two columns.  This tag is primarily used in
-    tamplates of edit views.  Example::
+    templates of edit views.  Example::
 
         {% input_field deposition.number %}
     """
