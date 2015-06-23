@@ -883,6 +883,8 @@ class AddMultipleTypeStepsForm(AddMyStepsForm):
 class SubprocessMultipleTypesForm(SubprocessForm):
     """Abstract model form for all step types in a process.  It is to be used in
     conjunction with :py:class:`~samples.utils.views.MultipleStepTypesMixin`.
+    See the views of th cluster-tool deposition in the INM "institute" app for
+    an example for how to use this class.
     """
 
     step_type = forms.CharField(widget=forms.HiddenInput)

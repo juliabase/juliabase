@@ -63,6 +63,7 @@ The following names are found in the module :py:mod:`samples.utils.views`.
 .. autoclass:: samples.utils.views.DepositionView
 .. autoclass:: samples.utils.views.DepositionMultipleTypeView
 .. autoclass:: samples.utils.views.SubprocessForm
+.. autoclass:: samples.utils.views.SubprocessMultipleTypesForm
 
 
 Mixins
@@ -154,15 +155,10 @@ must inherit from :py:class:`jb_common.models.PolymorphicModel`.  The
 :py:meth:`steps` method may return instances of the base model class, because
 the class-based view already takes care of finding the actual instance.
 
-In the view model, you must assure that each Step form class at least defines a
-field called ``step_type``.  This should be hidden from the user, as in::
-
-    step_type = forms.CharField(widget=forms.HiddenInput)
-
-It is used internally by ``MultipleStepTypesMixin`` to identify the step type
-in the HTTP POST data.  You may realise this field by defining it in a common
-parent form class – derived from
-:py:class:`~samples.utils.views.SubprocessForm` – for all step form classes.
+In the view model, you should derive the forms classes for your step types from
+:py:class:`~samples.utils.views.SubprocessMultipleTypesForm`.  This takes care
+of an extra field ``step_type`` that helps the view class to identify the step
+type from he HTTP POST data.
 
 This forms the basis of
 :py:class:`~samples.utils.views.DepositionMultipleTypeView`.  You can see the
