@@ -209,6 +209,11 @@ def input_field(field):
 
         {% input_field deposition.number %}
     """
+    if isinstance(field, six.string_types):
+        # If ``field`` is the empty string, generate a generic error message.
+        # Set ``string_if_invalid`` for clearer error messages in
+        # non-production deployments.
+        raise NameError(field or "field name is not defined")
     result = """<td class="field-label"><label for="id_{html_name}">{label}:</label></td>""".format(
         html_name=field.html_name, label=field.label)
     help_text = """<span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
