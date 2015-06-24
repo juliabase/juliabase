@@ -519,42 +519,18 @@ class FixedOperatorField(forms.ChoiceField):
 
 
 class SamplePositionForm(forms.Form):
-    sample = forms.CharField(label=capfirst(_("sample")))
     position = forms.CharField(label=capfirst(_("sample position")), required=False)
 
-    def __init__(self, user, preset_sample, preset_sample_position, *args, **kwargs):
+    def __init__(self, sample, *args, **kwargs):
         """
-        :param user: the current user
-        :param preset_sample: the selected sample to which the sample position should be
+        :param sample: the sample to which the sample position should be
             appended when creating a new process
-        :param preset_sample_position: the place from the selected sample in the apparatus
 
-        :type user: django.contrib.auth.models.User
-        :type preset_sample: `samples.models.Sample`
-        :type preset_sample_position: str
+        :type sample: `samples.models.Sample`
         """
+        kwargs["prefix"] = sample.id
         super(SamplePositionForm, self).__init__(*args, **kwargs)
-        self.fields["sample"].initial = preset_sample
-        self.fields["sample"].widget.attrs['readonly'] = True
-        if preset_sample_position:
-            self.fields["position"].initial = preset_sample_position
-
-
-    def clean_sample(self):
-        sample_name = self.cleaned_data.get("sample")
-        if sample_name:
-            if sample_name.startswith("*"):
-                sample_name = "*{0:05}".format(int(sample_name.strip("*")))
-            return models.Sample.objects.get(name=sample_name)
-
-    def clean(self):
-        cleaned_data = super(SamplePositionForm, self).clean()
-        sample = cleaned_data.get("sample")
-        place = cleaned_data.get("position")
-        if sample and not place:
-            self.add_error("position", _("This field is required."))
-            del cleaned_data["sample"]
-        return cleaned_data
+        self.sample = sample
 
 
 class RemoveFromMySamplesForm(forms.Form):

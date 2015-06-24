@@ -19,22 +19,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% if sample_positions %}
   {% load i18n %}
   {% load juliabase %}
-  {% load samples_extras %}
   <table class="sample-positions">
     <tbody>
-    {% for sample_position in sample_positions %}
+      {% for sample_position in sample_positions %}
         {% error_list sample_position _("General error") "<tr>" %}
         <tr>
           <td class="field-label">
-           <label for="id_{{ sample_position.sample.html_name }}"
+           <label for="id_{{ sample_position.sample_position.html_name }}"
                >{{ sample_position.sample }}:</label>
           </td>
           <td class="field-value">
-           <label for="id_{{ sample_position.position.html_name }}"
-               >{{ sample_position.position }}
+            {{ sample_position.position }}
           </td>
         </tr>
-    {% endfor %}
+      {% endfor %}
     </tbody>
   </table>
 {% endif %}
