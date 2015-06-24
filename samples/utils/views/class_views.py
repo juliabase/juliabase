@@ -736,7 +736,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
                 post_data[prefix + "-number"] = next_step_number
                 next_step_number += 1
                 self.forms["steps"].append(self.step_form_class(self, post_data, prefix=prefix))
-                self.forms["change_steps"].append(self.valid_despite_unbound(new_step[2]))
+                self.forms["change_steps"].append(new_step[2])
             elif new_step[0] == "duplicate":
                 original_step = new_step[1]
                 if original_step.is_valid():
@@ -986,7 +986,7 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
                 prefix = new_step[1].prefix
                 post_data[prefix + "-number"] = str(i + 1)
                 self.forms["steps"].append(StepFormClass(self, post_data, prefix=prefix))
-                self.forms["change_steps"].append(self.valid_despite_unbound(new_step[2]))
+                self.forms["change_steps"].append(new_step[2])
             elif new_step[0] == "duplicate":
                 original_step = new_step[1]
                 if original_step.is_valid():
