@@ -528,7 +528,7 @@ class SamplePositionForm(forms.Form):
 
         :type sample: `samples.models.Sample`
         """
-        kwargs["prefix"] = sample.id
+        kwargs["prefix"] = str(sample.id)
         super(SamplePositionForm, self).__init__(*args, **kwargs)
         self.sample = sample
 
