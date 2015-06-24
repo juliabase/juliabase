@@ -26,7 +26,7 @@ samples form, whereas the mixin class doesn't do this.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
+import datetime, types
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -182,6 +182,31 @@ class ProcessWithoutSamplesView(TemplateView):
             self.forms["process"] = self.form_class(self.request.user, self.data, instance=self.process, initial=initial)
         self.forms["edit_description"] = utils.EditDescriptionForm(self.data) if self.id else None
 
+    @staticmethod
+    def valid_despite_unbound(form):
+        """Marks an unbound form as valid.  This function monkey-patches the form so
+        that its :py:meth:`is_valid` method always returns ``True``.  This is
+        helpful for marking unbound forms that should not let the request fail
+        during a POST request.  An example is a form in which the user enters
+        the number of to-be-added sub-processes.  It is reset (emptied) after
+        each POST request by setting it to a pristine unbound form.  However,
+        this must not prevent the view from succeeding.
+
+        If ``form`` is bound, this function does nothing.
+
+        :param form: a form
+
+        :type form: ``django.forms.Form``
+
+        :return:
+          the modified form; note that the passed form is changed in place
+
+        :rtype: ``django.forms.Form``
+        """
+        if not form.is_bound:
+            form.is_valid = types.MethodType(lambda self: True, form)
+        return form
+
     def _check_validity(self, forms):
         """Helper for :py:meth:`is_all_valid` for allowing recursion through
         nested lists of forms.
@@ -191,21 +216,20 @@ class ProcessWithoutSamplesView(TemplateView):
             if isinstance(form, (list, tuple)):
                 all_valid = self._check_validity(form) and all_valid
             elif form is not None:
-                all_valid = (not form.is_bound or form.is_valid()) and all_valid
+                all_valid = form.is_valid() and all_valid
         return all_valid
 
     def is_all_valid(self):
-        """Checks whether all forms are valid.  Unbound forms – which may occur also in
-        POST requests – are not checked, except for the process form.
-        Moreover, this method guarantees that the :py:meth:`is_valid` method of
-        every bound form is called in order to collect all error messages.
+        """Checks whether all forms are valid.  Moreover, this method guarantees that
+        the :py:meth:`is_valid` method of every form is called in order to
+        collect all error messages.
 
         :Return:
           whether all forms are valid
 
         :rtype: bool
         """
-        return self._check_validity(self.forms.values()) and self.forms["process"].is_bound
+        return self._check_validity(self.forms.values())
 
     def is_referentially_valid(self):
         """Checks whether the data of all forms is consistent with each other
@@ -477,15 +501,6 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             self.forms["subprocesses"] = [self.subform_class(self, prefix=str(index), instance=subprocess)
                                           for index, subprocess in enumerate(subprocesses.all())]
 
-    def is_all_valid(self):
-        """Assures – on top of inherited validity checking – that no new subprocess
-        have been added.  Their forms are unbound and thus not checked by the
-        parent class.
-        """
-        all_valid = super(SubprocessesMixin, self).is_all_valid()
-        all_valid = all(form.is_bound for form in self.forms["subprocesses"]) and all_valid
-        return all_valid
-
     def is_referentially_valid(self):
         referentially_valid = super(SubprocessesMixin, self).is_referentially_valid()
         if not self.forms["subprocesses"]:
@@ -686,7 +701,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         # Add steps
         if self.forms["add_steps"].is_valid():
             structure_changed, new_steps = self.forms["add_steps"].change_structure(structure_changed, new_steps)
-            self.forms["add_steps"] = self.add_steps_form_class(self)
+            self.forms["add_steps"] = self.valid_despite_unbound(self.add_steps_form_class(self))
 
         # Delete steps
         for i in range(len(new_steps) - 1, -1, -1):
@@ -721,7 +736,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
                 post_data[prefix + "-number"] = next_step_number
                 next_step_number += 1
                 self.forms["steps"].append(self.step_form_class(self, post_data, prefix=prefix))
-                self.forms["change_steps"].append(new_step[2])
+                self.forms["change_steps"].append(self.valid_despite_unbound(new_step[2]))
             elif new_step[0] == "duplicate":
                 original_step = new_step[1]
                 if original_step.is_valid():
@@ -971,7 +986,7 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
                 prefix = new_step[1].prefix
                 post_data[prefix + "-number"] = str(i + 1)
                 self.forms["steps"].append(StepFormClass(self, post_data, prefix=prefix))
-                self.forms["change_steps"].append(new_step[2])
+                self.forms["change_steps"].append(self.valid_despite_unbound(new_step[2]))
             elif new_step[0] == "duplicate":
                 original_step = new_step[1]
                 if original_step.is_valid():
