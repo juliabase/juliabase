@@ -140,7 +140,6 @@ The following names are found in the module :py:mod:`samples.utils.views`.
 .. autoclass:: samples.utils.views.SampleSelectForm
 .. autoclass:: samples.utils.views.DepositionSamplesForm
 .. autoclass:: samples.utils.views.EditDescriptionForm
-.. autoclass:: samples.utils.views.RemoveFromMySamplesForm
 
 
 Plots
