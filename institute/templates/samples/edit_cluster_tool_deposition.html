@@ -73,13 +73,12 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
        ><br/>{% markdown_hint %}<br/>{{ process.comments }}
   </p>
 
-  {% if layers_and_change_layers %}
+  {% if steps_and_change_steps %}
     <table style="width: 100%">
       <tbody>
-      {% for layer, change_layer in layers_and_change_layers %}
+      {% for layer, change_layer in steps_and_change_steps %}
         <tr>
           <td style="border-style: solid; border-color: black; border-width: thin">
-            {{ layer.layer_type }}
             <table style="width: 100%">
               <tbody>
               {% error_list layer _("Error in layer") "<tr>" %}
@@ -114,13 +113,13 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                           <table style="width: 100%">
                             <tbody>
                                 <tr>
-                                  {% input_field change_layer.duplicate_this_layer %}
+                                  {% input_field change_layer.duplicate_this_step %}
                                 </tr>
                                 <tr>
-                                  {% input_field change_layer.remove_this_layer %}
+                                  {% input_field change_layer.remove_this_step %}
                                 </tr>
                                 <tr>
-                                  {% input_field change_layer.move_this_layer %}
+                                  {% input_field change_layer.move_this_step %}
                                 </tr>
                             </tbody>
                           </table></td></tr>
@@ -193,14 +192,14 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   <table style="margin-top: 2ex">
     <tbody>
     <tr>
-      <td class="field-label"><label for="id_{{ add_layers.layer_to_be_added.html_name }}"
-                 >{{ add_layers.layer_to_be_added.label }}:</label></td>
-      <td class="field-value" style="font-weight: normal">{{ add_layers.layer_to_be_added }}</td>
+      <td class="field-label"><label for="id_{{ add_steps.step_to_be_added.html_name }}"
+                 >{{ add_steps.step_to_be_added.label }}:</label></td>
+      <td class="field-value" style="font-weight: normal">{{ add_steps.step_to_be_added }}</td>
     </tr>
     <tr>
-      <td class="field-label"><label for="id_{{ add_layers.my_layer_to_be_added.html_name }}"
-                 >{{ add_layers.my_layer_to_be_added.label }}:</label></td>
-      <td class="field-value" style="font-weight: normal">{{ add_layers.my_layer_to_be_added }}</td>
+      <td class="field-label"><label for="id_{{ add_steps.my_step_to_be_added.html_name }}"
+                 >{{ add_steps.my_step_to_be_added.label }}:</label></td>
+      <td class="field-value" style="font-weight: normal">{{ add_steps.my_step_to_be_added }}</td>
     </tr>
     </tbody>
   </table>
