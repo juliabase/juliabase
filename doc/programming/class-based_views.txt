@@ -70,6 +70,7 @@ Mixins
 =======
 
 .. autoclass:: samples.utils.views.RemoveFromMySamplesMixin
+.. autoclass:: samples.utils.views.SamplePositionsMixin
 .. autoclass:: samples.utils.views.SubprocessesMixin
 .. autoclass:: samples.utils.views.MultipleStepsMixin
 .. autoclass:: samples.utils.views.MultipleStepTypesMixin

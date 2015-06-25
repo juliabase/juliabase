@@ -26,7 +26,7 @@ samples form, whereas the mixin class doesn't do this.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, types
+import datetime, types, re
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -42,11 +42,12 @@ from jb_common.utils.base import camel_case_to_underscores, is_json_requested, f
 from samples import permissions
 from . import forms as utils
 from .feed import Reporter
-from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples
+from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples, convert_id_to_int
 from samples import models
 
 
-__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SubprocessForm", "SubprocessesMixin",
+__all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SamplePositionsMixin",
+           "SubprocessForm", "SubprocessesMixin",
            "MultipleStepsMixin", "SubprocessMultipleTypesForm", "MultipleStepTypesMixin", "SimpleRadioSelectRenderer",
            "DepositionView", "DepositionMultipleTypeView")
 
@@ -441,6 +442,52 @@ class SamplePositionForm(forms.Form):
         kwargs["prefix"] = "sample_positions-{}".format(sample.id)
         super(SamplePositionForm, self).__init__(*args, **kwargs)
         self.sample = sample
+
+
+class SamplePositionsMixin(ProcessWithoutSamplesView):
+    """Mixin for views that need to store the positions the samples used to have
+    during the processing.  The respective process class must inherit from
+    :py:class:`~samples.models.ProcessWithSamplePositions`.  In the edit
+    template, you must add the following code::
+
+        {% include "samples/edit_sample_positions.html" %}
+
+    This mixin must come before the main view class in the list of parents.
+
+    FixMe: This is untested code.
+    """
+
+    html_name_regex = re.compile(r"sample_positions-(?P<sample_id>\d+)-position$")
+
+    def build_forms(self):
+        super(SamplePositionsMixin, self).build_forms()
+        if self.data is not None:
+            sample_ids = self.data.getlist("sample_list", []) or self.data.get("sample")
+            if not sample_ids:
+                for key, __ in self.data.items():
+                    match = self.html_name_regex.match(key)
+                    if match:
+                        sample_ids.append(match.group("sample_id"))
+        elif self.process:
+            sample_ids = self.process.samples.values_list("id", flat=True)
+        else:
+            sample_ids = []
+        self.forms["sample_positions"] = []
+        for i, sample_id in enumerate(sample_ids, 1):
+            form = SamplePositionForm(models.Sample.objects.get(id=convert_id_to_int(sample_id)),
+                                      "sample_positions-{}-position".format(sample_id) in self.data and self.data or None,
+                                      initial={"position": str(i)})
+            self.forms["sample_positions"].append(form)
+
+    def save_to_database(self):
+        process = super(SamplePositionsMixin, self).save_to_database()
+        sample_positions = {}
+        for sample_positions_form in self.forms["sample_positions"]:
+            sample_id = sample_positions_form.sample.id
+            sample_positions[sample_id] = sample_positions_form.cleaned_data["position"]
+        self.process.sample_positions = json.dumps(sample_positions)
+        self.process.save()
+        return process
 
 
 class NumberForm(forms.Form):
