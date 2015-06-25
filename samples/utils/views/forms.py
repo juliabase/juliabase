@@ -45,7 +45,7 @@ from . import base as utils
 
 __all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_steps", "InitialsForm",
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
-           "SamplePositionForm", "RemoveFromMySamplesForm", "time_pattern", "clean_time_field", "clean_timestamp_field",
+           "time_pattern", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
            "choices_of_content_types", "check_sample_name", "SampleSelectForm", "MultipleSamplesSelectForm")
 
@@ -516,29 +516,6 @@ class FixedOperatorField(forms.ChoiceField):
     def clean(self, value):
         value = super(FixedOperatorField, self).clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))
-
-
-class SamplePositionForm(forms.Form):
-    position = forms.CharField(label=capfirst(_("sample position")))
-
-    def __init__(self, sample, *args, **kwargs):
-        """
-        :param sample: the sample to which the sample position should be
-            appended when creating a new process
-
-        :type sample: `samples.models.Sample`
-        """
-        kwargs["prefix"] = "sample_positions-{}".format(sample.id)
-        super(SamplePositionForm, self).__init__(*args, **kwargs)
-        self.sample = sample
-
-
-class RemoveFromMySamplesForm(forms.Form):
-    """Form for the question whether the user wants to remove the samples
-    from the “My Samples” list after the process.
-    """
-    remove_from_my_samples = forms.BooleanField(label=_("Remove processed sample(s) from My Samples"),
-                                                required=False, initial=False)
 
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")

@@ -399,6 +399,14 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
         return process
 
 
+class RemoveFromMySamplesForm(forms.Form):
+    """Form for the question whether the user wants to remove the samples
+    from the “My Samples” list after the process.
+    """
+    remove_from_my_samples = forms.BooleanField(label=_("Remove processed sample(s) from My Samples"),
+                                                required=False, initial=False)
+
+
 class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
     """Mixin for views that like to offer a “Remove from my samples” button.  In
     the template, they may add the following code::
@@ -410,7 +418,7 @@ class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
 
     def build_forms(self):
         super(RemoveFromMySamplesMixin, self).build_forms()
-        self.forms["remove_from_my_samples"] = utils.RemoveFromMySamplesForm(self.data) if not self.id else None
+        self.forms["remove_from_my_samples"] = RemoveFromMySamplesForm(self.data) if not self.id else None
 
     def save_to_database(self):
         process = super(RemoveFromMySamplesMixin, self).save_to_database()
@@ -418,6 +426,21 @@ class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
            self.forms["remove_from_my_samples"].cleaned_data["remove_from_my_samples"]:
             remove_samples_from_my_samples(process.samples.all(), self.request.user)
         return process
+
+
+class SamplePositionForm(forms.Form):
+    position = forms.CharField(label=capfirst(_("sample position")))
+
+    def __init__(self, sample, *args, **kwargs):
+        """
+        :param sample: the sample to which the sample position should be
+            appended when creating a new process
+
+        :type sample: `samples.models.Sample`
+        """
+        kwargs["prefix"] = "sample_positions-{}".format(sample.id)
+        super(SamplePositionForm, self).__init__(*args, **kwargs)
+        self.sample = sample
 
 
 class NumberForm(forms.Form):
@@ -878,7 +901,7 @@ class AddMultipleTypeStepsForm(AddMyStepsForm):
     """Form for adding a new step in case of steps of different types.
     """
     step_to_be_added = forms.ChoiceField(label=_("Step to be added"), required=False,
-                                          widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+                                         widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
 
     def __init__(self, view, data=None, **kwargs):
         super(AddMultipleTypeStepsForm, self).__init__(view, data, **kwargs)
