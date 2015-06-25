@@ -519,7 +519,7 @@ class FixedOperatorField(forms.ChoiceField):
 
 
 class SamplePositionForm(forms.Form):
-    position = forms.CharField(label=capfirst(_("sample position")), required=False)
+    position = forms.CharField(label=capfirst(_("sample position")))
 
     def __init__(self, sample, *args, **kwargs):
         """
