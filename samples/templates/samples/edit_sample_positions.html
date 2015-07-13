@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% load i18n %}
   {% load juliabase %}
   <table class="sample-positions">
+    <caption>{% trans "sample positions"|capfirst %}</caption>
     <tbody>
       {% for sample_position in sample_positions %}
         {% error_list sample_position _("General error") "<tr>" %}
