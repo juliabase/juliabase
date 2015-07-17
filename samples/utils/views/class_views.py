@@ -462,7 +462,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
     def build_forms(self):
         super(SamplePositionsMixin, self).build_forms()
         if self.data is not None:
-            sample_ids = self.data.getlist("sample_list", []) or self.data.get("sample")
+            sample_ids = self.data.getlist("sample_list") or self.data.getlist("sample")
             if not sample_ids:
                 for key, __ in self.data.items():
                     match = self.html_name_regex.match(key)
