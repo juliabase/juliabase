@@ -808,8 +808,8 @@ def unquote_view_parameters(view):
     def unquoting_view(request, *args, **kwargs):
         if six.PY2:
             return view(request,
-                        *[urllib.parse.unquote(six.binary_type(value)).decode("utf-8") for value in args],
-                        **dict((key, urllib.parse.unquote(six.binary_type(value)).decode("utf-8"))
+                        *[urllib.parse.unquote(value.encode("utf-8")).decode("utf-8") for value in args],
+                        **dict((key, urllib.parse.unquote(value.encode("utf-8")).decode("utf-8"))
                                for key, value in kwargs.items()))
         return view(request,
                     *[urllib.parse.unquote(value) for value in args],
