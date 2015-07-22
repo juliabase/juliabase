@@ -154,6 +154,32 @@ class ProcessWithoutSamplesView(TemplateView):
         """
         return int(self.model.objects.aggregate(Max(self.identifying_field))[self.identifying_field + "__max"] or 0) + 1
 
+    def get_initial_process_data(self):
+        """Returns the initial data for the process form.  This is empty if we are
+        editing an existing process.  This is the central code for process
+        duplication.
+
+        :return:
+          the initial form data for the process
+
+        :rytpe: dict mapping str to object
+        """
+        initial = {}
+        if not self.id:
+            copy_from = self.request.GET.get("copy_from")
+            if copy_from:
+                # Duplication of a process
+                source_process_query = self.model.objects.filter(**{self.identifying_field: copy_from})
+                if source_process_query.count() == 1:
+                    initial.update(source_process_query.values()[0])
+                    initial["timestamp"] = datetime.datetime.now()
+                    initial["timestamp_inaccuracy"] = 0
+                    initial["operator"] = self.request.user.pk
+            next_id = self.get_next_id()
+            if next_id:
+                initial[self.identifying_field] = next_id
+        return initial
+
     def build_forms(self):
         """Fills the :py:attr:`forms` dictionary with the forms, or lists of them.  In
         this base class, we only add ``"process"`` itself and
@@ -166,21 +192,8 @@ class ProcessWithoutSamplesView(TemplateView):
         work.
         """
         if "process" not in self.forms:
-            initial = {}
-            if not self.id:
-                copy_from = self.request.GET.get("copy_from")
-                if copy_from:
-                    # Duplication of a process
-                    source_process_query = self.model.objects.filter(**{self.identifying_field: copy_from})
-                    if source_process_query.count() == 1:
-                        initial.update(source_process_query.values()[0])
-                        initial["timestamp"] = datetime.datetime.now()
-                        initial["timestamp_inaccuracy"] = 0
-                        initial["operator"] = self.request.user.pk
-                next_id = self.get_next_id()
-                if next_id:
-                    initial[self.identifying_field] = next_id
-            self.forms["process"] = self.form_class(self.request.user, self.data, instance=self.process, initial=initial)
+            self.forms["process"] = self.form_class(self.request.user, self.data, instance=self.process,
+                                                    initial=self.get_initial_process_data())
         self.forms["edit_description"] = utils.EditDescriptionForm(self.data) if self.id else None
 
     @staticmethod
