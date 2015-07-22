@@ -722,11 +722,13 @@ class AddStepsForm(AddMyStepsForm):
 class MultipleStepsMixin(ProcessWithoutSamplesView):
     """Mixin class for views for processes with steps.  The steps of the process
     must always be of the same type.  If they are not, you must use
-    :py:class:`MultipleTypeStepsMixin` instead.  Additionally to
-    :py:attr:`form_class`, you must set the :py:attr:`step_form_class` class
-    variable to the form class to be used for the steps.  Moreover, you must
-    set :py:attr:`process_field` to the name of the field of the parent process
-    in the step model.
+    :py:class:`MultipleTypeStepsMixin` instead.  The step model must include a
+    field called “``number``”, which should be ordered.
+
+    Additionally to :py:attr:`form_class`, you must set the
+    :py:attr:`step_form_class` class variable to the form class to be used for
+    the steps.  Moreover, you must set :py:attr:`process_field` to the name of
+    the field of the parent process in the step model.
 
     The step form should be a subclass of
     :py:class:`~samples.utils.views.SubprocessForm`.
@@ -1018,9 +1020,10 @@ class SubprocessMultipleTypesForm(SubprocessForm):
 
 class MultipleStepTypesMixin(MultipleStepsMixin):
     """Mixin class for processes the steps of which are of different types (i.e.,
-    different models).  You can see it in action in the module
-    :py:mod:`institute.views.samples.cluster_tool_deposition`.  Additionally to
-    the class variable :py:attr:`form_class`, you must set:
+    different models).  The step model must include a field called
+    “``number``”, which should be ordered.  You can see it in action in the
+    module :py:mod:`institute.views.samples.cluster_tool_deposition`.
+    Additionally to the class variable :py:attr:`form_class`, you must set:
 
     :ivar step_form_classes: This is a tuple of the form classes for the steps
 
