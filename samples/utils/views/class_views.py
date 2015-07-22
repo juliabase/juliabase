@@ -466,8 +466,6 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
         {% include "samples/edit_sample_positions.html" %}
 
     This mixin must come before the main view class in the list of parents.
-
-    FixMe: This is untested code.
     """
 
     html_name_regex = re.compile(r"(?P<sample_id>\d+)-position$")
