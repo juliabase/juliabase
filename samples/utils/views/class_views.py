@@ -439,7 +439,7 @@ class SamplePositionForm(forms.Form):
 
         :type sample: `samples.models.Sample`
         """
-        kwargs["prefix"] = "sample_positions-{}".format(sample.id)
+        kwargs["prefix"] = str(sample.id)
         super(SamplePositionForm, self).__init__(*args, **kwargs)
         self.sample = sample
 
@@ -457,7 +457,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
     FixMe: This is untested code.
     """
 
-    html_name_regex = re.compile(r"sample_positions-(?P<sample_id>\d+)-position$")
+    html_name_regex = re.compile(r"(?P<sample_id>\d+)-position$")
 
     def build_forms(self):
         super(SamplePositionsMixin, self).build_forms()
@@ -475,7 +475,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
         self.forms["sample_positions"] = []
         for i, sample_id in enumerate(sample_ids, 1):
             form = SamplePositionForm(models.Sample.objects.get(id=convert_id_to_int(sample_id)),
-                                      "sample_positions-{}-position".format(sample_id) in self.data and self.data or None,
+                                      "{}-position".format(sample_id) in self.data and self.data or None,
                                       initial={"position": str(i)})
             self.forms["sample_positions"].append(form)
 
