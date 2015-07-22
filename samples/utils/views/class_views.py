@@ -37,6 +37,7 @@ from django.utils.text import capfirst
 from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 import django.forms as forms
+from django.forms.models import modelform_factory
 from django.forms.utils import ValidationError
 from jb_common.utils.base import camel_case_to_underscores, is_json_requested, format_enumeration, int_or_zero
 from samples import permissions
@@ -470,7 +471,25 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
 
     html_name_regex = re.compile(r"(?P<sample_id>\d+)-position$")
 
+    def _form_class_with_exclude(self):
+        """Returns a slightly modified process form class.  It add "sample_positions"
+        to the list of excluded fields, because this is handled by external
+        forms of type :py:class:`SamplePositionForm`.
+
+        :return:
+          the modified process form class
+
+        :rtype: `samples.utils.views.ProcessForm`
+        """
+        try:
+            exclude = set(self.form_class.Meta.exclude)
+        except AttributeError:
+            exclude = set()
+        exclude.add("sample_positions")
+        return modelform_factory(self.model, form=self.form_class, exclude=tuple(exclude))
+
     def build_forms(self):
+        self.form_class = self._form_class_with_exclude()
         super(SamplePositionsMixin, self).build_forms()
         if self.data is not None:
             sample_ids = self.data.getlist("sample_list") or self.data.getlist("sample")
