@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-23 22:38+0200\n"
-"PO-Revision-Date: 2015-07-23 22:44+0200\n"
+"POT-Creation-Date: 2015-07-23 22:46+0200\n"
+"PO-Revision-Date: 2015-07-23 22:46+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -982,10 +982,12 @@ msgstr "Nichts geändert."
 
 #: institute/views/samples/my_layers.py:185
 msgid "You can't access the “My Layers” section of another user."
-msgstr "Sie können nicht auf die „Meine-Schichten“-Seite eines anderen Benutzes zugreifen."
+msgstr ""
+"Sie können nicht auf die „Meine-Schichten“-Seite eines anderen Benutzes "
+"zugreifen."
 
 #: institute/views/samples/my_layers.py:194
-msgid "Changes did not saved yet."
+msgid "Changes are not saved yet."
 msgstr "Die Änderungen sind noch nicht gespeichert."
 
 #: institute/views/samples/my_layers.py:198

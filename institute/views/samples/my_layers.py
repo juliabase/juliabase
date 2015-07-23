@@ -191,7 +191,7 @@ def edit(request, login_name):
             result = save_to_database(my_layer_forms, user)
             return utils.successful_response(request, result)
         elif all_valid and referentially_valid and structure_changed:
-            messages.error(request, _("Changes did not saved yet."))
+            messages.error(request, _("Changes are not saved yet."))
     else:
         my_layer_forms = forms_from_database(user)
     my_layer_forms.append(MyLayerForm(prefix=str(len(my_layer_forms))))
