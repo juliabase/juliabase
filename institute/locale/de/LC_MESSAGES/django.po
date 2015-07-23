@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-06-02 04:25+0200\n"
-"PO-Revision-Date: 2015-01-26 15:38+0100\n"
+"POT-Creation-Date: 2015-07-23 22:38+0200\n"
+"PO-Revision-Date: 2015-07-23 22:44+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -650,13 +650,17 @@ msgstr ""
 "Bugtracking benutzen, oder auf eine <a href=\"https://github.com\">GitHub</"
 "a>-Seite verlinken.  "
 
-#: institute/templates/jb_base.html:29
+#: institute/templates/jb_base.html:30
 msgid "INM logo"
 msgstr "Logo des INM"
 
-#: institute/templates/jb_base.html:31
+#: institute/templates/jb_base.html:32
 msgid "Institute of Nifty New<br/>Materials (INM)"
 msgstr "Institut für pfiffige neue<br/>Materialien (INM)"
+
+#: institute/templates/jb_base.html:36
+msgid "JuliaBase logo"
+msgstr "JuliaBase-Logo"
 
 #: institute/templates/samples/add_claim_oldstyle.html:29
 #: institute/templates/samples/add_claim_oldstyle.html:30
@@ -694,32 +698,36 @@ msgstr "Fehler in der Deposition"
 msgid "Error in sample list"
 msgstr "Fehler in Probenliste"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:85
+#: institute/templates/samples/edit_cluster_tool_deposition.html:84
 #: institute/templates/samples/edit_five_chamber_deposition.html:77
 #: institute/templates/samples/edit_five_chamber_deposition.html:78
 #: institute/templates/samples/edit_sample.html:61
 msgid "Error in layer"
 msgstr "Fehler in der Schicht"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:97
+#: institute/templates/samples/edit_cluster_tool_deposition.html:96
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:164
+#: institute/templates/samples/edit_cluster_tool_deposition.html:163
 msgid "Gas flows in sccm"
 msgstr "Gasflüsse in sccm"
 
-#: institute/templates/samples/edit_five_chamber_deposition.html:119
+#: institute/templates/samples/edit_five_chamber_deposition.html:115
 msgid "Error with adding layers"
 msgstr "Fehler beim hinzufügen von Schichten"
 
-#: institute/templates/samples/edit_five_chamber_deposition.html:120
+#: institute/templates/samples/edit_five_chamber_deposition.html:116
 msgid "Error with removing from My Samples"
 msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 
 #: institute/templates/samples/edit_layer_thickness_measurement.html:30
 msgid "Error in measurement"
 msgstr "Fehler in der Messung"
+
+#: institute/templates/samples/edit_my_layers.html:35
+msgid "Error in My Layer"
+msgstr "Fehler in Meiner Schicht"
 
 #: institute/templates/samples/edit_pds_measurement.html:30
 msgid "Error in PDS data"
@@ -797,7 +805,7 @@ msgstr "„Existieren“ bedeutet hier „in der Probendatenbank existieren“."
 msgid "Depositions by number"
 msgstr "Depositionen nach Nummer"
 
-#: institute/templates/samples/main_menu.html:33
+#: institute/templates/samples/main_menu.html:34
 msgid "Edit “My Layers”"
 msgstr "“Meine Schichten” ändern"
 
@@ -822,7 +830,7 @@ msgid "Material"
 msgstr "Material"
 
 #: institute/templatetags/institute_extras.py:79
-#: institute/views/samples/cluster_tool_deposition.py:132
+#: institute/views/samples/cluster_tool_deposition.py:113
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
@@ -919,14 +927,70 @@ msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: institute/views/samples/cluster_tool_deposition.py:56
+#: institute/views/samples/cluster_tool_deposition.py:55
 #: institute/views/samples/five_chamber_deposition.py:48
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
-#: institute/views/samples/cluster_tool_deposition.py:132
+#: institute/views/samples/cluster_tool_deposition.py:113
 msgid "PECVD"
 msgstr "PECVD"
+
+#: institute/views/samples/my_layers.py:46
+msgid "Nickname"
+msgstr "Spitzname"
+
+#: institute/views/samples/my_layers.py:47
+msgid "Layer identifier"
+msgstr "Schichtbezeichner"
+
+#: institute/views/samples/my_layers.py:48
+msgid "in the form \"deposition number\"-\"layer number\""
+msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
+
+#: institute/views/samples/my_layers.py:49
+msgid "Delete"
+msgstr "Löschen"
+
+#: institute/views/samples/my_layers.py:57
+msgid "Deposition and layer number must be separated by \"-\"."
+msgstr "Depositions- und Schichtnummer müssen mit \"-\" getrennt sein."
+
+#: institute/views/samples/my_layers.py:62
+msgid "Deposition number doesn't exist."
+msgstr "Diese Depositionsnummer existiert nicht."
+
+#: institute/views/samples/my_layers.py:66
+msgid "Layer number isn't a number."
+msgstr "Schichtnummer ist keine Nummer."
+
+#: institute/views/samples/my_layers.py:69
+msgid "This layer does not exist in this deposition."
+msgstr "Diese Schicht existiert nicht in dieser Deposition."
+
+#: institute/views/samples/my_layers.py:146
+msgid "Nickname is already given."
+msgstr "Dieser Spitzname ist schon vergeben."
+
+#: institute/views/samples/my_layers.py:163
+msgid "Successfully changed “My Layers”"
+msgstr "“Meine Schichten” erfolgreich geändert"
+
+#: institute/views/samples/my_layers.py:165
+msgid "Nothing changed."
+msgstr "Nichts geändert."
+
+#: institute/views/samples/my_layers.py:185
+msgid "You can't access the “My Layers” section of another user."
+msgstr "Sie können nicht auf die „Meine-Schichten“-Seite eines anderen Benutzes zugreifen."
+
+#: institute/views/samples/my_layers.py:194
+msgid "Changes did not saved yet."
+msgstr "Die Änderungen sind noch nicht gespeichert."
+
+#: institute/views/samples/my_layers.py:198
+msgid "My Layers"
+msgstr "Meine Schichten"
 
 #: institute/views/samples/pds_measurement.py:102
 msgid "This PDS number exists already."
@@ -1123,9 +1187,6 @@ msgstr "Die Probe {0} hat bereits ein Substrat."
 #~ msgid "Can edit all cluster tool depositions"
 #~ msgstr "Darf alle Cluster-Tool-Depositionen ändern"
 
-#~ msgid "JuliaBase logo"
-#~ msgstr "JuliaBase-Logo"
-
 #~ msgid "none"
 #~ msgstr "keine"
 
@@ -1265,14 +1326,8 @@ msgstr "Die Probe {0} hat bereits ein Substrat."
 #~ msgid "{name} “{number}”"
 #~ msgstr "{name} „{number}“"
 
-#~ msgid "This number is already in use."
-#~ msgstr "Diese Nummer ist schon vergeben."
-
 #~ msgid "Operator"
 #~ msgstr "Operateur"
-
-#~ msgid "The deposition number must not be changed."
-#~ msgstr "Die Depositionsnummer darf nicht verändert werden."
 
 #~ msgid "time"
 #~ msgstr "Zeit"
