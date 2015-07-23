@@ -512,9 +512,9 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
     def save_to_database(self):
         process = super(SamplePositionsMixin, self).save_to_database()
         sample_positions = {}
-        for sample_positions_form in self.forms["sample_positions"]:
-            sample_id = sample_positions_form.sample.id
-            sample_positions[sample_id] = sample_positions_form.cleaned_data["position"]
+        for sample_position_form in self.forms["sample_positions"]:
+            sample_id = sample_position_form.sample.id
+            sample_positions[sample_id] = sample_position_form.cleaned_data["position"]
         self.process.sample_positions = json.dumps(sample_positions)
         self.process.save()
         return process
