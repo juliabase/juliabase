@@ -723,17 +723,25 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
     """Mixin class for views for processes with steps.  The steps of the process
     must always be of the same type.  If they are not, you must use
     :py:class:`MultipleTypeStepsMixin` instead.  The step model must include a
-    field called “``number``”, which should be ordered.
+    field called “``number``”, which should be ordered.  This mixin must come
+    before the main view class in the list of parents.
 
-    Additionally to :py:attr:`form_class`, you must set the
-    :py:attr:`step_form_class` class variable to the form class to be used for
-    the steps.  Moreover, you must set :py:attr:`process_field` to the name of
-    the field of the parent process in the step model.
+    You can see it in action in the module
+    :py:mod:`institute.views.samples.five_chamber_deposition`.  In the
+    associated edit template, you can also see the usage of the three
+    additional template variables ``steps``, ``change_steps`` (well, at least
+    their combination ``steps_and_change_steps``), and ``add_steps``.
 
-    The step form should be a subclass of
-    :py:class:`~samples.utils.views.SubprocessForm`.
+    Additionally to :py:attr:`form_class`, you must set the following class
+    variables:
 
-    This mixin must come before the main view class in the list of parents.
+    :ivar step_form_class: the form class to be used for the steps.
+
+    :ivar process_field: to the name of the field of the parent process in the
+      step model.
+
+    :type step_form_class: subclass of `~samples.utils.views.SubprocessForm`
+    :type process_field: str
     """
     add_steps_form_class = AddStepsForm
     change_step_form_class = ChangeStepForm
@@ -1021,8 +1029,17 @@ class SubprocessMultipleTypesForm(SubprocessForm):
 class MultipleStepTypesMixin(MultipleStepsMixin):
     """Mixin class for processes the steps of which are of different types (i.e.,
     different models).  The step model must include a field called
-    “``number``”, which should be ordered.  You can see it in action in the
-    module :py:mod:`institute.views.samples.cluster_tool_deposition`.
+    “``number``”, which should be ordered.  This mixin must come before the
+    main view class in the list of parents.
+
+    You can see it in action in the module
+    :py:mod:`institute.views.samples.cluster_tool_deposition`.  In the
+    associated edit template, you can also see the usage of the three
+    additional template variables ``steps``, ``change_steps`` (well, at least
+    their combination ``steps_and_change_steps``), and ``add_steps``.
+    Moreover, note the use of the ``step_type`` and ``type`` fields of each
+    layer (= step).
+
     Additionally to the class variable :py:attr:`form_class`, you must set:
 
     :ivar step_form_classes: This is a tuple of the form classes for the steps
@@ -1032,11 +1049,9 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
       of the add-step form.
 
     :type step_form_classes: tuple of
-      :py:class:`~samples.utils.views.SubprocessForm`
+      :py:class:`~samples.utils.views.SubprocessMultipleTypesForm`
     :type short_labels: dict mapping
-      :py:class:`~samples.utils.views.SubprocessForm` to unicode.
-
-    This mixin must come before the main view class in the list of parents.
+      :py:class:`~samples.utils.views.SubprocessMultipleTypesForm` to unicode.
     """
     model = None
     form_class = None
