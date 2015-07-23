@@ -515,8 +515,8 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
         for sample_position_form in self.forms["sample_positions"]:
             sample_id = sample_position_form.sample.id
             sample_positions[sample_id] = sample_position_form.cleaned_data["position"]
-        self.process.sample_positions = json.dumps(sample_positions)
-        self.process.save()
+        process.sample_positions = json.dumps(sample_positions)
+        process.save()
         return process
 
 
