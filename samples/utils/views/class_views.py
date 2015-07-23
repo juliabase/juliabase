@@ -453,7 +453,7 @@ class SamplePositionForm(forms.Form):
 
         :type sample: `samples.models.Sample`
         """
-        kwargs["prefix"] = str(sample.id)
+        kwargs["prefix"] = "sample_positions-{}".format(sample.id)
         super(SamplePositionForm, self).__init__(*args, **kwargs)
         self.sample = sample
 
@@ -469,7 +469,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
     This mixin must come before the main view class in the list of parents.
     """
 
-    html_name_regex = re.compile(r"(?P<sample_id>\d+)-position$")
+    html_name_regex = re.compile(r"sample_positions-(?P<sample_id>\d+)-position$")
 
     def _form_class_with_exclude(self):
         """Returns a slightly modified process form class.  It add "sample_positions"
@@ -505,7 +505,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
         self.forms["sample_positions"] = []
         for i, sample_id in enumerate(sample_ids, 1):
             form = SamplePositionForm(models.Sample.objects.get(id=convert_id_to_int(sample_id)),
-                                      "{}-position".format(sample_id) in self.data and self.data or None,
+                                      "sample_positions-{}-position".format(sample_id) in self.data and self.data or None,
                                       initial={"position": str(i)})
             self.forms["sample_positions"].append(form)
 
