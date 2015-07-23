@@ -622,7 +622,9 @@ def clean_quantity_field(value, units):
     return match.group("number") + " " + unit
 
 
-def collect_subform_indices(post_data, subform_key="number", prefix=""):
+subform_name_pattern = re.compile(r"(?P<index>\d+)-(?P<key>.+)")
+
+def collect_subform_indices(post_data, subform_key="number"):
     """Find all indices of subforms of a certain type (e.g. layers) and return
     them so that the objects (e.g. layers) have a sensible order (e.g. sorted
     by layer number).  This is necessary because indices are used as form
@@ -633,35 +635,31 @@ def collect_subform_indices(post_data, subform_key="number", prefix=""):
     :param post_data: the result from ``request.POST``
     :param subform_key: the fieldname in the forms that is used for ordering.
         Defaults to ``number``.
-    :param prefix: an additional prefix to prepend to every form field name
-        (even before the index).  (Is almost never used.)
 
     :type post_data: QueryDict
 
     :return:
-      list with all found indices having this form prefix and key.
-      Their order is so that the respective values for that key are ascending.
+      list with all found indices having this key.  Their order is so that the
+      respective values for that key are ascending.
 
     :rtype: list of int
     """
-    subform_name_pattern = re.compile(re.escape(prefix) + r"(?P<index>\d+)(_\d+)*-(?P<key>.+)")
-    values = {}
+    post_items = {}
     for key, value in post_data.items():
         match = subform_name_pattern.match(key)
         if match:
             index = int(match.group("index"))
             if match.group("key") == subform_key:
-                values[index] = value
-            elif index not in values:
-                values[index] = None
+                post_items[index] = value
     last_value = 0
-    for index in sorted(values):
+    for index in sorted(post_items):
         try:
-            value = int(values[index])
-        except (TypeError, ValueError):
+            value = int(post_items[index])
+        except ValueError:
+            # Possibly, the user has entered rubbish.
             value = last_value + 0.01
-        last_value = values[index] = value
-    return sorted(values, key=lambda index: values[index])
+        post_items[index] = last_value = value
+    return sorted(post_items, key=lambda index: post_items[index])
 
 
 level0_pattern = re.compile(r"(?P<level0_index>\d+)-(?P<id>.+)")
