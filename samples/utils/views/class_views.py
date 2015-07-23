@@ -26,7 +26,7 @@ samples form, whereas the mixin class doesn't do this.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, types, re
+import datetime, types, re, json
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
