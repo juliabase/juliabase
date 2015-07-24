@@ -1468,7 +1468,7 @@ class UserDetails(models.Model):
     subscribed_feeds = models.ManyToManyField(ContentType, related_name="subscribed_users",
                                               verbose_name=_("subscribed newsfeeds"), blank=True)
     default_folded_process_classes = models.ManyToManyField(ContentType, related_name="dont_show_to_user",
-                                              verbose_name=_("folded processes"), blank=True)
+                                              verbose_name=_("process classes folded by default"), blank=True)
     folded_processes = models.TextField(_("folded processes"), blank=True, help_text=_("in JSON format"),
                                         default="{}")
     visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",

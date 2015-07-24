@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-23 22:38+0200\n"
-"PO-Revision-Date: 2015-07-23 22:40+0200\n"
+"POT-Creation-Date: 2015-07-24 16:39+0200\n"
+"PO-Revision-Date: 2015-07-24 16:40+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -470,7 +470,7 @@ msgstr "Beendigungen der Existenz"
 #: samples/models/common.py:1114
 #: samples/templates/samples/topics_and_permissions.html:101
 #: samples/templates/samples/topics_and_permissions.html:114
-#: samples/utils/views/class_views.py:996
+#: samples/utils/views/class_views.py:1002
 msgid "none"
 msgstr "keine"
 
@@ -586,8 +586,11 @@ msgstr "identifizierender Daten-Hash"
 msgid "subscribed newsfeeds"
 msgstr "abonnierte Newsfeeds"
 
-#: samples/models/common.py:1471 samples/models/common.py:1472
-#: samples/views/user_details.py:50
+#: samples/models/common.py:1471
+msgid "process classes folded by default"
+msgstr "Prozessarten, die per Voreinstellung eingefaltet sind"
+
+#: samples/models/common.py:1472 samples/views/user_details.py:50
 msgid "folded processes"
 msgstr "eingefaltete Prozesse"
 
@@ -757,7 +760,7 @@ msgstr "Auftrag für {process_class} von {datetime}"
 msgid "sample positions"
 msgstr "Probenpositionen"
 
-#: samples/models/common.py:1633 samples/models/common.py:1643
+#: samples/models/common.py:1635 samples/models/common.py:1645
 #: samples/views/task_lists.py:217
 msgid "confidential sample"
 msgstr "vertrauliche Probe"
@@ -2863,56 +2866,58 @@ msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
 msgid "sample position"
 msgstr "Probenposition"
 
-#: samples/utils/views/class_views.py:524
+#: samples/utils/views/class_views.py:531
 msgid "number of subprocesses"
 msgstr "Anzahl der Einzelprozesse"
 
-#: samples/utils/views/class_views.py:607
+#: samples/utils/views/class_views.py:614
 msgid "No subprocesses given."
 msgstr "Keine Einzelprozesse angegeben."
 
-#: samples/utils/views/class_views.py:625
+#: samples/utils/views/class_views.py:632
 msgid "duplicate this step"
 msgstr "diesen Schritt duplizieren"
 
-#: samples/utils/views/class_views.py:626
+#: samples/utils/views/class_views.py:633
 msgid "remove this step"
 msgstr "diesen Schritt entfernen"
 
-#: samples/utils/views/class_views.py:627
+#: samples/utils/views/class_views.py:634
 msgid "move this step"
 msgstr "diesen Schritt verschieben"
 
-#: samples/utils/views/class_views.py:628
+#: samples/utils/views/class_views.py:635
 msgid "up"
 msgstr "hoch"
 
-#: samples/utils/views/class_views.py:628
+#: samples/utils/views/class_views.py:635
 msgid "down"
 msgstr "runter"
 
-#: samples/utils/views/class_views.py:640
+#: samples/utils/views/class_views.py:647
 msgid "You can't duplicate, move, or remove a step at the same time."
-msgstr "Sie können nicht gleichzeitig denselben Schritt duplizieren, entfernen oder verschieben."
+msgstr ""
+"Sie können nicht gleichzeitig denselben Schritt duplizieren, entfernen oder "
+"verschieben."
 
-#: samples/utils/views/class_views.py:649
+#: samples/utils/views/class_views.py:656
 msgid "Nickname of My Step to be added"
 msgstr "Spitzname Meines Schrittes, der hinzugefügt werden soll"
 
-#: samples/utils/views/class_views.py:703
+#: samples/utils/views/class_views.py:710
 msgid "Number of steps to be added"
 msgstr "Anzahl der Schritte, die hinzugefügt werden sollen"
 
-#: samples/utils/views/class_views.py:748
+#: samples/utils/views/class_views.py:755
 msgid "No steps given."
 msgstr "Keine Schritte angegeben."
 
-#: samples/utils/views/class_views.py:990
+#: samples/utils/views/class_views.py:996
 msgid "Step to be added"
 msgstr "Schritt, der hinzugefügt werden soll"
 
-#: samples/utils/views/class_views.py:1162
-#: samples/utils/views/class_views.py:1184
+#: samples/utils/views/class_views.py:1172
+#: samples/utils/views/class_views.py:1194
 msgid "No layers given."
 msgstr "Keine Schichten angegeben."
 
@@ -4253,9 +4258,6 @@ msgstr "Themen und Berechtigungen von {user_name}"
 
 #~ msgid "Can adopt samples"
 #~ msgstr "Darf Proben in Besitz nehmen"
-
-#~ msgid "process classes"
-#~ msgstr "Prozessarten"
 
 #~ msgid "Initials"
 #~ msgstr "Kürzel"
