@@ -278,5 +278,13 @@ def actual_instances(instances):
     it into a list of the actual instances.  One use case are multiple-type steps::
 
         {% for step in process.steps.all|actual_instances %}
+
+    The name of the class in all-lowercase in injected into each instance in
+    the ``type`` attribute.
     """
-    return [instance.actual_instance for instance in instances]
+    result = []
+    for instance in instances:
+        actual_instance = instance.actual_instance
+        actual_instance.type = actual_instance.__class__.__name__.lower()
+        result.append(actual_instance)
+    return result
