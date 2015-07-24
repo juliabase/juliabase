@@ -663,7 +663,7 @@ class AddMyStepsForm(forms.Form):
             except self.model.DoesNotExist:
                 pass
             else:
-                step_query = process.steps().filter(number=step_number)
+                step_query = process.get_steps().filter(number=step_number)
                 if step_query.count() == 1:
                     return step_query.values()[0]
 
@@ -896,7 +896,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         """
         self.forms["steps"] = [self.step_form_class(self, prefix=str(step_index), instance=step,
                                                     initial={"number": step_index + 1})
-                               for step_index, step in enumerate(source_process.steps().all())]
+                               for step_index, step in enumerate(source_process.get_steps().all())]
 
     def build_forms(self):
         self.forms["add_steps"] = self.add_steps_form_class(self, self.data)
@@ -970,7 +970,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         :rtype: `samples.models.PhysicalProcess` or NoneType
         """
         process = super(MultipleStepsMixin, self).save_to_database()
-        process.steps().all().delete()
+        process.get_steps().all().delete()
         for step_form in self.forms["steps"]:
             step = step_form.save(commit=False)
             setattr(step, self.process_field, process)
@@ -1074,7 +1074,7 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
 
     def _read_step_forms(self, source_process):
         self.forms["steps"] = []
-        for index, step in enumerate(source_process.steps().all()):
+        for index, step in enumerate(source_process.get_steps().all()):
             step = step.actual_instance
             StepFormClass = self.step_types[step.__class__.__name__.lower()]
             self.forms["steps"].append(

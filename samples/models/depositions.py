@@ -70,7 +70,7 @@ class Deposition(PhysicalProcess):
     class JBMeta:
         identifying_field = "number"
 
-    def steps(self):
+    def get_steps(self):
         """Returns all layers of this deposition as a query set.
 
         :return:

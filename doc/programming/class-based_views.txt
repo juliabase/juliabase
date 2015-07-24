@@ -122,7 +122,7 @@ functionality: Re-ordering steps, duplicating them, deleting them.  The parent
 model, for example the deposition process class, must define a method
 :py:meth:`steps` that returns a query set of all steps, as in::
 
-      def steps(self):
+      def get_steps(self):
           return self.layers
 
 The ``MultipleStepsMixin`` is the main ingredient for the class
