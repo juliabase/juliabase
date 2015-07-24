@@ -491,23 +491,27 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
     def build_forms(self):
         self.form_class = self._form_class_with_exclude()
         super(SamplePositionsMixin, self).build_forms()
-        if self.data is not None:
+        if self.request.method == "POST":
             sample_ids = self.data.getlist("sample_list") or self.data.getlist("sample")
             if not sample_ids:
                 for key, __ in self.data.items():
                     match = self.html_name_regex.match(key)
                     if match:
                         sample_ids.append(match.group("sample_id"))
-        elif self.process:
-            sample_ids = self.process.samples.values_list("id", flat=True)
+            self.forms["sample_positions"] = []
+            for i, sample_id in enumerate(sample_ids, 1):
+                form = SamplePositionForm(models.Sample.objects.get(id=convert_id_to_int(sample_id)),
+                                          "sample_positions-{}-position".format(sample_id) in self.data and self.data or None,
+                                          initial={"position": str(i)})
+                self.forms["sample_positions"].append(form)
         else:
-            sample_ids = []
-        self.forms["sample_positions"] = []
-        for i, sample_id in enumerate(sample_ids, 1):
-            form = SamplePositionForm(models.Sample.objects.get(id=convert_id_to_int(sample_id)),
-                                      "sample_positions-{}-position".format(sample_id) in self.data and self.data or None,
-                                      initial={"position": str(i)})
-            self.forms["sample_positions"].append(form)
+            if self.id:
+                self.forms["sample_positions"] = [
+                    SamplePositionForm(models.Sample.objects.get(id=convert_id_to_int(sample_id)),
+                                       initial={"position": position})
+                    for sample_id, position in json.loads(self.process.sample_positions).items()]
+            else:
+                self.forms["sample_positions"] = []
 
     def save_to_database(self):
         process = super(SamplePositionsMixin, self).save_to_database()
