@@ -959,10 +959,9 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         return context
 
     def save_to_database(self):
-        """Apply all step changes, check the whole validity of the data, and save the
-        forms to the database.  Only the process is just updated if it already
-        existed.  However, the steps are completely deleted and re-constructed
-        from scratch.
+        """Saves the forms to the database.  Only the process is just updated if it
+        already existed.  However, the steps are completely deleted and
+        re-constructed from scratch.
 
         :return:
           The saved process instance, or ``None`` if validation failed
@@ -1044,12 +1043,16 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
 
     :ivar step_form_classes: This is a tuple of the form classes for the steps
 
+    :ivar process_field: to the name of the field of the parent process in the
+      step model.
+
     :ivar short_labels: *(optional)* This is a dict mapping a step form class
       to a concise name of that step type.  It is used in the selection widget
       of the add-step form.
 
     :type step_form_classes: tuple of
       :py:class:`~samples.utils.views.SubprocessMultipleTypesForm`
+    :type process_field: str
     :type short_labels: dict mapping
       :py:class:`~samples.utils.views.SubprocessMultipleTypesForm` to unicode.
     """
