@@ -270,3 +270,13 @@ def ptrans(context, string):
 @register.filter
 def times08(value):
     return value * 0.8
+
+
+@register.filter
+def actual_instances(instances):
+    """Takes a list of (polymorphic) model instances or a ``QuerySet`` and converts
+    it into a list of the actual instances.  One use case are multiple-type steps::
+
+        {% for step in process.steps|actual_instances %}
+    """
+    return [instance.actual_instance for instance in instances]
