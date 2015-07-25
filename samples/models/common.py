@@ -1471,6 +1471,10 @@ class UserDetails(models.Model):
                                               verbose_name=_("process classes folded by default"), blank=True)
     folded_processes = models.TextField(_("folded processes"), blank=True, help_text=_("in JSON format"),
                                         default="{}")
+    """Dictionary mapping the ID of a sample to a list of all processes that are
+    folded by the user.  Note that due to JSON's constraints, the sample ID is
+    a string.
+    """
     visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",
                                                 verbose_name=_("visible task lists"), blank=True)
     folded_topics = models.TextField(_("folded topics"), blank=True, help_text=_("in JSON format"),
