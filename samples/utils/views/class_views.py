@@ -507,6 +507,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
         else:
             if self.id:
                 sample_positions = json.loads(self.process.sample_positions)
+                sample_positions = dict((int(id), position) for id, position in sample_positions.items())
                 for sample in self.process.samples.all():
                     if sample.id in sample_positions:
                         self.forms["sample_positions"].append(

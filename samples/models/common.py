@@ -1614,8 +1614,10 @@ class ProcessWithSamplePositions(models.Model):
     """
 
     sample_positions = models.TextField(_("sample positions"), default="{}", help_text=_("in JSON format"))
-    """In JSON format, mapping sample IDs to positions.  Positions can be
-    numbers or strings."""
+    """In JSON format, mapping sample IDs to positions.  Positions can be numbers
+    or strings.  Note that due to JSON constraints, the sample IDs are
+    strings.
+    """
 
     class Meta:
         abstract = True
