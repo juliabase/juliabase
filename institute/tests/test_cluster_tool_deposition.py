@@ -24,7 +24,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime, decimal, json
-from django.test import TestCase
 from django.test.client import Client
 from .tools import TestCase
 
