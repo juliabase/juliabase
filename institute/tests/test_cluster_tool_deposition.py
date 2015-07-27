@@ -66,7 +66,8 @@ class ClusterToolDepositionTest(TestCase):
                          "content_type": "cluster tool PECVD layer", "plasma_start_with_shutter": False, "time": "",
                          "deposition_power": None}})
         response = self.client.get("/my_samples/e.monroe", HTTP_ACCEPT="application/json")
-        my_samples = json.loads(response.content)
+        # FixMe: In Django 1.9, replace this with ``response.json()``.
+        my_samples = json.loads(response.content.decode())
         self.assertIn(13, my_samples)
         self.assertIn(14, my_samples)
 

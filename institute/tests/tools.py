@@ -39,6 +39,7 @@ class TestCase(django.test.TestCase):
                 self._remove_dynamic_fields(value)
 
     def assertJsonDictEqual(self, response, dictionary):
-        data = json.loads(response.content.decode("ascii"))
+        # FixMe: In Django 1.9, replace this with ``response.json()``.
+        data = json.loads(response.content.decode())
         self._remove_dynamic_fields(data)
         self.assertEqual(data, dictionary)

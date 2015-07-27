@@ -85,7 +85,8 @@ class FiveChamberDepositionTest(TestCase):
              "layer 2": {"chamber": "i2", "h2": None, "id": 20, "layer_type": "", "number": 2, "sih4": 2.0, "temperature_1": None,
                          "temperature_2": None}})
         response = self.client.get("/my_samples/r.calvert", HTTP_ACCEPT="application/json")
-        my_samples = json.loads(response.content)
+        # FixMe: In Django 1.9, replace this with ``response.json()``.
+        my_samples = json.loads(response.content.decode())
         self.assertIn(1, my_samples)
         self.assertIn(3, my_samples)
 
@@ -97,7 +98,8 @@ class FiveChamberDepositionTest(TestCase):
              "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000",
              "remove_from_my_samples": "on"})
         response = self.client.get("/my_samples/r.calvert", HTTP_ACCEPT="application/json")
-        my_samples = json.loads(response.content)
+        # FixMe: In Django 1.9, replace this with ``response.json()``.
+        my_samples = json.loads(response.content.decode())
         self.assertNotIn(1, my_samples)
         self.assertNotIn(3, my_samples)
 
