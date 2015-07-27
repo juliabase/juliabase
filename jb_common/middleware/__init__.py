@@ -196,6 +196,6 @@ class UserTracebackMiddleware(object):
         is requested to be JSON.
         """
         if request.user.is_authenticated():
-            request.META["AUTH_USER"] = unicode(request.user.username)
+            request.META["AUTH_USER"] = six.text_type(request.user.username)
         else:
             request.META["AUTH_USER"] = "Anonymous User"

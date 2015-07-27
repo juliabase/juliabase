@@ -472,7 +472,7 @@ def build_structured_sample_list(user, samples=None):
         else:
             topicless_samples.append(sample)
     _structured_topics = structured_topics.copy()
-    for topic_id, structured_topic in _structured_topics.iteritems():
+    for topic_id, structured_topic in _structured_topics.items():
         if structured_topic.topic.has_parent():
             parent_structured_topic = create_topic_tree(structured_topic)
             structured_topics[parent_structured_topic.topic.id] = parent_structured_topic
