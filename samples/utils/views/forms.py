@@ -637,6 +637,7 @@ def collect_subform_indices(post_data, subform_key="number"):
         Defaults to ``number``.
 
     :type post_data: QueryDict
+    :type subform_key: str or ``NoneType``
 
     :return:
       list with all found indices having this key.  Their order is so that the
