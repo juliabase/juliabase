@@ -634,7 +634,8 @@ def collect_subform_indices(post_data, subform_key="number"):
 
     :param post_data: the result from ``request.POST``
     :param subform_key: the fieldname in the forms that is used for ordering.
-        Defaults to ``number``.
+        Defaults to ``number``.  If it is ``None``, all found indices are
+        returned in ascending order.
 
     :type post_data: QueryDict
     :type subform_key: str or ``NoneType``
@@ -650,8 +651,10 @@ def collect_subform_indices(post_data, subform_key="number"):
         match = subform_name_pattern.match(key)
         if match:
             index = int(match.group("index"))
-            if match.group("key") == subform_key:
+            if not subform_key or match.group("key") == subform_key:
                 post_items[index] = value
+    if not subform_key:
+        return sorted(post_items)
     last_value = 0
     for index in sorted(post_items):
         try:
