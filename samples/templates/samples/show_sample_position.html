@@ -24,24 +24,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div>
   <table class="sample-positions">
     <tbody>
-    <tr>
-      <td style="border-bottom: 2px solid; border-right: 2px solid">
-        {% trans 'Sample name' %}
-      </td>
-      <td style="border-bottom: 2px solid">
-        {% trans 'Substrate position' %}
-      </td>
-    </tr>
-        <tr>
-          <td class="field-label" style="border-right: 2px solid">
-           <label for="id_{{ sample_position.sample.html_name }}"
-               ><a href="{{ sample.get_absolute_url }}">{{ sample_position.0 }}</label>
-          </td>
-          <td class="field-value">
-           <label for="id_{{ sample_position.position.html_name }}"
-               >{{ sample_position.1 }}
-          </td>
-        </tr>
+      <tr>
+        <td style="border-bottom: 2px solid; border-right: 2px solid">
+          {% trans 'Sample name' %}
+        </td>
+        <td style="border-bottom: 2px solid">
+          {% trans 'Substrate position' %}
+        </td>
+      </tr>
+      <tr>
+        <td class="field-label" style="border-right: 2px solid">
+          <a href="{{ sample.get_absolute_url }}">{{ sample_position.0 }}</a>
+        </td>
+        <td class="field-value">
+          {{ sample_position.1 }}
+        </td>
+      </tr>
     </tbody>
   </table>
 </div>
