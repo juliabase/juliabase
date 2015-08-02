@@ -214,8 +214,7 @@ def input_field(field):
         # Set ``string_if_invalid`` for clearer error messages in
         # non-production deployments.
         raise NameError(field or "field name is not defined")
-    result = """<td class="field-label"><label for="id_{html_name}">{label}:</label></td>""".format(
-        html_name=field.html_name, label=field.label)
+    result = """<td class="field-label">{0}</td>""".format(field.label_tag())
     help_text = """<span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
     try:
         unit = field.field.unit

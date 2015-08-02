@@ -31,8 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tbody>
     {% if is_new %}
       <tr>
-        <td class="field-label"><label for="id_{{ sample_series.short_name.html_name }}"
-             >{{ sample_series.short_name.label }}:</label></td>
+        <td class="field-label">{{ sample_series.short_name.label_tag }}</td>
         <td class="field-input">{{ name_prefix }}-{{ sample_series.short_name }}</td>
       </tr>
     {% endif %}
@@ -43,16 +42,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% input_field sample_series.topic %}
     </tr>
     <tr>
-      <td class="field-label"><label for="id_{{ sample_series.description.html_name }}"
-           >{{ sample_series.description.label }}:</label><br/>{% markdown_hint %}</td>
+      <td class="field-label">{{ sample_series.description.label_tag }}<br/>{% markdown_hint %}</td>
       <td class="field-input">{{ sample_series.description }}</td>
     </tr>
     </tbody>
   </table>
 
   <div style="float: left; margin-left: 5em; margin-bottom: 3ex">
-    <label for="id_{{ sample_series.samples.html_name }}" style="margin-right: 0.5em"
-           >{{ sample_series.samples.label }}:</label>{{ sample_series.samples }}
+    <span style="margin-right: 0.5em">{{ sample_series.samples.label_tag }}</span>{{ sample_series.samples }}
   </div>
 
   {% include "samples/edit_description.html" %}

@@ -31,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <form method="post">{% csrf_token %}
   <table>
     <tbody>
-    <tr><td><label for="id_username">{% trans 'Username' %}:</label></td><td>{{ form.username }}</td></tr>
-    <tr><td><label for="id_password">{% trans 'Password' %}:</label></td><td>{{ form.password }}</td></tr>
+    <tr><td>{{ form.username.label_tag }}</td><td>{{ form.username }}</td></tr>
+    <tr><td>{{ form.password.label_tag }}</td><td>{{ form.password }}</td></tr>
     </tbody>
   </table>
 

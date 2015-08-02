@@ -30,8 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% if has_topics %}
       <tr>
         <td class="field-label">
-          <label for="id_{{ user_details.auto_addition_topics.html_name }}"
-                 >{{ user_details.auto_addition_topics.label }}:</label>
+          {{ user_details.auto_addition_topics.label_tag }}
           <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
             {% blocktrans %}(This list shows
             all topics you are a member of.  You can mark those topics that you want all new samples of which to be
@@ -42,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% endif %}
     <tr>
       <td class="field-label">
-        <label for="id_{{ initials.initials.html_name }}">{{ initials.initials.label }}:</label>
+        {{ initials.initials.label_tag }}
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}(Once set, you can't change this anymore.){% endblocktrans %}</div>
       </td>
@@ -53,9 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr>
     <tr>
       <td class="field-label">
-        <label for="id_{{ user_details.subscribed_feeds.html_name }}" style="margin-right: 0.5em; vertical-align: top">
-          {{ user_details.subscribed_feeds.label }}:
-        </label>
+        <span style="margin-right: 0.5em; vertical-align: top">{{ user_details.subscribed_feeds.label_tag }}</span>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}
             (Choose the news feeds you are interested in. For example: If you only select “sample”, you will be informed
@@ -68,9 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr>
     <tr>
       <td class="field-label">
-        <label for="id_{{ user_details.default_folded_process_classes.html_name }}" style="margin-right: 0.5em; vertical-align: top">
-          {{ user_details.default_folded_process_classes.label }}:
-        </label>
+        <span style="margin-right: 0.5em; vertical-align: top">{{ user_details.default_folded_process_classes.label_tag }}</span>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}
             (With this setting, it is possible to fold less interesting processes in the sample data sheet by default.)
@@ -83,9 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
      <tr>
       <td class="field-label">
-        <label for="id_{{ user_details.show_users_from_departments.html_name }}" style="margin-right: 0.5em; vertical-align: top">
-          {{ user_details.show_users_from_departments.label }}:
-        </label>
+        <span style="margin-right: 0.5em; vertical-align: top">{{ user_details.show_users_from_departments.label_tag }}</span>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
           {% blocktrans %}
             (Select the departments from which you want to see the members in the selection lists.)

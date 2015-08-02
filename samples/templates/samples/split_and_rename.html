@@ -82,16 +82,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </table>
 
   <p>
-    <label for="id_{{ global_data.sample_completely_split.html_name }}"
-           >{{ global_data.sample_completely_split.label }}:</label>
+    {{ global_data.sample_completely_split.label_tag }}
     {{ global_data.sample_completely_split }}
   </p>
   <p style="margin-bottom: 0pt">
-    <label for="id_{{ global_data.sample_series.html_name }}">{{ global_data.sample_series.label }}:</label>
+    {{ global_data.sample_series.label_tag }}
     {{ global_data.sample_series }}
   </p>
   <p class="submit-button" style="margin-top: 0pt">
-    <label for="id_{{ global_data.finished.html_name }}">{{ global_data.finished.label }}:</label>
+    {{ global_data.finished.label_tag }}
     {{ global_data.finished }}
   </p>
   <p class="submit-button"><input type="submit"/></p>

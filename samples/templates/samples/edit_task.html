@@ -30,37 +30,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <table class="padding5" style="float: left">
     <tbody>
     <tr>
-      <td class="field-label"><label for="id_{{ task.status.html_name }}">{{ task.status.label }}:</label></td>
+      <td class="field-label">{{ task.status.label_tag }}</td>
       <td class="field-input">{{ task.status }}</td>
     </tr>
     <tr>
-      <td class="field-label">
-        <label for="id_{{ task.process_class.html_name }}">{{ task.process_class.label }}:</label>
-      </td>
+      <td class="field-label">{{ task.process_class.label_tag }}</td>
       <td class="field-input">{{ task.process_class }}</td>
     </tr>
     <tr>
-      <td class="field-label"><label for="id_{{ task.priority.html_name }}">{{ task.priority.label }}:</label></td>
+      <td class="field-label">{{ task.priority.label_tag }}</td>
       <td class="field-input">{{ task.priority }}</td>
     </tr>
     <tr>
-      <td class="field-label"><label for="id_{{ task.finished_process.html_name }}">{{ task.finished_process.label }}:</label></td>
+      <td class="field-label">{{ task.finished_process.label_tag }}</td>
       <td class="field-input">{{ task.finished_process }}</td>
     </tr>
     <tr>
-      <td class="field-label"><label for="id_{{ task.operator.html_name }}">{{ task.operator.label }}:</label></td>
+      <td class="field-label">{{ task.operator.label_tag }}</td>
       <td class="field-input">{{ task.operator }}</td>
     <tr>
-      <td class="field-label"><label for="id_{{ task.comments.html_name }}"
-           >{{ task.comments.label }}:</label><br/>{% markdown_hint %}</td>
+      <td class="field-label">{{ task.comments.label_tag }}<br/>{% markdown_hint %}</td>
       <td class="field-input">{{ task.comments }}</td>
     </tr>
     </tbody>
   </table>
 
   <div style="float: left; margin-left: 5em; margin-bottom: 3ex">
-    <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
-           >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}
+    <span style="margin-right: 0.5em">{{ samples.sample_list.label_tag }}</span>{{ samples.sample_list }}
   </div>
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <table style="float: left">
       <tbody>
       <tr>
-        <td><label for="id_{{ column_groups.column_groups.html_name }}">{{ column_groups.column_groups.label }}:</label></td>
+        <td>{{ column_groups.column_groups.label_tag }}</td>
       </tr>
       {% error_list column_groups _("Error in column groups") "<tr>" %}
       <tr>
@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <table style="float: left; margin-right: 2em">
       <tbody>
       <tr>
-        <td><label for="id_{{ columns.columns.html_name }}">{{ columns.columns.label }}:</label></td>
+        <td>{{ columns.columns.label_tag }}</td>
       </tr>
       {% error_list columns _("Error in columns") "<tr>" %}
       <tr>

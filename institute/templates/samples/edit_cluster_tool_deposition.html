@@ -41,8 +41,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <tr>
         {% input_field process.number %}
         <td rowspan="4" style="padding-left: 2em">
-          <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
-                               >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
+          <span style="margin-right: 0.5em">{{ samples.sample_list.label_tag }}</span>{{ samples.sample_list }}</td>
       </tr>
       {% if process.user.is_superuser %}
         <tr>
@@ -69,8 +68,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   </table>
 
   <p>
-    <label for="id_{{ process.comments.html_name }}">{{ process.comments.label }}:</label
-       ><br/>{% markdown_hint %}<br/>{{ process.comments }}
+    {{ process.comments.label_tag }}<br/>{% markdown_hint %}<br/>{{ process.comments }}
   </p>
 
   {% if steps_and_change_steps %}
@@ -102,8 +100,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                             </td>
                             <td style="vertical-align: top; padding-left: 2em">
                               {% if layer.type == "clustertoolpecvdlayer" %}
-                                <label for="id_{{ layer.chamber.html_name }}">{{ layer.chamber.label }}:</label><span
-                                  class="field-value">{{ layer.chamber }}</span>
+                                {{ layer.chamber.label_tag }}<span class="field-value">{{ layer.chamber }}</span>
                               {% else %}
                                  
                               {% endif %}
@@ -151,8 +148,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                     <tr>
                       {% if layer.comments %}
                       <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex; width: 20%">
-                        <div><label for="id_{{ layer.comments.html_name }}">{{ layer.comments.label }}:<br/>
-                            {% markdown_hint %}</label></div>
+                        <div>{{ layer.comments.label_tag }}<br/>{% markdown_hint %}</label></div>
                           {{ layer.comments }}
                       </td>
                       {% else %}
@@ -192,13 +188,11 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   <table style="margin-top: 2ex">
     <tbody>
     <tr>
-      <td class="field-label"><label for="id_{{ add_steps.step_to_be_added.html_name }}"
-                 >{{ add_steps.step_to_be_added.label }}:</label></td>
+      <td class="field-label">{{ add_steps.step_to_be_added.label_tag }}</td>
       <td class="field-value" style="font-weight: normal">{{ add_steps.step_to_be_added }}</td>
     </tr>
     <tr>
-      <td class="field-label"><label for="id_{{ add_steps.my_step_to_be_added.html_name }}"
-                 >{{ add_steps.my_step_to_be_added.label }}:</label></td>
+      <td class="field-label">{{ add_steps.my_step_to_be_added.label_tag }}</td>
       <td class="field-value" style="font-weight: normal">{{ add_steps.my_step_to_be_added }}</td>
     </tr>
     </tbody>

@@ -30,27 +30,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tbody>
     <tr>
       {% input_field result.title %}
-      <td rowspan="5" style="vertical-align: top"><label for="id_{{ related_data.samples.html_name }}"
-                                >{{ related_data.samples.label }}:</label><br/>
+      <td rowspan="5" style="vertical-align: top">{{ related_data.samples.label_tag }}<br/>
         {{ related_data.samples }}
       </td>
-      <td rowspan="3" style="vertical-align: top"><label for="id_{{ related_data.sample_series.html_name }}"
-                                >{{ related_data.sample_series.label }}:</label><br/>
+      <td rowspan="3" style="vertical-align: top">{{ related_data.sample_series.label_tag }}<br/>
         {{ related_data.sample_series }}
       </td>
 
       {% if result.user.is_superuser %}
-        <td rowspan="3" style="vertical-align: top"><label for="id_{{ result.operator.html_name }}"
-                                  >{{ result.operator.label }}:</label><br/>
+        <td rowspan="3" style="vertical-align: top">{{ result.operator.label_tag }}<br/>
           {{ result.operator }}
         </td>
-        <td rowspan="3" style="vertical-align: top"><label for="id_{{ result.external_operator.html_name }}"
-                                  >{{ result.external_operator.label }}:</label><br/>
+        <td rowspan="3" style="vertical-align: top">{{ result.external_operator.label_tag }}<br/>
           {{ result.external_operator }}
         </td>
       {% else %}
-        <td rowspan="3" style="vertical-align: top"><label for="id_{{ result.combined_operator.html_name }}"
-                                  >{{ result.combined_operator.label }}:</label><br/>
+        <td rowspan="3" style="vertical-align: top">{{ result.combined_operator.label_tag }}<br/>
           {{ result.combined_operator }}
         </td>
       {% endif %}
@@ -62,13 +57,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% input_field result.comments %}
     </tr>
     <tr>
-      <td class="field-label"><label for="id_{{ related_data.image_file.html_name }}"
-                 >{{ related_data.image_file.label }}:</label></td>
+      <td class="field-label">{{ related_data.image_file.label_tag }}</td>
       <td class="field-input" colspan="3">{{ related_data.image_file }}</td>
     </tr>
     {% error_list dimensions _("Error in dimensions") "<tr>" 2 %}
     <tr>
-      <td class="field-label"><label for="id_{{ dimensions.number_of_quantities.html_name }}"
+      <td class="field-label"><label for="{{ dimensions.number_of_quantities.id_for_label }}"
                  >{% trans 'Number of quantities × values' %}:</label></td>
       <td class="field-input" colspan="3">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
     </tr>

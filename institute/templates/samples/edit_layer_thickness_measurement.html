@@ -56,9 +56,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       {% input_field process.method %}
     </tr>
     <tr>
-      <td style="text-align: right">
-         <label for="id_{{ process.comments.html_name }}">{{ process.comments.label }}:<br/>
-           {% markdown_hint %}</label></td>
+      <td style="text-align: right">{{ process.comments.label_tag }}<br/>{% markdown_hint %}</td>
       <td>{{ process.comments }}</td>
     </tr>
     </tbody>

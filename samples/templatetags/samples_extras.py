@@ -476,8 +476,8 @@ def split_field(*fields):
     """
     from_to_field = len(fields) == 2 and fields[1].html_name.endswith("_end")
     separator = " – " if from_to_field else " / "
-    result = """<td class="field-label"><label for="id_{html_name}">{label}:</label></td>""".format(
-        html_name=fields[0].html_name, label=fields[0].label if from_to_field else fields[0].label.rpartition(" ")[0])
+    result = """<td class="field-label"><label for="{id_for_label}">{label}:</label></td>""".format(
+        id_for_label=fields[0].id_for_label, label=fields[0].label if from_to_field else fields[0].label.rpartition(" ")[0])
     help_text = """ <span class="help">({0})</span>""".format(fields[0].help_text) if fields[0].help_text else ""
     result += """<td class="field-input">{fields_string}{help_text}</td>""".format(
         fields_string=separator.join(six.text_type(field) for field in fields), help_text=help_text)
@@ -588,26 +588,25 @@ def display_search_tree(tree):
             help_text = """ <span class="help">({0})</span>""".format(field_min.help_text) if field_min.help_text else ""
             unit = """ <span class="help">{0}</span>""".format(search_field.field.unit) if hasattr(search_field.field, "unit") \
                 and search_field.field.unit else ""
-            result += """<tr><td class="field-label"><label for="id_{html_name}">{label}:</label></td>""" \
+            result += """<tr><td class="field-label"><label for="{id_for_label}">{label}:</label></td>""" \
                 """<td class="field-input">{field_min} – {field_max}{unit}{help_text}</td></tr>""".format(
-                label=field_min.label, html_name=field_min.html_name, field_min=field_min, field_max=field_max,
+                label=field_min.label, id_for_label=field_min.id_for_label, field_min=field_min, field_max=field_max,
                 unit=unit, help_text=help_text)
         elif isinstance(search_field, jb_common.search.TextNullSearchField):
             field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
             help_text = """ <span class="help">({0})</span>""".format(field_main.help_text) if field_main.help_text else ""
-            result += """<tr><td class="field-label"><label for="id_{html_name_main}">{label_main}:</label></td>""" \
-                """<td class="field-input">{field_main} <label for="id_{html_name_null}">{label_null}:</label> """ \
+            result += """<tr><td class="field-label">{label_tag_main}</td>""" \
+                """<td class="field-input">{field_main} {label_tag_null} """ \
                 """{field_null}{help_text}</td></tr>""".format(
-                label_main=field_main.label, label_null=field_null.label,
-                html_name_main=field_main.html_name, html_name_null=field_null.html_name,
+                label_tag_main=field_main.label_tag(), label_tag_null=field_null.label_tag(),
                 field_main=field_main, field_null=field_null, help_text=help_text)
         else:
             for field in search_field.form:
                 help_text = """ <span class="help">({0})</span>""".format(field.help_text) if field.help_text else ""
-                result += """<tr><td class="field-label"><label for="id_{html_name}">{label}:</label></td>""" \
+                result += """<tr><td class="field-label">{label_tag}</td>""" \
                     """<td class="field-input">{field}{help_text}</td></tr>""".format(
-                    label=field.label, html_name=field.html_name, field=field, help_text=help_text)
+                        label_tag=field.label_tag(), field=field, help_text=help_text)
     if tree.children:
         result += """<tr><td colspan="2">"""
         for i, child in enumerate(tree.children):
