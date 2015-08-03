@@ -152,7 +152,9 @@ CACHES = {
         "TIMEOUT": 3600 * 24 * 28
         }
     }
-# CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
+if DEBUG:
+    # Switch off caching, so that edits are active immediately
+    CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
