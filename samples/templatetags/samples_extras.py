@@ -370,6 +370,7 @@ def sample_tags(sample, user):
 class ValueFieldNode(template.Node):
     """Helper class to realise the `value_field` tag.
     """
+    display_method_regex = re.compile(r"get_(?P<field>.*)_display$")
 
     def __init__(self, field, unit, significant_digits):
         self.field_name = field
@@ -383,6 +384,9 @@ class ValueFieldNode(template.Node):
             verbose_name = six.text_type(context[self.field_name]._meta.verbose_name)
         else:
             instance, field_name = self.field_name.rsplit(".", 1)
+            match = self.display_method_regex.match(field_name)
+            if match:
+                field_name = match.group("field")
             model = context[instance].__class__
             model_field = model._meta.get_field(field_name)
             verbose_name = six.text_type(model_field.verbose_name)
