@@ -78,8 +78,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                  {% if layer.type == "clustertoolpecvdlayer" %}
                     {% value_field layer.plasma_start_with_shutter "yes/no" %}
                  {% elif layer.type == "clustertoolhotwirelayer" %}
-                    <td class="field-label">{% verbose_name ClusterToolHotWireLayer.wire_material %}:</td>
-                    <td class="field-value">{{ layer.get_wire_material_display }}</td>
+                    {% value_field layer.get_wire_material_display %}
                  {% endif %}
               </tr>
               <tr>

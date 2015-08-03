@@ -84,8 +84,7 @@ function showCellData{{ process.id }}(process_id, position) {
 <table style="background-color: {{ process|solarsimulator_color }}">
   <tbody>
     <tr>
-      <td class="field-label">{% verbose_name SolarsimulatorMeasurement.irradiation %}:</td>
-      <td class="field-value">{{ process.get_irradiation_display }}</td>
+      {% value_field process.get_irradiation_display %}
     </tr>
     <tr>
         {% value_field process.temperature %}

@@ -53,8 +53,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
           {% value_field layer.h2 %}
         </tr>
         <tr>
-          <td class="field-label">{% verbose_name FiveChamberLayer.chamber %}:</td>
-          <td class="field-value">{{ layer.get_chamber_display }}</td>
+          {% value_field layer.get_chamber_display %}
           <td class="field-label">{% trans 'Silane conc.' %}:</td>
           <td class="field-value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
         </tr>

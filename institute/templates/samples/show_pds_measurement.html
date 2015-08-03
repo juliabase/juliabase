@@ -35,8 +35,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
     {% value_field process.number %}
   </tr>
   <tr>
-    <td class="field-label">{% verbose_name PDSMeasurement.apparatus %}:</td>
-    <td class="field-value">{{ process.get_apparatus_display }}</td>
+    {% value_field process.get_apparatus_display %}
   </tr>
   {% if process.raw_datafile %}
     <tr>
