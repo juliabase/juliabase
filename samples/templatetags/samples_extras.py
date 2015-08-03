@@ -75,9 +75,9 @@ def quantity(value, unit=None, autoescape=False):
         """
         if isinstance(number, (float, decimal.Decimal)):
             if number == 0 or -2 <= math.log10(abs(number)) < 5:
-                value_string = "{0:f}".format(number)
+                value_string = "{0:g}".format(float(number))
             else:
-                value_string = "{0:e}".format(number)
+                value_string = "{0:e}".format(float(number))
         else:
             value_string = six.text_type(number)
         if autoescape:
