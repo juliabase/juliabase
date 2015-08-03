@@ -370,23 +370,23 @@ def sample_tags(sample, user):
 class ValueFieldNode(template.Node):
     """Helper class to realise the `value_field` tag.
     """
-    display_method_regex = re.compile(r"get_(?P<field>.*)_display$")
+    display_method_regex = re.compile(r"get_(?P<field_name>.*)_display$")
 
-    def __init__(self, field, unit, significant_digits):
-        self.field_name = field
-        self.field = template.Variable(field)
+    def __init__(self, expression, unit, significant_digits):
+        self.variable = expression.var.var
+        self.expression = expression
         self.unit = unit
         self.significant_digits = significant_digits
 
     def render(self, context):
-        field = self.field.resolve(context)
-        if "." not in self.field_name:
-            verbose_name = six.text_type(context[self.field_name]._meta.verbose_name)
+        value = self.expression.resolve(context)
+        if "." not in self.variable:
+            verbose_name = six.text_type(context[self.variable]._meta.verbose_name)
         else:
-            instance, field_name = self.field_name.rsplit(".", 1)
+            instance, field_name = self.variable.rsplit(".", 1)
             match = self.display_method_regex.match(field_name)
             if match:
-                field_name = match.group("field")
+                field_name = match.group("field_name")
             model = context[instance].__class__
             model_field = model._meta.get_field(field_name)
             verbose_name = six.text_type(model_field.verbose_name)
@@ -397,24 +397,24 @@ class ValueFieldNode(template.Node):
                     pass
         verbose_name = jb_common.utils.base.capitalize_first_letter(verbose_name)
         if self.unit == "yes/no":
-            field = jb_common.templatetags.juliabase.fancy_bool(field)
+            value = jb_common.templatetags.juliabase.fancy_bool(value)
             unit = None
         elif self.unit == "user":
-            field = get_really_full_name(field, autoescape=True)
+            value = get_really_full_name(value, autoescape=True)
             unit = None
         elif self.unit == "sccm_collapse":
-            if not field:
+            if not value:
                 return """<td colspan="2"></td>"""
             unit = "sccm"
-        elif not field and field != 0:
+        elif not value and value != 0:
             unit = None
-            field = "—"
+            value = "—"
         else:
             unit = self.unit
-        if self.significant_digits and field != "—":
-            field = jb_common.utils.base.round(field, self.significant_digits)
+        if self.significant_digits and value != "—":
+            value = jb_common.utils.base.round(value, self.significant_digits)
         return """<td class="field-label">{label}:</td><td class="field-value">{value}</td>""".format(
-            label=verbose_name, value=conditional_escape(field) if unit is None else quantity(field, unit))
+            label=verbose_name, value=conditional_escape(value) if unit is None else quantity(value, unit))
 
 
 @register.tag
@@ -460,7 +460,7 @@ def value_field(parser, token):
         unit = significant_digits = None
     else:
         raise template.TemplateSyntaxError("value_field requires one, two, or three arguments")
-    return ValueFieldNode(field, unit or None, significant_digits)
+    return ValueFieldNode(parser.compile_filter(field), unit or None, significant_digits)
 
 
 @register.simple_tag
