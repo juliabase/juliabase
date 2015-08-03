@@ -44,8 +44,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <table style="width: 100%">
         <tbody>
         <tr>
-          <td class="field-label">{% verbose_name FiveChamberLayer.number %}:</td>
-          <td class="field-value">{{ layer.number|three_digits }}</td>
+          {% value_field layer.number|three_digits %}
           {% value_field layer.sih4 %}
         </tr>
         <tr>

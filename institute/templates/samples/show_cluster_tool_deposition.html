@@ -73,8 +73,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                     </tbody>
                   </table>
                 </td>
-                 <td class="field-label">{% verbose_name ClusterToolHotWireLayer.time %}:</td>
-                 <td class="field-value"> {{ layer.time|depostion_time }}</td>
+                 {% value_field layer.time|depostion_time %}
                  {% if layer.type == "clustertoolpecvdlayer" %}
                     {% value_field layer.plasma_start_with_shutter "yes/no" %}
                  {% elif layer.type == "clustertoolhotwirelayer" %}
