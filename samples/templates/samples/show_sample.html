@@ -103,7 +103,6 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
       {% with sample.clearance as clearance %}
         {% with sample.sample as sample %}
           <table>
-            <tbody>
             <tr>
               {% value_field sample.currently_responsible_person "user" %}
             </tr>
@@ -131,7 +130,6 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
             <tr>
               {% value_field sample.current_location %}
             </tr>
-            </tbody>
           </table>
 
           {% if not clearance %}
@@ -161,14 +159,12 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
       {% endwith %}
       <form method="post">{% csrf_token %}
         <table>
-          <tbody>
           <tr style="vertical-align: top">
             <td>{{ sample.is_my_sample_form.as_p }}</td>
             <td style="padding-left: 1em">
               <p class="submit-button"><input type="submit"/></p>
             </td>
           </tr>
-          </tbody>
         </table>
       </form>
     {% endif %}

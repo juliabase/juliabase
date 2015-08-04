@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
   {% if column_groups %}
     <table style="float: left">
-      <tbody>
       <tr>
         <td>{{ column_groups.column_groups.label_tag }}</td>
       </tr>
@@ -32,13 +31,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <tr>
         <td>{{ column_groups.column_groups }}</td>
       </tr>
-      </tbody>
     </table>
   {% endif %}
 
   {% if columns.fields.columns.choices %}
     <table style="float: left; margin-right: 2em">
-      <tbody>
       <tr>
         <td>{{ columns.columns.label_tag }}</td>
       </tr>
@@ -46,12 +43,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <tr>
         <td>{{ columns.columns }}</td>
       </tr>
-      </tbody>
     </table>
 
     {% if rows %}
       <table style="min-width: 40%">
-        <tbody>
         <tr><td>
           {% blocktrans %}
             <p>Below, you see a preview of the table.  If you export it by
@@ -70,22 +65,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               extension <tt>".txt"</tt> before importing it.</p>
           {% endblocktrans %}
         </td></tr>
-        </tbody>
       </table>
     {% endif %}
   {% endif %}
 
   {% if old_data %}
-	  <table style="display: none">
-	    <tbody>
-	    {{ old_data }}
-	    </tbody>
-	  </table>
+    <table style="display: none">
+      {{ old_data }}
+    </table>
   {% endif %}
 
   {% if rows %}
     <table border="1" style="clear: left; margin-top: 2ex; margin-left: auto; margin-right: auto">
-      <tbody>
       {% for row, switch_row in rows %}
         <tr>
           {% if forloop.first %}
@@ -102,7 +93,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% endfor %}
         </tr>
       {% endfor %}
-      </tbody>
     </table>
   {% endif %}
   {% if backlink %}

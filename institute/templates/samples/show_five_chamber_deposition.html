@@ -37,12 +37,10 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endif %}
 
 <table style="width: 100%">
-  <tbody>
   {% for layer in process.layers.all %}
   <tr>
     <td style="border-style: solid; border-color: black; border-width: thin">
       <table style="width: 100%">
-        <tbody>
         <tr>
           {% value_field layer.number|three_digits %}
           {% value_field layer.sih4 %}
@@ -59,10 +57,8 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
         <tr>
           {% value_split_field layer.temperature_1 layer.temperature_2 %}
         </tr>
-        </tbody>
       </table>
     </td>
   </tr>
   {% endfor %}
-  </tbody>
 </table>

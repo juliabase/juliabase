@@ -21,19 +21,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% load juliabase %}
   <table class="sample-positions">
     <caption>{% trans "sample positions"|capfirst %}</caption>
-    <tbody>
-      {% for sample_position in sample_positions %}
-        {% error_list sample_position _("General error") "<tr>" %}
-        <tr>
-          <td class="field-label">
-           <label for="{{ sample_position.position.id_for_label }}"
-               >{{ sample_position.sample }}:</label>
-          </td>
-          <td class="field-value">
-            {{ sample_position.position }}
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
+    {% for sample_position in sample_positions %}
+      {% error_list sample_position _("General error") "<tr>" %}
+      <tr>
+        <td class="field-label">
+         <label for="{{ sample_position.position.id_for_label }}"
+             >{{ sample_position.sample }}:</label>
+        </td>
+        <td class="field-value">
+          {{ sample_position.position }}
+        </td>
+      </tr>
+    {% endfor %}
   </table>
 {% endif %}

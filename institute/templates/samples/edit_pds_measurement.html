@@ -32,7 +32,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list overwrite _("Extract from datafile error") %}
   {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
   <table class="padding5">
-    <tbody>
     <tr>
       {% input_field process.number %}
       {% input_field overwrite.overwrite_from_file %}
@@ -65,7 +64,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">{{ process.comments.label_tag }}<br/>{% markdown_hint %}</td>
       <td class="field-input" colspan="3">{{ process.comments }}</td>
     </tr>
-    </tbody>
   </table>
 
   {% include "samples/edit_description.html" %}

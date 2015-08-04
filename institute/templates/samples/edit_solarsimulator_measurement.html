@@ -31,68 +31,64 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list sample _("Error in sample") %}
   {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
   <table class="padding5">
-    <tbody>
+    <tr>
+      {% input_field process.timestamp %}
+    </tr>
+    <tr>
+      {% input_field sample.sample %}
+    </tr>
+    <tr>
+      {% input_field process.irradiation %}
+    </tr>
+    <tr>
+      {% input_field process.temperature %}
+    </tr>
+    {% if process.user.is_superuser %}
       <tr>
-        {% input_field process.timestamp %}
+        {% input_field process.operator %}
       </tr>
       <tr>
-        {% input_field sample.sample %}
+        {% input_field process.external_operator %}
       </tr>
+    {% else %}
       <tr>
-        {% input_field process.irradiation %}
+        {% input_field process.combined_operator %}
       </tr>
-      <tr>
-        {% input_field process.temperature %}
-      </tr>
-      {% if process.user.is_superuser %}
-        <tr>
-          {% input_field process.operator %}
-        </tr>
-        <tr>
-          {% input_field process.external_operator %}
-        </tr>
-      {% else %}
-        <tr>
-          {% input_field process.combined_operator %}
-        </tr>
-      {% endif %}
-      <tr>
-        <td class="field-label">{{ process.comments.label_tag }}<br/>{% markdown_hint %}</td>
-        <td class="field-input" colspan="3">{{ process.comments }}</td>
-      </tr>
-    </tbody>
+    {% endif %}
+    <tr>
+      <td class="field-label">{{ process.comments.label_tag }}<br/>{% markdown_hint %}</td>
+      <td class="field-input" colspan="3">{{ process.comments }}</td>
+    </tr>
   </table>
 
   {{ number.as_p }}
 
   {% if subprocesses %}
     <table style="width: 100%">
-      <tbody>
-        {% for measurement in subprocesses %}
-          <tr>
-            <td style="border-style: solid; border-color: black; border-width: thin">
-              <table style="width: 100%">
-                {% error_list measurement _("Error in solarsimulator measurement") "<tr>" 4 %}
-                <tr>
-                  {% input_field measurement.position %}
-                </tr>
-                <tr><td><br/></td></tr>
-                <tr>
-                  {% input_field measurement.data_file %}
-                </tr>
-                <tr>
-                  {% input_field measurement.area %}
-                  {% input_field measurement.eta %}
-                </tr>
-                <tr>
-                  {% input_field measurement.isc %}
-                </tr>
-                <tr><td><br/></td></tr>
-              </table>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
+      {% for measurement in subprocesses %}
+        <tr>
+          <td style="border-style: solid; border-color: black; border-width: thin">
+            <table style="width: 100%">
+              {% error_list measurement _("Error in solarsimulator measurement") "<tr>" 4 %}
+              <tr>
+                {% input_field measurement.position %}
+              </tr>
+              <tr><td><br/></td></tr>
+              <tr>
+                {% input_field measurement.data_file %}
+              </tr>
+              <tr>
+                {% input_field measurement.area %}
+                {% input_field measurement.eta %}
+              </tr>
+              <tr>
+                {% input_field measurement.isc %}
+              </tr>
+              <tr><td><br/></td></tr>
+            </table>
+          </td>
+        </tr>
+      {% endfor %}
     </table>
   {% endif %}
 

@@ -27,8 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list task _("Error in deposition") %}
   {% error_list samples _("Error in sample list") %}
 
-    <table class="padding5" style="float: left">
-    <tbody>
+  <table class="padding5" style="float: left">
     <tr>
       <td class="field-label">{{ task.status.label_tag }}</td>
       <td class="field-input">{{ task.status }}</td>
@@ -52,7 +51,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">{{ task.comments.label_tag }}<br/>{% markdown_hint %}</td>
       <td class="field-input">{{ task.comments }}</td>
     </tr>
-    </tbody>
   </table>
 
   <div style="float: left; margin-left: 5em; margin-bottom: 3ex">

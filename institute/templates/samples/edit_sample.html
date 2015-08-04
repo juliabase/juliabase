@@ -30,13 +30,11 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 
   {% if informal_layers.non_form_errors %}
     <table class="tight-fullwidth">
-      <tbody>
       <tr>
         <td class="error-messages">
 	  <p>{% trans "General error" %}</p>{{ informal_layers.non_form_errors }}
         </td>
       </tr>
-      </tbody>
     </table>
   {% endif %}
   {{ informal_layers.management_form }}
@@ -56,7 +54,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <th style="font-size: x-small">{% trans 'delete' %}</th>
     </tr>
     </thead>
-    <tbody>
     {% for layer in informal_layers.forms %}
       {% error_list layer _("Error in layer") "<tr>" 11 %}
       <tr style="text-align: center">
@@ -73,6 +70,5 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ layer.DELETE }}</td>
       </tr>
     {% endfor %}
-    </tbody>
   </table>
 {% endblock %}

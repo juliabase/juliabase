@@ -123,13 +123,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endfor %}
 <form method="POST" style="margin-top: 5ex" class="screen-only">{% csrf_token %}
   <table style="float: right">
-    <tbody>
-      {% error_list choose_task_lists _("General error") "<tr>" 2 %}
-      <tr>
-    <td class="field-label">{{ choose_task_lists.visible_task_lists.label }}:</td>
-    <td class="field-input">{{ choose_task_lists.visible_task_lists }}</td>
-      </tr>
-    </tbody>
+    {% error_list choose_task_lists _("General error") "<tr>" 2 %}
+    <tr>
+      <td class="field-label">{{ choose_task_lists.visible_task_lists.label }}:</td>
+      <td class="field-input">{{ choose_task_lists.visible_task_lists }}</td>
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

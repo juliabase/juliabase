@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% else %}
   <p>{% trans 'This claim is active and needs now to be approved by the reviewer or withdrawn by the requester.' %}</p>
   <table class="padding5">
-    <tbody>
     <tr>
       <td>{% trans "requester"|capfirst %}:</td>
       <td>{{ claim.requester|get_really_full_name }}</td>
@@ -36,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td>{% trans "reviewer"|capfirst %}:</td>
       <td>{{ claim.reviewer|get_really_full_name }}</td>
     </tr>
-    </tbody>
   </table>
   <p style="margin-top: 4ex">
     {% blocktrans with claim.requester|get_really_full_name as name %}
@@ -54,7 +52,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% endif %}
     </tr>
     </thead>
-    <tbody>
     {% for sample in claim.samples.all %}
       <tr>
         <td><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></td>
@@ -65,13 +62,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {% endif %}
       </tr>
     {% endfor %}
-    </tbody>
   </table>
   <form method="post">{% csrf_token %}
     {% error_list approve _("General error") %}
     {% error_list withdraw _("General error") %}
     <table>
-      <tbody>
       {% if is_reviewer %}
         <tr>
           {% input_field approve.close %}
@@ -82,7 +77,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% input_field withdraw.close %}
         </tr>
       {% endif %}
-      </tbody>
     </table>
     <p class="submit-button" style="clear: both"><input type="submit"/></p>
   </form>

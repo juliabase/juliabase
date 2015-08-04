@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% load juliabase %}
   {% load samples_extras %}
   <table class="edit-description">
-    <tbody>
     {% error_list edit_description _("General error") "<tr>" %}
     <tr>
       <td>
@@ -35,6 +34,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tr>
       <td class="field-label">{{ edit_description.important.label_tag }} {{ edit_description.important }}</td>
     </tr>
-    </tbody>
   </table>
 {% endif %}

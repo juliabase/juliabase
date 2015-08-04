@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list result _("Error in result") %}
   {% error_list related_data _("General error") %}
   <table class="padding5">
-    <tbody>
     <tr>
       {% input_field result.title %}
       <td rowspan="5" style="vertical-align: top">{{ related_data.samples.label_tag }}<br/>
@@ -66,7 +65,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  >{% trans 'Number of quantities × values' %}:</label></td>
       <td class="field-input" colspan="3">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
     </tr>
-    </tbody>
   </table>
 
   <div style="display: none">{{ previous_dimensions.number_of_quantities }}{{ previous_dimensions.number_of_values }}</div>
@@ -82,18 +80,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% endfor %}
         </tr>
       </thead>
-      <tbody>
-        {% for value_list in value_lists %}
-          <tr>
-            {% for value in value_list %}
-              <td{% if forloop.parentloop.first or forloop.parentloop.last %}
-                    style="{% if forloop.parentloop.first %}padding-top: 0.5ex; {% endif %}
-                           {% if forloop.parentloop.last %}padding-bottom: 0.5ex; border-bottom: solid black 2px{% endif %}"
-                    {% endif %}>{% error_list value _("Error in value") %}{{ value.value }}</td>
-            {% endfor %}
-          </tr>
-        {% endfor %}
-      </tbody>
+      {% for value_list in value_lists %}
+        <tr>
+          {% for value in value_list %}
+            <td{% if forloop.parentloop.first or forloop.parentloop.last %}
+                  style="{% if forloop.parentloop.first %}padding-top: 0.5ex; {% endif %}
+                         {% if forloop.parentloop.last %}padding-bottom: 0.5ex; border-bottom: solid black 2px{% endif %}"
+                  {% endif %}>{% error_list value _("Error in value") %}{{ value.value }}</td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
     </table>
   {% endif %}
 

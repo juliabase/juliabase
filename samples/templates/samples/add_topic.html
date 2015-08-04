@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% trans "new topic"|capfirst as error_list_title %}
   {% error_list new_topic error_list_title %}
   <table>
-    <tbody>
     <tr>
       {% input_field new_topic.new_topic_name %}
     </tr>
@@ -40,7 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tr>
       {% input_field new_topic.confidential %}
     </tr>
-    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

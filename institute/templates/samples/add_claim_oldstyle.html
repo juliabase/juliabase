@@ -31,24 +31,20 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list substrate _("General error") %}
   <table style="float: right">
     <caption>{% trans "substrate"|capfirst %}</caption>
-    <tbody>
     <tr>
       {% input_field substrate.material %}
     </tr>
     <tr>
       {% input_field substrate.comments %}
     </tr>
-    </tbody>
   </table>
   <table>
-    <tbody>
     <tr>
       {% input_field samples.samples %}
     </tr>
     <tr>
       {% input_field reviewer.reviewer %}
     </tr>
-    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

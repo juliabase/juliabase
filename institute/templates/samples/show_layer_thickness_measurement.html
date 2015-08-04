@@ -24,18 +24,16 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 
 <table>
-  <tbody>
+  <tr>
+    {% value_field process.thickness %}
+  </tr>
+  <tr>
+    {% value_field process.get_method_display %}
+  </tr>
+  {% if process.comments %}
     <tr>
-      {% value_field process.thickness %}
+      <td class="field-label" style="vertical-align: top">{% verbose_name LayerThicknessMeasurement.comments %}:</td>
+      <td class="field-value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
     </tr>
-    <tr>
-      {% value_field process.get_method_display %}
-    </tr>
-    {% if process.comments %}
-      <tr>
-        <td class="field-label" style="vertical-align: top">{% verbose_name LayerThicknessMeasurement.comments %}:</td>
-        <td class="field-value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
-      </tr>
-    {% endif %}
-  </tbody>
+  {% endif %}
 </table>

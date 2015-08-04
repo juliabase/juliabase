@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% if form %}
   {% if form.errors or form.non_field_errors %}
     {% if outest_tag == "<table>" %}
-      <table class="tight-fullwidth"><tbody>
+      <table class="tight-fullwidth">
     {% endif %}
     <tr>
       <td class="error-messages"{% if colspan > 1 %} colspan="{{ colspan }}"{% endif %}>
@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </td>
     </tr>
     {% if outest_tag == "<table>" %}
-      </tbody></table>
+      </table>
     {% endif %}
   {% endif %}
 {% endif %}

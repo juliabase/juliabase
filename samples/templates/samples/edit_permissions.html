@@ -40,17 +40,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <th style="padding-left: 0.5em; padding-right: 0.5em">{% trans "can change permissions" %}</th>
         </tr>
       </thead>
-      <tbody>
-        {% for process, permissions in permissions_list %}
-          <tr>
-            <td>{{ process.name }}</td>
-            <td align="center">{{ permissions.can_add }}</td>
-            <td align="center">{{ permissions.can_view_all }}</td>
-            <td align="center">{{ permissions.can_edit_all }}</td>
-            <td align="center">{{ permissions.can_edit_permissions }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
+      {% for process, permissions in permissions_list %}
+        <tr>
+          <td>{{ process.name }}</td>
+          <td align="center">{{ permissions.can_add }}</td>
+          <td align="center">{{ permissions.can_view_all }}</td>
+          <td align="center">{{ permissions.can_edit_all }}</td>
+          <td align="center">{{ permissions.can_edit_permissions }}</td>
+        </tr>
+      {% endfor %}
     </table>
     <p class="submit-button" style="clear: both"><input type="submit"/></p>
   </form>

@@ -31,28 +31,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        ><img src="{% url 'kicker.views.plot' image_format='png' %}" alt='{% trans "kicker numbers" %}'/></a>
   </div>
   <table style="border: 2px solid gray" cellspacing="10">
-    <tbody>
-      {% for player, kicker_number in kicker_numbers %}
-        <tr>
-          <td>{{ player|nickname }}</td>
-          <td>{{ kicker_number }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
+    {% for player, kicker_number in kicker_numbers %}
+      <tr>
+        <td>{{ player|nickname }}</td>
+        <td>{{ kicker_number }}</td>
+      </tr>
+    {% endfor %}
   </table>
 
   <table cellspacing="10" style="font-size: x-small; margin-top: 3ex">
-    <tbody>
-      {% for match in latest_matches %}
-        <tr>
-          <td>{{ match.timestamp|date:"D" }}</td>
-          <td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
-            –<br/>{{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
-          <td>{{ match.goals_a }}:{{ match.goals_b }}</td>
-          <td>({{ match.reporter|nickname }})</td>
-        </tr>
-      {% endfor %}
-    </tbody>
+    {% for match in latest_matches %}
+      <tr>
+        <td>{{ match.timestamp|date:"D" }}</td>
+        <td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
+          –<br/>{{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
+        <td>{{ match.goals_a }}:{{ match.goals_b }}</td>
+        <td>({{ match.reporter|nickname }})</td>
+      </tr>
+    {% endfor %}
   </table>
 {% endif %}
 <p><a href="{% url 'kicker.views.edit_user_details' username=username %}"

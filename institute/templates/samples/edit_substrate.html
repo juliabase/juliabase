@@ -30,7 +30,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list process _("Substrate error") %}
   {% error_list samples _("Sample list error") %}
   <table>
-    <tbody>
     <tr>
       {% input_field samples.sample_list %}
     </tr>
@@ -56,7 +55,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
      <td class="field-label">{{ process.comments.label_tag }}<br/>{% markdown_hint %}</td>
       <td>{{ process.comments }}</td>
     </tr>
-    </tbody>
   </table>
   <div style="display: none">
     {# Hidden so that it's only set/changed by the remote client. #}

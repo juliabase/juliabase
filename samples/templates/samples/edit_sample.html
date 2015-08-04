@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <form method="post">{% csrf_token %}
   {% error_list sample _("Error in sample") %}
   <table>
-    <tbody>
     <tr>
       {% input_field sample.current_location %}
     </tr><tr>
@@ -38,7 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr><tr>
       {% input_field sample.topic %}
     </tr>
-    </tbody>
   </table>
 
   {% block sample_details %}{# This block can be overridden in derived templates #}{% endblock %}

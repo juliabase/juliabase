@@ -37,34 +37,32 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list process _("Error in deposition") %}
   {% error_list samples _("Error in sample list") %}
   <table class="padding5">
-    <tbody>
+    <tr>
+      {% input_field process.number %}
+      <td rowspan="4" style="padding-left: 2em">
+        <span style="margin-right: 0.5em">{{ samples.sample_list.label_tag }}</span>{{ samples.sample_list }}</td>
+    </tr>
+    {% if process.user.is_superuser %}
       <tr>
-        {% input_field process.number %}
-        <td rowspan="4" style="padding-left: 2em">
-          <span style="margin-right: 0.5em">{{ samples.sample_list.label_tag }}</span>{{ samples.sample_list }}</td>
-      </tr>
-      {% if process.user.is_superuser %}
-        <tr>
-          {% input_field process.operator %}
-          <td></td>
-        </tr>
-        <tr>
-          {% input_field process.external_operator %}
-          <td></td>
-        </tr>
-      {% else %}
-        <tr>
-          {% input_field process.combined_operator %}
-          <td></td>
-        </tr>
-      {% endif %}
-      <tr>
-        {% input_field process.carrier %}
+        {% input_field process.operator %}
+        <td></td>
       </tr>
       <tr>
-        {% input_field process.timestamp %}
+        {% input_field process.external_operator %}
+        <td></td>
       </tr>
-    </tbody>
+    {% else %}
+      <tr>
+        {% input_field process.combined_operator %}
+        <td></td>
+      </tr>
+    {% endif %}
+    <tr>
+      {% input_field process.carrier %}
+    </tr>
+    <tr>
+      {% input_field process.timestamp %}
+    </tr>
   </table>
 
   <p>
@@ -73,21 +71,17 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 
   {% if steps_and_change_steps %}
     <table style="width: 100%">
-      <tbody>
       {% for layer, change_layer in steps_and_change_steps %}
         <tr>
           <td style="border-style: solid; border-color: black; border-width: thin">
             <table style="width: 100%">
-              <tbody>
               {% error_list layer _("Error in layer") "<tr>" %}
               <tr>
                 <td>
                   <table style="width: 100%">
-                    <tbody>
                     <tr>
                       <td colspan="2" rowspan="3" style="vertical-align: top">
                         <table>
-                          <tbody>
                           <tr>
                             <td style="vertical-align: top; text-align: left">
                               <div>
@@ -108,19 +102,16 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                           </tr>
                           <tr><td colspan="2">
                           <table style="width: 100%">
-                            <tbody>
-                                <tr>
-                                  {% input_field change_layer.duplicate_this_step %}
-                                </tr>
-                                <tr>
-                                  {% input_field change_layer.remove_this_step %}
-                                </tr>
-                                <tr>
-                                  {% input_field change_layer.move_this_step %}
-                                </tr>
-                            </tbody>
+                            <tr>
+                              {% input_field change_layer.duplicate_this_step %}
+                            </tr>
+                            <tr>
+                              {% input_field change_layer.remove_this_step %}
+                            </tr>
+                            <tr>
+                              {% input_field change_layer.move_this_step %}
+                            </tr>
                           </table></td></tr>
-                          </tbody>
                         </table>
                       </td>
                         {% input_field layer.time %}
@@ -137,14 +128,12 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                         {% input_field layer.deposition_power %}
                       {% endif %}
                     </tr>
-                    </tbody>
                   </table>
                 </td>
               </tr>
               <tr>
                 <td>
                   <table style="width: 100%">
-                    <tbody>
                     <tr>
                       {% if layer.comments %}
                       <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex; width: 20%">
@@ -159,34 +148,28 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                           {{ _("Gas flows in sccm") }}
                         </div>
                         <table style="width: 100%; text-align: center" class="channels">
-                          <tbody>
-                            <tr>
-                                {% input_field layer.h2 %}
-                            </tr>
-                            <tr>
-                                {% input_field layer.sih4 %}
-                            </tr>                          
-                          </tbody>
+                          <tr>
+                            {% input_field layer.h2 %}
+                          </tr>
+                          <tr>
+                            {% input_field layer.sih4 %}
+                          </tr>                          
                         </table>
                       </td>
                     </tr>
-                    </tbody>
                   </table>
                 </td>
               </tr>
-              </tbody>
             </table>
           </td>
         </tr>
       {% endfor %}
-      </tbody>
     </table>
   {% endif %}
 
   {% include "samples/edit_description.html" %}
 
   <table style="margin-top: 2ex">
-    <tbody>
     <tr>
       <td class="field-label">{{ add_steps.step_to_be_added.label_tag }}</td>
       <td class="field-value" style="font-weight: normal">{{ add_steps.step_to_be_added }}</td>
@@ -195,7 +178,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">{{ add_steps.my_step_to_be_added.label_tag }}</td>
       <td class="field-value" style="font-weight: normal">{{ add_steps.my_step_to_be_added }}</td>
     </tr>
-    </tbody>
   </table>
 
   {% if remove_from_my_samples %}

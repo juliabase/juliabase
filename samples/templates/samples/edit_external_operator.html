@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <form method="post">{% csrf_token %}
   {% error_list external_operator _("Error in external operator") %}
   <table>
-    <tbody>
     <tr>
       {% input_field external_operator.name %}
     </tr><tr>
@@ -49,7 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% input_field external_operator.contact_persons %}
     </tr>
     {% endif %}
-    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

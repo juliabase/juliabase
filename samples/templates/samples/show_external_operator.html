@@ -40,31 +40,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 <table class="padding5" style="margin-bottom: 2ex">
-  <tbody>
-	  {% if external_operator %}
-	  <tr>
-	    {% value_field external_operator.name %}
-	  </tr>
-	  <tr>
-	    {% value_field external_operator.institution %}
-	  </tr>
-	  <tr>
-	    <td class="field-label">{% verbose_name ExternalOperator.email %}:</td>
-	    <td class="field-value" style="font-weight: normal"><a href="mailto:{{ external_operator.email }}"
-	                                                     >{{ external_operator.email }}</a></td>
-	  </tr>
-	  {% if external_operator.alternative_email %}
-	    <tr>
-	      <td class="field-label">{% verbose_name ExternalOperator.alternative_email %}:</td>
-	      <td class="field-value" style="font-weight: normal"><a href="mailto:{{ external_operator.alternative_email }}"
-	                                                       >{{ external_operator.alternative_email }}</a></td>
-	    </tr>
-	  {% endif %}
-	  {% if external_operator.phone %}
-	    <tr>
-	      {% value_field external_operator.phone %}
-	    </tr>
-	  {% endif %}
+  {% if external_operator %}
+    <tr>
+      {% value_field external_operator.name %}
+    </tr>
+    <tr>
+      {% value_field external_operator.institution %}
+    </tr>
+    <tr>
+      <td class="field-label">{% verbose_name ExternalOperator.email %}:</td>
+      <td class="field-value" style="font-weight: normal"><a href="mailto:{{ external_operator.email }}"
+                                                       >{{ external_operator.email }}</a></td>
+    </tr>
+    {% if external_operator.alternative_email %}
+      <tr>
+        <td class="field-label">{% verbose_name ExternalOperator.alternative_email %}:</td>
+        <td class="field-value" style="font-weight: normal"><a href="mailto:{{ external_operator.alternative_email }}"
+                                                         >{{ external_operator.alternative_email }}</a></td>
+      </tr>
+    {% endif %}
+    {% if external_operator.phone %}
+      <tr>
+        {% value_field external_operator.phone %}
+      </tr>
+    {% endif %}
   {% endif %}
   <tr>
     <td class="field-label">{% verbose_name ExternalOperator.contact_persons %}:</td>
@@ -82,7 +81,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-value">{{ initials }}</td>
     </tr>
   {% endif %}
-  </tbody>
 </table>
 
 {% if not external_operator or external_operator.confidential %}

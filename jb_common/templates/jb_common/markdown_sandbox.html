@@ -52,20 +52,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <th>{% trans 'result' %}</th>
       </tr>
     </thead>
-    <tbody>
-      <tr>
-        <td style="text-align: center">
-          {{ sandbox.sandbox }}
-        </td>
-        <td>
-          {% if extracted_content %}
-            <div>
-              {{ extracted_content|markdown }}
-            </div>
-          {% endif %}
-        </td>
-      </tr>
-    </tbody>
+    <tr>
+      <td style="text-align: center">
+        {{ sandbox.sandbox }}
+      </td>
+      <td>
+        {% if extracted_content %}
+          <div>
+            {{ extracted_content|markdown }}
+          </div>
+        {% endif %}
+      </td>
+    </tr>
   </table>
   {# Translators: result of markdown conversion #}
   <p class="submit-button" style="clear: both"><button type="submit">{% trans 'Generate result' %}</button></p>

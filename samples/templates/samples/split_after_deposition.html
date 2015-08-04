@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <th>{{ samples.0.1.0.new_name.label }}</th>
     </tr>
     </thead>
-    <tbody>
     {% for sample, new_names in samples %}
       {% error_list sample _("Error in sample name") "<tr>" 4 %}
       <tr>
@@ -66,7 +65,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </td>
       </tr>
     {% endfor %}
-    </tbody>
   </table>
   {{ new_sample_data.as_p }}
   <p class="submit-button"><input type="submit"/></p>

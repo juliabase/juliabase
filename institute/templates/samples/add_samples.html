@@ -29,7 +29,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 <form method="post">{% csrf_token %}
   {% error_list add_samples _("General error") %}
   <table>
-    <tbody>
     <tr>
       {% input_field add_samples.number_of_samples %}
     </tr><tr>
@@ -60,7 +59,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">{{ add_samples.rename.label }}:</td>
       <td class="field-input">{{ add_samples.rename }}</td>
     </tr>
-    </tbody>
   </table>
   <div style="display: none">
     {{ add_samples.timestamp_inaccuracy }}

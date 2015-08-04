@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list action _("General error") %}
   {% error_list my_samples _("Error in “My Samples”") %}
   <table style="float: right">
-    <tbody>
     <tr>
       {% input_field action.new_currently_responsible_person %}
     </tr><tr>
@@ -46,14 +45,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr><tr>
       {% input_field action.remove_from_my_samples %}
     </tr>
-    </tbody>
   </table>
   <table class="padding5">
-    <tbody>
     <tr>
       {% input_field my_samples.samples %}
     </tr>
-    </tbody>
   </table>
 
   <p class="submit-button" style="clear: both"><input type="submit"/></p>

@@ -26,11 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <form method="post">{% csrf_token %}
   {% error_list sample_death _("General error") %}
   <table>
-    <tbody>
     <tr>
       {% input_field sample_death.reason %}
     </tr>
-    </tbody>
   </table>
 
   <p class="submit-button"><input type="submit"/></p>

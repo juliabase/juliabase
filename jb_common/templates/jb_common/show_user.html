@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 <table class="padding10" style="margin-bottom: 2ex">
-  <tbody>
   <tr>
     <td class="field-label">{% trans 'Username' %}:</td><td class="field-value">{{ shown_user.username }}</td>
   </tr>
@@ -37,6 +36,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">{% trans 'department'|capfirst %}:</td><td class="field-value">{{ department }}</td>
     </tr>
   {% endif %}
-  </tbody>
 </table>
 {% endblock %}

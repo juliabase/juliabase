@@ -32,31 +32,29 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list remove_from_my_samples _("Error with removal from “My Samples”") %}
 
   <table class="padding5">
-    <tbody>
+    <tr>
+      {% input_field sample.sample %}
+      <td colspan="2"> </td>
+    </tr>
+    <tr>
+      {% input_field process.timestamp %}
+      <td colspan="2"> </td>
+    </tr>
+    {% if process.user.is_superuser %}
       <tr>
-        {% input_field sample.sample %}
-        <td colspan="2"> </td>
+        {% input_field process.operator %}
       </tr>
       <tr>
-        {% input_field process.timestamp %}
-        <td colspan="2"> </td>
+        {% input_field process.external_operator %}
       </tr>
-      {% if process.user.is_superuser %}
-        <tr>
-          {% input_field process.operator %}
-        </tr>
-        <tr>
-          {% input_field process.external_operator %}
-        </tr>
-      {% else %}
-        <tr>
-          {% input_field process.combined_operator %}
-        </tr>
-      {% endif %}
+    {% else %}
       <tr>
-        {% input_field process.layout %}
+        {% input_field process.combined_operator %}
       </tr>
-    </tbody>
+    {% endif %}
+    <tr>
+      {% input_field process.layout %}
+    </tr>
   </table>
 
 

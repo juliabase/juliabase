@@ -30,10 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <form method="post">{% csrf_token %}
   <table>
-    <tbody>
     <tr><td>{{ form.username.label_tag }}</td><td>{{ form.username }}</td></tr>
     <tr><td>{{ form.password.label_tag }}</td><td>{{ form.password }}</td></tr>
-    </tbody>
   </table>
 
   <p>

@@ -25,9 +25,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load institute_extras %}
 
 <table style="background-color: {{ process|solarsimulator_color }}">
-  <tbody>
-    <tr>
-      {% value_field process.get_irradiation_display %}
-    </tr>
-  </tbody>
+  <tr>
+    {% value_field process.get_irradiation_display %}
+  </tr>
 </table>

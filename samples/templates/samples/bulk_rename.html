@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
 <form method="post">{% csrf_token %}
   <table class="padding">
-    <tbody>
     {% if single_prefix or prefixes%}
       <tr>
         <td> </td>
@@ -63,7 +62,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </td>
       </tr>
     {% endfor %}
-    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

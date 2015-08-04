@@ -30,7 +30,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list process _("Error in measurement") %}
   {% error_list sample  _("Error in sample list") %}
   <table class="padding5">
-    <tbody>
     <tr>
       {% input_field sample.sample %}
     </tr>
@@ -59,7 +58,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <td style="text-align: right">{{ process.comments.label_tag }}<br/>{% markdown_hint %}</td>
       <td>{{ process.comments }}</td>
     </tr>
-    </tbody>
   </table>
 
   {% include "samples/edit_description.html" %}

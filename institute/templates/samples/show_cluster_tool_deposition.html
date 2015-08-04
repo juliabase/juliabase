@@ -35,99 +35,87 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endif %}
 
 <table style="width: 100%">
-  <tbody>
   {% for layer in layers %}
-  <tr>
-    <td style="border-style: solid; border-color: black; border-width: thin">
-      <table style="width: 100%">
-        <tbody>
-        <tr>
-          <td>
-            <table style="width: 100%">
-              <tbody>
-              <tr>
-                <td colspan="2" rowspan="3" style="vertical-align: top">
-                  <table>
-                    <tbody>
-                    <tr>
-                      <td style="vertical-align: top; text-align: right">
-                        <div style="float: left">{% verbose_name ClusterToolLayer.number %}:</div>
-                        <div
-                          style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
-                                 margin-left: 0.3em;
-                                 border-style: solid; border-width: thin;
-                                 border-color: black; float: right; clear: left">{{ layer.number }}</div>
-                      </td>
-                      <td style="vertical-align: top; padding-left: 2em">
-                        {% if layer.type == "clustertoolpecvdlayer" %}
-                          <span class="field-label">{% verbose_name ClusterToolPECVDLayer.chamber %}:</span
-                                ><span class="field-value">{{ layer.chamber }}</span>
-                        {% else %}
-                           
-                        {% endif %}
-                      </td>
-                    </tr>
-                    <tr>
-                      <td colspan="2">{{ layer|cluster_tool_layer_type:"verbose" }}</td>
-                    </tr>
-                    </tbody>
-                  </table>
-                </td>
-                 {% value_field layer.time|depostion_time %}
-                 {% if layer.type == "clustertoolpecvdlayer" %}
-                    {% value_field layer.plasma_start_with_shutter "yes/no" %}
-                 {% elif layer.type == "clustertoolhotwirelayer" %}
-                    {% value_field layer.get_wire_material_display %}
-                 {% endif %}
-              </tr>
-              <tr>
+    <tr>
+      <td style="border-style: solid; border-color: black; border-width: thin">
+        <table style="width: 100%">
+          <tr>
+            <td>
+              <table style="width: 100%">
+                <tr>
+                  <td colspan="2" rowspan="3" style="vertical-align: top">
+                    <table>
+                      <tr>
+                        <td style="vertical-align: top; text-align: right">
+                          <div style="float: left">{% verbose_name ClusterToolLayer.number %}:</div>
+                          <div
+                            style="font-size:xx-large; padding-left: 0.2em; padding-right: 0.2em;
+                                   margin-left: 0.3em;
+                                   border-style: solid; border-width: thin;
+                                   border-color: black; float: right; clear: left">{{ layer.number }}</div>
+                        </td>
+                        <td style="vertical-align: top; padding-left: 2em">
+                          {% if layer.type == "clustertoolpecvdlayer" %}
+                            <span class="field-label">{% verbose_name ClusterToolPECVDLayer.chamber %}:</span
+                                  ><span class="field-value">{{ layer.chamber }}</span>
+                          {% else %}
+                             
+                          {% endif %}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">{{ layer|cluster_tool_layer_type:"verbose" }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                   {% value_field layer.time|depostion_time %}
+                   {% if layer.type == "clustertoolpecvdlayer" %}
+                      {% value_field layer.plasma_start_with_shutter "yes/no" %}
+                   {% elif layer.type == "clustertoolhotwirelayer" %}
+                      {% value_field layer.get_wire_material_display %}
+                   {% endif %}
+                </tr>
+                <tr>
                   {% if layer.type == "clustertoolhotwirelayer" %}
                     {% value_field layer.base_pressure %}
                   {% elif layer.type == "clustertoolpecvdlayer" %}
                     {% value_field layer.deposition_power %}
                   {% endif %}
-              </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <table style="width: 100%">
-              <tbody>
-              <tr>
-                {% if layer.comments %}
-                <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
-                    {{ layer.comments|markdown_samples:"collapse" }}
-                </td>
-                {% else %}
-                <td> </td>
-                {% endif %}
-                <td style="width: 60%; vertical-align: top; padding: 1ex">
-                  <table style="text-align: center; width: 100%">
-                    <tbody>
-                    {% if layer.h2 %}
-                    <tr>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table style="width: 100%">
+                <tr>
+                  {% if layer.comments %}
+                  <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex">
+                      {{ layer.comments|markdown_samples:"collapse" }}
+                  </td>
+                  {% else %}
+                  <td> </td>
+                  {% endif %}
+                  <td style="width: 60%; vertical-align: top; padding: 1ex">
+                    <table style="text-align: center; width: 100%">
+                      {% if layer.h2 %}
+                      <tr>
                         {% value_field layer.h2 %}
-                    </tr>
-                    {% endif %}
-                    {% if layer.sih4 %}
-                    <tr>
+                      </tr>
+                      {% endif %}
+                      {% if layer.sih4 %}
+                      <tr>
                         {% value_field layer.sih4 %}
-                    </tr>
-                    {% endif %}
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </td>
-  </tr>
+                      </tr>
+                      {% endif %}
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
   {% endfor %}
-  </tbody>
 </table>

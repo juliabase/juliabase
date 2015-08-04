@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list sample_series _("Error in sample series") %}
 
   <table class="padding5" style="float: left; margin-bottom: 3ex; width: 45%">
-    <tbody>
     {% if is_new %}
       <tr>
         <td class="field-label">{{ sample_series.short_name.label_tag }}</td>
@@ -45,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">{{ sample_series.description.label_tag }}<br/>{% markdown_hint %}</td>
       <td class="field-input">{{ sample_series.description }}</td>
     </tr>
-    </tbody>
   </table>
 
   <div style="float: left; margin-left: 5em; margin-bottom: 3ex">

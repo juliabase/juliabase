@@ -87,35 +87,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <th>{% trans "special permissions that you don't have" %}</th>
     </tr>
   </thead>
-  <tbody>
-    <tr>
-      <td>
-        {% if permissions.0 %}
-          <ul style="color: green; font-weight: bold">
-            {% for permission in permissions.0 %}
-              <li>{{ permission }}</li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p style="text-align: center ">
-            {% trans 'none' %}
-          </p>
-        {% endif %}
-      </td>
-      <td>
-        {% if permissions.1 %}
-          <ul style="color: red; font-weight: bold">
-            {% for permission in permissions.1 %}
-              <li>{{ permission }}</li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p style="text-align: center ">
-            {% trans 'none' %}
-          </p>
-        {% endif %}
-      </td>
-    </tr>
-  </tbody>
+  <tr>
+    <td>
+      {% if permissions.0 %}
+        <ul style="color: green; font-weight: bold">
+          {% for permission in permissions.0 %}
+            <li>{{ permission }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p style="text-align: center ">
+          {% trans 'none' %}
+        </p>
+      {% endif %}
+    </td>
+    <td>
+      {% if permissions.1 %}
+        <ul style="color: red; font-weight: bold">
+          {% for permission in permissions.1 %}
+            <li>{{ permission }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p style="text-align: center ">
+          {% trans 'none' %}
+        </p>
+      {% endif %}
+    </td>
+  </tr>
 </table>
 {% endblock %}

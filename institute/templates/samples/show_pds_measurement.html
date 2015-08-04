@@ -30,7 +30,6 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endif %}
 
 <table class="padding5">
-  <tbody>
   <tr>
     {% value_field process.number %}
   </tr>
@@ -51,5 +50,4 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-value" style="font-weight: normal">{{ process.comments|markdown_samples:"collapse" }}</td>
     </tr>
   {% endif %}
-  </tbody>
 </table>

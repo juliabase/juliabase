@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
 <form method="post">{% csrf_token %}
   <table>
-    <tbody>
     <tr>
       <th>{{ my_layers.0.nickname.label }}</th>
       <th>{{ my_layers.0.deposition_and_layer.label }}</th>
@@ -39,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ layer.delete }}</td>
       </tr>
     {% endfor %}
-    </tbody>
   </table>
   <p class="submit-button"><input type="submit"/></p>
 </form>

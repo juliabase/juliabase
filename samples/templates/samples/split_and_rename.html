@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <th>{{ new_names.0.1.delete.label }}</th>
     </tr>
     </thead>
-    <tbody>
     {% if old_split %}
       {% for piece in old_split.pieces.all %}
         <tr>
@@ -69,16 +68,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td style="text-align: center">{{ new_name.delete }}</td>
       </tr>
     {% endfor %}
-    </tbody>
   </table>
 
   {% error_list automatic_split _("General error") %}
   <table style="border-collapse: collapse">
-    <tbody>
-      <tr>
-        {% input_field automatic_split.number %}
-      </tr>
-    </tbody>
+    <tr>
+      {% input_field automatic_split.number %}
+    </tr>
   </table>
 
   <p>

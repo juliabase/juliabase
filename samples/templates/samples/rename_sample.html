@@ -26,18 +26,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
 <form method="post">{% csrf_token %}
   <table class="padding">
-    <tbody>
     {% error_list sample_rename _("General error") "<tr>" %}
-      <tr>
-        {% input_field sample_rename.old_name %}
-      </tr>
-      <tr>
-        {% input_field sample_rename.new_name %}
-      </tr>
-      <tr>
-        {% input_field sample_rename.create_alias %}
-      </tr>
-    </tbody>
+    <tr>
+      {% input_field sample_rename.old_name %}
+    </tr>
+    <tr>
+      {% input_field sample_rename.new_name %}
+    </tr>
+    <tr>
+      {% input_field sample_rename.create_alias %}
+    </tr>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <form method="post">{% csrf_token %}
   {% error_list edit_topic _("Error in topic data") %}
   <table>
-    <tbody>
     <tr>
       {% input_field edit_topic.members %}
     </tr>
@@ -36,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tr>
       {% input_field edit_topic.confidential %}
     </tr>
-    </tbody>
   </table>
   <p class="submit-button" style="clear: both"><input type="submit"/></p>
 </form>

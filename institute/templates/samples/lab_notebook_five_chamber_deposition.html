@@ -49,33 +49,31 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
         <th></th>
       </tr>
     </thead>
-    <tbody>
-      {% for deposition in processes %}
-        {% lab_notebook_comments deposition "before" %}
-        {% for layer in deposition.layers.all %}
-          <tr style="vertical-align: top"{% if forloop.first %} class="topline"{% endif %}>
-            {% if forloop.first %}
-              <td rowspan="{{ deposition.layers.count }}">
-                <a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a>
-              </td>
-            {% endif %}
-            <td>{{ layer.get_chamber_display }}</td>
-            <td style="text-align: '.'">{{ layer.sih4|quantity|default_if_none:" " }}</td>
-            <td style="text-align: '.'">{{ layer.h2|quantity|default_if_none:" " }}</td>
-            <td style="text-align: '.'">{{ layer|calculate_silane_concentration|quantity|default_if_none:" " }}</td>
-            <td style="text-align: center">{{ layer.temperature_1|quantity|default_if_none:"–" }} /
-                                           {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
-            {% if forloop.first %}
-              <td rowspan="{{ deposition.layers.count }}">
-                <div style="float: right; margin-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
-                            border-bottom: 1px solid" class="timestamp">
-                  {{ deposition|timestamp:"3" }}</div>{{ deposition.comments|markdown_samples:"collapse" }}</td>
-            {% endif %}
-          </tr>
-        {% endfor %}
-        {% lab_notebook_comments deposition "after" %}
+    {% for deposition in processes %}
+      {% lab_notebook_comments deposition "before" %}
+      {% for layer in deposition.layers.all %}
+        <tr style="vertical-align: top"{% if forloop.first %} class="topline"{% endif %}>
+          {% if forloop.first %}
+            <td rowspan="{{ deposition.layers.count }}">
+              <a href="{{ deposition.get_absolute_url }}">{{ deposition.number }}</a>
+            </td>
+          {% endif %}
+          <td>{{ layer.get_chamber_display }}</td>
+          <td style="text-align: '.'">{{ layer.sih4|quantity|default_if_none:" " }}</td>
+          <td style="text-align: '.'">{{ layer.h2|quantity|default_if_none:" " }}</td>
+          <td style="text-align: '.'">{{ layer|calculate_silane_concentration|quantity|default_if_none:" " }}</td>
+          <td style="text-align: center">{{ layer.temperature_1|quantity|default_if_none:"–" }} /
+                                         {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
+          {% if forloop.first %}
+            <td rowspan="{{ deposition.layers.count }}">
+              <div style="float: right; margin-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
+                          border-bottom: 1px solid" class="timestamp">
+                {{ deposition|timestamp:"3" }}</div>{{ deposition.comments|markdown_samples:"collapse" }}</td>
+          {% endif %}
+        </tr>
       {% endfor %}
-    </tbody>
+      {% lab_notebook_comments deposition "after" %}
+    {% endfor %}
   </table>
 {% else %}
   <p>{% trans 'No data found for this time range.' %}</p>

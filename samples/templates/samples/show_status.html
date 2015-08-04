@@ -44,38 +44,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <th>{% trans 'posted at' %}</th>
        </tr>
      </thead>
-     <tbody>
-      {% for status_message, process_name in status_messages %}
-           <tr style="vertical-align: top">
-              <td>{{ process_name|first_upper }}</td>
-              <td>{{ status_message.message|markdown:"collapse" }}</td>
-              <td style="text-align: center; vertical-align: middle">
-                  {% if status_message.status_level == "undefined" %}
-                      <img src="{% static "juliabase/icons/grey.png" %}" alt="undefined"/>
-                  {% elif status_message.status_level == "red" %}
-                      <img src="{% static "juliabase/icons/red.png" %}" alt="red"/>
-                  {% elif status_message.status_level == "yellow" %}
-                      <img src="{% static "juliabase/icons/yellow.png" %}" alt="yellow"/>
-                  {% elif status_message.status_level == "green" %}
-                      <img src="{% static "juliabase/icons/green.png" %}" alt="green"/>
-                  {% endif %}
-              </td>
-              <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
-              <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
-              <td>{{ status_message.operator|get_really_full_name }}</td>
-              <td>{{ status_message.timestamp }}
-                {% if user == status_message.operator %}
-                  <form method="post" 
-             action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
-                        style="display: inline">{% csrf_token %}
-                    <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
-                           title="{% trans 'withdraw this status message for all processes' %}"/>
-                  </form>
-                {% endif %}
-              </td>
-           </tr>
+     {% for status_message, process_name in status_messages %}
+        <tr style="vertical-align: top">
+           <td>{{ process_name|first_upper }}</td>
+           <td>{{ status_message.message|markdown:"collapse" }}</td>
+           <td style="text-align: center; vertical-align: middle">
+               {% if status_message.status_level == "undefined" %}
+                   <img src="{% static "juliabase/icons/grey.png" %}" alt="undefined"/>
+               {% elif status_message.status_level == "red" %}
+                   <img src="{% static "juliabase/icons/red.png" %}" alt="red"/>
+               {% elif status_message.status_level == "yellow" %}
+                   <img src="{% static "juliabase/icons/yellow.png" %}" alt="yellow"/>
+               {% elif status_message.status_level == "green" %}
+                   <img src="{% static "juliabase/icons/green.png" %}" alt="green"/>
+               {% endif %}
+           </td>
+           <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
+           <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
+           <td>{{ status_message.operator|get_really_full_name }}</td>
+           <td>{{ status_message.timestamp }}
+             {% if user == status_message.operator %}
+               <form method="post" 
+          action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
+                     style="display: inline">{% csrf_token %}
+                 <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
+                        title="{% trans 'withdraw this status message for all processes' %}"/>
+               </form>
+             {% endif %}
+           </td>
+        </tr>
       {% endfor %}
-     </tbody>
   </table>
 {% else %}
   <p>{% trans 'There are no current status messages.' %}</p>
@@ -102,42 +100,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <th>{% trans 'posted at' %}</th>
        </tr>
     </thead>
-    <tbody>
-      {% for process_name, status_messages in further_status_messages %}
-           {% for status_message in status_messages %}
-             <tr style="vertical-align: top">
-                {% if forloop.first %}
-                  <td rowspan="{{ status_messages|length }}">{{ process_name|first_upper }}</td>
-                {% endif %}
-                <td>{{ status_message.message|markdown:"collapse" }}</td>
-                <td style="text-align: center; vertical-align: middle">
-                    {% if status_message.status_level == "undefined" %}
-                        <img src="{% static "juliabase/icons/grey.png" %}" alt="{% trans 'undefined' %}"/>
-                    {% elif status_message.status_level == "red" %}
-                        <img src="{% static "juliabase/icons/red.png" %}" alt="{% trans 'red' %}"/>
-                    {% elif status_message.status_level == "yellow" %}
-                        <img src="{% static "juliabase/icons/yellow.png" %}" alt="{% trans 'yellow' %}"/>
-                    {% elif status_message.status_level == "green" %}
-                        <img src="{% static "juliabase/icons/green.png" %}" alt="{% trans 'green' %}"/>
-                    {% endif %}
-                </td>
-                <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
-                <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
-                <td>{{ status_message.operator|get_really_full_name }}</td>
-                <td>{{ status_message.timestamp }}
-                  {% if user == status_message.operator %}
-                    <form method="post" 
-              action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={% url 'samples.views.status.show' %}"
-                          style="display: inline">{% csrf_token %}
-                      <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
-                             title="{% trans 'withdraw this status message for all processes' %}"/>
-                    </form>
-                  {% endif %}
-                </td>
-             </tr>
-          {% endfor %}
+    {% for process_name, status_messages in further_status_messages %}
+      {% for status_message in status_messages %}
+        <tr style="vertical-align: top">
+          {% if forloop.first %}
+            <td rowspan="{{ status_messages|length }}">{{ process_name|first_upper }}</td>
+          {% endif %}
+          <td>{{ status_message.message|markdown:"collapse" }}</td>
+          <td style="text-align: center; vertical-align: middle">
+            {% if status_message.status_level == "undefined" %}
+              <img src="{% static "juliabase/icons/grey.png" %}" alt="{% trans 'undefined' %}"/>
+            {% elif status_message.status_level == "red" %}
+              <img src="{% static "juliabase/icons/red.png" %}" alt="{% trans 'red' %}"/>
+            {% elif status_message.status_level == "yellow" %}
+              <img src="{% static "juliabase/icons/yellow.png" %}" alt="{% trans 'yellow' %}"/>
+            {% elif status_message.status_level == "green" %}
+              <img src="{% static "juliabase/icons/green.png" %}" alt="{% trans 'green' %}"/>
+            {% endif %}
+          </td>
+          <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
+          <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
+          <td>{{ status_message.operator|get_really_full_name }}</td>
+          <td>{{ status_message.timestamp }}
+            {% if user == status_message.operator %}
+              <form method="post" 
+        action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={% url 'samples.views.status.show' %}"
+                    style="display: inline">{% csrf_token %}
+                <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
+                       title="{% trans 'withdraw this status message for all processes' %}"/>
+              </form>
+            {% endif %}
+          </td>
+        </tr>
       {% endfor %}
-    </tbody>
+    {% endfor %}
   </table>
 
 {% endif %}

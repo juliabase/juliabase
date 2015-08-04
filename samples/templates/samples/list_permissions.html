@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <p>{% trans "People who can change permissions of users for the respective process are printed in bold." %}</p>
   <table class="padding10" border="1">
-    <tbody>
     {% for model in addable_models %}
       {% if model.add_permission or model.edit_permissions_permission %}
         <tr style="vertical-align: top">
@@ -45,7 +44,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </tr>
       {% endif %}
     {% endfor %}
-    </tbody>
   </table>
   {% if topic_managers %}
     <p>{% trans "The current topic managers are:" %}
@@ -58,26 +56,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </p>
   {% endif %}
   {% if user_list %}
-  {% comment %}
-    <p>{% trans "Change the permissions of:" %}
-      {% for user in user_list %}
-        {% spaceless %}
-          <a href="{% url 'samples.views.permissions.edit' username=user.username%}">{{ user|get_really_full_name:"plain" }}</a>
-          {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
-        {% endspaceless %}
-      {% endfor %}
-    </p>
-  {% endcomment %}
-  <form method="POST">{% csrf_token %}
-  {% error_list user_list _("Error in user list") %}
-    <table>
-    <tbody>
-    <tr>
-      {% input_field user_list.selected_user %}
-    </tr>
-    </tbody>
-  </table>
-  <p class="submit-button" style="clear: both"><input type="submit"/></p>
-  </form>
+    {% comment %}
+      <p>{% trans "Change the permissions of:" %}
+        {% for user in user_list %}
+          {% spaceless %}
+            <a href="{% url 'samples.views.permissions.edit' username=user.username%}">{{ user|get_really_full_name:"plain" }}</a>
+            {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
+          {% endspaceless %}
+        {% endfor %}
+      </p>
+    {% endcomment %}
+    <form method="POST">{% csrf_token %}
+    {% error_list user_list _("Error in user list") %}
+      <table>
+        <tr>
+          {% input_field user_list.selected_user %}
+        </tr>
+      </table>
+      <p class="submit-button" style="clear: both"><input type="submit"/></p>
+    </form>
   {% endif %}
 {% endblock %}

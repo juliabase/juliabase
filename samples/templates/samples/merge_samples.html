@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </p>
 <form method="post">{% csrf_token %}
   <table class="padding5">
-    <tbody>
     <tr>
       <th>{{ merge_forms.0.from_sample.label }}</th>
       <th></th>
@@ -47,7 +46,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ merge_form.to_sample }}</td>
       </tr>
     {% endfor %}
-    </tbody>
   </table>
   <p class="submit-button"><input type="submit"/></p>
 </form>
