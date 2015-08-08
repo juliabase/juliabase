@@ -24,7 +24,7 @@
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
-import re
+import re, json
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.safestring import mark_safe
@@ -287,3 +287,9 @@ def actual_instances(instances):
         actual_instance.type = actual_instance.__class__.__name__.lower()
         result.append(actual_instance)
     return result
+
+
+@register.filter
+def dejson(json_value):
+    """Takes a JSON string and returns it as a Python data structure."""
+    return json.loads(json_value)
