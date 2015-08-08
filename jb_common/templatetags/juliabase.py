@@ -293,3 +293,11 @@ def actual_instances(instances):
 def dejson(json_value):
     """Takes a JSON string and returns it as a Python data structure."""
     return json.loads(json_value)
+
+
+@register.filter
+def checkmark(value):
+    """Returns a checkmark if the given value resolves to ``True``, and the empty
+    string otherwise.
+    """
+    return mark_safe("✓") if value else ""
