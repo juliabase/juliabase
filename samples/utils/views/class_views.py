@@ -589,7 +589,7 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
         else:
             subprocesses = self.sub_model.objects.none()
         if self.request.method == "POST":
-            indices = utils.collect_subform_indices(self.data)
+            indices = utils.collect_subform_indices(self.data, None)
             self.forms["number"] = NumberForm(self.data)
             if self.forms["number"].is_valid():
                 new_number_of_forms = self.forms["number"].cleaned_data["number"] or len(indices)
