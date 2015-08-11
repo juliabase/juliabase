@@ -168,9 +168,9 @@ SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("solarsi
 MERGE_CLEANUP_FUNCTION = "institute.utils.clean_up_after_merging"
 
 SAMPLE_NAME_FORMATS = {
-    "provisional": {"possible_renames": {"old", "new"}},
+    "provisional": {"possible_renames": {"new"}},
     "old":         {"pattern": r"{short_year}[A-Z]-\d{{3,4}}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?",
-                    "possible_renames": {"old", "new"},
+                    "possible_renames": {"new"},
                     "verbose_name": _("old-style")},
     "new":         {"pattern": r"({short_year}-{user_initials}|{external_contact_initials})-[-A-Za-z_/0-9#()]+",
                     "verbose_name": _("new-style")}
