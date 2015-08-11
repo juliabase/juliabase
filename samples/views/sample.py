@@ -52,6 +52,7 @@ from jb_common.utils.base import format_enumeration, unquote_view_parameters, Ht
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
+from samples.utils import sample_names
 
 
 class IsMySampleForm(forms.Form):
@@ -395,7 +396,8 @@ class SamplesAndProcesses(object):
         except permissions.PermissionError:
             self.sample_context["can_add_process"] = False
         self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
-        if self.sample_context["can_edit"] and utils.sample_name_format(sample.name) in utils.get_renamable_name_formats():
+        if self.sample_context["can_edit"] and \
+           sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
             self.sample_context["id_for_rename"] = None

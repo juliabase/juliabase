@@ -40,6 +40,7 @@ from django.conf import settings
 from jb_common.utils.base import help_link, send_email, get_really_full_name, format_enumeration
 from jb_common.models import Topic
 import samples.utils.views as utils
+from samples.utils import sample_names
 from samples import permissions
 from samples.models import Sample, SampleClaim
 from samples.views.claim import ReviewerForm
@@ -65,7 +66,7 @@ class SamplesForm(forms.Form):
         for name in sample_names:
             name = name.strip()
             if name:
-                if utils.sample_name_format(name) == "old":
+                if sample_names.sample_name_format(name) == "old":
                     if name in valid_names:
                         raise ValidationError(_("The name {name} appears more than once.").format(name=name))
                     valid_names.append(name)
@@ -78,7 +79,7 @@ class SamplesForm(forms.Form):
             raise ValidationError(error_message)
         if not valid_names:
             raise ValidationError(self.fields["samples"].error_messages["required"])
-        existing_names = [name for name in valid_names if utils.does_sample_exist(name)]
+        existing_names = [name for name in valid_names if sample_names.does_sample_exist(name)]
         if existing_names:
             # This opens a small security hole because people can find out that
             # confidential samples are existing.  However, such samples mostly

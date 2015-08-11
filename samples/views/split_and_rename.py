@@ -35,6 +35,7 @@ from django.forms.utils import ValidationError
 from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters, help_link
 from samples import models, permissions
 import samples.utils.views as utils
+from samples.utils import sample_names
 
 
 class NewNameForm(forms.Form):
@@ -47,7 +48,7 @@ class NewNameForm(forms.Form):
     def __init__(self, user, parent_name, *args, **kwargs):
         super(NewNameForm, self).__init__(*args, **kwargs)
         self.parent_name = parent_name
-        parent_name_format = utils.sample_name_format(parent_name)
+        parent_name_format = sample_names.sample_name_format(parent_name)
         if parent_name_format:
             self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[parent_name_format].get("possible_renames", set())
         else:
@@ -56,7 +57,7 @@ class NewNameForm(forms.Form):
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        sample_name_format, match = utils.sample_name_format(new_name, with_match_object=True)
+        sample_name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
         if not sample_name_format:
             raise ValidationError(_("The sample name has an invalid format."))
         elif not new_name.startswith(self.parent_name):
@@ -67,11 +68,12 @@ class NewNameForm(forms.Form):
                                                       "  Alternatively, it must be a valid name of one of these types: "
                                                       "{sample_formats}", len(self.possible_new_name_formats))
                     further_error_message = further_error_message.format(sample_formats=format_enumeration(
-                        utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
+                        sample_names.verbose_sample_name_format(name_format)
+                        for name_format in self.possible_new_name_formats))
                     error_message += further_error_message
                 raise ValidationError(error_message)
             utils.check_sample_name(match, self.user)
-        if utils.does_sample_exist(new_name):
+        if sample_names.does_sample_exist(new_name):
             raise ValidationError(_("Name does already exist in database."))
         return new_name
 

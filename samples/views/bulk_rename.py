@@ -38,6 +38,7 @@ from django.contrib import messages
 from jb_common.utils.base import format_enumeration
 from samples import models, permissions
 import samples.utils.views as utils
+from samples.utils import sample_names
 
 
 class PrefixesForm(forms.Form):
@@ -73,7 +74,7 @@ class NewNameForm(forms.Form):
         """
         super(NewNameForm, self).__init__(*args, **kwargs)
         self.prefix_ = prefix_
-        old_name_format = utils.sample_name_format(sample.name)
+        old_name_format = sample_names.sample_name_format(sample.name)
         if old_name_format:
             self.possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_name_format].get("possible_renames", set())
         else:
@@ -82,16 +83,16 @@ class NewNameForm(forms.Form):
 
     def clean_name(self):
         new_name = self.prefix_ + self.cleaned_data["name"]
-        name_format, match = utils.sample_name_format(new_name, with_match_object=True)
+        name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
         if name_format not in self.possible_new_name_formats:
             error_message = ungettext("New name must be a valid “{sample_formats}” name.",
                                       "New name must be a valid name of one of these types: {sample_formats}",
                                       len(self.possible_new_name_formats))
             error_message = error_message.format(sample_formats=format_enumeration(
-                utils.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
+                sample_names.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
             raise ValidationError(error_message)
         utils.check_sample_name(match, self.user)
-        if utils.does_sample_exist(new_name):
+        if sample_names.does_sample_exist(new_name):
             raise ValidationError(_("This sample name exists already."))
         return new_name
 
@@ -193,7 +194,8 @@ def bulk_rename(request):
     elif "ids" in request.GET:
         ids = request.GET["ids"].split(",")
         samples = [get_object_or_404(models.Sample, pk=utils.convert_id_to_int(id_)) for id_ in ids]
-        if not all(utils.sample_name_format(sample.name) in utils.get_renamable_name_formats() for sample in samples):
+        if not all(sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats()
+                   for sample in samples):
             raise Http404("Some given samples cannot be renamed.")
     else:
         samples = None

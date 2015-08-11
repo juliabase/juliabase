@@ -78,14 +78,17 @@ Sample-related
 The following names are found in the module :py:mod:`samples.utils.views`.
 
 .. autofunction:: samples.utils.views.dead_samples
-.. autofunction:: samples.utils.views.sample_name_format
-.. autofunction:: samples.utils.views.get_sample
-.. autofunction:: samples.utils.views.does_sample_exist
-.. autofunction:: samples.utils.views.normalize_sample_name
 .. autofunction:: samples.utils.views.lookup_sample
 .. autofunction:: samples.utils.views.remove_samples_from_my_samples
 .. autofunction:: samples.utils.views.extract_preset_sample
 .. autofunction:: samples.utils.views.restricted_samples_query
+
+The following names are found in the module :py:mod:`samples.utils.sample_names`.
+
+.. autofunction:: samples.utils.views.sample_name_format
+.. autofunction:: samples.utils.views.get_sample
+.. autofunction:: samples.utils.views.does_sample_exist
+.. autofunction:: samples.utils.views.normalize_sample_name
 
 
 Miscellaneous

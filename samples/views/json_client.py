@@ -43,6 +43,7 @@ from django.contrib.contenttypes.models import ContentType
 from jb_common.models import Topic
 from jb_common.utils.base import respond_in_json, JSONRequestException, int_or_zero
 import samples.utils.views as utils
+from samples.utils import sample_names
 from samples import models, permissions
 
 
@@ -74,7 +75,7 @@ def add_sample(request):
         raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
     if len(name) > 30:
         raise JSONRequestException(5, "The sample name is too long.")
-    name_format = utils.sample_name_format(name)
+    name_format = sample_names.sample_name_format(name)
     if name_format is None or \
        not request.user.is_superuser and \
        name_format not in settings.SAMPLE_NAME_FORMATS["provisional"].get("possible_renames", set()):

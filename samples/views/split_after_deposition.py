@@ -39,6 +39,7 @@ from django.contrib.contenttypes.models import ContentType
 from jb_common.utils.base import is_json_requested, unquote_view_parameters, int_or_zero
 from samples import models, permissions
 import samples.utils.views as utils
+from samples.utils import sample_names
 
 
 class OriginalDataForm(Form):
@@ -60,15 +61,15 @@ class OriginalDataForm(Form):
     def clean_new_name(self):
         if "sample" in self.cleaned_data:
             new_name = self.cleaned_data["new_name"]
-            if new_name != self.cleaned_data["sample"].name and utils.does_sample_exist(new_name):
+            if new_name != self.cleaned_data["sample"].name and sample_names.does_sample_exist(new_name):
                 raise ValidationError(_("This sample name exists already."))
-            elif utils.sample_name_format(new_name) == "provisional":
+            elif sample_names.sample_name_format(new_name) == "provisional":
                 raise ValidationError(_("You must get rid of the provisional sample name."))
             return new_name
 
     def clean_sample(self):
         if not self.remote_client:
-            sample = utils.get_sample(self.cleaned_data["sample"])
+            sample = sample_names.get_sample(self.cleaned_data["sample"])
             if sample is None:
                 raise ValidationError(_("No sample with this name found."))
             if isinstance(sample, list):
@@ -93,8 +94,8 @@ class OriginalDataForm(Form):
             new_name = cleaned_data["new_name"]
             sample = cleaned_data.get("sample")
             if sample:
-                old_sample_name_format = utils.sample_name_format(sample.name)
-                if old_sample_name_format not in utils.get_renamable_name_formats():
+                old_sample_name_format = sample_names.sample_name_format(sample.name)
+                if old_sample_name_format not in sample_names.get_renamable_name_formats():
                     if not new_name.startswith(sample.name):
                         self.add_error("new_name", _("The new name must begin with the old name."))
                 elif sample and sample.name != new_name:
@@ -117,7 +118,7 @@ class NewNameForm(Form):
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        sample_name_format = utils.sample_name_format(new_name)
+        sample_name_format = sample_names.sample_name_format(new_name)
         if not sample_name_format:
             raise ValidationError(_("The sample name has an invalid format."))
         return new_name
@@ -339,12 +340,12 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                                                         _("This sample name has been used already on this page."))
                                 referentially_valid = False
                             new_names.add(new_name)
-                            if utils.sample_name_format(new_name) in utils.get_renamable_name_formats() and \
+                            if sample_names.sample_name_format(new_name) in sample_names.get_renamable_name_formats() and \
                                     not new_name.startswith(original_data_form.cleaned_data["new_name"]):
                                 new_name_form.add_error("new_name", _("If you choose a deposition-style name, it must begin "
                                                               "with the parent's new name."))
                                 referentially_valid = False
-                            if utils.does_sample_exist(new_name):
+                            if sample_names.does_sample_exist(new_name):
                                 new_name_form.add_error("new_name", _("This sample name exists already."))
                                 referentially_valid = False
     return referentially_valid
@@ -425,7 +426,7 @@ def forms_from_database(user, deposition, remote_client, new_names):
         try:
             return new_names[sample.id]
         except KeyError:
-            if utils.sample_name_format(sample.name) in utils.get_renamable_name_formats():
+            if sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
                 name_postfix = ""
                 try:
                     sample_positions = json.loads(deposition.sample_positions)

@@ -41,6 +41,7 @@ import jb_common.utils.base
 import jb_common.templatetags.juliabase
 import jb_common.search
 import samples.utils.views
+import samples.utils.sample_names
 
 
 register = template.Library()
@@ -319,7 +320,7 @@ def markdown_samples(value, margins="default"):
             name = match.group("name")
             database_item = None
             if next_is_sample:
-                sample = samples.utils.views.get_sample(name)
+                sample = samples.utils.sample_names.get_sample(name)
                 if isinstance(sample, samples.models.Sample):
                     database_item = sample
             else:

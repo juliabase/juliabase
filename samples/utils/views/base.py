@@ -36,131 +36,16 @@ from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters
 from jb_common import mimeparse
 from samples import models, permissions
+from samples.utils import sample_names
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
 import jb_common.utils.base
 
 
-__all__ = ("sample_name_format", "get_renamable_name_formats", "verbose_sample_name_format", "get_sample",
-           "does_sample_exist", "normalize_sample_name", "AmbiguityException", "lookup_sample", "convert_id_to_int",
+__all__ = ("AmbiguityException", "lookup_sample", "convert_id_to_int",
            "successful_response", "remove_samples_from_my_samples", "StructuredSeries", "StructuredTopic",
            "build_structured_sample_list", "extract_preset_sample", "digest_process", "restricted_samples_query",
            "enforce_clearance", "UnicodeWriter", "table_export", "median", "average")
-
-
-def sample_name_format(name, with_match_object=False):
-    """Determines which sample name format the given name has.  It doesn't test
-    whether the sample name is existing, nor if the initials are valid.
-
-    :param name: the sample name
-
-    :type name: unicode
-
-    :return:
-      The name of the sample name format and the respective match object.  The
-      latter can be used to extract groups, for exampe.  ``None`` if the name
-      had no valid format.
-
-    :rtype: (unicode, re.MatchObject) or NoneType.
-    """
-    for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
-        match = properties["regex"].match(name)
-        if match:
-            return (name_format, match) if with_match_object else name_format
-    return (None, None) if with_match_object else None
-
-
-renamable_name_formats = None
-def get_renamable_name_formats():
-    global renamable_name_formats
-    if renamable_name_formats is None:
-        renamable_name_formats = {name_format for (name_format, properties) in settings.SAMPLE_NAME_FORMATS.items()
-                                  if properties.get("possible_renames")}
-    return renamable_name_formats
-
-
-def verbose_sample_name_format(name_format):
-    """Returns the human-friendly, translatable name of the sample name format.  In
-    English, it is in singular, and usable as an attribute to a noun.  In
-    non-English language, you should choose something equivalent for the
-    translation.
-
-    :param name_format: The name format
-
-    :type name_format: unicode
-
-    :return:
-      The verbose human-friendly name of this sample name format.
-
-    :rtype: unicode
-    """
-    return settings.SAMPLE_NAME_FORMATS[name_format]["verbose_name"]
-
-
-def get_sample(sample_name):
-    """Lookup a sample by name.  You may also give an alias.  If more than one
-    sample is found (can only happen via aliases), it returns a list.  Matching
-    is exact.
-
-    :param sample_name: the name or alias of the sample
-
-    :type sample_name: unicode
-
-    :return:
-      the found sample.  If more than one sample was found, a list of them.  If
-      none was found, ``None``.
-
-    :rtype: `samples.models.Sample`, list of `samples.models.Sample`, or
-      NoneType
-    """
-    try:
-        sample = models.Sample.objects.get(name=sample_name)
-    except models.Sample.DoesNotExist:
-        aliases = [alias.sample for alias in models.SampleAlias.objects.filter(name=sample_name)]
-        if len(aliases) == 1:
-            return aliases[0]
-        return aliases or None
-    else:
-        return sample
-
-
-def does_sample_exist(sample_name):
-    """Returns ``True`` if the sample name exists in the database.
-
-    :param sample_name: the name or alias of the sample
-
-    :type sample_name: unicode
-
-    :return:
-      whether a sample with this name exists
-
-    :rtype: bool
-    """
-    return models.Sample.objects.filter(name=sample_name).exists() or \
-        models.SampleAlias.objects.filter(name=sample_name).exists()
-
-
-def normalize_sample_name(sample_name):
-    """Returns the current name of the sample.
-
-    :param sample_name: the name or alias of the sample
-
-    :type sample_name: unicode
-
-    :return:
-      The current name of the sample.  This is only different from the input if
-      you gave an alias.
-
-    :rtype: unicode
-    """
-    if models.Sample.objects.filter(name=sample_name).exists():
-        return sample_name
-    try:
-        sample_alias = models.SampleAlias.objects.get(name=sample_name)
-    except models.SampleAlias.DoesNotExist:
-        return
-    else:
-        return sample_alias.sample.name
 
 
 class AmbiguityException(Exception):
@@ -201,10 +86,10 @@ def lookup_sample(sample_name, user, with_clearance=False):
     :raises samples.permissions.PermissionError: if the user is not allowed to
       view the sample
     """
-    name_format, match = sample_name_format(sample_name, with_match_object=True)
+    name_format, match = sample_names.sample_name_format(sample_name, with_match_object=True)
     if name_format == "provisional":
         sample_name = "*{0:05}".format(int(match.group("id")))
-    sample = get_sample(sample_name)
+    sample = sample_names.get_sample(sample_name)
     if not sample:
         raise Http404("Sample {name} could not be found (neither as an alias).".format(name=sample_name))
     if isinstance(sample, list):
