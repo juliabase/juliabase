@@ -141,3 +141,24 @@ def normalize_sample_name(sample_name):
         return
     else:
         return sample_alias.sample.name
+
+
+def valid_new_sample_name(sample_name, new_sample_name):
+    """Checks if the sample can be renamed in the new sample
+    name. The new sample name must match any name pattern that are
+    listet in the possible_renames properties.
+
+    :param sample_name: The actual sample name
+    :param new_sample_name: The new sample name
+
+    :type sample_name: unicode
+    :type new_sample_name: unicode
+
+    :return:
+      `True` if the sample can be renamed, `False` otherwise.
+
+    :rtype: boolean
+    """
+    name_format = sample_name_format(sample_name)
+    new_name_format = sample_name_format(new_sample_name)
+    return new_name_format in settings.SAMPLE_NAME_FORMATS[name_format].get("possible_renames", [])

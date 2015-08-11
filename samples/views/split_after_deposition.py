@@ -94,11 +94,10 @@ class OriginalDataForm(Form):
             new_name = cleaned_data["new_name"]
             sample = cleaned_data.get("sample")
             if sample:
-                old_sample_name_format = sample_names.sample_name_format(sample.name)
-                if old_sample_name_format not in sample_names.get_renamable_name_formats():
+                if not sample_names.valid_new_sample_name(sample.name, new_name):
                     if not new_name.startswith(sample.name):
                         self.add_error("new_name", _("The new name must begin with the old name."))
-                elif sample and sample.name != new_name:
+                elif sample and sample.name != new_name and sample_names.valid_new_sample_name(sample.name, self.deposition_number):
                     if not new_name.startswith(self.deposition_number):
                         self.add_error("new_name", _("The new name must begin with the deposition number."))
         return cleaned_data
@@ -426,7 +425,8 @@ def forms_from_database(user, deposition, remote_client, new_names):
         try:
             return new_names[sample.id]
         except KeyError:
-            if sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
+            if sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats() \
+            and sample_names.valid_new_sample_name(sample.name, deposition.number):
                 name_postfix = ""
                 try:
                     sample_positions = json.loads(deposition.sample_positions)

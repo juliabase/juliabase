@@ -50,6 +50,7 @@ from django.conf import settings
 import jb_common.utils.base as utils
 import jb_common.models
 import samples.models
+from samples.utils.sample_names import sample_name_format, get_renamable_name_formats
 
 
 _permission_name_regex = re.compile("(?P<prefix>Can (?:add|edit every|view every|edit permissions for) )'(?P<class_name>.+)'",
@@ -411,7 +412,8 @@ def assert_can_rename_sample(user, sample):
     currently_responsible_person = sample.currently_responsible_person
     sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
     user_department = user.jb_user_details.department or NoDepartment()
-    if (not user.has_perm("samples.rename_samples") or sample_department != user_department) \
+    if ((not user.has_perm("samples.rename_samples") or sample_department != user_department)
+        and not sample_name_format(sample.name) in get_renamable_name_formats()) \
        and not user.is_superuser:
         description = _("You are not allowed to rename the sample.")
         raise PermissionError(user, description)
