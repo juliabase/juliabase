@@ -161,4 +161,4 @@ def valid_new_sample_name(sample_name, new_sample_name):
     """
     name_format = sample_name_format(sample_name)
     new_name_format = sample_name_format(new_sample_name)
-    return new_name_format in settings.SAMPLE_NAME_FORMATS[name_format].get("possible_renames", [])
+    return new_name_format in settings.SAMPLE_NAME_FORMATS[name_format].get("possible_renames", set())
