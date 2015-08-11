@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% endif %}
         </td>
         <td> </td>
+        <td> {{ samples.0.1.save_alias.label }} </td>
       </tr>
     {% endif %}
     {% for sample, new_name in samples %}
@@ -60,6 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             …{{ new_name.name }}
           </div>
         </td>
+        <td class="{% if forloop.last %}last{% else %}row{% endif %}">{{ new_name.save_alias }}</td>
       </tr>
     {% endfor %}
   </table>

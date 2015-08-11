@@ -59,6 +59,8 @@ class NewNameForm(forms.Form):
     """Form for the new name of one sample.
     """
     name = forms.CharField(label=_("New name"), max_length=22)
+    save_alias = forms.BooleanField(label=_("Save old name as alias"), required=False,
+                                    initial=True)
 
     def __init__(self, user, prefix_, sample, *args, **kwargs):
         """
@@ -233,7 +235,7 @@ def bulk_rename(request):
         referentially_valid = is_referentially_valid(samples, new_name_forms)
         if all_valid and referentially_valid:
             for sample, new_name_form in zip(samples, new_name_forms):
-                if not sample.name.startswith("*"):
+                if not sample.name.startswith("*") and new_name_form.cleaned_data["save_alias"]:
                     models.SampleAlias(name=sample.name, sample=sample).save()
                 sample.name = new_name_form.cleaned_data["name"]
                 sample.save()
