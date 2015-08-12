@@ -63,16 +63,16 @@ class NewNameForm(forms.Form):
         elif not new_name.startswith(self.parent_name):
             if sample_name_format not in self.possible_new_name_formats:
                 error_message = _("The new sample name must start with the parent sample's name.")
-                params_dict = {}
+                params = {}
                 if self.possible_new_name_formats:
                     further_error_message = ungettext("  Alternatively, it must be a valid “%(sample_formats)s” name.",
                                                       "  Alternatively, it must be a valid name of one of these types: "
                                                       "%(sample_formats)s", len(self.possible_new_name_formats))
                     error_message += further_error_message
-                    params_dict.update({"sample_formats": format_enumeration(
+                    params.update({"sample_formats": format_enumeration(
                         sample_names.verbose_sample_name_format(name_format)
                         for name_format in self.possible_new_name_formats)})
-                raise ValidationError(error_message, params=params_dict, code="invalid")
+                raise ValidationError(error_message, params=params, code="invalid")
             utils.check_sample_name(match, self.user)
         if sample_names.does_sample_exist(new_name):
             raise ValidationError(_("Name does already exist in database."), code="duplicate")
