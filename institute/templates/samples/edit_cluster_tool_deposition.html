@@ -137,12 +137,12 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
                   <table style="width: 100%">
                     <tr>
                       {% if layer.comments %}
-                      <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex; width: 20%">
-                        <div>{{ layer.comments.label_tag }}<br/>{% markdown_hint %}</div>
-                          {{ layer.comments }}
-                      </td>
+                        <td style="border: 1px dashed grey; vertical-align: top; padding: 1ex; width: 20%">
+                          <div>{{ layer.comments.label_tag }}<br/>{% markdown_hint %}</div>
+                            {{ layer.comments }}
+                        </td>
                       {% else %}
-                      <td> </td>
+                        <td> </td>
                       {% endif %}
                       <td style="vertical-align: top; padding: 1ex">
                         <div style="text-align: center; margin-bottom: 1ex; font-style: italic">
