@@ -217,13 +217,15 @@ class ProcessForm(ModelForm):
             operator, external_operator = cleaned_data["combined_operator"]
             if operator:
                 if final_operator and final_operator != operator:
-                    self.add_error("combined_operator", "Your operator and combined operator didn't match.")
+                    self.add_error("combined_operator", ValidationError("Your operator and combined operator didn't match.",
+                                                                        code="invalid"))
                 else:
                     final_operator = operator
             if external_operator:
                 if final_external_operator and final_external_operator != external_operator:
                     self.add_error("combined_external_operator",
-                                   "Your external operator and combined external operator didn't match.")
+                                   ValidationError("Your external operator and combined external operator didn't match.",
+                                                   code="invalid"))
                 else:
                     final_external_operator = external_operator
         if not final_operator:
@@ -259,9 +261,10 @@ class ProcessForm(ModelForm):
             dead_samples_list = dead_samples(samples, self.cleaned_data["timestamp"])
             if dead_samples_list:
                 samples_list = format_enumeration(dead_samples_list)
-                self.add_error("timestamp", ungettext_lazy("The sample {samples} is already dead at this time.",
-                                                           "The samples {samples} are already dead at this time.",
-                                                           len(dead_samples_list)).format(samples=samples_list))
+                self.add_error("timestamp", ValidationError(
+                    ungettext_lazy("The sample {samples} is already dead at this time.",
+                                   "The samples {samples} are already dead at this time.",
+                                   len(dead_samples_list)), params={"samples": samples_list}, code="invalid"))
                 referentially_valid = False
         return referentially_valid
 

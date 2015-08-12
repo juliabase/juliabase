@@ -492,7 +492,9 @@ main form gets additional cleaning methods::
             cleaned_data = super(DepositionForm, self).clean()
             if "number" in cleaned_data and "timestamp" in cleaned_data:
                 if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
-                    self.add_error("number", _("The first two digits must match the year of the deposition."))
+                    self.add_error("number", ValidationError(
+                        _("The first two digits must match the year of the deposition."),
+                        code="invalid"))
             return cleaned_data
 
 The view class must override :py:meth:`get_next_id` because the ID of a

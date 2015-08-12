@@ -90,9 +90,10 @@ class NewTopicForm(forms.Form):
             topic_name = cleaned_data["new_topic_name"]
             if Topic.objects.filter(name=topic_name, department=self.user.jb_user_details.department,
                                     parent_topic=parent_topic).exists():
-                self.add_error("new_topic_name", _("This topic name is already used."))
+                self.add_error("new_topic_name", ValidationError(_("This topic name is already used."), code="duplicate"))
         if parent_topic and parent_topic.manager != cleaned_data.get("topic_manager"):
-            self.add_error("topic_manager", _("The topic manager must be the topic manager from the upper topic."))
+            self.add_error("topic_manager", ValidationError(
+                _("The topic manager must be the topic manager from the upper topic."), code="invalid"))
         return cleaned_data
 
 
@@ -193,8 +194,8 @@ class EditTopicForm(forms.Form):
         if "members" in cleaned_data and "confidential" in cleaned_data:
             if cleaned_data["confidential"] and \
                     not any(permissions.has_permission_to_edit_topic(user, self.topic) for user in cleaned_data["members"]):
-                self.add_error("members",
-                               _("In confidential topics, at least one member must have permission to edit the topic."))
+                self.add_error("members", ValidationError(
+                    _("In confidential topics, at least one member must have permission to edit the topic."), code="invalid"))
         return cleaned_data
 
 

@@ -107,7 +107,8 @@ class SubstrateForm(forms.ModelForm):
         cleaned_data = super(SubstrateForm, self).clean()
         if "material" in cleaned_data and "comments" in cleaned_data:
             if cleaned_data["material"] == "custom" and not cleaned_data["comments"]:
-                self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
+                self.add_error("comments", ValidationError(_("For a custom substrate, you must give substrate comments."),
+                                                           code="invalid"))
         return cleaned_data
 
 

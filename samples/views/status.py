@@ -110,10 +110,11 @@ class StatusForm(forms.ModelForm):
         else:
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
         if cleaned_data["begin"] > cleaned_data["end"]:
-            self.add_error("begin", _("The begin must be before the end."))
+            self.add_error("begin", ValidationError(_("The begin must be before the end."), code="invalid"))
             del cleaned_data["begin"]
         if cleaned_data["status_level"] in ["red", "yellow"] and not cleaned_data.get("message"):
-            self.add_error("message", _("A message must be given when the status level is red or yellow."))
+            self.add_error("message", ValidationError(
+                _("A message must be given when the status level is red or yellow."), code="required"))
         return cleaned_data
 
 

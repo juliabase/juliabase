@@ -97,19 +97,19 @@ class OriginalDataForm(Form):
             if sample and not sample_names.valid_new_sample_name(sample.name, new_name) and \
                not new_name.startswith(sample.name):
                 error_message = _("The new name must begin with the old name.")
+                params = {}
                 old_sample_name_format = sample_names.sample_name_format(sample.name)
                 possible_new_name_formats = \
                         settings.SAMPLE_NAME_FORMATS[old_sample_name_format].get("possible_renames", set())
                 if possible_new_name_formats:
-                    further_error_message = ungettext("  Alternatively, it must be a valid “{sample_formats}” name.",
-                                                      "  Alternatively, it must be a valid name of one of these types: "
-                                                      "{sample_formats}.", len(possible_new_name_formats))
-                    further_error_message = further_error_message.format(sample_formats=format_enumeration(
-                        sample_names.verbose_sample_name_format(name_format) for name_format in possible_new_name_formats))
-                    error_message += further_error_message
+                    error_message += ungettext("  Alternatively, it must be a valid “%(sample_formats)s” name.",
+                                               "  Alternatively, it must be a valid name of one of these types: "
+                                               "%(sample_formats)s.", len(possible_new_name_formats))
+                    params.update({"sample_formats": format_enumeration(
+                        sample_names.verbose_sample_name_format(name_format) for name_format in possible_new_name_formats)})
                 if sample_names.valid_new_sample_name(sample.name, self.deposition_number):
                     error_message += _("  Or, the new name must be or begin with the deposition number.")
-                self.add_error("new_name", error_message)
+                self.add_error("new_name", ValidationError(error_message, params=params, code="invalid"))
         return cleaned_data
 
 
@@ -303,27 +303,31 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
         if original_data_form.is_valid():
             original_sample = original_data_form.cleaned_data["sample"]
             if original_sample in original_samples:
-                original_data_form.add_error("sample",
-                                             _("Sample {sample} occurs multiple times.").format(sample=original_sample))
+                original_data_form.add_error("sample", ValidationError(
+                    _("Sample %(sample)s occurs multiple times."), params={"sample": original_sample}, code="invalid"))
                 referentially_valid = False
             original_samples.add(original_sample)
             if original_sample not in samples:
-                original_data_form.add_error("sample",
-                             _("Sample {sample} doesn't belong to this deposition.").format(sample=original_sample))
+                original_data_form.add_error("sample", ValidationError(
+                    _("Sample %(sample)s doesn't belong to this deposition."), params={"sample": original_sample},
+                    code="invalid"))
                 referentially_valid = False
             new_name = original_data_form.cleaned_data["new_name"]
             if new_name in new_names:
-                original_data_form.add_error("new_name", _("This sample name has been used already on this page."))
+                original_data_form.add_error("new_name", ValidationError(
+                    _("This sample name has been used already on this page."), code="invalid"))
                 referentially_valid = False
             new_names.add(new_name)
             if more_than_one_piece and new_name == deposition.number:
-                original_data_form.add_error("new_name", _("Since there is more than one piece, the new name "
-                                                   "must not be exactly the deposition's name."))
+                original_data_form.add_error("new_name", ValidationError(
+                    _("Since there is more than one piece, the new name must not be exactly the deposition's name."),
+                    code="invalid"))
                 referentially_valid = False
     if all(original_data_form.is_valid() for original_data_form in original_data_forms):
         assert len(original_samples) <= len(samples)
         if len(original_samples) < len(samples):
-            original_data_form.add_error(None, _("At least one sample of the original deposition is missing."))
+            original_data_form.add_error(None, ValidationError(
+                _("At least one sample of the original deposition is missing."), code="required"))
             referentially_valid = False
     for new_name_forms, original_data_form in zip(new_name_form_lists, original_data_forms):
         if original_data_form.is_valid():
@@ -331,8 +335,8 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
             if deposition != original_sample.processes.exclude(content_type=ContentType.objects.
                                                                get_for_model(models.Result)) \
                 .order_by("-timestamp")[0].actual_instance and original_data_form.cleaned_data["number_of_pieces"] > 1:
-                original_data_form.add_error("sample",
-                     _("The sample can't be split, because the deposition is not the latest process."))
+                original_data_form.add_error("sample", ValidationError(
+                    _("The sample can't be split, because the deposition is not the latest process."), code="invalid"))
                 referentially_valid = False
             else:
                 for new_name_form in new_name_forms:
@@ -340,21 +344,23 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                         new_name = new_name_form.cleaned_data["new_name"]
                         if original_data_form.cleaned_data["number_of_pieces"] == 1:
                             if new_name != original_data_form.cleaned_data["new_name"]:
-                                new_name_form.add_error("new_name",
-                                                        _("If you don't split, you can't rename the single piece."))
+                                new_name_form.add_error("new_name", ValidationError(
+                                    _("If you don't split, you can't rename the single piece."), code="invalid"))
                                 referentially_valid = False
                         else:
                             if new_name in new_names:
-                                new_name_form.add_error("new_name",
-                                                        _("This sample name has been used already on this page."))
+                                new_name_form.add_error("new_name", ValidationError(
+                                    _("This sample name has been used already on this page."), code="invalid"))
                                 referentially_valid = False
                             new_names.add(new_name)
                             if not new_name.startswith(original_data_form.cleaned_data["new_name"]):
-                                new_name_form.add_error("new_name", _("If you choose a deposition-style name, it must begin "
-                                                              "with the parent's new name."))
+                                new_name_form.add_error("new_name", ValidationError(
+                                    _("If you choose a deposition-style name, it must begin with the parent's new name."),
+                                    code="invalid"))
                                 referentially_valid = False
                             if sample_names.does_sample_exist(new_name):
-                                new_name_form.add_error("new_name", _("This sample name exists already."))
+                                new_name_form.add_error("new_name", ValidationError(_("This sample name exists already."),
+                                                                                    code="duplicate"))
                                 referentially_valid = False
     return referentially_valid
 

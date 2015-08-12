@@ -23,6 +23,7 @@ from __future__ import absolute_import, unicode_literals
 import copy, datetime
 from django import forms
 from django.contrib.auth.models import User
+from django.forms.utils import ValidationError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -179,7 +180,7 @@ class TaskForm(forms.ModelForm):
         cleaned_data = super(TaskForm, self).clean()
         if cleaned_data.get("status") in ["2 accepted", "3 in progress", "0 finished"]:
             if not cleaned_data.get("operator"):
-                self.add_error("operator", _("With this status, you must set an operator."))
+                self.add_error("operator", ValidationError(_("With this status, you must set an operator."), code="required"))
         return cleaned_data
 
 

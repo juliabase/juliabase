@@ -35,6 +35,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 from django.utils.text import capfirst
+from django.forms.utils import ValidationError
 import django.forms as forms
 from jb_common.signals import storage_changed
 from jb_common.utils.base import static_file_response, is_update_necessary, mkdirs, help_link
@@ -72,7 +73,8 @@ def save_image_file(image_data, result, related_data_form):
             elif chunk.startswith(b"%PDF"):
                 new_image_type = "pdf"
             else:
-                related_data_form.add_error("image_file", _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."))
+                related_data_form.add_error("image_file", ValidationError(
+                    _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."), code="invalid"))
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
                 os.remove(result.get_image_locations()["image_file"])
@@ -162,9 +164,11 @@ class RelatedDataForm(forms.Form):
         if samples is not None and sample_series is not None:
             for sample_or_series in set(samples + list(sample_series)) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
-                    self.add_error(None, _("You don't have the permission to add the result to all selected samples/series."))
+                    self.add_error(None, ValidationError(
+                        _("You don't have the permission to add the result to all selected samples/series."),
+                        code="forbidden"))
             if not samples and not sample_series:
-                self.add_error(None, _("You must select at least one samples/series."))
+                self.add_error(None, ValidationError(_("You must select at least one samples/series."), code="required"))
         return cleaned_data
 
 
@@ -388,15 +392,16 @@ class FormSet(object):
             new_related_objects = set(self.related_data_form.cleaned_data["samples"]) | \
                 set(self.related_data_form.cleaned_data["sample_series"])
             if new_related_objects - old_related_objects and not self.edit_description_form.cleaned_data["important"]:
-                self.edit_description_form.add_error("important",
-                                                     _("Adding samples or sample series must be marked as important."))
+                self.edit_description_form.add_error("important", ValidationError(
+                    _("Adding samples or sample series must be marked as important."), code="required"))
                 referentially_valid = False
         quantities = set()
         for quantity_form in self.quantity_forms:
             if quantity_form.is_valid():
                 quantity = quantity_form.cleaned_data["quantity"]
                 if quantity in quantities:
-                    quantity_form.add_error("quantity", _("This quantity is already used in this table."))
+                    quantity_form.add_error("quantity", ValidationError(_("This quantity is already used in this table."),
+                                                                        code="invalid"))
                     referentially_valid = False
                 else:
                     quantities.add(quantity)

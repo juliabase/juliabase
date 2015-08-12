@@ -30,6 +30,7 @@ import django.contrib.auth.models
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
+from django.forms.utils import ValidationError
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.contrib.contenttypes.models import ContentType
@@ -182,11 +183,12 @@ def is_referentially_valid(withdraw_form, approve_form):
     referencially_valid = True
     if (approve_form and approve_form.cleaned_data["close"]) and \
             (withdraw_form and withdraw_form.cleaned_data["close"]):
-        withdraw_form.add_error(None, _("You can't withdraw and approve at the same time."))
+        withdraw_form.add_error(None, ValidationError(_("You can't withdraw and approve at the same time."), code="invalid"))
         referencially_valid = False
     if (not approve_form or not approve_form.cleaned_data["close"]) and \
             (not withdraw_form or not withdraw_form.cleaned_data["close"]):
-        withdraw_form.add_error(None, _("You must select exactly one option, or leave this page."))
+        withdraw_form.add_error(None, ValidationError(_("You must select exactly one option, or leave this page."),
+                                                      code="invalid"))
         referencially_valid = False
     return referencially_valid
 

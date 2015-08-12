@@ -123,7 +123,8 @@ def is_referentially_valid(samples, new_name_forms):
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["name"]
             if new_name in new_names:
-                new_name_form.add_error("name", _("This sample name has been used already on this page."))
+                new_name_form.add_error("name", ValidationError(_("This sample name has been used already on this page."),
+                                                                code="invalid"))
                 referentially_valid = False
             else:
                 new_names.add(new_name)

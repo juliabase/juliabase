@@ -234,18 +234,19 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
     """
     referentially_valid = global_data_form.cleaned_data["finished"]
     if not new_name_forms:
-        global_data_form.add_error(None, _("You must split into at least one piece."))
+        global_data_form.add_error(None, ValidationError(_("You must split into at least one piece."), code="required"))
         referentially_valid = False
     if global_data_form.is_valid() and global_data_form.cleaned_data["sample_completely_split"] and \
             number_of_old_pieces + len(new_name_forms) < 2:
-        global_data_form.add_error(None, _("You must split into at least two pieces if the split is complete."))
+        global_data_form.add_error(None, ValidationError(
+            _("You must split into at least two pieces if the split is complete."), code="required"))
         referentially_valid = False
     new_names = set()
     for new_name_form in new_name_forms:
         if new_name_form.is_valid():
             new_name = new_name_form.cleaned_data["new_name"]
             if new_name in new_names:
-                new_name_form.add_error(None, _("Name is already given."))
+                new_name_form.add_error(None, ValidationError(_("Name is already given."), code="invalid"))
                 referentially_valid = False
             new_names.add(new_name)
     return referentially_valid

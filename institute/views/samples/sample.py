@@ -120,9 +120,11 @@ class AddSamplesForm(forms.Form):
     def clean(self):
         cleaned_data = super(AddSamplesForm, self).clean()
         if cleaned_data["substrate"] == "custom" and not cleaned_data.get("substrate_comments"):
-            self.add_error("substrate_comments", _("For a custom substrate, you must give substrate comments."))
+            self.add_error("substrate_comments",
+                           ValidationError(_("For a custom substrate, you must give substrate comments."), code="required"))
         if cleaned_data.get("rename") == "cleaning" and not cleaned_data.get("cleaning_number"):
-            self.add_error("cleaning_number", _("You must provide a cleaning number if you want to use it for the names."))
+            self.add_error("cleaning_number", ValidationError(
+                _("You must provide a cleaning number if you want to use it for the names."), code="required"))
         return cleaned_data
 
 

@@ -27,6 +27,7 @@
 from __future__ import unicode_literals, absolute_import
 
 from django.db.models import Max
+from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext, ugettext
 from institute import models as institute_models
 import samples.utils.views as utils
@@ -41,7 +42,8 @@ class SubstrateForm(utils.ProcessForm):
     def clean(self):
         cleaned_data = super(SubstrateForm, self).clean()
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
-            self.add_error("comments", _("For a custom substrate, you must give substrate comments."))
+            self.add_error("comments", ValidationError(_("For a custom substrate, you must give substrate comments."),
+                                                       code="required"))
         return cleaned_data
 
 

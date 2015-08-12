@@ -612,7 +612,7 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
     def is_referentially_valid(self):
         referentially_valid = super(SubprocessesMixin, self).is_referentially_valid()
         if not self.forms["subprocesses"]:
-            self.forms["process"].add_error(None, _("No subprocesses given."))
+            self.forms["process"].add_error(None, ValidationError(_("No subprocesses given."), code="required"))
             referentially_valid = False
         return referentially_valid
 
@@ -957,7 +957,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         """
         referentially_valid = super(MultipleStepsMixin, self).is_referentially_valid()
         if not self.forms["steps"]:
-            self.forms["process"].add_error(None, self.error_message_no_steps)
+            self.forms["process"].add_error(None, ValidationError(self.error_message_no_steps, code="required"))
             referentially_valid = False
         return referentially_valid
 

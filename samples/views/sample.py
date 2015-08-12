@@ -106,8 +106,8 @@ def is_referentially_valid(sample, sample_form, edit_description_form):
              sample_form.cleaned_data["currently_responsible_person"] != sample.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
-        edit_description_form.add_error("important",
-                     _("Changing the topic or the responsible person must be marked as important."))
+        edit_description_form.add_error("important", ValidationError(
+            _("Changing the topic or the responsible person must be marked as important."), code="required"))
     return referentially_valid
 
 
@@ -1026,7 +1026,8 @@ class SampleRenameForm(forms.Form):
         old_name = cleaned_data.get("old_name", "").strip()
         new_name = cleaned_data.get("new_name", "").strip()
         if new_name and new_name == old_name:
-            self.add_error("new_name", _("The new name must be different from the old name."))
+            self.add_error("new_name", ValidationError(_("The new name must be different from the old name."),
+                                                       code="invalid"))
             del cleaned_data["new_name"]
         return cleaned_data
 

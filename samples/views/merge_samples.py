@@ -76,17 +76,18 @@ class MergeSamplesForm(forms.Form):
         from_sample = cleaned_data.get("from_sample")
         to_sample = cleaned_data.get("to_sample")
         if from_sample and not to_sample:
-            self.add_error(None, _("You must select a target sample."))
+            self.add_error(None, ValidationError(_("You must select a target sample."), code="required"))
         elif not from_sample and to_sample:
-            self.add_error(None, _("You must select a source sample."))
+            self.add_error(None, ValidationError(_("You must select a source sample."), code="required"))
         elif from_sample and to_sample:
             if not (from_sample.currently_responsible_person == to_sample.currently_responsible_person == self.user) \
                     and not self.user.is_superuser:
-                self.add_error(None, _("You must be the currently responsible person of both samples."))
+                self.add_error(None, ValidationError(_("You must be the currently responsible person of both samples."),
+                                                     code="forbidden"))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             if from_sample == to_sample:
-                self.add_error(None, _("You can't merge a sample into itself."))
+                self.add_error(None, ValidationError(_("You can't merge a sample into itself."), code="invalid"))
                 cleaned_data.pop(from_sample, None)
                 cleaned_data.pop(to_sample, None)
             sample_death = get_first_process(to_sample, models.SampleDeath)
@@ -98,12 +99,14 @@ class MergeSamplesForm(forms.Form):
                     pass
                 else:
                     if sample_death and sample_death.timestamp <= latest_process.timestamp:
-                        self.add_error(None, _("One or more processes would be after sample death of {to_sample}.").format(
-                                to_sample=to_sample.name))
+                        self.add_error(None, ValidationError(
+                            _("One or more processes would be after sample death of %(to_sample)s."),
+                            params={"to_sample": to_sample.name}, code="invalid"))
                         cleaned_data.pop(from_sample, None)
                     if sample_split and sample_split.timestamp <= latest_process.timestamp:
-                        self.add_error(None, _("One or more processes would be after sample split of {to_sample}.").format(
-                                to_sample=to_sample.name))
+                        self.add_error(None, ValidationError(
+                            _("One or more processes would be after sample split of %(to_sample)s."),
+                            params={"to_sample": to_sample.name}, code="invalid"))
                         cleaned_data.pop(from_sample, None)
         return cleaned_data
 
@@ -155,11 +158,12 @@ def is_referentially_valid(merge_samples_forms):
             from_sample = merge_samples_form.cleaned_data["from_sample"]
             to_sample = merge_samples_form.cleaned_data["to_sample"]
             if from_sample in from_samples or to_sample in from_samples:
-                merge_samples_form.add_error(None, _("You can merge a sample only once."))
+                merge_samples_form.add_error(None, ValidationError(_("You can merge a sample only once."), code="invalid"))
                 referentially_valid = False
             if from_sample in to_samples:
-                merge_samples_form.add_error(None,
-                             _("You can't merge a sample which was merged shortly before.  Do this in a separate call."))
+                merge_samples_form.add_error(None, ValidationError(
+                    _("You can't merge a sample which was merged shortly before.  Do this in a separate call."),
+                    code="invalid"))
                 referentially_valid = False
             if from_sample:
                 from_samples.add(from_sample)
@@ -167,7 +171,7 @@ def is_referentially_valid(merge_samples_forms):
                 to_samples.add(to_sample)
     if referentially_valid and all(merge_samples_form.is_valid() for merge_samples_form in merge_samples_forms) \
             and not from_samples:
-        merge_samples_forms[0].add_error(None, _("No samples selected."))
+        merge_samples_forms[0].add_error(None, ValidationError(_("No samples selected."), code="required"))
         referentially_valid = False
     return referentially_valid
 

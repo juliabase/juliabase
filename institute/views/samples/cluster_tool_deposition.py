@@ -30,6 +30,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.forms.utils import ValidationError
 import jb_common.utils.base
 import samples.utils.views as utils
 import institute.utils.views as form_utils
@@ -51,7 +52,8 @@ class DepositionForm(utils.DepositionForm):
         cleaned_data = super(DepositionForm, self).clean()
         if "number" in cleaned_data and "timestamp" in cleaned_data:
             if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
-                self.add_error("number", _("The first two digits must match the year of the deposition."))
+                self.add_error("number", ValidationError(_("The first two digits must match the year of the deposition."),
+                                                         code="invalid"))
         return cleaned_data
 
 

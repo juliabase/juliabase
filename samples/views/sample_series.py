@@ -230,8 +230,8 @@ def is_referentially_valid(sample_series, sample_series_form, edit_description_f
              sample_series.currently_responsible_person) and \
              not edit_description_form.cleaned_data["important"]:
         referentially_valid = False
-        edit_description_form.add_error("important",
-                     _("Changing the topic or the responsible person must be marked as important."))
+        edit_description_form.add_error("important", ValidationError(
+            _("Changing the topic or the responsible person must be marked as important."), code="required"))
     return referentially_valid
 
 
@@ -308,12 +308,13 @@ def new(request):
             full_name = "{0}-{1}-{2}".format(
                 request.user.username, timestamp.strftime("%y"), sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).exists():
-                sample_series_form.add_error("short_name", _("This sample series name is already given."))
+                sample_series_form.add_error("short_name", ValidationError(_("This sample series name is already given."),
+                                                                           code="duplicate"))
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
-                error_message = ungettext("The name is {number} letter too long.", "The name is {number} letters too long.",
-                                          overfull_letters).format(number=overfull_letters)
-                sample_series_form.add_error("short_name", error_message)
+                sample_series_form.add_error("short_name", ValidationError(
+                    ungettext("The name is %(number)s letter too long.", "The name is %(number)s letters too long.",
+                              overfull_letters), params={"number": overfull_letters}, code="invalid"))
             else:
                 sample_series = sample_series_form.save(commit=False)
                 sample_series.name = full_name

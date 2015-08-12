@@ -99,9 +99,11 @@ class ActionForm(forms.Form):
         cleaned_data = super(ActionForm, self).clean()
         if cleaned_data["copy_to_user"]:
             if not cleaned_data["comment"]:
-                self.add_error("comment", _("If you copy samples over to another person, you must enter a short comment."))
+                self.add_error("comment", ValidationError(
+                    _("If you copy samples over to another person, you must enter a short comment."), code="required"))
         if cleaned_data["clearance"] is not None and not cleaned_data.get("copy_to_user"):
-            self.add_error("copy_to_user", _("If you set a clearance, you must copy samples to another user."))
+            self.add_error("copy_to_user", ValidationError(
+                _("If you set a clearance, you must copy samples to another user."), code="required"))
             del cleaned_data["clearance"]
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
             cleaned_data["new_current_location"]) and not cleaned_data.get("comment"):
@@ -138,9 +140,9 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     for sample in my_samples_form.cleaned_data["samples"]:
                         permissions.assert_can_edit_sample(current_user, sample)
                 except permissions.PermissionError:
-                    action_form.add_error(None,
-                                 _("""You must be the currently responsible person for samples you'd like to change
-                                  or the topic manager from the samples topics."""))
+                    action_form.add_error(None, ValidationError(
+                        _("""You must be the currently responsible person for samples you'd like to change
+                        or the topic manager from the samples topics."""), code="forbidden"))
                     referentially_valid = False
         if action_data["clearance"] is None and action_data["copy_to_user"]:
             try:
@@ -152,8 +154,9 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     for user in action_data["copy_to_user"]:
                         permissions.assert_can_fully_view_sample(user, sample)
             except permissions.PermissionError:
-                action_form.add_error("clearance", _("If you copy samples over to another person who cannot fully view one of the "
-                                            "samples, you must select a clearance option."))
+                action_form.add_error("clearance", ValidationError(
+                    _("If you copy samples over to another person who cannot fully view one of the "
+                      "samples, you must select a clearance option."), code="required"))
                 referentially_valid = False
         if action_data.get("clearance") is not None:
             failed_samples = []
@@ -163,8 +166,9 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                 except permissions.PermissionError:
                     failed_samples.append(sample)
             if failed_samples:
-                my_samples_form.add_error("samples", _("You cannot grant clearances for the following samples:") + " " +
-                             format_enumeration(failed_samples))
+                my_samples_form.add_error("samples", ValidationError(
+                    _("You cannot grant clearances for the following samples: %(failed_samples)s"),
+                    params={"failed_samples": format_enumeration(failed_samples)}, code="forbidden"))
                 referentially_valid = False
     return referentially_valid
 
