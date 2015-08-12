@@ -88,7 +88,7 @@ class NewNameForm(forms.Form):
         name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
         if name_format not in self.possible_new_name_formats:
             error_message = ungettext("New name must be a valid “{sample_formats}” name.",
-                                      "New name must be a valid name of one of these types: {sample_formats}",
+                                      "New name must be a valid name of one of these types: {sample_formats}.",
                                       len(self.possible_new_name_formats))
             error_message = error_message.format(sample_formats=format_enumeration(
                 sample_names.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
