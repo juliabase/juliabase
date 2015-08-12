@@ -28,9 +28,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime, os, json, subprocess
-from jb_common.signals import storage_changed
-from jb_common.utils.base import static_file_response, \
-    is_update_necessary, mkdirs
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -39,8 +36,9 @@ from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 from django.utils.text import capfirst
 import django.forms as forms
+from jb_common.signals import storage_changed
+from jb_common.utils.base import static_file_response, is_update_necessary, mkdirs, help_link
 import jb_common.utils.base
-from jb_common.utils.base import help_link
 from samples import models, permissions
 import samples.utils.views as utils
 
