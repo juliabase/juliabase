@@ -28,7 +28,8 @@ from __future__ import absolute_import, unicode_literals
 import datetime, json
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils.text import capfirst
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
@@ -36,7 +37,7 @@ from django.forms import Form
 from django import forms
 from django.forms.utils import ValidationError
 from django.contrib.contenttypes.models import ContentType
-from jb_common.utils.base import is_json_requested, unquote_view_parameters, int_or_zero
+from jb_common.utils.base import is_json_requested, unquote_view_parameters, int_or_zero, format_enumeration
 from samples import models, permissions
 import samples.utils.views as utils
 from samples.utils import sample_names
@@ -93,13 +94,22 @@ class OriginalDataForm(Form):
         if "new_name" in cleaned_data:
             new_name = cleaned_data["new_name"]
             sample = cleaned_data.get("sample")
-            if sample:
-                if not sample_names.valid_new_sample_name(sample.name, new_name):
-                    if not new_name.startswith(sample.name):
-                        self.add_error("new_name", _("The new name must begin with the old name."))
-                elif sample and sample.name != new_name and sample_names.valid_new_sample_name(sample.name, self.deposition_number):
-                    if not new_name.startswith(self.deposition_number):
-                        self.add_error("new_name", _("The new name must begin with the deposition number."))
+            if sample and not sample_names.valid_new_sample_name(sample.name, new_name) and \
+               not new_name.startswith(sample.name):
+                error_message = _("The new name must begin with the old name.")
+                old_sample_name_format = sample_names.sample_name_format(sample.name)
+                possible_new_name_formats = \
+                        settings.SAMPLE_NAME_FORMATS[old_sample_name_format].get("possible_renames", set())
+                if possible_new_name_formats:
+                    further_error_message = ungettext("  Alternatively, it must be a valid “{sample_formats}” name.",
+                                                      "  Alternatively, it must be a valid name of one of these types: "
+                                                      "{sample_formats}.", len(possible_new_name_formats))
+                    further_error_message = further_error_message.format(sample_formats=format_enumeration(
+                        sample_names.verbose_sample_name_format(name_format) for name_format in possible_new_name_formats))
+                    error_message += further_error_message
+                if sample_names.valid_new_sample_name(sample.name, self.deposition_number):
+                    error_message += _("  Or, the new name must be or begin with the deposition number.")
+                self.add_error("new_name", error_message)
         return cleaned_data
 
 
