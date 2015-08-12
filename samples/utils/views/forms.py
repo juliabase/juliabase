@@ -236,9 +236,12 @@ class ProcessForm(ModelForm):
     def is_referentially_valid(self, samples_form):
         """Test whether the forms are consistent with each other and with the database.
         In its current form, it only checks whether the sample is still “alive”
-        at the time of the measurement.
+        at the time of the measurement.  If the given ``samples_form`` is
+        unbound, the samples are not checked.  (It means that the respective
+        view does not allow to change samples connected with an existing
+        process.)
 
-        :param samples_form: a bound samples selection form
+        :param samples_form: a bound or unbound samples selection form
 
         :type samples_form: `SampleSelectForm` or `MultipleSamplesSelectForm`
 
@@ -248,7 +251,7 @@ class ProcessForm(ModelForm):
         :rtype: bool
         """
         referentially_valid = True
-        if self.is_valid() and samples_form.is_valid():
+        if self.is_valid() and samples_form.is_bound and samples_form.is_valid():
             if isinstance(samples_form, SampleSelectForm):
                 samples = [samples_form.cleaned_data["sample"]]
             else:
@@ -895,6 +898,7 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
     def __init__(self, user, deposition, preset_sample, data=None, **kwargs):
         samples = user.my_samples.all()
         important_samples = set()
+        self.always_valid = False
         if deposition:
             kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
             if deposition.finished:
@@ -906,6 +910,7 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
                 # afterwards is a source of big trouble.
                 super(DepositionSamplesForm, self).__init__(**kwargs)
                 self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+                self.always_valid = True
             else:
                 super(DepositionSamplesForm, self).__init__(data, **kwargs)
             important_samples.update(deposition.samples.all())
@@ -917,6 +922,9 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
                 self.fields["sample_list"].initial.append(preset_sample.pk)
         self.fields["sample_list"].set_samples(user, samples, important_samples)
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
+
+    def is_valid(self):
+        return self.always_valid or super(DepositionSamplesForm, self).is_valid()
 
 
 _ = ugettext
