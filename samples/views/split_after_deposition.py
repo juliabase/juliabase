@@ -349,8 +349,7 @@ def is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
                                                         _("This sample name has been used already on this page."))
                                 referentially_valid = False
                             new_names.add(new_name)
-                            if sample_names.sample_name_format(new_name) in sample_names.get_renamable_name_formats() and \
-                                    not new_name.startswith(original_data_form.cleaned_data["new_name"]):
+                            if not new_name.startswith(original_data_form.cleaned_data["new_name"]):
                                 new_name_form.add_error("new_name", _("If you choose a deposition-style name, it must begin "
                                                               "with the parent's new name."))
                                 referentially_valid = False
