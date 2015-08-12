@@ -29,7 +29,6 @@ processes.
 from __future__ import absolute_import, unicode_literals
 
 from django import forms
-from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext
 import jb_common.utils.base
 import samples.utils.views as utils
