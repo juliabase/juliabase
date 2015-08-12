@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-23 22:38+0200\n"
-"PO-Revision-Date: 2015-06-02 04:27+0200\n"
+"POT-Creation-Date: 2015-08-12 16:59+0200\n"
+"PO-Revision-Date: 2015-08-12 17:03+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -118,7 +118,7 @@ msgid "app label"
 msgstr "App-Label"
 
 #: jb_common/models.py:48 jb_common/models.py:70 jb_common/models.py:134
-#: jb_common/templates/jb_common/show_user.html:37
+#: jb_common/templates/jb_common/show_user.html:36
 msgid "department"
 msgstr "Abteilung"
 
@@ -213,38 +213,38 @@ msgstr ""
 "Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen "
 "nicht-leeren Wert angeben."
 
-#: jb_common/search.py:262
+#: jb_common/search.py:263
 msgid "explicitly empty"
 msgstr "explizit leer"
 
-#: jb_common/search.py:350
+#: jb_common/search.py:351
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 "Der Zeitstempel passte nicht in das Muster JJJJ-MM-TT HH:MM:SS oder einem "
 "vorderen Teil davon."
 
-#: jb_common/search.py:378
+#: jb_common/search.py:380
 msgid "Invalid date or time."
 msgstr "Ungültiges Datum oder ungültige Zeit."
 
-#: jb_common/search.py:409
+#: jb_common/search.py:411
 msgid "doesn't matter"
 msgstr "egal"
 
-#: jb_common/search.py:409 jb_common/templatetags/juliabase.py:164
+#: jb_common/search.py:411 jb_common/templatetags/juliabase.py:164
 msgid "yes"
 msgstr "ja"
 
-#: jb_common/search.py:409 jb_common/templatetags/juliabase.py:164
+#: jb_common/search.py:411 jb_common/templatetags/juliabase.py:164
 msgid "no"
 msgstr "nein"
 
-#: jb_common/search.py:431
+#: jb_common/search.py:433
 msgid "containing"
 msgstr "enthaltend"
 
-#: jb_common/search.py:767
+#: jb_common/search.py:769
 msgid "restrict to"
 msgstr "beschränken auf"
 
@@ -271,15 +271,15 @@ msgstr ""
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: jb_common/templates/500.html:39 jb_common/templates/jb_base.html:90
+#: jb_common/templates/500.html:38 jb_common/templates/jb_base.html:88
 msgid "Log in"
 msgstr "Anmelden"
 
-#: jb_common/templates/500.html:53
+#: jb_common/templates/500.html:51
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: jb_common/templates/500.html:54
+#: jb_common/templates/500.html:52
 msgid ""
 "\n"
 "You experienced an internal error in the JuliaBase server software.  The\n"
@@ -294,32 +294,32 @@ msgstr ""
 "den Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, "
 "sobald der Fehler behoben ist.\n"
 
-#: jb_common/templates/jb_base.html:61
+#: jb_common/templates/jb_base.html:59
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: jb_common/templates/jb_base.html:67
+#: jb_common/templates/jb_base.html:65
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: jb_common/templates/jb_base.html:69
+#: jb_common/templates/jb_base.html:67
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: jb_common/templates/jb_base.html:74
+#: jb_common/templates/jb_base.html:72
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: jb_common/templates/jb_base.html:80
+#: jb_common/templates/jb_base.html:78
 msgid "Help"
 msgstr "Hilfe"
 
-#: jb_common/templates/jb_base.html:86
+#: jb_common/templates/jb_base.html:84
 msgid "Log out"
 msgstr "Abmelden"
 
-#: jb_common/templates/jb_base.html:107
+#: jb_common/templates/jb_base.html:104
 msgid "JuliaBase logo"
 msgstr "JuliaBase-Logo"
 
@@ -337,18 +337,6 @@ msgstr ""
 "dann zweimal (um sicherzustellen, dass Sie es korrekt eingegeben haben) das "
 "neue Kennwort ein."
 
-#: jb_common/templates/jb_common/change_password.html:33
-msgid "Old password:"
-msgstr "Altes Passwort:"
-
-#: jb_common/templates/jb_common/change_password.html:35
-msgid "New password:"
-msgstr "Neues Passwort:"
-
-#: jb_common/templates/jb_common/change_password.html:37
-msgid "Confirm password:"
-msgstr "Passwort wiederholen:"
-
 #: jb_common/templates/jb_common/change_password.html:39
 msgid "Change my password"
 msgstr "Mein Passwort ändern"
@@ -364,16 +352,7 @@ msgstr ""
 "Ihr Benutzername und Ihr Passwort passen nicht zusammen. Bitte versuchen Sie "
 "es noch einmal."
 
-#: jb_common/templates/jb_common/login.html:34
-#: jb_common/templates/jb_common/show_user.html:27
-msgid "Username"
-msgstr "Benutzername"
-
-#: jb_common/templates/jb_common/login.html:35
-msgid "Password"
-msgstr "Passwort"
-
-#: jb_common/templates/jb_common/login.html:40
+#: jb_common/templates/jb_common/login.html:38
 msgid "login"
 msgstr "Anmelden"
 
@@ -424,7 +403,7 @@ msgid "result"
 msgstr "Ergebnis"
 
 #. Translators: result of markdown conversion
-#: jb_common/templates/jb_common/markdown_sandbox.html:71
+#: jb_common/templates/jb_common/markdown_sandbox.html:69
 msgid "Generate result"
 msgstr "Ergebnis erzeugen"
 
@@ -436,7 +415,11 @@ msgstr "Das Passwort wurde erfolgreich geändert"
 msgid "Your password was changed."
 msgstr "Ihr Passwort wurde geändert."
 
-#: jb_common/templates/jb_common/show_user.html:31
+#: jb_common/templates/jb_common/show_user.html:26
+msgid "Username"
+msgstr "Benutzername"
+
+#: jb_common/templates/jb_common/show_user.html:30
 msgid "Email address"
 msgstr "Email-Adresse"
 
@@ -451,9 +434,9 @@ msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
 #: jb_common/utils/base.py:200
-#, python-brace-format
-msgid "Couldn't open {filename}."
-msgstr "Konnte {filename} nicht öffnen."
+#, python-format
+msgid "Couldn't open %(filename)s."
+msgstr "Konnte %(filename)s nicht öffnen."
 
 #: jb_common/utils/base.py:214
 msgid "This file is not in an allowed directory."
@@ -500,6 +483,18 @@ msgstr "Sandkasten"
 #: jb_common/views.py:98
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
+
+#~ msgid "Old password:"
+#~ msgstr "Altes Passwort:"
+
+#~ msgid "New password:"
+#~ msgstr "Neues Passwort:"
+
+#~ msgid "Confirm password:"
+#~ msgstr "Passwort wiederholen:"
+
+#~ msgid "Password"
+#~ msgstr "Passwort"
 
 #~ msgid "Department"
 #~ msgstr "Abteilung"

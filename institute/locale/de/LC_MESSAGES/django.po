@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-23 22:46+0200\n"
-"PO-Revision-Date: 2015-07-23 22:46+0200\n"
+"POT-Creation-Date: 2015-08-12 16:59+0200\n"
+"PO-Revision-Date: 2015-08-12 19:19+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -585,15 +585,15 @@ msgstr ""
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: institute/templates/500.html:42
+#: institute/templates/500.html:41
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: institute/templates/500.html:56
+#: institute/templates/500.html:54
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: institute/templates/500.html:57
+#: institute/templates/500.html:55
 msgid ""
 "\n"
 "<p>You experienced an internal error in the JuliaBase server software.  The\n"
@@ -666,7 +666,7 @@ msgstr "JuliaBase-Logo"
 #: institute/templates/samples/add_claim_oldstyle.html:30
 #: institute/templates/samples/add_claim_oldstyle.html:31
 #: institute/templates/samples/add_samples.html:30
-#: institute/templates/samples/edit_sample.html:36
+#: institute/templates/samples/edit_sample.html:35
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -698,26 +698,26 @@ msgstr "Fehler in der Deposition"
 msgid "Error in sample list"
 msgstr "Fehler in Probenliste"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:84
-#: institute/templates/samples/edit_five_chamber_deposition.html:77
-#: institute/templates/samples/edit_five_chamber_deposition.html:78
-#: institute/templates/samples/edit_sample.html:61
+#: institute/templates/samples/edit_cluster_tool_deposition.html:78
+#: institute/templates/samples/edit_five_chamber_deposition.html:69
+#: institute/templates/samples/edit_five_chamber_deposition.html:70
+#: institute/templates/samples/edit_sample.html:58
 msgid "Error in layer"
 msgstr "Fehler in der Schicht"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:96
+#: institute/templates/samples/edit_cluster_tool_deposition.html:89
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:163
+#: institute/templates/samples/edit_cluster_tool_deposition.html:149
 msgid "Gas flows in sccm"
 msgstr "Gasflüsse in sccm"
 
-#: institute/templates/samples/edit_five_chamber_deposition.html:115
+#: institute/templates/samples/edit_five_chamber_deposition.html:102
 msgid "Error with adding layers"
 msgstr "Fehler beim hinzufügen von Schichten"
 
-#: institute/templates/samples/edit_five_chamber_deposition.html:116
+#: institute/templates/samples/edit_five_chamber_deposition.html:103
 msgid "Error with removing from My Samples"
 msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 
@@ -725,7 +725,7 @@ msgstr "Fehler beim Entfernen von „Meinen Schichten“"
 msgid "Error in measurement"
 msgstr "Fehler in der Messung"
 
-#: institute/templates/samples/edit_my_layers.html:35
+#: institute/templates/samples/edit_my_layers.html:34
 msgid "Error in My Layer"
 msgstr "Fehler in Meiner Schicht"
 
@@ -753,7 +753,7 @@ msgstr "Fehler beim Entfernen von „Meine Proben“"
 msgid "Informal stack"
 msgstr "Informeller Stapel"
 
-#: institute/templates/samples/edit_sample.html:56
+#: institute/templates/samples/edit_sample.html:54
 msgid "delete"
 msgstr "löschen"
 
@@ -761,7 +761,7 @@ msgstr "löschen"
 msgid "Error in solarsimulator measurements"
 msgstr "Fehler in Sonnensimulator-Messungen"
 
-#: institute/templates/samples/edit_solarsimulator_measurement.html:76
+#: institute/templates/samples/edit_solarsimulator_measurement.html:72
 msgid "Error in solarsimulator measurement"
 msgstr "Fehler in der Sonnensimulator-Messung"
 
@@ -781,7 +781,7 @@ msgstr "Fehler mit der Probenliste"
 msgid "number"
 msgstr "Nummer"
 
-#: institute/templates/samples/lab_notebook_five_chamber_deposition.html:81
+#: institute/templates/samples/lab_notebook_five_chamber_deposition.html:79
 msgid "No data found for this time range."
 msgstr "Keine Daten aus diesen Zeitraum gefunden."
 
@@ -809,7 +809,7 @@ msgstr "Depositionen nach Nummer"
 msgid "Edit “My Layers”"
 msgstr "“Meine Schichten” ändern"
 
-#: institute/templates/samples/show_five_chamber_deposition.html:58
+#: institute/templates/samples/show_five_chamber_deposition.html:54
 msgid "Silane conc."
 msgstr "Silankonz."
 
@@ -830,7 +830,7 @@ msgid "Material"
 msgstr "Material"
 
 #: institute/templatetags/institute_extras.py:79
-#: institute/views/samples/cluster_tool_deposition.py:113
+#: institute/views/samples/cluster_tool_deposition.py:112
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
@@ -840,56 +840,56 @@ msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr "Ungültige Depositionsnummer.  Sie muss von der Form JJB-NNN sein."
 
 #: institute/utils/views.py:63 institute/utils/views.py:67
-#, python-brace-format
-msgid "The deposition letter must be an uppercase “{letter}”."
-msgstr "Der Anlangen-Buchstabe muss ein großes „{letter}“ sein."
+#, python-format
+msgid "The deposition letter must be an uppercase “%(letter)s”."
+msgstr "Der Anlangen-Buchstabe muss ein großes „%(letter)s“ sein."
 
-#: institute/views/samples/claim.py:55
+#: institute/views/samples/claim.py:56
 msgid "Samples"
 msgstr "Proben"
 
-#: institute/views/samples/claim.py:55
+#: institute/views/samples/claim.py:56
 msgid "Comma-separated"
 msgstr "Komma-separiert"
 
-#: institute/views/samples/claim.py:70
-#, python-brace-format
-msgid "The name {name} appears more than once."
-msgstr "Der Name {name} kommt mehr als einmal vor."
+#: institute/views/samples/claim.py:71
+#, python-format
+msgid "The name %(name)s appears more than once."
+msgstr "Der Name %(name)s kommt mehr als einmal vor."
 
-#: institute/views/samples/claim.py:76
-#, python-brace-format
-msgid "The name {invalid_names} is not valid."
-msgid_plural "The names {invalid_names} are not valid."
-msgstr[0] "Der Name {invalid_names} ist ungültig."
-msgstr[1] "Die Namen {invalid_names} sind ungültig."
+#: institute/views/samples/claim.py:78
+#, python-format
+msgid "The name %(invalid_names)s is not valid."
+msgid_plural "The names %(invalid_names)s are not valid."
+msgstr[0] "Der Name %(invalid_names)s ist ungültig."
+msgstr[1] "Die Namen %(invalid_names)s sind ungültig."
 
-#: institute/views/samples/claim.py:87
-#, python-brace-format
-msgid "The name {existing_names} is already existing."
-msgid_plural "The names {existing_names} are already existing."
-msgstr[0] "Der Name {existing_names} existiert schon."
-msgstr[1] "Die Namen {existing_names} existieren schon."
+#: institute/views/samples/claim.py:89
+#, python-format
+msgid "The name %(existing_names)s is already existing."
+msgid_plural "The names %(existing_names)s are already existing."
+msgstr[0] "Der Name %(existing_names)s existiert schon."
+msgstr[1] "Die Namen %(existing_names)s existieren schon."
 
-#: institute/views/samples/claim.py:107 institute/views/samples/sample.py:123
+#: institute/views/samples/claim.py:110 institute/views/samples/sample.py:123
 #: institute/views/samples/substrate.py:44
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: institute/views/samples/claim.py:154
+#: institute/views/samples/claim.py:157
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: institute/views/samples/claim.py:164
+#: institute/views/samples/claim.py:167
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: institute/views/samples/claim.py:165
+#: institute/views/samples/claim.py:168
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -918,21 +918,21 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: institute/views/samples/claim.py:195
+#: institute/views/samples/claim.py:198
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: institute/views/samples/claim.py:201
+#: institute/views/samples/claim.py:204
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: institute/views/samples/cluster_tool_deposition.py:55
+#: institute/views/samples/cluster_tool_deposition.py:54
 #: institute/views/samples/five_chamber_deposition.py:48
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
-#: institute/views/samples/cluster_tool_deposition.py:113
+#: institute/views/samples/cluster_tool_deposition.py:112
 msgid "PECVD"
 msgstr "PECVD"
 
