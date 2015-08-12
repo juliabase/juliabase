@@ -253,7 +253,8 @@ class TextNullSearchField(SearchField):
             text = [value for key, value in self.cleaned_data.items() if key.endswith("_main")][0]
             explicitly_empty = [value for key, value in self.cleaned_data.items() if key.endswith("_null")][0]
             if explicitly_empty and text:
-                raise forms.ValidationError(_("You can't search for empty values while giving a non-empty value."))
+                raise forms.ValidationError(_("You can't search for empty values while giving a non-empty value."),
+                                            code="invalid")
             return cleaned_data
 
     def parse_data(self, data, prefix):
@@ -347,7 +348,8 @@ class DateTimeField(forms.Field):
             return None
         match = self.datetime_pattern.match(value)
         if not match:
-            raise forms.ValidationError(_("The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."))
+            raise forms.ValidationError(_("The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."),
+                                        code="invalid")
         year, month, day, hour, minute, second = match.groups()
         if self.with_inaccuracy:
             if month is None:
@@ -375,7 +377,7 @@ class DateTimeField(forms.Field):
         try:
             timestamp = datetime.datetime(year, month, day, hour, minute, second)
         except ValueError:
-            raise forms.ValidationError(_("Invalid date or time."))
+            raise forms.ValidationError(_("Invalid date or time."), code="invalid")
         return (timestamp, inaccuracy) if self.with_inaccuracy else timestamp
 
 

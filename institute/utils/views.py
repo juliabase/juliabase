@@ -57,12 +57,13 @@ def clean_deposition_number_field(value, letter):
     """
     if not deposition_number_pattern.match(value):
         # Translators: “YY” is year, “L” is letter, and “NNN” is number
-        raise ValidationError(_("Invalid deposition number.  It must be of the form YYL-NNN."))
+        raise ValidationError(_("Invalid deposition number.  It must be of the form YYL-NNN."), code="invalid")
     if isinstance(letter, list):
         if value[2] not in letter:
-            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(
-                letter=", ".join(letter)))
+            raise ValidationError(_("The deposition letter must be an uppercase “%(letter)s”."),
+                                  params={"letter": ", ".join(letter)}, code="invalid")
     else:
         if value[2] != letter:
-            raise ValidationError(_("The deposition letter must be an uppercase “{letter}”.").format(letter=letter))
+            raise ValidationError(_("The deposition letter must be an uppercase “%(letter)s”."), params={"letter": letter},
+                                  code="invalid")
     return value

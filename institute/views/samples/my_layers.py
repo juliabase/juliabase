@@ -54,19 +54,19 @@ class MyLayerForm(forms.Form):
         tests.
         """
         if "-" not in self.cleaned_data["deposition_and_layer"]:
-            raise ValidationError(_("Deposition and layer number must be separated by \"-\"."))
+            raise ValidationError(_("Deposition and layer number must be separated by \"-\"."), code="invalid")
         deposition_number, layer_number = self.cleaned_data["deposition_and_layer"].rsplit("-", 1)
         try:
             deposition = models.Deposition.objects.get(number=deposition_number).actual_instance
         except models.Deposition.DoesNotExist:
-            raise ValidationError(_("Deposition number doesn't exist."))
+            raise ValidationError(_("Deposition number doesn't exist."), code="invalid")
         try:
             layer_number = int(layer_number)
         except ValueError:
-            raise ValidationError(_("Layer number isn't a number."))
+            raise ValidationError(_("Layer number isn't a number."), code="invalid")
         # FixMe: Handle the case when there is no "layers" attribute
         if not deposition.layers.filter(number=layer_number).exists():
-            raise ValidationError(_("This layer does not exist in this deposition."))
+            raise ValidationError(_("This layer does not exist in this deposition."), code="invalid")
         return deposition.id, layer_number
 
 

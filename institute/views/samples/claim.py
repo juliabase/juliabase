@@ -68,26 +68,28 @@ class SamplesForm(forms.Form):
             if name:
                 if sample_names.sample_name_format(name) == "old":
                     if name in valid_names:
-                        raise ValidationError(_("The name {name} appears more than once.").format(name=name))
+                        raise ValidationError(_("The name %(name)s appears more than once."), params={"name": name},
+                                              code="invalid")
                     valid_names.append(name)
                 else:
                     invalid_names.append(name)
         if invalid_names:
             error_message = ungettext(
-                "The name {invalid_names} is not valid.", "The names {invalid_names} are not valid.",
-                len(invalid_names)).format(invalid_names=format_enumeration(invalid_names))
-            raise ValidationError(error_message)
+                "The name %(invalid_names)s is not valid.", "The names %(invalid_names)s are not valid.",
+                len(invalid_names))
+            raise ValidationError(error_message, params={"invalid_names": format_enumeration(invalid_names)}, code="invalid")
         if not valid_names:
-            raise ValidationError(self.fields["samples"].error_messages["required"])
+            raise ValidationError(self.fields["samples"].error_messages["required"], code="required")
         existing_names = [name for name in valid_names if sample_names.does_sample_exist(name)]
         if existing_names:
             # This opens a small security hole because people can find out that
             # confidential samples are existing.  However, such samples mostly
             # have non-oldstyle names anyway.
             error_message = ungettext(
-                "The name {existing_names} is already existing.", "The names {existing_names} are already existing.",
-                len(existing_names)).format(existing_names=format_enumeration(existing_names))
-            raise ValidationError(error_message)
+                "The name %(existing_names)s is already existing.", "The names %(existing_names)s are already existing.",
+                len(existing_names))
+            raise ValidationError(error_message, params={"existing_names": format_enumeration(existing_names)},
+                                  code="duplicate")
         return valid_names
 
 

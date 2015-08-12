@@ -105,7 +105,7 @@ class AddSamplesForm(forms.Form):
         """
         timestamp = self.cleaned_data["timestamp"]
         if timestamp > datetime.datetime.now():
-            raise ValidationError(_("The timestamp must not be in the future."))
+            raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
         return timestamp
 
     def clean_substrate_originator(self):

@@ -76,11 +76,12 @@ class NewTopicForm(forms.Form):
         if pk:
             parent_topic = Topic.objects.get(pk=int(pk))
             if not permissions.has_permission_to_edit_topic(self.user, parent_topic):
-                raise ValidationError(_("You are not allowed to edit the topic “{parent_topic}”.").\
-                                      format(parent_topic=parent_topic.name))
+                raise ValidationError(_("You are not allowed to edit the topic “%(parent_topic)s”."),
+                                      params={"parent_topic": parent_topic.name})
             return parent_topic
         elif not permissions.has_permission_to_edit_topic(self.user):
-            raise ValidationError(_("You are only allowed to create sub topics. You have to select an upper topic."))
+            raise ValidationError(_("You are only allowed to create sub topics. You have to select an upper topic."),
+                                  code="forbidden")
 
     def clean(self):
         cleaned_data = super(NewTopicForm, self).clean()

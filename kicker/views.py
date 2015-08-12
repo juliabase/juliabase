@@ -369,16 +369,16 @@ class UserDetailsForm(forms.ModelForm):
     def clean_nickname(self):
         nickname = self.cleaned_data["nickname"]
         if nickname and models.UserDetails.objects.exclude(user=self.user).filter(nickname=nickname).exists():
-            raise ValidationError(_("This nickname is already given."))
+            raise ValidationError(_("This nickname is already given."), code="duplicate")
         return nickname
 
     def clean_shortkey(self):
         shortkey = self.cleaned_data["shortkey"]
         if shortkey:
             if models.UserDetails.objects.exclude(user=self.user).filter(shortkey=shortkey).exists():
-                raise ValidationError(_("This shortkey is already given."))
+                raise ValidationError(_("This shortkey is already given."), code="duplicate")
             if shortkey in "sykmGQ!":
-                raise ValidationError(_("This shortkey is invalid."))
+                raise ValidationError(_("This shortkey is invalid."), code="invalid")
         return shortkey
 
 

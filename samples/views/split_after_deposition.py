@@ -63,30 +63,30 @@ class OriginalDataForm(Form):
         if "sample" in self.cleaned_data:
             new_name = self.cleaned_data["new_name"]
             if new_name != self.cleaned_data["sample"].name and sample_names.does_sample_exist(new_name):
-                raise ValidationError(_("This sample name exists already."))
+                raise ValidationError(_("This sample name exists already."), code="duplicate")
             elif sample_names.sample_name_format(new_name) == "provisional":
-                raise ValidationError(_("You must get rid of the provisional sample name."))
+                raise ValidationError(_("You must get rid of the provisional sample name."), code="invalid")
             return new_name
 
     def clean_sample(self):
         if not self.remote_client:
             sample = sample_names.get_sample(self.cleaned_data["sample"])
             if sample is None:
-                raise ValidationError(_("No sample with this name found."))
+                raise ValidationError(_("No sample with this name found."), code="invalid")
             if isinstance(sample, list):
-                raise ValidationError(_("Alias is not unique."))
+                raise ValidationError(_("Alias is not unique."), code="duplicate")
         else:
             try:
                 sample = models.Sample.objects.get(pk=int(self.cleaned_data["sample"]))
             except models.Sample.DoesNotExist:
-                raise ValidationError(_("No sample with this ID found."))
+                raise ValidationError(_("No sample with this ID found."), code="invalid")
             except ValueError:
-                raise ValidationError(_("Invalid ID format."))
+                raise ValidationError(_("Invalid ID format."), code="invalid")
         return sample
 
     def clean_number_of_pieces(self):
         if self.cleaned_data["number_of_pieces"] <= 0:
-            raise ValidationError(_("Must be at least 1."))
+            raise ValidationError(_("Must be at least 1."), code="invalid")
         return self.cleaned_data["number_of_pieces"]
 
     def clean(self):
@@ -129,7 +129,7 @@ class NewNameForm(Form):
         new_name = self.cleaned_data["new_name"]
         sample_name_format = sample_names.sample_name_format(new_name)
         if not sample_name_format:
-            raise ValidationError(_("The sample name has an invalid format."))
+            raise ValidationError(_("The sample name has an invalid format."), code="invalid")
         return new_name
 
 

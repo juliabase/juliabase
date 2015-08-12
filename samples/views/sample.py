@@ -1008,17 +1008,17 @@ class SampleRenameForm(forms.Form):
         try:
             sample = models.Sample.objects.get(name=old_name)
         except models.Sample.DoesNotExist:
-            raise ValidationError(_("This sample does not exist."))
+            raise ValidationError(_("This sample does not exist."), code="invalid")
         if not permissions.has_permission_to_rename_sample(self.user, sample):
-            raise ValidationError(_("You are not allowed to rename the sample."))
+            raise ValidationError(_("You are not allowed to rename the sample."), code="invalid")
         return old_name
 
     def clean_new_name(self):
         new_name = self.cleaned_data.get("new_name", "")
         if not new_name.strip():
-            raise ValidationError(_("New name is required."))
+            raise ValidationError(_("New name is required."), code="required")
         if models.Sample.objects.filter(name=new_name).exists():
-            raise ValidationError(_("A sample with this name already exists."))
+            raise ValidationError(_("A sample with this name already exists."), code="duplicate")
         return new_name
 
     def clean(self):

@@ -168,7 +168,7 @@ def check_markdown(text):
         elements.
     """
     if dangerous_markup_pattern.search(text):
-        raise ValidationError(_("You mustn't use image and headings syntax in Markdown markup."))
+        raise ValidationError(_("You mustn't use image and headings syntax in Markdown markup."), code="invalid")
 
 
 def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_directory=False):
@@ -197,7 +197,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
     """
     if filepath:
         def raise_inaccessible_exception():
-            raise ValidationError(_("Couldn't open {filename}.").format(filename=filepath))
+            raise ValidationError(_("Couldn't open %(filename)s."), params={"filename": filepath}, code="invalid")
         filepath = os.path.normpath(filepath)
         assert os.path.isabs(default_root)
         assert all(os.path.isabs(path) for path in allowed_roots)
@@ -211,7 +211,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
                 raise_inaccessible_exception()
             absolute_filepath = os.path.join(absolute_filepath, ".")
         if not any(os.path.commonprefix([absolute_filepath, path]) for path in allowed_roots):
-            raise ValidationError(_("This file is not in an allowed directory."))
+            raise ValidationError(_("This file is not in an allowed directory."), code="invalid")
         if not os.path.exists(absolute_filepath):
             raise_inaccessible_exception()
         if os.path.isfile(absolute_filepath):

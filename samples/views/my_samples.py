@@ -105,7 +105,7 @@ class ActionForm(forms.Form):
             del cleaned_data["clearance"]
         if (cleaned_data["new_currently_responsible_person"] or cleaned_data["new_topic"] or
             cleaned_data["new_current_location"]) and not cleaned_data.get("comment"):
-            raise ValidationError(_("If you edit samples, you must enter a short comment."))
+            raise ValidationError(_("If you edit samples, you must enter a short comment."), code="invalid")
         return cleaned_data
 
 

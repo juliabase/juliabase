@@ -61,7 +61,7 @@ class SampleDeathForm(forms.ModelForm):
         """
         reason = self.cleaned_data["reason"]
         if reason == "split" and not self.sample.last_process_if_split():
-            raise ValidationError(_("Last process wasn't a split."))
+            raise ValidationError(_("Last process wasn't a split."), code="invalid")
         return reason
 
 

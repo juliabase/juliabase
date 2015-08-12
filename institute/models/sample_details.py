@@ -389,7 +389,7 @@ class InformalLayerForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(InformalLayerForm, self).clean()
         if not cleaned_data.get("classification") and not cleaned_data.get("comments"):
-            raise ValidationError(_("You must give a classification or comments or both."))
+            raise ValidationError(_("You must give a classification or comments or both."), code="invalid")
         return cleaned_data
 
 InformalLayerFormSet = inlineformset_factory(SampleDetails, InformalLayer, extra=8, form=InformalLayerForm,

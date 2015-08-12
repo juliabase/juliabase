@@ -87,15 +87,16 @@ class NewNameForm(forms.Form):
         new_name = self.prefix_ + self.cleaned_data["name"]
         name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
         if name_format not in self.possible_new_name_formats:
-            error_message = ungettext("New name must be a valid “{sample_formats}” name.",
-                                      "New name must be a valid name of one of these types: {sample_formats}.",
+            error_message = ungettext("New name must be a valid “%(sample_formats)s” name.",
+                                      "New name must be a valid name of one of these types: %(sample_formats)s.",
                                       len(self.possible_new_name_formats))
-            error_message = error_message.format(sample_formats=format_enumeration(
-                sample_names.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats))
-            raise ValidationError(error_message)
+            raise ValidationError(error_message,
+                params={"sample_formats": format_enumeration(
+                    sample_names.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats)},
+                code="invalid")
         utils.check_sample_name(match, self.user)
         if sample_names.does_sample_exist(new_name):
-            raise ValidationError(_("This sample name exists already."))
+            raise ValidationError(_("This sample name exists already."), code="duplicate")
         return new_name
 
 

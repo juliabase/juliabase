@@ -278,10 +278,10 @@ class DepositionForm(ProcessForm):
         number = self.cleaned_data["number"]
         if self.process and self.process.finished:
             if self.process.number != number:
-                raise ValidationError(_("The deposition number must not be changed."))
+                raise ValidationError(_("The deposition number must not be changed."), code="invalid")
         else:
             if models.Deposition.objects.filter(number=number).exists():
-                raise ValidationError(_("This deposition number exists already."))
+                raise ValidationError(_("This deposition number exists already."), code="duplicate")
         return number
 
 
@@ -354,9 +354,9 @@ class InitialsForm(forms.Form):
         properties = settings.INITIALS_FORMATS["user" if self.is_user else "external_contact"]
         pattern = properties["regex"]
         if not pattern.match(initials):
-            raise ValidationError(properties["description"])
+            raise ValidationError(properties["description"], code="invalid")
         if models.Initials.objects.filter(initials=initials).exists():
-            raise ValidationError(_("These initials are already used."))
+            raise ValidationError(_("These initials are already used."), code="duplicate")
         return initials
 
     def save(self, person=None):
@@ -546,11 +546,11 @@ def clean_time_field(value):
         return ""
     match = time_pattern.match(value)
     if not match:
-        raise ValidationError(_("Time must be given in the form HH:MM:SS."))
+        raise ValidationError(_("Time must be given in the form HH:MM:SS."), code="invalid")
     hours, minutes, seconds = match.group("H"), int(match.group("M")), int(match.group("S"))
     hours = int(hours) if hours is not None else 0
     if minutes >= 60 or seconds >= 60:
-        raise ValidationError(_("Minutes and seconds must be smaller than 60."))
+        raise ValidationError(_("Minutes and seconds must be smaller than 60."), code="invalid")
     if not hours:
         return "{0}:{1:02}".format(minutes, seconds)
     else:
@@ -580,12 +580,12 @@ def clean_timestamp_field(value):
     if isinstance(value, datetime.datetime):
         # Allow mis-sychronisation of clocks of up to one minute.
         if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
-            raise ValidationError(_("The timestamp must not be in the future."))
+            raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
     else:
         if value > datetime.date.today():
-            raise ValidationError(_("The date must not be in the future."))
+            raise ValidationError(_("The date must not be in the future."), code="invalid")
     if value.year < 1900:
-        raise ValidationError(_("The year must not be earlier than 1900."))
+        raise ValidationError(_("The year must not be earlier than 1900."), code="invalid")
     return value
 
 
@@ -615,13 +615,14 @@ def clean_quantity_field(value, units):
     value = six.text_type(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
     match = quantity_pattern.match(value)
     if not match:
-        raise ValidationError(_("Must be a physical quantity with number and unit."))
+        raise ValidationError(_("Must be a physical quantity with number and unit."), code="invalid")
     original_unit = match.group("unit").lower()
     for unit in units:
         if unit.lower() == original_unit.lower():
             break
     else:
-        raise ValidationError(_("The unit is invalid.  Valid units are: {units}").format(units=", ".join(units)))
+        raise ValidationError(_("The unit is invalid.  Valid units are: %(units)s"), params={"units": ", ".join(units)},
+                              code="invalid")
     return match.group("number") + " " + unit
 
 
@@ -810,25 +811,25 @@ def check_sample_name(match, user, is_new=True):
     groups = {key: value for key, value in match.groupdict().items() if value is not None}
     if "year" in groups:
         if int(groups["year"]) != datetime.datetime.now().year:
-            raise ValidationError(_("The year must be the current year."))
+            raise ValidationError(_("The year must be the current year."), code="invalid")
     if "short_year" in groups:
         if 2000 + int(groups["short_year"]) != datetime.datetime.now().year:
-            raise ValidationError(_("The year must be the current year."))
+            raise ValidationError(_("The year must be the current year."), code="invalid")
     if "user_initials" in groups:
         try:
             error = groups["user_initials"] != user.initials.initials
         except models.Initials.DoesNotExist:
             error = True
         if error:
-            raise ValidationError(_("The initials do not match yours."))
+            raise ValidationError(_("The initials do not match yours."), code="invalid")
     if "external_contact_initials" in groups:
         if not models.Initials.objects.filter(initials=groups["external_contact_initials"],
                                               external_operator__contact_persons=user).exists():
-            raise ValidationError(_("The initials do not match any of your external contacts."))
+            raise ValidationError(_("The initials do not match any of your external contacts."), code="invalid")
     if "combined_initials" in groups:
         if not models.Initials.objects.filter(initials=groups["combined_initials"]). \
            filter(Q(external_operator__contact_persons=user) | Q(user=user)).exists():
-            raise ValidationError(_("The initials do not match yours, nor any of your external contacts."))
+            raise ValidationError(_("The initials do not match yours, nor any of your external contacts."), code="invalid")
 
 
 class SampleSelectForm(forms.Form):

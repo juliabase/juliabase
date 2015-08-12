@@ -645,7 +645,7 @@ class ChangeStepForm(forms.Form):
         if cleaned_data.get("move_this_step"):
             operations += 1
         if operations > 1:
-            raise ValidationError(_("You can't duplicate, move, or remove a step at the same time."))
+            raise ValidationError(_("You can't duplicate, move, or remove a step at the same time."), code="invalid")
         return cleaned_data
 
 
@@ -1029,7 +1029,7 @@ class SubprocessMultipleTypesForm(SubprocessForm):
 
     def clean_step_type(self):
         if self.cleaned_data["step_type"] != self.type:
-            raise ValidationError("Layer type is invalid.")
+            raise ValidationError("Layer type is invalid.", code="invalid")
         return self.cleaned_data["step_type"]
 
 

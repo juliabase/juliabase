@@ -95,7 +95,7 @@ class StatusForm(forms.ModelForm):
         """
         timestamp = self.cleaned_data["timestamp"]
         if timestamp > datetime.datetime.now():
-            raise ValidationError(_("The timestamp must not be in the future."))
+            raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
         return timestamp
 
     def clean(self):
