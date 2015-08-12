@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-12 16:59+0200\n"
+"POT-Creation-Date: 2015-08-12 20:02+0200\n"
 "PO-Revision-Date: 2015-08-12 19:19+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -830,7 +830,7 @@ msgid "Material"
 msgstr "Material"
 
 #: institute/templatetags/institute_extras.py:79
-#: institute/views/samples/cluster_tool_deposition.py:112
+#: institute/views/samples/cluster_tool_deposition.py:114
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
@@ -871,25 +871,25 @@ msgid_plural "The names %(existing_names)s are already existing."
 msgstr[0] "Der Name %(existing_names)s existiert schon."
 msgstr[1] "Die Namen %(existing_names)s existieren schon."
 
-#: institute/views/samples/claim.py:110 institute/views/samples/sample.py:123
-#: institute/views/samples/substrate.py:44
+#: institute/views/samples/claim.py:110 institute/views/samples/sample.py:124
+#: institute/views/samples/substrate.py:45
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: institute/views/samples/claim.py:157
+#: institute/views/samples/claim.py:158
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: institute/views/samples/claim.py:167
+#: institute/views/samples/claim.py:168
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: institute/views/samples/claim.py:168
+#: institute/views/samples/claim.py:169
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -918,21 +918,21 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: institute/views/samples/claim.py:198
+#: institute/views/samples/claim.py:199
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: institute/views/samples/claim.py:204
+#: institute/views/samples/claim.py:205
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: institute/views/samples/cluster_tool_deposition.py:54
-#: institute/views/samples/five_chamber_deposition.py:48
+#: institute/views/samples/cluster_tool_deposition.py:55
+#: institute/views/samples/five_chamber_deposition.py:49
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
-#: institute/views/samples/cluster_tool_deposition.py:112
+#: institute/views/samples/cluster_tool_deposition.py:114
 msgid "PECVD"
 msgstr "PECVD"
 
@@ -1064,13 +1064,13 @@ msgstr "mit {markdown_link}-Syntax"
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: institute/views/samples/sample.py:125
+#: institute/views/samples/sample.py:127
 msgid "You must provide a cleaning number if you want to use it for the names."
 msgstr ""
 "Sie müssen eine Renigungsnummer angeben, wenn Sie diese für die Namen "
 "verwenden wollen."
 
-#: institute/views/samples/sample.py:235
+#: institute/views/samples/sample.py:237
 #, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
@@ -1079,31 +1079,31 @@ msgstr ""
 "Ihre Proben haben die Namen {first_name} bis {last_name}.  Sie wurden zu "
 "„Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:238
+#: institute/views/samples/sample.py:240
 #, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den Namen {name}.  Sie wurde zu „Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:248
+#: institute/views/samples/sample.py:250
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: institute/views/samples/sample.py:254
+#: institute/views/samples/sample.py:256
 msgid "Destination samples"
 msgstr "Zielproben"
 
-#: institute/views/samples/sample.py:292
+#: institute/views/samples/sample.py:294
 #, python-brace-format
 msgid "Informal stack was copied from sample {sample}."
 msgstr "Der informelle Stapel von Probe {sample} wurde übernommen."
 
-#: institute/views/samples/sample.py:296
+#: institute/views/samples/sample.py:298
 #, python-brace-format
 msgid "Informal stack of {sample} was successfully copied."
 msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 
-#: institute/views/samples/sample.py:300
+#: institute/views/samples/sample.py:302
 #, python-brace-format
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
@@ -1113,7 +1113,7 @@ msgstr "Informellen Stapel von „{sample}“ kopieren"
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: institute/views/samples/substrate.py:68
+#: institute/views/samples/substrate.py:70
 #, python-brace-format
 msgid ""
 "Sample {0} has already processes before the timestamp of this substrate, "
@@ -1122,7 +1122,7 @@ msgstr ""
 "Probe {0} hat bereits Prozesse vor dem Zeitstempel dieses Substrates, "
 "nämlich von {1}."
 
-#: institute/views/samples/substrate.py:74
+#: institute/views/samples/substrate.py:76
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
