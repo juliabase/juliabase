@@ -295,11 +295,11 @@ class ProcessWithoutSamplesView(TemplateView):
         referentially_valid = self.is_referentially_valid()
         if all_valid and referentially_valid:
             self.process = self.save_to_database()
-            return self._successful_response(request)
+            return self.create_successful_response(request)
         else:
             return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
 
-    def _successful_response(self, request):
+    def create_successful_response(self, request):
         """Creates a `success` response and triggers a HTTP redirect.
         It is called after saving the process to the database.
 
