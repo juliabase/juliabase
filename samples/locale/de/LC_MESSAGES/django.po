@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-12 20:02+0200\n"
-"PO-Revision-Date: 2015-08-12 20:06+0200\n"
+"POT-Creation-Date: 2015-08-13 14:03+0200\n"
+"PO-Revision-Date: 2015-08-13 14:03+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +52,7 @@ msgstr "hinzufügen"
 #: samples/models/feeds.py:284 samples/models/feeds.py:504
 #: samples/templates/samples/base.html:31
 #: samples/templates/samples/main_menu.html:86
-#: samples/utils/views/forms.py:875 samples/views/result.py:110
+#: samples/utils/views/forms.py:872 samples/views/result.py:110
 #: samples/views/sample_series.py:56 samples/views/task_lists.py:47
 #: samples/views/task_lists.py:300
 msgid "samples"
@@ -356,7 +356,7 @@ msgstr "Thema"
 
 #: samples/models/common.py:695 samples/models/common.py:969
 #: samples/models/common.py:1052 samples/templates/samples/show_claim.html:47
-#: samples/utils/views/forms.py:842 samples/views/sample_series.py:360
+#: samples/utils/views/forms.py:839 samples/views/sample_series.py:360
 msgid "sample"
 msgstr "Probe"
 
@@ -540,7 +540,7 @@ msgid "sample series"
 msgstr "Probenserien"
 
 #: samples/models/common.py:1407 samples/models/common.py:1414
-#: samples/utils/views/forms.py:335
+#: samples/utils/views/forms.py:332
 msgid "initials"
 msgstr "Kürzel"
 
@@ -2559,7 +2559,7 @@ msgstr "eingestellt am"
 #: samples/templates/samples/show_status.html:70
 #: samples/templates/samples/show_status.html:129
 msgid "cancel"
-msgstr "entfernen"
+msgstr "abbrechen"
 
 #: samples/templates/samples/show_status.html:71
 #: samples/templates/samples/show_status.html:130
@@ -2838,77 +2838,77 @@ msgstr ""
 "(Diese Serie enthält weitere Proben, die nicht zu Ihrer „Meine-Proben“-Liste "
 "gehören.)"
 
-#: samples/utils/views/class_views.py:316
+#: samples/utils/views/class_views.py:317
 #, python-brace-format
 msgid "{process} was successfully changed in the database."
 msgstr "{process} wurde erfolgreich in der Datenbank geändert."
 
-#: samples/utils/views/class_views.py:318
+#: samples/utils/views/class_views.py:319
 #, python-brace-format
 msgid "{process} was successfully added to the database."
 msgstr "{process} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: samples/utils/views/class_views.py:332
+#: samples/utils/views/class_views.py:331
 #, python-brace-format
 msgid "edit {process}"
 msgstr "{process} ändern"
 
-#: samples/utils/views/class_views.py:333
+#: samples/utils/views/class_views.py:332
 #, python-brace-format
 msgid "add {class_name}"
 msgstr "{class_name} hinzufügen"
 
-#: samples/utils/views/class_views.py:421
+#: samples/utils/views/class_views.py:420
 msgid "Remove processed sample(s) from My Samples"
 msgstr "Entferne prozessierte Probe(n) von „Meine Proben“"
 
-#: samples/utils/views/class_views.py:447
+#: samples/utils/views/class_views.py:446
 msgid "sample position"
 msgstr "Probenposition"
 
-#: samples/utils/views/class_views.py:532
+#: samples/utils/views/class_views.py:531
 msgid "number of subprocesses"
 msgstr "Anzahl der Einzelprozesse"
 
-#: samples/utils/views/class_views.py:615
+#: samples/utils/views/class_views.py:614
 msgid "No subprocesses given."
 msgstr "Keine Einzelprozesse angegeben."
 
-#: samples/utils/views/class_views.py:633
+#: samples/utils/views/class_views.py:632
 msgid "duplicate this step"
 msgstr "diesen Schritt duplizieren"
 
-#: samples/utils/views/class_views.py:634
+#: samples/utils/views/class_views.py:633
 msgid "remove this step"
 msgstr "diesen Schritt entfernen"
 
-#: samples/utils/views/class_views.py:635
+#: samples/utils/views/class_views.py:634
 msgid "move this step"
 msgstr "diesen Schritt verschieben"
 
-#: samples/utils/views/class_views.py:636
+#: samples/utils/views/class_views.py:635
 msgid "up"
 msgstr "hoch"
 
-#: samples/utils/views/class_views.py:636
+#: samples/utils/views/class_views.py:635
 msgid "down"
 msgstr "runter"
 
-#: samples/utils/views/class_views.py:648
+#: samples/utils/views/class_views.py:647
 msgid "You can't duplicate, move, or remove a step at the same time."
 msgstr ""
 "Sie können nicht gleichzeitig denselben Schritt duplizieren, entfernen oder "
 "verschieben."
 
-#: samples/utils/views/class_views.py:657
+#: samples/utils/views/class_views.py:656
 msgid "Nickname of My Step to be added"
 msgstr "Spitzname Meines Schrittes, der hinzugefügt werden soll"
 
-#: samples/utils/views/class_views.py:711
+#: samples/utils/views/class_views.py:710
 msgid "Number of steps to be added"
 msgstr "Anzahl der Schritte, die hinzugefügt werden sollen"
 
-#: samples/utils/views/class_views.py:756
+#: samples/utils/views/class_views.py:755
 msgid "No steps given."
 msgstr "Keine Schritte angegeben."
 
@@ -2921,75 +2921,75 @@ msgstr "Schritt, der hinzugefügt werden soll"
 msgid "No layers given."
 msgstr "Keine Schichten angegeben."
 
-#: samples/utils/views/forms.py:265
+#: samples/utils/views/forms.py:262
 #, python-brace-format
 msgid "The sample {samples} is already dead at this time."
 msgid_plural "The samples {samples} are already dead at this time."
 msgstr[0] "Die Probe {samples} ist zu diesem Zeitpunkt schon tot."
 msgstr[1] "Die Proben {samples} sind zu diesem Zeitpunkt schon tot."
 
-#: samples/utils/views/forms.py:284
+#: samples/utils/views/forms.py:281
 msgid "The deposition number must not be changed."
 msgstr "Die Depositionsnummer darf nicht geändert werden"
 
-#: samples/utils/views/forms.py:287
+#: samples/utils/views/forms.py:284
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer existiert schon."
 
-#: samples/utils/views/forms.py:362
+#: samples/utils/views/forms.py:359
 msgid "These initials are already used."
 msgstr "Dieses Namenskürzel ist schon vergeben."
 
-#: samples/utils/views/forms.py:386
+#: samples/utils/views/forms.py:383
 msgid "Description of edit"
 msgstr "Beschreibung der Änderung"
 
-#: samples/utils/views/forms.py:387
+#: samples/utils/views/forms.py:384
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: samples/utils/views/forms.py:552
+#: samples/utils/views/forms.py:549
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: samples/utils/views/forms.py:556
+#: samples/utils/views/forms.py:553
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: samples/utils/views/forms.py:586 samples/views/status.py:98
+#: samples/utils/views/forms.py:583 samples/views/status.py:98
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: samples/utils/views/forms.py:589
+#: samples/utils/views/forms.py:586
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: samples/utils/views/forms.py:591
+#: samples/utils/views/forms.py:588
 msgid "The year must not be earlier than 1900."
 msgstr "Das Jahr darf nicht vor 1900 sein."
 
-#: samples/utils/views/forms.py:621
+#: samples/utils/views/forms.py:618
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: samples/utils/views/forms.py:627
+#: samples/utils/views/forms.py:624
 #, python-format
 msgid "The unit is invalid.  Valid units are: %(units)s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %(units)s"
 
-#: samples/utils/views/forms.py:817 samples/utils/views/forms.py:820
+#: samples/utils/views/forms.py:814 samples/utils/views/forms.py:817
 msgid "The year must be the current year."
 msgstr "Das Jahr muss das aktuelle Jahr sein."
 
-#: samples/utils/views/forms.py:827
+#: samples/utils/views/forms.py:824
 msgid "The initials do not match yours."
 msgstr "Das Kürzel ist nicht deines."
 
-#: samples/utils/views/forms.py:831
+#: samples/utils/views/forms.py:828
 msgid "The initials do not match any of your external contacts."
 msgstr "Das Kürzel passt nicht zu irgendeinem deiner externen Kontakte."
 
-#: samples/utils/views/forms.py:835
+#: samples/utils/views/forms.py:832
 msgid "The initials do not match yours, nor any of your external contacts."
 msgstr ""
 "Das Kürzel ist nicht deines, noch das von irgendeinem deiner externen "
@@ -3376,7 +3376,9 @@ msgstr ""
 #, python-format
 msgid ""
 "You cannot grant clearances for the following samples: %(failed_samples)s"
-msgstr "Sie können für die folgenden Proben keine Freigaben gewähren: %(failed_samples)s"
+msgstr ""
+"Sie können für die folgenden Proben keine Freigaben gewähren: "
+"%(failed_samples)s"
 
 #: samples/views/my_samples.py:267
 msgid "You can't access the “My Samples” section of another user."
@@ -3677,7 +3679,9 @@ msgid_plural ""
 "  Alternatively, it must be a valid name of one of these types: "
 "%(sample_formats)s."
 msgstr[0] "  Alternativ muss es ein gültiger „%(sample_formats)s“ Name sein."
-msgstr[1] "  Alternativ muss es ein gültiger Name der folgenden Arten sein: %(sample_formats)s."
+msgstr[1] ""
+"  Alternativ muss es ein gültiger Name der folgenden Arten sein: "
+"%(sample_formats)s."
 
 #: samples/views/split_after_deposition.py:111
 msgid "  Or, the new name must be or begin with the deposition number."
