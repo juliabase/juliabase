@@ -295,14 +295,29 @@ class ProcessWithoutSamplesView(TemplateView):
         referentially_valid = self.is_referentially_valid()
         if all_valid and referentially_valid:
             self.process = self.save_to_database()
-            Reporter(request.user).report_physical_process(
-                self.process, self.forms["edit_description"].cleaned_data if self.forms["edit_description"] else None)
-            success_report = _("{process} was successfully changed in the database."). \
-                format(process=self.process) if self.id else \
-                _("{process} was successfully added to the database.").format(process=self.process)
-            return successful_response(request, success_report, json_response=self.process.pk)
+            return self._successful_response(request)
         else:
             return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
+
+    def _successful_response(self, request):
+        """Creates a `success` response and triggers a HTTP redirect.
+        It is called after saving the process to the database.
+
+        :param request: the HTTP request object
+
+        :type request: ``django.http.HttpRequest``
+
+        :Return:
+          the HTTP response
+
+        :rtype: ``django.http.HttpResponse``
+        """
+        Reporter(request.user).report_physical_process(
+            self.process, self.forms["edit_description"].cleaned_data if self.forms["edit_description"] else None)
+        success_report = _("{process} was successfully changed in the database."). \
+            format(process=self.process) if self.id else \
+            _("{process} was successfully added to the database.").format(process=self.process)
+        return successful_response(request, success_report, json_response=self.process.pk)
 
     def get_title(self):
         """Creates the title of the response.  This is used in the ``<title>``
