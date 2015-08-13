@@ -50,7 +50,7 @@ from django.conf import settings
 import jb_common.utils.base as utils
 import jb_common.models
 import samples.models
-from samples.utils.sample_names import sample_name_format, get_renamable_name_formats
+from samples.utils.sample_name_formats import sample_name_format, get_renamable_name_formats
 
 
 _permission_name_regex = re.compile("(?P<prefix>Can (?:add|edit every|view every|edit permissions for) )'(?P<class_name>.+)'",
