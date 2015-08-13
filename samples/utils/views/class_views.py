@@ -26,7 +26,7 @@ samples form, whereas the mixin class doesn't do this.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, types, re, json
+import datetime, re, json
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -197,31 +197,6 @@ class ProcessWithoutSamplesView(TemplateView):
                                                     initial=self.get_initial_process_data())
         self.forms["edit_description"] = utils.EditDescriptionForm(self.data) if self.id else None
 
-    @staticmethod
-    def valid_despite_unbound(form):
-        """Marks an unbound form as valid.  This function monkey-patches the form so
-        that its :py:meth:`is_valid` method always returns ``True``.  This is
-        helpful for marking unbound forms that should not let the request fail
-        during a POST request.  An example is a form in which the user enters
-        the number of to-be-added sub-processes.  It is reset (emptied) after
-        each POST request by setting it to a pristine unbound form.  However,
-        this must not prevent the view from succeeding.
-
-        If ``form`` is bound, this function does nothing.
-
-        :param form: a form
-
-        :type form: ``django.forms.Form``
-
-        :return:
-          the modified form; note that the passed form is changed in place
-
-        :rtype: ``django.forms.Form``
-        """
-        if not form.is_bound:
-            form.is_valid = types.MethodType(lambda self: True, form)
-        return form
-
     def _check_validity(self, forms):
         """Helper for :py:meth:`is_all_valid` for allowing recursion through
         nested lists of forms.
@@ -230,7 +205,7 @@ class ProcessWithoutSamplesView(TemplateView):
         for form in forms:
             if isinstance(form, (list, tuple)):
                 all_valid = self._check_validity(form) and all_valid
-            elif form is not None:
+            elif form is not None and not getattr(form, "dont_check_validity", False):
                 all_valid = form.is_valid() and all_valid
         return all_valid
 
@@ -238,6 +213,15 @@ class ProcessWithoutSamplesView(TemplateView):
         """Checks whether all forms are valid.  Moreover, this method guarantees that
         the :py:meth:`is_valid` method of every form is called in order to
         collect all error messages.
+
+        You may mark any unbound form as valid for this method by setting its
+        attribute ``dont_check_validity`` to ``True``.  If it is not present,
+        it is assumed to be ``False``.  This is helpful for marking unbound
+        forms that should not let the request fail during a POST request.  An
+        example is a form in which the user enters the number of to-be-added
+        sub-processes.  It is reset (emptied) after each POST request by
+        setting it to a pristine unbound form.  However, this must not prevent
+        the view from succeeding.
 
         :Return:
           whether all forms are valid
@@ -819,7 +803,8 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         # Add steps
         if self.forms["add_steps"].is_valid():
             structure_changed, new_steps = self.forms["add_steps"].change_structure(structure_changed, new_steps)
-            self.forms["add_steps"] = self.valid_despite_unbound(self.add_steps_form_class(self))
+            self.forms["add_steps"] = self.add_steps_form_class(self)
+            self.forms["add_steps"].dont_check_validity = True
 
         # Delete steps
         for i in range(len(new_steps) - 1, -1, -1):
