@@ -29,18 +29,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {% spaceless %}
           <div class="page-header"><h1>
             {{ title }}{% block process_icons %}{% if edit_url %}<a class="edit-icon"
-                                             href="{{ edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+                                             href="{{ edit_url }}?next={{ url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if duplicate_url %}<a class="edit-icon" href="{{ duplicate_url }}"
                ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% trans 'duplicate' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if export_url %}<a class="edit-icon"
-                    href="{{ export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+                    href="{{ export_url }}?next={{ url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" title="{% trans 'export as table' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if resplit_url %}<a class="edit-icon"
-                     href="{{ resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+                     href="{{ resplit_url }}?next={{ url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% trans 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% endblock process_icons %}
