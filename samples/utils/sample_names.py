@@ -114,3 +114,51 @@ def valid_new_sample_name(sample_name, new_sample_name):
     name_format = sample_name_format(sample_name)
     new_name_format = sample_name_format(new_sample_name)
     return new_name_format in settings.SAMPLE_NAME_FORMATS[name_format].get("possible_renames", set())
+
+def verbose_sample_name_format(name_format):
+    """Returns the human-friendly, translatable name of the sample name format.  In
+    English, it is in singular, and usable as an attribute to a noun.  In
+    non-English language, you should choose something equivalent for the
+    translation.
+
+    :param name_format: The name format
+
+    :type name_format: unicode
+
+    :return:
+      The verbose human-friendly name of this sample name format.
+
+    :rtype: unicode
+    """
+    return settings.SAMPLE_NAME_FORMATS[name_format]["verbose_name"]
+
+
+def sample_name_format(name, with_match_object=False):
+    """Determines which sample name format the given name has.  It doesn't test
+    whether the sample name is existing, nor if the initials are valid.
+
+    :param name: the sample name
+
+    :type name: unicode
+
+    :return:
+      The name of the sample name format and the respective match object.  The
+      latter can be used to extract groups, for exampe.  ``None`` if the name
+      had no valid format.
+
+    :rtype: (unicode, re.MatchObject) or NoneType.
+    """
+    for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
+        match = properties["regex"].match(name)
+        if match:
+            return (name_format, match) if with_match_object else name_format
+    return (None, None) if with_match_object else None
+
+
+renamable_name_formats = None
+def get_renamable_name_formats():
+    global renamable_name_formats
+    if renamable_name_formats is None:
+        renamable_name_formats = {name_format for (name_format, properties) in settings.SAMPLE_NAME_FORMATS.items()
+                                  if properties.get("possible_renames")}
+    return renamable_name_formats

@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     "django.contrib.admin",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "iek4",
     "institute",
     "samples",
     "jb_common"
