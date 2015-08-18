@@ -25,7 +25,7 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 from django.conf import settings
-from samples import models
+import samples.models
 from .sample_name_formats import *
 
 
@@ -46,9 +46,9 @@ def get_sample(sample_name):
       NoneType
     """
     try:
-        sample = models.Sample.objects.get(name=sample_name)
-    except models.Sample.DoesNotExist:
-        aliases = [alias.sample for alias in models.SampleAlias.objects.filter(name=sample_name)]
+        sample = samples.models.Sample.objects.get(name=sample_name)
+    except samples.models.Sample.DoesNotExist:
+        aliases = [alias.sample for alias in samples.models.SampleAlias.objects.filter(name=sample_name)]
         if len(aliases) == 1:
             return aliases[0]
         return aliases or None
@@ -68,8 +68,8 @@ def does_sample_exist(sample_name):
 
     :rtype: bool
     """
-    return models.Sample.objects.filter(name=sample_name).exists() or \
-        models.SampleAlias.objects.filter(name=sample_name).exists()
+    return samples.models.Sample.objects.filter(name=sample_name).exists() or \
+        samples.models.SampleAlias.objects.filter(name=sample_name).exists()
 
 
 def normalize_sample_name(sample_name):
@@ -85,11 +85,11 @@ def normalize_sample_name(sample_name):
 
     :rtype: unicode
     """
-    if models.Sample.objects.filter(name=sample_name).exists():
+    if samples.models.Sample.objects.filter(name=sample_name).exists():
         return sample_name
     try:
-        sample_alias = models.SampleAlias.objects.get(name=sample_name)
-    except models.SampleAlias.DoesNotExist:
+        sample_alias = samples.models.SampleAlias.objects.get(name=sample_name)
+    except samples.models.SampleAlias.DoesNotExist:
         return
     else:
         return sample_alias.sample.name
