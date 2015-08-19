@@ -1045,7 +1045,7 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
     additional template variables ``steps``, ``change_steps`` (well, at least
     their combination ``steps_and_change_steps``), and ``add_steps``.
     Moreover, note the use of the ``step_type`` and ``type`` fields of each
-    layer (= step).
+    layer (= step).
 
     Additionally to the class variable :py:attr:`form_class`, you must set:
 
