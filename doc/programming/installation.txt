@@ -194,3 +194,15 @@ Linux variant.  It may be the (new) file ``/etc/apache2/httpd.conf``, or a new
 file in ``/etc/apache2/conf.d``, or a new file in
 ``/etc/apache2/sites-available`` with a symlink in
 ``/etc/apache2/sites-enabled``.
+
+Moreover, you may need to `set the locale environment variables for the Apache
+process`_.  On Ubuntu, all that it needed to be done is to comment out the line
+“``. /etc/default/locale``” in the file ``/etc/apache2/envvars``.  However,
+this sets the locale also for non-JuliaBase applications which are served by
+the same Apache instance.  To have more fine-grained control, you can use
+`mod_wsgi in daemon mode`_.
+
+.. _set the locale environment variables for the Apache process:
+   https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/modwsgi/#if-you-get-a-unicodeencodeerror
+.. _mod_wsgi in daemon mode:
+   http://blog.dscpl.com.au/2014/09/setting-lang-and-lcall-when-using.html
