@@ -68,5 +68,5 @@ open("informal_stack.yaml", "w").write("""- fields: {{additional_process_data: '
   pk: 5
 """.format(sample_id))
 
-subprocess.check_call(["python", "../../manage.py", "loaddata", "informal_stack.yaml"])
+subprocess.check_call(["../../manage.py", "loaddata", "informal_stack.yaml"])
 os.remove("informal_stack.yaml")
