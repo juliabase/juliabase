@@ -804,6 +804,8 @@ def unquote_view_parameters(view):
     :type view: function
     """
     # FixMe: Actually, percent-encoding "/" and "%" is enough.
+    #
+    # Python3 note: The "assigned=" can be dropped in Python 3.
     @wraps(view, assigned=available_attrs(view))
     def unquoting_view(request, *args, **kwargs):
         if six.PY2:
