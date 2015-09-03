@@ -36,7 +36,7 @@ sample_id = Sample("14S-001").id
 logout()
 
 
-open("informal_stack.yaml", "w").write("""- fields: {{additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
+open("/tmp/informal_stack.yaml", "w").write("""- fields: {{additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
     color: red, comments: '', doping: p, index: 2, process: null, sample_details: {0},
     structured: false, textured: false, thickness: '50.0', thickness_reliable: true,
     verified: true}}
@@ -68,5 +68,5 @@ open("informal_stack.yaml", "w").write("""- fields: {{additional_process_data: '
   pk: 5
 """.format(sample_id))
 
-subprocess.check_call(["../../manage.py", "loaddata", "informal_stack.yaml"])
-os.remove("informal_stack.yaml")
+subprocess.check_call(["../../manage.py", "loaddata", "/tmp/informal_stack.yaml"])
+os.remove("/tmp/informal_stack.yaml")
