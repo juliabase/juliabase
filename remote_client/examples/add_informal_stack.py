@@ -20,8 +20,8 @@
 """This is simply a helper program to get the demo site complete.  It fetches
 the ID of the sample 14S-001 and attaches informal layers to it by leading an
 ad-hoc generated fixture.  This is not very elegangt but as long as there is no
-facility in the remot client library to add informal stacks, this is the way to
-go.
+facility in the remote client library to add informal stacks, this is the way
+to go.
 """
 
 from __future__ import unicode_literals
