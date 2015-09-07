@@ -67,7 +67,7 @@ function showCellData{{ process.id }}(process_id, position) {
     <img src="{{ thumbnail_layout }}" alt="{% trans 'cell layout' %}" usemap="#map-{{ process.id }}"/>
   {% else %}
     <ul class="cells">
-      {% for cell in cells|sort_cells %}
+      {% for cell in process.cells.all|sort_cells %}
         <li onclick="showCellData{{ process.id }}({{ process.id }}, '{{ cell.position }}')">
           {{ cell.position }}
           {% if process.irradiation == "AM1.5" %}
@@ -90,7 +90,7 @@ function showCellData{{ process.id }}(process_id, position) {
   </tr>
 </table>
 <div id="solarsimulator-{{ process.id }}">
-  {% for cell in cells %}
+  {% for cell in process.cells.all %}
     <table style="display: {% if cell.position == default_cell.0 %}table{% else %}none{% endif %}"
            id="cell_table_{{ process.id }}_{{ cell.position }}">
       <tr>{% value_field cell.position %}</tr>

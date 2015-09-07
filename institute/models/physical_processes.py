@@ -147,19 +147,18 @@ class SolarsimulatorMeasurement(PhysicalProcess):
             context["shapes"] = layout.get_map_shapes() if layout else {}
         context["thumbnail_layout"] = django.core.urlresolvers.reverse(
             "institute.views.samples.layout.show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
-        if "cells" not in context:
-            context["cells"] = self.cells.all()
+        cells = self.cells.all()
         if "image_urls" not in context:
             context["image_urls"] = {}
-            for cell in context["cells"]:
+            for cell in cells:
                 plot_locations = self.calculate_plot_locations(plot_id=cell.position)
                 _thumbnail, _figure = plot_locations["thumbnail_url"], plot_locations["plot_url"]
                 context["image_urls"][cell.position] = (_thumbnail, _figure)
         if "default_cell" not in context:
             if self.irradiation == "AM1.5":
-                default_cell = sorted([(cell.eta, cell.position) for cell in context["cells"]], reverse=True)[0][1]
+                default_cell = sorted([(cell.eta, cell.position) for cell in cells], reverse=True)[0][1]
             else:
-                default_cell = sorted([(cell.isc, cell.position) for cell in context["cells"]], reverse=True)[0][1]
+                default_cell = sorted([(cell.isc, cell.position) for cell in cells], reverse=True)[0][1]
             context["default_cell"] = (default_cell,) + context["image_urls"][default_cell]
         return super(SolarsimulatorMeasurement, self).get_context_for_user(user, context)
 
