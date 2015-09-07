@@ -58,20 +58,7 @@ class ClusterToolDeposition(samples.models.Deposition):
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "ClusterToolDeposition")
 
     def get_context_for_user(self, user, old_context):
-        """
-        Additionally, because this is a cluster tool and thus has different
-        type of layers, I add a layer list ``layers`` to the template context.
-        The template can't access the layers with ``process.layers.all()``
-        because they are polymorphic.  But ``layers`` can be conveniently
-        digested by the template.
-        """
         context = old_context.copy()
-        layers = []
-        for layer in self.layers.all():
-            layer = layer.actual_instance
-            layer.type = layer.__class__.__name__.lower()
-            layers.append(layer)
-        context["layers"] = layers
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
                 django.core.urlresolvers.reverse("add_cluster_tool_deposition"), urlquote_plus(self.number))

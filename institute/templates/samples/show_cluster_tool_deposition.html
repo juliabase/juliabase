@@ -23,6 +23,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load i18n %}
 {% load samples_extras %}
 {% load institute_extras %}
+{% load juliabase %}
 
 <p>
   <span class="field-label">{% verbose_name Deposition.number %}:</span><span class="field-value"
@@ -35,7 +36,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endif %}
 
 <table style="width: 100%">
-  {% for layer in layers %}
+  {% for layer in process.layers.all|actual_instances %}
     <tr>
       <td style="border-style: solid; border-color: black; border-width: thin">
         <table style="width: 100%">
