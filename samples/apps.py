@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import os, re, importlib
+import re, importlib
 from django.apps import AppConfig
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
@@ -34,9 +34,6 @@ class SamplesConfig(AppConfig):
 
     def ready(self):
         import samples.signals
-
-        if not os.path.exists(settings.CACHE_ROOT):
-            os.makedirs(settings.CACHE_ROOT)
 
         initials_groups = {}
         for name, properties in settings.INITIALS_FORMATS.items():
