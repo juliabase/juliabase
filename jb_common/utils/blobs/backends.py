@@ -30,6 +30,7 @@ from __future__ import absolute_import, division, unicode_literals
 import os, uuid
 from contextlib import contextmanager
 import psycopg2
+from jb_common.utils.base import mkdirs
 
 
 class BlobStorage(object):
@@ -162,7 +163,10 @@ class Filesystem(BlobStorage):
         os.unlink(os.path.join(self.root, path))
 
     def open(self, path, mode):
-        return open(os.path.join(self.root, path), mode + "b")
+        filepath = os.path.join(self.root, path)
+        if mode == "w":
+            mkdirs(filepath)
+        return open(filepath, mode + "b")
 
     def write(self, file_handle, data):
         file_handle.write(data)
