@@ -226,6 +226,16 @@ class PostgreSQL(BlobStorage):
 
     @contextmanager
     def existing_large_object(self, path):
+        """Context manager for getting *existing* blobs.  If a blob with the given
+        ``path`` doesn't exist, an exception is raised.  Otherwise, it returns
+        the OID of the blob and a database cursor.
+
+        :param path: path to an existing file in the blob database
+
+        :type path: str
+
+        :raises FileNotFoundError: if no file with that path exists
+        """
         with psycopg2.connect(database=self.database, user=self.user, password=self.password, host=self.host) \
              as connection, connection.cursor() as cursor:
             oid = self.get_oid(cursor, path)
@@ -233,13 +243,14 @@ class PostgreSQL(BlobStorage):
                 raise FileNotFoundError("No such blob: {}".format(repr(path)))
             large_object = connection.lobject(oid)
             try:
-                yield large_object
+                yield large_object, cursor
             finally:
                 if not large_object.closed:
                     large_object.close()
 
     def unlink(self, path):
-        with self.existing_large_object(path) as large_object:
+        with self.existing_large_object(path) as large_object, cursor:
+            cursor.execute("DELETE FROM blobs WHERE large_object_id=%s;", (large_object.oid,))
             large_object.unlink()
 
     def open(self, path, mode):
@@ -268,11 +279,5 @@ class PostgreSQL(BlobStorage):
         connection.close()
 
     def export(self, path):
-        with psycopg2.connect(database=self.database, user=self.user, password=self.password, host=self.host) as connection:
-            with connection.cursor() as cursor:
-                oid = self.get_oid(cursor, path)
-                if oid is None:
-                    raise FileNotFoundError("No such blob: {}".format(repr(path)))
-                large_object = connection.lobject(oid)
-                large_object.export(os.path.join("/tmp", uuid.uuid4()))
-                large_object.close()
+        with self.existing_large_object(path) as large_object, cursor:
+            large_object.export(os.path.join("/tmp", uuid.uuid4()))
