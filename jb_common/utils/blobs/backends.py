@@ -31,6 +31,7 @@ import os, uuid
 from contextlib import contextmanager
 import psycopg2
 from jb_common.utils.base import mkdirs
+from jb_common.signals import storage_changed
 
 
 class BlobStorage(object):
@@ -117,6 +118,24 @@ class Filesystem(BlobStorage):
     This backend always exports to /tmp.
     """
 
+    class File(file):
+        """A very simplistic file-like objects.  It only defines the methods that are
+        needed in JuliaBase: `write` (with one parameter) and `close`.  I need
+        this wrapper to have a hook in the `close` method to call the
+        ``storage_changed`` signal.
+        """
+
+        def __init__(self, file):
+            self.file = file
+
+        def write(self, data):
+            self.file.write(data)
+
+        def close(self):
+            self.file.close()
+            storage_changed.send(Filesystem)
+
+
     def __init__(self, root):
         """Class constructor.
 
@@ -133,7 +152,7 @@ class Filesystem(BlobStorage):
         filepath = os.path.join(self.root, path)
         if mode == "w":
             mkdirs(filepath)
-        return open(filepath, mode + "b")
+        return Filesystem.File(open(filepath, mode + "b"))
 
     def export(self, path):
         path = os.path.join(self.root, path)

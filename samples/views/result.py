@@ -83,7 +83,6 @@ def save_image_file(image_data, result, related_data_form):
             destination = settings.BLOB_STORAGE_BACKEND.open(image_path, "w")
         destination.write(chunk)
     destination.close()
-    storage_changed.send(models.Result)
     result.save()
 
 
