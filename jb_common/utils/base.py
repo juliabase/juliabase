@@ -608,7 +608,7 @@ def static_file_response(filepath, served_filename=None):
     response = django.http.HttpResponse()
     if not settings.USE_X_SENDFILE:
         response.write(open(filepath, "rb").read())
-    response["X-Sendfile"] = filepath
+    response[settings.USE_X_SENDFILE if isinstance(settings.USE_X_SENDFILE, six.string_types) else "X-Sendfile"] = filepath
     response["Content-Type"] = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
     response["Content-Length"] = os.path.getsize(filepath)
     if served_filename:
