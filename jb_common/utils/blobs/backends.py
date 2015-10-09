@@ -36,7 +36,7 @@ from jb_common.utils.base import mkdirs
 class BlobStorage(object):
     """Abstract base class for blob storage backends.  It lists all methods that
     may be implemented and their signatures.  Currently, core JuliaBase only
-    calls the methods `open`, `write`, `close`, and `export`.
+    calls the methods `open` and `export`.
     """
 
     def list(self, path):
@@ -65,7 +65,11 @@ class BlobStorage(object):
         raise NotImplementedError
 
     def open(self, path, mode="r"):
-        """Opens the file at ``path``.  This must be a regular file.
+        """Opens the file at ``path``.  This must be a regular file.  The returned
+        objects is guaranteed to have two simple methods: ``write(data)``
+        writes ``data`` to the file and can be called multiple times.  And
+        ``close()`` closes the file and should be called when all data is
+        written.
 
         :param path: absolute path to a file
         :param mode: mode in which the file should be opened; may be ``"r"`` or
@@ -74,46 +78,9 @@ class BlobStorage(object):
         :type path: str
 
         :return:
-          handle to the opened file
+          the opened file
 
-        :rtype: object
-        """
-        raise NotImplementedError
-
-    def read(self, file_handle, length=None):
-        """Reads from a file.
-
-        :param file_handle: the file handle as returned by `open`.
-        :param length: number of bytes to read; if ``None``, read until the end
-          of the file.
-
-        :type file_handle: object
-        :param length: int
-
-        :return:
-          the read data
-
-        :rtype: bytes
-        """
-        raise NotImplementedError
-
-    def close(self, file_handle):
-        """Closes a file.
-
-        :param file_handle: the file handle as returned by `open`.
-
-        :type file_handle: object
-        """
-        raise NotImplementedError
-
-    def write(self, file_handle, data):
-        """Writes to a file.
-
-        :param file_handle: the file handle as returned by `open`.
-        :param data: the data to be written
-
-        :type file_handle: object
-        :param data: bytes
+        :rtype: almost-file-like object
         """
         raise NotImplementedError
 
@@ -168,12 +135,6 @@ class Filesystem(BlobStorage):
             mkdirs(filepath)
         return open(filepath, mode + "b")
 
-    def write(self, file_handle, data):
-        file_handle.write(data)
-
-    def close(self, file_handle):
-        file_handle.close()
-
     def export(self, path):
         path = os.path.join(self.root, path)
         filename = str(uuid.uuid4())
@@ -192,6 +153,25 @@ class PostgreSQL(BlobStorage):
     one table called “blobs” in the database to link the large object IDs
     (OIDs) with the pathname and an mtime timestamp.
     """
+
+    class BlobFile(object):
+        """A very simplistic file-like objects.  It only defines the methods that are
+        needed in JuliaBase: `write` (with one parameter) and `close`.
+        """
+
+        def __init__(self, path, connection, cursor, large_object):
+            self.path, self.connection, self.cursor, self.large_object = path, connection, cursor, large_object
+
+        def write(self, data):
+            self.large_object.write(data)
+
+        def close(self, data):
+            self.cursor.execute("UPDATE blobs SET mtime=now() WHERE path=%s;", (self.path,))
+            self.large_object.close()
+            self.connection.commit()
+            self.cursor.close()
+            self.connection.close()
+
 
     def __init__(self, database, user, password, host):
         """Class constructor.  It creates the table “blobs” in the database if
@@ -278,19 +258,7 @@ class PostgreSQL(BlobStorage):
         else:
             large_object = connection.lobject(oid, mode="wb")
             large_object.truncate()
-        return (path, connection, cursor, large_object)
-
-    def write(self, file_handle, data):
-        path, connection, cursor, large_object = file_handle
-        large_object.write(data)
-
-    def close(self, file_handle):
-        path, connection, cursor, large_object = file_handle
-        cursor.execute("UPDATE blobs SET mtime=now() WHERE path=%s;", (path,))
-        large_object.close()
-        connection.commit()
-        cursor.close()
-        connection.close()
+        return PostgreSQL.BlobFile(path, connection, cursor, large_object)
 
     def export(self, path):
         with self.existing_large_object(path) as (large_object, cursor):
