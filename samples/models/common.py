@@ -1180,7 +1180,7 @@ class Result(Process):
         per result in upcoming JuliaBase versions.)
 
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
-        on the original file type, and stored in ``settings.MEDIA_ROOT``.
+        on the original file type, and stored in ``settings.CACHE_ROOT``.
 
         :return:
           a dictionary containing the following keys:
