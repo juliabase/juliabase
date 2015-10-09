@@ -163,7 +163,7 @@ class Filesystem(BlobStorage):
 
     def export(self, path):
         path = os.path.join(self.root, path)
-        filename = uuid.uuid4()
+        filename = str(uuid.uuid4())
         result = os.path.join("/tmp", filename)
         try:
             os.link(path, result)
@@ -204,6 +204,7 @@ class PostgreSQL(BlobStorage):
             except psycopg2.ProgrammingError:
                 connection.reset()
 
+    @staticmethod
     def get_oid(cursor, path):
         """Returns the OID of the given ``path``, or ``None`` if the path does not
         exist in the database.
@@ -249,7 +250,7 @@ class PostgreSQL(BlobStorage):
                     large_object.close()
 
     def unlink(self, path):
-        with self.existing_large_object(path) as large_object, cursor:
+        with self.existing_large_object(path) as (large_object, cursor):
             cursor.execute("DELETE FROM blobs WHERE large_object_id=%s;", (large_object.oid,))
             large_object.unlink()
 
@@ -279,5 +280,5 @@ class PostgreSQL(BlobStorage):
         connection.close()
 
     def export(self, path):
-        with self.existing_large_object(path) as large_object, cursor:
-            large_object.export(os.path.join("/tmp", uuid.uuid4()))
+        with self.existing_large_object(path) as (large_object, cursor):
+            large_object.export(os.path.join("/tmp", str(uuid.uuid4())))
