@@ -27,7 +27,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, os, json, subprocess
+import datetime, json, subprocess
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -45,9 +45,9 @@ import samples.utils.views as utils
 
 
 def save_image_file(image_data, result, related_data_form):
-    """Saves an uploaded image file stream to its final destination in
-    ``settings.MEDIA_ROOT``.  If the given result has already an image connected
-    with it, it is removed first.
+    """Saves an uploaded image file stream to its final destination in the blob
+    store.  If the given result has already an image connected with it, it is
+    removed first.
 
     :param image_data: the file-like object which contains the uploaded data
         stream
@@ -77,13 +77,12 @@ def save_image_file(image_data, result, related_data_form):
                     _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."), code="invalid"))
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
-                os.remove(result.get_image_locations()["image_file"])
+                settings.BLOB_STORAGE_BACKEND.unlink(result.get_image_locations()["image_file"])
             result.image_type = new_image_type
             image_path = result.get_image_locations()["image_file"]
-            mkdirs(image_path)
-            destination = open(image_path, "wb+")
-        destination.write(chunk)
-    destination.close()
+            destination = settings.BLOB_STORAGE_BACKEND.open(image_path, "w")
+        settings.BLOB_STORAGE_BACKEND.write(destination, chunk)
+    settings.BLOB_STORAGE_BACKEND.close(destination)
     storage_changed.send(models.Result)
     result.save()
 
@@ -588,7 +587,8 @@ def show_image(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    return static_file_response(image_locations["image_file"], image_locations["sluggified_filename"])
+    return static_file_response(settings.BLOB_STORAGE_BACKEND.export(image_locations["image_file"]),
+                                image_locations["sluggified_filename"])
 
 
 @login_required
