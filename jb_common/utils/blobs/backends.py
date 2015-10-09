@@ -18,6 +18,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+"""The blob storage backends.  Currently, it is used for storing uploaded files
+(with result processes).  You have to set a blob storage backend in the
+``BLOB_STORAGE_BACKEND`` settings like this::
+
+    BLOB_STORAGE_BACKEND = Filesystem(MEDIA_ROOT)
+"""
+
 from __future__ import absolute_import, division, unicode_literals
 
 import os, uuid
