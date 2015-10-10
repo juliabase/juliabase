@@ -31,6 +31,7 @@ from __future__ import absolute_import, division, unicode_literals
 import os, uuid
 from contextlib import contextmanager
 import psycopg2
+from django.conf import settings
 from jb_common.utils.base import mkdirs
 from jb_common.signals import storage_changed
 
@@ -137,14 +138,15 @@ class Filesystem(BlobStorage):
             storage_changed.send(Filesystem)
 
 
-    def __init__(self, root):
+    def __init__(self, root=None):
         """Class constructor.
 
-        :param root: root directory of the file system storage of BLOB files
+        :param root: root directory of the file system storage of BLOB files;
+          it defaults to ``MEDIA_ROOT``
 
         :type root: str
         """
-        self.root = root
+        self.root = root or settings.MEDIA_ROOT
 
     def unlink(self, path):
         os.unlink(os.path.join(self.root, path))
