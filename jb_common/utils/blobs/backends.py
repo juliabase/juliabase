@@ -29,7 +29,7 @@
 from __future__ import absolute_import, division, unicode_literals
 import django.utils.six as six
 
-import os, uuid
+import os, uuid, datetime
 from contextlib import contextmanager
 import psycopg2
 from django.conf import settings
@@ -63,6 +63,20 @@ class BlobStorage(object):
           paths)
 
         :rtype: list of str
+        """
+        raise NotImplementedError
+
+    def getmtime(self, path):
+        """Returns the modification timestamp of the file at ``path``.
+
+        :param path: full path to a directory
+
+        :type path: str
+
+        :return:
+          the modification timestamp
+
+        :rtype: datetime.datetime
         """
         raise NotImplementedError
 
@@ -155,6 +169,9 @@ class Filesystem(BlobStorage):
         :type root: str
         """
         self.root = root or settings.MEDIA_ROOT
+
+    def getmtime(self, path):
+        return datetime.datetime.fromtimestamp(os.path.getmtime(os.path.join(self.root, path)))
 
     def unlink(self, path):
         os.unlink(os.path.join(self.root, path))
@@ -272,6 +289,11 @@ class PostgreSQL(BlobStorage):
                 if not large_object.closed:
                     large_object.close()
 
+    def getmtime(self, path):
+        with self.existing_large_object(path) as (large_object, cursor):
+            cursor.execute("SELECT mtime FROM blobs WHERE large_object_id=%s;", (large_object.oid,))
+            return cursor.fetchone()[0]
+        
     def unlink(self, path):
         with self.existing_large_object(path) as (large_object, cursor):
             cursor.execute("DELETE FROM blobs WHERE large_object_id=%s;", (large_object.oid,))
