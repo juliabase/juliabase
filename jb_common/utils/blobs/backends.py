@@ -45,18 +45,21 @@ class BlobStorage(object):
     """Abstract base class for blob storage backends.  It lists all methods that
     may be implemented and their signatures.  Currently, core JuliaBase only
     calls the methods `open` and `export`.
+
+    Note the “full path” means that it must be complete.  *Important*: Any
+    paths in the blob storage must not start with a slash.
     """
 
     def list(self, path):
         """Lists all files in the directory ``path``.  If ``path`` points to a file, an
         empty list is returned.
 
-        :param path: absolute path to a directory
+        :param path: full path to a directory
 
         :type path: str
 
         :return:
-          all files in the directory, as simple names (rather than absolute
+          all files in the directory, as simple names (rather than full
           paths)
 
         :rtype: list of str
@@ -66,7 +69,7 @@ class BlobStorage(object):
     def unlink(self, path):
         """Removes the file at ``path``.  This must not be a directory.
 
-        :param path: absolute path to a file
+        :param path: full path to a file
 
         :type path: str
         """
@@ -79,7 +82,7 @@ class BlobStorage(object):
         ``close()`` closes the file and should be called when all data is
         written.
 
-        :param path: absolute path to a file
+        :param path: full path to a file
         :param mode: mode in which the file should be opened; may be ``"r"`` or
           ``"w"``
 
@@ -103,7 +106,7 @@ class BlobStorage(object):
         Web server, or in ``/tmp`` after a reboot), else, a temporary file is
         staying around.
 
-        :param path: absolute path to a file
+        :param path: full path to a file
 
         :type path: str
 
