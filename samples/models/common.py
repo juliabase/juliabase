@@ -1171,16 +1171,22 @@ class Result(Process):
         """Get the location of the image in the local filesystem as well
         as on the webpage.
 
-        Every image exist twice on the local filesystem.  First, it is in
-        ``settings.MEDIA_ROOT/results``.  (Typically, ``MEDIA_ROOT`` is
-        ``/var/www/juliabase/uploads/`` and should be backuped.)  This is the
-        original file, uploaded by the user.  Its filename is ``"0"`` plus the
-        respective file extension (jpeg, png, or pdf).  The sub-directory is
-        the primary key of the result.  (This allows for more than one image
-        per result in upcoming JuliaBase versions.)
+        Every image exist twice.  First, it is in the blob store.  If you use
+        the ``Filesystem`` blob store with ``settings.MEDIA_ROOT`` as its
+        parameter, it is in ``settings.MEDIA_ROOT/results``.  (Typically,
+        ``MEDIA_ROOT`` is ``/var/www/juliabase/uploads/`` and should be
+        backuped.)  This is the original file, uploaded by the user.  Its
+        filename is ``"0"`` plus the respective file extension (jpeg, png, or
+        pdf).  The sub-directory is the primary key of the result.  (This
+        allows for more than one image per result in upcoming JuliaBase
+        versions.)
+
+        Thus, keep in mind that ``"image_file"`` does not refer to an actual
+        file path but the path (the primary key if you wish) in the blob
+        storage backend.
 
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
-        on the original file type, and stored in ``settings.MEDIA_ROOT``.
+        on the original file type, and stored in ``settings.CACHE_ROOT``.
 
         :return:
           a dictionary containing the following keys:
@@ -1188,7 +1194,8 @@ class Result(Process):
           =========================  =========================================
                  key                           meaning
           =========================  =========================================
-          ``"image_file"``           full path to the original image file
+          ``"image_file"``           path to the original image file in the
+                                     blob storage backend
           ``"image_url"``            full relative URL to the image
           ``"thumbnail_file"``       full path to the thumbnail file
           ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
@@ -1201,7 +1208,7 @@ class Result(Process):
         original_extension = "." + self.image_type
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
         sluggified_filename = defaultfilters.slugify(self.title) + original_extension
-        return {"image_file": os.path.join(settings.MEDIA_ROOT, "results", str(self.pk), "0" + original_extension),
+        return {"image_file": os.path.join("results", str(self.pk), "0" + original_extension),
                 "image_url": django.core.urlresolvers.reverse(
                     "samples.views.result.show_image", kwargs={"process_id": str(self.pk)}),
                 "thumbnail_file": os.path.join(settings.CACHE_ROOT, "results_thumbnails", str(self.pk),

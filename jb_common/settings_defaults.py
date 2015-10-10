@@ -20,6 +20,10 @@
 
 """Default values of jb_common settings."""
 
+from __future__ import absolute_import, unicode_literals
+# Python3 note: Below, there are some str() calls that should be removed with
+# Python3.
+
 import sys, os
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.crypto import get_random_string
@@ -28,6 +32,7 @@ from django.utils.crypto import get_random_string
 DEBUG_EMAIL_REDIRECT_USERNAME = ""
 JAVASCRIPT_I18N_APPS = ("django.contrib.auth", "samples", "jb_common")
 USE_X_SENDFILE = False
+BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem", ())
 
 # LDAP-related settings
 

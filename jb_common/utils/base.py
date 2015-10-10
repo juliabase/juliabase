@@ -43,6 +43,7 @@ from django.utils.decorators import available_attrs
 from django.utils.translation import ugettext_lazy as _, ugettext_lazy, ugettext
 from django.utils.functional import allow_lazy
 from jb_common import mimeparse
+from jb_common.utils import blobs
 
 
 class HttpResponseUnauthorized(django.http.HttpResponse):
@@ -547,8 +548,9 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
     union of `source_files` and `timestamps` is empty, the function returns
     ``False``.
 
-    :param destination: the path to the destination file
-    :param source_files: the paths of the source files
+    :param destination: the absolute path to the destination file
+    :param source_files: the paths of the source files; if relative, they are
+        assumed to be in the blob storage.
     :param timestamps: timestamps of non-file source objects
     :param additional_inaccuracy: When comparing file timestamps across
         computers, there may be trouble due to inaccurate clocks or filesystems
@@ -570,7 +572,11 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
     :raises OSError: if one of the source paths is not found
     """
     all_timestamps = copy.copy(timestamps)
-    all_timestamps.extend(datetime.datetime.fromtimestamp(os.path.getmtime(filename)) for filename in source_files)
+    if all(os.path.isabs(path) for path in source_files):
+        getmtime = lambda path: datetime.datetime.fromtimestamp(os.path.getmtime(path))
+    else:
+        getmtime = blobs.storage.getmtime
+    all_timestamps.extend(getmtime(filename) for filename in source_files)
     if not all_timestamps:
         return False
     # The ``+1`` is for avoiding false positives due to floating point
@@ -608,7 +614,7 @@ def static_file_response(filepath, served_filename=None):
     response = django.http.HttpResponse()
     if not settings.USE_X_SENDFILE:
         response.write(open(filepath, "rb").read())
-    response["X-Sendfile"] = filepath
+    response[settings.USE_X_SENDFILE if isinstance(settings.USE_X_SENDFILE, six.string_types) else "X-Sendfile"] = filepath
     response["Content-Type"] = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
     response["Content-Length"] = os.path.getsize(filepath)
     if served_filename:

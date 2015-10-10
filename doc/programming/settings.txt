@@ -208,6 +208,10 @@ If ``True``, JuliaBase assumes that the web server is interpreting the
 Otherwise, JuliaBase serves the file, which may be slower and more
 time-consuming.  In most cases, it doesn't matter, though.
 
+You can also set it to the X-Sendfile header you want, e.g.::
+
+    USE_X_SENDFILE = "X-Sendfile-Temporary"
+
 
 .. index:: LDAP
 

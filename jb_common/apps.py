@@ -26,6 +26,7 @@ from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
 from django.core.urlresolvers import reverse
 import jb_common.utils.base as utils
+import jb_common.utils.blobs
 from jb_common.nav_menu import MenuItem
 
 
@@ -35,6 +36,8 @@ class JBCommonConfig(AppConfig):
 
     def ready(self):
         import jb_common.signals
+
+        jb_common.utils.blobs.set_storage_backend()
 
     def build_menu(self, menu, request):
         """Contribute to the menu.  See :py:mod:`jb_common.nav_menu` for further
