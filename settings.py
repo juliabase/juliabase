@@ -72,7 +72,7 @@ DATE_FORMAT = "D, j. N Y"
 
 STATIC_ROOT = str("/var/www/juliabase/static/")
 MEDIA_ROOT = str("/var/www/juliabase/uploads")
-BLOB_STORAGE_BACKEND = Filesystem(MEDIA_ROOT)
+BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem", (MEDIA_ROOT,))
 
 
 # Make sure to use a trailing slash if there is a path component (optional in

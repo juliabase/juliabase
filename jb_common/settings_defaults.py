@@ -27,13 +27,13 @@ from __future__ import absolute_import, unicode_literals
 import sys, os
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.crypto import get_random_string
-from jb_common.utils.blobs.backends import Filesystem
 
 
 DEBUG_EMAIL_REDIRECT_USERNAME = ""
 JAVASCRIPT_I18N_APPS = ("django.contrib.auth", "samples", "jb_common")
 USE_X_SENDFILE = False
-BLOB_STORAGE_BACKEND = Filesystem(str("/var/www/juliabase/uploads"))
+BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem",
+                        (str("/var/www/juliabase/uploads"),))
 
 # LDAP-related settings
 

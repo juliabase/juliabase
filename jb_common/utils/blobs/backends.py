@@ -22,7 +22,8 @@
 (with result processes).  You have to set a blob storage backend in the
 ``BLOB_STORAGE_BACKEND`` settings like this::
 
-    BLOB_STORAGE_BACKEND = Filesystem(MEDIA_ROOT)
+    BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem",
+                            (MEDIA_ROOT),))
 """
 
 from __future__ import absolute_import, division, unicode_literals

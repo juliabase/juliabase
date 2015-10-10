@@ -40,6 +40,7 @@ import django.forms as forms
 from jb_common.signals import storage_changed
 from jb_common.utils.base import static_file_response, is_update_necessary, mkdirs, help_link
 import jb_common.utils.base
+import jb_common.utils.blobs
 from samples import models, permissions
 import samples.utils.views as utils
 
@@ -77,10 +78,10 @@ def save_image_file(image_data, result, related_data_form):
                     _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."), code="invalid"))
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
-                settings.BLOB_STORAGE_BACKEND.unlink(result.get_image_locations()["image_file"])
+                jb_common.utils.blobs.storage.unlink(result.get_image_locations()["image_file"])
             result.image_type = new_image_type
             image_path = result.get_image_locations()["image_file"]
-            destination = settings.BLOB_STORAGE_BACKEND.open(image_path, "w")
+            destination = jb_common.utils.blobs.storage.open(image_path, "w")
         destination.write(chunk)
     destination.close()
     result.save()
@@ -586,7 +587,7 @@ def show_image(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    return static_file_response(settings.BLOB_STORAGE_BACKEND.export(image_locations["image_file"]),
+    return static_file_response(jb_common.utils.blobs.storage.export(image_locations["image_file"]),
                                 image_locations["sluggified_filename"])
 
 
