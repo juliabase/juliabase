@@ -142,7 +142,7 @@ class Filesystem(BlobStorage):
     This backend always exports to /tmp.
     """
 
-    class File(file):
+    class File(object):
         """A very simplistic file-like objects.  It only defines the methods that are
         needed in JuliaBase: `write` (with one parameter) and `close`.  I need
         this wrapper to have a hook in the `close` method to call the
