@@ -1181,6 +1181,10 @@ class Result(Process):
         allows for more than one image per result in upcoming JuliaBase
         versions.)
 
+        Thus, keep in mind that ``"image_file"`` does not refer to an actual
+        file path but the path (the primary key if you wish) in the blob
+        storage backend.
+
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
         on the original file type, and stored in ``settings.CACHE_ROOT``.
 
@@ -1190,7 +1194,8 @@ class Result(Process):
           =========================  =========================================
                  key                           meaning
           =========================  =========================================
-          ``"image_file"``           full path to the original image file
+          ``"image_file"``           path to the original image file in the
+                                     blob storage backend
           ``"image_url"``            full relative URL to the image
           ``"thumbnail_file"``       full path to the thumbnail file
           ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
