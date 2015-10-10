@@ -27,7 +27,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, json, subprocess
+import os, datetime, json, subprocess
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -611,13 +611,14 @@ def show_thumbnail(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    image_file = image_locations["image_file"]
+    image_file = jb_common.utils.blobs.storage.export(image_locations["image_file"])
     thumbnail_file = image_locations["thumbnail_file"]
     if is_update_necessary(thumbnail_file, [image_file]):
         mkdirs(thumbnail_file)
         subprocess.check_call(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
                                "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), thumbnail_file])
         storage_changed.send(models.Result)
+    os.unlink(image_file)
     return static_file_response(thumbnail_file)
 
 
