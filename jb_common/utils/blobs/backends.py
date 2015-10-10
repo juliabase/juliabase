@@ -27,6 +27,7 @@
 """
 
 from __future__ import absolute_import, division, unicode_literals
+import django.utils.six as six
 
 import os, uuid
 from contextlib import contextmanager
@@ -34,6 +35,10 @@ import psycopg2
 from django.conf import settings
 from jb_common.utils.base import mkdirs
 from jb_common.signals import storage_changed
+
+
+if six.PY2:
+    FileNotFoundError = OSError
 
 
 class BlobStorage(object):
