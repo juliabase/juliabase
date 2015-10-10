@@ -626,10 +626,14 @@ def mkdirs(path):
 
     :type path: str
     """
-    try:
-        os.makedirs(os.path.dirname(path))
-    except OSError:
-        pass
+    if six.PY3:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+    else:
+        try:
+            os.makedirs(os.path.dirname(path))
+        except OSError as error:
+            if "Errno 17" not in str(error):
+                raise
 
 
 @contextmanager
