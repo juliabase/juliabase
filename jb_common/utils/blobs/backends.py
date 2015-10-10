@@ -212,7 +212,7 @@ class PostgreSQL(BlobStorage):
         def write(self, data):
             self.large_object.write(data)
 
-        def close(self, data):
+        def close(self):
             self.cursor.execute("UPDATE blobs SET mtime=now() WHERE path=%s;", (self.path,))
             self.large_object.close()
             self.connection.commit()
@@ -293,7 +293,7 @@ class PostgreSQL(BlobStorage):
         with self.existing_large_object(path) as (large_object, cursor):
             cursor.execute("SELECT mtime FROM blobs WHERE large_object_id=%s;", (large_object.oid,))
             return cursor.fetchone()[0]
-        
+
     def unlink(self, path):
         with self.existing_large_object(path) as (large_object, cursor):
             cursor.execute("DELETE FROM blobs WHERE large_object_id=%s;", (large_object.oid,))
@@ -314,4 +314,6 @@ class PostgreSQL(BlobStorage):
 
     def export(self, path):
         with self.existing_large_object(path) as (large_object, cursor):
-            large_object.export(os.path.join("/tmp", str(uuid.uuid4())))
+            result = os.path.join("/tmp", str(uuid.uuid4()))
+            large_object.export(result)
+            return result
