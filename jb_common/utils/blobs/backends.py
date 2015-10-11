@@ -23,7 +23,7 @@
 ``BLOB_STORAGE_BACKEND`` settings like this::
 
     BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem",
-                            (MEDIA_ROOT),))
+                            (MEDIA_ROOT,))
 """
 
 from __future__ import absolute_import, division, unicode_literals
