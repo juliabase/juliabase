@@ -161,7 +161,7 @@ class RelatedDataForm(forms.Form):
         samples = cleaned_data.get("samples")
         sample_series = cleaned_data.get("sample_series")
         if samples is not None and sample_series is not None:
-            for sample_or_series in set(samples + list(sample_series)) - self.old_relationships:
+            for sample_or_series in set(list(samples) + list(sample_series)) - self.old_relationships:
                 if not permissions.has_permission_to_add_result_process(self.user, sample_or_series):
                     self.add_error(None, ValidationError(
                         _("You don't have the permission to add the result to all selected samples/series."),
