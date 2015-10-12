@@ -139,8 +139,8 @@ class Filesystem(BlobStorage):
     JuliaBase only on one computer, or use a cluster file systems for all
     cluster nodes.
 
-    This backend always exports hard links, preferably to /tmp, else to the
-    root directory.
+    This backend always exports hard links, preferably to /tmp, else to
+    CACHE_ROOT or to the root directory.
     """
 
     class File(object):
@@ -184,15 +184,27 @@ class Filesystem(BlobStorage):
         return Filesystem.File(open(filepath, mode + "b"))
 
     def export(self, path):
+        """Create a hard link to the file.  Three directories are tried, in this order:
+
+        1. /tmp
+        2. CACHE_ROOT
+        3. `root` (as given to `__init__`
+
+        A failure means the the original file and the link are not on the same
+        filesystem, which must be the case at least for (3).
+        """
         path = os.path.join(self.root, path)
         filename = str(uuid.uuid4())
         result = os.path.join("/tmp", filename)
         try:
             os.link(path, result)
         except OSError:
-            # /tmp and `self.root` are not on the same filesystem.
-            result = os.path.join(self.root, filename)
-            os.link(path, result)
+            result = os.path.join(settings.CACHE_ROOT, filename)
+            try:
+                os.link(path, result)
+            except OSError:
+                result = os.path.join(self.root, filename)
+                os.link(path, result)
         return result
 
 
