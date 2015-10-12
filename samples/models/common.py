@@ -316,9 +316,9 @@ class Process(PolymorphicModel):
                                                              kwargs={"process_id": str(self.id), "plot_id": plot_id})
         basename = "{0}-{1}-{2}-{3}-{4}".format(
             self.content_type.app_label, self.content_type.model, get_language(), self.id, plot_id)
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".pdf"),
+        return {"plot_file": os.path.join("plots", basename + ".pdf"),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".png"),
+                "thumbnail_file": os.path.join("plots", basename + ".png"),
                 "thumbnail_url": thumbnail_url}
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
