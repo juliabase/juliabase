@@ -185,6 +185,25 @@ the names of the formats to their properties.  See :doc:`sample_names` for more
 information.
 
 
+.. index:: TEMP_STATIC_DIRS
+
+TEMP_STATIC_DIRS
+----------------
+
+Default: ``()``
+
+Contains a list of directories from which temporary static files are served
+which should be deleted immediately after having been served.
+
+Important: If `USE_X_SENDFILE`_ is ``True``, all temporary static files are
+served by the ``X-Sendfile-Temporary`` header.  When using Apache with at least
+version 1.0 of `mod_xsendfile`_, this means that Apache serves the file and
+immediately deletes it afterwards.  You have to set the Apache flag
+``AllowFileDelete`` correctly for this to work.
+
+.. _mod_xsendfile: http://www.juliabase.org/downloads/impressum.html
+
+
 .. index:: THUMBNAIL_WIDTH
 
 THUMBNAIL_WIDTH
@@ -207,10 +226,6 @@ If ``True``, JuliaBase assumes that the web server is interpreting the
 ``X-Sendfile`` header and serves a static file (e.g. an image) itself.
 Otherwise, JuliaBase serves the file, which may be slower and more
 time-consuming.  In most cases, it doesn't matter, though.
-
-You can also set it to the X-Sendfile header you want, e.g.::
-
-    USE_X_SENDFILE = "X-Sendfile-Temporary"
 
 
 .. index:: LDAP

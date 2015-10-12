@@ -611,10 +611,21 @@ def static_file_response(filepath, served_filename=None):
 
     :rype: ``django.http.HttpResponse``
     """
+    filepath = os.path.realpath(filepath)
+    for path in settings.TEMP_STATIC_DIRS:
+        path = os.path.join(os.path.realpath(path), "")
+        if os.path.commonprefix([filepath, path]) == path:
+            is_temporary = True
+    else:
+        is_temporary = False
+
     response = django.http.HttpResponse()
-    if not settings.USE_X_SENDFILE:
+    if settings.USE_X_SENDFILE:
+        response["X-Sendfile-Temporary" if is_temporary else "X-Sendfile"] = filepath
+    else:
         response.write(open(filepath, "rb").read())
-    response[settings.USE_X_SENDFILE if isinstance(settings.USE_X_SENDFILE, six.string_types) else "X-Sendfile"] = filepath
+        if is_temporary:
+            os.unlink(filepath)
     response["Content-Type"] = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
     response["Content-Length"] = os.path.getsize(filepath)
     if served_filename:
