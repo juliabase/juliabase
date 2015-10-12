@@ -50,7 +50,7 @@ def generate_stack(thumbnail, locations, sample, sample_details):
         content = subprocess.check_output(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
                                            "-sOutputFile=-", pdf_filename])
     else:
-        content = open(pdf_filename).read()
+        content = open(pdf_filename, "rb").read()
     os.unlink(pdf_filename)
     return content
 
