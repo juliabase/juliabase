@@ -35,7 +35,7 @@ from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _, ugettext
-from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs, \
+from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, \
     int_or_zero, static_response, get_cached_file_content
 import samples.utils.views as utils
 from kicker import models
