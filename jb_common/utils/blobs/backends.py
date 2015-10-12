@@ -189,7 +189,8 @@ class Filesystem(BlobStorage):
         try:
             os.link(path, result)
         except OSError:
-            result = os.path.join(os.path.dirname(path), filename)
+            # /tmp and `self.root` are not on the same filesystem.
+            result = os.path.join(self.root, filename)
             os.link(path, result)
         return result
 
