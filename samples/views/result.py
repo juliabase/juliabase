@@ -38,7 +38,6 @@ from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import django.forms as forms
-from jb_common.signals import storage_changed
 from jb_common.utils.base import static_response, static_file_response, get_cached_file_content, help_link
 import jb_common.utils.base
 import jb_common.utils.blobs

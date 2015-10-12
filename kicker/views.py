@@ -37,7 +37,6 @@ from django.http import Http404
 from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, mkdirs, \
     int_or_zero, static_response, get_cached_file_content
-from jb_common.signals import storage_changed
 import samples.utils.views as utils
 from kicker import models
 

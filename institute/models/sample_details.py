@@ -37,7 +37,6 @@ import django.core.urlresolvers
 from django import forms
 from django.forms.utils import ValidationError
 from django.forms.models import inlineformset_factory
-from jb_common.signals import storage_changed
 from jb_common import search, model_fields
 import jb_common.utils.base
 from samples.data_tree import DataNode, DataItem
