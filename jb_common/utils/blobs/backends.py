@@ -316,6 +316,6 @@ class PostgreSQL(BlobStorage):
 
     def export(self, path):
         with self.existing_large_object(path) as (large_object, cursor):
-            result = os.path.join("/tmp", str(uuid.uuid4()))
+            result = os.path.join(settings.CACHE_ROOT, str(uuid.uuid4()))
             large_object.export(result)
             return result
