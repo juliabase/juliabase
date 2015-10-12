@@ -22,7 +22,7 @@ from __future__ import absolute_import, division, unicode_literals
 import django.utils.six as six
 from django.utils.six.moves import urllib
 
-import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string
+import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string, hashlib
 from contextlib import contextmanager
 from functools import wraps
 from smtplib import SMTPException
@@ -585,6 +585,48 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
         datetime.datetime.fromtimestamp(os.path.getmtime(destination) + additional_inaccuracy + 1) < max(all_timestamps)
 
 
+def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
+    """Returns the content of the file denoted by ``path``.  It tries to get this
+    from cache, taking the timestamps of all ``source_files`` and the
+    ``timestamps`` into account.  If the cache lookup fails, ``generator`` is
+    called (without arguments!) to generate the file content, which is then
+    cached.
+
+    :param destination: the absolute path to the destination file
+    :param generator: callable which returns the file content; it is only
+      called of the cache lookup yields a miss
+    :param source_files: the paths of the source files; if relative, they are
+        assumed to be in the blob storage.
+    :param timestamps: timestamps of non-file source objects
+
+    :type destination: unicode
+    :type generator: callable with no arguments returning bytes
+    :type source_files: list of unicode
+    :type timestamps: list of datetime.datetime
+
+    :return:
+      content of the file denoted by ``path``
+
+    :rtype: bytes
+
+    :raises OSError: if one of the source paths is not found
+    """
+    all_timestamps = copy.copy(timestamps)
+    if all(os.path.isabs(path) for path in source_files):
+        getmtime = lambda path: datetime.datetime.fromtimestamp(os.path.getmtime(path))
+    else:
+        getmtime = blobs.storage.getmtime
+    all_timestamps.extend(getmtime(filename) for filename in source_files)
+    hash_ = hashlib.sha1()
+    hash_.update(";".join(six.text_type(timestamp) for timestamp in sorted(all_timestamps)).encode("ascii"))
+    key = "file:{timestamp_hash}:{path}".format(timestamp_hash=hash_.hexdigest()[:10], path=path)
+    content = get_from_cache(key)
+    if content is None:
+        content = generator()
+        cache.set(key, content)
+    return content
+
+
 def format_lazy(string, *args, **kwargs):
     """Implements a lazy variant of the ``format`` string method.  For
     example, you might say::
@@ -597,6 +639,32 @@ def format_lazy(string, *args, **kwargs):
 # Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
 # whatever reason.
 format_lazy = allow_lazy(format_lazy, six.text_type)
+
+
+def static_response(content, served_filename="", content_type=None):
+    """Serves a bytes string as static content.
+
+    :param content: the content to be served
+    :param served_filename: the filename the should be transmitted; if given,
+        the response will be an "attachment"
+    :param content_type: the MIME type of the content
+
+    :type content: bytes
+    :type served_filename: str
+    :type content_type: str
+
+    :return:
+      the HTTP response with the static file
+
+    :rype: ``django.http.HttpResponse``
+    """
+    response = django.http.HttpResponse()
+    response.write(content)
+    response["Content-Type"] = content_type or mimetypes.guess_type(served_filename)[0] or "application/octet-stream"
+    response["Content-Length"] = len(content)
+    if served_filename:
+        response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
+    return response
 
 
 def static_file_response(filepath, served_filename=None):

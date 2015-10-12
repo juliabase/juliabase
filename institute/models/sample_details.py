@@ -93,9 +93,9 @@ class SampleDetails(models.Model):
 
         :rtype: dict mapping str to str
         """
-        return {"diagram_file": os.path.join(settings.CACHE_ROOT, "stacks", str(self.pk) + ".pdf"),
+        return {"diagram_file": os.path.join("stacks", str(self.pk) + ".pdf"),
                 "diagram_url": django.core.urlresolvers.reverse("stack_diagram", kwargs={"sample_id": str(self.pk)}),
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "stacks", str(self.pk) + ".png"),
+                "thumbnail_file": os.path.join("stacks", str(self.pk) + ".png"),
                 "thumbnail_url": django.core.urlresolvers.reverse("stack_diagram_thumbnail",
                                                                   kwargs={"sample_id": str(self.pk)})}
 
@@ -145,12 +145,8 @@ class SampleDetails(models.Model):
             context["informal_stack_url"] = plot_locations["diagram_url"]
             context["informal_stack_thumbnail_url"] = plot_locations["thumbnail_url"]
         else:
-            removed = jb_common.utils.base.remove_file(plot_locations["diagram_file"])
-            removed = jb_common.utils.base.remove_file(plot_locations["thumbnail_file"]) or removed
             context.pop("informal_stack_url", None)
             context.pop("informal_stack_thumbnail_url", None)
-            if removed:
-                storage_changed.send(SampleDetails)
         return context
 
     def process_get(self, user):

@@ -28,6 +28,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import os, datetime, json, subprocess
+from functools import partial
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -38,7 +39,7 @@ from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import django.forms as forms
 from jb_common.signals import storage_changed
-from jb_common.utils.base import static_file_response, is_update_necessary, mkdirs, help_link
+from jb_common.utils.base import static_response, static_file_response, get_cached_file_content, help_link
 import jb_common.utils.base
 import jb_common.utils.blobs
 from samples import models, permissions
@@ -591,6 +592,14 @@ def show_image(request, process_id):
                                 image_locations["sluggified_filename"])
 
 
+def generate_thumbnail(result, image_filename):
+    image_file = jb_common.utils.blobs.storage.export(image_filename)
+    content = subprocess.check_output(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
+                                       "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), "png:-"])
+    os.unlink(image_file)
+    return content
+
+
 @login_required
 def show_thumbnail(request, process_id):
     """Shows the thumnail of a particular result image.  Although its response
@@ -611,15 +620,11 @@ def show_thumbnail(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    image_file = jb_common.utils.blobs.storage.export(image_locations["image_file"])
+    image_filename = image_locations["image_file"]
     thumbnail_file = image_locations["thumbnail_file"]
-    if is_update_necessary(thumbnail_file, [image_file]):
-        mkdirs(thumbnail_file)
-        subprocess.check_call(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
-                               "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), thumbnail_file])
-        storage_changed.send(models.Result)
-    os.unlink(image_file)
-    return static_file_response(thumbnail_file)
+    content = get_cached_file_content(thumbnail_file, partial(generate_thumbnail, result, image_filename),
+                                      [image_filename])
+    return static_response(content, content_type="image/png")
 
 
 @login_required

@@ -21,11 +21,10 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-# FixMe: Layout files should be taken from cache if appropriate.
-
 from __future__ import unicode_literals, absolute_import, division
 
-import os.path, subprocess
+import os, subprocess, uuid
+from functools import partial
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -36,21 +35,25 @@ from institute import models
 from institute import layouts
 
 
-@login_required
-def show_layout(request, process_id, sample_id):
-    sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
-    process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id)).actual_instance
-
-    pdf_filename = "/tmp/layouts_{0}_{1}.pdf".format(process.id, sample.id)
-    jb_common.utils.base.mkdirs(pdf_filename)
+def generate_layout(sample, process):
+    # FixMe: This should be implemented without writing to the disk.
+    pdf_filename = "/tmp/layouts_{}.pdf".format(uuid.uuid4())
     layout = layouts.get_layout(sample, process)
     if not layout:
         raise Http404("error")
     layout.generate_pdf(pdf_filename)
-
-    png_filename = os.path.join(settings.CACHE_ROOT, "layouts", "{0}-{1}.png".format(process.id, sample.id))
-    jb_common.utils.base.mkdirs(png_filename)
     resolution = settings.THUMBNAIL_WIDTH / (layout.width / 72)
-    subprocess.check_call(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r{0}".format(resolution), "-dEPSCrop",
-                             "-sOutputFile=" + png_filename, pdf_filename])
-    return jb_common.utils.base.static_file_response(png_filename)
+    content = subprocess.check_output(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r{0}".format(resolution),
+                                       "-dEPSCrop", "-sOutputFile=-", pdf_filename])
+    os.unlink(pdf_filename)
+    return content
+
+
+@login_required
+def show_layout(request, process_id, sample_id):
+    sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
+    process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id)).actual_instance
+    png_filename = os.path.join("layouts", "{0}-{1}.png".format(process.id, sample.id))
+    content = jb_common.utils.base.get_cached_file_content(
+        png_filename, partial(generate_layout, sample, process), timestamps=[sample.last_modified, process.last_modified])
+    return jb_common.utils.base.static_response(content, png_filename)

@@ -316,9 +316,9 @@ class Process(PolymorphicModel):
                                                              kwargs={"process_id": str(self.id), "plot_id": plot_id})
         basename = "{0}-{1}-{2}-{3}-{4}".format(
             self.content_type.app_label, self.content_type.model, get_language(), self.id, plot_id)
-        return {"plot_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".pdf"),
+        return {"plot_file": os.path.join("plots", basename + ".pdf"),
                 "plot_url": plot_url,
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "plots", basename + ".png"),
+                "thumbnail_file": os.path.join("plots", basename + ".png"),
                 "thumbnail_url": thumbnail_url}
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
@@ -1186,7 +1186,7 @@ class Result(Process):
         storage backend.
 
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
-        on the original file type, and stored in ``settings.CACHE_ROOT``.
+        on the original file type, and stored in the cache.
 
         :return:
           a dictionary containing the following keys:
@@ -1211,8 +1211,7 @@ class Result(Process):
         return {"image_file": os.path.join("results", str(self.pk), "0" + original_extension),
                 "image_url": django.core.urlresolvers.reverse(
                     "samples.views.result.show_image", kwargs={"process_id": str(self.pk)}),
-                "thumbnail_file": os.path.join(settings.CACHE_ROOT, "results_thumbnails", str(self.pk),
-                                               "0" + thumbnail_extension),
+                "thumbnail_file": os.path.join("results_thumbnails", str(self.pk), "0" + thumbnail_extension),
                 "thumbnail_url": django.core.urlresolvers.reverse(
                     "samples.views.result.show_thumbnail", kwargs={"process_id": str(self.pk)}),
                 "sluggified_filename": sluggified_filename}
