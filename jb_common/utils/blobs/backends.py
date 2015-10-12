@@ -139,7 +139,8 @@ class Filesystem(BlobStorage):
     JuliaBase only on one computer, or use a cluster file systems for all
     cluster nodes.
 
-    This backend always exports to /tmp.
+    This backend always exports hard links, preferably to /tmp, else to the
+    root directory.
     """
 
     class File(object):
