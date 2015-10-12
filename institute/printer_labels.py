@@ -31,7 +31,7 @@ unit of measurement in ReportLab.
 
 from __future__ import division, unicode_literals, absolute_import
 import django.utils.six as six
-from django.utils.six.moves import cStringIO as StringIO
+from django.utils.six import BytesIO
 
 import re
 from reportlab.pdfgen import canvas
@@ -134,7 +134,7 @@ def printer_label(sample):
 
     :rtype: str
     """
-    output = StringIO()
+    output = BytesIO()
     text = sample.name
     c = canvas.Canvas(output, pagesize=(width, height))
     c.setAuthor("JuliaBase samples database")
