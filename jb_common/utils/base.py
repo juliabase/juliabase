@@ -641,6 +641,32 @@ def format_lazy(string, *args, **kwargs):
 format_lazy = allow_lazy(format_lazy, six.text_type)
 
 
+def static_response(content, served_filename="", content_type=None):
+    """Serves a bytes string as static content.
+
+    :param content: the content to be served
+    :param served_filename: the filename the should be transmitted; if given,
+        the response will be an "attachment"
+    :param content_type: the MIME type of the content
+
+    :type content: bytes
+    :type served_filename: str
+    :type content_type: str
+
+    :return:
+      the HTTP response with the static file
+
+    :rype: ``django.http.HttpResponse``
+    """
+    response = django.http.HttpResponse()
+    response.write(content)
+    response["Content-Type"] = content_type or mimetypes.guess_type(served_filename)[0] or "application/octet-stream"
+    response["Content-Length"] = len(content)
+    if served_filename:
+        response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
+    return response
+
+
 def static_file_response(filepath, served_filename=None):
     """Serves a file of the local file system.
 
