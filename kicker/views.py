@@ -19,8 +19,10 @@
 
 
 from __future__ import division, absolute_import, unicode_literals
+from django.utils.six import BytesIO
 
 import datetime, os, mimetypes
+from functools import partial
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 import matplotlib.dates
@@ -295,7 +297,7 @@ def get_eligible_players():
     return [(entry[1], int(round(entry[0]))) for entry in result]
 
 
-def generate_plot():
+def generate_plot(image_format):
     eligible_players = [entry[0] for entry in get_eligible_players()]
     hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
     plot_data = []
@@ -329,7 +331,7 @@ def generate_plot():
     axes.grid(True)
     axes.legend(loc=legend_loc, bbox_to_anchor=legend_bbox, ncol=ncol, shadow=True)
     output = BytesIO()
-    canvas.print_figure(output, format="png")
+    canvas.print_figure(output, format=image_format)
     figure.clf()
     return output.getvalue()
 
@@ -341,7 +343,7 @@ def plot(request, image_format):
         timestamps = [models.KickerNumber.objects.latest().timestamp]
     except models.KickerNumber.DoesNotExist:
         timestamps = []
-    content = get_cached_file_content(plot_filepath, generate_plot, timestamps=timestamps)
+    content = get_cached_file_content(plot_filepath, partial(generate_plot, image_format), timestamps=timestamps)
     return static_response(content, "kicker.pdf" if image_format == "pdf" else None, mimetypes.guess_type(plot_filepath))
     
 
