@@ -159,7 +159,7 @@ class Path(object):
         self.textured_points = [(dimensions["stack_width"] / parameters["grid_points"] * i,
                                  random.uniform(-parameters["roughness"], parameters["roughness"]))
                                 for i in range(parameters["grid_points"] + 1)]
-        self.edge_indices = [int(round(x * parameters["grid_points"])) for x in [1 / 8, 3 / 8, 5 / 8, 7 / 8]]
+        self.edge_indices = [int(round(x * parameters["grid_points"])) for x in [1/8, 3/8, 5/8, 7/8]]
 
         self.voffset = 0 if fill_color or not bottom_layer else bottom_layer.accumulated_height
         bottom_textured = bottom_layer and bottom_layer.textured
@@ -494,16 +494,16 @@ class Scale(object):
         thicknesses = [layer.nm for layer in layers if layer.nm > 0]
         thicknesses.sort(reverse=True)
         if thicknesses:
-            self.scale = 2 * 10 ** (1 / 10) * lineskip / thicknesses[len(thicknesses) // 2]
+            self.scale = 2 * 10**(1/10) * lineskip / thicknesses[len(thicknesses) // 2]
         else:
-            self.scale = 2 * 10 ** (1 / 10) * lineskip / 1000
+            self.scale = 2 * 10**(1/10) * lineskip / 1000
         # In order to snap the scale to discrete values
         self.scale = 10 ** (round(math.log10(self.scale) * 5) / 5)
 
         self.magnitude = 1
         while self.magnitude < 9:
             for self.factor in [1, 2, 5]:
-                self.scale_height = self.scale * 10 ** self.magnitude * self.factor
+                self.scale_height = self.scale * 10**self.magnitude * self.factor
                 if self.scale_height > 0.7 * cm:
                     break
             else:
