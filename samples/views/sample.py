@@ -968,6 +968,12 @@ def data_matrix_code(request):
 
     :rtype: HttpResponse
     """
+    raise Http404()
+    # FixMe: This non-working currently because it write the dara matrix PNG
+    # into STATIC_ROOT.  It is poorly coded for two reasons: First, STATIC_ROOT
+    # may not exist because another system is serving static content.  And
+    # Secondly, retrieving the actual PNG must also work even if the
+    # corresponding HTML has not been retrieved yet.
     try:
         data = request.GET["data"]
     except KeyError:
