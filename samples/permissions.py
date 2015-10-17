@@ -118,7 +118,7 @@ def get_user_permissions(user):
 
 
 def get_user_hash(user):
-    """Generates a secret hash that is connected with a user.  It is means as
+    """Generates a secret hash that is connected with a user.  It is meant as
     some sort of URL-based login for fetching feeds.  If the user accesses his
     feed via his aggregator, he is possibly not logged-in.  Because the
     aggregator cannot login by itself, the URL must be made unguessable.  This
