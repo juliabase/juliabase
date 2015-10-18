@@ -159,9 +159,9 @@ def update_informal_layers(sender, instance, created, **kwargs):
             informal_layers = []
             append_non_process_layers()
             modified_layers = set()
-            for process in sample.processes.all():
-                process = process.actual_instance
-                if hasattr(process, "update_informal_layers"):
+            for process in sample.processes.all().prefetch_related("content_type"):
+                if hasattr(process.content_type.model_class(), "update_informal_layers"):
+                    process = process.actual_instance
                     process_layers = [layer for layer in old_layers if layer.process == process]
                     process.update_informal_layers(
                         sample, instance, informal_layers, process_layers, modified_layers,
