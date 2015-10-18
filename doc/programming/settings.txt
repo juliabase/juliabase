@@ -503,8 +503,11 @@ particular, nobody else should have access to it.
 Of course, alternatively, you may set the ``SECRET_KEY`` in a completely
 different way.
 
-A change of the secret key has the usual impact as for every Django deployment,
-plus that links to Atom feeds change (with the old ones being broken).
+A change of the secret key has the `usual impact`_ as for every Django
+deployment, plus that links to Atom feeds change (with the old ones being
+broken).
+
+.. _usual impact: http://stackoverflow.com/a/15383766/188108
 
 
 .. index:: TEMPLATES
