@@ -25,14 +25,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 {% if topics %}
-  <ul>
-    {% for topic in topics %}
+  <table class="padding5">
+  <tbody>
+    <tr>
+      <td><b>{% trans 'topic'|capfirst %}</b></td>
+      <td><b>{% trans 'topic manager'|capfirst %}</b></td>
+    </tr>
+    {% for topic,manager,edit_able in topics %}
       {% with topic.id|urlquote as normalized_topicid %}
-        <li style='list-style-image: url("{% static "juliabase/icons/group.png" %}")'
-            ><a href="{% url 'samples.views.topic.edit' id=normalized_topicid %}">{{ topic.name }}</a></li>
+        <tr>
+          <td>
+            <span style='background: url("{% static "juliabase/icons/group.png" %}")no-repeat bottom left; background-position: 0 0; width: 16px; height: 16px;display: inline-block;'></span>
+         	  {% if edit_able %}<a href="{% url 'samples.views.topic.edit' id=normalized_topicid %}">{{ topic.name }}</a>
+         	  {% else %}{{ topic.name }}{% endif %}</td>
+          <td>{{ manager|get_really_full_name }}</td>
+        </tr>
       {% endwith %}
     {% endfor %}
-  </ul>
+  </tbody>
+  </table>
 {% else %}
   <p>{% trans 'No topics available.' %}</p>
 {% endif %}
