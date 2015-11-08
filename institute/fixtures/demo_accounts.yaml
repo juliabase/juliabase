@@ -32,7 +32,7 @@
 - fields:
     username: nobody
     last_name: Nobody
-    password: !
+    password: '!'
   model: auth.user
   pk: 2
 - fields:

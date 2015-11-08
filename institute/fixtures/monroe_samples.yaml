@@ -32,7 +32,7 @@
   model: institute.sampledetails
   pk: 16
 - fields:
-    current_location: Monroe's drawer
+    current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
     last_modified: 2015-01-21 11:15:04.584448
     name: 15-EM-1
@@ -46,7 +46,7 @@
   model: samples.sample
   pk: 13
 - fields:
-    current_location: Monroe's drawer
+    current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
     last_modified: 2015-01-21 11:15:05.508435
     name: 15-EM-2
@@ -60,7 +60,7 @@
   model: samples.sample
   pk: 14
 - fields:
-    current_location: Monroe's drawer
+    current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
     last_modified: 2015-01-21 11:15:06.460807
     name: 15-EM-3
@@ -74,7 +74,7 @@
   model: samples.sample
   pk: 15
 - fields:
-    current_location: Monroe's drawer
+    current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
     last_modified: 2015-01-21 11:15:07.390776
     name: 15-EM-4

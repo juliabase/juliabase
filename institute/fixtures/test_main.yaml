@@ -362,7 +362,7 @@
     is_superuser: false
     last_login: 2015-01-21 11:15:01.010541
     last_name: Nobody
-    password: !
+    password: '!'
     user_permissions: []
     username: nobody
   model: auth.user
