@@ -168,10 +168,10 @@ def list_(request):
     for topic in Topic.objects.filter(parent_topic=None).iterator():
         if topic.confidential and user not in topic.members.all() and not user.is_superuser:
             continue
-        edit_able = False
+        editable = False
         if permissions.has_permission_to_edit_topic(user, topic):
-            edit_able = True
-        topics.append((topic, topic.manager, edit_able))
+            editable = True
+        topics.append((topic, topic.manager, editable))
     if not topics:
         raise Http404("Can't find any topics.")
     return render(request, "samples/list_topics.html", {"title": _("List of all topics"), "topics": topics})
