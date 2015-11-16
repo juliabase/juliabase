@@ -111,20 +111,15 @@ $(function() { juliabase.request("{% url 'samples.views.json_client.get_folded_m
     </ul>
   {% endif %}
 
-  {% if can_add_topic or can_edit_topics %}
-    <h2>{% trans 'edit topics'|capfirst %}</h2>
-
+    <h2>{% trans 'topics'|capfirst %}</h2>
     <ul>
       {% if can_add_topic %}
         <li style='list-style-image: url("{% static "juliabase/icons/group_add.png" %}")'>
           <a href="{% url 'samples.views.topic.add' %}">{% trans 'add new topic'|capfirst %}</a></li>
       {% endif %}
-      {% if can_edit_topics %}
         <li style='list-style-image: url("{% static "juliabase/icons/group_gear.png" %}")'>
-          <a href="{% url 'samples.views.topic.list_' %}">{% trans 'change topic memberships'|capfirst %}</a></li>
-      {% endif %}
+          <a href="{% url 'samples.views.topic.list_' %}">{% trans 'topics'|capfirst %}</a></li>
     </ul>
-  {% endif %}
 
   {% if can_add_external_operator or has_external_contacts %}
     <h2>{% trans 'external operators'|capfirst %}</h2>

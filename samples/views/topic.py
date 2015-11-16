@@ -164,11 +164,17 @@ def list_(request):
     :rtype: HttpResponse
     """
     user = request.user
-    editable_topics = [topic for topic in Topic.objects.filter(parent_topic=None).all()
-                                if permissions.has_permission_to_edit_topic(user, topic)]
-    if not editable_topics:
-        raise Http404("Can't find any topics that you can edit.")
-    return render(request, "samples/list_topics.html", {"title": _("List of all topics"), "topics": editable_topics})
+    topics = []
+    for topic in Topic.objects.filter(parent_topic=None).iterator():
+        if topic.confidential and user not in topic.members.all() and not user.is_superuser:
+            continue
+        editable = False
+        if permissions.has_permission_to_edit_topic(user, topic):
+            editable = True
+        topics.append((topic, editable))
+    if not topics:
+        raise Http404("Can't find any topics.")
+    return render(request, "samples/list_topics.html", {"title": _("List of all topics"), "topics": topics})
 
 
 class EditTopicForm(forms.Form):
