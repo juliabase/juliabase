@@ -171,7 +171,7 @@ def list_(request):
         editable = False
         if permissions.has_permission_to_edit_topic(user, topic):
             editable = True
-        topics.append((topic, topic.manager, editable))
+        topics.append((topic, editable))
     if not topics:
         raise Http404("Can't find any topics.")
     return render(request, "samples/list_topics.html", {"title": _("List of all topics"), "topics": topics})

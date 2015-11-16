@@ -31,14 +31,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <th>{% trans 'topic'|capfirst %}</th>
       <th>{% trans 'topic manager'|capfirst %}</th>
     </tr>
-    {% for topic, manager, editable in topics %}
+    {% for topic, editable in topics %}
       {% with topic.id|urlquote as normalized_topicid %}
         <tr>
           <td>
             <span style='background: url("{% static "juliabase/icons/group.png" %}")no-repeat bottom left; background-position: 0 0; width: 16px; height: 16px;display: inline-block;'></span>
          	  {% if editable %}<a href="{% url 'samples.views.topic.edit' id=normalized_topicid %}">{{ topic.name }}</a>
          	  {% else %}{{ topic.name }}{% endif %}</td>
-          <td>{{ manager|get_really_full_name }}</td>
+          <td>{{ topic.manager|get_really_full_name }}</td>
         </tr>
       {% endwith %}
     {% endfor %}
