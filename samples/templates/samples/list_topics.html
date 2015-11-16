@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="padding5">
   <tbody>
     <tr>
-      <td><b>{% trans 'topic'|capfirst %}</b></td>
-      <td><b>{% trans 'topic manager'|capfirst %}</b></td>
+      <th>{% trans 'topic'|capfirst %}</th>
+      <th>{% trans 'topic manager'|capfirst %}</th>
     </tr>
     {% for topic,manager,edit_able in topics %}
       {% with topic.id|urlquote as normalized_topicid %}
