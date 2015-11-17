@@ -668,7 +668,7 @@ class NumberedLabel(Label):
     :type voffset: float
     :type right_row: bool
     """
-    largest_number = None
+    largest_number = 0
 
     def __init__(self, lower, upper, voffset, right_row):
         """
