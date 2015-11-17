@@ -4,6 +4,12 @@ then
     ./five_chamber.py
     ./cluster_tool.py
     ./pds.py
+elif [ "$1" = "synchronous" ]
+then
+    ./five_chamber.py
+    ./cluster_tool.py
+    ./pds.py
+    ./solarsimulator.py
 else
     ./five_chamber.py & ./cluster_tool.py
     ./pds.py & ./solarsimulator.py
