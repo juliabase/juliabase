@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ "$1" = "build_test_main" ]
+if [ "$JULIABASE_ACCESS_MODE" = "synchronous" ]
 then
     ./five_chamber.py
     ./cluster_tool.py
