@@ -38,11 +38,11 @@ from __future__ import absolute_import, unicode_literals
 from jb_remote import six
 from jb_remote.six.moves import urllib
 
-import re, logging, datetime
+import re, logging, datetime, os
 from jb_remote import *
 
 
-settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = "https://demo.juliabase.org/"
+settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = os.environ.get("JULIABASE_SERVER_URL", "http://localhost/")
 
 
 class ClusterToolDeposition(object):
