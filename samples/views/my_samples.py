@@ -146,6 +146,7 @@ def is_referentially_valid(current_user, my_samples_form, action_form):
                     referentially_valid = False
         if action_data["clearance"] is None and action_data["copy_to_user"]:
             try:
+                action_data["copy_to_user"] = list(action_data["copy_to_user"])
                 action_data["copy_to_user"].remove(action_data["new_currently_responsible_person"])
             except ValueError:
                 pass
