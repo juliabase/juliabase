@@ -30,6 +30,7 @@ from functools import update_wrapper
 import dateutil.tz
 import django.http
 import django.contrib.auth.models
+import django.core.urlresolvers
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
