@@ -194,7 +194,8 @@ class ProcessWithoutSamplesView(TemplateView):
         """
         if "process" not in self.forms:
             self.forms["process"] = self.form_class(self.request.user, self.data, instance=self.process,
-                                                    initial=self.get_initial_process_data())
+                                                    initial=self.get_initial_process_data(),
+                                                    files=self.request.FILES or None)
         self.forms["edit_description"] = utils.EditDescriptionForm(self.data) if self.id else None
 
     def _check_validity(self, forms):
