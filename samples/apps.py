@@ -108,7 +108,7 @@ class SamplesConfig(AppConfig):
             manage_menu.add(_("status messages"), reverse("samples.views.status.show"))
             manage_menu.add(_("inspect crawler logs"), reverse("samples.views.log_viewer.list"))
             if request.user.is_superuser:
-                manage_menu.add(_("administration"), "admin/")
+                manage_menu.add(_("administration"), reverse("admin:index"))
 
 
 _ = ugettext
