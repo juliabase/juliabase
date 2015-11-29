@@ -1116,7 +1116,7 @@ def generate_permissions(permissions, class_name):
         codename = codename.format(class_name=class_name_lower)
         name = name.format(class_name=class_name_human)
         result.append((codename, name))
-    return tuple(result)
+    return tuple(sorted(result))
 
 
 def pretty_print_query_dict(query_dict):
