@@ -31,8 +31,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   {% error_list samples _("Error in sample list") %}
   <table class="padding5">
     <tr>
-      <td style="text-align: right">{{ process.number.label_tag }}</td>
-      <td>{{ process.number }}</td>
+      {% input_field process.number %}
       <td rowspan="4" style="padding-left: 2em; vertical-align:top">
         {{ samples.sample_list.label_tag }}{{ samples.sample_list }}</td>
     </tr>
