@@ -81,7 +81,7 @@ class HotWireLayerForm(ClusterToolLayerForm):
         widgets = {
             "number": forms.TextInput(attrs={"readonly": "readonly", "size": 2,
                                             "style": "text-align: center; font-size: xx-large"}),
-            "comments": forms.Textarea(attrs={"cols": 70, "rows": 18}),
+            "comments": forms.Textarea(attrs={"cols": 40, "rows": 8}),
             "time": forms.TextInput(attrs={"size": 10}),
             "base_pressure": forms.TextInput(attrs={"size": 10}),
             "h2": forms.TextInput(attrs={"size": 15}),
@@ -101,7 +101,7 @@ class PECVDLayerForm(ClusterToolLayerForm):
         model = institute_models.ClusterToolPECVDLayer
         widgets = {"number": forms.TextInput(attrs={"readonly": "readonly" , "size": 2,
                                                     "style": "text-align: center; font-size: xx-large"}),
-                   "comments": forms.Textarea(attrs={"cols": 70, "rows": 18}),
+                   "comments": forms.Textarea(attrs={"cols": 40, "rows": 8}),
                    "time": forms.TextInput(attrs={"size": 10}),
                    "deposition_power": forms.TextInput(attrs={"size": 10}),
                    "h2": forms.TextInput(attrs={"size": 15}),
