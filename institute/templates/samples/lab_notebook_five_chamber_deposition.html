@@ -62,8 +62,8 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
           <td style="text-align: '.'">{{ layer.sih4|quantity|default_if_none:" " }}</td>
           <td style="text-align: '.'">{{ layer.h2|quantity|default_if_none:" " }}</td>
           <td style="text-align: '.'">{{ layer|calculate_silane_concentration|quantity|default_if_none:" " }}</td>
-          <td style="text-align: center">{{ layer.temperature_1|quantity|default_if_none:"–" }} /
-                                         {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
+          <td>{{ layer.temperature_1|quantity|default_if_none:"–" }} /
+            {{ layer.temperature_2|quantity|default_if_none:"–" }}</td>
           {% if forloop.first %}
             <td rowspan="{{ deposition.layers.count }}">
               <div style="float: right; margin-left: 3em; margin-bottom: 2ex; border-left: 1px solid;
