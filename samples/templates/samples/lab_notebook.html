@@ -41,14 +41,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {{ year_month.year }}/{{ year_month.month }}<br/>
     <div class="screen-only" style="margin-top: 1ex">
       <input type="submit"/><br/>
-      <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %}>
-        <img src="{% static "juliabase/icons/book_previous.png" %}" alt="previous month icon"
-             title="{% trans 'previous month' %}" width="16" height="16"/></a>
-            
-      <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %}>
-        <img src="{% static "juliabase/icons/book_next.png" %}" alt="next month icon" title="{% trans 'next month' %}"
-             width="16" height="16"/>
-      </a>
+      {% block notebook_nav_icons %}
+        <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %}>
+          <img src="{% static "juliabase/icons/book_previous.png" %}" alt="previous month icon"
+               title="{% trans 'previous month' %}" width="16" height="16"/></a>
+              
+        <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %}>
+          <img src="{% static "juliabase/icons/book_next.png" %}" alt="next month icon" title="{% trans 'next month' %}"
+               width="16" height="16"/>
+        </a>
+      {% endblock %}
     </div>
   </div>
 </form>
