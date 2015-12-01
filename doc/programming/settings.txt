@@ -105,6 +105,17 @@ no emails are sent at all in debugging mode.  This prevents embarrassment
 caused by emails sent to other people while merely debugging your code.
 
 
+.. index:: HELP_LINK_PREFIX
+
+HELP_LINK_PREFIX
+----------------
+
+Default:: ``"http://www.juliabase.org/"``
+
+URL prefix to be prepended to all help link given in the
+:py:func:`~jb_common.utils.base.help_link` decorator.
+
+
 .. index:: INITIALS_FORMATS
 .. _INITIALS_FORMATS:
 

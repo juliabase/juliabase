@@ -74,7 +74,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {% endif %}
         {% if help_link %}
           {% block help_link %}
-            <a href="http://www.juliabase.org/{{ help_link }}"><img
+            <a href="{{ help_link }}"><img
               src="{% static "juliabase/icons/help.png" %}" alt="help icon" title="{% trans 'Help' %}"
                                                     width="16" height="16"/></a>
           {% endblock %}

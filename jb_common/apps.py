@@ -62,7 +62,7 @@ class JBCommonConfig(AppConfig):
         except AttributeError:
             pass
         else:
-            jb_menu.add(_("help"), help_link, "question-sign")
+            jb_menu.add(_("help"), settings.HELP_LINK_PREFIX + help_link, "question-sign")
         jb_menu.add(_("statistics"), reverse("samples.views.statistics.statistics"), "stats")
         jb_menu.add(_("about"), reverse("samples.views.statistics.about"), "info-sign")
         if request.user.is_authenticated() and request.method == "GET" and settings.LANGUAGES:

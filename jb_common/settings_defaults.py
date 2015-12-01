@@ -34,6 +34,7 @@ JAVASCRIPT_I18N_APPS = ("django.contrib.auth", "samples", "jb_common")
 USE_X_SENDFILE = False
 TEMP_STATIC_DIRS = ()
 BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem", ())
+HELP_LINK_PREFIX = "http://www.juliabase.org/"
 
 # LDAP-related settings
 

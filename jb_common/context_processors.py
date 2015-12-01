@@ -52,7 +52,7 @@ def default(request):
     user = request.user
     result = {}
     try:
-        result["help_link"] = request.juliabase_help_link
+        result["help_link"] = settings.HELP_LINK_PREFIX + request.juliabase_help_link
     except AttributeError:
         pass
     result["url"] = request.path
