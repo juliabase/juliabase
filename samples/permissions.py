@@ -848,7 +848,7 @@ def assert_can_edit_users_topics(user):
     :raises PermissionError: if the user is not allowed to edit his/ her
         topics, or to add new sub topics.
     """
-    if not user.has_perm("jb_common.edit_their_topics") and \
+    if not (user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.edit_their_topics")) and \
         not user.has_perm("jb_common.change_topic"):
         description = _("You are not allowed to change your topics because you don't have the permission "
                         "“{0}” or “{1}”.").format(translate_permission("jb_common.change_topic"),
