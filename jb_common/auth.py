@@ -265,7 +265,8 @@ class LDAPConnection(object):
             if "department" in attributes:
                 jb_department_name = settings.LDAP_DEPARTMENTS[attributes["department"][0]]
                 try:
-                    user.jb_user_details.department = settings.LDAP_ADDITIONAL_USERS[user.username]
+                    user.jb_user_details.department = Department.objects.get(
+                        name=settings.LDAP_ADDITIONAL_USERS[user.username])
                 except KeyError:
                     user.jb_user_details.department = Department.objects.get(name=jb_department_name)
             user.email = attributes["mail"][0]
