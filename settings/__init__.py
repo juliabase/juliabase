@@ -20,27 +20,14 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import socket, os
 
-from __future__ import absolute_import, unicode_literals
+hostname = socket.gethostname()
+BASE_DIR = os.path.dirname(__file__)
 
-import sys, os
-from django.core.management import execute_from_command_line
-
-
-root = os.path.dirname(os.path.abspath(__file__))
-if os.path.isdir(os.path.join(root, "mysite")):
-    sys.path.append(os.path.join(root, "juliabase"))
-if sys.argv[1:2] == ["test"]:
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.settings_test")
-elif os.path.isdir(os.path.join(root, "mysite")):
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+if not os.path.exists(os.path.join(BASE_DIR, hostname + ".py")):
+    module_name = "basic"
 else:
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+    module_name = hostname
 
-
-import django.contrib.auth.management
-def _get_only_custom_permissions(opts, ctype):
-    return list(opts.permissions)
-django.contrib.auth.management._get_all_permissions = _get_only_custom_permissions
-
-execute_from_command_line(sys.argv)
+exec "from settings.{} import *".format(module_name)

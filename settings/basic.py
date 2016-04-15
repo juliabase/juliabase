@@ -34,7 +34,7 @@ from jb_common.settings_defaults import *
 from samples.settings_defaults import *
 
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 if not os.path.exists(os.path.join(BASE_DIR, "jb_common")) and os.path.exists(os.path.join(BASE_DIR, "..", "juliabase")):
     BASE_DIR = os.path.join(os.path.dirname(BASE_DIR), "juliabase")
 
