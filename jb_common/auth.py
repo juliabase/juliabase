@@ -296,6 +296,12 @@ def synchronize_users_with_ad(sender, **kwargs):
     password against the LDAP directory.  In particular, if a user cannot be
     found anymore or has switched the institute is set to “inactive”.
     Moreover, name, email, and permissions are updated.
+
+    *Important*: This listener is only activated if this module is imported,
+    which does not happen (as of Django 1.8) for JuliaBase's ``manage.py
+    maintenance`` command.  Thus, you need to import this module where you
+    import your own signals module, e.g. in the ``ready()`` method of your
+    ``AppConfig`` class.
     """
     ldap_connection = LDAPConnection()
     for user in User.objects.filter(is_active=True):
