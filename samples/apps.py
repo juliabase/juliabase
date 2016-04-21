@@ -24,7 +24,6 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
 from django.core.urlresolvers import reverse
-import jb_common.utils.base as utils
 from jb_common.nav_menu import MenuItem
 
 
@@ -59,6 +58,8 @@ class SamplesConfig(AppConfig):
         """Contribute to the menu.  See :py:mod:`jb_common.nav_menu` for further
         information.
         """
+        import jb_common.utils.base as utils
+
         if request.user.is_authenticated():
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
             user_menu.prepend(MenuItem(_("my topics and permissions"),

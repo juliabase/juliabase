@@ -25,7 +25,6 @@ from django.conf import settings
 from django.apps import AppConfig
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
 from django.core.urlresolvers import reverse
-import jb_common.utils.base as utils
 import jb_common.utils.blobs
 from jb_common.nav_menu import MenuItem
 
@@ -43,6 +42,8 @@ class JBCommonConfig(AppConfig):
         """Contribute to the menu.  See :py:mod:`jb_common.nav_menu` for further
         information.
         """
+        import jb_common.utils.base as utils
+
         menu.get_or_create(_("add"))
         menu.get_or_create(pgettext("top-level menu item", "explore"))
         menu.get_or_create(_("manage"))
