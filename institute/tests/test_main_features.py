@@ -23,13 +23,13 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test.client import Client
 
 
+@override_settings(ROOT_URLCONF="institute.tests.urls")
 class MainFeaturesTest(TestCase):
     fixtures = ["test_main"]
-    urls = "institute.tests.urls"
 
     def setUp(self):
         self.client = Client()

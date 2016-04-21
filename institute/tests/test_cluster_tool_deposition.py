@@ -25,12 +25,13 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime, decimal, json
 from django.test.client import Client
+from django.test import override_settings
 from .tools import TestCase
 
 
+@override_settings(ROOT_URLCONF="institute.tests.urls")
 class ClusterToolDepositionTest(TestCase):
     fixtures = ["test_main", "monroe_samples"]
-    urls = "institute.tests.urls"
 
     def setUp(self):
         self.client = Client()

@@ -24,13 +24,14 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.test.client import Client
+from django.test import override_settings
 import jb_common.utils.base
 from .tools import TestCase
 
 
+@override_settings(ROOT_URLCONF="institute.tests.urls")
 class ExportTest(TestCase):
     fixtures = ["test_main"]
-    urls = "institute.tests.urls"
     maxDiff = None
 
     def setUp(self):
@@ -91,9 +92,9 @@ class SharedUtilsTest(TestCase):
         self.assertEqual(jb_common.utils.base.capitalize_first_letter("ärgerlich"), "Ärgerlich")
 
 
+@override_settings(ROOT_URLCONF="institute.tests.urls")
 class AdminExportTest(TestCase):
     fixtures = ["test_main"]
-    urls = "institute.tests.urls"
 
     def setUp(self):
         self.client = Client()
