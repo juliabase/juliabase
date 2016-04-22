@@ -79,8 +79,11 @@ class PermissionsModels(object):
       show all users of a model.  Note that this excludes superusers, unless
       they have the distinctive permissions.
 
-    :cvar topic_manager_permission: the permission instance for changing
+    :ivar topic_manager_permission: the permission instance for changing
       memberships in own topics
+
+    :ivar add_external_operators_permission: the permission instance for adding
+      external operators
 
     :type name: unicode
     :type codename: str
@@ -93,12 +96,8 @@ class PermissionsModels(object):
     :type full_editors: QuerySet
     :type all_users: QuerySet
     :type topic_manager_permission: django.contrib.auth.models.Permission
+    :type add_external_operators_permission: django.contrib.auth.models.Permission
     """
-
-    topic_manager_permission = Permission.objects.get(codename="edit_their_topics",
-                                                      content_type=ContentType.objects.get_for_model(Topic))
-    add_external_operators_permission = Permission.objects.get(codename="add_externaloperator",
-                                                               content_type=ContentType.objects.get_for_model(models.ExternalOperator))
 
     def __init__(self, addable_model_class):
         """
@@ -108,6 +107,10 @@ class PermissionsModels(object):
         :type addable_model_class: ``class`` (derived from
           ``django.db.models.Model``)
         """
+        self.topic_manager_permission = Permission.objects.get(codename="edit_their_topics",
+                                                          content_type=ContentType.objects.get_for_model(Topic))
+        self.add_external_operators_permission = Permission.objects.get(codename="add_externaloperator",
+                                                content_type=ContentType.objects.get_for_model(models.ExternalOperator))
         self.name = addable_model_class._meta.verbose_name_plural
         self.codename = addable_model_class.__name__.lower()
         content_type = ContentType.objects.get_for_model(addable_model_class)
