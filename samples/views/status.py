@@ -205,7 +205,7 @@ def withdraw(request, id_):
     status_message.save()
     for process_class in status_message.process_classes.all():
         utils.Reporter(request.user).report_withdrawn_status_message(process_class, status_message)
-    return utils.successful_response(request, _("The status message was successfully withdrawn."), show)
+    return utils.successful_response(request, _("The status message was successfully withdrawn."), "samples:show_status")
 
 
 _ = ugettext

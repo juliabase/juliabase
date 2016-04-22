@@ -135,7 +135,7 @@ def add(request):
                 next_view = None
                 next_view_kwargs = {}
             else:
-                next_view = "samples.views.topic.edit"
+                next_view = "samples:edit_topic"
                 next_view_kwargs = {"id": django.utils.http.urlquote(new_topic.id, safe="")}
             new_topic.manager.user_permissions.add(PermissionsModels.topic_manager_permission)
             request.user.topics.add(new_topic)

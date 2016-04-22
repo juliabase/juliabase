@@ -123,7 +123,7 @@ JuliaBase.
             claim.samples = samples_form.cleaned_data["samples"]
             return utils.successful_response(request,
                                              _("Sample claim {id_} was successfully submitted.").format(id_=claim.pk),
-                                             show, kwargs={"claim_id": claim.pk})
+                                             "samples:show_claim", kwargs={"claim_id": claim.pk})
     else:
         samples_form = SamplesForm(user)
         reviewer_form = ReviewerForm()

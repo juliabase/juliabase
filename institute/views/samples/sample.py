@@ -240,7 +240,7 @@ def add(request):
                 success_report = _("Your sample has the name {name}.  It was added to “My Samples”."). \
                     format(name=new_names[0])
             if add_samples_form.cleaned_data["rename"] == "new-style":
-                return utils.successful_response(request, success_report, "samples.views.bulk_rename.bulk_rename",
+                return utils.successful_response(request, success_report, "samples:bulk_rename",
                                                  query_string="ids=" + ",".join(str(id_) for id_ in ids),
                                                  forced=True, json_response=ids)
             else:
@@ -296,7 +296,7 @@ def copy_informal_stack(request, sample_name):
                                                 edit_description={"important": False, "description": message})
             return utils.successful_response(
                 request, _("Informal stack of {sample} was successfully copied.").format(sample=sample),
-                "samples.views.sample.by_id", {"sample_id": sample.id, "path_suffix": ""})
+                "samples:show_sample_by_id", {"sample_id": sample.id, "path_suffix": ""})
     else:
         destination_samples_form = DestinationSamplesForm(request.user, sample)
     context = {"title": _("Copy informal stack of “{sample}”").format(sample=sample),

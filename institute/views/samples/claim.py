@@ -197,7 +197,7 @@ JuliaBase.
             claim.samples = samples
             return utils.successful_response(request,
                                              _("Sample claim {id_} was successfully submitted.").format(id_=claim.pk),
-                                             "samples.views.claim.show", kwargs={"claim_id": claim.pk})
+                                             "samples:show_claim", kwargs={"claim_id": claim.pk})
     else:
         samples_form = SamplesForm()
         substrate_form = SubstrateForm()

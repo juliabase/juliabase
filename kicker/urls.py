@@ -38,5 +38,5 @@ urlpatterns = [
     url(r"^details/(?P<username>.+)", edit_user_details, name="edit_user_details"),
     url(r"^kicker\.(?P<image_format>png|pdf)$", plot, name="plot"),
     url(r"^player", get_player),
-    url(r"^$", summary),
+    url(r"^$", summary, name="summary"),
 ]

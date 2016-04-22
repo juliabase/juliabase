@@ -214,7 +214,7 @@ def bulk_rename(request):
         query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(
             request.path + "?" + request.META["QUERY_STRING"], safe="/")
         messages.info(request, _("You may change the sample names, but you must choose initials first."))
-        return utils.successful_response(request, view="samples.views.user_details.edit_preferences",
+        return utils.successful_response(request, view="samples:edit_preferences",
                                          kwargs={"login_name": request.user.username},
                                          query_string=query_string, forced=True)
     single_prefix = available_prefixes[0][1] if len(available_prefixes) == 1 else None

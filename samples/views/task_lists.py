@@ -304,7 +304,7 @@ def edit(request, task_id):
                 edit_description = None
             utils.Reporter(request.user).report_task(task, edit_description)
             message = _("Task was {verb} successfully.").format(verb=_("edited") if task_id else _("added"))
-            return utils.successful_response(request, message, "samples.views.task_lists.show")
+            return utils.successful_response(request, message, "samples:show_task_lists")
     else:
         samples_form = SamplesForm(user, preset_sample, task)
         initial = {}
@@ -381,7 +381,7 @@ def show(request):
                 [ContentType.objects.get_for_id(int(id_))
                  for id_ in choose_task_lists_form.cleaned_data["visible_task_lists"] if id_]
             # In order to have a GET instead of a POST as the last request
-            return utils.successful_response(request, view=show)
+            return utils.successful_response(request, view="samples:show_task_lists")
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
     task_lists = create_task_lists(request.user)
@@ -409,7 +409,7 @@ def remove(request, task_id):
         raise permissions.PermissionError(request.user, _("You are not the customer of this task."))
     utils.Reporter(request.user).report_removed_task(task)
     task.delete()
-    return utils.successful_response(request, _("The task was successfully removed."), show)
+    return utils.successful_response(request, _("The task was successfully removed."), "samples:show_task_lists")
 
 
 _ = ugettext

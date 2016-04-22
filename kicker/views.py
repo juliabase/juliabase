@@ -394,7 +394,7 @@ def edit_user_details(request, username):
         user_details_form = UserDetailsForm(user, request.POST, instance=user_details)
         if user_details_form.is_valid():
             user_details_form.save()
-            return successful_response(request, _("The preferences were successfully updated."), summary)
+            return successful_response(request, _("The preferences were successfully updated."), "kicker:summary")
     else:
         user_details_form = UserDetailsForm(user, instance=user_details)
     return render(request, "kicker/user_details.html", {

@@ -355,7 +355,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                 sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
                 request, _("Sample “{sample}” was successfully split.").format(sample=parent),
-                "show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
+                "samples:show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
         new_name_forms, global_data_form, automatic_split_form = forms_from_database(parent, request.user)
         next_prefix = "0"

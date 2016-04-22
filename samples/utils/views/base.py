@@ -150,8 +150,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :param request: the current HTTP request
     :param success_report: an optional short success message reported to the
         user on the next view
-    :param view: the view name/function to redirect to; defaults to the main
-        menu page (same when ``None`` is given)
+    :param view: the view name to redirect to; defaults to the main menu page
+        (same when ``None`` is given)
     :param kwargs: group parameters in the URL pattern that have to be filled
     :param query_string: the *quoted* query string to be appended, without the
         leading ``"?"``
@@ -163,7 +163,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :type request: HttpRequest
     :type success_report: unicode
-    :type view: str or function
+    :type view: str
     :type kwargs: dict
     :type query_string: unicode
     :type forced: bool
