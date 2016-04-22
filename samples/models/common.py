@@ -247,6 +247,7 @@ class Process(PolymorphicModel):
                 format(process_class_name=self._meta.verbose_name, identifier=self.id)
 
     def _urlresolve(self, prefix):
+        prefix = self._meta.app_label + ":" + prefix
         class_name = camel_case_to_underscores(self.__class__.__name__)
         try:
             field_name = parameter_name = self.JBMeta.identifying_field
