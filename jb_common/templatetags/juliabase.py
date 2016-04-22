@@ -255,17 +255,6 @@ def error_list(form, form_error_title, outest_tag="<table>", colspan=1):
     return {"form": form, "form_error_title": form_error_title, "colspan": colspan, "outest_tag": outest_tag}
 
 
-@register.simple_tag
-def ptrans(context, string):
-    # FixMe: I hope that in upcoming Django versions, this will be included
-    # anyway.  Then, this tag should be deleted.
-    """Tag for translating a string with context.  Example::
-
-        {% ptrans 'month' 'May' %}
-    """
-    return pgettext(context, string)
-
-
 @register.filter
 def times08(value):
     return value * 0.8
