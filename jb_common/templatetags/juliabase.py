@@ -152,9 +152,9 @@ def markdown_hint():
     """Tag for inserting a short remark that Markdown syntax must be used
     here, with a link to further information.
     """
-    return """<span class="markdown-hint">(""" + _("""with {markdown_link} syntax""") \
-        .format(markdown_link="""<a href="{0}">Markdown</a>""".format(
-           django.core.urlresolvers.reverse("jb_common:markdown_sandbox"))) + ")</span>"
+    return mark_safe("""<span class="markdown-hint">(""" + _("""with {markdown_link} syntax""")
+                     .format(markdown_link="""<a href="{0}">Markdown</a>""".format(
+                         django.core.urlresolvers.reverse("jb_common:markdown_sandbox"))) + ")</span>")
 
 
 @register.filter
@@ -223,7 +223,7 @@ def input_field(field):
     else:
         unit = """<span class="unit-of-measurement">{unit}</span>""".format(unit=unit)
     result += """<td class="field-input">{field}{unit}{help_text}</td>""".format(field=field, unit=unit, help_text=help_text)
-    return result
+    return mark_safe(result)
 
 
 @register.inclusion_tag("error_list.html")

@@ -486,7 +486,7 @@ def split_field(*fields):
     help_text = """ <span class="help">({0})</span>""".format(fields[0].help_text) if fields[0].help_text else ""
     result += """<td class="field-input">{fields_string}{help_text}</td>""".format(
         fields_string=separator.join(six.text_type(field) for field in fields), help_text=help_text)
-    return result
+    return mark_safe(result)
 
 
 class ValueSplitFieldNode(template.Node):
@@ -622,7 +622,7 @@ def display_search_tree(tree):
                 result += """</td></tr><tr><td colspan="2">"""
         result += "</td></tr>"
     result += "</table>"
-    return result
+    return mark_safe(result)
 
 
 @register.filter
