@@ -77,7 +77,7 @@ urlpatterns = [
     url(r"^depositions/split_and_rename_samples/(?P<deposition_number>.+)",
         split_after_deposition.split_and_rename_after_deposition, name="split_and_rename_after_deposition"),
     url(r"^depositions/$", main.deposition_search, name="deposition_search"),
-    url(r"^depositions/(?P<deposition_number>.+)", main.show_deposition),
+    url(r"^depositions/(?P<deposition_number>.+)", main.show_deposition, name="show_deposition"),
 
     url(r"^samples/by_id/(?P<sample_id>\d+)(?P<path_suffix>.*)", sample.by_id, name="show_sample_by_id"),
     url(r"^samples/$", sample.search, name="sample_search"),
@@ -145,7 +145,7 @@ urlpatterns = [
     url(r"^change_my_samples$", json_client.change_my_samples),
 
     url(r"^qr_code$", sample.qr_code, name="qr_code"),
-    url(r"^data_matrix_code$", sample.data_matrix_code),
+    url(r"^data_matrix_code$", sample.data_matrix_code, name="data_matrix_code"),
 
     url(r"^status/add/$", status.add, name="add_status"),
     url(r"^status/$", status.show, name="show_status"),
