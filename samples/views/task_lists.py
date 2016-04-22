@@ -53,7 +53,7 @@ class SamplesForm(forms.Form):
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
             if user != task.customer or task.status != "1 new":
                 super(SamplesForm, self).__init__(**kwargs)
-                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+                self.fields["sample_list"].disabled = True
             else:
                 super(SamplesForm, self).__init__(data, **kwargs)
             important_samples.update(task.samples.all())
@@ -134,7 +134,7 @@ class TaskForm(forms.ModelForm):
         self.fields["comments"].widget.attrs["cols"] = 30
         self.fields["comments"].widget.attrs["rows"] = 5
         for field_name in self.fixed_fields:
-            self.fields[field_name].widget.attrs["disabled"] = "disabled"
+            self.fields[field_name].disabled = True
             self.fields[field_name].required = False
 
     def clean_status(self):

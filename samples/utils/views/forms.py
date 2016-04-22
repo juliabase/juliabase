@@ -180,7 +180,7 @@ class ProcessForm(ModelForm):
             kwargs["initial"].setdefault("combined_operator", user.pk)
         super(ProcessForm, self).__init__(*args, **kwargs)
         if self.process and self.process.finished:
-            self.fields["finished"].widget.attrs["disabled"] = "disabled"
+            self.fields["finished"].disabled = True
         self.fields["combined_operator"].set_choices(user, self.process)
         if not user.is_superuser:
             self.fields["external_operator"].choices = []
@@ -909,7 +909,7 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
                 # change the name of samples, and so changing the affected samples
                 # afterwards is a source of big trouble.
                 super(DepositionSamplesForm, self).__init__(**kwargs)
-                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+                self.fields["sample_list"].disabled = True
                 self.dont_check_validity = True
             else:
                 super(DepositionSamplesForm, self).__init__(data, **kwargs)

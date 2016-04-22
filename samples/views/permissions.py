@@ -266,13 +266,17 @@ class PermissionsForm(forms.Form):
                              "can_edit_permissions": edited_user in model.permission_editors}
         super(PermissionsForm, self).__init__(*args, **kwargs)
         if not model.add_permission:
-            self.fields["can_add"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_add"].disabled = True
+            self.fields["can_add"].widget.attrs["style"] = "display: none"
         if not model.view_all_permission:
-            self.fields["can_view_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_view_all"].disabled = True
+            self.fields["can_view_all"].widget.attrs["style"] = "display: none"
         if not model.edit_all_permission:
-            self.fields["can_edit_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_edit_all"].disabled = True
+            self.fields["can_edit_all"].widget.attrs["style"] = "display: none"
         if not model.edit_permissions_permission:
-            self.fields["can_edit_permissions"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_edit_permissions"].disabled = True
+            self.fields["can_edit_permissions"].widget.attrs["style"] = "display: none"
 
     def clean(self):
         """Note that I don't check whether disabled fields were set
