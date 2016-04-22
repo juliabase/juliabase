@@ -118,7 +118,7 @@ def about(request):
     }
     db_configuration = settings.DATABASES.get("default", {})
     db_backend = db_configuration.get("ENGINE")
-    if db_backend == "django.db.backends.postgresql_psycopg2":
+    if db_backend == "django.db.backends.postgresql":
         cursor = connection.cursor()
         cursor.execute("SELECT version()")
         context["postgresql_version"] = cursor.fetchone()[0].split()[1]
