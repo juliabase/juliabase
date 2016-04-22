@@ -345,7 +345,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     if query_string:
         query_string = "?" + query_string
     # FixMe: Once jb_common has gotten its main menu view, this must be
-    # used here as default vor ``view`` instead of the bogus ``None``.
+    # used here as default for ``view`` instead of the bogus ``None``.
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or None, kwargs=kwargs) + query_string)
 
 
