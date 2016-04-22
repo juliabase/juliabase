@@ -193,7 +193,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
             full_name = conditional_escape(full_name)
         if anchor_type == "http":
             return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
-                        "samples.views.external_operator.show", kwargs={"external_operator_id": user.pk}), full_name))
+                        "samples:show_external_operator", kwargs={"external_operator_id": user.pk}), full_name))
         elif anchor_type == "mailto":
             return mark_safe('<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
         elif anchor_type == "plain":
@@ -216,7 +216,7 @@ def get_safe_operator_name(user, autoescape=False):
     if autoescape:
         name = conditional_escape(name)
     return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
-                "samples.views.external_operator.show", kwargs={"external_operator_id": user.pk}), name))
+                "samples:show_external_operator", kwargs={"external_operator_id": user.pk}), name))
 
 
 timestamp_formats = ("%Y-%m-%d %H:%M:%S",

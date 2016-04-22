@@ -144,7 +144,7 @@ class ExternalOperator(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.external_operator.show", args=(self.pk,))
+        return django.core.urlresolvers.reverse("samples:show_external_operator", args=(self.pk,))
 
 
 timestamp_inaccuracy_choices = (
@@ -278,7 +278,7 @@ class Process(PolymorphicModel):
         try:
             return self._urlresolve("show_")
         except django.core.urlresolvers.NoReverseMatch:
-            return django.core.urlresolvers.reverse("samples.views.main.show_process", args=(str(self.id),))
+            return django.core.urlresolvers.reverse("samples:show_process", args=(str(self.id),))
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
@@ -306,13 +306,13 @@ class Process(PolymorphicModel):
         """
         if not plot_id:
             # We give this a nicer URL because this case is so common
-            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.id)})
-            thumbnail_url = django.core.urlresolvers.reverse("default_process_plot_thumbnail",
+            plot_url = django.core.urlresolvers.reverse("samples:default_process_plot", kwargs={"process_id": str(self.id)})
+            thumbnail_url = django.core.urlresolvers.reverse("samples:default_process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.id)})
         else:
-            plot_url = django.core.urlresolvers.reverse("process_plot",
+            plot_url = django.core.urlresolvers.reverse("samples:process_plot",
                                                         kwargs={"process_id": str(self.id), "plot_id": plot_id})
-            thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
+            thumbnail_url = django.core.urlresolvers.reverse("samples:process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.id), "plot_id": plot_id})
         basename = "{0}-{1}-{2}-{3}-{4}".format(
             self.content_type.app_label, self.content_type.model, get_language(), self.id, plot_id)
@@ -637,7 +637,8 @@ class PhysicalProcess(Process):
         :rtype: str
         """
         try:
-            return django.core.urlresolvers.reverse("add_" + camel_case_to_underscores(cls.__name__))
+            return django.core.urlresolvers.reverse("add_" + camel_case_to_underscores(cls.__name__),
+                                                    current_app=cls._meta.app_label)
         except django.core.urlresolvers.NoReverseMatch:
             return None
 
@@ -806,10 +807,10 @@ class Sample(models.Model):
 
     def get_absolute_url(self):
         if self.name.startswith("*"):
-            return django.core.urlresolvers.reverse("show_sample_by_id",
+            return django.core.urlresolvers.reverse("samples:show_sample_by_id",
                                                     kwargs={"sample_id": str(self.pk), "path_suffix": ""})
         else:
-            return django.core.urlresolvers.reverse("show_sample_by_name", args=(urlquote(self.name, safe=""),))
+            return django.core.urlresolvers.reverse("samples:show_sample_by_name", args=(urlquote(self.name, safe=""),))
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
@@ -1029,7 +1030,7 @@ class SampleSplit(Process):
         if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
             context["resplit_url"] = django.core.urlresolvers.reverse(
-                "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.id})
+                "samples:split_and_rename", kwargs={"old_split_id": self.id})
         else:
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)
@@ -1080,7 +1081,7 @@ class SampleClaim(models.Model):
         return _("sample claim #{number}").format(number=self.pk)
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.claim.show", args=(self.pk,))
+        return django.core.urlresolvers.reverse("samples:show_claim", args=(self.pk,))
 
 
 sample_death_reasons = (
@@ -1165,7 +1166,7 @@ class Result(Process):
                 return _("result #{number}").format(number=self.pk)
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.result.show", args=(self.pk,))
+        return django.core.urlresolvers.reverse("samples:show_result", args=(self.pk,))
 
     def get_image_locations(self):
         """Get the location of the image in the local filesystem as well
@@ -1210,10 +1211,10 @@ class Result(Process):
         sluggified_filename = defaultfilters.slugify(self.title) + original_extension
         return {"image_file": os.path.join("results", str(self.pk), "0" + original_extension),
                 "image_url": django.core.urlresolvers.reverse(
-                    "samples.views.result.show_image", kwargs={"process_id": str(self.pk)}),
+                    "samples:show_result_image", kwargs={"process_id": str(self.pk)}),
                 "thumbnail_file": os.path.join("results_thumbnails", str(self.pk), "0" + thumbnail_extension),
                 "thumbnail_url": django.core.urlresolvers.reverse(
-                    "samples.views.result.show_thumbnail", kwargs={"process_id": str(self.pk)}),
+                    "samples:show_result_thumbnail", kwargs={"process_id": str(self.pk)}),
                 "sluggified_filename": sluggified_filename}
 
     def get_context_for_user(self, user, old_context):
@@ -1222,7 +1223,7 @@ class Result(Process):
             if "quantities" not in context or "value_lists" not in context:
                 context["quantities"], context["value_lists"] = json.loads(self.quantities_and_values)
             context["export_url"] = \
-                django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
+                django.core.urlresolvers.reverse("samples:export_result", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
             if self.image_type != "none":
                 image_locations = self.get_image_locations()
@@ -1323,7 +1324,7 @@ class SampleSeries(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.sample_series.show", args=(urlquote(self.name, safe=""),))
+        return django.core.urlresolvers.reverse("samples:show_sample_series", args=(urlquote(self.name, safe=""),))
 
     def get_data(self):
         """Extract the data of this sample series as a dictionary, ready to be used for
@@ -1588,7 +1589,7 @@ class Task(models.Model):
                 process_class=self.process_class.name, datetime=self.creating_timestamp))
 
     def get_absolute_url(self):
-        return "{0}#task_{1}".format(django.core.urlresolvers.reverse("samples.views.task_lists.show"), self.id)
+        return "{0}#task_{1}".format(django.core.urlresolvers.reverse("samples:show_task_lists"), self.id)
 
     @classmethod
     def get_search_tree_node(cls):

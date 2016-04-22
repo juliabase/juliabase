@@ -146,7 +146,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
             layout = institute.layouts.get_layout(sample, self)
             context["shapes"] = layout.get_map_shapes() if layout else {}
         context["thumbnail_layout"] = django.core.urlresolvers.reverse(
-            "institute.views.samples.layout.show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
+            "show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
         cells = self.cells.all()
         if "image_urls" not in context:
             context["image_urls"] = {}

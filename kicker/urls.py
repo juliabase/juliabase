@@ -28,13 +28,15 @@ from django.conf.urls import url
 from kicker.views import edit_match, cancel_match, set_start_kicker_number, edit_user_details, get_player, summary, plot
 
 
+app_name = "kicker"
+
 urlpatterns = [
     url(r"^matches/(?P<id_>\d+)/edit/$", edit_match),
     url(r"^matches/add/$", edit_match, {"id_": None}),
     url(r"^matches/(?P<id_>\d+)/cancel/$", cancel_match),
     url(r"^starting_numbers/(?P<username>.+)/add/$", set_start_kicker_number),
-    url(r"^details/(?P<username>.+)", edit_user_details),
-    url(r"^kicker\.(?P<image_format>png|pdf)$", plot),
+    url(r"^details/(?P<username>.+)", edit_user_details, name="edit_user_details"),
+    url(r"^kicker\.(?P<image_format>png|pdf)$", plot, name="plot"),
     url(r"^player", get_player),
     url(r"^$", summary),
 ]

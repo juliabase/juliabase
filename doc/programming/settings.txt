@@ -44,10 +44,9 @@ ADD_SAMPLES_VIEW
 
 Default: ``""`` (Empty string)
 
-Name of the view in Python's dot notation which points to the view to add
-samples.  For example::
+Name of the view to add samples.  For example::
 
-    ADD_SAMPLES_VIEW = "institute.views.samples.sample.add"
+    ADD_SAMPLES_VIEW = "institute:add_sample"
 
 This view function must have exactly one parameter, namely the ``request``
 instance.

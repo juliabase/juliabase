@@ -25,12 +25,12 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load staticfiles %}
 
 {% block search_things_extras %}
-  <li><a href="{% url 'samples.views.main.deposition_search' %}">{% trans 'Depositions by number' %}</a></li>
+  <li><a href="{% url 'samples:deposition_search' %}">{% trans 'Depositions by number' %}</a></li>
 {% endblock %}
 
 {% block miscellaneous_extras %}
   <li style='list-style-image: url("{% static "juliabase/icons/shape_square_edit.png" %}")'>
-    <a href="{% url 'institute.views.samples.my_layers.edit' login_name=user.username %}"
+    <a href="{% url 'institute:edit_my_layers' login_name=user.username %}"
        >{% trans 'Edit “My Layers”' %}</a></li>
   {{ block.super }}
 {% endblock %}

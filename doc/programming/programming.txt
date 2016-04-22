@@ -328,6 +328,15 @@ the thickness measurement, you add::
 See the methods of the class :py:class:`~samples.utils.urls.PatternGenerator`
 for further details.
 
+Take care that the namespace of the URL patterns has the same name as your
+institute app!  One way to do that is to say
+
+::
+
+   app_name = "institute"
+
+at the beginning of :file:`institute/urls.py`.
+
 
 .. index::
    pair: process; view

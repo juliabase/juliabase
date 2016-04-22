@@ -153,7 +153,7 @@ def show(request, username, user_hash):
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     permissions.assert_can_view_feed(user_hash, user)
     feed_absolute_url = request.build_absolute_uri(django.core.urlresolvers.reverse(
-        show, kwargs={"username": username, "user_hash": user_hash}))
+        "samples:show_feed", kwargs={"username": username, "user_hash": user_hash}))
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     feed.attrib["xml:base"] = request.build_absolute_uri("/")
     ElementTree.SubElement(feed, "id").text = feed_absolute_url

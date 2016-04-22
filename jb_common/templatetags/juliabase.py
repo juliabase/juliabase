@@ -71,7 +71,7 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     elif anchor_type == "http":
         # FixMe: The view should be one of jb_common.
         return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
-                    "jb_common.views.show_user", kwargs={"login_name": user.username}), full_name))
+                    "jb_common:show_user", kwargs={"login_name": user.username}), full_name))
     elif anchor_type == "mailto":
         return mark_safe('<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
     else:
@@ -154,7 +154,7 @@ def markdown_hint():
     """
     return """<span class="markdown-hint">(""" + _("""with {markdown_link} syntax""") \
         .format(markdown_link="""<a href="{0}">Markdown</a>""".format(
-           django.core.urlresolvers.reverse("jb_common.views.markdown_sandbox"))) + ")</span>"
+           django.core.urlresolvers.reverse("jb_common:markdown_sandbox"))) + ")</span>"
 
 
 @register.filter

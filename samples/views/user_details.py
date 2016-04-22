@@ -167,7 +167,7 @@ def topics_and_permissions(request, login_name):
                    "topics": user.topics.all(), "managed_topics": user.managed_topics.all(),
                    "permissions": permissions.get_user_permissions(user),
                    "full_user_name": get_really_full_name(request.user),
-                   "permissions_url": django.core.urlresolvers.reverse("samples.views.permissions.list_")})
+                   "permissions_url": django.core.urlresolvers.reverse("samples:list_permissions")})
 
 
 _ = ugettext

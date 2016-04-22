@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% endblock %}
   <script type="text/javascript" src="{% static "juliabase/js/jquery-1.11.1.min.js" %}"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript" src="{% url 'jb_common_jsi18n' %}"></script>
+  <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}"></script>
   <script type="text/javascript" src="{% static "juliabase/js/juliabase.js" %}"></script>
   <script type="text/javascript">
   // <![CDATA[
@@ -45,16 +45,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block content %}
   <ul style="display: none">
-    <li><a accesskey="m" href="{% url 'samples.views.main.main_menu' %}">Main menu</a></li>
-    <li><a accesskey="s" href="{% url 'samples.views.sample.advanced_search' %}">Advanced search</a></li>
-    <li><a accesskey="x" href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
+    <li><a accesskey="m" href="{% url 'samples:main_menu' %}">Main menu</a></li>
+    <li><a accesskey="s" href="{% url 'samples:advanced_search' %}">Advanced search</a></li>
+    <li><a accesskey="x" href="{% url 'logout' %}">Logout</a></li>
     <li><a accesskey="a" href="{% url add_samples_view %}">Add samples</a></li>
   </ul>
   <table class="headbar">
     <tr>
       <td class="info">
         {% for language_code, language in translation_flags %}
-          <a href="{% url 'jb_common.views.switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
+          <a href="{% url 'jb_common:switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
              ><img src="{% static "juliabase/flags/"|add:language_code|add:".png" %}"
                    alt="{% blocktrans with language as language %}switch to {{ language }}{% endblocktrans %}"
                    width="16" height="11"/></a>
@@ -80,7 +80,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% endblock %}
         {% endif %}
         {% if user.is_authenticated %}
-          <a href="{% url 'django.contrib.auth.views.logout' %}"
+          <a href="{% url 'logout' %}"
              ><img src="{% static "juliabase/icons/door_open.png" %}" alt="log-out icon" title="{% trans 'Log out' %}"
                    width="16" height="16"/></a>
         {% else %}

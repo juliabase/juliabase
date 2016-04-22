@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endblock %}
 
 {% block frame_content %}
-{% url 'samples.views.status.show' as next_url %}
+{% url 'samples:show_status' as next_url %}
 {% if status_messages %}
   <table class="padding" border="1">
      <thead>
@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            <td>{{ status_message.timestamp }}
              {% if user == status_message.operator %}
                <form method="post" 
-          action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
+          action="{% url 'samples:withdraw_status' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
                      style="display: inline">{% csrf_token %}
                  <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
                         title="{% trans 'withdraw this status message for all processes' %}"/>
@@ -79,9 +79,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <p>{% trans 'There are no current status messages.' %}</p>
 {% endif %}
 
-<p><a href="{% url 'samples.views.status.add' %}?next={{ next_url|urlquote_plus }}" style="margin-right: 3em"
+<p><a href="{% url 'samples:add_status' %}?next={{ next_url|urlquote_plus }}" style="margin-right: 3em"
       >{% trans 'Add a status message' %}</a>
-<a href="{% url 'samples.views.user_details.edit_preferences' login_name=user.username %}?next={{ next_url|urlquote_plus }}"
+<a href="{% url 'samples:edit_preferences' login_name=user.username %}?next={{ next_url|urlquote_plus }}"
    >{% trans 'Subscribe to status messages' %}</a></p>
 
 
@@ -124,7 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <td>{{ status_message.timestamp }}
             {% if user == status_message.operator %}
               <form method="post" 
-        action="{% url 'samples.views.status.withdraw' id_=status_message.id %}?next={% url 'samples.views.status.show' %}"
+        action="{% url 'samples:withdraw_status' id_=status_message.id %}?next={% url 'samples:show_status' %}"
                     style="display: inline">{% csrf_token %}
                 <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
                        title="{% trans 'withdraw this status message for all processes' %}"/>

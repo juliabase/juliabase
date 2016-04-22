@@ -39,6 +39,11 @@ class PatternGenerator(object):
         pattern_generator.deposition("FiveChamberDeposition", "5-chamber_depositions")
         pattern_generator.physical_process("PDSMeasurement", "number")
         pattern_generator.physical_process("Substrate", views={"edit"})
+
+    *Important*: Various places of JuliaBase assume that the URL patterns of
+    physical processes reside in a namespace which has the same name as the app
+    which holds the associated model classes.  So take care that this is the
+    case!
     """
 
     def __init__(self, url_patterns, views_prefix, app_label=None):

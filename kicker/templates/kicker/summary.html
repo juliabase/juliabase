@@ -27,8 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
 {% if latest_matches %}
   <div style="float:right">
-    <a href="{% url 'kicker.views.plot' image_format='pdf' %}"
-       ><img src="{% url 'kicker.views.plot' image_format='png' %}" alt='{% trans "kicker numbers" %}'/></a>
+    <a href="{% url 'kicker:plot' image_format='pdf' %}"
+       ><img src="{% url 'kicker:plot' image_format='png' %}" alt='{% trans "kicker numbers" %}'/></a>
   </div>
   <table style="border: 2px solid gray" cellspacing="10">
     {% for player, kicker_number in kicker_numbers %}
@@ -51,6 +51,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% endfor %}
   </table>
 {% endif %}
-<p><a href="{% url 'kicker.views.edit_user_details' username=username %}"
+<p><a href="{% url 'kicker:edit_user_details' username=username %}"
       >{% trans 'Edit your Kicker user details' %}</a></p>
 {% endblock %}

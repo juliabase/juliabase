@@ -239,7 +239,7 @@ def list_(request):
         if request.method == "POST":
             user_list_form = UserListForm(user, request.POST)
             if user_list_form.is_valid():
-                return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.permissions.edit",
+                return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples:edit_permissions",
                                 kwargs={"username": user_list_form.cleaned_data["selected_user"].username}))
         else:
             user_list_form = UserListForm(user)

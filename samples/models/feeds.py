@@ -435,7 +435,7 @@ class FeedStatusMessage(FeedEntry):
         metadata["title"] = _("New status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new status message"
-        metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
+        metadata["link"] = django.core.urlresolvers.reverse("samples:show_status")
         return metadata
 
 
@@ -455,7 +455,7 @@ class FeedWithdrawnStatusMessage(FeedEntry):
         metadata["title"] = _("Withdrawn status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "withdrawn status message"
-        metadata["link"] = django.core.urlresolvers.reverse("samples.views.status.show")
+        metadata["link"] = django.core.urlresolvers.reverse("samples:show_status")
         return metadata
 
 
@@ -512,7 +512,7 @@ class FeedRemovedTask(FeedEntry):
         metadata["title"] = _("Removed a task for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "removed task"
-        metadata["link"] = django.core.urlresolvers.reverse("samples.views.task_lists.show")
+        metadata["link"] = django.core.urlresolvers.reverse("samples:show_task_lists")
         return metadata
 
 

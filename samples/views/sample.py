@@ -207,7 +207,7 @@ def get_allowed_processes(user, sample):
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
         general_processes.append({"label": models.Result._meta.verbose_name, "type": "result",
-                                  "url": django.core.urlresolvers.reverse("add_result")})
+                                  "url": django.core.urlresolvers.reverse("samples:add_result")})
     general_processes.extend(permissions.get_allowed_physical_processes(user))
     if not sample_processes and not general_processes:
         raise permissions.PermissionError(user, _("You are not allowed to add any processes to the sample {sample} "
@@ -714,7 +714,7 @@ def by_id(request, sample_id, path_suffix):
     permissions.get_sample_clearance(request.user, sample)
     query_string = request.META["QUERY_STRING"] or ""
     return HttpResponseSeeOther(
-        django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
+        django.core.urlresolvers.reverse("samples:show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else ""))
 
 
