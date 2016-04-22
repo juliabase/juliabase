@@ -157,7 +157,7 @@ urlpatterns = [
     url(r"^merge_samples$", merge_samples.merge, name="merge_samples"),
 
     url(r"crawler_logs/$", log_viewer.list, name="list_log_viewers"),
-    url(r"crawler_logs/(?P<process_class_name>[a-z_0-9]+)$", log_viewer.view),
+    url(r"crawler_logs/(?P<process_class_name>[a-z_0-9]+)$", log_viewer.view, name="show_crawler_log"),
 
     url(r"^tasks/$", task_lists.show, name="show_task_lists"),
     url(r"^tasks/add/$", task_lists.edit, {"task_id": None}),
