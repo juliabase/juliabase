@@ -1029,8 +1029,7 @@ class SampleSplit(Process):
             context["parent"] = None
         if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
-            context["resplit_url"] = django.core.urlresolvers.reverse(
-                "samples:split_and_rename", kwargs={"old_split_id": self.id})
+            context["resplit_url"] = django.core.urlresolvers.reverse("samples:resplit", kwargs={"old_split_id": self.id})
         else:
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)

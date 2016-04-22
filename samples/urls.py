@@ -93,7 +93,7 @@ urlpatterns = [
     url(r"^samples/(?P<sample_name>.+)$", sample.show, name="show_sample_by_name"),
     url(r"^bulk_rename$", bulk_rename.bulk_rename, name="bulk_rename"),
 
-    url(r"^resplit/(?P<old_split_id>.+)", split_and_rename.split_and_rename),
+    url(r"^resplit/(?P<old_split_id>.+)", split_and_rename.split_and_rename, name="resplit"),
 
     url(r"^processes/(?P<process_id>\d+)$", main.show_process, name="show_process"),
 
