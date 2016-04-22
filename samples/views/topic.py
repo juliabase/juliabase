@@ -30,6 +30,7 @@ from django.http import Http404
 import django.utils.http
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext
+import django.core.urlresolvers
 import django.forms as forms
 from django.forms.utils import ValidationError
 from django.utils.text import capfirst
@@ -114,7 +115,7 @@ def add(request):
     permissions.assert_can_edit_users_topics(request.user)
     if not request.user.jb_user_details.department:
         if request.user.is_superuser:
-            return HttpResponseSeeOther("/admin/jb_common/topic/add/")
+            return HttpResponseSeeOther(django.core.urlresolvers.reverse("admin:jb_common_topic_add"))
         else:
             raise permissions.PermissionError(request.user,
                                               _("You cannot add topics here because you are not in any department."))
