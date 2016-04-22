@@ -46,7 +46,7 @@ Default: ``""`` (Empty string)
 
 Name of the view to add samples.  For example::
 
-    ADD_SAMPLES_VIEW = "institute:add_sample"
+    ADD_SAMPLES_VIEW = "institute:add_samples"
 
 This view function must have exactly one parameter, namely the ``request``
 instance.

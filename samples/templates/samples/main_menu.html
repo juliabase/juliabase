@@ -83,7 +83,7 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
 
   <ul style='list-style-image: url("{% static "juliabase/icons/add.png" %}")'>
     <li style='list-style-image: url("{% static "juliabase/icons/ruby_add.png" %}")'>
-      <a href="{{ add_sample_url }}">{% trans 'samples'|capfirst %}</a></li>
+      <a href="{{ add_samples_url }}">{% trans 'samples'|capfirst %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/chart_organisation_add.png" %}")'>
       <a href="{% url 'samples:add_sample_series' %}">{% trans 'sample series'|capfirst %}</a></li>
     <li style='list-style-image: url("{% static "juliabase/icons/lightbulb_add.png" %}")'>

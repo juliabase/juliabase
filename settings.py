@@ -159,7 +159,7 @@ if DEBUG:
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-ADD_SAMPLES_VIEW = "institute:add_sample"
+ADD_SAMPLES_VIEW = "institute:add_samples"
 
 MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, str("remote_client"), str("examples"))
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds_raw_data"))

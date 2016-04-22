@@ -47,7 +47,7 @@ app_name = "institute"
 urlpatterns = [
     # General additions
 
-    url(r"^samples/add/$", sample.add, name="add_sample"),
+    url(r"^samples/add/$", sample.add, name="add_samples"),
     url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", sample.copy_informal_stack, name="copy_informal_stack"),
     url(r"^claims/(?P<username>.+)/add_oldstyle/$", claim.add_oldstyle, name="add_claim_oldstyle"),
     url(r"^my_layers/(?P<login_name>.+)", my_layers.edit, name="edit_my_layers"),
