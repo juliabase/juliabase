@@ -638,8 +638,7 @@ class PhysicalProcess(Process):
         :rtype: str
         """
         try:
-            return django.core.urlresolvers.reverse("add_" + camel_case_to_underscores(cls.__name__),
-                                                    current_app=cls._meta.app_label)
+            return django.core.urlresolvers.reverse(cls._meta.app_label + ":add_" + camel_case_to_underscores(cls.__name__))
         except django.core.urlresolvers.NoReverseMatch:
             return None
 
