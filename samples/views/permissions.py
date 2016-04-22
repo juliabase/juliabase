@@ -79,12 +79,6 @@ class PermissionsModels(object):
       show all users of a model.  Note that this excludes superusers, unless
       they have the distinctive permissions.
 
-    :ivar topic_manager_permission: the permission instance for changing
-      memberships in own topics
-
-    :ivar add_external_operators_permission: the permission instance for adding
-      external operators
-
     :type name: unicode
     :type codename: str
     :type edit_permissions_permission: django.contrib.auth.models.Permission
@@ -95,8 +89,6 @@ class PermissionsModels(object):
     :type full_viewers: QuerySet
     :type full_editors: QuerySet
     :type all_users: QuerySet
-    :type topic_manager_permission: django.contrib.auth.models.Permission
-    :type add_external_operators_permission: django.contrib.auth.models.Permission
     """
 
     def __init__(self, addable_model_class):
@@ -107,10 +99,6 @@ class PermissionsModels(object):
         :type addable_model_class: ``class`` (derived from
           ``django.db.models.Model``)
         """
-        self.topic_manager_permission = Permission.objects.get(codename="edit_their_topics",
-                                                          content_type=ContentType.objects.get_for_model(Topic))
-        self.add_external_operators_permission = Permission.objects.get(codename="add_externaloperator",
-                                                content_type=ContentType.objects.get_for_model(models.ExternalOperator))
         self.name = addable_model_class._meta.verbose_name_plural
         self.codename = addable_model_class.__name__.lower()
         content_type = ContentType.objects.get_for_model(addable_model_class)
@@ -249,10 +237,12 @@ def list_(request):
     else:
         user_list_form = None
     if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.change_topic"):
+        topic_manager_permission = Permission.objects.get(
+            codename="edit_their_topics", content_type=ContentType.objects.get_for_model(Topic))
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
-            .filter(Q(groups__permissions=PermissionsModels.topic_manager_permission) |
-                    Q(user_permissions=PermissionsModels.topic_manager_permission)).distinct())
+            .filter(Q(groups__permissions=topic_manager_permission) |
+                    Q(user_permissions=topic_manager_permission)).distinct())
     else:
         topic_managers = None
     return render(request, "samples/list_permissions.html",
