@@ -75,7 +75,7 @@ urlpatterns = [
     url(r"^my_samples/(?P<username>.+)", my_samples.edit, name="edit_my_samples"),
 
     url(r"^depositions/split_and_rename_samples/(?P<deposition_number>.+)",
-        split_after_deposition.split_and_rename_after_deposition),
+        split_after_deposition.split_and_rename_after_deposition, name="split_and_rename_after_deposition"),
     url(r"^depositions/$", main.deposition_search, name="deposition_search"),
     url(r"^depositions/(?P<deposition_number>.+)", main.show_deposition),
 
