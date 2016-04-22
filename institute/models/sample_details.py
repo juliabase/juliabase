@@ -92,9 +92,10 @@ class SampleDetails(models.Model):
         :rtype: dict mapping str to str
         """
         return {"diagram_file": os.path.join("stacks", str(self.pk) + ".pdf"),
-                "diagram_url": django.core.urlresolvers.reverse("stack_diagram", kwargs={"sample_id": str(self.pk)}),
+                "diagram_url": django.core.urlresolvers.reverse("institute:stack_diagram",
+                                                                kwargs={"sample_id": str(self.pk)}),
                 "thumbnail_file": os.path.join("stacks", str(self.pk) + ".png"),
-                "thumbnail_url": django.core.urlresolvers.reverse("stack_diagram_thumbnail",
+                "thumbnail_url": django.core.urlresolvers.reverse("institute:stack_diagram_thumbnail",
                                                                   kwargs={"sample_id": str(self.pk)})}
 
     def has_producible_stack_diagram(self):

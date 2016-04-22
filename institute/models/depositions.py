@@ -61,7 +61,7 @@ class ClusterToolDeposition(samples.models.Deposition):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.core.urlresolvers.reverse("add_cluster_tool_deposition"), urlquote_plus(self.number))
+                django.core.urlresolvers.reverse("institute:add_cluster_tool_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super(ClusterToolDeposition, self).get_context_for_user(user, context)
@@ -159,7 +159,7 @@ class FiveChamberDeposition(samples.models.Deposition):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.core.urlresolvers.reverse("add_five_chamber_deposition"), urlquote_plus(self.number))
+                django.core.urlresolvers.reverse("institute:add_five_chamber_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)
