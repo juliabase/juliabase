@@ -85,7 +85,7 @@ urlpatterns = [
     # FixMe: Must be regenerated with a minimal add-sample form
  #   url(r"^samples/add/$", sample.add),
     url(r"^samples/(?P<parent_name>.+)/split/$", split_and_rename.split_and_rename, name="split_and_rename"),
-    url(r"^samples/(?P<sample_name>.+)/kill/$", sample_death.new),
+    url(r"^samples/(?P<sample_name>.+)/kill/$", sample_death.new, name="kill_sample"),
     url(r"^samples/(?P<sample_name>.+)/add_process/$", sample.add_process, name="add_process"),
     url(r"^samples/(?P<sample_name>.+)/edit/$", sample.edit, name="edit_sample"),
     url(r"^samples/(?P<sample_name>.+)/export/$", sample.export, name="export_sample"),

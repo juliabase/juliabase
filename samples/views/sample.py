@@ -200,9 +200,14 @@ def get_allowed_processes(user, sample):
     """
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
-        sample_processes.append({"label": _("split"), "url": sample.get_absolute_url() + "/split/", "type": "split"})
+        sample_processes.append({"label": _("split"),
+                                 "url": django.core.urlresolvers.reverse("samples:split_and_rename",
+                                                                         kwargs={"parent_name": sample.name}),
+                                 "type": "split"})
         # Translators: Of a sample
-        sample_processes.append({"label": _("cease of existence"), "url": sample.get_absolute_url() + "/kill/",
+        sample_processes.append({"label": _("cease of existence"),
+                                 "url": django.core.urlresolvers.reverse("samples:kill_sample",
+                                                                         kwargs={"sample_name": sample.name}),
                                  "type": "death"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
