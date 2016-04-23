@@ -806,8 +806,8 @@ def cache_hit_rate():
 
 
 def unlazy_object(lazy_object):
-    """Returns the actual (wrapped) instance of a lazy object.  Note that the
-    lazy object may be changed by this function: Afterwards, it definitely
+    """Returns the actual (wrapped) instance of a lazy object.  Note that the lazy
+    object may be changed by this function in situ: Afterwards, it definitely
     contains the wrapped instance.
 
     :param lazy_object: the lazy object
