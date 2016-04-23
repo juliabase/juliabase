@@ -805,25 +805,6 @@ def cache_hit_rate():
         return hits / (hits + misses)
 
 
-def unlazy_object(lazy_object):
-    """Returns the actual (wrapped) instance of a lazy object.  Note that the lazy
-    object may be changed by this function in situ: Afterwards, it definitely
-    contains the wrapped instance.
-
-    :param lazy_object: the lazy object
-
-    :type lazy_object: django.utils.functional.LazyObject
-
-    :return:
-      the actual object
-
-    :rtype: object
-    """
-    if lazy_object._wrapped is None:
-        lazy_object._setup()
-    return lazy_object._wrapped
-
-
 def convert_bytes_to_str(byte_array):
     """Converts an array of bytes representing the string literals as decimal
     integers to unicode letters.
