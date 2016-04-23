@@ -30,6 +30,7 @@ import datetime, re, json
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
@@ -53,6 +54,7 @@ __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixi
            "DepositionView", "DepositionMultipleTypeView")
 
 
+@method_decorator(login_required, name="dispatch")
 class ProcessWithoutSamplesView(TemplateView):
     """Abstract base class for the classed-based views.  It deals only with the
     process per se, and in partuclar, with no samples associated with this
@@ -347,14 +349,6 @@ class ProcessWithoutSamplesView(TemplateView):
         context.update(kwargs)
         context.update(self.forms)
         return super(ProcessWithoutSamplesView, self).get_context_data(**context)
-
-    @classmethod
-    def as_view(cls, **initkwargs):
-        """Return the callable for the URL patterns.  This is part of the official
-        Django API.  We override it to add a login check.
-        """
-        view = super(ProcessWithoutSamplesView, cls).as_view(**initkwargs)
-        return login_required(view)
 
 
 class ProcessView(ProcessWithoutSamplesView):
