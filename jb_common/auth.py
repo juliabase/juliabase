@@ -48,9 +48,9 @@ Portions of this module are inspired by
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
-import datetime
 from django.contrib.auth.models import User, Permission
 from django.contrib.sessions.models import Session
+import django.utils.timezone
 from django.conf import settings
 from django.core.mail import mail_admins
 import ldap3
@@ -285,7 +285,7 @@ class LDAPConnection(object):
             user.groups.clear()
             user.topics.clear()
             user.user_permissions.clear()
-            for session in Session.objects.filter(expire_date__gte=datetime.datetime.now()).iterator():
+            for session in Session.objects.filter(expire_date__gte=django.utils.timezone.now()).iterator():
                 if session.get_decoded().get("_auth_user_id") == user.id:
                     session.delete()
 

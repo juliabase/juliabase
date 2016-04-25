@@ -28,6 +28,7 @@ import django.utils.six as six
 import re, datetime, json
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
+import django.utils.timezone
 from django.conf import settings
 from django.forms.utils import ValidationError
 from django.http import QueryDict
@@ -174,7 +175,7 @@ class ProcessForm(ModelForm):
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
         if not self.process or self.unfinished:
-            kwargs.setdefault("initial", {}).setdefault("timestamp", datetime.datetime.now())
+            kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
         if not self.process:
             kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
             kwargs["initial"].setdefault("combined_operator", user.pk)
@@ -579,7 +580,7 @@ def clean_timestamp_field(value):
     """
     if isinstance(value, datetime.datetime):
         # Allow mis-sychronisation of clocks of up to one minute.
-        if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
+        if value > django.utils.timezone.now() + datetime.timedelta(minutes=1):
             raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
     else:
         if value > datetime.date.today():

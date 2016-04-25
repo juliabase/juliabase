@@ -24,6 +24,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime, decimal, json
+import django.utils.timezone
 from django.test.client import Client
 from django.test import override_settings
 from .tools import TestCase
@@ -37,9 +38,10 @@ class FiveChamberDepositionTest(TestCase):
         self.client = Client()
         assert self.client.login(username="r.calvert", password="12345")
         self.deposition_number = datetime.datetime.now().strftime("%yS-001")
-        timestamp = datetime.datetime.now()
-        self.timestamp = timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        self.timestamp_with_t = timestamp.strftime("%Y-%m-%dT%H:%M:%S")
+        timestamp = django.utils.timezone.now()
+        # See <https://code.djangoproject.com/ticket/11385>.
+        self.timestamp = django.utils.timezone.localtime(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+        self.timestamp_with_t = timestamp.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def test_retrieve_add_view(self):
         response = self.client.get("/5-chamber_depositions/add/")

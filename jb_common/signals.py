@@ -41,6 +41,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.db.models import signals
+import django.utils.timezone
 from django.dispatch import receiver
 import django.dispatch
 from django.contrib.auth.models import User
@@ -87,7 +88,7 @@ def add_all_user_details(**kwargs):
 def expire_error_pages(sender, **kwargs):
     """Deletes all error pages which are older than six weeks.
     """
-    now = datetime.datetime.now()
+    now = django.utils.timezone.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
     for error_page in models.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
         error_page.delete()

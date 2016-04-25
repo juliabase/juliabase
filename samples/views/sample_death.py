@@ -23,11 +23,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
 from django.shortcuts import render
 from django.http import Http404
 from django.forms.utils import ValidationError
 from django import forms
+import django.utils.timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from jb_common.utils.base import unquote_view_parameters
@@ -91,7 +91,7 @@ def new(request, sample_name):
         sample_death_form = SampleDeathForm(sample, request.POST)
         if sample_death_form.is_valid():
             sample_death = sample_death_form.save(commit=False)
-            sample_death.timestamp = datetime.datetime.now()
+            sample_death.timestamp = django.utils.timezone.now()
             sample_death.operator = request.user
             sample_death.save()
             sample_death.samples = [sample]

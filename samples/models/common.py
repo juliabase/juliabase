@@ -32,7 +32,7 @@ import django.utils.six as six
 
 from django.utils.encoding import python_2_unicode_compatible
 
-import hashlib, os.path, datetime, json, collections
+import hashlib, os.path, json, collections
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
@@ -729,7 +729,7 @@ class Sample(models.Model):
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
         super(Sample, self).save(*args, **kwargs)
-        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=datetime.datetime.now())
+        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=django.utils.timezone.now())
         if with_relations:
             for series in self.series.all():
                 series.save()
@@ -1510,7 +1510,7 @@ class UserDetails(models.Model):
         :py:attr:`jb_common.models.UserDetails.layout_last_modified`),
         e.g. topic memberships.  It is used for efficient caching.
         """
-        self.display_settings_timestamp = datetime.datetime.now()
+        self.display_settings_timestamp = django.utils.timezone.now()
         self.save()
 
 

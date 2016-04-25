@@ -60,6 +60,7 @@ DATABASES = {
         }
     }
 
+USE_TZ = True
 TIME_ZONE = "Europe/Berlin"
 
 LANGUAGE_CODE = "en-us"

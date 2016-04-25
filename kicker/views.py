@@ -31,6 +31,7 @@ from django.forms.utils import ValidationError
 from django.http import Http404
 from django.conf import settings
 from django.db.models import Q
+import django.utils.timezone
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
@@ -289,7 +290,7 @@ def set_start_kicker_number(request, username):
 
 
 def get_eligible_players():
-    two_weeks_ago = datetime.datetime.now() - datetime.timedelta(weeks=2)
+    two_weeks_ago = django.utils.timezone.now() - datetime.timedelta(weeks=2)
     ids = list(models.KickerNumber.objects.filter(timestamp__gt=two_weeks_ago).values_list("player", flat=True))
     eligible_players = list(django.contrib.auth.models.User.objects.in_bulk(ids).values())
     result = [(get_current_kicker_number_or_estimate(player), player) for player in eligible_players]
@@ -299,7 +300,7 @@ def get_eligible_players():
 
 def generate_plot(image_format):
     eligible_players = [entry[0] for entry in get_eligible_players()]
-    hundred_days_ago = datetime.datetime.now() - datetime.timedelta(days=100)
+    hundred_days_ago = django.utils.timezone.now() - datetime.timedelta(days=100)
     plot_data = []
     for player in eligible_players:
         x_values, y_values = [], []

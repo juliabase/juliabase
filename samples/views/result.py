@@ -32,6 +32,7 @@ from functools import partial
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+import django.utils.timezone
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
@@ -123,7 +124,7 @@ class RelatedDataForm(forms.Form):
         super(RelatedDataForm, self).__init__(data, files, **kwargs)
         self.old_relationships = set(old_result.samples.all()) | set(old_result.sample_series.all()) if old_result else set()
         self.user = user
-        now = datetime.datetime.now() + datetime.timedelta(seconds=5)
+        now = django.utils.timezone.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
         samples = user.my_samples.all()
         important_samples = set()

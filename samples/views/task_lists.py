@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
+import django.utils.timezone
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 from django.apps import apps
@@ -337,7 +338,7 @@ def create_task_lists(user):
         department_names = set(Department.objects.filter(app_label=app_label).values_list("name", flat=True))
         assert len(department_names) == 1
         return department_names.pop()
-    one_week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
+    one_week_ago = django.utils.timezone.now() - datetime.timedelta(weeks=1)
     task_lists = []
     seen_process_names = set()
     ambiguous_process_names = set()

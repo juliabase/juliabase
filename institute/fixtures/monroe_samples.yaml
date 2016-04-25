@@ -34,7 +34,7 @@
 - fields:
     current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
-    last_modified: 2015-01-21T11:15:04Z
+    last_modified: "2015-01-21T11:15:04Z"
     name: 15-EM-1
     processes: [1]
     purpose: ''
@@ -48,7 +48,7 @@
 - fields:
     current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
-    last_modified: 2015-01-21T11:15:05Z
+    last_modified: "2015-01-21T11:15:05Z"
     name: 15-EM-2
     processes: [1]
     purpose: ''
@@ -62,7 +62,7 @@
 - fields:
     current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
-    last_modified: 2015-01-21T11:15:06Z
+    last_modified: "2015-01-21T11:15:06Z"
     name: 15-EM-3
     processes: [1]
     purpose: ''
@@ -76,7 +76,7 @@
 - fields:
     current_location: "Monroe's drawer"
     currently_responsible_person: [e.monroe]
-    last_modified: 2015-01-21T11:15:07Z
+    last_modified: "2015-01-21T11:15:07Z"
     name: 15-EM-4
     processes: [1]
     purpose: ''
@@ -93,14 +93,14 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: 2015-01-21T11:15:01Z
+    display_settings_timestamp: "2015-01-21T11:15:01Z"
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
     my_steps: '[["standard-hotwire", 14, 1]]'
-    my_samples_timestamp: 1990-01-01T00:00:00Z
-    my_samples_list_timestamp: 1990-01-01T00:00:00Z
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:

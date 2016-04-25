@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import datetime
+import django.utils.timezone
 
 
 class Migration(migrations.Migration):
@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='userdetails',
             name='my_samples_list_timestamp',
-            field=models.DateTimeField(default=datetime.datetime.now(), verbose_name='My Samples list last modified', auto_now_add=True),
+            field=models.DateTimeField(default=django.utils.timezone.now(), verbose_name='My Samples list last modified', auto_now_add=True),
             preserve_default=False,
         ),
     ]

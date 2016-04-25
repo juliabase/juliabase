@@ -31,6 +31,7 @@ from django.forms import widgets
 from django.forms.utils import ValidationError
 from django.shortcuts import render, get_object_or_404
 import django.core.urlresolvers
+import django.utils.timezone
 from django.utils.encoding import force_text
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -77,7 +78,7 @@ class StatusForm(forms.ModelForm):
         self.user = user
         self.fields["operator"].set_operator(user, user.is_superuser)
         self.fields["operator"].initial = user.pk
-        self.fields["timestamp"].initial = datetime.datetime.now()
+        self.fields["timestamp"].initial = django.utils.timezone.now()
         self.fields["process_classes"].choices = utils.choices_of_content_types(
             cls for cls in get_all_addable_physical_process_models() if self.is_editable(cls))
         self.fields["process_classes"].widget.attrs["size"] = 24
@@ -94,7 +95,7 @@ class StatusForm(forms.ModelForm):
         """Forbid timestamps that are in the future.
         """
         timestamp = self.cleaned_data["timestamp"]
-        if timestamp > datetime.datetime.now():
+        if timestamp > django.utils.timezone.now():
             raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
         return timestamp
 
@@ -104,11 +105,13 @@ class StatusForm(forms.ModelForm):
         if begin:
             cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = cleaned_data["begin"]
         else:
-            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = datetime.datetime(1900, 1, 1), 6
+            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = \
+                    django.utils.timezone.make_aware(datetime.datetime(1900, 1, 1)), 6
         if end:
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = cleaned_data["end"]
         else:
-            cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
+            cleaned_data["end"], cleaned_data["end_inaccuracy"] = \
+                    django.utils.timezone.make_aware(datetime.datetime(9999, 12, 31)), 6
         if cleaned_data["begin"] > cleaned_data["end"]:
             self.add_error("begin", ValidationError(_("The begin must be before the end."), code="invalid"))
             del cleaned_data["begin"]
@@ -159,7 +162,7 @@ def show(request):
 
     :rtype: HttpResponse
     """
-    now = datetime.datetime.now()
+    now = django.utils.timezone.now()
     eligible_status_messages = models.StatusMessage.objects.filter(withdrawn=False, begin__lt=now, end__gt=now)
     process_classes = set()
     for status_message in eligible_status_messages:

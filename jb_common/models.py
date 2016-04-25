@@ -25,11 +25,12 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 from django.utils.encoding import python_2_unicode_compatible
 
-import hashlib, datetime
+import hashlib
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
+import django.utils.timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 import jb_common.search
 
@@ -94,7 +95,7 @@ class UserDetails(models.Model):
 
     def save(self, *args, **kwargs):
         if self._old != self.get_data_hash():
-            self.layout_last_modified = datetime.datetime.now()
+            self.layout_last_modified = django.utils.timezone.now()
         super(UserDetails, self).save(*args, **kwargs)
 
     def get_data_hash(self):

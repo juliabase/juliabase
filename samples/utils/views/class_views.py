@@ -26,12 +26,13 @@ samples form, whereas the mixin class doesn't do this.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, re, json
+import re, json
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+import django.utils.timezone
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.text import capfirst
@@ -175,7 +176,7 @@ class ProcessWithoutSamplesView(TemplateView):
                 source_process_query = self.model.objects.filter(**{self.identifying_field: copy_from})
                 if source_process_query.count() == 1:
                     initial.update(source_process_query.values()[0])
-                    initial["timestamp"] = datetime.datetime.now()
+                    initial["timestamp"] = django.utils.timezone.now()
                     initial["timestamp_inaccuracy"] = 0
                     initial["operator"] = self.request.user.pk
             next_id = self.get_next_id()

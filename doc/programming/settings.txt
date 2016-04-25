@@ -578,7 +578,17 @@ in the ``"OPTIONS"`` dictionary, and without caching, like::
 USE_TZ
 ------
 
-You may set it to ``True`` (the default for newly created Django projects).
-This may or may not work for you since JuliaBase is not tested with
-timezone-awareness.  In particular, the remote client will surely fail.
-Therefore, we recommend to leave it at the default value ``False``.
+You should set it to ``True`` (the default for newly created Django projects).
+You even must do so if your database backend does not support timezone-aware
+datetimes by itself.
+
+
+.. index:: TIME_ZONE
+
+TIME_ZONE
+---------
+
+If ``USE_TZ`` is set to ``True``, you should also consider setting
+``TIME_ZONE``.  See the `Django documentation`_ for details.
+
+.. _Django documentation: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TIME_ZONE

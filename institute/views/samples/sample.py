@@ -29,7 +29,6 @@ substrate with every sample, too (and possibly a cleaning process).
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
-import datetime
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
@@ -40,6 +39,7 @@ from django.utils.safestring import mark_safe
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.text import capfirst
+import django.utils.timezone
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from jb_common.utils.base import help_link, get_really_full_name, int_or_zero
@@ -86,7 +86,7 @@ class AddSamplesForm(forms.Form):
 
     def __init__(self, user, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)
-        self.fields["timestamp"].initial = datetime.datetime.now()
+        self.fields["timestamp"].initial = django.utils.timezone.now()
         self.fields["topic"].set_topics(user)
         self.fields["substrate_comments"].help_text = \
             """<span class="markdown-hint">""" + _("""with {markdown_link} syntax""").format(
@@ -104,7 +104,7 @@ class AddSamplesForm(forms.Form):
         """Forbid timestamps that are in the future.
         """
         timestamp = self.cleaned_data["timestamp"]
-        if timestamp > datetime.datetime.now():
+        if timestamp > django.utils.timezone.now():
             raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
         return timestamp
 
