@@ -58,8 +58,8 @@ class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
 
 rename_choices = (("", _("no names")),
                     # Translators: "new-style" names
-                ("new-style", _("new-style")),
-                ("cleaning", _("cleaning number")))
+                  ("new-style", _("new-style")),
+                  ("cleaning", _("cleaning number")))
 
 class AddSamplesForm(forms.Form):
     """Form for adding new samples."""
