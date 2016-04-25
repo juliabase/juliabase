@@ -23,7 +23,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, decimal, json
+import datetime, decimal
 import django.utils.timezone
 from django.test.client import Client
 from django.test import override_settings
@@ -69,8 +69,7 @@ class ClusterToolDepositionTest(TestCase):
                          "content_type": "cluster tool PECVD layer", "plasma_start_with_shutter": False, "time": "",
                          "deposition_power": None}})
         response = self.client.get("/my_samples/e.monroe", HTTP_ACCEPT="application/json")
-        # FixMe: In Django 1.9, replace this with ``response.json()``.
-        my_samples = json.loads(response.content.decode())
+        my_samples = response.json()
         self.assertIn(13, my_samples)
         self.assertIn(14, my_samples)
 
