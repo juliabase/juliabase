@@ -23,7 +23,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import re, json
+import json
 import django.test
 
 
