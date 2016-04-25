@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import os
 from django.test import TestCase, override_settings
 from django.test.client import Client
 
@@ -41,7 +42,8 @@ class MainFeaturesTest(TestCase):
 
     def test_add_samples(self):
         response = self.client.get("/samples/add/")
-        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, open(os.path.join(os.path.dirname(__file__), "add_sample_radio_input.html")).read(), html=True)
 
     def test_add_sample_series(self):
         response = self.client.get("/sample_series/add/")
