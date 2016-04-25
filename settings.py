@@ -46,9 +46,9 @@ DEBUG = True
 DEFAULT_FROM_EMAIL = ""
 EMAIL_HOST = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
-ADMINS = (
+ADMINS = [
     ("JuliaBase-Admins", "bronger@physik.rwth-aachen.de"),
-)
+]
 
 DATABASES = {
     "default": {
@@ -111,7 +111,7 @@ if DEBUG:
     TEMPLATES[0]["OPTIONS"]["loaders"] = ["django.template.loaders.app_directories.Loader",
                                           "django.template.loaders.filesystem.Loader"]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "jb_common.middleware.MessageMiddleware",
@@ -121,12 +121,13 @@ MIDDLEWARE_CLASSES = (
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
-)
+]
+
 APPEND_SLASH = False
 
 ROOT_URLCONF = str("urls")
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -136,15 +137,15 @@ INSTALLED_APPS = (
     "institute",
     "samples",
     "jb_common"
-)
+]
 
-JAVASCRIPT_I18N_APPS += ("institute",)
+JAVASCRIPT_I18N_APPS += ["institute"]
 
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
 
 # This determines which flags are shown
-LANGUAGES = (("en", _("English")), ("de", _("German")))
+LANGUAGES = [("en", _("English")), ("de", _("German"))]
 
 CACHES = {
     "default": {
@@ -177,4 +178,4 @@ SAMPLE_NAME_FORMATS = {
                     "verbose_name": _("new-style")}
 }
 
-NAME_PREFIX_TEMPLATES = ("{short_year}-{user_initials}-", "{external_contact_initials}-")
+NAME_PREFIX_TEMPLATES = ["{short_year}-{user_initials}-", "{external_contact_initials}-"]

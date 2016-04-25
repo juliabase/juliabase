@@ -85,7 +85,7 @@ spelling: ``MyProcessClassName`` becomes :file:`my_process_class_name.log`.
 CRAWLER_LOGS_WHITELIST
 ----------------------
 
-Default: ``()`` (Empty tuple)
+Default: ``[]`` (Empty list)
 
 List of process classes for which the crawler log is public, i.e. not
 restricted to users that are allowed to add new processes of that kind.
@@ -146,9 +146,9 @@ more information.
 JAVASCRIPT_I18N_APPS
 --------------------
 
-Default: ``("django.contrib.auth", "samples", "jb_common")``
+Default: ``["django.contrib.auth", "samples", "jb_common"]``
 
-Tuple containing all apps which contain translations that should be used in
+List containing all apps which contain translations that should be used in
 JavaScript code.  The apps are named as in the Django setting
 ``INSTALLED_APPS``.  See the `Django documentation
 <https://docs.djangoproject.com/en/dev/topics/i18n/translation/#internationalization-in-javascript-code>`_
@@ -174,7 +174,7 @@ called.
 NAME_PREFIX_TEMPLATES
 ---------------------
 
-Default: ``()`` (Empty tuple)
+Default: ``[]`` (Empty list)
 
 List of string templates that define possible sample name prefixes.  See
 :doc:`sample_names` for more information.
@@ -200,7 +200,7 @@ information.
 TEMP_STATIC_DIRS
 ----------------
 
-Default: ``()``
+Default: ``[]``
 
 Contains a list of directories from which temporary static files are served
 which should be deleted immediately after having been served.
@@ -261,15 +261,15 @@ works well for Active Directory domain controllers.
 LDAP_ADDITIONAL_ATTRIBUTES
 --------------------------
 
-Default: ``()`` (Empty tuple)
+Default: ``[]`` (Empty list)
 
 JuliaBase limits the attributes it receives for every user to a certain subset,
 e.g. the user's real name and their department.  If your code needs additional
-LDAP attributes, put their names into this tuple.  Note that its members must
-be byte strings.  An example might be::
+LDAP attributes, put their names into this list.  Note that its members must be
+byte strings.  An example might be::
 
-    LDAP_ADDITIONAL_ATTRIBUTES = (b"telephoneNumber", b"msExchUserCulture",
-                                  b"physicalDeliveryOfficeName")
+    LDAP_ADDITIONAL_ATTRIBUTES = [b"telephoneNumber", b"msExchUserCulture",
+                                  b"physicalDeliveryOfficeName"]
 
 
 .. index:: LDAP_ADDITIONAL_USERS
@@ -364,7 +364,7 @@ for user details in the LDAP directory.  It is typically something like::
 LDAP_URLS
 ---------
 
-Default: ``()`` (Empty tuple)
+Default: ``[]`` (Empty list)
 
 List of URLs of LDAP directories.  If you want to use LDAP, this must contain
 at least one URL.  It may contain more if there are multiple redundant LDAP
