@@ -181,7 +181,6 @@ def urlquote(value):
     need to be further escaped.
     """
     return django.utils.http.urlquote(value, safe="")
-urlquote.is_safe = False
 
 
 @register.filter
@@ -194,7 +193,6 @@ def urlquote_plus(value):
                >{% trans 'edit' %}</a>
     """
     return django.utils.http.urlquote_plus(value, safe="/")
-urlquote_plus.is_safe = False
 
 
 @register.simple_tag
