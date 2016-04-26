@@ -337,7 +337,7 @@ def markdown_samples(value, margins="default"):
     return mark_safe(result)
 
 
-@register.filter
+@register.filter(is_safe=True)
 @stringfilter
 def first_upper(value):
     """Filter for formatting the value to set the first character to uppercase.
