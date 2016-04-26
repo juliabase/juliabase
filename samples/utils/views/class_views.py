@@ -36,8 +36,7 @@ import django.utils.timezone
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.text import capfirst
-from django.utils.safestring import mark_safe
-from django.utils.encoding import force_text
+from django.utils.html import format_html, format_html_join
 import django.forms as forms
 from django.forms.models import modelform_factory
 from django.forms.utils import ValidationError
@@ -983,8 +982,8 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
 
 class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
     def render(self):
-        return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
-                    "<li>{0}</li>".format(force_text(w)) for w in self)))
+        inner = format_html_join("\n", "<li>{0}</li>", zip(self))
+        return format_html('<ul class="radio-select">\n{0}\n</ul>', inner)
 
 
 class AddMultipleTypeStepsForm(AddMyStepsForm):

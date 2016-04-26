@@ -93,7 +93,8 @@ def solarsimulator_color(measurement):
     measurement.  The returned string is ready-to-be-used in CSS directives as
     a colour name.
     """
-    return {"dark": "gray", "AM1.5": "inherited", "BG7": "lightblue", "OG590": "darkorange"}[measurement.irradiation]
+    return mark_safe(
+        {"dark": "gray", "AM1.5": "inherited", "BG7": "lightblue", "OG590": "darkorange"}[measurement.irradiation])
 
 
 @register.filter
@@ -117,9 +118,9 @@ def depostion_time(time):
             hours = 0
         else:
             hours, minutes, seconds = time_components
-        return "{0}:{1:02}:{2:02}".format(int(hours), int(minutes), int(seconds))
+        return mark_safe("{0}:{1:02}:{2:02}".format(int(hours), int(minutes), int(seconds)))
     else:
-        return "—"
+        return mark_safe("—")
 
 @register.filter
 def short_filepath(filepath):

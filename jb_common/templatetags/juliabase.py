@@ -28,6 +28,7 @@ import re, json
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.safestring import mark_safe
+from django.utils.html import format_html
 from django.utils.html import conditional_escape, escape
 import django.utils.http
 import markdown as markup
@@ -40,12 +41,12 @@ import jb_common.utils.base as utils
 register = template.Library()
 
 
-@register.filter(needs_autoescape=True)
-def get_really_full_name(user, anchor_type="http", autoescape=False):
-    """Unfortunately, Django's get_full_name method for users returns the
-    empty string if the user has no first and surname set. However, it'd be
-    sensible to use the login name as a fallback then. This is realised here.
-    See also `jb_common.utils.get_really_full_name`.
+@register.filter
+def get_really_full_name(user, anchor_type="http"):
+    """Unfortunately, Django's get_full_name method for users returns the empty
+    string if the user has no first and surname set. However, it'd be sensible
+    to use the login name as a fallback then. This is realised here.  See also
+    `jb_common.utils.get_really_full_name`.
 
     The optional parameter to this filter determines whether the name should be
     linked or not, and if so, how.  There are three possible parameter values:
@@ -59,21 +60,17 @@ def get_really_full_name(user, anchor_type="http", autoescape=False):
     ``"plain"``
         There should be no link, the name is just printed as plain unformatted
         text.
-
     """
     full_name = utils.get_really_full_name(user)
-    if autoescape:
-        full_name = conditional_escape(full_name)
     if anchor_type == "mailto" and not user.email:
         anchor_type = "plain"
     if anchor_type == "plain" or not user.jb_user_details.department:
-        return mark_safe(full_name)
+        return full_name
     elif anchor_type == "http":
-        # FixMe: The view should be one of jb_common.
-        return mark_safe('<a href="{0}">{1}</a>'.format(django.core.urlresolvers.reverse(
-                    "jb_common:show_user", kwargs={"login_name": user.username}), full_name))
+        return format_html('<a href="{0}">{1}</a>', mark_safe(django.core.urlresolvers.reverse(
+            "jb_common:show_user", kwargs={"login_name": user.username})), full_name)
     elif anchor_type == "mailto":
-        return mark_safe('<a href="mailto:{0}">{1}</a>'.format(user.email, full_name))
+        return format_html('<a href="mailto:{0}">{1}</a>', user.email, full_name)
     else:
         return ""
 
@@ -86,20 +83,20 @@ def substitute_formulae(string):
     simply insert an ``<img>`` tag with a Google URL for every formula.
 
     Note that any HTML-like material which is found along the way is escaped.
-    Thus, this routine returns a safe string.
+    Thus, this routine returns an HTML-safe string.  (However, it is not
+    decorated with ``mark_safe()``.)
 
     :param string: raw text from the user or the database
 
     :type string: unicode
 
     :return:
-      The escaped string, marked as safe and ready to be used in the output
-      HTML.  Any LaTeX formulae are replaced by Google images.
+      The HTML-safe string with any LaTeX formulae replaced by Google images.
 
-    :rtype: safe unicode
+    :rtype: unicode
     """
     if "$" not in string:
-        return mark_safe(escape(string))
+        return escape(string)
     no_further_match = False
     position = 0
     result = ""
@@ -124,7 +121,7 @@ def substitute_formulae(string):
         if no_further_match:
             result += escape(string[position:])
             break
-    return mark_safe(result)
+    return result
 
 
 @register.filter
@@ -143,7 +140,7 @@ def markdown(value, margins="default"):
     result = markup.markdown(substitute_formulae(utils.substitute_html_entities(six.text_type(value))))
     if result.startswith("<p>"):
         if margins == "collapse":
-            result = mark_safe("""<p style="margin: 0pt">""" + result[3:])
+            result = """<p style="margin: 0pt">""" + result[3:]
     return mark_safe(result)
 
 
@@ -162,7 +159,7 @@ def fancy_bool(boolean):
     """Filter for coverting a bool into a translated “Yes” or “No”.
     """
     result = capfirst(_("yes")) if boolean else capfirst(_("no"))
-    return mark_safe(result)
+    return result
 
 
 @register.filter
@@ -171,7 +168,7 @@ def contenttype_name(contenttype):
     FixMe: This is superfluous if #16803 is resolved.  Then, you can simply use
     a field of the contettype instance.
     """
-    return mark_safe(contenttype.model_class()._meta.verbose_name)
+    return contenttype.model_class()._meta.verbose_name
 
 
 @register.filter
@@ -289,4 +286,4 @@ def checkmark(value):
     """Returns a checkmark if the given value resolves to ``True``, and the empty
     string otherwise.
     """
-    return mark_safe("✓") if value else ""
+    return mark_safe("✓" if value else "")

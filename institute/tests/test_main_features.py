@@ -26,6 +26,7 @@ from __future__ import absolute_import, unicode_literals
 import os
 from django.test import TestCase, override_settings
 from django.test.client import Client
+from django.contrib.auth.models import User
 
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
@@ -150,3 +151,29 @@ class MainFeaturesTest(TestCase):
     def test_statistics(self):
         response = self.client.get("/statistics")
         self.assertEqual(response.status_code, 200)
+
+
+@override_settings(ROOT_URLCONF="institute.tests.urls")
+class AutoescapeTest(TestCase):
+    fixtures = ["test_main"]
+
+    def setUp(self):
+        self.client = Client()
+        assert self.client.login(username="s.renard", password="12345")
+
+    def test_get_really_full_name(self):
+        calvert = User.objects.get(username="r.calvert")
+        calvert.first_name = "Ros<badtag>alee"
+        calvert.last_name = "Cal<badtag>vert"
+        calvert.email = "r.calvert@<badtag>grimm.invalid"
+        calvert.save()
+
+        def check(url):
+            response = self.client.get(url)
+            self.assertNotContains(response, "Calvert")
+            self.assertNotContains(response, "<badtag>")
+            self.assertContains(response, "&lt;badtag&gt;")
+
+        check("/permissions/")
+        check("/users/r.calvert")
+        check("/samples/14S-001")
