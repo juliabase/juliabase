@@ -583,7 +583,7 @@ def display_search_tree(tree):
     result = """<table style="border: 2px solid black; padding-left: 3em">"""
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _("General error"), "outest_tag": "<tr>"}
-        result += render_to_string("error_list.html", context_instance=template.Context(error_context))
+        result += render_to_string("error_list.html", error_context)
         if isinstance(search_field, jb_common.search.RangeSearchField):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
             field_max = [field for field in search_field.form if field.name.endswith("_max")][0]

@@ -535,19 +535,19 @@ class Process(PolymorphicModel):
             context = self.get_sample_position_context(user, context)
         if "html_body" not in context:
             context["html_body"] = render_to_string(
-                "samples/show_" + camel_case_to_underscores(self.__class__.__name__) + ".html", context_instance=Context(context))
+                "samples/show_" + camel_case_to_underscores(self.__class__.__name__) + ".html", context)
             if "short_html_body" not in context:
                 try:
                     context["short_html_body"] = render_to_string(
                         "samples/show-short_{0}.html". \
-                            format(camel_case_to_underscores(self.__class__.__name__)), context_instance=Context(context))
+                            format(camel_case_to_underscores(self.__class__.__name__)), context)
                 except TemplateDoesNotExist:
                     context["short_html_body"] = None
             if "extend_html_body" not in context:
                 try:
                     context["extended_html_body"] = render_to_string(
                         "samples/show-extended_{0}.html". \
-                            format(camel_case_to_underscores(self.__class__.__name__)), context_instance=Context(context))
+                            format(camel_case_to_underscores(self.__class__.__name__)), context)
                 except TemplateDoesNotExist:
                     context["extended_html_body"] = None
         if "operator" not in context:
