@@ -50,6 +50,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='task',
             name='operator',
-            field=models.ForeignKey(related_name='operated_tasks', verbose_name='operator', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='operated_tasks', verbose_name='operator', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
         ),
     ]

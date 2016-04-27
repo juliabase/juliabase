@@ -66,9 +66,9 @@ class UserDetails(models.Model):
     django.contrib.auth.models.User.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
+    user = models.OneToOneField(django.contrib.auth.models.User, models.CASCADE, primary_key=True, verbose_name=_("user"),
                                 related_name="jb_user_details")
-    department = models.ForeignKey(Department, verbose_name=_("department"), related_name="user_details",
+    department = models.ForeignKey(Department, models.CASCADE, verbose_name=_("department"), related_name="user_details",
                                    null=True, blank=True)
     """The department of the user and all samples that he/she is the currently
     responsible for.  If it is ``None``, the user must not appear in the
@@ -132,10 +132,10 @@ class Topic(models.Model):
     members = models.ManyToManyField(django.contrib.auth.models.User, blank=True, verbose_name=_("members"),
                                      related_name="topics")
     confidential = models.BooleanField(_("confidential"), default=False)
-    department = models.ForeignKey(Department, verbose_name=_("department"), related_name="topic")
-    parent_topic = models.ForeignKey("self", verbose_name=_("parent topic"), related_name="child_topics",
+    department = models.ForeignKey(Department, models.CASCADE, verbose_name=_("department"), related_name="topic")
+    parent_topic = models.ForeignKey("self", models.CASCADE, verbose_name=_("parent topic"), related_name="child_topics",
                                     blank=True, null=True)
-    manager = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("topic manager"),
+    manager = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("topic manager"),
                                 related_name="managed_topics")
 
     class Meta:
@@ -229,7 +229,7 @@ class PolymorphicModel(models.Model):
     Simply derive the top-level model class from this one, and then you can
     easily resolve polymorphy in it and its derived classes.
     """
-    content_type = models.ForeignKey(ContentType, null=True, blank=True, editable=False)
+    content_type = models.ForeignKey(ContentType, models.CASCADE, null=True, blank=True, editable=False)
     actual_object_id = models.PositiveIntegerField(null=True, blank=True, editable=False)
     actual_instance = GenericForeignKey("content_type", "actual_object_id")
 
@@ -252,7 +252,7 @@ class ErrorPage(models.Model):
     view the full error page.  Such pages are expired after some time.
     """
     hash_value = models.CharField(_("hash value"), max_length=40, primary_key=True)
-    user = models.ForeignKey(django.contrib.auth.models.User, null=True, blank=True, verbose_name=_("user"),
+    user = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, null=True, blank=True, verbose_name=_("user"),
                              related_name="error_pages")
     requested_url = models.TextField(_("requested URL"), blank=True)
     html = models.TextField("HTML")

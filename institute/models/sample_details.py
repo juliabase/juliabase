@@ -51,8 +51,8 @@ class SampleDetails(models.Model):
     so that the user doesn't get an outdated sample data sheet when this model
     or depending models are updated.
     """
-    sample = models.OneToOneField(samples.models.Sample, verbose_name=_("sample"), related_name="sample_details",
-                                  primary_key=True)
+    sample = models.OneToOneField(samples.models.Sample, models.CASCADE, verbose_name=_("sample"),
+                                  related_name="sample_details", primary_key=True)
 
     class Meta:
         verbose_name = _("sample details")
@@ -282,7 +282,8 @@ class InformalLayer(models.Model):
     """Model for one layer in the informal layer stack diagram.
     """
     index = models.PositiveIntegerField(_("index"))
-    sample_details = models.ForeignKey(SampleDetails, verbose_name=_("sample details"), related_name="informal_layers")
+    sample_details = models.ForeignKey(SampleDetails, models.CASCADE, verbose_name=_("sample details"),
+                                       related_name="informal_layers")
     doping = models.CharField(_("doping"), max_length=10, null=True, blank=True, choices=doping_choices)
     classification = models.CharField(_("classification"), max_length=30, null=True, blank=True,
                                       choices=classification_choices)
@@ -293,8 +294,8 @@ class InformalLayer(models.Model):
     structured = models.BooleanField(_("structured"), default=False)
     textured = models.BooleanField(_("textured"), default=False)
     always_collapsed = models.BooleanField(_("always collapsed"), default=False)
-    process = models.ForeignKey(samples.models.Process, verbose_name=_("process"), related_name="informal_layers",
-                                null=True, blank=True)
+    process = models.ForeignKey(samples.models.Process, models.CASCADE, verbose_name=_("process"),
+                                related_name="informal_layers", null=True, blank=True)
     additional_process_data = models.TextField(_("additional process data"), blank=True)
     verified = models.BooleanField(_("verified"), default=False)
 

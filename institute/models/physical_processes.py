@@ -230,7 +230,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
 @python_2_unicode_compatible
 class SolarsimulatorCellMeasurement(models.Model):
-    measurement = models.ForeignKey(SolarsimulatorMeasurement, related_name="cells",
+    measurement = models.ForeignKey(SolarsimulatorMeasurement, models.CASCADE, related_name="cells",
                                     verbose_name=_("solarsimulator measurement"))
     position = models.CharField(_("cell position"), max_length=5)
     data_file = models.CharField(_("data file"), max_length=200, db_index=True,

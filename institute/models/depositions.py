@@ -95,7 +95,7 @@ class ClusterToolLayer(samples.models.Layer, jb_common_models.PolymorphicModel):
     polymorphism here because cluster tools may have layers with very different
     fields.
     """
-    deposition = models.ForeignKey(ClusterToolDeposition, related_name="layers", verbose_name=_("deposition"))
+    deposition = models.ForeignKey(ClusterToolDeposition, models.CASCADE, related_name="layers", verbose_name=_("deposition"))
 
     class Meta(samples.models.Layer.Meta):
         unique_together = ("deposition", "number")
@@ -186,7 +186,7 @@ five_chamber_layer_type_choices = (
 class FiveChamberLayer(samples.models.Layer):
     """One layer in a 5-chamber deposition.
     """
-    deposition = models.ForeignKey(FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
+    deposition = models.ForeignKey(FiveChamberDeposition, models.CASCADE, related_name="layers", verbose_name=_("deposition"))
     layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
     chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
     sih4 = model_fields.DecimalQuantityField("SiH₄", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
