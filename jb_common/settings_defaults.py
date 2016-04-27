@@ -53,7 +53,6 @@ LDAP_URLS = []
 # DEBUG
 # DEFAULT_FROM_EMAIL
 # LOGIN_REDIRECT_URL
-# TEMPLATE_CONTEXT_PROCESSORS
 
 def get_secret_key_from_file(filepath):
     """Returns the secret key used for the Django setting ``SECRET_KEY`` in your
