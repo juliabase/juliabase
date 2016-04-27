@@ -46,13 +46,13 @@ DEBUG = True
 DEFAULT_FROM_EMAIL = ""
 EMAIL_HOST = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
-ADMINS = (
+ADMINS = [
     ("JuliaBase-Admins", "bronger@physik.rwth-aachen.de"),
-)
+]
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": "juliabase",
         "USER": "juliabase",
         "PASSWORD": "12345",
@@ -60,7 +60,8 @@ DATABASES = {
         }
     }
 
-TIME_ZONE = "Europe/Berlin"
+USE_TZ = True
+TIME_ZONE = "UTC"
 
 LANGUAGE_CODE = "en-us"
 
@@ -110,7 +111,7 @@ if DEBUG:
     TEMPLATES[0]["OPTIONS"]["loaders"] = ["django.template.loaders.app_directories.Loader",
                                           "django.template.loaders.filesystem.Loader"]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE_CLASSES = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "jb_common.middleware.MessageMiddleware",
@@ -120,12 +121,13 @@ MIDDLEWARE_CLASSES = (
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
-)
+]
+
 APPEND_SLASH = False
 
 ROOT_URLCONF = str("urls")
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -135,15 +137,15 @@ INSTALLED_APPS = (
     "institute",
     "samples",
     "jb_common"
-)
+]
 
-JAVASCRIPT_I18N_APPS += ("institute",)
+JAVASCRIPT_I18N_APPS += ["institute"]
 
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
 
 # This determines which flags are shown
-LANGUAGES = (("en", _("English")), ("de", _("German")))
+LANGUAGES = [("en", _("English")), ("de", _("German"))]
 
 CACHES = {
     "default": {
@@ -159,7 +161,7 @@ if DEBUG:
 CACHE_MIDDLEWARE_SECONDS = 60 * 60 * 24
 CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
-ADD_SAMPLES_VIEW = "institute.views.samples.sample.add"
+ADD_SAMPLES_VIEW = "institute:add_samples"
 
 MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, str("remote_client"), str("examples"))
 PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds_raw_data"))
@@ -176,4 +178,4 @@ SAMPLE_NAME_FORMATS = {
                     "verbose_name": _("new-style")}
 }
 
-NAME_PREFIX_TEMPLATES = ("{short_year}-{user_initials}-", "{external_contact_initials}-")
+NAME_PREFIX_TEMPLATES = ["{short_year}-{user_initials}-", "{external_contact_initials}-"]

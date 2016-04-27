@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedEditedTask',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('description', models.TextField(verbose_name='description')),
             ],
             options={
@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedEditedSampleSeries',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('description', models.TextField(verbose_name='description')),
                 ('responsible_person_changed', models.BooleanField(default=False, verbose_name='has responsible person changed')),
             ],
@@ -92,7 +92,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedEditedSamples',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('description', models.TextField(verbose_name='description')),
                 ('responsible_person_changed', models.BooleanField(default=False, verbose_name='has responsible person changed')),
             ],
@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedEditedPhysicalProcess',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('description', models.TextField(verbose_name='description')),
             ],
             options={
@@ -119,7 +119,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedCopiedMySamples',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('comments', models.TextField(verbose_name='comments')),
             ],
             options={
@@ -132,9 +132,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedChangedTopic',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('action', models.CharField(max_length=7, verbose_name='action', choices=[('added', 'added'), ('removed', 'removed')])),
-                ('topic', models.ForeignKey(verbose_name='topic', to='jb_common.Topic')),
+                ('topic', models.ForeignKey(verbose_name='topic', to='jb_common.Topic', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -146,7 +146,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedMovedSamples',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('description', models.TextField(verbose_name='description')),
             ],
             options={
@@ -159,9 +159,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedMovedSampleSeries',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('description', models.TextField(verbose_name='description')),
-                ('old_topic', models.ForeignKey(related_name='news_ex_sample_series', verbose_name='old topic', blank=True, to='jb_common.Topic', null=True)),
+                ('old_topic', models.ForeignKey(related_name='news_ex_sample_series', verbose_name='old topic', blank=True, to='jb_common.Topic', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -173,7 +173,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedNewPhysicalProcess',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -185,7 +185,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedNewSamples',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('purpose', models.CharField(max_length=80, verbose_name='purpose', blank=True)),
             ],
             options={
@@ -198,7 +198,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedNewSampleSeries',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -210,7 +210,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedNewTask',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -222,9 +222,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedRemovedTask',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('old_id', models.PositiveIntegerField(unique=True, verbose_name='number')),
-                ('process_class', models.ForeignKey(verbose_name='process class', to='contenttypes.ContentType')),
+                ('process_class', models.ForeignKey(verbose_name='process class', to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -236,7 +236,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedResult',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('description', models.TextField(verbose_name='description', blank=True)),
                 ('is_new', models.BooleanField(default=False, verbose_name='result is new')),
             ],
@@ -250,7 +250,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedSampleSplit',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
                 ('sample_completely_split', models.BooleanField(default=False, verbose_name='sample was completely split')),
             ],
             options={
@@ -263,8 +263,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedStatusMessage',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
-                ('process_class', models.ForeignKey(verbose_name='process class', to='contenttypes.ContentType')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
+                ('process_class', models.ForeignKey(verbose_name='process class', to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -276,8 +276,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FeedWithdrawnStatusMessage',
             fields=[
-                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry')),
-                ('process_class', models.ForeignKey(verbose_name='process class', to='contenttypes.ContentType')),
+                ('feedentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.FeedEntry', on_delete=models.CASCADE)),
+                ('process_class', models.ForeignKey(verbose_name='process class', to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -290,7 +290,7 @@ class Migration(migrations.Migration):
             name='Initials',
             fields=[
                 ('initials', models.CharField(max_length=4, serialize=False, verbose_name='initials', primary_key=True)),
-                ('external_operator', models.OneToOneField(related_name='initials', null=True, blank=True, to='samples.ExternalOperator', verbose_name='external operator')),
+                ('external_operator', models.OneToOneField(related_name='initials', null=True, blank=True, to='samples.ExternalOperator', verbose_name='external operator', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'initials',
@@ -320,7 +320,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Deposition',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('number', models.CharField(unique=True, max_length=15, verbose_name='deposition number', db_index=True)),
                 ('split_done', models.BooleanField(default=False, verbose_name='split after deposition done')),
             ],
@@ -337,7 +337,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Result',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('title', models.CharField(max_length=50, verbose_name='title')),
                 ('image_type', models.CharField(default='none', max_length=4, verbose_name='image file type', choices=[('none', 'none'), ('pdf', 'PDF'), ('png', 'PNG'), ('jpeg', 'JPEG')])),
                 ('quantities_and_values', models.TextField(help_text='in JSON format', verbose_name='quantities and values', blank=True)),
@@ -372,7 +372,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255, verbose_name='name')),
-                ('sample', models.ForeignKey(related_name='aliases', verbose_name='sample', to='samples.Sample')),
+                ('sample', models.ForeignKey(related_name='aliases', verbose_name='sample', to='samples.Sample', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'name alias',
@@ -395,7 +395,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SampleDeath',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('reason', models.CharField(max_length=50, verbose_name='cause of death', choices=[('split', 'completely split'), ('lost', 'lost and unfindable'), ('destroyed', 'completely destroyed')])),
             ],
             options={
@@ -422,8 +422,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SampleSplit',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
-                ('parent', models.ForeignKey(verbose_name='parent', to='samples.Sample')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
+                ('parent', models.ForeignKey(verbose_name='parent', to='samples.Sample', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -470,7 +470,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserDetails',
             fields=[
-                ('user', models.OneToOneField(related_name='samples_user_details', primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL, verbose_name='user')),
+                ('user', models.OneToOneField(related_name='samples_user_details', primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL, verbose_name='user', on_delete=models.CASCADE)),
                 ('only_important_news', models.BooleanField(default=False, verbose_name='get only important news')),
                 ('my_layers', models.TextField(help_text='in JSON format', verbose_name='my layers', blank=True)),
                 ('display_settings_timestamp', models.DateTimeField(auto_now_add=True, verbose_name='display settings last modified')),
@@ -495,25 +495,25 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='task',
             name='customer',
-            field=models.ForeignKey(related_name='tasks', verbose_name='customer', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='tasks', verbose_name='customer', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='task',
             name='finished_process',
-            field=models.ForeignKey(related_name='task', verbose_name='finished process', blank=True, to='samples.Process', null=True),
+            field=models.ForeignKey(related_name='task', verbose_name='finished process', blank=True, to='samples.Process', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='task',
             name='operator',
-            field=models.ForeignKey(related_name='operated tasks', verbose_name='operator', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='operated tasks', verbose_name='operator', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='task',
             name='process_class',
-            field=models.ForeignKey(related_name='tasks', verbose_name='process class', to='contenttypes.ContentType'),
+            field=models.ForeignKey(related_name='tasks', verbose_name='process class', to='contenttypes.ContentType', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -525,7 +525,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='statusmessage',
             name='operator',
-            field=models.ForeignKey(related_name='status_messages', verbose_name='reporter', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='status_messages', verbose_name='reporter', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -537,7 +537,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sampleseries',
             name='currently_responsible_person',
-            field=models.ForeignKey(related_name='sample_series', verbose_name='currently responsible person', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='sample_series', verbose_name='currently responsible person', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -555,19 +555,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sampleseries',
             name='topic',
-            field=models.ForeignKey(related_name='sample_series', verbose_name='topic', to='jb_common.Topic'),
+            field=models.ForeignKey(related_name='sample_series', verbose_name='topic', to='jb_common.Topic', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='sampleclaim',
             name='requester',
-            field=models.ForeignKey(related_name='claims', verbose_name='requester', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='claims', verbose_name='requester', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='sampleclaim',
             name='reviewer',
-            field=models.ForeignKey(related_name='claims_as_reviewer', verbose_name='reviewer', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='claims_as_reviewer', verbose_name='reviewer', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -583,7 +583,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sample',
             name='currently_responsible_person',
-            field=models.ForeignKey(related_name='samples', verbose_name='currently responsible person', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='samples', verbose_name='currently responsible person', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -595,13 +595,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='sample',
             name='split_origin',
-            field=models.ForeignKey(related_name='pieces', verbose_name='split origin', blank=True, to='samples.SampleSplit', null=True),
+            field=models.ForeignKey(related_name='pieces', verbose_name='split origin', blank=True, to='samples.SampleSplit', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='sample',
             name='topic',
-            field=models.ForeignKey(related_name='samples', verbose_name='topic', blank=True, to='jb_common.Topic', null=True),
+            field=models.ForeignKey(related_name='samples', verbose_name='topic', blank=True, to='jb_common.Topic', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -613,49 +613,49 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='process',
             name='content_type',
-            field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='process',
             name='external_operator',
-            field=models.ForeignKey(related_name='processes', verbose_name='external operator', blank=True, to='samples.ExternalOperator', null=True),
+            field=models.ForeignKey(related_name='processes', verbose_name='external operator', blank=True, to='samples.ExternalOperator', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='process',
             name='operator',
-            field=models.ForeignKey(related_name='processes', verbose_name='operator', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='processes', verbose_name='operator', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='initials',
             name='user',
-            field=models.OneToOneField(related_name='initials', null=True, blank=True, to=settings.AUTH_USER_MODEL, verbose_name='user'),
+            field=models.OneToOneField(related_name='initials', null=True, blank=True, to=settings.AUTH_USER_MODEL, verbose_name='user', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feedwithdrawnstatusmessage',
             name='status',
-            field=models.ForeignKey(related_name='feed_entries_for_withdrawal', verbose_name='status message', to='samples.StatusMessage'),
+            field=models.ForeignKey(related_name='feed_entries_for_withdrawal', verbose_name='status message', to='samples.StatusMessage', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feedstatusmessage',
             name='status',
-            field=models.ForeignKey(related_name='feed_entries', verbose_name='status message', to='samples.StatusMessage'),
+            field=models.ForeignKey(related_name='feed_entries', verbose_name='status message', to='samples.StatusMessage', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feedsamplesplit',
             name='sample_split',
-            field=models.ForeignKey(verbose_name='sample split', to='samples.SampleSplit'),
+            field=models.ForeignKey(verbose_name='sample split', to='samples.SampleSplit', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feedresult',
             name='result',
-            field=models.ForeignKey(verbose_name='result', to='samples.Result'),
+            field=models.ForeignKey(verbose_name='result', to='samples.Result', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -667,13 +667,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feednewtask',
             name='task',
-            field=models.ForeignKey(related_name='feed_entries_for_new_tasks', verbose_name='task', to='samples.Task'),
+            field=models.ForeignKey(related_name='feed_entries_for_new_tasks', verbose_name='task', to='samples.Task', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feednewsampleseries',
             name='sample_series',
-            field=models.ForeignKey(verbose_name='sample series', to='samples.SampleSeries'),
+            field=models.ForeignKey(verbose_name='sample series', to='samples.SampleSeries', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -685,7 +685,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feednewsampleseries',
             name='topic',
-            field=models.ForeignKey(verbose_name='topic', to='jb_common.Topic'),
+            field=models.ForeignKey(verbose_name='topic', to='jb_common.Topic', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -703,19 +703,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feednewsamples',
             name='topic',
-            field=models.ForeignKey(related_name='new_samples_news', verbose_name='topic', to='jb_common.Topic'),
+            field=models.ForeignKey(related_name='new_samples_news', verbose_name='topic', to='jb_common.Topic', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feednewphysicalprocess',
             name='process',
-            field=models.OneToOneField(verbose_name='process', to='samples.Process'),
+            field=models.OneToOneField(verbose_name='process', to='samples.Process', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feedmovedsampleseries',
             name='sample_series',
-            field=models.ForeignKey(verbose_name='sample series', to='samples.SampleSeries'),
+            field=models.ForeignKey(verbose_name='sample series', to='samples.SampleSeries', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -727,7 +727,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feedmovedsampleseries',
             name='topic',
-            field=models.ForeignKey(verbose_name='topic', to='jb_common.Topic'),
+            field=models.ForeignKey(verbose_name='topic', to='jb_common.Topic', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -739,7 +739,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feedmovedsamples',
             name='old_topic',
-            field=models.ForeignKey(verbose_name='old topic', blank=True, to='jb_common.Topic', null=True),
+            field=models.ForeignKey(verbose_name='old topic', blank=True, to='jb_common.Topic', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -751,19 +751,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feedmovedsamples',
             name='topic',
-            field=models.ForeignKey(related_name='moved_samples_news', verbose_name='topic', to='jb_common.Topic'),
+            field=models.ForeignKey(related_name='moved_samples_news', verbose_name='topic', to='jb_common.Topic', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feedentry',
             name='content_type',
-            field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feedentry',
             name='originator',
-            field=models.ForeignKey(verbose_name='originator', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(verbose_name='originator', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -775,13 +775,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feededitedtask',
             name='task',
-            field=models.ForeignKey(related_name='feed_entries_for_edited_tasks', verbose_name='task', to='samples.Task'),
+            field=models.ForeignKey(related_name='feed_entries_for_edited_tasks', verbose_name='task', to='samples.Task', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='feededitedsampleseries',
             name='sample_series',
-            field=models.ForeignKey(verbose_name='sample series', to='samples.SampleSeries'),
+            field=models.ForeignKey(verbose_name='sample series', to='samples.SampleSeries', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -793,7 +793,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='feededitedphysicalprocess',
             name='process',
-            field=models.ForeignKey(verbose_name='process', to='samples.Process'),
+            field=models.ForeignKey(verbose_name='process', to='samples.Process', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -817,13 +817,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='clearance',
             name='sample',
-            field=models.ForeignKey(related_name='clearances', verbose_name='sample', to='samples.Sample'),
+            field=models.ForeignKey(related_name='clearances', verbose_name='sample', to='samples.Sample', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='clearance',
             name='user',
-            field=models.ForeignKey(related_name='clearances', verbose_name='user', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='clearances', verbose_name='user', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

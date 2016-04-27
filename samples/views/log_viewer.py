@@ -75,7 +75,7 @@ def view(request, process_class_name):
     else:
         raise Http404("Process class not found.")
     try:
-        logs_whitelist = settings.CRAWLER_LOGS_WHITELIST
+        logs_whitelist = set(settings.CRAWLER_LOGS_WHITELIST)
     except AttributeError:
         logs_whitelist = set()
     if process_class.__name__ not in logs_whitelist:
@@ -104,7 +104,7 @@ def list(request):
     :rtype: HttpResponse
     """
     try:
-        logs_whitelist = settings.CRAWLER_LOGS_WHITELIST
+        logs_whitelist = set(settings.CRAWLER_LOGS_WHITELIST)
     except AttributeError:
         logs_whitelist = set()
     crawlers = []

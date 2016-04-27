@@ -27,12 +27,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {{ block.super }}
 <script type="text/javascript">
 // <![CDATA[
-$(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_processes' sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:"," }}",
+$(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:"," }}",
                                function(data) { for (var i=0; i < data.length; i++)
                                                 { $("#process-body-" + data[i]).hide(); $("#process-short-body-" + data[i]).show(); }
                                });
               $("span.process-heading").click(function(event){var process_id = event.target.id.split('-')[2];
-                                                    juliabase.request("{% url 'samples.views.json_client.fold_process' sample_id=samples_and_processes.sample_context.sample.id %}",
+                                                    juliabase.request("{% url 'samples:fold_process' sample_id=samples_and_processes.sample_context.sample.id %}",
                                                     function(data) {if (data) {
                                                              var shown_element = $("#process-short-body-" + process_id);
                                                              $("#process-body-" + process_id).hide("fast");
@@ -66,32 +66,32 @@ $(function() {juliabase.request("{% url 'samples.views.json_client.get_folded_pr
       {% spaceless %}<div class="page-header"><h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
       {% for alias in sample.sample.aliases.all %}
         alias <strong>{{ alias }}</strong> {% endfor %}</span>{% block sample_icons %}{% if sample.can_edit %}<a class="edit-icon"
-           href="{% url 'samples.views.sample.edit' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+           href="{% url 'samples:edit_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                           ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                                 width="16" height="16"/></a>
         {% if sample.id_for_rename %}<a class="edit-icon"
-           href="{% url 'samples.views.bulk_rename.bulk_rename' %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+           href="{% url 'samples:bulk_rename' %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
     ><img src="{% static "juliabase/icons/tag_blue.png" %}" alt="give-name icon" title="{% trans 'give name' %}"
           width="16" height="16"/></a>
         {% endif %}
       {% endif %}
-      {% if sample.can_add_process %}<a class="edit-icon" href="{% url 'samples.views.sample.add_process' sample_name=sample.sample.name %}"
+      {% if sample.can_add_process %}<a class="edit-icon" href="{% url 'samples:add_process' sample_name=sample.sample.name %}"
                                  ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add-process icon"
                                        title="{% trans 'add process' %}" width="16" height="16"/></a>{% endif %}
       {% if not sample.clearance %}<a class="edit-icon"
-         href="{% url 'samples.views.sample.export' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
+         href="{% url 'samples:export_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
          ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" width="16" height="16"
                title="{% trans 'export as table' %}"/></a>{% endif %}
      {% if sample.can_rename_sample %}
       <a class="edit-icon"
-           href="{% url 'samples.views.sample.rename_sample' %}?sample_id={{ sample.id_for_rename }}&amp;next={% url 'samples.views.sample.by_id' sample_id=sample.sample.id path_suffix='' %}"
+           href="{% url 'samples:rename_sample' %}?sample_id={{ sample.id_for_rename }}&amp;next={% url 'samples:show_sample_by_id' sample_id=sample.sample.id path_suffix='' %}"
     ><img src="{% static "juliabase/icons/tag_red.png" %}" alt="rename icon" title="{% trans 'rename sample' %}"
           width="16" height="16"/></a>{% endif %}{% endblock sample_icons %}</h1></div>{% endspaceless %}
 
       {% block extra_sample_header %}
         {# This block may be overridden or expanded in derived templates #}
         <div class="screen-only" style="float: right"><a
-                href="{% url 'samples.views.sample.qr_code' %}?data={{ sample.sample.id|urlquote_plus }}"
+                href="{% url 'samples:qr_code' %}?data={{ sample.sample.id|urlquote_plus }}"
                                                          ><img width="40" height="40" style="display: block"
                 alt="{% trans 'Data Matrix code' %}" src="{% static "samples/qrcode.png" %}"/></a></div>
       {% endblock %}

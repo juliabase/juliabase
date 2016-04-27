@@ -168,6 +168,7 @@ from __future__ import absolute_import, unicode_literals
 
 import datetime, hashlib
 from django.db.models import signals
+import django.utils.timezone
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 import django.contrib.contenttypes.management
@@ -190,7 +191,7 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
     Samples”.  But the gain would be small and the code significantly more
     complex.
     """
-    now = datetime.datetime.now()
+    now = django.utils.timezone.now()
     if reverse:
         # `instance` is django.contrib.auth.models.User
         if action in ["post_add", "post_remove", "post_clear"]:
@@ -376,7 +377,7 @@ def touch_my_samples_list_by_topic(sender, instance, raw, **kwargs):
     if not raw and instance.pk:
         old_instance = jb_common_app.Topic.objects.get(pk=instance.pk)
         if old_instance.name != instance.name or old_instance.confidential != instance.confidential:
-            samples_app.UserDetails.objects.update(my_samples_list_timestamp=datetime.datetime.now())
+            samples_app.UserDetails.objects.update(my_samples_list_timestamp=django.utils.timezone.now())
 
 
 @receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
@@ -389,7 +390,7 @@ def touch_my_samples_list_by_topic_memberships(sender, instance, action, reverse
     # but who just happen to be in a topic the memberships of which has
     # changed.  Could be possibly fixed by not assigning just a list to
     # ``topic.members`` in the "edit topic" view.
-    now = datetime.datetime.now()
+    now = django.utils.timezone.now()
     if reverse:
         # `instance` is a user
         user_details = instance.samples_user_details
@@ -452,6 +453,6 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
 def expire_feed_entries(sender, **kwargs):
     """Deletes all feed entries which are older than six weeks.
     """
-    now = datetime.datetime.now()
+    now = django.utils.timezone.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
     samples_app.FeedEntry.objects.filter(timestamp__lt=six_weeks_ago).delete()

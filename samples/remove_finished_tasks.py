@@ -26,7 +26,8 @@ postgresql_backup script to have a backup, if needed.
 
 import datetime
 from samples.models import Task
+import django.utils.timezone
 
 
 Task.objects.filter(status__contains="finished",
-                    last_modified__lte=datetime.datetime.now() - datetime.timedelta(days=7)).delete()
+                    last_modified__lte=django.utils.timezone.now() - datetime.timedelta(days=7)).delete()

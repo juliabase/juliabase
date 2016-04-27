@@ -32,7 +32,7 @@ import django.utils.six as six
 
 from django.utils.encoding import python_2_unicode_compatible
 
-import hashlib, os.path, datetime, json, collections
+import hashlib, os.path, json, collections
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
@@ -144,7 +144,7 @@ class ExternalOperator(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.external_operator.show", args=(self.pk,))
+        return django.core.urlresolvers.reverse("samples:show_external_operator", args=(self.pk,))
 
 
 timestamp_inaccuracy_choices = (
@@ -180,9 +180,10 @@ class Process(PolymorphicModel):
     timestamp = models.DateTimeField(_("timestamp"))
     timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices,
                                                             default=0)
-    operator = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("operator"), related_name="processes")
-    external_operator = models.ForeignKey(ExternalOperator, verbose_name=_("external operator"), null=True, blank=True,
-                                          related_name="processes")
+    operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("operator"),
+                                 related_name="processes")
+    external_operator = models.ForeignKey(ExternalOperator, models.CASCADE, verbose_name=_("external operator"),
+                                          null=True, blank=True, related_name="processes")
     comments = models.TextField(_("comments"), blank=True)
     last_modified = models.DateTimeField(_("last modified"), auto_now=True)
     finished = models.BooleanField(_("finished"), default=True)
@@ -247,6 +248,7 @@ class Process(PolymorphicModel):
                 format(process_class_name=self._meta.verbose_name, identifier=self.id)
 
     def _urlresolve(self, prefix):
+        prefix = self._meta.app_label + ":" + prefix
         class_name = camel_case_to_underscores(self.__class__.__name__)
         try:
             field_name = parameter_name = self.JBMeta.identifying_field
@@ -278,7 +280,7 @@ class Process(PolymorphicModel):
         try:
             return self._urlresolve("show_")
         except django.core.urlresolvers.NoReverseMatch:
-            return django.core.urlresolvers.reverse("samples.views.main.show_process", args=(str(self.id),))
+            return django.core.urlresolvers.reverse("samples:show_process", args=(str(self.id),))
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
@@ -306,13 +308,13 @@ class Process(PolymorphicModel):
         """
         if not plot_id:
             # We give this a nicer URL because this case is so common
-            plot_url = django.core.urlresolvers.reverse("default_process_plot", kwargs={"process_id": str(self.id)})
-            thumbnail_url = django.core.urlresolvers.reverse("default_process_plot_thumbnail",
+            plot_url = django.core.urlresolvers.reverse("samples:default_process_plot", kwargs={"process_id": str(self.id)})
+            thumbnail_url = django.core.urlresolvers.reverse("samples:default_process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.id)})
         else:
-            plot_url = django.core.urlresolvers.reverse("process_plot",
+            plot_url = django.core.urlresolvers.reverse("samples:process_plot",
                                                         kwargs={"process_id": str(self.id), "plot_id": plot_id})
-            thumbnail_url = django.core.urlresolvers.reverse("process_plot_thumbnail",
+            thumbnail_url = django.core.urlresolvers.reverse("samples:process_plot_thumbnail",
                                                              kwargs={"process_id": str(self.id), "plot_id": plot_id})
         basename = "{0}-{1}-{2}-{3}-{4}".format(
             self.content_type.app_label, self.content_type.model, get_language(), self.id, plot_id)
@@ -534,19 +536,19 @@ class Process(PolymorphicModel):
             context = self.get_sample_position_context(user, context)
         if "html_body" not in context:
             context["html_body"] = render_to_string(
-                "samples/show_" + camel_case_to_underscores(self.__class__.__name__) + ".html", context_instance=Context(context))
+                "samples/show_" + camel_case_to_underscores(self.__class__.__name__) + ".html", context)
             if "short_html_body" not in context:
                 try:
                     context["short_html_body"] = render_to_string(
                         "samples/show-short_{0}.html". \
-                            format(camel_case_to_underscores(self.__class__.__name__)), context_instance=Context(context))
+                            format(camel_case_to_underscores(self.__class__.__name__)), context)
                 except TemplateDoesNotExist:
                     context["short_html_body"] = None
             if "extend_html_body" not in context:
                 try:
                     context["extended_html_body"] = render_to_string(
                         "samples/show-extended_{0}.html". \
-                            format(camel_case_to_underscores(self.__class__.__name__)), context_instance=Context(context))
+                            format(camel_case_to_underscores(self.__class__.__name__)), context)
                 except TemplateDoesNotExist:
                     context["extended_html_body"] = None
         if "operator" not in context:
@@ -637,7 +639,7 @@ class PhysicalProcess(Process):
         :rtype: str
         """
         try:
-            return django.core.urlresolvers.reverse("add_" + camel_case_to_underscores(cls.__name__))
+            return django.core.urlresolvers.reverse(cls._meta.app_label + ":add_" + camel_case_to_underscores(cls.__name__))
         except django.core.urlresolvers.NoReverseMatch:
             return None
 
@@ -679,16 +681,16 @@ class Sample(models.Model):
                                       verbose_name=_("watchers"))
         # Translators: location of a sample
     current_location = models.CharField(_("current location"), max_length=50)
-    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="samples",
+    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="samples",
                                                      verbose_name=_("currently responsible person"))
     purpose = models.CharField(_("purpose"), max_length=80, blank=True)
         # Translators: keywords for samples
     tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
-    split_origin = models.ForeignKey("SampleSplit", null=True, blank=True, related_name="pieces",
+    split_origin = models.ForeignKey("SampleSplit", models.CASCADE, null=True, blank=True, related_name="pieces",
                                      # Translators: ID of mother sample
                                      verbose_name=_("split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
-    topic = models.ForeignKey(Topic, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
+    topic = models.ForeignKey(Topic, models.CASCADE, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
     last_modified = models.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
@@ -728,7 +730,7 @@ class Sample(models.Model):
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
         super(Sample, self).save(*args, **kwargs)
-        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=datetime.datetime.now())
+        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=django.utils.timezone.now())
         if with_relations:
             for series in self.series.all():
                 series.save()
@@ -806,10 +808,10 @@ class Sample(models.Model):
 
     def get_absolute_url(self):
         if self.name.startswith("*"):
-            return django.core.urlresolvers.reverse("show_sample_by_id",
+            return django.core.urlresolvers.reverse("samples:show_sample_by_id",
                                                     kwargs={"sample_id": str(self.pk), "path_suffix": ""})
         else:
-            return django.core.urlresolvers.reverse("show_sample_by_name", args=(urlquote(self.name, safe=""),))
+            return django.core.urlresolvers.reverse("samples:show_sample_by_name", args=(urlquote(self.name, safe=""),))
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
@@ -966,7 +968,7 @@ class SampleAlias(models.Model):
     aliases of the same name.
     """
     name = models.CharField(_("name"), max_length=255)
-    sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="aliases")
+    sample = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("sample"), related_name="aliases")
 
     class Meta:
         unique_together = (("name", "sample"),)
@@ -991,7 +993,7 @@ class SampleSplit(Process):
     relationship in both directions.
     """
         # Translators: parent of a sample
-    parent = models.ForeignKey(Sample, verbose_name=_("parent"))
+    parent = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("parent"))
     """This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too."""
@@ -1028,8 +1030,7 @@ class SampleSplit(Process):
             context["parent"] = None
         if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
-            context["resplit_url"] = django.core.urlresolvers.reverse(
-                "samples.views.split_and_rename.split_and_rename", kwargs={"old_split_id": self.id})
+            context["resplit_url"] = django.core.urlresolvers.reverse("samples:resplit", kwargs={"old_split_id": self.id})
         else:
             context["resplit_url"] = None
         return super(SampleSplit, self).get_context_for_user(user, context)
@@ -1048,8 +1049,9 @@ class Clearance(models.Model):
     Note that the processes needn't be processes connected with the sample.
     They may also belong to one of its ancestors.
     """
-    user = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("user"), related_name="clearances")
-    sample = models.ForeignKey(Sample, verbose_name=_("sample"), related_name="clearances")
+    user = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("user"),
+                             related_name="clearances")
+    sample = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
     last_modified = models.DateTimeField(_("last modified"), auto_now=True)
 
@@ -1065,8 +1067,9 @@ class Clearance(models.Model):
 @python_2_unicode_compatible
 class SampleClaim(models.Model):
         # Translators: someone who assert a claim to samples
-    requester = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("requester"), related_name="claims")
-    reviewer = models.ForeignKey(django.contrib.auth.models.User, verbose_name=_("reviewer"),
+    requester = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("requester"),
+                                  related_name="claims")
+    reviewer = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("reviewer"),
                                  related_name="claims_as_reviewer")
     samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_("samples"))
         # Translators: "closed" claim to samples
@@ -1080,7 +1083,7 @@ class SampleClaim(models.Model):
         return _("sample claim #{number}").format(number=self.pk)
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.claim.show", args=(self.pk,))
+        return django.core.urlresolvers.reverse("samples:show_claim", args=(self.pk,))
 
 
 sample_death_reasons = (
@@ -1165,7 +1168,7 @@ class Result(Process):
                 return _("result #{number}").format(number=self.pk)
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.result.show", args=(self.pk,))
+        return django.core.urlresolvers.reverse("samples:show_result", args=(self.pk,))
 
     def get_image_locations(self):
         """Get the location of the image in the local filesystem as well
@@ -1210,10 +1213,10 @@ class Result(Process):
         sluggified_filename = defaultfilters.slugify(self.title) + original_extension
         return {"image_file": os.path.join("results", str(self.pk), "0" + original_extension),
                 "image_url": django.core.urlresolvers.reverse(
-                    "samples.views.result.show_image", kwargs={"process_id": str(self.pk)}),
+                    "samples:show_result_image", kwargs={"process_id": str(self.pk)}),
                 "thumbnail_file": os.path.join("results_thumbnails", str(self.pk), "0" + thumbnail_extension),
                 "thumbnail_url": django.core.urlresolvers.reverse(
-                    "samples.views.result.show_thumbnail", kwargs={"process_id": str(self.pk)}),
+                    "samples:show_result_thumbnail", kwargs={"process_id": str(self.pk)}),
                 "sluggified_filename": sluggified_filename}
 
     def get_context_for_user(self, user, old_context):
@@ -1222,7 +1225,7 @@ class Result(Process):
             if "quantities" not in context or "value_lists" not in context:
                 context["quantities"], context["value_lists"] = json.loads(self.quantities_and_values)
             context["export_url"] = \
-                django.core.urlresolvers.reverse("samples.views.result.export", kwargs={"process_id": self.pk})
+                django.core.urlresolvers.reverse("samples:export_result", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
             if self.image_type != "none":
                 image_locations = self.get_image_locations()
@@ -1291,12 +1294,13 @@ class SampleSeries(models.Model):
                             # Translators: The “Y” stands for “year”
                             help_text=_("must be of the form “originator-YY-name”"))
     timestamp = models.DateTimeField(_("timestamp"))
-    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, related_name="sample_series",
+    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE,
+                                                     related_name="sample_series",
                                                      verbose_name=_("currently responsible person"))
     description = models.TextField(_("description"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_("samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_("results"))
-    topic = models.ForeignKey(Topic, related_name="sample_series", verbose_name=_("topic"))
+    topic = models.ForeignKey(Topic, models.CASCADE, related_name="sample_series", verbose_name=_("topic"))
     last_modified = models.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
@@ -1323,7 +1327,7 @@ class SampleSeries(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return django.core.urlresolvers.reverse("samples.views.sample_series.show", args=(urlquote(self.name, safe=""),))
+        return django.core.urlresolvers.reverse("samples:show_sample_series", args=(urlquote(self.name, safe=""),))
 
     def get_data(self):
         """Extract the data of this sample series as a dictionary, ready to be used for
@@ -1411,9 +1415,9 @@ class Initials(models.Model):
     after thorough examination”.
     """
     initials = models.CharField(_("initials"), max_length=4, primary_key=True)
-    user = models.OneToOneField(django.contrib.auth.models.User, verbose_name=_("user"),
+    user = models.OneToOneField(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("user"),
                                 related_name="initials", null=True, blank=True)
-    external_operator = models.OneToOneField(ExternalOperator, verbose_name=_("external operator"),
+    external_operator = models.OneToOneField(ExternalOperator, models.CASCADE, verbose_name=_("external operator"),
                                              related_name="initials", null=True, blank=True)
 
     class Meta:
@@ -1430,7 +1434,7 @@ class UserDetails(models.Model):
     django.contrib.auth.models.User.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, primary_key=True, verbose_name=_("user"),
+    user = models.OneToOneField(django.contrib.auth.models.User, models.CASCADE, primary_key=True, verbose_name=_("user"),
                                 related_name="samples_user_details")
     auto_addition_topics = models.ManyToManyField(
         Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
@@ -1510,7 +1514,7 @@ class UserDetails(models.Model):
         :py:attr:`jb_common.models.UserDetails.layout_last_modified`),
         e.g. topic memberships.  It is used for efficient caching.
         """
-        self.display_settings_timestamp = datetime.datetime.now()
+        self.display_settings_timestamp = django.utils.timezone.now()
         self.save()
 
 
@@ -1535,7 +1539,7 @@ class StatusMessage(models.Model):
     begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=timestamp_inaccuracy_choices,
                                                         default=0)
     end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
-    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="status_messages",
+    operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="status_messages",
                                  verbose_name=_("reporter"))
     message = models.TextField(_("message"), blank=True)
     status_level = models.CharField(_("level"), choices=status_level_choices, default="undefined", max_length=10)
@@ -1567,13 +1571,14 @@ class Task(models.Model):
     """
     """
     status = models.CharField(_("status"), max_length=15, choices=status_choices, default="1 new")
-    customer = models.ForeignKey(django.contrib.auth.models.User, related_name="tasks", verbose_name=_("customer"))
+    customer = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="tasks",
+                                 verbose_name=_("customer"))
     creating_timestamp = models.DateTimeField(_("created at"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now_add=True)
     last_modified = models.DateTimeField(_("last modified"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now=True)
-    operator = models.ForeignKey(django.contrib.auth.models.User, related_name="operated_tasks",
+    operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="operated_tasks",
                                  verbose_name=_("operator"), null=True, blank=True)
-    process_class = models.ForeignKey(ContentType, related_name="tasks", verbose_name=_("process class"))
-    finished_process = models.ForeignKey(Process, related_name="task", null=True, blank=True,
+    process_class = models.ForeignKey(ContentType, models.CASCADE, related_name="tasks", verbose_name=_("process class"))
+    finished_process = models.ForeignKey(Process, models.CASCADE, related_name="task", null=True, blank=True,
                                          verbose_name=_("finished process"))
     samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_("samples"))
     comments = models.TextField(_("comments"), blank=True)
@@ -1588,7 +1593,7 @@ class Task(models.Model):
                 process_class=self.process_class.name, datetime=self.creating_timestamp))
 
     def get_absolute_url(self):
-        return "{0}#task_{1}".format(django.core.urlresolvers.reverse("samples.views.task_lists.show"), self.id)
+        return "{0}#task_{1}".format(django.core.urlresolvers.reverse("samples:show_task_lists"), self.id)
 
     @classmethod
     def get_search_tree_node(cls):

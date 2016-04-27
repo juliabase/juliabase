@@ -146,7 +146,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
             layout = institute.layouts.get_layout(sample, self)
             context["shapes"] = layout.get_map_shapes() if layout else {}
         context["thumbnail_layout"] = django.core.urlresolvers.reverse(
-            "institute.views.samples.layout.show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
+            "institute:show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
         cells = self.cells.all()
         if "image_urls" not in context:
             context["image_urls"] = {}
@@ -230,7 +230,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
 @python_2_unicode_compatible
 class SolarsimulatorCellMeasurement(models.Model):
-    measurement = models.ForeignKey(SolarsimulatorMeasurement, related_name="cells",
+    measurement = models.ForeignKey(SolarsimulatorMeasurement, models.CASCADE, related_name="cells",
                                     verbose_name=_("solarsimulator measurement"))
     position = models.CharField(_("cell position"), max_length=5)
     data_file = models.CharField(_("data file"), max_length=200, db_index=True,

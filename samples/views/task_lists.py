@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
+import django.utils.timezone
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
 from django.apps import apps
@@ -53,7 +54,7 @@ class SamplesForm(forms.Form):
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
             if user != task.customer or task.status != "1 new":
                 super(SamplesForm, self).__init__(**kwargs)
-                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+                self.fields["sample_list"].disabled = True
             else:
                 super(SamplesForm, self).__init__(data, **kwargs)
             important_samples.update(task.samples.all())
@@ -134,7 +135,7 @@ class TaskForm(forms.ModelForm):
         self.fields["comments"].widget.attrs["cols"] = 30
         self.fields["comments"].widget.attrs["rows"] = 5
         for field_name in self.fixed_fields:
-            self.fields[field_name].widget.attrs["disabled"] = "disabled"
+            self.fields[field_name].disabled = True
             self.fields[field_name].required = False
 
     def clean_status(self):
@@ -304,7 +305,7 @@ def edit(request, task_id):
                 edit_description = None
             utils.Reporter(request.user).report_task(task, edit_description)
             message = _("Task was {verb} successfully.").format(verb=_("edited") if task_id else _("added"))
-            return utils.successful_response(request, message, "samples.views.task_lists.show")
+            return utils.successful_response(request, message, "samples:show_task_lists")
     else:
         samples_form = SamplesForm(user, preset_sample, task)
         initial = {}
@@ -337,7 +338,7 @@ def create_task_lists(user):
         department_names = set(Department.objects.filter(app_label=app_label).values_list("name", flat=True))
         assert len(department_names) == 1
         return department_names.pop()
-    one_week_ago = datetime.datetime.now() - datetime.timedelta(weeks=1)
+    one_week_ago = django.utils.timezone.now() - datetime.timedelta(weeks=1)
     task_lists = []
     seen_process_names = set()
     ambiguous_process_names = set()
@@ -381,7 +382,7 @@ def show(request):
                 [ContentType.objects.get_for_id(int(id_))
                  for id_ in choose_task_lists_form.cleaned_data["visible_task_lists"] if id_]
             # In order to have a GET instead of a POST as the last request
-            return utils.successful_response(request, view=show)
+            return utils.successful_response(request, view="samples:show_task_lists")
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
     task_lists = create_task_lists(request.user)
@@ -409,7 +410,7 @@ def remove(request, task_id):
         raise permissions.PermissionError(request.user, _("You are not the customer of this task."))
     utils.Reporter(request.user).report_removed_task(task)
     task.delete()
-    return utils.successful_response(request, _("The task was successfully removed."), show)
+    return utils.successful_response(request, _("The task was successfully removed."), "samples:show_task_lists")
 
 
 _ = ugettext

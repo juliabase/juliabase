@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% if crawlers %}
   <ul>
     {% for crawler_verbose_name, crawler_name in crawlers %}
-      <li><a href="{{ crawler_name }}">{{ crawler_verbose_name }}</a></li>
+      <li><a href="{% url 'samples:show_crawler_log' process_class_name=crawler_name %}">{{ crawler_verbose_name }}</a></li>
     {% endfor %}
   </ul>
 {% else %}

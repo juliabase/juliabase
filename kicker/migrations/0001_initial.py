@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserDetails',
             fields=[
-                ('user', models.OneToOneField(related_name='kicker_user_details', primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL, verbose_name='user')),
+                ('user', models.OneToOneField(related_name='kicker_user_details', primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL, verbose_name='user', on_delete=models.CASCADE)),
                 ('nickname', models.CharField(max_length=30, verbose_name='nickname', blank=True)),
                 ('shortkey', models.CharField(max_length=1, verbose_name='shortkey', blank=True)),
             ],
@@ -87,55 +87,55 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='stockvalue',
             name='gambler',
-            field=models.ForeignKey(related_name='stock_values', verbose_name='gambler', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='stock_values', verbose_name='gambler', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='shares',
             name='bought_person',
-            field=models.ForeignKey(related_name='sold_shares', verbose_name='bought person', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='sold_shares', verbose_name='bought person', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='shares',
             name='owner',
-            field=models.ForeignKey(related_name='bought_shares', verbose_name='owner', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='bought_shares', verbose_name='owner', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='match',
             name='player_a_1',
-            field=models.ForeignKey(related_name='match_player_a_1', verbose_name='player 1 of team A', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='match_player_a_1', verbose_name='player 1 of team A', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='match',
             name='player_a_2',
-            field=models.ForeignKey(related_name='match_player_a_2', verbose_name='player 2 of team A', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='match_player_a_2', verbose_name='player 2 of team A', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='match',
             name='player_b_1',
-            field=models.ForeignKey(related_name='match_player_b_1', verbose_name='player 1 of team B', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='match_player_b_1', verbose_name='player 1 of team B', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='match',
             name='player_b_2',
-            field=models.ForeignKey(related_name='match_player_b_2', verbose_name='player 2 of team B', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='match_player_b_2', verbose_name='player 2 of team B', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='match',
             name='reporter',
-            field=models.ForeignKey(related_name='+', verbose_name='reporter', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='+', verbose_name='reporter', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='kickernumber',
             name='player',
-            field=models.ForeignKey(related_name='kicker_numbers', verbose_name='player', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='kicker_numbers', verbose_name='player', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
   <ul>
     {% for external_operator in external_operators %}
-      <li><a href="{% url 'samples.views.external_operator.edit' external_operator_id=external_operator.pk %}"
+      <li><a href="{% url 'samples:edit_external_operator' external_operator_id=external_operator.pk %}"
              >{{ external_operator }}</a></li>
     {% endfor %}
   </ul>

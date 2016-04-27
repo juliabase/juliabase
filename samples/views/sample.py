@@ -48,7 +48,7 @@ import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, \
     adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
-    mkdirs, cache_key_locked, get_from_cache, unlazy_object, int_or_zero, help_link
+    mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
@@ -160,7 +160,7 @@ def edit(request, sample_name):
             feed_reporter.report_edited_samples([sample], edit_description_form.cleaned_data)
             return utils.successful_response(
                 request, _("Sample {sample} was successfully changed in the database.").format(sample=sample),
-                by_id, {"sample_id": sample.pk, "path_suffix": ""})
+                "samples:show_sample_by_id", {"sample_id": sample.pk, "path_suffix": ""})
     else:
         sample_form = SampleForm(request.user, instance=sample)
         edit_description_form = utils.EditDescriptionForm()
@@ -200,14 +200,19 @@ def get_allowed_processes(user, sample):
     """
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
-        sample_processes.append({"label": _("split"), "url": sample.get_absolute_url() + "/split/", "type": "split"})
+        sample_processes.append({"label": _("split"),
+                                 "url": django.core.urlresolvers.reverse("samples:split_and_rename",
+                                                                         kwargs={"parent_name": sample.name}),
+                                 "type": "split"})
         # Translators: Of a sample
-        sample_processes.append({"label": _("cease of existence"), "url": sample.get_absolute_url() + "/kill/",
+        sample_processes.append({"label": _("cease of existence"),
+                                 "url": django.core.urlresolvers.reverse("samples:kill_sample",
+                                                                         kwargs={"sample_name": sample.name}),
                                  "type": "death"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
         general_processes.append({"label": models.Result._meta.verbose_name, "type": "result",
-                                  "url": django.core.urlresolvers.reverse("add_result")})
+                                  "url": django.core.urlresolvers.reverse("samples:add_result")})
     general_processes.extend(permissions.get_allowed_physical_processes(user))
     if not sample_processes and not general_processes:
         raise permissions.PermissionError(user, _("You are not allowed to add any processes to the sample {sample} "
@@ -285,14 +290,6 @@ class SamplesAndProcesses(object):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
-                # FixMe: Remove try block when it is clear that request.user is
-                # a SimpleLazyObject which is not pickable.  Maybe this can be
-                # removed completely if
-                # https://code.djangoproject.com/ticket/16563 is fixed.
-                try:
-                    samples_and_processes.user = unlazy_object(samples_and_processes.user)
-                except AttributeError:
-                    pass
                 cache.set(cache_key, samples_and_processes)
             samples_and_processes.remove_noncleared_process_contexts(user, clearance)
         else:
@@ -714,7 +711,7 @@ def by_id(request, sample_id, path_suffix):
     permissions.get_sample_clearance(request.user, sample)
     query_string = request.META["QUERY_STRING"] or ""
     return HttpResponseSeeOther(
-        django.core.urlresolvers.reverse("show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
+        django.core.urlresolvers.reverse("samples:show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else ""))
 
 

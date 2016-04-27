@@ -150,8 +150,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :param request: the current HTTP request
     :param success_report: an optional short success message reported to the
         user on the next view
-    :param view: the view name/function to redirect to; defaults to the main
-        menu page (same when ``None`` is given)
+    :param view: the view name to redirect to; defaults to the main menu page
+        (same when ``None`` is given)
     :param kwargs: group parameters in the URL pattern that have to be filled
     :param query_string: the *quoted* query string to be appended, without the
         leading ``"?"``
@@ -163,7 +163,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :type request: HttpRequest
     :type success_report: unicode
-    :type view: str or function
+    :type view: str
     :type kwargs: dict
     :type query_string: unicode
     :type forced: bool
@@ -176,9 +176,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     """
     if jb_common.utils.base.is_json_requested(request):
         return jb_common.utils.base.respond_in_json(json_response)
-    return jb_common.utils.base.successful_response(request, success_report,
-                                                    view or "samples.views.main.main_menu", kwargs,
-                                                    query_string, forced)
+    return jb_common.utils.base.successful_response(request, success_report, view or "samples:main_menu",
+                                                    kwargs, query_string, forced)
 
 
 def remove_samples_from_my_samples(samples, user):

@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=80, verbose_name='name')),
                 ('confidential', models.BooleanField(default=False, verbose_name='confidential')),
-                ('department', models.ForeignKey(related_name='topic', verbose_name='department', to='jb_common.Department')),
+                ('department', models.ForeignKey(related_name='topic', verbose_name='department', to='jb_common.Department', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['name'],
@@ -61,11 +61,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserDetails',
             fields=[
-                ('user', models.OneToOneField(related_name='jb_user_details', primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL, verbose_name='user')),
+                ('user', models.OneToOneField(related_name='jb_user_details', primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL, verbose_name='user', on_delete=models.CASCADE)),
                 ('language', models.CharField(default='de', max_length=10, verbose_name='language', choices=[('en', 'English'), ('de', 'Deutsch')])),
                 ('browser_system', models.CharField(default='windows', max_length=10, verbose_name='operating system')),
                 ('layout_last_modified', models.DateTimeField(auto_now_add=True, verbose_name='layout last modified')),
-                ('department', models.ForeignKey(related_name='user_details', verbose_name='department', blank=True, to='jb_common.Department', null=True)),
+                ('department', models.ForeignKey(related_name='user_details', verbose_name='department', blank=True, to='jb_common.Department', null=True, on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'user details',
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='topic',
             name='manager',
-            field=models.ForeignKey(related_name='managed_topics', verbose_name='topic manager', to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(related_name='managed_topics', verbose_name='topic manager', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='topic',
             name='parent_topic',
-            field=models.ForeignKey(related_name='child_topics', verbose_name='parent topic', blank=True, to='jb_common.Topic', null=True),
+            field=models.ForeignKey(related_name='child_topics', verbose_name='parent topic', blank=True, to='jb_common.Topic', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='errorpage',
             name='user',
-            field=models.ForeignKey(related_name='error_pages', verbose_name='user', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='error_pages', verbose_name='user', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]

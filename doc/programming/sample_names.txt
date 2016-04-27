@@ -179,7 +179,7 @@ a name prefix, which is then prepended to every new name.  This is partly for
 convenience and partly for name policy enforcement.  With the setting
 ``NAME_PREFIX_TEMPLATES``, you can configure this behaviour::
 
-    NAME_PREFIX_TEMPLATES = ("{short_year}-{user_initials}-", "{external_contact_initials}-")
+    NAME_PREFIX_TEMPLATES = ["{short_year}-{user_initials}-", "{external_contact_initials}-"]
 
 This example defines two prefixes.  You may use the following placeholders in
 the templates:

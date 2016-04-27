@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ClusterToolDeposition',
             fields=[
-                ('deposition_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Deposition')),
+                ('deposition_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Deposition', on_delete=models.CASCADE)),
                 ('carrier', models.CharField(max_length=10, verbose_name='carrier', blank=True)),
             ],
             options={
@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ClusterToolHotWireLayer',
             fields=[
-                ('clustertoollayer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='institute.ClusterToolLayer')),
+                ('clustertoollayer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='institute.ClusterToolLayer', on_delete=models.CASCADE)),
                 ('h2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='H\u2082', max_digits=5, decimal_places=2, blank=True)),
                 ('sih4', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='SiH\u2084', max_digits=5, decimal_places=2, blank=True)),
                 ('time', models.CharField(help_text='format HH:MM:SS', max_length=9, verbose_name='deposition time', blank=True)),
@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ClusterToolPECVDLayer',
             fields=[
-                ('clustertoollayer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='institute.ClusterToolLayer')),
+                ('clustertoollayer_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='institute.ClusterToolLayer', on_delete=models.CASCADE)),
                 ('h2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='H\u2082', max_digits=5, decimal_places=2, blank=True)),
                 ('sih4', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='SiH\u2084', max_digits=5, decimal_places=2, blank=True)),
                 ('chamber', models.CharField(max_length=5, verbose_name='chamber', choices=[('#1', '#1'), ('#2', '#2'), ('#3', '#3')])),
@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FiveChamberDeposition',
             fields=[
-                ('deposition_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Deposition')),
+                ('deposition_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Deposition', on_delete=models.CASCADE)),
             ],
             options={
                 'get_latest_by': 'timestamp',
@@ -111,7 +111,7 @@ class Migration(migrations.Migration):
                 ('h2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='H\u2082', max_digits=7, decimal_places=3, blank=True)),
                 ('temperature_1', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='temperature 1', max_digits=7, decimal_places=3, blank=True)),
                 ('temperature_2', jb_common.model_fields.DecimalQuantityField(null=True, verbose_name='temperature 2', max_digits=7, decimal_places=3, blank=True)),
-                ('deposition', models.ForeignKey(related_name='layers', verbose_name='deposition', to='institute.FiveChamberDeposition')),
+                ('deposition', models.ForeignKey(related_name='layers', verbose_name='deposition', to='institute.FiveChamberDeposition', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['number'],
@@ -148,7 +148,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LayerThicknessMeasurement',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('thickness', jb_common.model_fields.FloatQuantityField(verbose_name='layer thickness')),
                 ('method', models.CharField(default='profilers&edge', max_length=30, verbose_name='measurement method', choices=[('profilers&edge', 'profilometer + edge'), ('ellipsometer', 'ellipsometer'), ('calculated', 'calculated from deposition parameters'), ('estimate', 'estimate'), ('other', 'other')])),
             ],
@@ -165,7 +165,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PDSMeasurement',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('number', models.PositiveIntegerField(unique=True, verbose_name='PDS number', db_index=True)),
                 ('raw_datafile', models.CharField(help_text='only the relative path below "pds_raw_data/"', max_length=200, verbose_name='raw data file')),
                 ('apparatus', models.CharField(default='pds1', max_length=15, verbose_name='apparatus', choices=[('pds1', 'PDS #1'), ('pds2', 'PDS #2')])),
@@ -184,7 +184,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SampleDetails',
             fields=[
-                ('sample', models.OneToOneField(related_name='sample_details', primary_key=True, serialize=False, to='samples.Sample', verbose_name='sample')),
+                ('sample', models.OneToOneField(related_name='sample_details', primary_key=True, serialize=False, to='samples.Sample', verbose_name='sample', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'sample details',
@@ -211,7 +211,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SolarsimulatorMeasurement',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('irradiation', models.CharField(max_length=10, verbose_name='irradiation', choices=[('AM1.5', 'AM1.5'), ('OG590', 'OG590'), ('BG7', 'BG7')])),
                 ('temperature', jb_common.model_fields.DecimalQuantityField(default=25.0, verbose_name='temperature', max_digits=3, decimal_places=1)),
             ],
@@ -229,7 +229,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Structuring',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('layout', models.CharField(max_length=30, verbose_name='layout', choices=[('inm standard', 'INM Standard'), ('acme1', 'ACME 1'), ('custom', 'custom')])),
                 ('length', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='length', blank=True)),
                 ('width', jb_common.model_fields.FloatQuantityField(null=True, verbose_name='width', blank=True)),
@@ -248,7 +248,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Substrate',
             fields=[
-                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process')),
+                ('process_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='samples.Process', on_delete=models.CASCADE)),
                 ('material', models.CharField(max_length=30, verbose_name='substrate material', choices=[('custom', 'custom'), ('asahi-u', 'ASAHI-U'), ('asahi-vu', 'ASAHI-VU'), ('corning', 'Corning glass'), ('glass', 'glass'), ('si-wafer', 'silicon wafer'), ('quartz', 'quartz'), ('sapphire', 'sapphire'), ('aluminium foil', 'aluminium foil')])),
             ],
             options={
@@ -264,7 +264,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='solarsimulatorcellmeasurement',
             name='measurement',
-            field=models.ForeignKey(related_name='cells', verbose_name='solarsimulator measurement', to='institute.SolarsimulatorMeasurement'),
+            field=models.ForeignKey(related_name='cells', verbose_name='solarsimulator measurement', to='institute.SolarsimulatorMeasurement', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -274,13 +274,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='informallayer',
             name='process',
-            field=models.ForeignKey(related_name='informal_layers', verbose_name='process', blank=True, to='samples.Process', null=True),
+            field=models.ForeignKey(related_name='informal_layers', verbose_name='process', blank=True, to='samples.Process', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='informallayer',
             name='sample_details',
-            field=models.ForeignKey(related_name='informal_layers', verbose_name='sample details', to='institute.SampleDetails'),
+            field=models.ForeignKey(related_name='informal_layers', verbose_name='sample details', to='institute.SampleDetails', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(
@@ -294,13 +294,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='clustertoollayer',
             name='content_type',
-            field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(blank=True, editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='clustertoollayer',
             name='deposition',
-            field=models.ForeignKey(related_name='layers', verbose_name='deposition', to='institute.ClusterToolDeposition'),
+            field=models.ForeignKey(related_name='layers', verbose_name='deposition', to='institute.ClusterToolDeposition', on_delete=models.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterUniqueTogether(

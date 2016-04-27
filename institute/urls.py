@@ -42,18 +42,20 @@ from samples.utils.urls import PatternGenerator
 from institute.views.samples import sample, claim, stack, layout, json_client, substrate, structuring, my_layers
 
 
+app_name = "institute"
+
 urlpatterns = [
     # General additions
 
-    url(r"^samples/add/$", sample.add),
-    url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", sample.copy_informal_stack),
-    url(r"^claims/(?P<username>.+)/add_oldstyle/$", claim.add_oldstyle),
-    url(r"^my_layers/(?P<login_name>.+)", my_layers.edit),
+    url(r"^samples/add/$", sample.add, name="add_samples"),
+    url(r"^samples/(?P<sample_name>.+)/copy_informal_stack/$", sample.copy_informal_stack, name="copy_informal_stack"),
+    url(r"^claims/(?P<username>.+)/add_oldstyle/$", claim.add_oldstyle, name="add_claim_oldstyle"),
+    url(r"^my_layers/(?P<login_name>.+)", my_layers.edit, name="edit_my_layers"),
     url(r"^stacks/(?P<sample_id>\d+)$", stack.show_stack, {"thumbnail": False}, "stack_diagram"),
     url(r"^stacks/thumbnails/(?P<sample_id>\d+)$", stack.show_stack, {"thumbnail": True},
         "stack_diagram_thumbnail"),
-    url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)$", layout.show_layout),
-    url(r"^printer_label/(?P<sample_id>\d+)$", sample.printer_label),
+    url(r"layouts/(?P<sample_id>\d+)/(?P<process_id>\d+)$", layout.show_layout, name="show_layout"),
+    url(r"^printer_label/(?P<sample_id>\d+)$", sample.printer_label, name="printer_label"),
     url(r"^trac/", TemplateView.as_view(template_name="bug_tracker.html")),
 
     # Remote client

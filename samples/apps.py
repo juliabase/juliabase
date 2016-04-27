@@ -24,7 +24,6 @@ from django.apps import AppConfig
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
 from django.core.urlresolvers import reverse
-import jb_common.utils.base as utils
 from jb_common.nav_menu import MenuItem
 
 
@@ -59,22 +58,24 @@ class SamplesConfig(AppConfig):
         """Contribute to the menu.  See :py:mod:`jb_common.nav_menu` for further
         information.
         """
+        import jb_common.utils.base as utils
+
         if request.user.is_authenticated():
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
             user_menu.prepend(MenuItem(_("my topics and permissions"),
-                                       reverse("samples.views.user_details.topics_and_permissions",
+                                       reverse("samples:topics_and_permissions",
                                                kwargs={"login_name": request.user.username})))
             add_menu = menu.get_or_create(_("add"))
             add_menu.add(_("samples"), reverse(settings.ADD_SAMPLES_VIEW), "stop")
-            add_menu.add(_("sample series"), reverse("samples.views.sample_series.new"), "th")
-            add_menu.add(_("result"), reverse("add_result"), "scale")
+            add_menu.add(_("sample series"), reverse("samples:add_sample_series"), "th")
+            add_menu.add(_("result"), reverse("samples:add_result"), "scale")
             add_menu.add_separator()
             permissions = importlib.import_module("samples.permissions")
             for physical_process in permissions.get_allowed_physical_processes(request.user):
                 add_menu.add(physical_process["label"], physical_process["url"])
             explore_menu = menu.get_or_create(pgettext("top-level menu item", "explore"))
-            explore_menu.add(_("advanced search"), reverse("samples.views.sample.advanced_search"), "search")
-            explore_menu.add(_("samples by name"), reverse("samples.views.sample.search"), "stop")
+            explore_menu.add(_("advanced search"), reverse("samples:advanced_search"), "search")
+            explore_menu.add(_("samples by name"), reverse("samples:sample_search"), "stop")
             explore_menu.add_separator()
             lab_notebooks = permissions.get_lab_notebooks(request.user)
             if lab_notebooks:
@@ -82,31 +83,30 @@ class SamplesConfig(AppConfig):
                 for lab_notebook in lab_notebooks:
                     explore_menu.add(lab_notebook["label"], lab_notebook["url"], "book")
             manage_menu = menu.get_or_create(_("manage"))
-            manage_menu.add(_("manage “My Samples”"), reverse("samples.views.my_samples.edit",
+            manage_menu.add(_("manage “My Samples”"), reverse("samples:edit_my_samples",
                                                               kwargs={"username": request.user.username}))
             if request.user.has_perm("samples.rename_samples"):
-                manage_menu.add(_("rename sample"), reverse("samples.views.sample.rename_sample"))
-            manage_menu.add(_("merge samples"), reverse("samples.views.merge_samples.merge"))
-            manage_menu.add(_("sample claims"), reverse("samples.views.claim.list_",
-                                                        kwargs={"username": request.user.username}))
+                manage_menu.add(_("rename sample"), reverse("samples:rename_sample"))
+            manage_menu.add(_("merge samples"), reverse("samples:merge_samples"))
+            manage_menu.add(_("sample claims"), reverse("samples:list_claims", kwargs={"username": request.user.username}))
             manage_menu.add_separator()
             if permissions.has_permission_to_edit_users_topics(request.user):
-                manage_menu.add(_("add new topic"), reverse("samples.views.topic.add"))
+                manage_menu.add(_("add new topic"), reverse("samples:add_topic"))
             if permissions.can_edit_any_topics(request.user):
-                manage_menu.add(_("change topic memberships"), reverse("samples.views.topic.list_"))
+                manage_menu.add(_("change topic memberships"), reverse("samples:list_topics"))
             manage_menu.add_separator()
             if permissions.has_permission_to_add_external_operator(request.user):
-                manage_menu.add(_("add external operator"), reverse("samples.views.external_operator.new"))
+                manage_menu.add(_("add external operator"), reverse("samples:add_external_operator"))
             if permissions.can_edit_any_external_contacts(request.user):
-                manage_menu.add(_("edit external operator"), reverse("samples.views.external_operator.list_"))
+                manage_menu.add(_("edit external operator"), reverse("samples:list_external_operators"))
             manage_menu.add_separator()
-            manage_menu.add(_("permissions"), reverse("samples.views.permissions.list_"))
-            manage_menu.add(_("task lists"), reverse("samples.views.task_lists.show"))
+            manage_menu.add(_("permissions"), reverse("samples:list_permissions"))
+            manage_menu.add(_("task lists"), reverse("samples:show_task_lists"))
             manage_menu.add(_("newsfeed"),
-                            reverse("samples.views.feed.show", kwargs={"username": request.user,
-                                                                       "user_hash": permissions.get_user_hash(request.user)}))
-            manage_menu.add(_("status messages"), reverse("samples.views.status.show"))
-            manage_menu.add(_("inspect crawler logs"), reverse("samples.views.log_viewer.list"))
+                            reverse("samples:show_feed", kwargs={"username": request.user,
+                                                                 "user_hash": permissions.get_user_hash(request.user)}))
+            manage_menu.add(_("status messages"), reverse("samples:show_status"))
+            manage_menu.add(_("inspect crawler logs"), reverse("samples:list_log_viewers"))
             if request.user.is_superuser:
                 manage_menu.add(_("administration"), reverse("admin:index"))
 

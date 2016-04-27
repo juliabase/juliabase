@@ -328,6 +328,15 @@ the thickness measurement, you add::
 See the methods of the class :py:class:`~samples.utils.urls.PatternGenerator`
 for further details.
 
+Take care that the namespace of the URL patterns has the same name as your
+institute app!  One way to do that is to say
+
+::
+
+   app_name = "institute"
+
+at the beginning of :file:`institute/urls.py`.
+
 
 .. index::
    pair: process; view
@@ -422,8 +431,8 @@ In contrast, the layer model is derived from :py:class:`~samples.models.Layer`,
 which in turn is an ordinary Django model (not a ``Process``)::
 
     class FiveChamberLayer(samples.models.Layer):
-        deposition = models.ForeignKey(
-            FiveChamberDeposition, related_name="layers", verbose_name=_("deposition"))
+        deposition = models.ForeignKey(FiveChamberDeposition, models.CASCADE,
+            related_name="layers", verbose_name=_("deposition"))
         layer_type = models.CharField(
             _("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
         chamber = models.CharField(

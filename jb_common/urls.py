@@ -32,22 +32,33 @@ core views for all JuliaBase apps.
 
 from __future__ import absolute_import, unicode_literals
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf import settings
 from django.contrib.auth.views import password_change, password_change_done, login, logout
 from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page, cached_javascript_catalog
 
-urlpatterns = [
-    url(r"^change_password$", password_change, {"template_name": "jb_common/change_password.html"}, name="password_change"),
+
+jb_common_patterns = ([
+    url(r"^users/(?P<login_name>.+)", show_user, name="show_user"),
+    url(r"^markdown$", markdown_sandbox, name="markdown_sandbox"),
+    url(r"^switch_language$", switch_language, name="switch_language"),
+    url(r"^error_pages/(?P<hash_value>.+)", show_error_page, name="show_error_page"),
+
+    url(r"^jsi18n/$", cached_javascript_catalog, {"packages": settings.JAVASCRIPT_I18N_APPS}, "jsi18n"),
+], "jb_common")
+
+# Unfortunately, the ``password_change`` view expects the
+# ``password_change_done`` URL name to live in the global namespace, therefore,
+# I have to define these separately.
+login_related_patterns = [
+    url(r"^change_password$", password_change, {"template_name": "jb_common/change_password.html"}, "password_change"),
     url(r"^change_password/done/$", password_change_done,
-        {"template_name": "jb_common/password_changed.html"}, name="password_change_done"),
-    url(r"^login$", login, {"template_name": "jb_common/login.html"}, name="login"),
-    url(r"^logout$", logout, {"template_name": "jb_common/logout.html"}, name="logout"),
+        {"template_name": "jb_common/password_changed.html"}, "password_change_done"),
+    url(r"^login$", login, {"template_name": "jb_common/login.html"}, "login"),
+    url(r"^logout$", logout, {"template_name": "jb_common/logout.html"}, "logout"),
+]
 
-    url(r"^users/(?P<login_name>.+)", show_user),
-    url(r"^markdown$", markdown_sandbox),
-    url(r"^switch_language$", switch_language),
-    url(r"^error_pages/(?P<hash_value>.+)", show_error_page),
-
-    url(r"^jsi18n/$", cached_javascript_catalog, {"packages": settings.JAVASCRIPT_I18N_APPS}, name="jb_common_jsi18n"),
+urlpatterns = [
+    url(r"", include(login_related_patterns)),
+    url(r"", include(jb_common_patterns)),
 ]

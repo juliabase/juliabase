@@ -152,7 +152,8 @@ def format_timestamp(timestamp):
     """Serializses a timestamp.  This is the counter function to `parse_timestamp`,
     however, there is an asymmetry: Here, we don't generate ISO 8601 timestamps
     (with the ``"T"`` inbetween).  The reason is that Django's `DateTimeField`
-    would not be able to parse it.
+    would not be able to parse it.  But see
+    <https://code.djangoproject.com/ticket/11385>.
 
     :param timestamp: the timestamp to format
 

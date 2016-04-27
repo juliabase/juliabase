@@ -26,16 +26,17 @@ samples form, whereas the mixin class doesn't do this.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime, re, json
+import re, json
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+import django.utils.timezone
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.text import capfirst
-from django.utils.safestring import mark_safe
-from django.utils.encoding import force_text
+from django.utils.html import format_html, format_html_join
 import django.forms as forms
 from django.forms.models import modelform_factory
 from django.forms.utils import ValidationError
@@ -53,6 +54,7 @@ __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixi
            "DepositionView", "DepositionMultipleTypeView")
 
 
+@method_decorator(login_required, name="dispatch")
 class ProcessWithoutSamplesView(TemplateView):
     """Abstract base class for the classed-based views.  It deals only with the
     process per se, and in partuclar, with no samples associated with this
@@ -173,7 +175,7 @@ class ProcessWithoutSamplesView(TemplateView):
                 source_process_query = self.model.objects.filter(**{self.identifying_field: copy_from})
                 if source_process_query.count() == 1:
                     initial.update(source_process_query.values()[0])
-                    initial["timestamp"] = datetime.datetime.now()
+                    initial["timestamp"] = django.utils.timezone.now()
                     initial["timestamp_inaccuracy"] = 0
                     initial["operator"] = self.request.user.pk
             next_id = self.get_next_id()
@@ -347,14 +349,6 @@ class ProcessWithoutSamplesView(TemplateView):
         context.update(kwargs)
         context.update(self.forms)
         return super(ProcessWithoutSamplesView, self).get_context_data(**context)
-
-    @classmethod
-    def as_view(cls, **initkwargs):
-        """Return the callable for the URL patterns.  This is part of the official
-        Django API.  We override it to add a login check.
-        """
-        view = super(ProcessWithoutSamplesView, cls).as_view(**initkwargs)
-        return login_required(view)
 
 
 class ProcessView(ProcessWithoutSamplesView):
@@ -988,8 +982,8 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
 
 class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
     def render(self):
-        return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
-                    "<li>{0}</li>".format(force_text(w)) for w in self)))
+        inner = format_html_join("\n", "<li>{0}</li>", zip(self))
+        return format_html('<ul class="radio-select">\n{0}\n</ul>', inner)
 
 
 class AddMultipleTypeStepsForm(AddMyStepsForm):

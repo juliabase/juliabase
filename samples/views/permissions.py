@@ -79,9 +79,6 @@ class PermissionsModels(object):
       show all users of a model.  Note that this excludes superusers, unless
       they have the distinctive permissions.
 
-    :cvar topic_manager_permission: the permission instance for changing
-      memberships in own topics
-
     :type name: unicode
     :type codename: str
     :type edit_permissions_permission: django.contrib.auth.models.Permission
@@ -92,13 +89,7 @@ class PermissionsModels(object):
     :type full_viewers: QuerySet
     :type full_editors: QuerySet
     :type all_users: QuerySet
-    :type topic_manager_permission: django.contrib.auth.models.Permission
     """
-
-    topic_manager_permission = Permission.objects.get(codename="edit_their_topics",
-                                                      content_type=ContentType.objects.get_for_model(Topic))
-    add_external_operators_permission = Permission.objects.get(codename="add_externaloperator",
-                                                               content_type=ContentType.objects.get_for_model(models.ExternalOperator))
 
     def __init__(self, addable_model_class):
         """
@@ -239,17 +230,19 @@ def list_(request):
         if request.method == "POST":
             user_list_form = UserListForm(user, request.POST)
             if user_list_form.is_valid():
-                return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples.views.permissions.edit",
+                return HttpResponseSeeOther(django.core.urlresolvers.reverse("samples:edit_permissions",
                                 kwargs={"username": user_list_form.cleaned_data["selected_user"].username}))
         else:
             user_list_form = UserListForm(user)
     else:
         user_list_form = None
     if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.change_topic"):
+        topic_manager_permission = Permission.objects.get(
+            codename="edit_their_topics", content_type=ContentType.objects.get_for_model(Topic))
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
-            .filter(Q(groups__permissions=PermissionsModels.topic_manager_permission) |
-                    Q(user_permissions=PermissionsModels.topic_manager_permission)).distinct())
+            .filter(Q(groups__permissions=topic_manager_permission) |
+                    Q(user_permissions=topic_manager_permission)).distinct())
     else:
         topic_managers = None
     return render(request, "samples/list_permissions.html",
@@ -273,13 +266,17 @@ class PermissionsForm(forms.Form):
                              "can_edit_permissions": edited_user in model.permission_editors}
         super(PermissionsForm, self).__init__(*args, **kwargs)
         if not model.add_permission:
-            self.fields["can_add"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_add"].disabled = True
+            self.fields["can_add"].widget.attrs["style"] = "display: none"
         if not model.view_all_permission:
-            self.fields["can_view_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_view_all"].disabled = True
+            self.fields["can_view_all"].widget.attrs["style"] = "display: none"
         if not model.edit_all_permission:
-            self.fields["can_edit_all"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_edit_all"].disabled = True
+            self.fields["can_edit_all"].widget.attrs["style"] = "display: none"
         if not model.edit_permissions_permission:
-            self.fields["can_edit_permissions"].widget.attrs.update({"disabled": "disabled", "style": "display: none"})
+            self.fields["can_edit_permissions"].disabled = True
+            self.fields["can_edit_permissions"].widget.attrs["style"] = "display: none"
 
     def clean(self):
         """Note that I don't check whether disabled fields were set

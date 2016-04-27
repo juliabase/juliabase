@@ -29,6 +29,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 from django import forms
 from django.contrib.auth.decorators import login_required
+import django.utils.timezone
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils.text import capfirst
 from django.forms.utils import ValidationError
@@ -90,7 +91,7 @@ class GlobalDataForm(forms.Form):
 
     def __init__(self, parent, user_details, data=None, **kwargs):
         super(GlobalDataForm, self).__init__(data, **kwargs)
-        now = datetime.datetime.now() + datetime.timedelta(seconds=5)
+        now = django.utils.timezone.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
         self.fields["sample_series"].queryset = permissions.get_editable_sample_series(user_details.user)
 
@@ -278,7 +279,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
 
     :rtype: `samples.models.SampleSplit`, dict mapping unicode to int
     """
-    now = datetime.datetime.now()
+    now = django.utils.timezone.now()
     if not sample_split:
         sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
         sample_split.save()
@@ -355,7 +356,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
                 sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
                 request, _("Sample “{sample}” was successfully split.").format(sample=parent),
-                "show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
+                "samples:show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
         new_name_forms, global_data_form, automatic_split_form = forms_from_database(parent, request.user)
         next_prefix = "0"

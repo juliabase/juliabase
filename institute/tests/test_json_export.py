@@ -24,13 +24,14 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.test.client import Client
+from django.test import override_settings
 import jb_common.utils.base
 from .tools import TestCase
 
 
+@override_settings(ROOT_URLCONF="institute.tests.urls")
 class ExportTest(TestCase):
     fixtures = ["test_main"]
-    urls = "institute.tests.urls"
     maxDiff = None
 
     def setUp(self):
@@ -41,7 +42,7 @@ class ExportTest(TestCase):
         response = self.client.get("/processes/13", HTTP_ACCEPT="application/json")
         self.assertEqual(response["Content-Type"], "application/json")
         self.assertJsonDictEqual(response,
-            {"samples": [7], "timestamp_inaccuracy": 3, "timestamp": "2014-10-01T10:29:00", "material": "corning", "id": 13,
+            {"samples": [7], "timestamp_inaccuracy": 3, "timestamp": "2014-10-01T10:29:00Z", "material": "corning", "id": 13,
              "external_operator": None, "finished": True, "comments": "", "operator": "e.monroe",
              "content_type": "substrate"})
 
@@ -49,7 +50,7 @@ class ExportTest(TestCase):
         response = self.client.get("/pds_measurements/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertJsonDictEqual(response,
-            {"samples": [7], "apparatus": "pds1", "timestamp_inaccuracy": 0, "timestamp": "2014-10-07T10:01:00",
+            {"samples": [7], "apparatus": "pds1", "timestamp_inaccuracy": 0, "timestamp": "2014-10-07T10:01:00Z",
              "external_operator": None, "id": 25,
              "operator": "n.burkhardt", "finished": True, "comments": "",
              "number": 1, "content_type": "PDS measurement", "raw_datafile": "measurement-1.dat"})
@@ -61,7 +62,7 @@ class ExportTest(TestCase):
             {"split_origin": None, "name": "14-JS-1", "tags": "", "currently_responsible_person": "j.silverton",
              "topic": "Juliette's PhD thesis", "purpose": "",
              "current_location": "Juliette's office", "id": 7,
-             "process #13": {"content_type": "substrate", "timestamp": "2014-10-01T10:29:00", "material": "corning",
+             "process #13": {"content_type": "substrate", "timestamp": "2014-10-01T10:29:00Z", "material": "corning",
                              "timestamp_inaccuracy": 3, "comments": "", "finished": True,
                              "samples": [7], "external_operator": None,
                              "operator": "e.monroe", "id": 13},
@@ -76,10 +77,10 @@ class ExportTest(TestCase):
                                          "content_type": "cluster tool hot-wire layer", "time": "10:00", "sih4": 7.0,
                                          "wire_material": "rhenium", "id": 3},
                              "timestamp_inaccuracy": 0, "comments": "", "number": "14C-001", "finished": True, "carrier": "",
-                             "samples": [7], "timestamp": "2014-10-01T10:30:00", "operator": "e.monroe", "split_done": False,
+                             "samples": [7], "timestamp": "2014-10-01T10:30:00Z", "operator": "e.monroe", "split_done": False,
                              "id": 14},
              "process #25": {"external_operator": None, "content_type": "PDS measurement", "apparatus": "pds1",
-                             "timestamp": "2014-10-07T10:01:00", "timestamp_inaccuracy": 0, "comments": "", "number": 1,
+                             "timestamp": "2014-10-07T10:01:00Z", "timestamp_inaccuracy": 0, "comments": "", "number": 1,
                              "finished": True, "raw_datafile": "measurement-1.dat", "samples": [7],
                              "operator": "n.burkhardt", "id": 25}})
 
@@ -91,9 +92,9 @@ class SharedUtilsTest(TestCase):
         self.assertEqual(jb_common.utils.base.capitalize_first_letter("ärgerlich"), "Ärgerlich")
 
 
+@override_settings(ROOT_URLCONF="institute.tests.urls")
 class AdminExportTest(TestCase):
     fixtures = ["test_main"]
-    urls = "institute.tests.urls"
 
     def setUp(self):
         self.client = Client()
@@ -103,6 +104,6 @@ class AdminExportTest(TestCase):
         response = self.client.get("/substrates_by_sample/1", HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertJsonDictEqual(response,
-                         {"operator": "r.calvert", "timestamp": "2014-10-01T10:29:00", "material": "corning",
+                         {"operator": "r.calvert", "timestamp": "2014-10-01T10:29:00Z", "material": "corning",
                           "timestamp_inaccuracy": 3, "comments": "", "finished": True, "samples": [1],
                           "external_operator": None, "content_type": "substrate", "id": 1})

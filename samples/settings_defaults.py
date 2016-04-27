@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 ADD_SAMPLES_VIEW = ""
 CACHE_ROOT = str("/tmp/juliabase_cache")
 CRAWLER_LOGS_ROOT = ""
-CRAWLER_LOGS_WHITELIST = ()
+CRAWLER_LOGS_WHITELIST = []
 INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}",
                              "description": _("The initials start with two uppercase letters.  "
                                               "They contain uppercase letters and digits only.  Digits are at the end.")},
@@ -38,7 +38,7 @@ INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}"
                                                           "The length is exactly 4 characters.")}
                     }
 MERGE_CLEANUP_FUNCTION = ""
-NAME_PREFIX_TEMPLATES = ()
+NAME_PREFIX_TEMPLATES = []
 SAMPLE_NAME_FORMATS = {"provisional": {"possible_renames": {"default"}},
                        "default":     {"pattern": r"[-A-Za-z_/0-9#()]*"}}
 THUMBNAIL_WIDTH = 400

@@ -36,8 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <tr>
           <td>
             <span style='background: url("{% static "juliabase/icons/group.png" %}")no-repeat bottom left; background-position: 0 0; width: 16px; height: 16px;display: inline-block;'></span>
-         	  {% if editable %}<a href="{% url 'samples.views.topic.edit' id=normalized_topicid %}">{{ topic.name }}</a>
-         	  {% else %}{{ topic.name }}{% endif %}</td>
+                  {% if editable %}<a href="{% url 'samples:edit_topic' id=normalized_topicid %}">{{ topic.name }}</a>
+                  {% else %}{{ topic.name }}{% endif %}</td>
           <td>{{ topic.manager|get_really_full_name }}</td>
         </tr>
       {% endwith %}

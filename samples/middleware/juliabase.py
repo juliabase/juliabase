@@ -49,8 +49,7 @@ class ExceptionsMiddleware(object):
         if isinstance(exception, PermissionError):
             return HttpResponseUnauthorized(
                 loader.render_to_string("samples/permission_error.html",
-                                        {"title": _("Access denied"), "exception": exception},
-                                        context_instance=RequestContext(request)))
+                                        {"title": _("Access denied"), "exception": exception}, request=request))
         elif isinstance(exception, utils.AmbiguityException):
             return render(request, "samples/disambiguation.html",
                           {"alias": exception.sample_name, "samples": exception.samples,

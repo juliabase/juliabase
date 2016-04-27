@@ -28,6 +28,7 @@ import django.utils.six as six
 import re, datetime, json
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
+import django.utils.timezone
 from django.conf import settings
 from django.forms.utils import ValidationError
 from django.http import QueryDict
@@ -174,13 +175,13 @@ class ProcessForm(ModelForm):
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
         if not self.process or self.unfinished:
-            kwargs.setdefault("initial", {}).setdefault("timestamp", datetime.datetime.now())
+            kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
         if not self.process:
             kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
             kwargs["initial"].setdefault("combined_operator", user.pk)
         super(ProcessForm, self).__init__(*args, **kwargs)
         if self.process and self.process.finished:
-            self.fields["finished"].widget.attrs["disabled"] = "disabled"
+            self.fields["finished"].disabled = True
         self.fields["combined_operator"].set_choices(user, self.process)
         if not user.is_superuser:
             self.fields["external_operator"].choices = []
@@ -579,7 +580,7 @@ def clean_timestamp_field(value):
     """
     if isinstance(value, datetime.datetime):
         # Allow mis-sychronisation of clocks of up to one minute.
-        if value > datetime.datetime.now() + datetime.timedelta(minutes=1):
+        if value > django.utils.timezone.now() + datetime.timedelta(minutes=1):
             raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
     else:
         if value > datetime.date.today():
@@ -909,7 +910,7 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
                 # change the name of samples, and so changing the affected samples
                 # afterwards is a source of big trouble.
                 super(DepositionSamplesForm, self).__init__(**kwargs)
-                self.fields["sample_list"].widget.attrs["disabled"] = "disabled"
+                self.fields["sample_list"].disabled = True
                 self.dont_check_validity = True
             else:
                 super(DepositionSamplesForm, self).__init__(data, **kwargs)

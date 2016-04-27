@@ -21,6 +21,7 @@ from __future__ import absolute_import, unicode_literals, division
 
 import datetime
 from django.db.models import signals
+import django.utils.timezone
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from jb_common.signals import maintain
@@ -46,7 +47,7 @@ def add_all_user_details(sender, **kwargs):
 
 @receiver(maintain)
 def expire_shortkeys(sender, **kwargs):
-    one_year_ago = datetime.datetime.now() - datetime.timedelta(356)
+    one_year_ago = django.utils.timezone.now() - datetime.timedelta(356)
     for details in kicker_app.UserDetails.objects.exclude(shortkey=""):
         try:
             too_old = kicker_app.KickerNumber.objects.filter(player=details.user).latest().timestamp < one_year_ago
@@ -58,5 +59,5 @@ def expire_shortkeys(sender, **kwargs):
 
 @receiver(maintain)
 def expire_matches(sender, **kwargs):
-    one_day_ago = datetime.datetime.now() - datetime.timedelta(1)
+    one_day_ago = django.utils.timezone.now() - datetime.timedelta(1)
     kicker_app.Match.objects.filter(finished=False, timestamp__lt=one_day_ago).delete()

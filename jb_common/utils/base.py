@@ -305,8 +305,8 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     :param request: the current HTTP request
     :param success_report: an optional short success message reported to the
         user on the next view
-    :param view: the view name/function to redirect to; defaults to the main
-        menu page (same when ``None`` is given)
+    :param view: the view name to redirect to; defaults to the main menu page
+        (same when ``None`` is given)
     :param kwargs: group parameters in the URL pattern that have to be filled
     :param query_string: the *quoted* query string to be appended, without the
         leading ``"?"``
@@ -316,7 +316,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
     :type request: HttpRequest
     :type success_report: unicode
-    :type view: str or function
+    :type view: str
     :type kwargs: dict
     :type query_string: unicode
     :type forced: bool
@@ -345,7 +345,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     if query_string:
         query_string = "?" + query_string
     # FixMe: Once jb_common has gotten its main menu view, this must be
-    # used here as default vor ``view`` instead of the bogus ``None``.
+    # used here as default for ``view`` instead of the bogus ``None``.
     return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or None, kwargs=kwargs) + query_string)
 
 
@@ -803,25 +803,6 @@ def cache_hit_rate():
         return None
     else:
         return hits / (hits + misses)
-
-
-def unlazy_object(lazy_object):
-    """Returns the actual (wrapped) instance of a lazy object.  Note that the
-    lazy object may be changed by this function: Afterwards, it definitely
-    contains the wrapped instance.
-
-    :param lazy_object: the lazy object
-
-    :type lazy_object: django.utils.functional.LazyObject
-
-    :return:
-      the actual object
-
-    :rtype: object
-    """
-    if lazy_object._wrapped is None:
-        lazy_object._setup()
-    return lazy_object._wrapped
 
 
 def convert_bytes_to_str(byte_array):

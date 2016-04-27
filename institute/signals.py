@@ -37,7 +37,7 @@ import django.contrib.auth.models
 from django.utils.translation import ugettext as _, ugettext
 from jb_common.signals import maintain
 import jb_common.utils.base as utils
-from samples.models import Result, PhysicalProcess, Sample, SampleAlias
+from samples.models import PhysicalProcess, Sample
 from institute import models as institute_app
 
 

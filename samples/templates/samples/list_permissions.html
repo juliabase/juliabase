@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <p>{% trans "Change the permissions of:" %}
         {% for user in user_list %}
           {% spaceless %}
-            <a href="{% url 'samples.views.permissions.edit' username=user.username%}">{{ user|get_really_full_name:"plain" }}</a>
+            <a href="{% url 'samples:edit_permissions' username=user.username%}">{{ user|get_really_full_name:"plain" }}</a>
             {% if not forloop.last %}<span>{% trans ", "%}</span>{% endif %}
           {% endspaceless %}
         {% endfor %}

@@ -29,17 +29,16 @@ substrate with every sample, too (and possibly a cleaning process).
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
-import datetime
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.forms.utils import ValidationError
 from django.forms import widgets
 from django.http import HttpResponse
-from django.utils.safestring import mark_safe
-from django.utils.encoding import force_text
+from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.text import capfirst
+import django.utils.timezone
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from jb_common.utils.base import help_link, get_really_full_name, int_or_zero
@@ -52,14 +51,14 @@ from institute import printer_labels
 
 class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
     def render(self):
-        return mark_safe("""<ul class="radio-select">\n{0}\n</ul>""".format("\n".join(
-                    """<li style="white-space: nowrap">{0}</li>""".format(force_text(w)) for w in self)))
+        inner = format_html_join("\n", '<li style="white-space: nowrap">{0}</li>', zip(self))
+        return format_html('<ul class="radio-select">\n{0}\n</ul>', inner)
 
 
 rename_choices = (("", _("no names")),
                     # Translators: "new-style" names
-                ("new-style", _("new-style")),
-                ("cleaning", _("cleaning number")))
+                  ("new-style", _("new-style")),
+                  ("cleaning", _("cleaning number")))
 
 class AddSamplesForm(forms.Form):
     """Form for adding new samples."""
@@ -86,12 +85,12 @@ class AddSamplesForm(forms.Form):
 
     def __init__(self, user, data=None, **kwargs):
         super(AddSamplesForm, self).__init__(data, **kwargs)
-        self.fields["timestamp"].initial = datetime.datetime.now()
+        self.fields["timestamp"].initial = django.utils.timezone.now()
         self.fields["topic"].set_topics(user)
         self.fields["substrate_comments"].help_text = \
             """<span class="markdown-hint">""" + _("""with {markdown_link} syntax""").format(
             markdown_link="""<a href="{0}">Markdown</a>""".format(
-                    django.core.urlresolvers.reverse("jb_common.views.markdown_sandbox"))) + "</span>"
+                    django.core.urlresolvers.reverse("jb_common:markdown_sandbox"))) + "</span>"
         self.fields["substrate_originator"].choices = [("<>", get_really_full_name(user))]
         external_contacts = user.external_contacts.all()
         if external_contacts:
@@ -104,7 +103,7 @@ class AddSamplesForm(forms.Form):
         """Forbid timestamps that are in the future.
         """
         timestamp = self.cleaned_data["timestamp"]
-        if timestamp > datetime.datetime.now():
+        if timestamp > django.utils.timezone.now():
             raise ValidationError(_("The timestamp must not be in the future."), code="invalid")
         return timestamp
 
@@ -240,7 +239,7 @@ def add(request):
                 success_report = _("Your sample has the name {name}.  It was added to “My Samples”."). \
                     format(name=new_names[0])
             if add_samples_form.cleaned_data["rename"] == "new-style":
-                return utils.successful_response(request, success_report, "samples.views.bulk_rename.bulk_rename",
+                return utils.successful_response(request, success_report, "samples:bulk_rename",
                                                  query_string="ids=" + ",".join(str(id_) for id_ in ids),
                                                  forced=True, json_response=ids)
             else:
@@ -296,7 +295,7 @@ def copy_informal_stack(request, sample_name):
                                                 edit_description={"important": False, "description": message})
             return utils.successful_response(
                 request, _("Informal stack of {sample} was successfully copied.").format(sample=sample),
-                "samples.views.sample.by_id", {"sample_id": sample.id, "path_suffix": ""})
+                "samples:show_sample_by_id", {"sample_id": sample.id, "path_suffix": ""})
     else:
         destination_samples_form = DestinationSamplesForm(request.user, sample)
     context = {"title": _("Copy informal stack of “{sample}”").format(sample=sample),

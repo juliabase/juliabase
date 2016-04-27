@@ -28,7 +28,6 @@ old-style names which do not exist in the database yet.
 
 from __future__ import absolute_import, unicode_literals
 
-import datetime
 import django.contrib.auth.models
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
@@ -36,6 +35,7 @@ from django.forms.utils import ValidationError
 from django.contrib.auth.decorators import login_required
 import django.core.urlresolvers
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+import django.utils.timezone
 from django.conf import settings
 from jb_common.utils.base import help_link, send_email, get_really_full_name, format_enumeration
 from jb_common.models import Topic
@@ -179,13 +179,13 @@ to withdraw the request.
 
 JuliaBase.
 """), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
-                 "url": request.build_absolute_uri(django.core.urlresolvers.reverse("samples.views.claim.show",
-                                                                                    kwargs={"claim_id": claim.pk}))})
+                 "url": request.build_absolute_uri(django.core.urlresolvers.reverse(
+                     "samples:show_claim", kwargs={"claim_id": claim.pk}))})
             _ = ugettext
             samples = []
             nobody = django.contrib.auth.models.User.objects.get(username="nobody")
             legacy = Topic.objects.get(name="Legacy")
-            now = datetime.datetime.now()
+            now = django.utils.timezone.now()
             material, substrate_comments = substrate_form.cleaned_data["material"], substrate_form.cleaned_data["comments"]
             for name in samples_form.cleaned_data["samples"]:
                 substrate = models.Substrate(operator=nobody, timestamp=now, material=material, comments=substrate_comments)
@@ -197,7 +197,7 @@ JuliaBase.
             claim.samples = samples
             return utils.successful_response(request,
                                              _("Sample claim {id_} was successfully submitted.").format(id_=claim.pk),
-                                             "samples.views.claim.show", kwargs={"claim_id": claim.pk})
+                                             "samples:show_claim", kwargs={"claim_id": claim.pk})
     else:
         samples_form = SamplesForm()
         substrate_form = SubstrateForm()

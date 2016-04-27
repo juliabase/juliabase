@@ -65,47 +65,49 @@ from samples.views import statistics, main, feed, my_samples, split_after_deposi
     claim, json_client, status, merge_samples, log_viewer, task_lists
 
 
+app_name = "samples"
+
 urlpatterns = [
-    url(r"^about$", statistics.about),
-    url(r"^statistics$", statistics.statistics),
-    url(r"^$", main.main_menu),
-    url(r"^feeds/(?P<username>.+)\+(?P<user_hash>.+)", feed.show),
-    url(r"^my_samples/(?P<username>.+)", my_samples.edit),
+    url(r"^about$", statistics.about, name="about"),
+    url(r"^statistics$", statistics.statistics, name="statistics"),
+    url(r"^$", main.main_menu, name="main_menu"),
+    url(r"^feeds/(?P<username>.+)\+(?P<user_hash>.+)", feed.show, name="show_feed"),
+    url(r"^my_samples/(?P<username>.+)", my_samples.edit, name="edit_my_samples"),
 
     url(r"^depositions/split_and_rename_samples/(?P<deposition_number>.+)",
-        split_after_deposition.split_and_rename_after_deposition),
-    url(r"^depositions/$", main.deposition_search),
-    url(r"^depositions/(?P<deposition_number>.+)", main.show_deposition),
+        split_after_deposition.split_and_rename_after_deposition, name="split_and_rename_after_deposition"),
+    url(r"^depositions/$", main.deposition_search, name="deposition_search"),
+    url(r"^depositions/(?P<deposition_number>.+)", main.show_deposition, name="show_deposition"),
 
     url(r"^samples/by_id/(?P<sample_id>\d+)(?P<path_suffix>.*)", sample.by_id, name="show_sample_by_id"),
-    url(r"^samples/$", sample.search),
-    url(r"^advanced_search$", sample.advanced_search),
+    url(r"^samples/$", sample.search, name="sample_search"),
+    url(r"^advanced_search$", sample.advanced_search, name="advanced_search"),
     # FixMe: Must be regenerated with a minimal add-sample form
  #   url(r"^samples/add/$", sample.add),
-    url(r"^samples/(?P<parent_name>.+)/split/$", split_and_rename.split_and_rename),
-    url(r"^samples/(?P<sample_name>.+)/kill/$", sample_death.new),
-    url(r"^samples/(?P<sample_name>.+)/add_process/$", sample.add_process),
-    url(r"^samples/(?P<sample_name>.+)/edit/$", sample.edit),
-    url(r"^samples/(?P<sample_name>.+)/export/$", sample.export),
-    url(r"^samples/rename/$", sample.rename_sample),
+    url(r"^samples/(?P<parent_name>.+)/split/$", split_and_rename.split_and_rename, name="split_and_rename"),
+    url(r"^samples/(?P<sample_name>.+)/kill/$", sample_death.new, name="kill_sample"),
+    url(r"^samples/(?P<sample_name>.+)/add_process/$", sample.add_process, name="add_process"),
+    url(r"^samples/(?P<sample_name>.+)/edit/$", sample.edit, name="edit_sample"),
+    url(r"^samples/(?P<sample_name>.+)/export/$", sample.export, name="export_sample"),
+    url(r"^samples/rename/$", sample.rename_sample, name="rename_sample"),
     url(r"^samples/(?P<sample_name>.+)$", sample.show, name="show_sample_by_name"),
-    url(r"^bulk_rename$", bulk_rename.bulk_rename),
+    url(r"^bulk_rename$", bulk_rename.bulk_rename, name="bulk_rename"),
 
-    url(r"^resplit/(?P<old_split_id>.+)", split_and_rename.split_and_rename),
+    url(r"^resplit/(?P<old_split_id>.+)", split_and_rename.split_and_rename, name="resplit"),
 
-    url(r"^processes/(?P<process_id>\d+)$", main.show_process),
+    url(r"^processes/(?P<process_id>\d+)$", main.show_process, name="show_process"),
 
-    url(r"^sample_series/add/$", sample_series.new),
-    url(r"^sample_series/(?P<name>.+)/edit/$", sample_series.edit),
-    url(r"^sample_series/(?P<name>.+)/export/$", sample_series.export),
-    url(r"^sample_series/(?P<name>.+)", sample_series.show),
+    url(r"^sample_series/add/$", sample_series.new, name="add_sample_series"),
+    url(r"^sample_series/(?P<name>.+)/edit/$", sample_series.edit, name="edit_sample_series"),
+    url(r"^sample_series/(?P<name>.+)/export/$", sample_series.export, name="export_sample_series"),
+    url(r"^sample_series/(?P<name>.+)", sample_series.show, name="show_sample_series"),
 
     url(r"^results/add/$", result.edit, {"process_id": None}, "add_result"),
     url(r"^results/(?P<process_id>\d+)/edit/$", result.edit, name="edit_result"),
-    url(r"^results/(?P<process_id>\d+)/export/$", result.export),
-    url(r"^results/images/(?P<process_id>\d+)$", result.show_image),
-    url(r"^results/thumbnails/(?P<process_id>\d+)$", result.show_thumbnail),
-    url(r"^results/(?P<process_id>\d+)$", result.show),
+    url(r"^results/(?P<process_id>\d+)/export/$", result.export, name="export_result"),
+    url(r"^results/images/(?P<process_id>\d+)$", result.show_image, name="show_result_image"),
+    url(r"^results/thumbnails/(?P<process_id>\d+)$", result.show_thumbnail, name="show_result_thumbnail"),
+    url(r"^results/(?P<process_id>\d+)$", result.show, name="show_result"),
 
     url(r"^plots/thumbnails/(?P<process_id>\d+)/(?P<plot_id>.+)", plots.show_plot, {"thumbnail": True},
         "process_plot_thumbnail"),
@@ -114,24 +116,24 @@ urlpatterns = [
     url(r"^plots/(?P<process_id>\d+)/(?P<plot_id>.+)", plots.show_plot, {"thumbnail": False}, "process_plot"),
     url(r"^plots/(?P<process_id>\d+)$", plots.show_plot, {"plot_id": "", "thumbnail": False}, "default_process_plot"),
 
-    url(r"^external_operators/add/$", external_operator.new),
-    url(r"^external_operators/(?P<external_operator_id>.+)/edit/$", external_operator.edit),
-    url(r"^external_operators/(?P<external_operator_id>.+)", external_operator.show),
-    url(r"^external_operators/$", external_operator.list_),
+    url(r"^external_operators/add/$", external_operator.new, name="add_external_operator"),
+    url(r"^external_operators/(?P<external_operator_id>.+)/edit/$", external_operator.edit, name="edit_external_operator"),
+    url(r"^external_operators/(?P<external_operator_id>.+)", external_operator.show, name="show_external_operator"),
+    url(r"^external_operators/$", external_operator.list_, name="list_external_operators"),
 
-    url(r"^preferences/(?P<login_name>.+)", user_details.edit_preferences),
-    url(r"^topics_and_permissions/(?P<login_name>.+)", user_details.topics_and_permissions),
+    url(r"^preferences/(?P<login_name>.+)", user_details.edit_preferences, name="edit_preferences"),
+    url(r"^topics_and_permissions/(?P<login_name>.+)", user_details.topics_and_permissions, name="topics_and_permissions"),
 
-    url(r"^permissions/$", permissions.list_),
-    url(r"^permissions/(?P<username>.+)", permissions.edit),
+    url(r"^permissions/$", permissions.list_, name="list_permissions"),
+    url(r"^permissions/(?P<username>.+)", permissions.edit, name="edit_permissions"),
 
-    url(r"^topics/add/$", topic.add),
-    url(r"^topics/$", topic.list_),
-    url(r"^topics/(?P<id>\d+)$", topic.edit),
+    url(r"^topics/add/$", topic.add, name="add_topic"),
+    url(r"^topics/$", topic.list_, name="list_topics"),
+    url(r"^topics/(?P<id>\d+)$", topic.edit, name="edit_topic"),
 
-    url(r"^claims/(?P<username>.+)/add/$", claim.add),
-    url(r"^claims/(?P<username>.+)/$", claim.list_),
-    url(r"^claims/(?P<claim_id>\d+)$", claim.show),
+    url(r"^claims/(?P<username>.+)/add/$", claim.add, name="add_claim"),
+    url(r"^claims/(?P<username>.+)/$", claim.list_, name="list_claims"),
+    url(r"^claims/(?P<claim_id>\d+)$", claim.show, name="show_claim"),
 
     url(r"^add_sample$", json_client.add_sample),
     url(r"^primary_keys$", json_client.primary_keys),
@@ -142,26 +144,26 @@ urlpatterns = [
     url(r"^add_alias$", json_client.add_alias),
     url(r"^change_my_samples$", json_client.change_my_samples),
 
-    url(r"^qr_code$", sample.qr_code),
-    url(r"^data_matrix_code$", sample.data_matrix_code),
+    url(r"^qr_code$", sample.qr_code, name="qr_code"),
+    url(r"^data_matrix_code$", sample.data_matrix_code, name="data_matrix_code"),
 
-    url(r"^status/add/$", status.add),
-    url(r"^status/$", status.show),
-    url(r"^status/(?P<id_>\d+)/withdraw/$", status.withdraw),
+    url(r"^status/add/$", status.add, name="add_status"),
+    url(r"^status/$", status.show, name="show_status"),
+    url(r"^status/(?P<id_>\d+)/withdraw/$", status.withdraw, name="withdraw_status"),
 
-    url(r"^fold_process/(?P<sample_id>\d+)$", json_client.fold_process),
-    url(r"^folded_processes/(?P<sample_id>\d+)$", json_client.get_folded_processes),
+    url(r"^fold_process/(?P<sample_id>\d+)$", json_client.fold_process, name="fold_process"),
+    url(r"^folded_processes/(?P<sample_id>\d+)$", json_client.get_folded_processes, name="get_folded_processes"),
 
-    url(r"^merge_samples$", merge_samples.merge),
+    url(r"^merge_samples$", merge_samples.merge, name="merge_samples"),
 
-    url(r"crawler_logs/$", log_viewer.list),
-    url(r"crawler_logs/(?P<process_class_name>[a-z_0-9]+)$", log_viewer.view),
+    url(r"crawler_logs/$", log_viewer.list, name="list_log_viewers"),
+    url(r"crawler_logs/(?P<process_class_name>[a-z_0-9]+)$", log_viewer.view, name="show_crawler_log"),
 
-    url(r"^tasks/$", task_lists.show),
+    url(r"^tasks/$", task_lists.show, name="show_task_lists"),
     url(r"^tasks/add/$", task_lists.edit, {"task_id": None}),
-    url(r"^tasks/(?P<task_id>\d+)/edit/$", task_lists.edit),
-    url(r"^tasks/(?P<task_id>\d+)/remove/$", task_lists.remove),
+    url(r"^tasks/(?P<task_id>\d+)/edit/$", task_lists.edit, name="edit_task_list"),
+    url(r"^tasks/(?P<task_id>\d+)/remove/$", task_lists.remove, name="remove_task_list"),
 
-    url(r"^fold_main_menu_element/", json_client.fold_main_menu_element),
-    url(r"^folded_main_menu_elements/", json_client.get_folded_main_menu_elements),
+    url(r"^fold_main_menu_element/", json_client.fold_main_menu_element, name="fold_main_menu_element"),
+    url(r"^folded_main_menu_elements/", json_client.get_folded_main_menu_elements, name="get_folded_main_menu_elements"),
 ]
