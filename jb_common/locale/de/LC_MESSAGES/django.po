@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-13 14:03+0200\n"
+"POT-Creation-Date: 2016-04-27 18:43+0000\n"
 "PO-Revision-Date: 2015-08-12 17:03+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -33,48 +33,48 @@ msgstr ""
 msgid "JuliaBase – administration"
 msgstr "JuliaBase – Verwaltung"
 
-#: jb_common/apps.py:43
+#: jb_common/apps.py:47
 msgid "add"
 msgstr "hinzufügen"
 
-#: jb_common/apps.py:44
+#: jb_common/apps.py:48
 msgctxt "top-level menu item"
 msgid "explore"
 msgstr "nachschlagen"
 
-#: jb_common/apps.py:45
+#: jb_common/apps.py:49
 msgid "manage"
 msgstr "verwalten"
 
-#: jb_common/apps.py:49
+#: jb_common/apps.py:53
 msgid "edit preferences"
 msgstr "Einstellungen ändern"
 
-#: jb_common/apps.py:53
+#: jb_common/apps.py:57
 msgid "change password"
 msgstr "Passwort ändern"
 
-#: jb_common/apps.py:54
+#: jb_common/apps.py:58
 msgid "logout"
 msgstr "Logout"
 
-#: jb_common/apps.py:56
+#: jb_common/apps.py:60
 msgid "main menu"
 msgstr "Hauptmenü"
 
-#: jb_common/apps.py:62
+#: jb_common/apps.py:66
 msgid "help"
 msgstr "Hilfe"
 
-#: jb_common/apps.py:63
+#: jb_common/apps.py:67
 msgid "statistics"
 msgstr "Statistiken"
 
-#: jb_common/apps.py:64
+#: jb_common/apps.py:68
 msgid "about"
 msgstr "über"
 
-#: jb_common/apps.py:74
+#: jb_common/apps.py:78
 #, python-brace-format
 msgid "switch to {language}"
 msgstr "wechsle zu {language}"
@@ -109,142 +109,142 @@ msgstr "Kleine Ganzzahl in Einheiten von %(unit)s"
 msgid "Positive small integer in the unit of %(unit)s"
 msgstr "Positive kleine Ganzzahl in Einheiten von %(unit)s"
 
-#: jb_common/models.py:43 jb_common/models.py:130
+#: jb_common/models.py:44 jb_common/models.py:131
 msgid "name"
 msgstr "Name"
 
-#: jb_common/models.py:44
+#: jb_common/models.py:45
 msgid "app label"
 msgstr "App-Label"
 
-#: jb_common/models.py:48 jb_common/models.py:70 jb_common/models.py:134
+#: jb_common/models.py:49 jb_common/models.py:71 jb_common/models.py:135
 #: jb_common/templates/jb_common/show_user.html:36
 msgid "department"
 msgstr "Abteilung"
 
-#: jb_common/models.py:49
+#: jb_common/models.py:50
 msgid "departments"
 msgstr "Abteilungen"
 
-#: jb_common/models.py:68 jb_common/models.py:254
+#: jb_common/models.py:69 jb_common/models.py:255
 msgid "user"
 msgstr "Benutzer"
 
-#: jb_common/models.py:78
+#: jb_common/models.py:79
 msgid "language"
 msgstr "Sprache"
 
-#: jb_common/models.py:79
+#: jb_common/models.py:80
 msgid "operating system"
 msgstr "Betriebssystem"
 
-#: jb_common/models.py:80
+#: jb_common/models.py:81
 msgid "layout last modified"
 msgstr "letzte Änderung des Layouts"
 
-#: jb_common/models.py:85 jb_common/models.py:86
+#: jb_common/models.py:86 jb_common/models.py:87
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: jb_common/models.py:131
+#: jb_common/models.py:132
 msgid "members"
 msgstr "Mitglieder"
 
-#: jb_common/models.py:133
+#: jb_common/models.py:134
 msgid "confidential"
 msgstr "vertraulich"
 
-#: jb_common/models.py:135
+#: jb_common/models.py:136
 msgid "parent topic"
 msgstr "Überthema"
 
-#: jb_common/models.py:137
+#: jb_common/models.py:138
 msgid "topic manager"
 msgstr "Themenmanager"
 
-#: jb_common/models.py:142
+#: jb_common/models.py:143
 msgid "topic"
 msgstr "Thema"
 
-#: jb_common/models.py:143
+#: jb_common/models.py:144
 msgid "topics"
 msgstr "Themen"
 
-#: jb_common/models.py:147
+#: jb_common/models.py:148
 msgid "Can add new topics"
 msgstr "Darf neue Themen hinzufügen"
 
-#: jb_common/models.py:148
+#: jb_common/models.py:149
 msgid "Can edit all topics"
 msgstr "Darf alle Themen ändern"
 
-#: jb_common/models.py:149
+#: jb_common/models.py:150
 msgid "Can edit topics that he/she is a manager of"
 msgstr "Darf Themen ändern, für die er/sie Manager ist"
 
-#: jb_common/models.py:180
+#: jb_common/models.py:181
 #, python-brace-format
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: jb_common/models.py:253
+#: jb_common/models.py:254
 msgid "hash value"
 msgstr "Hashwert"
 
-#: jb_common/models.py:256
+#: jb_common/models.py:257
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: jb_common/models.py:258
+#: jb_common/models.py:259
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: jb_common/models.py:261
+#: jb_common/models.py:262
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: jb_common/models.py:262
+#: jb_common/models.py:263
 msgid "error pages"
 msgstr "Fehlerseiten"
 
-#: jb_common/search.py:256
+#: jb_common/search.py:255
 msgid "You can't search for empty values while giving a non-empty value."
 msgstr ""
 "Sie können nicht nach explizit leeren Werten suchen und gleichzeitig einen "
 "nicht-leeren Wert angeben."
 
-#: jb_common/search.py:263
+#: jb_common/search.py:262
 msgid "explicitly empty"
 msgstr "explizit leer"
 
-#: jb_common/search.py:351
+#: jb_common/search.py:350
 msgid ""
 "The timestamp didn't match YYYY-MM-DD HH:MM:SS or a starting part of it."
 msgstr ""
 "Der Zeitstempel passte nicht in das Muster JJJJ-MM-TT HH:MM:SS oder einem "
 "vorderen Teil davon."
 
-#: jb_common/search.py:380
+#: jb_common/search.py:379
 msgid "Invalid date or time."
 msgstr "Ungültiges Datum oder ungültige Zeit."
 
-#: jb_common/search.py:411
+#: jb_common/search.py:410
 msgid "doesn't matter"
 msgstr "egal"
 
-#: jb_common/search.py:411 jb_common/templatetags/juliabase.py:164
+#: jb_common/search.py:410 jb_common/templatetags/juliabase.py:161
 msgid "yes"
 msgstr "ja"
 
-#: jb_common/search.py:411 jb_common/templatetags/juliabase.py:164
+#: jb_common/search.py:410 jb_common/templatetags/juliabase.py:161
 msgid "no"
 msgstr "nein"
 
-#: jb_common/search.py:433
+#: jb_common/search.py:432
 msgid "containing"
 msgstr "enthaltend"
 
-#: jb_common/search.py:769
+#: jb_common/search.py:768
 msgid "restrict to"
 msgstr "beschränken auf"
 
@@ -271,7 +271,7 @@ msgstr ""
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: jb_common/templates/500.html:38 jb_common/templates/jb_base.html:88
+#: jb_common/templates/500.html:38 jb_common/templates/jb_base.html.py:88
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -423,55 +423,55 @@ msgstr "Benutzername"
 msgid "Email address"
 msgstr "Email-Adresse"
 
-#: jb_common/templatetags/juliabase.py:155
+#: jb_common/templatetags/juliabase.py:152
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: jb_common/utils/base.py:171
+#: jb_common/utils/base.py:173
 msgid "You mustn't use image and headings syntax in Markdown markup."
 msgstr ""
 "Sie dürfen weder Bilder noch Überschriften in Markdown-Markup verwenden."
 
-#: jb_common/utils/base.py:200
+#: jb_common/utils/base.py:202
 #, python-format
 msgid "Couldn't open %(filename)s."
 msgstr "Konnte %(filename)s nicht öffnen."
 
-#: jb_common/utils/base.py:214
+#: jb_common/utils/base.py:216
 msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #. Translators: Intended as a separator in an enumeration of three or more items
-#: jb_common/utils/base.py:788
+#: jb_common/utils/base.py:859
 msgid ", "
 msgstr ", "
 
-#: jb_common/utils/base.py:788
+#: jb_common/utils/base.py:859
 msgid ", and "
 msgstr " und "
 
 #. Translators: Intended to be used in an enumeration of exactly two items
-#: jb_common/utils/base.py:791
+#: jb_common/utils/base.py:862
 msgid " and "
 msgstr " und "
 
-#: jb_common/utils/base.py:987
+#: jb_common/utils/base.py:1060
 #, python-brace-format
 msgid "Can add {class_name}"
 msgstr "Darf {class_name} hinzufügen"
 
-#: jb_common/utils/base.py:988
+#: jb_common/utils/base.py:1061
 #, python-brace-format
 msgid "Can edit every {class_name}"
 msgstr "Darf jede(n/s) {class_name} ändern"
 
-#: jb_common/utils/base.py:989
+#: jb_common/utils/base.py:1062
 #, python-brace-format
 msgid "Can view every {class_name}"
 msgstr "Darf jede(n/s) {class_name} sehen"
 
-#: jb_common/utils/base.py:990
+#: jb_common/utils/base.py:1063
 #, python-brace-format
 msgid "Can edit permissions for {class_name}"
 msgstr "Darf die Berechtigungen für {class_name} ändern"

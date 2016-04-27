@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-08-13 14:03+0200\n"
+"POT-Creation-Date: 2016-04-27 18:43+0000\n"
 "PO-Revision-Date: 2015-03-11 10:01+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -65,8 +65,8 @@ msgstr "Sekunden"
 msgid "duration of the match"
 msgstr "Dauer des Matches"
 
-#: kicker/models.py:42 kicker/models.py:58 kicker/models.py:70
-#: kicker/models.py:82
+#: kicker/models.py:42 kicker/models.py:60 kicker/models.py:73
+#: kicker/models.py:86
 msgid "timestamp"
 msgstr "Zeitstempel"
 
@@ -78,71 +78,71 @@ msgstr "beendet"
 msgid "reporter"
 msgstr "Berichter"
 
-#: kicker/models.py:49
+#: kicker/models.py:50
 msgid "match"
 msgstr "Match"
 
-#: kicker/models.py:50
+#: kicker/models.py:51
 msgid "matches"
 msgstr "Matches"
 
-#: kicker/models.py:54
+#: kicker/models.py:55
 msgid "owner"
 msgstr "Besitzer"
 
-#: kicker/models.py:55
+#: kicker/models.py:57
 msgid "bought person"
 msgstr "Gekaufte Person"
 
-#: kicker/models.py:57
+#: kicker/models.py:59
 msgid "number of shares"
 msgstr "Aktienanzahl"
 
-#: kicker/models.py:63
+#: kicker/models.py:65
 msgid "shares"
 msgstr "Aktie"
 
-#: kicker/models.py:64
+#: kicker/models.py:66
 msgid "shareses"
 msgstr "Aktien"
 
-#: kicker/models.py:68
+#: kicker/models.py:70
 msgid "player"
 msgstr "Spieler"
 
-#: kicker/models.py:69 kicker/models.py:75
+#: kicker/models.py:72 kicker/models.py:78
 msgid "kicker number"
 msgstr "Kickerzahl"
 
-#: kicker/models.py:76 kicker/templates/kicker/summary.html:31
+#: kicker/models.py:79 kicker/templates/kicker/summary.html.py:31
 msgid "kicker numbers"
 msgstr "Kickerzahlen"
 
-#: kicker/models.py:80
+#: kicker/models.py:83
 msgid "gambler"
 msgstr "Spieler"
 
-#: kicker/models.py:81 kicker/models.py:87
+#: kicker/models.py:85 kicker/models.py:91
 msgid "stock value"
 msgstr "Aktienkurs"
 
-#: kicker/models.py:88
+#: kicker/models.py:92
 msgid "stock values"
 msgstr "Aktienkurse"
 
-#: kicker/models.py:97
+#: kicker/models.py:101
 msgid "user"
 msgstr "Benutzer"
 
-#: kicker/models.py:99
+#: kicker/models.py:103
 msgid "nickname"
 msgstr "Spitzname"
 
-#: kicker/models.py:100
+#: kicker/models.py:104
 msgid "shortkey"
 msgstr "Tastenkürzel"
 
-#: kicker/models.py:103 kicker/models.py:104
+#: kicker/models.py:107 kicker/models.py:108
 msgid "user details"
 msgstr "Benutzerdetails"
 
@@ -154,55 +154,55 @@ msgstr "Ihre Kicker-Benutzerdetails ändern"
 msgid "Already taken shortkeys:"
 msgstr "Bereits vergebene Tastenkürzel:"
 
-#: kicker/views.py:194 kicker/views.py:261
+#: kicker/views.py:196 kicker/views.py:263
 msgid "You must be the original reporter of this match."
 msgstr "Sie müssen der ursprüngliche Berichter des Matches sein."
 
-#: kicker/views.py:212
+#: kicker/views.py:214
 msgid "Matches with three players can't be processed."
 msgstr "Matches mit drei Spielern können nicht verarbeitet werden."
 
-#: kicker/views.py:214
+#: kicker/views.py:216
 msgid "All players are the same person."
 msgstr "Alle Spieler sind dieselbe Person."
 
-#: kicker/views.py:218
+#: kicker/views.py:220
 msgid "A finished match can't be edited anymore."
 msgstr "Ein beendetes Match kann nicht mehr geändert werden."
 
-#: kicker/views.py:225
+#: kicker/views.py:227
 msgid "This match is older than the most recent kicker numbers."
 msgstr "Dieses Match ist älter als die letzten Kickerzahlen."
 
-#: kicker/views.py:246
+#: kicker/views.py:248
 msgid "Seconds must be positive."
 msgstr "Sekunden müssen eine positive Zahl sein."
 
-#: kicker/views.py:263
+#: kicker/views.py:265
 msgid "A finished match can't be canceled."
 msgstr "Ein beendetes Match kann nicht abgebrochen werden."
 
-#: kicker/views.py:353
+#: kicker/views.py:356
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:372
+#: kicker/views.py:375
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:379
+#: kicker/views.py:382
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
-#: kicker/views.py:381
+#: kicker/views.py:384
 msgid "This shortkey is invalid."
 msgstr "Dieses Tastenkürzel ist ungültig."
 
-#: kicker/views.py:395
+#: kicker/views.py:398
 msgid "The preferences were successfully updated."
 msgstr "Die Einstellungen wurden erfolgreich geändert."
 
-#: kicker/views.py:399
+#: kicker/views.py:402
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"
