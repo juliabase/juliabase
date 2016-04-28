@@ -34,7 +34,6 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst
 import django.core
 from django.conf import settings
-from jb_common.models import Topic
 from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, sorted_users
 from jb_common.utils.views import UserField
 from samples import models, permissions
@@ -237,8 +236,7 @@ def list_(request):
     else:
         user_list_form = None
     if user.has_perm("jb_common.add_topic") or user.has_perm("jb_common.change_topic"):
-        topic_manager_permission = Permission.objects.get(
-            codename="edit_their_topics", content_type=ContentType.objects.get_for_model(Topic))
+        topic_manager_permission = permissions.get_topic_manager_permission()
         topic_managers = sorted_users(
             User.objects.filter(is_active=True, is_superuser=False)
             .filter(Q(groups__permissions=topic_manager_permission) |

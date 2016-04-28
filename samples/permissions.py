@@ -244,6 +244,23 @@ def get_lab_notebooks(user):
     return lab_notebooks
 
 
+_topic_manager_permission = None
+def get_topic_manager_permission():
+    """Returns the permission object for topic managers.  This caches the database
+    access which is needed to get this permissions object.
+
+    :return:
+      The permission to edit all topics which you are member of
+
+    :rtype: django.contrib.auth.models.Permission
+    """
+    global _topic_manager_permission
+    if not _topic_manager_permission:
+        _topic_manager_permission = Permission.objects.get(
+            codename="edit_their_topics", content_type=ContentType.objects.get_for_model(jb_common.models.Topic))
+    return _topic_manager_permission
+
+
 def can_edit_any_topics(user):
     """Returns whether the user can edit any topics.  It is used to decide whether
     or not a link to the “choose topic for edit” page should be shown.
@@ -685,16 +702,15 @@ def assert_can_edit_sample(user, sample):
 
     :raises PermissionError: if the user is not allowed to edit the sample
     """
-    from samples.views.permissions import PermissionsModels
     currently_responsible_person = sample.currently_responsible_person
     sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
     user_department = user.jb_user_details.department or NoDepartment()
     if not sample.topic and sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
+    topic_manager_permission = get_topic_manager_permission()
     if sample.topic and currently_responsible_person != user and not user.is_superuser and not \
-        (user in sample.topic.members.all() and
-         PermissionsModels.topic_manager_permission in user.user_permissions.all()):
+        (user in sample.topic.members.all() and topic_manager_permission in user.user_permissions.all()):
         description = _("You are not allowed to edit the sample “{name}” (including splitting and declaring dead) because "
                         "you are not the currently responsible person for this sample.").format(name=sample)
         raise PermissionError(user, description)
