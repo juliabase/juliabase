@@ -102,8 +102,8 @@ class PermissionsModels(object):
         self.codename = addable_model_class.__name__.lower()
         content_type = ContentType.objects.get_for_model(addable_model_class)
         try:
-            self.edit_permissions_permission = Permission.objects.get(codename="edit_permissions_for_{}".format(self.codename),
-                                                                      content_type=content_type)
+            self.edit_permissions_permission = Permission.objects.get(
+                codename="edit_permissions_for_{}".format(self.codename), content_type=content_type)
         except Permission.DoesNotExist:
             self.edit_permissions_permission = None
         try:
