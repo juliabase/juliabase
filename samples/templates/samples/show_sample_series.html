@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  width="16" height="16"/></a
      >{% endif %}
   {% if can_add_result %}<a class="edit-icon"
-  href="{% url 'sample:add_result' %}?sample_series={{ sample_series.name|urlquote_plus }}&amp;next={{ sample_series.get_absolute_url|urlquote_plus }}"
+  href="{% url 'samples:add_result' %}?sample_series={{ sample_series.name|urlquote_plus }}&amp;next={{ sample_series.get_absolute_url|urlquote_plus }}"
    ><img src="{% static "juliabase/icons/lightbulb_add.png" %}" alt="add-result icon" title="{% trans 'add result' %}"
          width="16" height="16"/></a>{% endif %}
   <a class="edit-icon"
