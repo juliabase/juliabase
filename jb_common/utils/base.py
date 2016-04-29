@@ -42,6 +42,7 @@ from django.utils import translation
 from django.utils.decorators import available_attrs
 from django.utils.translation import ugettext_lazy as _, ugettext_lazy, ugettext
 from django.utils.functional import allow_lazy
+import django.utils.timezone
 from jb_common import mimeparse
 from jb_common.utils import blobs
 
@@ -522,6 +523,23 @@ def register_abstract_model(abstract_model):
     abstract_models.add(abstract_model)
 
 
+def getmtime_utc(path):
+    """Returns the modification time of ``path`` as a timezone-aware object.  The
+    timezone is UTC.
+
+    :param path: path to the file
+
+    :type path: str
+
+    :return:
+      The modification time of ``path`` as a timezone-aware datetime object in
+      UTC.
+
+    :rtype: datetime.datetime
+    """
+    return datetime.datetime.fromtimestamp(os.path.getmtime(path), django.utils.timezone.utc)
+
+
 def is_update_necessary(destination, source_files=[], timestamps=[], additional_inaccuracy=0):
     """Returns whether the destination file needs to be re-created from the
     sources.  It bases of the timestamps of last file modification.  If the
@@ -553,7 +571,7 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
     """
     all_timestamps = copy.copy(timestamps)
     if all(os.path.isabs(path) for path in source_files):
-        getmtime = lambda path: datetime.datetime.fromtimestamp(os.path.getmtime(path))
+        getmtime = getmtime_utc
     else:
         getmtime = blobs.storage.getmtime
     all_timestamps.extend(getmtime(filename) for filename in source_files)
@@ -562,7 +580,7 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
     return not os.path.exists(destination) or \
-        datetime.datetime.fromtimestamp(os.path.getmtime(destination) + additional_inaccuracy + 1) < max(all_timestamps)
+        getmtime_utc(destination) + datetime.timedelta(seconds=additional_inaccuracy + 1) < max(all_timestamps)
 
 
 def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
@@ -593,7 +611,7 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     """
     all_timestamps = copy.copy(timestamps)
     if all(os.path.isabs(path) for path in source_files):
-        getmtime = lambda path: datetime.datetime.fromtimestamp(os.path.getmtime(path))
+        getmtime = getmtime_utc
     else:
         getmtime = blobs.storage.getmtime
     all_timestamps.extend(getmtime(filename) for filename in source_files)

@@ -33,7 +33,7 @@ import os, uuid, datetime
 from contextlib import contextmanager
 import psycopg2
 from django.conf import settings
-from jb_common.utils.base import mkdirs
+from jb_common.utils.base import mkdirs, getmtime_utc
 from jb_common.signals import storage_changed
 
 
@@ -172,7 +172,7 @@ class Filesystem(BlobStorage):
         self.root = root or settings.MEDIA_ROOT
 
     def getmtime(self, path):
-        return datetime.datetime.fromtimestamp(os.path.getmtime(os.path.join(self.root, path)))
+        return getmtime_utc(os.path.join(self.root, path))
 
     def unlink(self, path):
         os.unlink(os.path.join(self.root, path))
