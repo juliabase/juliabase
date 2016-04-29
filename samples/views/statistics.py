@@ -26,10 +26,6 @@ this in the institution's app.
 from __future__ import absolute_import, division, unicode_literals
 
 import sys
-try:
-    import memcache
-except ImportError:
-    memcache = None
 import matplotlib
 from django.views.decorators.cache import cache_page, cache_control
 from django.utils.translation import ugettext as _
@@ -51,11 +47,18 @@ def get_cache_connections():
 
     :rtype: int, int
     """
-    if memcache and settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.memcached.MemcachedCache":
-        memcached_client = memcache.Client(settings.CACHES["default"]["LOCATION"])
+    memcached_binding = None
+    if settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.memcached.MemcachedCache":
+        import memcache as memcached_binding
+        key_mapping = lambda k: k.encode("ascii")
+    elif settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.memcached.PyLibMCCache":
+        import pylibmc as memcached_binding
+        key_mapping = lambda k: k
+    if memcached_binding:
+        memcached_client = memcached_binding.Client(settings.CACHES["default"]["LOCATION"])
         servers = memcached_client.get_stats()
         number_of_servers = len(servers)
-        connections = sum(int(server[1][b"curr_connections"]) for server in servers)
+        connections = sum(int(server[1][key_mapping("curr_connections")]) for server in servers)
     else:
         number_of_servers = 0
         connections = 0
