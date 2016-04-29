@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% spaceless %}
     <h2>{{ process_name }}<a
        class="edit-icon"
-       href="{% url 'samples:edit_task_list' %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
+       href="{% url 'samples:add_task_list' %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
         <img src="{% static "juliabase/icons/layout_add.png" %}" alt="add icon" title="{% trans 'add task'|capfirst %}"
              width="16" height="16"/></a></h2>
   {% endspaceless %}

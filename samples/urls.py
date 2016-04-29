@@ -160,7 +160,7 @@ urlpatterns = [
     url(r"crawler_logs/(?P<process_class_name>[a-z_0-9]+)$", log_viewer.view, name="show_crawler_log"),
 
     url(r"^tasks/$", task_lists.show, name="show_task_lists"),
-    url(r"^tasks/add/$", task_lists.edit, {"task_id": None}),
+    url(r"^tasks/add/$", task_lists.edit, {"task_id": None}, name="add_task_list"),
     url(r"^tasks/(?P<task_id>\d+)/edit/$", task_lists.edit, name="edit_task_list"),
     url(r"^tasks/(?P<task_id>\d+)/remove/$", task_lists.remove, name="remove_task_list"),
 
