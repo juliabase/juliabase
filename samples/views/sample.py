@@ -46,9 +46,8 @@ from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
-from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, \
-    adjust_timezone_information, is_json_requested, respond_in_json, get_all_models, \
-    mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
+from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_json_requested, \
+    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
@@ -575,7 +574,7 @@ def embed_timestamp(request, sample_name):
             timestamps.append(user_details.display_settings_timestamp)
             timestamps.append(user_details.my_samples_timestamp)
             timestamps.append(request.user.jb_user_details.layout_last_modified)
-            request._sample_timestamp = adjust_timezone_information(max(timestamps))
+            request._sample_timestamp = max(timestamps)
 
 
 def sample_timestamp(request, sample_name):

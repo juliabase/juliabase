@@ -30,7 +30,6 @@ from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
 import hashlib, datetime
-from jb_common.utils.base import adjust_timezone_information
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms.utils import ValidationError
@@ -127,9 +126,9 @@ def embed_timestamp(request, name):
         except models.SampleSeries.DoesNotExist:
             request._sample_series_timestamp = None
         else:
-            timestamp = max(sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp,
-                            request.user.jb_user_details.layout_last_modified)
-            request._sample_series_timestamp = adjust_timezone_information(timestamp)
+            request._sample_series_timestamp = max(
+                sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp,
+                request.user.jb_user_details.layout_last_modified)
 
 
 def sample_series_timestamp(request, name):

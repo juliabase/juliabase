@@ -27,7 +27,6 @@ from contextlib import contextmanager
 from functools import wraps
 from smtplib import SMTPException
 from functools import update_wrapper
-import dateutil.tz
 import django.http
 import django.contrib.auth.models
 import django.core.urlresolvers
@@ -373,26 +372,6 @@ def unicode_strftime(timestamp, format_string):
         return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
     else:
         return timestamp.strftime(format_string)
-
-
-def adjust_timezone_information(timestamp):
-    """Adds proper timezone information to the timestamp.  It assumes that the
-    timestamp has no previous ``tzinfo`` set, but it refers to the
-    ``TIME_ZONE`` Django setting.  This is the case with the PostgreSQL backend
-    as long as http://code.djangoproject.com/ticket/2626 is not fixed.
-
-    FixMe: This is not tested with another database backend except PostgreSQL.
-
-    :param timestamp: the timestamp whose ``tzinfo`` should be modified
-
-    :type timestamp: datetime.datetime
-
-    :return:
-      the timestamp with the correct timezone setting
-
-    :rtype: datetime.datetime
-    """
-    return timestamp.replace(tzinfo=dateutil.tz.tzlocal())
 
 
 def send_email(subject, content, recipients, format_dict=None):
