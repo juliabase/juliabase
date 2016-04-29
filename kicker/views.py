@@ -204,7 +204,8 @@ def edit_match(request, id_=None):
         goals_b = int(request.POST["goals_b"])
         seconds = float(request.POST["seconds"])
         finished = request.POST.get("finished") == "on"
-        timestamp = datetime.datetime.strptime(request.POST["timestamp"], "%Y-%m-%d %H:%M:%S")
+        timestamp = django.utils.timezone.make_aware(datetime.datetime.strptime(
+            request.POST["timestamp"], "%Y-%m-%d %H:%M:%S"))
     except KeyError as error:
         raise JSONRequestException(3, error.args[0])
     except ValueError as error:
@@ -274,7 +275,8 @@ def set_start_kicker_number(request, username):
         raise JSONRequestException(3005, "You must be the user \"kicker\" to use this function.")
     try:
         start_kicker_number = int(request.POST["start_kicker_number"])
-        timestamp = datetime.datetime.strptime(request.POST["timestamp"], "%Y-%m-%d %H:%M:%S")
+        timestamp = django.utils.timezone.make_aware(
+            datetime.datetime.strptime(request.POST["timestamp"], "%Y-%m-%d %H:%M:%S"))
     except KeyError:
         raise JSONRequestException(3, error.args[0])
     except ValueError as error:

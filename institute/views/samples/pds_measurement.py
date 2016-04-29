@@ -34,6 +34,7 @@ from django.conf import settings
 import django.contrib.auth.models
 from django import forms
 from django.utils.translation import ugettext_lazy as _, ugettext
+import django.utils.timezone
 from jb_common.utils.base import check_filepath
 import samples.utils.views as utils
 from samples import models
@@ -69,7 +70,7 @@ def get_data_from_file(number):
             key, __, value = line[1:].partition(":")
             key, value = key.strip().lower(), value.strip()
             if key == "timestamp":
-                result["timestamp"] = datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                result["timestamp"] = django.utils.timezone.make_aware(datetime.datetime.strptime(value, "%Y-%m-%d %H:%M:%S"))
             elif key == "apparatus":
                 result["apparatus"] = "pds" + value
             elif key == "comments":

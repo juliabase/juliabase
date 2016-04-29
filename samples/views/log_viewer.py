@@ -30,6 +30,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.utils.translation import ugettext as _
+import django.utils.timezone
 from jb_common.utils.base import camel_case_to_underscores
 from samples import permissions
 
@@ -49,7 +50,7 @@ def read_crawler_log(filepath):
     content = ""
     for i in xrange(start_index, len(lines)):
         content += lines[i][20:]
-    return content, datetime.datetime.strptime(lines[start_index][:19], "%Y-%m-%d %H:%M:%S")
+    return content, django.utils.timezone.make_aware(datetime.datetime.strptime(lines[start_index][:19], "%Y-%m-%d %H:%M:%S"))
 
 
 @login_required

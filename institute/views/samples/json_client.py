@@ -38,6 +38,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import get_object_or_404
 from django.http import Http404
+import django.utils.timezone
 from jb_common.models import Topic
 from jb_common.utils.base import respond_in_json, JSONRequestException
 import samples.utils.views as utils
@@ -226,7 +227,7 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cel
         return respond_in_json(_get_solarsimulator_measurement_by_filepath(filepath, request.user))
     except Http404:
         sample = get_object_or_404(models.Sample, id=sample_id)
-        start_date = datetime.datetime.strptime(date, "%Y-%m-%d")
+        start_date = django.utils.timezone.make_aware(datetime.datetime.strptime(date, "%Y-%m-%d"))
         end_date = start_date + datetime.timedelta(days=1)
         matching_measurements = institute.models.SolarsimulatorMeasurement.objects.filter(
             samples__id=sample_id, irradiation=irradiation, timestamp__gte=start_date, timestamp__lt=end_date). \
@@ -267,7 +268,8 @@ def get_current_structuring(request, sample_id):
     """
     sample = get_object_or_404(models.Sample, id=sample_id)
     try:
-        timestamp = datetime.datetime.strptime(request.GET["timestamp"].partition(".")[0], "%Y-%m-%d %H:%M:%S")
+        timestamp = django.utils.timezone.make_aware(
+            datetime.datetime.strptime(request.GET["timestamp"].partition(".")[0], "%Y-%m-%d %H:%M:%S"))
     except KeyError:
         timestamp = None
     except ValueError:
