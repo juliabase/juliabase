@@ -48,6 +48,7 @@ Portions of this module are inspired by
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
 
+import re
 from django.contrib.auth.models import User, Permission
 from django.contrib.sessions.models import Session
 import django.utils.timezone
@@ -112,6 +113,7 @@ class LDAPConnection(object):
     alive, this is not detected.  Typically, they live only for the duration
     of the login or the nightly maintenance process.
     """
+    url_regex = re.compile(r"(?:(?P<protocol>ldaps?)://)?(?P<host>[^:]+)(?::(?P<port>\d+))?$", re.IGNORECASE)
 
     def __init__(self):
         self.cached_ad_data = {}
@@ -120,6 +122,34 @@ class LDAPConnection(object):
             for ad_groupname, permission_codenames in settings.LDAP_GROUPS_TO_PERMISSIONS.items())
         managed_permissions_codenames = set().union(*settings.LDAP_GROUPS_TO_PERMISSIONS.values())
         self.managed_permissions = set(Permission.objects.filter(codename__in=managed_permissions_codenames))
+
+    def get_server_parameters(self, url):
+        """Parses the given URL and returns parameters for ``ldap3.Server``.  This
+        method is necessary to work around at least some ldap3 version that are
+        unable to properly parse the port part in the URL.  Therefore, I do my
+        own parsing here.
+
+        :param url: URL to the LDAP server.
+
+        :type url: str
+
+        :return:
+          The keyword arguments to the ``ldap3.Server`` constructor.  If the
+          syntax of URL cannot be recognised, the returned dict is ``{"host":
+          url}``.
+
+        :rtype: dict mapping str to object
+        """
+        kwargs = {}
+        match = self.url_regex.match(url)
+        if match:
+            groups = match.groupdict()
+            kwargs["host"] = groups["host"]
+            kwargs["use_ssl"] = (groups["protocol"] or "").lower() == "ldaps"
+            kwargs["port"] = groups["port"] and int(groups["port"])
+        else:
+            kwargs["host"] = url
+        return kwargs
 
     def is_valid(self, username, password):
         """Returns whether the username/password combination is known in the AD, and
@@ -139,7 +169,7 @@ class LDAPConnection(object):
         """
         for ad_ldap_url in settings.LDAP_URLS:
             try:
-                server = ldap3.Server(ad_ldap_url, use_ssl=True)
+                server = ldap3.Server(**self.get_server_parameters(ad_ldap_url))
                 connection = ldap3.Connection(server, user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
                                               password=password.encode("utf-8"), raise_exceptions=True, read_only=True)
                 connection.bind()
@@ -178,7 +208,7 @@ class LDAPConnection(object):
             ad_data = self.cached_ad_data[username]
         except KeyError:
             for ad_ldap_url in settings.LDAP_URLS:
-                server = ldap3.Server(ad_ldap_url, use_ssl=True)
+                server = ldap3.Server(**self.get_server_parameters(ad_ldap_url))
                 connection = ldap3.Connection(server, raise_exceptions=True, read_only=True)
                 try:
                     connection.bind()

@@ -373,7 +373,8 @@ working one.  An example value may be::
 
     LDAP_URLS = ["ldaps://dc-e01.ad.mycompany.com:636"]
 
-Here, 636 is the port number of LDAP-over-TLS.
+Here, 636 is the port number of LDAP-over-TLS.  Note that in order to use TLS,
+you must start the URL with ``ldaps://``.
 
 
 Django settings with special meaning in JuliaBase
