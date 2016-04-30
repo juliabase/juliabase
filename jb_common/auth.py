@@ -59,6 +59,14 @@ from jb_common.signals import maintain
 from django.dispatch import receiver
 
 
+# FixMe: Apparently, ldap3 moved to long constant names and back again.  Thus,
+# this should be removed eventually.
+try:
+    ldap3.SUBTREE
+except AttributeError:
+    ldap3.SUBTREE = ldap3.SEARCH_SCOPE_WHOLE_SUBTREE
+
+
 class ActiveDirectoryBackend:
 
     supports_object_permissions = False
@@ -145,7 +153,12 @@ class LDAPConnection(object):
                 return False
             return True
         else:
-            mail_admins("JuliaBase LDAP error", message=latest_error.message["desc"])
+            try:
+                # FixMe: This branch is only for Python 2
+                message = latest_error.message["desc"]
+            except AttributeError:
+                message = str(latest_error)
+            mail_admins("JuliaBase LDAP error", message)
             return False
 
     def get_ad_data(self, username):
@@ -176,7 +189,12 @@ class LDAPConnection(object):
                                                     settings.LDAP_ADDITIONAL_ATTRIBUTES)))
                 except ldap3.LDAPException as e:
                     if settings.LDAP_URLS.index(ad_ldap_url) + 1 == len(settings.LDAP_URLS):
-                        mail_admins("JuliaBase LDAP error", message=e.message["desc"])
+                        try:
+                            # FixMe: This branch is only for Python 2
+                            message = e.message["desc"]
+                        except AttributeError:
+                            message = str(e)
+                        mail_admins("JuliaBase LDAP error", message)
                     else:
                         continue
                 ad_data = connection.response[0]["attributes"] if connection.response[0]["type"] == "searchResEntry" else None
