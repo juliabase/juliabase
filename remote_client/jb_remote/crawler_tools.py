@@ -118,8 +118,8 @@ def find_changed_files(root, diff_file, pattern=""):
     :param pattern: Regular expression for filenames (without path) that should
         be scanned.  By default, all files are scanned.
 
-    :type root: str
-    :type diff_file: str
+    :type root: unicode
+    :type diff_file: unicode
     :type pattern: unicode
 
     :return:
