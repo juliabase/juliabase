@@ -232,8 +232,9 @@ def get_lab_notebooks(user):
     lab_notebooks = []
     for process_class, process in get_all_addable_physical_process_models().items():
         try:
-            url = django.core.urlresolvers.reverse("lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                                                   kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
+            url = django.core.urlresolvers.reverse(
+                process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
         except django.core.urlresolvers.NoReverseMatch:
             pass
         else:
