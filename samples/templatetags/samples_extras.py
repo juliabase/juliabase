@@ -686,9 +686,8 @@ def task_color(task):
 
 @register.filter
 def get_hash_value(instance):
-    """
-    """
     return instance.get_hash_value()
+
 
 @register.simple_tag
 def expand_topic(topic, user):
@@ -739,16 +738,18 @@ def expand_topic(topic, user):
           """
     return mark_safe(result)
 
+
 @register.filter
 def class_name(value):
     """Returns the class name for a database model instance.
     """
     return value.__class__.__name__
 
+
 @register.filter
 def strip_substrings(value, pattern):
-    """Removes substrings from a value.
-    The substring pattern should have a clear delimiter.
+    """Removes substrings from a value.  The substring pattern should have a clear
+    delimiter.
 
     The allowed delimiter “;”, “,” and “\t”.
     """
@@ -756,6 +757,7 @@ def strip_substrings(value, pattern):
     for sub_pattern in substring_pattern:
         value = value.replace(sub_pattern, "")
     return value
+
 
 @register.filter
 def camel_case_to_human_text(value):
