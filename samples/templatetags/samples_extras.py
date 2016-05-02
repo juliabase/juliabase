@@ -753,9 +753,9 @@ def strip_substrings(value, pattern):
 
     The allowed delimiter “;”, “,” and “\t”.
     """
-    substring_pattern = map(unicode.strip, re.split(";|,|\t", pattern))
-    for sub_pattern in substring_pattern:
-        value = value.replace(sub_pattern, "")
+    for substring in re.split(r";|,|\t", pattern):
+        substring = substring.strip()
+        value = value.replace(substring, "")
     return value
 
 
