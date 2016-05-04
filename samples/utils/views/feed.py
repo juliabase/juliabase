@@ -338,7 +338,7 @@ class Reporter(object):
         who are allowed to see the sample and who have the sample on their “My
         Samples” list are informed.
 
-        :param samples: the samples that was edited
+        :param samples: the samples that were edited
         :param edit_description: The dictionary containing data about what was
             edited in the samples.  Its keys correspond to the fields of
             `~samples.utils.views.EditDescriptionForm`.

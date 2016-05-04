@@ -331,7 +331,7 @@ class PermissionError(Exception):
     and don't use Django's `PermissionDenied` because we need additional
     context variables.
 
-    :ivar description: the full description of the problem, possible remedy
+    :ivar description: The full description of the problem, possible remedy
       inclusive.  It should be a complete sentence, which addresses the user
       directly.  It should start with a capital letter and end with a full
       stop.  For example, it may be “You are not allowed to view sample 01B-410
