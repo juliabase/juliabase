@@ -420,6 +420,7 @@ class SamplesAndProcesses(object):
         except permissions.PermissionError:
             self.sample_context["can_add_process"] = False
         self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
+        self.sample_context["can_delete"] = permissions.has_permission_to_delete_sample(self.user, sample)
         if self.sample_context["can_edit"] and \
            sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
             self.sample_context["id_for_rename"] = str(sample.pk)
