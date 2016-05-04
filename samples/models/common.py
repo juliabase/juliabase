@@ -592,6 +592,32 @@ class Process(PolymorphicModel):
             and not related_object.related_model.__name__.startswith("Feed"))
         return search.SearchTreeNode(cls, related_models, search_fields)
 
+    def is_deletable(self, user):
+        """Returns whether this process can be deleted without leaving artifacts.  This
+        includes really only this condition, rather than whether the process is
+        young enough to be deleted, whether there are following processes etc.
+        Optionally, a (translated) text message may be returned with further
+        information.
+
+        The given current user is only used for checking whether cleaning up
+        the mentioned artifacts is allowed.  In particular, checkes whether the
+        current user is allowed to delete the current process per se must be
+        checked by the caller.
+
+        :param user: the current user
+
+        :type user: django.contrib.auth.models.User
+
+        :return:
+          Whether this process can be deleted, and a message.  If the process
+          can be deleted, the message contains an additional warning about side
+          effects.  Else, the message contains an explanation on why it cannot
+          be deleted.
+
+        :rtype: bool, unicode or NoneType
+        """
+        return True, None
+
 
 class PhysicalProcess(Process):
     """Abstract class for physical processes.  These processes are “real”
@@ -1038,6 +1064,13 @@ class SampleSplit(Process):
     @classmethod
     def get_search_tree_node(cls):
         raise NotImplementedError
+
+    def is_deletable(self, user):
+        pieces = self.pieces.all()
+        if not all(samples.permissions.has_permission_to_delete_sample(user, sample) for sample in pieces):
+            return False, _("At least one sample split piece cannot be deleted.")
+        else:
+            return True, _("The following samples are also deleted: {samples}".format(samples=format_enumeration(pieces)))
 
 
 @python_2_unicode_compatible
