@@ -32,6 +32,7 @@ import PIL.ImageOps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.core.urlresolvers
 import django.forms as forms
@@ -168,6 +169,33 @@ def edit(request, sample_name):
                "edit_description": edit_description_form}
     context.update(sample_details_context)
     return render(request, "samples/edit_sample.html", context)
+
+
+@login_required
+@require_http_methods(["POST"])
+@unquote_view_parameters
+def delete(request, sample_name):
+    """View for delete the given sample.  Note that this view is POST-only.
+    Typically, it is visited by clicking on an icon.
+
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
+
+    :type request: HttpRequest
+    :type sample_name: unicode
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    sample = utils.lookup_sample(sample_name, request.user)
+    permissions.assert_can_delete_sample(request.user, sample)
+    feed_reporter = utils.Reporter(request.user)
+    feed_reporter.report_deleted_sample(sample)
+    success_message = _("Sample {sample} was successfully deleted in the database.").format(sample=sample)
+    sample.delete()
+    return utils.successful_response(request, success_message)
 
 
 def get_allowed_processes(user, sample):

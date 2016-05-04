@@ -88,6 +88,7 @@ urlpatterns = [
     url(r"^samples/(?P<sample_name>.+)/kill/$", sample_death.new, name="kill_sample"),
     url(r"^samples/(?P<sample_name>.+)/add_process/$", sample.add_process, name="add_process"),
     url(r"^samples/(?P<sample_name>.+)/edit/$", sample.edit, name="edit_sample"),
+    url(r"^samples/(?P<sample_name>.+)/delete/$", sample.delete, name="delete_sample"),
     url(r"^samples/(?P<sample_name>.+)/export/$", sample.export, name="export_sample"),
     url(r"^samples/rename/$", sample.rename_sample, name="rename_sample"),
     url(r"^samples/(?P<sample_name>.+)$", sample.show, name="show_sample_by_name"),
