@@ -979,6 +979,15 @@ class Sample(models.Model):
         else:
             return search.SearchTreeNode(cls, related_models, search_fields)
 
+    def delete(self, *args, **kwargs):
+        """Deletes the sample and all of its processes that contain only this sample –
+        which includes splits, pieces, and the cascade after that.
+        """
+        for process in self.processes.all():
+            if process.samples.count() == 1:
+                process.delete()
+        super(Sample, self).delete(*args, **kwargs)
+
 
 @python_2_unicode_compatible
 class SampleAlias(models.Model):
@@ -1069,6 +1078,11 @@ class SampleSplit(Process):
             return False, _("At least one sample split piece cannot be deleted.")
         else:
             return True, _("The following samples are also deleted: {samples}".format(samples=format_enumeration(pieces)))
+
+    def delete(self, *args, **kwargs):
+        for sample in self.pieces.all():
+            sample.delete()
+        super(SampleSplit, self).delete(*args, **kwargs)
 
 
 @python_2_unicode_compatible
