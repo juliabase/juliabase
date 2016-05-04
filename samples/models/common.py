@@ -930,7 +930,6 @@ class Sample(models.Model):
                     for process in self.processes.all())
         return data
 
-
     def get_data_for_table_export(self):
         """Extract the data of this sample as a tree of nodes with lists of key–value
         pairs, ready to be used for the table data export.  Every child of the
@@ -955,7 +954,6 @@ class Sample(models.Model):
             data_node.children.extend(process.actual_instance.get_data_for_table_export()
                                   for process in self.processes.order_by("timestamp").iterator())
         return data_node
-
 
     @classmethod
     def get_search_tree_node(cls):
