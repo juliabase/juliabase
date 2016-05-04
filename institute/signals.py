@@ -85,6 +85,13 @@ def add_sample_details(sender, instance, created, **kwargs):
         institute_app.SampleDetails.objects.get_or_create(sample=instance)
 
 
+@receiver(signals.pre_delete, sender=Sample)
+def delete_sample_details(sender, instance, **kwargs):
+    """Delete ``SampleDetails`` for every deleted sample.
+    """
+    institute_app.SampleDetails.objects.get(sample=instance).delete()
+
+
 @receiver(signals.post_save)
 def update_informal_layers(sender, instance, created, **kwargs):
     """Update the informal layers of all samples connected with the process
