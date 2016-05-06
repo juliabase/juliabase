@@ -453,9 +453,14 @@ def assert_can_delete_sample(user, sample):
     :type user: django.contrib.auth.models.User
     :type sample: `samples.models.Sample`
 
+    :return:
+      the objects that are deleted
+
+    :rtype: set of ``Model``
+
     :raises PermissionError: if the user is not allowed to delete the sample
     """
-    sample.delete(dry_run=True, user=user)
+    return sample.delete(dry_run=True, user=user)
 
 
 def get_sample_clearance(user, sample):
@@ -569,9 +574,14 @@ def assert_can_delete_physical_process(user, process):
     :type user: django.contrib.auth.models.User
     :type process: `samples.models.Process`
 
+    :return:
+      the objects that are deleted
+
+    :rtype: set of ``Model``
+
     :raises PermissionError: if the user is not allowed to delete the process.
     """
-    process.delete(dry_run=True, user=user)
+    return process.delete(dry_run=True, user=user)
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
