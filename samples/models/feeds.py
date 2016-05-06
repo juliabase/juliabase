@@ -220,6 +220,23 @@ class FeedEditedPhysicalProcess(FeedEntry):
         return {"process": self.process.actual_instance}
 
 
+class FeedDeletedProcess(FeedEntry):
+    """Model for feed entries for a deleted process, including result processes.
+    """
+    process_name = models.TextField(_("process name"))
+
+    class Meta(PolymorphicModel.Meta):
+        verbose_name = _("deleted process feed entry")
+        verbose_name_plural = _("deleted process feed entries")
+
+    def get_metadata(self):
+        metadata = {}
+        metadata["title"] = _("Process {name} was deleted").format(name=self.process_name)
+        metadata["category term"] = "deleted process"
+        metadata["category label"] = "deleted process"
+        return metadata
+
+
 class FeedResult(FeedEntry):
     """Model for feed entries about new or edited result processes.  Note that
     this model doesn't care whether the result is connected with samples or

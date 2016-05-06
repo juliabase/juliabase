@@ -23,6 +23,7 @@ the database was changed in one way or another.
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 from django.contrib.contenttypes.models import ContentType
 import jb_common.models
@@ -235,6 +236,22 @@ class Reporter(object):
                 entry = models.FeedNewPhysicalProcess.objects.create(originator=self.originator, process=process)
             self.__add_watchers(process, important)
             self.__connect_with_users(entry, process.__class__)
+
+
+    def report_deleted_process(self, process):
+        """Generate a feed entry about a deletion of a process.
+
+        :param process: the process that was deleted
+
+        :type process: `samples.models.Process`
+        """
+        entry = models.FeedDeletedProcess.objects.create(originator=self.originator, process_name=six.text_type(process))
+        self.__add_watchers(process)
+        if isinstance(process, models.Result):
+            for sample_series in process.sample_series.all():
+                self.__add_watchers(sample_series)
+        self.__connect_with_users(entry, process.__class__)
+
 
     def report_result_process(self, result, edit_description=None):
         """Generate a feed entry for a result process which was recently

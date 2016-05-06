@@ -257,6 +257,8 @@ def delete_process(request, process_id):
     :rtype: HttpResponse
     """
     process = get_object_or_404(Process, pk=int_or_zero(process_id)).actual_instance
+    feed_reporter = utils.Reporter(request.user)
+    feed_reporter.report_deleted_process(process)
     success_message = _("Process {process} was successfully deleted in the database.").format(process=process)
     process.delete()
     return utils.successful_response(request, success_message)
