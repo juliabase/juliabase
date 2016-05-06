@@ -78,7 +78,7 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
       {% if sample.can_delete %}
         <form method="post" action="{% url 'samples:delete_sample' sample_name=sample.sample.name %}"
               class="edit-icon" style="display: inline">{% csrf_token %}
-          <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="delete icon" title="{% trans 'delete' %}"/>
+          <input type="image" src="{% static "juliabase/icons/delete.png" %}" alt="delete icon" title="{% trans 'delete' %}"/>
         </form>
       {% endif %}
       {% if sample.can_add_process %}<a class="edit-icon" href="{% url 'samples:add_process' sample_name=sample.sample.name %}"
