@@ -300,6 +300,24 @@ class FeedEditedSamples(FeedEntry):
         return metadata
 
 
+class FeedDeletedSample(FeedEntry):
+    """Model for feed entries for a deleted sample.  Note that in contrast to
+    edited samples, this is only one per feed entry.
+    """
+    sample_name = models.CharField(_("sample name"), max_length=30)
+
+    class Meta(PolymorphicModel.Meta):
+        verbose_name = _("deleted sample feed entry")
+        verbose_name_plural = _("deleted sample feed entries")
+
+    def get_metadata(self):
+        metadata = {}
+        metadata["title"] = _("Sample {name} was deleted").format(name=self.sample_name)
+        metadata["category term"] = "deleted sample"
+        metadata["category label"] = "deleted sample"
+        return metadata
+
+
 class FeedSampleSplit(FeedEntry):
     """Model for feed entries for sample splits.
     """

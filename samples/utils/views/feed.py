@@ -353,6 +353,19 @@ class Reporter(object):
         self.__add_interested_users(samples, important)
         self.__connect_with_users(entry, models.Sample)
 
+    def report_deleted_sample(self, sample):
+        """Generate a feed entry about a deletion of a sample.  All users who are
+        allowed to see the sample and who have the sample on their “My Samples”
+        list are informed.
+
+        :param sample: the sample that was deleted
+
+        :type sample: `samples.models.Sample`
+        """
+        entry = models.FeedDeletedSample.objects.create(originator=self.originator, sample_name=sample.name)
+        self.__add_interested_users([sample])
+        self.__connect_with_users(entry, models.Sample)
+
     def report_sample_split(self, sample_split, sample_completely_split):
         """Generate a feed entry for a sample split.
 
