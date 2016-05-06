@@ -190,9 +190,12 @@ def delete(request, sample_name):
     :rtype: HttpResponse
     """
     sample = utils.lookup_sample(sample_name, request.user)
-    permissions.assert_can_delete_sample(request.user, sample)
-    feed_reporter = utils.Reporter(request.user)
-    feed_reporter.report_deleted_sample(sample)
+    affected_objects = permissions.assert_can_delete_sample(request.user, sample)
+    for instance in affected_objects:
+        if isinstance(instance, models.Sample):
+            utils.Reporter(request.user).report_deleted_sample(instance)
+        elif isinstance(instance, models.Process):
+            utils.Reporter(request.user).report_deleted_process(instance)
     success_message = _("Sample {sample} was successfully deleted in the database.").format(sample=sample)
     sample.delete()
     return utils.successful_response(request, success_message)

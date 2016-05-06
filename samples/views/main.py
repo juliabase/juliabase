@@ -257,8 +257,12 @@ def delete_process(request, process_id):
     :rtype: HttpResponse
     """
     process = get_object_or_404(Process, pk=int_or_zero(process_id)).actual_instance
-    feed_reporter = utils.Reporter(request.user)
-    feed_reporter.report_deleted_process(process)
+    affected_objects = permissions.assert_can_delete_physical_process(request.user, process)
+    for instance in affected_objects:
+        if isinstance(instance, models.Sample):
+            utils.Reporter(request.user).report_deleted_sample(instance)
+        elif isinstance(instance, models.Process):
+            utils.Reporter(request.user).report_deleted_process(instance)
     success_message = _("Process {process} was successfully deleted in the database.").format(process=process)
     process.delete()
     return utils.successful_response(request, success_message)
