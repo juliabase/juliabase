@@ -32,10 +32,11 @@ import django.utils.six as six
 
 from django.utils.encoding import python_2_unicode_compatible
 
-import hashlib, os.path, json, collections
+import hashlib, os.path, json, collections, datetime
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
+import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
@@ -592,31 +593,57 @@ class Process(PolymorphicModel):
             and not related_object.related_model.__name__.startswith("Feed"))
         return search.SearchTreeNode(cls, related_models, search_fields)
 
-    def is_deletable(self, user):
-        """Returns whether this process can be deleted without leaving artifacts.  This
-        includes really only this condition, rather than whether the process is
-        young enough to be deleted, whether there are following processes etc.
-        Optionally, a (translated) text message may be returned with further
-        information.
+    def delete(self, *args, **kwargs):
+        """Deletes this process.  This function should be called on the actual
+        instance.
 
-        The given current user is only used for checking whether cleaning up
-        the mentioned artifacts is allowed.  In particular, checkes whether the
-        current user is allowed to delete the current process per se must be
-        checked by the caller.
+        In contrast to ordinary Django ``delete`` methods, this method takes
+        two optional optional keyword arguments for a dry run (no deletion).
 
-        :param user: the current user
+        The dry run checks whether the deletion is allowed to the user.
 
+        The dry run is realised within ``delete()`` instead of in a method of
+        its own because the algorithms for both are very similar.  Thus, it
+        avoids code duplication.
+
+        *Important*: Any ``delete()`` you call in case of a dry run *must*
+        support the ``dry_run`` argument.
+
+        :param dry_run: If it is ``True``, nothing is actually deleted.
+          Instead, the methods explores whether all affected objects can be
+          deleted in the first place, and if so, which database objects are
+          affected.
+        :param user: The current user.  This must only be given if ``dry_run``
+          is ``True``.
+
+        :type dry_run: bool
         :type user: django.contrib.auth.models.User
 
         :return:
-          Whether this process can be deleted, and a message.  If the process
-          can be deleted, the message contains an additional warning about side
-          effects.  Else, the message contains an explanation on why it cannot
-          be deleted.
+          If ``dry_run`` is not ``True``, the result of the original ``delete``
+          method is returned.  Otherwise, a set of affected obejcts is
+          returned.  It includes the current instance.  This may be used by the
+          caller to generate an expressive and informative “Are you really
+          sure” page.
 
-        :rtype: bool, unicode or NoneType
+          In most cases, this set will only contain the current instance.
+          However sample splits, for example, also delete their pieces (and
+          grand-pieces etc).  Moreover, samples deletions also delete processes
+          which relate to only that sample.
+
+        :rtype: (int, dict mapping ``Model`` to int) or set of ``Model``
         """
-        return True, None
+        dry_run = kwargs.pop("dry_run", False)
+        user = kwargs.pop("user", None)
+        if dry_run:
+            if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
+                description = _("You are not allowed to delete the process “{process}” because it is older than "
+                                "one hour.").format(process=self)
+                raise samples.permissions.PermissionError(user, description)
+            samples.permissions.assert_can_edit_physical_process(user, self)
+            return set([self])
+        else:
+            return super(Process, self).delete(*args, **kwargs)
 
 
 class PhysicalProcess(Process):
@@ -981,12 +1008,23 @@ class Sample(models.Model):
 
     def delete(self, *args, **kwargs):
         """Deletes the sample and all of its processes that contain only this sample –
-        which includes splits, pieces, and the cascade after that.
+        which includes splits, pieces, and the cascade after that.  See
+        :py:meth:`Process.delete` for further information.
         """
-        for process in self.processes.all():
-            if process.samples.count() == 1:
-                process.delete()
-        super(Sample, self).delete(*args, **kwargs)
+        dry_run = kwargs.get("dry_run", False)
+        if dry_run:
+            affected_objects = set([self])
+            samples.permissions.assert_can_edit_sample(kwargs["user"], self)
+        for process in self.processes.annotate(number_of_samples=models.Count("samples")).filter(number_of_samples=1):
+            result = process.delete(*args, **kwargs)
+            if dry_run:
+                affected_objects |= result
+        if dry_run:
+            return affected_objects
+        else:
+            kwargs.pop("dry_run", None)
+            kwargs.pop("user", None)
+            return super(Sample, self).delete(*args, **kwargs)
 
 
 @python_2_unicode_compatible
@@ -1072,17 +1110,17 @@ class SampleSplit(Process):
     def get_search_tree_node(cls):
         raise NotImplementedError
 
-    def is_deletable(self, user):
-        pieces = self.pieces.all()
-        if not all(samples.permissions.has_permission_to_delete_sample(user, sample) for sample in pieces):
-            return False, _("At least one sample split piece cannot be deleted.")
-        else:
-            return True, _("The following samples are also deleted: {samples}".format(samples=format_enumeration(pieces)))
-
     def delete(self, *args, **kwargs):
+        dry_run = kwargs.get("dry_run", False)
+        affected_objects = set()
         for sample in self.pieces.all():
-            sample.delete()
-        super(SampleSplit, self).delete(*args, **kwargs)
+            result = sample.delete(*args, **kwargs)
+            if dry_run:
+                affected_objects |= error.affected_objects
+        result = super(SampleSplit, self).delete(*args, **kwargs)
+        if dry_run:
+            affected_objects |= result
+        return affected_objects if dry_run else result
 
 
 @python_2_unicode_compatible

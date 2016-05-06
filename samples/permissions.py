@@ -40,12 +40,11 @@ permission just means that e.g. a link is not generated (for example, in the
 
 from __future__ import absolute_import, unicode_literals
 
-import hashlib, re, datetime
+import hashlib, re
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 import django.core.urlresolvers
 from django.utils.translation import ugettext_lazy as _, ugettext
-import django.utils.timezone
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 import jb_common.utils.base as utils
@@ -456,17 +455,7 @@ def assert_can_delete_sample(user, sample):
 
     :raises PermissionError: if the user is not allowed to delete the sample
     """
-    assert_can_edit_sample(user, sample)
-    sample_processes = sample.processes.all()
-    if not all(has_permission_to_edit_physical_process(user, process) for process in sample_processes):
-        description = _("You are not allowed to delete the sample “{name}” since you cannot edit all affected processes.".
-                        format(name=sample))
-        raise PermissionError(user, description)
-    for process in sample_processes:
-        if process.samples.count() == 1 and not has_permission_to_delete_physical_process(user, process):
-            description = _("You are not allowed to delete the sample “{name}” since you cannot delete the process "
-                            "“{process}” which only has this sample.".format(name=sample, process=process))
-            raise PermissionError(user, description)
+    sample.delete(dry_run=True, user=user)
 
 
 def get_sample_clearance(user, sample):
@@ -573,8 +562,6 @@ def assert_can_delete_physical_process(user, process):
     - ``process.is_deletable(user)`` must yield ``True``.
     - You can edit the process.
     - The process is not older than one hour.
-    - For no sample of the process, there is another process after this
-      process.
 
     :param user: the user whose permission should be checked
     :param process: The process to delete.  This must be the actual instance.
@@ -584,21 +571,7 @@ def assert_can_delete_physical_process(user, process):
 
     :raises PermissionError: if the user is not allowed to delete the process.
     """
-    is_deletable, message = process.is_deletable(user)
-    if not is_deletable:
-        description = _("You are not allowed to delete “{process}” because of the following reason: {reason}"). \
-                      format(process=process, reason=message)
-        raise PermissionError(user, description)
-    assert_can_edit_physical_process(user, process)
-    if process.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
-        description = _("You are not allowed to delete the process “{process}” because it is older than one hour."). \
-                      format(process=process)
-        raise PermissionError(user, description)
-    for sample in process.samples.all():
-        if sample.processes.filter(timestamp__gt=process.timestamp).exists():
-            description = _("You are not allowed to delete the process “{process}” because it is not the latest one for "
-                            "at least sample “name”.").format(process=process, name=sample)
-            raise PermissionError(user, description)
+    process.delete(dry_run=True, user=user)
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
