@@ -97,6 +97,7 @@ urlpatterns = [
     url(r"^resplit/(?P<old_split_id>.+)", split_and_rename.split_and_rename, name="resplit"),
 
     url(r"^processes/(?P<process_id>\d+)$", main.show_process, name="show_process"),
+    url(r"^processes/(?P<process_id>\d+)/delete/$", main.delete_process, name="delete_process"),
 
     url(r"^sample_series/add/$", sample_series.new, name="add_sample_series"),
     url(r"^sample_series/(?P<name>.+)/edit/$", sample_series.edit, name="edit_sample_series"),

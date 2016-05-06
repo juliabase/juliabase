@@ -495,9 +495,9 @@ class Process(PolymorphicModel):
         A process context has always the following fields: ``process``,
         ``html_body``, ``name``, ``operator``, ``timestamp``, and
         ``timestamp_inaccuracy``.  Optional standard fields are ``edit_url``,
-        ``export_url``, and ``duplicate_url``.  It may also have further
-        fields, which must be interpreted by the respective ``"show_…"``
-        template.
+        ``export_url``, ``duplicate_url``, and ``delete_url``.  It may also
+        have further fields, which must be interpreted by the respective
+        ``"show_…"`` template.
 
         It is very important to see that ``html_body`` (the result of the
         ``show_<process name>.html`` template) must not depend on sample data!
@@ -565,6 +565,10 @@ class Process(PolymorphicModel):
                 context["edit_url"] = None
         else:
             context["edit_url"] = None
+        if samples.permissions.has_permission_to_delete_physical_process(user, self):
+            context["delete_url"] = django.core.urlresolvers.reverse("samples:delete_process", kwargs={"process_id": self.pk})
+        else:
+            context["delete_url"] = None
         return context
 
     @classmethod
