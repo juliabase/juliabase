@@ -205,7 +205,7 @@ def show_process(request, process_id, process_name="Process"):
     the lookup.
 
     :param request: the current HTTP Request object
-    :param process_id: the ID or the process
+    :param process_id: the ID or the process's identifying field value
     :param process_name: the class name of the process; if ``None``, ``Process``
         is assumed
 
