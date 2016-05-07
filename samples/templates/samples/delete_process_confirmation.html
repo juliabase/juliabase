@@ -1,0 +1,48 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of JuliaBase, see http://www.juliabase.org.
+Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% load i18n %}
+{% load juliabase %}
+
+{% block frame_content %}
+
+{% blocktrans %}
+<p>You are about to delete the process “{{ process }}”.  This action cannot be
+  reverted.  The following objects will be deleted:</p>
+{% endblocktrans %}
+
+<ul>
+  {% for class_name, instances in affected_objects.items %}
+    <li>
+      <strong>{{ class_name }}</strong>
+      <ul>
+        {% for instance in instances %}
+          <li>{{ instance }}</li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% endfor %}
+</ul>
+
+<form method="post" action="{% url 'samples:delete_process' process_id=process.id %}">{% csrf_token %}
+  <input type="submit" alt="delete icon" value="{% trans 'yes, I am sure'|capfirst %}"/>
+</form>
+
+{% endblock %}

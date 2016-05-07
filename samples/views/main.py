@@ -268,4 +268,37 @@ def delete_process(request, process_id):
     return utils.successful_response(request, success_message)
 
 
+@login_required
+@require_http_methods(["GET"])
+@unquote_view_parameters
+def delete_process_confirmation(request, process_id):
+    """View for confirming that you really want to delete the given process.
+    Typically, it is visited by clicking on an icon.
+
+    :param request: the current HTTP Request object
+    :param process_id: the ID of the process
+
+    :type request: HttpRequest
+    :type process_id: unicode
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    process = get_object_or_404(Process, pk=int_or_zero(process_id)).actual_instance
+    affected_objects = permissions.assert_can_delete_physical_process(request.user, process)
+    digested_affected_objects = {}
+    for instance in affected_objects:
+        try:
+            class_name = instance.__class__._meta.verbose_name_plural.title()
+        except AttributeError:
+            class_name = capfirst(_("miscellaneous"))
+        digested_affected_objects.setdefault(class_name, set()).add(instance)
+    print(digested_affected_objects)
+    return render(request, "samples/delete_process_confirmation.html",
+                  {"title": _("Delete process “{process}”").format(process=process), "process": process,
+                   "affected_objects": digested_affected_objects})
+
+
 _ = ugettext

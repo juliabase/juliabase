@@ -566,7 +566,8 @@ class Process(PolymorphicModel):
         else:
             context["edit_url"] = None
         if samples.permissions.has_permission_to_delete_physical_process(user, self):
-            context["delete_url"] = django.core.urlresolvers.reverse("samples:delete_process", kwargs={"process_id": self.pk})
+            context["delete_url"] = django.core.urlresolvers.reverse(
+                "samples:delete_process_confirmation", kwargs={"process_id": self.pk})
         else:
             context["delete_url"] = None
         return context

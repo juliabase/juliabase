@@ -99,6 +99,8 @@ urlpatterns = [
 
     url(r"^processes/(?P<process_id>\d+)$", main.show_process, name="show_process"),
     url(r"^processes/(?P<process_id>\d+)/delete/$", main.delete_process, name="delete_process"),
+    url(r"^processes/(?P<process_id>\d+)/delete-confirmation$", main.delete_process_confirmation,
+        name="delete_process_confirmation"),
 
     url(r"^sample_series/add/$", sample_series.new, name="add_sample_series"),
     url(r"^sample_series/(?P<name>.+)/edit/$", sample_series.edit, name="edit_sample_series"),
