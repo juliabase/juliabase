@@ -541,11 +541,6 @@ class Process(PolymorphicModel):
             context["timestamp"] = self.timestamp
         if "timestamp_inaccuracy" not in context:
             context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
-        if samples.permissions.has_permission_to_delete_physical_process(user, self):
-            context["delete_url"] = django.core.urlresolvers.reverse(
-                "samples:delete_process_confirmation", kwargs={"process_id": self.pk})
-        else:
-            context["delete_url"] = None
         return context
 
     @classmethod
@@ -689,6 +684,11 @@ class PhysicalProcess(Process):
                 context["edit_url"] = None
         else:
             context["edit_url"] = None
+        if samples.permissions.has_permission_to_delete_physical_process(user, self):
+            context["delete_url"] = django.core.urlresolvers.reverse(
+                "samples:delete_process_confirmation", kwargs={"process_id": self.pk})
+        else:
+            context["delete_url"] = None
         return context
 
     @classmethod
