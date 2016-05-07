@@ -597,7 +597,7 @@ class Process(PolymorphicModel):
 
         :return:
           If ``dry_run`` is not ``True``, the result of the original ``delete``
-          method is returned.  Otherwise, a set of affected obejcts is
+          method is returned.  Otherwise, a set of affected objects is
           returned.  It includes the current instance.  This may be used by the
           caller to generate an expressive and informative “Are you really
           sure” page.
