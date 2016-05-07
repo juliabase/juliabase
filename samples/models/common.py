@@ -248,20 +248,6 @@ class Process(PolymorphicModel):
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=self.id)
 
-    def _urlresolve(self, prefix):
-        prefix = self._meta.app_label + ":" + prefix
-        class_name = camel_case_to_underscores(self.__class__.__name__)
-        try:
-            field_name = parameter_name = self.JBMeta.identifying_field
-        except AttributeError:
-            field_name, parameter_name = "id", class_name + "_id"
-        # Quote it in order to allow slashs in values.
-        field_value = urlquote(getattr(self, field_name), safe="")
-        try:
-            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: field_value})
-        except django.core.urlresolvers.NoReverseMatch:
-            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={"process_id": field_value})
-
     def get_absolute_url(self):
         """Returns the relative URL (ie, without the domain name) of the
         database object.  Django calls this method ``get_absolute_url`` to make
@@ -278,10 +264,7 @@ class Process(PolymorphicModel):
 
         :rtype: str
         """
-        try:
-            return self._urlresolve("show_")
-        except django.core.urlresolvers.NoReverseMatch:
-            return django.core.urlresolvers.reverse("samples:show_process", args=(str(self.id),))
+        return django.core.urlresolvers.reverse("samples:show_process", args=(str(self.id),))
 
     def calculate_plot_locations(self, plot_id=""):
         """Get the location of a plot in the local filesystem as well as on
@@ -558,13 +541,6 @@ class Process(PolymorphicModel):
             context["timestamp"] = self.timestamp
         if "timestamp_inaccuracy" not in context:
             context["timestamp_inaccuracy"] = self.timestamp_inaccuracy
-        if samples.permissions.has_permission_to_edit_physical_process(user, self):
-            try:
-                context["edit_url"] = self._urlresolve("edit_")
-            except django.core.urlresolvers.NoReverseMatch:
-                context["edit_url"] = None
-        else:
-            context["edit_url"] = None
         if samples.permissions.has_permission_to_delete_physical_process(user, self):
             context["delete_url"] = django.core.urlresolvers.reverse(
                 "samples:delete_process_confirmation", kwargs={"process_id": self.pk})
@@ -683,6 +659,37 @@ class PhysicalProcess(Process):
         # abstract ancestor, and this one doesn't have these fields.
         ordering = ["timestamp"]
         get_latest_by = "timestamp"
+
+    def _urlresolve(self, prefix):
+        prefix = self._meta.app_label + ":" + prefix
+        class_name = camel_case_to_underscores(self.__class__.__name__)
+        try:
+            field_name = parameter_name = self.JBMeta.identifying_field
+        except AttributeError:
+            field_name, parameter_name = "id", class_name + "_id"
+        # Quote it in order to allow slashs in values.
+        field_value = urlquote(getattr(self, field_name), safe="")
+        try:
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={parameter_name: field_value})
+        except django.core.urlresolvers.NoReverseMatch:
+            return django.core.urlresolvers.reverse(prefix + class_name, kwargs={"process_id": field_value})
+
+    def get_absolute_url(self):
+        try:
+            return self._urlresolve("show_")
+        except django.core.urlresolvers.NoReverseMatch:
+            return django.core.urlresolvers.reverse("samples:show_process", args=(str(self.id),))
+
+    def get_context_for_user(self, user, old_context):
+        context = old_context.copy()
+        if samples.permissions.has_permission_to_edit_physical_process(user, self):
+            try:
+                context["edit_url"] = self._urlresolve("edit_")
+            except django.core.urlresolvers.NoReverseMatch:
+                context["edit_url"] = None
+        else:
+            context["edit_url"] = None
+        return context
 
     @classmethod
     def get_add_link(cls):
@@ -1321,6 +1328,10 @@ class Result(Process):
                                 "image_url": image_locations["image_url"]})
             else:
                 context["thumbnail_url"] = context["image_url"] = None
+        if samples.permissions.has_permission_to_edit_result_process(user, self):
+            context["edit_url"] = django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
+        else:
+            context["edit_url"] = None
         return super(Result, self).get_context_for_user(user, context)
 
     def get_data(self):
