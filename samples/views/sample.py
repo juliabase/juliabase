@@ -176,7 +176,6 @@ def edit(request, sample_name):
 @unquote_view_parameters
 def delete(request, sample_name):
     """View for delete the given sample.  Note that this view is POST-only.
-    Typically, it is visited by clicking on an icon.
 
     :param request: the current HTTP Request object
     :param sample_name: the name of the sample
@@ -199,6 +198,39 @@ def delete(request, sample_name):
     success_message = _("Sample {sample} was successfully deleted in the database.").format(sample=sample)
     sample.delete()
     return utils.successful_response(request, success_message)
+
+
+@login_required
+@require_http_methods(["GET"])
+@unquote_view_parameters
+def delete_confirmation(request, sample_name):
+    """View for confirming that you really want to delete the given sample.
+    Typically, it is visited by clicking on an icon.
+
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
+
+    :type request: HttpRequest
+    :type sample_name: unicode
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    sample = utils.lookup_sample(sample_name, request.user)
+    affected_objects = permissions.assert_can_delete_sample(request.user, sample)
+    digested_affected_objects = {}
+    for instance in affected_objects:
+        try:
+            class_name = instance.__class__._meta.verbose_name_plural.title()
+        except AttributeError:
+            class_name = capfirst(_("miscellaneous"))
+        digested_affected_objects.setdefault(class_name, set()).add(instance)
+    print(digested_affected_objects)
+    return render(request, "samples/delete_sample_confirmation.html",
+                  {"title": _("Delete sample “{sample}”").format(sample=sample), "sample": sample,
+                   "affected_objects": digested_affected_objects})
 
 
 def get_allowed_processes(user, sample):

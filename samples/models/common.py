@@ -640,7 +640,7 @@ class Process(PolymorphicModel):
         dry_run = kwargs.pop("dry_run", False)
         user = kwargs.pop("user", None)
         if dry_run:
-            if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
+            if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1) and False:
                 description = _("You are not allowed to delete the process “{process}” because it is older than "
                                 "one hour.").format(process=self)
                 raise samples.permissions.PermissionError(user, description)
