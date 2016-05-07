@@ -612,12 +612,9 @@ class Process(PolymorphicModel):
         dry_run = kwargs.pop("dry_run", False)
         user = kwargs.pop("user", None)
         if dry_run:
-            if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1) and False:
-                description = _("You are not allowed to delete the process “{process}” because it is older than "
-                                "one hour.").format(process=self)
-                raise samples.permissions.PermissionError(user, description)
-            samples.permissions.assert_can_edit_physical_process(user, self)
-            return set([self])
+            description = _("You are not allowed to delete the process “{process}” because this kind of process cannot be "
+                            "deleted.").format(process=self)
+            raise samples.permissions.PermissionError(user, description)
         else:
             return super(Process, self).delete(*args, **kwargs)
 
@@ -718,6 +715,18 @@ class PhysicalProcess(Process):
         data = DataNode(_("lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
         data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
         return data
+
+    def delete(self, *args, **kwargs):
+        dry_run = kwargs.get("dry_run", False)
+        if dry_run:
+            if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1) and False:
+                description = _("You are not allowed to delete the process “{process}” because it is older than "
+                                "one hour.").format(process=self)
+                raise samples.permissions.PermissionError(user, description)
+            samples.permissions.assert_can_edit_physical_process(kwargs["user"], self)
+            return set([self])
+        else:
+            return super(PhysicalProcess, self).delete(*args, **kwargs)
 
 
 all_searchable_physical_processes = None
