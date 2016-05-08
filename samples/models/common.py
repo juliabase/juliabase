@@ -1037,6 +1037,7 @@ class Sample(models.Model):
             affected_objects = set([self])
             samples.permissions.assert_can_edit_sample(kwargs["user"], self)
         for process in self.processes.annotate(number_of_samples=models.Count("samples")).filter(number_of_samples=1):
+            process = process.actual_instance
             result = process.delete(*args, **kwargs)
             if dry_run:
                 affected_objects |= result
