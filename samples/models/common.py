@@ -719,11 +719,12 @@ class PhysicalProcess(Process):
     def delete(self, *args, **kwargs):
         dry_run = kwargs.get("dry_run", False)
         if dry_run:
+            user = kwargs["user"]
             if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
                 description = _("You are not allowed to delete the process “{process}” because it is older than "
                                 "one hour.").format(process=self)
                 raise samples.permissions.PermissionError(user, description)
-            samples.permissions.assert_can_edit_physical_process(kwargs["user"], self)
+            samples.permissions.assert_can_edit_physical_process(user, self)
             return set([self])
         else:
             return super(PhysicalProcess, self).delete(*args, **kwargs)
