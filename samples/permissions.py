@@ -763,8 +763,8 @@ def assert_can_edit_sample(user, sample):
     topic_manager_permission = get_topic_manager_permission()
     if sample.topic and currently_responsible_person != user and not user.is_superuser and not \
         (user in sample.topic.members.all() and topic_manager_permission in user.user_permissions.all()):
-        description = _("You are not allowed to edit the sample “{name}” (including splitting and declaring dead) because "
-                        "you are not the currently responsible person for this sample.").format(name=sample)
+        description = _("You are not allowed to edit the sample “{name}” (including splitting, declaring dead, and deleting) "
+                        "because you are not the currently responsible person for this sample.").format(name=sample)
         raise PermissionError(user, description)
 
 
