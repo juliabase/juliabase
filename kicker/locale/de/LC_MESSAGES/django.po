@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-27 18:43+0000\n"
+"POT-Creation-Date: 2016-05-08 16:07+0000\n"
 "PO-Revision-Date: 2015-03-11 10:01+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -114,7 +114,7 @@ msgstr "Spieler"
 msgid "kicker number"
 msgstr "Kickerzahl"
 
-#: kicker/models.py:79 kicker/templates/kicker/summary.html.py:31
+#: kicker/models.py:79 kicker/templates/kicker/summary.html:31
 msgid "kicker numbers"
 msgstr "Kickerzahlen"
 
@@ -154,55 +154,55 @@ msgstr "Ihre Kicker-Benutzerdetails ändern"
 msgid "Already taken shortkeys:"
 msgstr "Bereits vergebene Tastenkürzel:"
 
-#: kicker/views.py:196 kicker/views.py:263
+#: kicker/views.py:196 kicker/views.py:264
 msgid "You must be the original reporter of this match."
 msgstr "Sie müssen der ursprüngliche Berichter des Matches sein."
 
-#: kicker/views.py:214
+#: kicker/views.py:215
 msgid "Matches with three players can't be processed."
 msgstr "Matches mit drei Spielern können nicht verarbeitet werden."
 
-#: kicker/views.py:216
+#: kicker/views.py:217
 msgid "All players are the same person."
 msgstr "Alle Spieler sind dieselbe Person."
 
-#: kicker/views.py:220
+#: kicker/views.py:221
 msgid "A finished match can't be edited anymore."
 msgstr "Ein beendetes Match kann nicht mehr geändert werden."
 
-#: kicker/views.py:227
+#: kicker/views.py:228
 msgid "This match is older than the most recent kicker numbers."
 msgstr "Dieses Match ist älter als die letzten Kickerzahlen."
 
-#: kicker/views.py:248
+#: kicker/views.py:249
 msgid "Seconds must be positive."
 msgstr "Sekunden müssen eine positive Zahl sein."
 
-#: kicker/views.py:265
+#: kicker/views.py:266
 msgid "A finished match can't be canceled."
 msgstr "Ein beendetes Match kann nicht abgebrochen werden."
 
-#: kicker/views.py:356
+#: kicker/views.py:358
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:375
+#: kicker/views.py:377
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:382
+#: kicker/views.py:384
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
-#: kicker/views.py:384
+#: kicker/views.py:386
 msgid "This shortkey is invalid."
 msgstr "Dieses Tastenkürzel ist ungültig."
 
-#: kicker/views.py:398
+#: kicker/views.py:400
 msgid "The preferences were successfully updated."
 msgstr "Die Einstellungen wurden erfolgreich geändert."
 
-#: kicker/views.py:402
+#: kicker/views.py:404
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"

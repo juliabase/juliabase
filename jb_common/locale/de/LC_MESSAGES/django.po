@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-27 18:43+0000\n"
+"POT-Creation-Date: 2016-05-08 16:07+0000\n"
 "PO-Revision-Date: 2015-08-12 17:03+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -248,7 +248,7 @@ msgstr "enthaltend"
 msgid "restrict to"
 msgstr "beschränken auf"
 
-#: jb_common/templates/404.html:31 jb_common/templates/404.html.py:32
+#: jb_common/templates/404.html:31 jb_common/templates/404.html:32
 msgid "Resource not found"
 msgstr "Ressource nicht gefunden"
 
@@ -271,7 +271,7 @@ msgstr ""
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: jb_common/templates/500.html:38 jb_common/templates/jb_base.html.py:88
+#: jb_common/templates/500.html:38 jb_common/templates/jb_base.html:88
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -443,35 +443,35 @@ msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #. Translators: Intended as a separator in an enumeration of three or more items
-#: jb_common/utils/base.py:859
+#: jb_common/utils/base.py:856
 msgid ", "
 msgstr ", "
 
-#: jb_common/utils/base.py:859
+#: jb_common/utils/base.py:856
 msgid ", and "
 msgstr " und "
 
 #. Translators: Intended to be used in an enumeration of exactly two items
-#: jb_common/utils/base.py:862
+#: jb_common/utils/base.py:859
 msgid " and "
 msgstr " und "
 
-#: jb_common/utils/base.py:1060
+#: jb_common/utils/base.py:1057
 #, python-brace-format
 msgid "Can add {class_name}"
 msgstr "Darf {class_name} hinzufügen"
 
-#: jb_common/utils/base.py:1061
+#: jb_common/utils/base.py:1058
 #, python-brace-format
 msgid "Can edit every {class_name}"
 msgstr "Darf jede(n/s) {class_name} ändern"
 
-#: jb_common/utils/base.py:1062
+#: jb_common/utils/base.py:1059
 #, python-brace-format
 msgid "Can view every {class_name}"
 msgstr "Darf jede(n/s) {class_name} sehen"
 
-#: jb_common/utils/base.py:1063
+#: jb_common/utils/base.py:1060
 #, python-brace-format
 msgid "Can edit permissions for {class_name}"
 msgstr "Darf die Berechtigungen für {class_name} ändern"
