@@ -686,7 +686,7 @@ class PhysicalProcess(Process):
                 "samples:delete_process_confirmation", kwargs={"process_id": self.pk})
         else:
             context["delete_url"] = None
-        return context
+        return super(PhysicalProcess, self).get_context_for_user(user, context)
 
     @classmethod
     def get_add_link(cls):
