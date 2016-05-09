@@ -23,13 +23,97 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from datetime import timedelta
 from django.test import TestCase, override_settings
 from django.test.client import Client
+from samples import models
+import django.utils.timezone
+import institute.models as institute_models
+from django.contrib.auth.models import User
 
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
 class DeletionTest(TestCase):
-    fixtures = ["test_main"]#, "test_delete"]
+    fixtures = ["test_main"]
+
+    @classmethod
+    def setUpTestData(cls):
+        start = django.utils.timezone.now() - timedelta(minutes=30)
+        calvert = User.objects.get(username="r.calvert")
+        sample = models.Sample.objects.create(name="testsample", currently_responsible_person=calvert)
+        cls.substrate = institute_models.Substrate.objects.create(operator=calvert, timestamp=start)
+        sample.processes.add(cls.substrate)
+        cls.split = models.SampleSplit.objects.create(operator=calvert, parent=sample,
+                                                      timestamp=start + timedelta(minutes=10))
+        piece_1 = models.Sample.objects.create(name="piece-1", currently_responsible_person=calvert, split_origin=cls.split)
+        piece_2 = models.Sample.objects.create(name="piece-2", currently_responsible_person=calvert, split_origin=cls.split)
+
+    def setUp(self):
+        self.client = Client()
+        assert self.client.login(username="r.calvert", password="12345")
+        self.substrate.refresh_from_db()
+        self.split.refresh_from_db()
+
+    def test_delete_sample(self):
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+        response = self.client.post("/samples/testsample/delete/", follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(models.Sample.objects.filter(name="testsample").exists())
+        self.assertFalse(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertFalse(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertFalse(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertFalse(models.Process.objects.filter(pk=self.split.pk).exists())
+
+    def test_delete_split(self):
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+        response = self.client.post("/processes/{}/delete/".format(self.split.pk), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertFalse(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertFalse(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertFalse(models.Process.objects.filter(pk=self.split.pk).exists())
+
+    def test_delete_piece_1(self):
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+        response = self.client.post("/samples/piece-1/delete/".format(self.split.pk), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertFalse(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+
+    def test_delete_substrate(self):
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+        response = self.client.post("/processes/{}/delete/".format(self.substrate.pk), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertFalse(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+
+
+@override_settings(ROOT_URLCONF="institute.tests.urls")
+class DeletionFailureTest(TestCase):
+    fixtures = ["test_main"]
 
     def setUp(self):
         self.client = Client()
@@ -53,7 +137,7 @@ class DeletionTest(TestCase):
 
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
-class DeletionFailureTest(TestCase):
+class DeletionFailureAsPriviledgedUserTest(TestCase):
     fixtures = ["test_main"]
 
     def setUp(self):
