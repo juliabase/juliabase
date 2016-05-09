@@ -32,10 +32,11 @@ import django.utils.six as six
 
 from django.utils.encoding import python_2_unicode_compatible
 
-import hashlib, os.path, json, collections
+import hashlib, os.path, json, collections, datetime
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
+import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
 from django.template import defaultfilters, Context, TemplateDoesNotExist
 from django.template.loader import render_to_string
@@ -477,9 +478,9 @@ class Process(PolymorphicModel):
         A process context has always the following fields: ``process``,
         ``html_body``, ``name``, ``operator``, ``timestamp``, and
         ``timestamp_inaccuracy``.  Optional standard fields are ``edit_url``,
-        ``export_url``, and ``duplicate_url``.  It may also have further
-        fields, which must be interpreted by the respective ``"show_…"``
-        template.
+        ``export_url``, ``duplicate_url``, and ``delete_url``.  It may also
+        have further fields, which must be interpreted by the respective
+        ``"show_…"`` template.
 
         It is very important to see that ``html_body`` (the result of the
         ``show_<process name>.html`` template) must not depend on sample data!
@@ -568,6 +569,60 @@ class Process(PolymorphicModel):
             and not related_object.related_model.__name__.startswith("Feed"))
         return search.SearchTreeNode(cls, related_models, search_fields)
 
+    def delete(self, *args, **kwargs):
+        """Deletes this process.  This function should be called on the actual
+        instance.
+
+        In contrast to ordinary Django ``delete`` methods, this method takes
+        two optional optional keyword arguments for a dry run (no deletion).
+
+        The dry run checks whether the deletion is allowed to the user.
+
+        The dry run is realised within ``delete()`` instead of in a method of
+        its own because the algorithms for both are very similar.  Thus, it
+        avoids code duplication.
+
+        *Important*: Any ``delete()`` you call in case of a dry run *must*
+        support the ``dry_run`` argument.
+
+        :param dry_run: If it is ``True``, nothing is actually deleted.
+          Instead, the methods explores whether all affected objects can be
+          deleted in the first place, and if so, which database objects are
+          affected.
+        :param user: The current user.  This must only be given if ``dry_run``
+          is ``True``.
+
+        :type dry_run: bool
+        :type user: django.contrib.auth.models.User
+
+        :return:
+          If ``dry_run`` is not ``True``, the result of the original ``delete``
+          method is returned.  Otherwise, a set of affected objects is
+          returned.  It includes the current instance.  This may be used by the
+          caller to generate an expressive and informative “Are you really
+          sure” page.
+
+          In most cases, this set will only contain the current instance.
+          However sample splits, for example, also delete their pieces (and
+          grand-pieces etc).  Moreover, samples deletions also delete processes
+          which relate to only that sample.
+
+        :rtype: (int, dict mapping ``Model`` to int) or set of ``Model``
+        """
+        # FixMe: This method by default forbids to delete a process.  This is
+        # unfortunate because in every derived class which should be allowed to
+        # be deleted, I cannot call this inherited method during a dry run.
+        # This is bad OOP and leads to duplicated tests in the derived classes
+        # (e.g. for too old process).
+        dry_run = kwargs.pop("dry_run", False)
+        user = kwargs.pop("user", None)
+        if dry_run:
+            description = _("You are not allowed to delete the process “{process}” because this kind of process cannot be "
+                            "deleted.").format(process=self)
+            raise samples.permissions.PermissionError(user, description)
+        else:
+            return super(Process, self).delete(*args, **kwargs)
+
 
 class PhysicalProcess(Process):
     """Abstract class for physical processes.  These processes are “real”
@@ -631,6 +686,11 @@ class PhysicalProcess(Process):
                 context["edit_url"] = None
         else:
             context["edit_url"] = None
+        if samples.permissions.has_permission_to_delete_physical_process(user, self):
+            context["delete_url"] = django.core.urlresolvers.reverse(
+                "samples:delete_process_confirmation", kwargs={"process_id": self.pk})
+        else:
+            context["delete_url"] = None
         return super(PhysicalProcess, self).get_context_for_user(user, context)
 
     @classmethod
@@ -660,6 +720,19 @@ class PhysicalProcess(Process):
         data = DataNode(_("lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
         data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
         return data
+
+    def delete(self, *args, **kwargs):
+        dry_run = kwargs.get("dry_run", False)
+        if dry_run:
+            user = kwargs["user"]
+            if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
+                description = _("You are not allowed to delete the process “{process}” because it is older than "
+                                "one hour.").format(process=self)
+                raise samples.permissions.PermissionError(user, description)
+            samples.permissions.assert_can_edit_physical_process(user, self)
+            return set([self])
+        else:
+            return super(PhysicalProcess, self).delete(*args, **kwargs)
 
 
 all_searchable_physical_processes = None
@@ -911,7 +984,6 @@ class Sample(models.Model):
                     for process in self.processes.all())
         return data
 
-
     def get_data_for_table_export(self):
         """Extract the data of this sample as a tree of nodes with lists of key–value
         pairs, ready to be used for the table data export.  Every child of the
@@ -937,7 +1009,6 @@ class Sample(models.Model):
                                   for process in self.processes.order_by("timestamp").iterator())
         return data_node
 
-
     @classmethod
     def get_search_tree_node(cls):
         """Class method for generating the search tree node for this model
@@ -961,6 +1032,28 @@ class Sample(models.Model):
             return search.DetailsSearchTreeNode(cls, related_models, search_fields, "sample_details")
         else:
             return search.SearchTreeNode(cls, related_models, search_fields)
+
+    def delete(self, *args, **kwargs):
+        """Deletes the sample and all of its processes that contain only this sample –
+        which includes splits, pieces, and the cascade after that.  See
+        :py:meth:`Process.delete` for further information.
+        """
+        dry_run = kwargs.get("dry_run", False)
+        if dry_run:
+            affected_objects = set([self])
+            samples.permissions.assert_can_edit_sample(kwargs["user"], self)
+        for process in self.processes.all():
+            if process.samples.count() == 1:
+                process = process.actual_instance
+                result = process.delete(*args, **kwargs)
+                if dry_run:
+                    affected_objects |= result
+        if dry_run:
+            return affected_objects
+        else:
+            kwargs.pop("dry_run", None)
+            kwargs.pop("user", None)
+            return super(Sample, self).delete(*args, **kwargs)
 
 
 @python_2_unicode_compatible
@@ -1045,6 +1138,22 @@ class SampleSplit(Process):
     @classmethod
     def get_search_tree_node(cls):
         raise NotImplementedError
+
+    def delete(self, *args, **kwargs):
+        dry_run = kwargs.get("dry_run", False)
+        if dry_run and self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
+            description = _("You are not allowed to delete the process “{process}” because it is older than "
+                            "one hour.").format(process=self)
+            raise samples.permissions.PermissionError(user, description)
+        affected_objects = set([self])
+        for sample in self.pieces.all():
+            result = sample.delete(*args, **kwargs)
+            if dry_run:
+                affected_objects |= result
+        if dry_run:
+            return affected_objects
+        else:
+            return super(SampleSplit, self).delete(*args, **kwargs)
 
 
 @python_2_unicode_compatible

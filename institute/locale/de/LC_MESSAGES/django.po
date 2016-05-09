@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-04-27 18:43+0000\n"
+"POT-Creation-Date: 2016-05-08 16:07+0000\n"
 "PO-Revision-Date: 2015-08-12 19:19+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -561,7 +561,7 @@ msgstr ""
 "\n"
 "{user_name} hat seinen/ihren ersten Prozess „{apparatus}“ angelegt.\n"
 
-#: institute/templates/404.html:36 institute/templates/404.html.py:37
+#: institute/templates/404.html:36 institute/templates/404.html:37
 msgid "Resource not found"
 msgstr "Ressource nicht gefunden"
 
@@ -993,11 +993,11 @@ msgstr "Die Änderungen sind noch nicht gespeichert."
 msgid "My Layers"
 msgstr "Meine Schichten"
 
-#: institute/views/samples/pds_measurement.py:102
+#: institute/views/samples/pds_measurement.py:103
 msgid "This PDS number exists already."
 msgstr "Diese PDS-Nummer ist schon vergeben."
 
-#: institute/views/samples/pds_measurement.py:119
+#: institute/views/samples/pds_measurement.py:120
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 

@@ -23,6 +23,7 @@ the database was changed in one way or another.
 """
 
 from __future__ import absolute_import, unicode_literals
+import django.utils.six as six
 
 from django.contrib.contenttypes.models import ContentType
 import jb_common.models
@@ -236,6 +237,22 @@ class Reporter(object):
             self.__add_watchers(process, important)
             self.__connect_with_users(entry, process.__class__)
 
+
+    def report_deleted_process(self, process):
+        """Generate a feed entry about a deletion of a process.
+
+        :param process: the process that was deleted
+
+        :type process: `samples.models.Process`
+        """
+        entry = models.FeedDeletedProcess.objects.create(originator=self.originator, process_name=six.text_type(process))
+        self.__add_watchers(process)
+        if isinstance(process, models.Result):
+            for sample_series in process.sample_series.all():
+                self.__add_watchers(sample_series)
+        self.__connect_with_users(entry, process.__class__)
+
+
     def report_result_process(self, result, edit_description=None):
         """Generate a feed entry for a result process which was recently
         edited or created.
@@ -338,7 +355,7 @@ class Reporter(object):
         who are allowed to see the sample and who have the sample on their “My
         Samples” list are informed.
 
-        :param samples: the samples that was edited
+        :param samples: the samples that were edited
         :param edit_description: The dictionary containing data about what was
             edited in the samples.  Its keys correspond to the fields of
             `~samples.utils.views.EditDescriptionForm`.
@@ -351,6 +368,19 @@ class Reporter(object):
             originator=self.originator, description=edit_description["description"], important=important)
         entry.samples = samples
         self.__add_interested_users(samples, important)
+        self.__connect_with_users(entry, models.Sample)
+
+    def report_deleted_sample(self, sample):
+        """Generate a feed entry about a deletion of a sample.  All users who are
+        allowed to see the sample and who have the sample on their “My Samples”
+        list are informed.
+
+        :param sample: the sample that was deleted
+
+        :type sample: `samples.models.Sample`
+        """
+        entry = models.FeedDeletedSample.objects.create(originator=self.originator, sample_name=sample.name)
+        self.__add_interested_users([sample])
         self.__connect_with_users(entry, models.Sample)
 
     def report_sample_split(self, sample_split, sample_completely_split):

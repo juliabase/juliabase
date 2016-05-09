@@ -88,6 +88,8 @@ urlpatterns = [
     url(r"^samples/(?P<sample_name>.+)/kill/$", sample_death.new, name="kill_sample"),
     url(r"^samples/(?P<sample_name>.+)/add_process/$", sample.add_process, name="add_process"),
     url(r"^samples/(?P<sample_name>.+)/edit/$", sample.edit, name="edit_sample"),
+    url(r"^samples/(?P<sample_name>.+)/delete/$", sample.delete, name="delete_sample"),
+    url(r"^samples/(?P<sample_name>.+)/delete-confirmation$", sample.delete_confirmation, name="delete_sample_confirmation"),
     url(r"^samples/(?P<sample_name>.+)/export/$", sample.export, name="export_sample"),
     url(r"^samples/rename/$", sample.rename_sample, name="rename_sample"),
     url(r"^samples/(?P<sample_name>.+)$", sample.show, name="show_sample_by_name"),
@@ -96,6 +98,9 @@ urlpatterns = [
     url(r"^resplit/(?P<old_split_id>.+)", split_and_rename.split_and_rename, name="resplit"),
 
     url(r"^processes/(?P<process_id>\d+)$", main.show_process, name="show_process"),
+    url(r"^processes/(?P<process_id>\d+)/delete/$", main.delete_process, name="delete_process"),
+    url(r"^processes/(?P<process_id>\d+)/delete-confirmation$", main.delete_process_confirmation,
+        name="delete_process_confirmation"),
 
     url(r"^sample_series/add/$", sample_series.new, name="add_sample_series"),
     url(r"^sample_series/(?P<name>.+)/edit/$", sample_series.edit, name="edit_sample_series"),

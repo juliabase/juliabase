@@ -32,6 +32,7 @@ import PIL.ImageOps
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.core.urlresolvers
 import django.forms as forms
@@ -168,6 +169,68 @@ def edit(request, sample_name):
                "edit_description": edit_description_form}
     context.update(sample_details_context)
     return render(request, "samples/edit_sample.html", context)
+
+
+@login_required
+@require_http_methods(["POST"])
+@unquote_view_parameters
+def delete(request, sample_name):
+    """View for delete the given sample.  Note that this view is POST-only.
+
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
+
+    :type request: HttpRequest
+    :type sample_name: unicode
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    sample = utils.lookup_sample(sample_name, request.user)
+    affected_objects = permissions.assert_can_delete_sample(request.user, sample)
+    for instance in affected_objects:
+        if isinstance(instance, models.Sample):
+            utils.Reporter(request.user).report_deleted_sample(instance)
+        elif isinstance(instance, models.Process):
+            utils.Reporter(request.user).report_deleted_process(instance)
+    success_message = _("Sample {sample} was successfully deleted in the database.").format(sample=sample)
+    sample.delete()
+    return utils.successful_response(request, success_message)
+
+
+@login_required
+@require_http_methods(["GET"])
+@unquote_view_parameters
+def delete_confirmation(request, sample_name):
+    """View for confirming that you really want to delete the given sample.
+    Typically, it is visited by clicking on an icon.
+
+    :param request: the current HTTP Request object
+    :param sample_name: the name of the sample
+
+    :type request: HttpRequest
+    :type sample_name: unicode
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    sample = utils.lookup_sample(sample_name, request.user)
+    affected_objects = permissions.assert_can_delete_sample(request.user, sample)
+    digested_affected_objects = {}
+    for instance in affected_objects:
+        try:
+            class_name = instance.__class__._meta.verbose_name_plural.title()
+        except AttributeError:
+            class_name = capfirst(_("miscellaneous"))
+        digested_affected_objects.setdefault(class_name, set()).add(instance)
+    print(digested_affected_objects)
+    return render(request, "samples/delete_sample_confirmation.html",
+                  {"title": _("Delete sample “{sample}”").format(sample=sample), "sample": sample,
+                   "affected_objects": digested_affected_objects})
 
 
 def get_allowed_processes(user, sample):
@@ -392,6 +455,7 @@ class SamplesAndProcesses(object):
         except permissions.PermissionError:
             self.sample_context["can_add_process"] = False
         self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
+        self.sample_context["can_delete"] = permissions.has_permission_to_delete_sample(self.user, sample)
         if self.sample_context["can_edit"] and \
            sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
             self.sample_context["id_for_rename"] = str(sample.pk)

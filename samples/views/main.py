@@ -28,15 +28,17 @@ import django.utils.six as six
 from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
 from django.http import HttpResponsePermanentRedirect, Http404
+from django.views.decorators.http import require_http_methods
 import django.core.urlresolvers
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext
-from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters
+from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
+    int_or_zero
 from jb_common.models import Topic
 import samples.utils.views as utils
-from samples.models import ExternalOperator
+from samples.models import ExternalOperator, Process
 
 
 class MySeries(object):
@@ -205,7 +207,7 @@ def show_process(request, process_id, process_name="Process"):
     the lookup.
 
     :param request: the current HTTP Request object
-    :param process_id: the ID or the process
+    :param process_id: the ID or the process's identifying field value
     :param process_name: the class name of the process; if ``None``, ``Process``
         is assumed
 
@@ -235,6 +237,68 @@ def show_process(request, process_id, process_name="Process"):
     template_context = {"title": six.text_type(process), "samples": process.samples.all(), "process": process}
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)
+
+
+@login_required
+@require_http_methods(["POST"])
+@unquote_view_parameters
+def delete_process(request, process_id):
+    """Deletes an existing physical process.
+
+    :param request: the current HTTP Request object
+    :param process_id: the process's ID
+
+    :type request: HttpRequest
+    :type process_id: unicode
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    process = get_object_or_404(Process, pk=int_or_zero(process_id)).actual_instance
+    affected_objects = permissions.assert_can_delete_physical_process(request.user, process)
+    for instance in affected_objects:
+        if isinstance(instance, models.Sample):
+            utils.Reporter(request.user).report_deleted_sample(instance)
+        elif isinstance(instance, models.Process):
+            utils.Reporter(request.user).report_deleted_process(instance)
+    success_message = _("Process {process} was successfully deleted in the database.").format(process=process)
+    process.delete()
+    return utils.successful_response(request, success_message)
+
+
+@login_required
+@require_http_methods(["GET"])
+@unquote_view_parameters
+def delete_process_confirmation(request, process_id):
+    """View for confirming that you really want to delete the given process.
+    Typically, it is visited by clicking on an icon.
+
+    :param request: the current HTTP Request object
+    :param process_id: the ID of the process
+
+    :type request: HttpRequest
+    :type process_id: unicode
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    process = get_object_or_404(Process, pk=int_or_zero(process_id)).actual_instance
+    affected_objects = permissions.assert_can_delete_physical_process(request.user, process)
+    digested_affected_objects = {}
+    for instance in affected_objects:
+        try:
+            class_name = instance.__class__._meta.verbose_name_plural.title()
+        except AttributeError:
+            class_name = capfirst(_("miscellaneous"))
+        digested_affected_objects.setdefault(class_name, set()).add(instance)
+    print(digested_affected_objects)
+    return render(request, "samples/delete_process_confirmation.html",
+                  {"title": _("Delete process “{process}”").format(process=process), "process": process,
+                   "affected_objects": digested_affected_objects})
 
 
 _ = ugettext

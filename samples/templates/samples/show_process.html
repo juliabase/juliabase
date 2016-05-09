@@ -32,6 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                              href="{{ edit_url }}?next={{ url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
                      width="16" height="16"/></a>
+            {% endif %}{% if delete_url %}<a class="edit-icon" href="{{ delete_url }}"
+               ><img src="{% static "juliabase/icons/cog_delete.png" %}" alt="delete icon" title="{% trans 'delete' %}"
+                     width="16" height="16"/></a>
             {% endif %}{% if duplicate_url %}<a class="edit-icon" href="{{ duplicate_url }}"
                ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% trans 'duplicate' %}"
                      width="16" height="16"/></a>
