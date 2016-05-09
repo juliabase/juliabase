@@ -1139,15 +1139,15 @@ class SampleSplit(Process):
             description = _("You are not allowed to delete the process “{process}” because it is older than "
                             "one hour.").format(process=self)
             raise samples.permissions.PermissionError(user, description)
-        affected_objects = set()
+        affected_objects = set([self])
         for sample in self.pieces.all():
             result = sample.delete(*args, **kwargs)
             if dry_run:
-                affected_objects |= error.affected_objects
-        result = super(SampleSplit, self).delete(*args, **kwargs)
+                affected_objects |= result
         if dry_run:
-            affected_objects |= result
-        return affected_objects if dry_run else result
+            return affected_objects
+        else:
+            return super(SampleSplit, self).delete(*args, **kwargs)
 
 
 @python_2_unicode_compatible
