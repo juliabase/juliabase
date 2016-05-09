@@ -38,15 +38,18 @@ class DeletionTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        start = django.utils.timezone.now() - timedelta(minutes=30)
-        calvert = User.objects.get(username="r.calvert")
-        sample = models.Sample.objects.create(name="testsample", currently_responsible_person=calvert)
-        cls.substrate = institute_models.Substrate.objects.create(operator=calvert, timestamp=start)
+        cls.start = django.utils.timezone.now() - timedelta(minutes=30)
+        cls.calvert = User.objects.get(username="r.calvert")
+        sample = models.Sample.objects.create(name="testsample", currently_responsible_person=cls.calvert)
+        cls.substrate = institute_models.Substrate.objects.create(operator=cls.calvert, timestamp=cls.start)
         sample.processes.add(cls.substrate)
-        cls.split = models.SampleSplit.objects.create(operator=calvert, parent=sample,
-                                                      timestamp=start + timedelta(minutes=10))
-        piece_1 = models.Sample.objects.create(name="piece-1", currently_responsible_person=calvert, split_origin=cls.split)
-        piece_2 = models.Sample.objects.create(name="piece-2", currently_responsible_person=calvert, split_origin=cls.split)
+        cls.split = models.SampleSplit.objects.create(operator=cls.calvert, parent=sample,
+                                                      timestamp=cls.start + timedelta(minutes=10))
+        sample.processes.add(cls.split)
+        piece_1 = models.Sample.objects.create(name="piece-1", currently_responsible_person=cls.calvert,
+                                               split_origin=cls.split)
+        piece_2 = models.Sample.objects.create(name="piece-2", currently_responsible_person=cls.calvert,
+                                               split_origin=cls.split)
 
     def setUp(self):
         self.client = Client()
@@ -109,6 +112,36 @@ class DeletionTest(TestCase):
         self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
         self.assertFalse(models.Process.objects.filter(pk=self.substrate.pk).exists())
         self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+
+    def test_delete_result_failing(self):
+        result = models.Result.objects.create(operator=self.calvert, timestamp=self.start + timedelta(minutes=20))
+        models.Sample.objects.get(name="piece-1").processes.add(result)
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+        response = self.client.post("/samples/testsample/delete/".format(self.substrate.pk), follow=True)
+        self.assertContains(response, "You are not allowed to delete the process “result for piece-1” because this kind of "
+                            "process cannot be deleted.", status_code=401)
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=result.pk).exists())
+
+    def test_delete_with_result(self):
+        result = models.Result.objects.create(operator=self.calvert, timestamp=self.start + timedelta(minutes=20))
+        models.Sample.objects.get(name="piece-1").processes.add(result)
+        models.Sample.objects.get(name="14-JS-1").processes.add(result)
+        self.assertTrue(models.Sample.objects.filter(name="testsample").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-1").exists())
+        self.assertTrue(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.substrate.pk).exists())
+        self.assertTrue(models.Process.objects.filter(pk=self.split.pk).exists())
+        response = self.client.post("/samples/testsample/delete/".format(self.substrate.pk), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(models.Sample.objects.filter(name="testsample").exists())
+        self.assertFalse(models.Sample.objects.filter(name="piece-2").exists())
+        self.assertTrue(models.Process.objects.filter(pk=result.pk).exists())
 
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
