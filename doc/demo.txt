@@ -218,6 +218,22 @@ possibilities: Splitting and result process.
 
 
 .. index::
+   pair: sample; delete
+   pair: process; delete
+
+Delete samples and processes
+----------------------------
+
+You should never delete anything in a lab database.  However, due to heavy user
+demands, JuliaBase has the feature to delete samples and processes.  The rules
+are very strict though: You can only delete a process that you may edit, and
+that is not older than one hour.  If you delete a sample split, all pieces are
+deleted, too (if you are allowed to do so).  If you delete a sample, all
+processes which only have this sample are deleted, too (again, if you are
+allowed to do so).
+
+
+.. index::
    pair: sample; split
 
 Split a sample
