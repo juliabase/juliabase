@@ -21,7 +21,7 @@ msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-08 16:07+0000\n"
-"PO-Revision-Date: 2016-05-08 18:18+0200\n"
+"PO-Revision-Date: 2016-05-09 21:27+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -993,7 +993,7 @@ msgstr "Feed-Einträge für gelöschte Proben"
 #: samples/models/feeds.py:332
 #, python-brace-format
 msgid "Sample {name} was deleted"
-msgstr "Probe {sample} wurde gelöscht"
+msgstr "Probe {name} wurde gelöscht"
 
 #: samples/models/feeds.py:342 samples/views/split_and_rename.py:88
 msgid "sample was completely split"
