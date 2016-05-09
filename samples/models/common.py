@@ -609,6 +609,11 @@ class Process(PolymorphicModel):
 
         :rtype: (int, dict mapping ``Model`` to int) or set of ``Model``
         """
+        # FixMe: This method by default forbids to delete a process.  This is
+        # unfortunate because in every derived class which should be allowed to
+        # be deleted, I cannot call this inherited method during a dry run.
+        # This is bad OOP and leads to duplicated tests in the derived classes
+        # (e.g. for too old process).
         dry_run = kwargs.pop("dry_run", False)
         user = kwargs.pop("user", None)
         if dry_run:
