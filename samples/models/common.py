@@ -621,6 +621,7 @@ class Process(PolymorphicModel):
                             "deleted.").format(process=self)
             raise samples.permissions.PermissionError(user, description)
         else:
+            self.save()
             return super(Process, self).delete(*args, **kwargs)
 
 
@@ -1053,6 +1054,7 @@ class Sample(models.Model):
         else:
             kwargs.pop("dry_run", None)
             kwargs.pop("user", None)
+            self.save()
             return super(Sample, self).delete(*args, **kwargs)
 
 
