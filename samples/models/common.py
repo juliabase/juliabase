@@ -1360,7 +1360,7 @@ class Result(Process):
             else:
                 context["thumbnail_url"] = context["image_url"] = None
         if samples.permissions.has_permission_to_edit_result_process(user, self):
-            context["edit_url"] = django.core.urlresolvers.reverse("edit_result", kwargs={"process_id": self.pk})
+            context["edit_url"] = django.core.urlresolvers.reverse("samples:edit_result", kwargs={"process_id": self.pk})
         else:
             context["edit_url"] = None
         return super(Result, self).get_context_for_user(user, context)
