@@ -623,6 +623,9 @@ class Process(PolymorphicModel):
             raise samples.permissions.PermissionError(user, description)
         else:
             self.save()
+            # FixMe: The following line is necessary only until
+            # https://code.djangoproject.com/ticket/17688 is fixed.
+            self.samples.clear()
             return super(Process, self).delete(*args, **kwargs)
 
 
@@ -1053,6 +1056,10 @@ class Sample(models.Model):
         if dry_run:
             return affected_objects
         else:
+            # FixMe: The following two lines are necessary only until
+            # https://code.djangoproject.com/ticket/17688 is fixed.
+            self.processes.clear()
+            self.watchers.clear()
             kwargs.pop("dry_run", None)
             kwargs.pop("user", None)
             self.save()
@@ -1404,6 +1411,13 @@ class Result(Process):
         elif len(value_lists) == 1:
             data_node.items.extend([DataItem(quantity, value) for quantity, value in zip(quantities, value_lists[0])])
         return data_node
+
+    def delete(self, *args, **kwargs):
+        # FixMe: This method in its current form is necessary only until
+        # https://code.djangoproject.com/ticket/17688 is fixed.
+        if not kwargs.get("dry_run", False):
+            self.sample_series.clear()
+        return super(Result, self).delete(*args, **kwargs)
 
 
 @python_2_unicode_compatible
