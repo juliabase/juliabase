@@ -227,7 +227,6 @@ def delete_confirmation(request, sample_name):
         except AttributeError:
             class_name = capfirst(_("miscellaneous"))
         digested_affected_objects.setdefault(class_name, set()).add(instance)
-    print(digested_affected_objects)
     return render(request, "samples/delete_sample_confirmation.html",
                   {"title": _("Delete sample “{sample}”").format(sample=sample), "sample": sample,
                    "affected_objects": digested_affected_objects})

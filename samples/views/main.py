@@ -295,7 +295,6 @@ def delete_process_confirmation(request, process_id):
         except AttributeError:
             class_name = capfirst(_("miscellaneous"))
         digested_affected_objects.setdefault(class_name, set()).add(instance)
-    print(digested_affected_objects)
     return render(request, "samples/delete_process_confirmation.html",
                   {"title": _("Delete process “{process}”").format(process=process), "process": process,
                    "affected_objects": digested_affected_objects})
