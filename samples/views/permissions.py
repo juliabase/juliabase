@@ -338,7 +338,7 @@ def edit(request, username):
                 model_permission("can_edit_all", "full_editors", model.edit_all_permission)
                 model_permission("can_edit_permissions", "permission_editors", model.edit_permissions_permission)
             return utils.successful_response(request, _("The permissions of {name} were successfully changed."). \
-                                                 format(name=get_really_full_name(edited_user)), list_)
+                                                 format(name=get_really_full_name(edited_user)), "samples:list_permissions")
     return render(request, "samples/edit_permissions.html",
                   {"title": _("Change permissions of {name}").format(name=get_really_full_name(edited_user)),
                    "permissions_list": permissions_list})
