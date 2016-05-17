@@ -351,9 +351,11 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
 
 def unicode_strftime(timestamp, format_string):
     """Formats a timestamp to a string.  Unfortunately, the built-in method
-    ``strftime`` of datetime.datetime objects is not unicode-safe.
-    Therefore, I have to do a conversion into an UTF-8 intermediate
-    representation.  In Python 3.0, this problem is gone.
+    ``strftime`` of datetime.datetime objects is not unicode-safe.  Therefore,
+    I have to do a conversion into an UTF-8 intermediate representation.  In
+    Python 3.0, this problem is gone.  Note that this routine does not change
+    the timezone of the timestamp.  It may be necessary to convert to the
+    current time zone first.
 
     :param timestamp: the timestamp to be converted
     :param format_string: The format string that contains the pattern (i.e. all
