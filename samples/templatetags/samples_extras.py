@@ -34,6 +34,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.utils.http
+import django.utils.timezone
 import django.core.urlresolvers
 import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -246,6 +247,7 @@ def timestamp(value, minimal_inaccuracy=0):
     else:
         timestamp_ = value["timestamp"]
         inaccuracy = value["timestamp_inaccuracy"]
+    timestamp_ = timestamp_.astimezone(django.utils.timezone.get_current_timezone())
     return mark_safe(
         jb_common.utils.base.unicode_strftime(timestamp_, timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
 
@@ -274,6 +276,7 @@ def status_timestamp(value, type_):
         inaccuracy = value.end_inaccuracy
     if inaccuracy == 6:
         return None
+    timestamp_ = timestamp_.astimezone(django.utils.timezone.get_current_timezone())
     return mark_safe(jb_common.utils.base.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
 
 
