@@ -63,7 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% for process in result_processes %}
   <div class="process">
     <p class="operator_and_timestamp">
-      {{ process.operator|get_really_full_name }}, {{ process.timestamp }}
+      {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
     </p>
     <h2>{{ process.name }}{% if process.edit_url %}<a class="edit-icon"
                    href="{{ process.edit_url }}?next={{ sample_series.get_absolute_url|urlquote_plus }}"

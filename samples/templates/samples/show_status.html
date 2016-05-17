@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
            <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
            <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
            <td>{{ status_message.operator|get_really_full_name }}</td>
-           <td>{{ status_message.timestamp }}
+           <td>{{ status_message|timestamp }}
              {% if user == status_message.operator %}
                <form method="post" 
           action="{% url 'samples:withdraw_status' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
@@ -121,7 +121,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
           <td>{{ status_message|status_timestamp:"end"|default_if_none:"—" }}</td>
           <td>{{ status_message.operator|get_really_full_name }}</td>
-          <td>{{ status_message.timestamp }}
+          <td>{{ status_message|timestamp }}
             {% if user == status_message.operator %}
               <form method="post" 
         action="{% url 'samples:withdraw_status' id_=status_message.id %}?next={% url 'samples:show_status' %}"

@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
   <div class="process">
     <p class="operator_and_timestamp">
-      {{ result.operator|get_really_full_name }}, {{ result.timestamp }}
+      {{ result.operator|get_really_full_name }}, {{ result|timestamp }}
     </p>
     {% if samples or sample_series %}
       <p>

@@ -229,24 +229,33 @@ timestamp_formats = ("%Y-%m-%d %H:%M:%S",
 
 @register.filter
 def timestamp(value, minimal_inaccuracy=0):
-    """Filter for formatting the timestamp of a process properly to reflect
-    the inaccuracy connected with this timestamp.
+    """Filter for formatting the timestamp of a process properly to reflect the
+    inaccuracy connected with this timestamp.  It works not strictly only for
+    models.  In fact, any object with a ``timestamp`` field can be passed in.
+    If no ``timestamp_inaccuracy`` field is present in the value, 0 (accuracy
+    to the second) is assumed.
 
-    :param value: the process whose timestamp should be formatted
+    Instead of a model instance, a dict objects may be used as the input value.
+    In this case, keys instead of attributes are looked up, but with the same
+    names.
 
-    :type value: `samples.models.Process` or dict mapping str to object
+    :param value: the model whose timestamp should be formatted
+    :param minimal_inaccuracy: minimal inaccuracy used for display
+
+    :type value: ``models.Model`` or dict mapping str to object
+    :type minimal_inaccuracy: int
 
     :return:
       the rendered timestamp
 
     :rtype: unicode
     """
-    if isinstance(value, samples.models.Process):
+    try:
         timestamp_ = value.timestamp
-        inaccuracy = value.timestamp_inaccuracy
-    else:
+        inaccuracy = getattr(value, "timestamp_inaccuracy", 0)
+    except AttributeError:
         timestamp_ = value["timestamp"]
-        inaccuracy = value["timestamp_inaccuracy"]
+        inaccuracy = value.get("timestamp_inaccuracy", 0)
     timestamp_ = timestamp_.astimezone(django.utils.timezone.get_current_timezone())
     return mark_safe(
         jb_common.utils.base.unicode_strftime(timestamp_, timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
