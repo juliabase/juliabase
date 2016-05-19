@@ -1152,6 +1152,7 @@ class SampleSplit(Process):
     def delete(self, *args, **kwargs):
         dry_run = kwargs.get("dry_run", False)
         if dry_run and self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
+            user = kwargs["user"]
             description = _("You are not allowed to delete the process “{process}” because it is older than "
                             "one hour.").format(process=self)
             raise samples.permissions.PermissionError(user, description)
