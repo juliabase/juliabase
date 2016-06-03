@@ -24,6 +24,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import django.test
+import jb_remote.common
 
 
 class TestCase(django.test.TestCase):
@@ -41,3 +42,37 @@ class TestCase(django.test.TestCase):
         data = response.json()
         self._remove_dynamic_fields(data)
         self.assertEqual(data, dictionary)
+
+
+class JuliaBaseConnection(jb_remote.common.JuliaBaseConnection):
+    """Connection mock for unit testing the remote client.  An instance of this
+    class can be injected into the remote client module
+    (e.g. ``jb_remote_inm``) before it is used.  This module typically has got
+    a top-level variable called ``connection`` (possible imported from
+    ``jb_remote.common``, which must be rebound.
+    """
+
+    def __init__(self, client):
+        """Class constructor.
+
+        :param client: Django test client
+
+        :type client: ``django.test.Client``
+        """
+        self.client = client
+        super(JuliaBaseConnection, self).__init__()
+        self.root_url = "/"
+        self.extra = {"HTTP_ACCEPT": "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7"}
+
+    def _do_http_request(self, url, data=None):
+        if data is None:
+            return self.client.post(url, data, **self.extra)
+        else:
+            return self.client.get(url, **self.extra)
+
+    def open(self, relative_url, data=None, response_is_json=True):
+        response = self._do_http_request(self.root_url + relative_url, self._clean_data(data))
+        if response_is_json:
+            return response.json()
+        else:
+            return response.content
