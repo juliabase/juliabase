@@ -577,7 +577,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:02Z"
     operator: [r.calvert]
-    timestamp: "2014-10-01T10:29:0Z"
+    timestamp: "2014-10-01T10:29:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 1
@@ -589,7 +589,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:04Z"
     operator: [r.calvert]
-    timestamp: "2014-10-01T10:30:0Z"
+    timestamp: "2014-10-01T10:30:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 2
@@ -601,7 +601,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:05Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T11:09:0Z"
+    timestamp: "2014-10-02T11:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 3
@@ -613,7 +613,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:05Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T11:10:0Z"
+    timestamp: "2014-10-02T11:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 4
@@ -625,7 +625,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:05Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T12:09:0Z"
+    timestamp: "2014-10-02T12:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 5
@@ -637,7 +637,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:06Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T12:10:0Z"
+    timestamp: "2014-10-02T12:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 6
@@ -649,7 +649,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:06Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T13:09:0Z"
+    timestamp: "2014-10-02T13:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 7
@@ -661,7 +661,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:07Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T13:10:0Z"
+    timestamp: "2014-10-02T13:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 8
@@ -673,7 +673,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:07Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T14:09:0Z"
+    timestamp: "2014-10-02T14:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 9
@@ -685,7 +685,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:08Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T14:10:0Z"
+    timestamp: "2014-10-02T14:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 10
@@ -697,7 +697,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:08Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T15:09:0Z"
+    timestamp: "2014-10-02T15:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 11
@@ -709,7 +709,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:09Z"
     operator: [r.calvert]
-    timestamp: "2014-10-02T15:10:0Z"
+    timestamp: "2014-10-02T15:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 12
@@ -721,7 +721,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:10Z"
     operator: [e.monroe]
-    timestamp: "2014-10-01T10:29:0Z"
+    timestamp: "2014-10-01T10:29:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 13
@@ -733,7 +733,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:12Z"
     operator: [e.monroe]
-    timestamp: "2014-10-01T10:30:0Z"
+    timestamp: "2014-10-01T10:30:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 14
@@ -745,7 +745,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:13Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T11:09:0Z"
+    timestamp: "2014-10-02T11:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 15
@@ -757,7 +757,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:13Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T11:10:0Z"
+    timestamp: "2014-10-02T11:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 16
@@ -769,7 +769,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:14Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T12:09:0Z"
+    timestamp: "2014-10-02T12:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 17
@@ -781,7 +781,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:14Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T12:10:0Z"
+    timestamp: "2014-10-02T12:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 18
@@ -793,7 +793,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:15Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T13:09:0Z"
+    timestamp: "2014-10-02T13:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 19
@@ -805,7 +805,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:16Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T13:10:0Z"
+    timestamp: "2014-10-02T13:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 20
@@ -817,7 +817,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:16Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T14:09:0Z"
+    timestamp: "2014-10-02T14:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 21
@@ -829,7 +829,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:17Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T14:10:0Z"
+    timestamp: "2014-10-02T14:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 22
@@ -841,7 +841,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:17Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T15:09:0Z"
+    timestamp: "2014-10-02T15:09:00Z"
     timestamp_inaccuracy: 3
   model: samples.process
   pk: 23
@@ -853,7 +853,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:18Z"
     operator: [e.monroe]
-    timestamp: "2014-10-02T15:10:0Z"
+    timestamp: "2014-10-02T15:10:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 24
@@ -865,7 +865,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:20Z"
     operator: [n.burkhardt]
-    timestamp: "2014-10-07T10:01:0Z"
+    timestamp: "2014-10-07T10:01:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 25
@@ -877,7 +877,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:21Z"
     operator: [n.burkhardt]
-    timestamp: "2014-10-07T10:02:0Z"
+    timestamp: "2014-10-07T10:02:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 26
@@ -889,7 +889,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:21Z"
     operator: [n.burkhardt]
-    timestamp: "2014-10-07T10:03:0Z"
+    timestamp: "2014-10-07T10:03:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 27
@@ -901,7 +901,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:22Z"
     operator: [n.burkhardt]
-    timestamp: "2014-10-07T10:04:0Z"
+    timestamp: "2014-10-07T10:04:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 28
@@ -913,7 +913,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:22Z"
     operator: [n.burkhardt]
-    timestamp: "2014-10-07T10:05:0Z"
+    timestamp: "2014-10-07T10:05:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 29
@@ -925,7 +925,7 @@
     finished: true
     last_modified: "2015-01-21T11:15:23Z"
     operator: [n.burkhardt]
-    timestamp: "2014-10-07T10:06:0Z"
+    timestamp: "2014-10-07T10:06:00Z"
     timestamp_inaccuracy: 0
   model: samples.process
   pk: 30
@@ -1124,7 +1124,7 @@
     identifying_data_hash: c0721478e7f85a572679622a1660fffcfe49d6e0
     my_steps: ''
     my_samples_timestamp: "2015-01-21T11:15:22Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: []
     subscribed_feeds:
@@ -1144,7 +1144,7 @@
     identifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
     my_steps: ''
     my_samples_timestamp: "2015-01-21T11:15:01Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: []
     subscribed_feeds:
@@ -1163,8 +1163,8 @@
     folded_topics: '[]'
     identifying_data_hash: ''
     my_steps: ''
-    my_samples_timestamp: "1990-01-01T00:00:0Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -1177,14 +1177,14 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: "1990-01-01T00:00:0Z"
+    display_settings_timestamp: "1990-01-01T00:00:00Z"
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
     my_steps: ''
-    my_samples_timestamp: "1990-01-01T00:00:0Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -1204,7 +1204,7 @@
     identifying_data_hash: ''
     my_steps: ''
     my_samples_timestamp: "2015-01-21T11:15:17Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -1223,8 +1223,8 @@
     folded_topics: '[]'
     identifying_data_hash: ''
     my_steps: ''
-    my_samples_timestamp: "1990-01-01T00:00:0Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -1244,7 +1244,7 @@
     identifying_data_hash: ''
     my_steps: ''
     my_samples_timestamp: "2015-01-21T11:15:09Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
@@ -1257,14 +1257,14 @@
 - fields:
     auto_addition_topics: []
     default_folded_process_classes: []
-    display_settings_timestamp: "1990-01-01T00:00:0Z"
+    display_settings_timestamp: "1990-01-01T00:00:00Z"
     folded_processes: '{}'
     folded_series: '[]'
     folded_topics: '[]'
     identifying_data_hash: ''
     my_steps: ''
-    my_samples_timestamp: "1990-01-01T00:00:0Z"
-    my_samples_list_timestamp: "1990-01-01T00:00:0Z"
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
     show_users_from_departments: [1]
     subscribed_feeds:
