@@ -132,11 +132,12 @@ def double_urlquote(string):
 def parse_timestamp(timestamp):
     """Convert a timestamp coming from the server to a Python `datetime` object.
     The server serialises with the `DjangoJSONEncoder`, which in turn uses the
-    ``.isoformat()`` method.  As long as the server does not handle
-    timezone-aware timestamps (i.e., ``USE_TZ=False``), this works.
+    ``.isoformat()`` method.  Note that the timestamp must use the UTC timezone
+    (Z for zulu), which seems to be always the case for non-template responses
+    (at least for PostgreSQL and SQLite).
 
     :param timestamp: the timestamp to parse, coming from the server.  It must
-        have ISO 8601 format format without timezone information.
+        have ISO 8601 format format exlicitly with the “Z” timezone.
 
     :type timestamp: str
 
@@ -145,7 +146,7 @@ def parse_timestamp(timestamp):
 
     :rtype: datetime.datetime
     """
-    return datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S" + (".%f" if "." in timestamp else ""))
+    return datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S" + (".%f" if "." in timestamp else "") + "Z")
 
 
 def format_timestamp(timestamp):

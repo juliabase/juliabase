@@ -27,7 +27,8 @@ import datetime, decimal
 import django.utils.timezone
 from django.test.client import Client
 from django.test import override_settings
-from .tools import TestCase
+import jb_remote_inm
+from .tools import TestCase, JuliaBaseConnection
 
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
@@ -129,3 +130,7 @@ class ClusterToolDepositionTest(TestCase):
         self.assertLess(abs((response.context["process"]["timestamp"].value() - datetime.datetime.now()).total_seconds()), 1)
         self.assertEqual(response.context["process"]["operator"].value(), 6)
         self.assertEqual(response.context["process"]["combined_operator"].value(), 6)
+
+    def test_remote_client(self):
+        jb_remote_inm.connection = JuliaBaseConnection(self.client)
+        jb_remote_inm.ClusterToolDeposition("14C-001")
