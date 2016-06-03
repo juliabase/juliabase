@@ -408,7 +408,7 @@ class JuliaBaseConnection(object):
         :raises urllib.error.URLError: if a lower-level error occured, e.g. the
             HTTP connection couldn't be established.
         """
-        if not self.root_url:
+        if self.root_url is None:
             raise Exception("No root URL defined.  Maybe not logged-in?")
         response = self._do_http_request(self.root_url + relative_url, self._clean_data(data))
         if response_is_json:
