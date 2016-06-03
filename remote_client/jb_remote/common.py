@@ -361,6 +361,24 @@ class JuliaBaseConnection(object):
                     raise
             time.sleep(3 * random.random())
 
+    @staticmethod
+    def _clean_data(data):
+        if data is None:
+            return None
+        cleaned_data = {}
+        for key, value in data.items():
+            key = clean_header(key)
+            if value is not None:
+                if not isinstance(value, list):
+                    cleaned_header = clean_header(value)
+                    if cleaned_header:
+                        cleaned_data[key] = cleaned_header
+                else:
+                    cleaned_list = [clean_header(item) for item in value if value is not None]
+                    if cleaned_list:
+                        cleaned_data[key] = cleaned_list
+        return cleaned_data
+
     def open(self, relative_url, data=None, response_is_json=True):
         """Do an HTTP request with the JuliaBase server.  If ``data`` is not
         ``None``, its a POST request, and GET otherwise.
@@ -392,22 +410,7 @@ class JuliaBaseConnection(object):
         """
         if not self.root_url:
             raise Exception("No root URL defined.  Maybe not logged-in?")
-        if data is not None:
-            cleaned_data = {}
-            for key, value in data.items():
-                key = clean_header(key)
-                if value is not None:
-                    if not isinstance(value, list):
-                        cleaned_header = clean_header(value)
-                        if cleaned_header:
-                            cleaned_data[key] = cleaned_header
-                    else:
-                        cleaned_list = [clean_header(item) for item in value if value is not None]
-                        if cleaned_list:
-                            cleaned_data[key] = cleaned_list
-            response = self._do_http_request(self.root_url + relative_url, cleaned_data)
-        else:
-            response = self._do_http_request(self.root_url + relative_url)
+        response = self._do_http_request(self.root_url + relative_url, self._clean_data(data))
         if response_is_json:
             assert response.info()["Content-Type"].startswith("application/json")
             return json.loads(response.read().decode("utf-8"))
