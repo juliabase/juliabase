@@ -240,8 +240,7 @@ def get_lab_notebooks(user):
         else:
             if has_permission_to_view_lab_notebook(user, process_class):
                 lab_notebooks.append({"label": process["label_plural"], "url": url})
-    if lab_notebooks:
-        lab_notebooks.sort(key=lambda process: process["label"].lower())
+    lab_notebooks.sort(key=lambda process: process["label"].lower())
     return lab_notebooks
 
 
