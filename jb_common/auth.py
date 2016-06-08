@@ -170,7 +170,8 @@ class LDAPConnection(object):
         for ad_ldap_url in settings.LDAP_URLS:
             try:
                 server = ldap3.Server(**self.get_server_parameters(ad_ldap_url))
-                connection = ldap3.Connection(server, user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
+                connection = ldap3.Connection(server,
+                                              user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
                                               password=password.encode("utf-8"), raise_exceptions=True, read_only=True)
                 connection.bind()
                 connection.unbind()
@@ -214,7 +215,8 @@ class LDAPConnection(object):
                     connection.bind()
                     connection.search(search_base=settings.LDAP_SEARCH_DN,
                                       search_scope=ldap3.SUBTREE,
-                                      search_filter="(&(sAMAccountName={0}){1})".format(username, settings.LDAP_ACCOUNT_FILTER),
+                                      search_filter="(&(sAMAccountName={0}){1})".format(username,
+                                                                                        settings.LDAP_ACCOUNT_FILTER),
                                       attributes=list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
                                                     settings.LDAP_ADDITIONAL_ATTRIBUTES)))
                 except ldap3.LDAPException as e:
