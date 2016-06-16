@@ -210,21 +210,20 @@ class LDAPConnection(object):
         except KeyError:
             for ad_ldap_url in settings.LDAP_URLS:
                 server = ldap3.Server(**self.get_server_parameters(ad_ldap_url))
-                connection = ldap3.Connection(server, raise_exceptions=True, read_only=True)
                 try:
-                    connection.bind()
-                    connection.search(search_base=settings.LDAP_SEARCH_DN,
-                                      search_scope=ldap3.SUBTREE,
-                                      search_filter="(&(sAMAccountName={0}){1})".format(username,
-                                                                                        settings.LDAP_ACCOUNT_FILTER),
-                                      attributes=list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
-                                                    settings.LDAP_ADDITIONAL_ATTRIBUTES)))
+                    with ldap3.Connection(server, raise_exceptions=True, read_only=True) as connection:
+                        connection.search(search_base=settings.LDAP_SEARCH_DN,
+                                          search_scope=ldap3.SUBTREE,
+                                          search_filter="(&(sAMAccountName={0}){1})".format(username,
+                                                                                            settings.LDAP_ACCOUNT_FILTER),
+                                          attributes=list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
+                                              settings.LDAP_ADDITIONAL_ATTRIBUTES)))
+                        ad_data = connection.response[0]["attributes"] if connection.response[0]["type"] == "searchResEntry" \
+                                  else None
+                        self.cached_ad_data[username] = ad_data
+                        break
                 except ldap3.LDAPException as e:
                     continue
-                ad_data = connection.response[0]["attributes"] if connection.response[0]["type"] == "searchResEntry" else None
-                self.cached_ad_data[username] = ad_data
-                connection.unbind()
-                break
             else:
                 try:
                     # FixMe: This branch is only for Python 2
