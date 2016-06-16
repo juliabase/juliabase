@@ -223,13 +223,14 @@ class LDAPConnection(object):
                         self.cached_ad_data[username] = ad_data
                         break
                 except ldap3.LDAPException as e:
+                    error = e
                     continue
             else:
                 try:
                     # FixMe: This branch is only for Python 2
-                    message = e.message["desc"]
+                    message = error.message["desc"]
                 except AttributeError:
-                    message = str(e)
+                    message = str(error)
                 mail_admins("JuliaBase LDAP error", message)
                 ad_data = None
         return ad_data
