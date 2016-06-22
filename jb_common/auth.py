@@ -47,8 +47,10 @@ Portions of this module are inspired by
 
 from __future__ import absolute_import, unicode_literals
 import django.utils.six as six
+from django.utils.six.moves import cStringIO as StringIO
 
-import re
+import re, traceback
+from contextlib import contextmanager
 from django.contrib.auth.models import User, Permission
 from django.contrib.sessions.models import Session
 import django.utils.timezone
@@ -151,6 +153,34 @@ class LDAPConnection(object):
             kwargs["host"] = url
         return kwargs
 
+    @contextmanager
+    def server_connection(self, **kwargs):
+        """Returns a context manager which yields an LDAP connection object.  All
+        keyword parameters passed are passed to the connection constructor.
+        Note that “connection” here means a Python ldap3 object rather than the
+        :py:class:`LDAPConnection` class.
+
+        :raises ldap3.LDAPInvalidCredentialsResult: if you proveded user
+          credentials in ``kwargs`` and they were invalid.
+        """
+        connection_kwargs = {"raise_exceptions": True, "read_only": True}
+        connection_kwargs.update(kwargs)
+        for ad_ldap_url in settings.LDAP_URLS:
+            server = ldap3.Server(**self.get_server_parameters(ad_ldap_url))
+            try:
+                with ldap3.Connection(server, **connection_kwargs) as connection:
+                    yield connection
+                    break
+            except ldap3.LDAPInvalidCredentialsResult:
+                raise
+            except ldap3.LDAPException:
+                message = StringIO()
+                traceback.print_exc(file=message)
+                continue
+        else:
+            mail_admins("JuliaBase LDAP error", message.getvalue())
+            yield None
+
     def is_valid(self, username, password):
         """Returns whether the username/password combination is known in the AD, and
         whether the user is a current member of one of the eligible departments.
@@ -167,29 +197,11 @@ class LDAPConnection(object):
 
         :rtype: bool
         """
-        for ad_ldap_url in settings.LDAP_URLS:
-            try:
-                server = ldap3.Server(**self.get_server_parameters(ad_ldap_url))
-                connection = ldap3.Connection(server,
-                                              user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
-                                              password=password.encode("utf-8"), raise_exceptions=True, read_only=True)
-                connection.bind()
-                connection.unbind()
-            except ldap3.LDAPInvalidCredentialsResult:
-                return False
-            except ldap3.LDAPException as e:
-                latest_error = e
-                continue
-            if not self.is_eligible_ldap_member(username):
-                return False
-            return True
-        else:
-            try:
-                # FixMe: This branch is only for Python 2
-                message = latest_error.message["desc"]
-            except AttributeError:
-                message = str(latest_error)
-            mail_admins("JuliaBase LDAP error", message)
+        try:
+            with self.server_connection(user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
+                                        password=password.encode("utf-8")) as connection:
+                return connection is not None
+        except ldap3.LDAPInvalidCredentialsResult:
             return False
 
     def get_ad_data(self, username):
@@ -208,31 +220,17 @@ class LDAPConnection(object):
         try:
             ad_data = self.cached_ad_data[username]
         except KeyError:
-            for ad_ldap_url in settings.LDAP_URLS:
-                server = ldap3.Server(**self.get_server_parameters(ad_ldap_url))
-                try:
-                    with ldap3.Connection(server, raise_exceptions=True, read_only=True) as connection:
-                        connection.search(search_base=settings.LDAP_SEARCH_DN,
-                                          search_scope=ldap3.SUBTREE,
-                                          search_filter="(&(sAMAccountName={0}){1})".format(username,
-                                                                                            settings.LDAP_ACCOUNT_FILTER),
-                                          attributes=list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
-                                              settings.LDAP_ADDITIONAL_ATTRIBUTES)))
-                        ad_data = connection.response[0]["attributes"] if connection.response[0]["type"] == "searchResEntry" \
-                                  else None
-                        self.cached_ad_data[username] = ad_data
-                        break
-                except ldap3.LDAPException as e:
-                    error = e
-                    continue
-            else:
-                try:
-                    # FixMe: This branch is only for Python 2
-                    message = error.message["desc"]
-                except AttributeError:
-                    message = str(error)
-                mail_admins("JuliaBase LDAP error", message)
-                ad_data = None
+            with self.server_connection() as connection:
+                if connection is None:
+                    return None
+                connection.search(search_base=settings.LDAP_SEARCH_DN,
+                                  search_scope=ldap3.SUBTREE,
+                                  search_filter="(&(sAMAccountName={0}){1})".format(username,
+                                                                                    settings.LDAP_ACCOUNT_FILTER),
+                                  attributes=list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
+                                      settings.LDAP_ADDITIONAL_ATTRIBUTES)))
+                ad_data = connection.response[0]["attributes"] if connection.response[0]["type"] == "searchResEntry" else None
+                self.cached_ad_data[username] = ad_data
         return ad_data
 
     def is_eligible_ldap_member(self, username):
