@@ -10,7 +10,8 @@ For further information, visit its [web page](http://www.juliabase.org)
 Community
 ---------
 
-The mailing list is "juliabase at googlegroups.com".  It also exists in
+The mailing list is "juliabase at googlegroups.com"
+(https://groups.google.com/forum/#!forum/juliabase).  It also exists in
 newsgroup form on news.gmane.org as "gmane.comp.db.juliabase".
 
 
