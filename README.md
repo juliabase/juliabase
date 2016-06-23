@@ -4,13 +4,13 @@ JuliaBase
 JuliaBase is a Python web framework for creating databases for sample tracking
 in scientific instituions or working groups.  It bases on Django.
 
-For further information, visit its [web page](http://www.juliabase.org)
+For further information, visit the JuliaBase web page at http://www.juliabase.org.
 
 
 Community
 ---------
 
-The mailing list is "juliabase at googlegroups.com".  It also exists in
+The mailing list is "juliabase at googlegroups.com" or https://groups.google.com/forum/#!forum/juliabase.  It also exists in
 newsgroup form on news.gmane.org as "gmane.comp.db.juliabase".
 
 
