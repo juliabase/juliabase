@@ -62,9 +62,9 @@ class UserDetailsForm(forms.ModelForm):
                     if issubclass(process_class, models.Process) and not process_class._meta.abstract
                     and process_class not in [models.Process, models.Deposition]]
         for department in user.samples_user_details.show_users_from_departments.iterator():
-            process_from_department = set(process for process in processes
-                                          if process._meta.app_label == department.app_label)
-            choices.append((department.name, utils.choices_of_content_types(process_from_department)))
+            processes_from_department = set(process for process in processes
+                                            if process._meta.app_label == department.app_label)
+            choices.append((department.name, utils.choices_of_content_types(processes_from_department)))
         if not choices:
             choices = (("", 9 * "-"),)
         self.fields["default_folded_process_classes"].choices = choices
