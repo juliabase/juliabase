@@ -110,7 +110,7 @@ def edit_preferences(request, login_name):
         """Creates the new exceptional processes dictionary and saves it into the user details.
         """
         old_default_classes = set(cls.id for cls in ContentType.objects.filter(dont_show_to_user=user.samples_user_details))
-        new_default_classes = set(map(int, default_folded_process_classes))
+        new_default_classes = set(int(class_id) for class_id in default_folded_process_classes if class_id)
         differences = old_default_classes ^ new_default_classes
         exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
         for process_id_list in exceptional_processes_dict.values():
