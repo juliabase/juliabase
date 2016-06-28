@@ -46,13 +46,10 @@ import samples.utils.views as utils
 class UserDetailsForm(forms.ModelForm):
     """Model form for user preferences.
     """
-    subscribed_feeds = forms.MultipleChoiceField(label=capfirst(_("subscribed newsfeeds")), required=False)
-    default_folded_process_classes = forms.MultipleChoiceField(label=capfirst(_("folded processes")), required=False)
-    show_users_from_departments = forms.MultipleChoiceField(label=capfirst(_("show users from department")), required=False)
-
     class Meta:
         model = models.UserDetails
-        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds",)
+        fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds", "default_folded_process_classes",
+                  "show_users_from_departments")
 
     def __init__(self, user, *args, **kwargs):
         super(UserDetailsForm, self).__init__(*args, **kwargs)
@@ -65,19 +62,13 @@ class UserDetailsForm(forms.ModelForm):
             processes_from_department = set(process for process in processes
                                             if process._meta.app_label == department.app_label)
             choices.append((department.name, utils.choices_of_content_types(processes_from_department)))
-        if not choices:
-            choices = (("", 9 * "-"),)
-        self.fields["default_folded_process_classes"].choices = choices
-        self.fields["default_folded_process_classes"].initial = [content_type.id for content_type
-                                                     in user.samples_user_details.default_folded_process_classes.iterator()]
+        self.fields["default_folded_process_classes"].choices = choices or (("", 9 * "-"),)
+        self.fields["default_folded_process_classes"].initial = \
+                    [content_type.id for content_type in user.samples_user_details.default_folded_process_classes.iterator()]
         self.fields["default_folded_process_classes"].widget.attrs["size"] = "15"
         self.fields["subscribed_feeds"].choices = utils.choices_of_content_types(
             list(get_all_addable_physical_process_models()) + [models.Sample, models.SampleSeries, Topic])
         self.fields["subscribed_feeds"].widget.attrs["size"] = "15"
-        self.fields["show_users_from_departments"].choices = [(department.pk, department.name)
-                                                            for department in Department.objects.iterator()]
-        self.fields["show_users_from_departments"].initial = \
-                    user.samples_user_details.show_users_from_departments.values_list("id", flat=True)
 
 
 @login_required
@@ -134,12 +125,7 @@ def edit_preferences(request, login_name):
         initials_form = utils.InitialsForm(user, initials_mandatory, request.POST)
         if user_details_form.is_valid() and initials_form.is_valid():
             __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
-            user_details = user_details_form.save(commit=False)
-            user_details.show_users_from_departments = Department.objects.filter(id__in=
-                                                        user_details_form.cleaned_data["show_users_from_departments"])
-            user_details.default_folded_process_classes = [ContentType.objects.get_for_id(int(id_))
-                 for id_ in user_details_form.cleaned_data["default_folded_process_classes"]]
-            user_details.save()
+            user_details_form.save()
             initials_form.save()
             return utils.successful_response(request, _("The preferences were successfully updated."))
     else:

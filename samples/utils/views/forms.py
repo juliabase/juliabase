@@ -778,11 +778,10 @@ def choices_of_content_types(classes):
     :return:
       the choices, ready to be used for a ``MultipleChoiceField``
 
-    :rtype: list of (int, unicode)
+    :rtype: list of (int, ``django.contrib.contenttypes.models.ContentType``)
     """
-    # FixMe: The translation functionality in this function may become
-    # superfluous when Django Ticket #16803 is fixed.
-    choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name) for cls in classes]
+    content_types = [ContentType.objects.get_for_model(cls) for cls in classes]
+    choices = [(content_type.id, content_type) for content_type in content_types]
     choices.sort(key=lambda item: item[1].lower())
     return choices
 

@@ -199,9 +199,7 @@ class ChooseTaskListsForm(forms.Form):
             choices.append((department.name, utils.choices_of_content_types(process_from_department)))
         if len(choices) == 1:
             choices = choices[0][1]
-        if not choices:
-            choices = (("", 9 * "-"),)
-        self.fields["visible_task_lists"].choices = choices
+        self.fields["visible_task_lists"].choices = choices or (("", 9 * "-"),)
         self.fields["visible_task_lists"].initial = [content_type.id for content_type
                                                      in user.samples_user_details.visible_task_lists.iterator()]
         self.fields["visible_task_lists"].widget.attrs["size"] = "15"
