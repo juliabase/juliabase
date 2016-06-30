@@ -37,45 +37,6 @@ from jb_common import __version__
 import jb_common.utils.base as utils
 
 
-def get_cache_connections():
-    """Returns the connections statistics of the memcached servers in the
-    cluster.
-
-    :return:
-      the total number of current memcached connections, the maximal number of
-      current memcached connections, or ``(0, 0)`` if memcached is not used
-
-    :rtype: int, int
-    """
-    memcached_binding = None
-    if settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.memcached.MemcachedCache":
-        import memcache as memcached_binding
-        key_mapping = lambda k: k.encode("ascii")
-    elif settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.memcached.PyLibMCCache":
-        import pylibmc as memcached_binding
-        key_mapping = lambda k: k
-    if memcached_binding:
-        memcached_client = memcached_binding.Client(settings.CACHES["default"]["LOCATION"])
-        servers = memcached_client.get_stats()
-        number_of_servers = len(servers)
-        connections = sum(int(server[1][key_mapping("curr_connections")]) for server in servers)
-    else:
-        number_of_servers = 0
-        connections = 0
-    max_connections = 0
-    try:
-        for line in open("/etc/memcached.conf"):
-            if line.startswith("-c"):
-                max_connections = int(line.split()[1])
-                break
-        else:
-            max_connections = 1024
-    except:
-        pass
-    max_connections *= number_of_servers
-    return connections, max_connections
-
-
 def statistics(request):
     """View for various internal server statistics and plots.  Note that you
     needn't be logged in for accessing this.
@@ -91,8 +52,7 @@ def statistics(request):
     """
     return render(request, "samples/statistics.html",
                   {"title": _("JuliaBase server statistics"),
-                   "cache_hit_rate": int(round((utils.cache_hit_rate() or 0) * 100)),
-                   "cache_connections": get_cache_connections()})
+                   "cache_hit_rate": int(round((utils.cache_hit_rate() or 0) * 100))})
 
 
 @cache_control(max_age=0)  # This is for language switching

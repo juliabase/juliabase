@@ -149,11 +149,14 @@ LANGUAGES = [("en", _("English")), ("de", _("German"))]
 
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.memcached.MemcachedCache",
-        "LOCATION": ["localhost"],
-        "TIMEOUT": 3600 * 24 * 28
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "TIMEOUT": 3600 * 24 * 28,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     }
+}
 if DEBUG:
     # Switch off caching, so that edits are active immediately
     CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}

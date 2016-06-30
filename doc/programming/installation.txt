@@ -72,7 +72,7 @@ operating system by default anyway, you must install:
 
 - Apache2
 - PostgreSQL (and the Python module “psycopg2” for it)
-- memcached (and the Python module for it)
+- Redis (and the Django module for it)
 - matplotlib
 - reportlab
 - Python modules for YAML and markdown
