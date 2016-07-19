@@ -86,10 +86,10 @@ type
   end;
 
 var
-  jb_package_path, jb_module_name, jb_interpreter_path:String;
+  jb_package_path, jb_module_name, jb_interpreter_path: String;
   jb_open_error_page_in_browser: boolean;
 
-function execute_jb(const login, password, commands: String; testserver:boolean=false): String;
+function execute_jb(const login, password, commands: String; testserver: boolean=false): String;
 
 implementation
 
