@@ -142,7 +142,7 @@ class Topic(models.Model):
         ordering = ["name"]
         verbose_name = _("topic")
         verbose_name_plural = _("topics")
-        unique_together = ("name", "department")
+        unique_together = ("name", "department", "parent_topic")
         _ = lambda x: x
         default_permissions = ()
         permissions = (("add_topic", _("Can add new topics")),
@@ -195,6 +195,7 @@ class Topic(models.Model):
     def save(self):
         """When the topic was edited, the sub topics must be updated.
         """
+        assert not Topic.objects.filter(name=self.name, department=self.department, parent_topic=self.parent_topic).exists()
         super(Topic, self).save()
         for child_topic in self.child_topics.iterator():
             child_topic.confidential = self.confidential

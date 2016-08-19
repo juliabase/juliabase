@@ -126,15 +126,15 @@ def add(request):
                               confidential=new_topic_form.cleaned_data["confidential"],
                               department=request.user.jb_user_details.department,
                               manager=new_topic_form.cleaned_data["topic_manager"])
-            new_topic.save()
             if parent_topic:
                 new_topic.parent_topic = parent_topic
                 new_topic.confidential = parent_topic.confidential
-                new_topic.members = parent_topic.members.all()
                 new_topic.save()
+                new_topic.members.set(parent_topic.members.all())
                 next_view = None
                 next_view_kwargs = {}
             else:
+                new_topic.save()
                 next_view = "samples:edit_topic"
                 next_view_kwargs = {"id": django.utils.http.urlquote(new_topic.id, safe="")}
             new_topic.manager.user_permissions.add(permissions.get_topic_manager_permission())
