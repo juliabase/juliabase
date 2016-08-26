@@ -34,7 +34,7 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
 from django.conf import settings
-from django.utils.encoding import iri_to_uri
+from django.utils.encoding import iri_to_uri, force_text
 from django.forms.utils import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -371,6 +371,7 @@ def unicode_strftime(timestamp, format_string):
 
     :rtype: unicode
     """
+    format_string = force_text(format_string)
     if six.PY2:
         return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
     else:
