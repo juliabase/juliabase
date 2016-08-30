@@ -95,7 +95,7 @@ However, the Active Directory knows him/her.  There are two
 possibilities: Either this is the former collegue, then just set
 him/her to “active”.  Or, they just happen to have the same login,
 then change the former collegue's login name.
-""".format(user.username)).encode("utf-8"))
+""".format(user.username)))
         ldap_connection.synchronize_with_ad(user)
         return user
 
