@@ -192,10 +192,23 @@ class Topic(models.Model):
         """
         return True if self.parent_topic else False
 
+    def __check_duplicate(self):
+        """Checks whether there is a duplicate topic in the database.  Since the DB
+        cannot find duplicates if the parent topic is empty (see
+        http://stackoverflow.com/a/33308014/188108 for details), I check for
+        them here.  If there is a collision, the server bails out (just as with
+        a DB ``IntegrityError``) because it should be avoided in the caller.
+        """
+        base_query = Topic.objects.filter(name=self.name, department=self.department, parent_topic=self.parent_topic)
+        if self.pk is None:
+            assert not base_query.exists()
+        else:
+            assert not base_query.exclude(pk=self.pk).exists()
+
     def save(self):
         """When the topic was edited, the sub topics must be updated.
         """
-        assert not Topic.objects.filter(name=self.name, department=self.department, parent_topic=self.parent_topic).exists()
+        self.__check_duplicate()
         super(Topic, self).save()
         for child_topic in self.child_topics.iterator():
             child_topic.confidential = self.confidential
