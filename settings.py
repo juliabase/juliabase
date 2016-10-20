@@ -101,8 +101,8 @@ TEMPLATES = [
                                    "django.contrib.messages.context_processors.messages",
                                    "jb_common.context_processors.default",
                                    "institute.context_processors.default"],
-            "loaders": ["django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
-                                                                  "django.template.loaders.filesystem.Loader")]
+            "loaders": [("django.template.loaders.cached.Loader", ("django.template.loaders.app_directories.Loader",
+                                                                   "django.template.loaders.filesystem.Loader"))]
             }
     }
 ]
