@@ -20,8 +20,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-08 16:07+0000\n"
-"PO-Revision-Date: 2015-08-12 17:03+0200\n"
+"POT-Creation-Date: 2016-10-27 16:29+0000\n"
+"PO-Revision-Date: 2016-10-27 18:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -126,7 +126,7 @@ msgstr "Abteilung"
 msgid "departments"
 msgstr "Abteilungen"
 
-#: jb_common/models.py:69 jb_common/models.py:255
+#: jb_common/models.py:69 jb_common/models.py:269
 msgid "user"
 msgstr "Benutzer"
 
@@ -187,23 +187,23 @@ msgstr "Darf Themen ändern, für die er/sie Manager ist"
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: jb_common/models.py:254
+#: jb_common/models.py:268
 msgid "hash value"
 msgstr "Hashwert"
 
-#: jb_common/models.py:257
+#: jb_common/models.py:271
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: jb_common/models.py:259
+#: jb_common/models.py:273
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: jb_common/models.py:262
+#: jb_common/models.py:276
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: jb_common/models.py:263
+#: jb_common/models.py:277
 msgid "error pages"
 msgstr "Fehlerseiten"
 
@@ -443,35 +443,35 @@ msgid "This file is not in an allowed directory."
 msgstr "Diese Datei ist nicht in einem erlaubten Verzeichnis."
 
 #. Translators: Intended as a separator in an enumeration of three or more items
-#: jb_common/utils/base.py:856
+#: jb_common/utils/base.py:859
 msgid ", "
 msgstr ", "
 
-#: jb_common/utils/base.py:856
+#: jb_common/utils/base.py:859
 msgid ", and "
 msgstr " und "
 
 #. Translators: Intended to be used in an enumeration of exactly two items
-#: jb_common/utils/base.py:859
+#: jb_common/utils/base.py:862
 msgid " and "
 msgstr " und "
 
-#: jb_common/utils/base.py:1057
+#: jb_common/utils/base.py:1060
 #, python-brace-format
 msgid "Can add {class_name}"
 msgstr "Darf {class_name} hinzufügen"
 
-#: jb_common/utils/base.py:1058
+#: jb_common/utils/base.py:1061
 #, python-brace-format
 msgid "Can edit every {class_name}"
 msgstr "Darf jede(n/s) {class_name} ändern"
 
-#: jb_common/utils/base.py:1059
+#: jb_common/utils/base.py:1062
 #, python-brace-format
 msgid "Can view every {class_name}"
 msgstr "Darf jede(n/s) {class_name} sehen"
 
-#: jb_common/utils/base.py:1060
+#: jb_common/utils/base.py:1063
 #, python-brace-format
 msgid "Can edit permissions for {class_name}"
 msgstr "Darf die Berechtigungen für {class_name} ändern"
