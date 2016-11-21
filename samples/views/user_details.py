@@ -140,6 +140,7 @@ def edit_preferences(request, login_name):
             user_details.default_folded_process_classes = [ContentType.objects.get_for_id(int(id_))
                  for id_ in user_details_form.cleaned_data["default_folded_process_classes"]]
             user_details.save()
+            user_details_form.save_m2m()
             initials_form.save()
             return utils.successful_response(request, _("The preferences were successfully updated."))
     else:

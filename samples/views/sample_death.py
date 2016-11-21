@@ -94,6 +94,7 @@ def new(request, sample_name):
             sample_death.timestamp = django.utils.timezone.now()
             sample_death.operator = request.user
             sample_death.save()
+            sample_death_form.save_m2m()
             sample_death.samples = [sample]
             # FixMe: Feed entries
             return utils.successful_response(request, _("Sample “{sample}” was killed.").format(sample=sample),

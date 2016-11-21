@@ -617,6 +617,7 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
             subprocess = form.save(commit=False)
             setattr(subprocess, self.process_field, process)
             subprocess.save()
+            form.save_m2m()
         return process
 
 
@@ -977,6 +978,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
             step = step_form.save(commit=False)
             setattr(step, self.process_field, process)
             step.save()
+            step_form.save_m2m()
         return process
 
 
