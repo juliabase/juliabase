@@ -60,7 +60,7 @@ class SamplesConfig(AppConfig):
         """
         import jb_common.utils.base as utils
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
             user_menu.prepend(MenuItem(_("my topics and permissions"),
                                        reverse("samples:topics_and_permissions",

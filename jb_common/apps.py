@@ -47,7 +47,7 @@ class JBCommonConfig(AppConfig):
         menu.get_or_create(_("add"))
         menu.get_or_create(pgettext("top-level menu item", "explore"))
         menu.get_or_create(_("manage"))
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             user_menu = menu.get_or_create(MenuItem(utils.get_really_full_name(request.user), position="right"))
             user_menu.add(
                 _("edit preferences"),
@@ -66,7 +66,7 @@ class JBCommonConfig(AppConfig):
             jb_menu.add(_("help"), settings.HELP_LINK_PREFIX + help_link, "question-sign")
         jb_menu.add(_("statistics"), reverse("samples:statistics"), "stats")
         jb_menu.add(_("about"), reverse("samples:about"), "info-sign")
-        if request.user.is_authenticated() and request.method == "GET" and settings.LANGUAGES:
+        if request.user.is_authenticated and request.method == "GET" and settings.LANGUAGES:
             jb_menu.add_separator()
             for code, name in settings.LANGUAGES:
                 back_url = request.path

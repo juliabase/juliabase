@@ -52,7 +52,7 @@ class LocaleMiddleware(object):
 
     @staticmethod
     def get_language_for_user(request):
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             try:
                 language = request.user.jb_user_details.language
                 return language
@@ -127,7 +127,7 @@ class ActiveUserMiddleware(object):
     installed middleware classes.
     """
     def process_request(self, request):
-        if request.user.is_authenticated() and not request.user.is_active:
+        if request.user.is_authenticated and not request.user.is_active:
             logout(request)
 
 
@@ -156,7 +156,7 @@ class JSONClientMiddleware(object):
         if is_json_requested(request) and response._headers["content-type"][1].startswith("text/html") and \
                 response.status_code == 200:
             user = request.user
-            if not user.is_authenticated():
+            if not user.is_authenticated:
                 # Login view was returned
                 return HttpResponseUnauthorised()
             hash_ = hashlib.sha1()
@@ -195,7 +195,7 @@ class UserTracebackMiddleware(object):
         """Convert response to exceptions to JSONised version if the response
         is requested to be JSON.
         """
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             request.META["AUTH_USER"] = six.text_type(request.user.username)
         else:
             request.META["AUTH_USER"] = "Anonymous User"

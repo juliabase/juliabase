@@ -58,7 +58,7 @@ def default(request):
     result["url"] = request.path
     if request.GET:
         result["url"] += "?" + request.GET.urlencode()
-    if user.is_authenticated():
+    if user.is_authenticated:
         result["salutation"] = user.first_name or user.username
     if request.method == "GET":
         result["translation_flags"] = tuple((code, ugettext(language)) for code, language in settings.LANGUAGES)
