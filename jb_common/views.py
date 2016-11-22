@@ -25,7 +25,7 @@ from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 import django.contrib.auth.models
 from django.views.decorators.cache import cache_control
-from django.views.i18n import javascript_catalog
+from django.views.i18n import JavaScriptCatalog
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.decorators import login_required
 from jb_common import models
@@ -152,7 +152,7 @@ def cached_javascript_catalog(request, domain="djangojs", packages=None):
     server configurations.  The downside, namely that new translations are
     delivered after at most one hour, is absolutely bearable.
     """
-    return javascript_catalog(request, domain, packages)
+    return JavaScriptCatalog.as_view(domain=domain, packages=packages)(request)
 
 
 _ = ugettext
