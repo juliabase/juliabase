@@ -41,7 +41,7 @@ from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.decorators import available_attrs
 from django.utils.translation import ugettext_lazy as _, ugettext_lazy, ugettext
-from django.utils.functional import allow_lazy
+from django.utils.functional import keep_lazy_text
 import django.utils.timezone
 from jb_common import mimeparse
 from jb_common.utils import blobs
@@ -628,6 +628,7 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     return content
 
 
+@keep_lazy_text
 def format_lazy(string, *args, **kwargs):
     """Implements a lazy variant of the ``format`` string method.  For
     example, you might say::
@@ -637,9 +638,6 @@ def format_lazy(string, *args, **kwargs):
     Here, “``_``” is ``ugettext_lazy``.
     """
     return string.format(*args, **kwargs)
-# Unfortunately, ``allow_lazy`` doesn't work as a real Python decorator, for
-# whatever reason.
-format_lazy = allow_lazy(format_lazy, six.text_type)
 
 
 def static_response(content, served_filename="", content_type=None):
