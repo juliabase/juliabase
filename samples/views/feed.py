@@ -26,7 +26,7 @@ from __future__ import absolute_import, unicode_literals
 import datetime, time
 import xml.etree.ElementTree as ElementTree
 import django.contrib.auth.models
-from django.template import Context, loader
+from django.template import loader
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -200,7 +200,7 @@ def show(request, username, user_hash):
         content = ElementTree.SubElement(entry_element, "content")
         context_dict = {"entry": entry}
         context_dict.update(entry.get_additional_template_context(user))
-        content.text = template.render(Context(context_dict))
+        content.text = template.render(context_dict)
         content.attrib["type"] = "html"
 #    indent(feed)
     return HttpResponse("""<?xml version="1.0"?>\n"""
