@@ -39,7 +39,7 @@ else:
 
 
 import django.contrib.auth.management
-def _get_only_custom_permissions(opts, ctype):
+def _get_only_custom_permissions(opts):
     return list(opts.permissions)
 django.contrib.auth.management._get_all_permissions = _get_only_custom_permissions
 
