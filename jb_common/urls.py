@@ -34,8 +34,11 @@ from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url, include
 from django.conf import settings
+from django.views.decorators.cache import cache_page
+from django.views.i18n import JavaScriptCatalog
+from django.utils.http import urlquote_plus
 from django.contrib.auth.views import password_change, password_change_done, login, logout
-from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page, cached_javascript_catalog
+from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page
 
 
 jb_common_patterns = ([
@@ -44,7 +47,7 @@ jb_common_patterns = ([
     url(r"^switch_language$", switch_language, name="switch_language"),
     url(r"^error_pages/(?P<hash_value>.+)", show_error_page, name="show_error_page"),
 
-    url(r"^jsi18n/$", cached_javascript_catalog, {"packages": settings.JAVASCRIPT_I18N_APPS}, "jsi18n"),
+    url(r"^jsi18n/$", cache_page(3600)(JavaScriptCatalog.as_view(packages=settings.JAVASCRIPT_I18N_APPS)), name="jsi18n"),
 ], "jb_common")
 
 # Unfortunately, the ``password_change`` view expects the
