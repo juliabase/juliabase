@@ -24,7 +24,7 @@
     username: juliabase
     first_name: Julia
     # 12345
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: pbkdf2_sha256$30000$CPFJtUJvCaI3$Svtj6GbwvT3gUcKWiX/LFPUhM0vcUnAGMc//XcL6dvY=
     is_superuser: true
     is_staff: true
   model: auth.user
@@ -40,7 +40,7 @@
     first_name: Nick
     last_name: Burkhardt
     # 12345
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: pbkdf2_sha256$30000$CPFJtUJvCaI3$Svtj6GbwvT3gUcKWiX/LFPUhM0vcUnAGMc//XcL6dvY=
     user_permissions:
     - [add_pdsmeasurement, institute, pdsmeasurement]
     - [edit_permissions_for_pdsmeasurement, institute, pdsmeasurement]
@@ -52,7 +52,7 @@
     first_name: Hank
     last_name: Griffin
     # 12345
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: pbkdf2_sha256$30000$CPFJtUJvCaI3$Svtj6GbwvT3gUcKWiX/LFPUhM0vcUnAGMc//XcL6dvY=
     user_permissions:
     - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
     - [edit_permissions_for_solarsimulatormeasurement, institute, solarsimulatormeasurement]
@@ -64,7 +64,7 @@
     first_name: Juliette
     last_name: Silverton
     # 12345
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: pbkdf2_sha256$30000$CPFJtUJvCaI3$Svtj6GbwvT3gUcKWiX/LFPUhM0vcUnAGMc//XcL6dvY=
     user_permissions:
     - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
   model: auth.user
@@ -74,7 +74,7 @@
     first_name: Eddie
     last_name: Monroe
     # 12345
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: pbkdf2_sha256$30000$CPFJtUJvCaI3$Svtj6GbwvT3gUcKWiX/LFPUhM0vcUnAGMc//XcL6dvY=
     user_permissions:
     - [add_clustertooldeposition, institute, clustertooldeposition]
     - [edit_permissions_for_clustertooldeposition, institute, clustertooldeposition]
@@ -87,7 +87,7 @@
     first_name: Rosalee
     last_name: Calvert
     # 12345
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: pbkdf2_sha256$30000$CPFJtUJvCaI3$Svtj6GbwvT3gUcKWiX/LFPUhM0vcUnAGMc//XcL6dvY=
     user_permissions:
     - [add_fivechamberdeposition, institute, fivechamberdeposition]
     - [edit_permissions_for_fivechamberdeposition, institute, fivechamberdeposition]
@@ -100,7 +100,7 @@
     first_name: Jean
     last_name: Renard
     # 12345
-    password: sha1$cf7ae$389ebb168bac3ab13ae855dca09d5cbb49c78ea9
+    password: pbkdf2_sha256$30000$CPFJtUJvCaI3$Svtj6GbwvT3gUcKWiX/LFPUhM0vcUnAGMc//XcL6dvY=
     user_permissions:
     - [view_every_sample, samples, sample]
     - [adopt_samples, samples, sample]
