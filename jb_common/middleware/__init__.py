@@ -115,10 +115,10 @@ class MessageMiddleware(object):
 
 class ActiveUserMiddleware(object):
     """Middleware to prevent a non-active user from using the site.  Unfortunately,
-    ``is_active=False`` only prevents a user from logging.  If he was already
-    logged in before ``is_active`` was set to ``False`` and doesn't log out, he
-    can use the site until the session is purged.  This middleware prevents
-    this.
+    ``is_active=False`` only prevents a user from logging in.  If he was
+    already logged in before ``is_active`` was set to ``False`` and doesn't log
+    out, he can use the site until the session is purged.  This middleware
+    prevents this.
 
     Alternatively to this middleware, you can make sure that all the user's
     sessions are purged when he or she is set to inactive.
