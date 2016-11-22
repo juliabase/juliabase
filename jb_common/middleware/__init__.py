@@ -50,6 +50,9 @@ class LocaleMiddleware(object):
     """
     language_pattern = re.compile("[a-zA-Z0-9]+")
 
+    def __init__(self, get_response):
+        self.get_response = get_response
+
     @staticmethod
     def get_language_for_user(request):
         if request.user.is_authenticated:
@@ -60,7 +63,7 @@ class LocaleMiddleware(object):
                 pass
         return translation.get_language_from_request(request)
 
-    def process_request(self, request):
+    def __call__(self, request):
         if is_json_requested(request):
             # JSON responses are made for programs, so strings must be stable
             language = "en"
@@ -69,7 +72,8 @@ class LocaleMiddleware(object):
         translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
 
-    def process_response(self, request, response):
+        response = self.get_response(request)
+
         patch_vary_headers(response, ("Accept-Language",))
         response["Content-Language"] = translation.get_language()
         translation.deactivate()
@@ -82,16 +86,20 @@ class MessageMiddleware(object):
     pages with messages are never cached by the browser, so that the messages
     don't get persistent.
     """
-    def process_request(self, request):
-        request._messages = default_storage(request)
 
-    def process_response(self, request, response):
-        """
-        Updates the storage backend (i.e., saves the messages).
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        """Updates the storage backend (i.e., saves the messages).
 
         If not all messages could not be stored and ``DEBUG`` is ``True``, a
         ``ValueError`` is raised.
         """
+        request._messages = default_storage(request)
+
+        response = self.get_response(request)
+
         # A higher middleware layer may return a request which does not contain
         # messages storage, so make no assumption that it will be there.
         if hasattr(request, '_messages'):
@@ -122,9 +130,14 @@ class ActiveUserMiddleware(object):
     This middleware must be after AuthenticationMiddleware in the list of
     installed middleware classes.
     """
-    def process_request(self, request):
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
         if request.user.is_authenticated and not request.user.is_active:
             logout(request)
+        return self.get_response(request)
 
 
 class HttpResponseUnauthorised(django.http.HttpResponse):
@@ -136,8 +149,7 @@ class HttpResponseUnprocessableEntity(django.http.HttpResponse):
 
 
 class JSONClientMiddleware(object):
-    """Middleware to convert responses to JSON if this was requested by the
-    client.
+    """Middleware to convert responses to JSON if this was requested by the client.
 
     It is important that this class comes after all non-JuliaBase middleware in
     ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the
@@ -145,10 +157,14 @@ class JSONClientMiddleware(object):
     case?
     """
 
-    def process_response(self, request, response):
-        """Return a HTTP 422 response if a JSON response was requested and an
-        HTML page with form errors is returned.
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        """Return a HTTP 422 response if a JSON response was requested and an HTML page
+        with form errors is returned.
         """
+        response = self.get_response(request)
         if is_json_requested(request) and response._headers["content-type"][1].startswith("text/html") and \
                 response.status_code == 200:
             user = request.user
@@ -169,7 +185,6 @@ class JSONClientMiddleware(object):
                 content_type="application/json")
         return response
 
-
     def process_exception(self, request, exception):
         """Convert response to exceptions to JSONised version if the response
         is requested to be JSON.
@@ -186,6 +201,12 @@ class UserTracebackMiddleware(object):
     """Adds user to request context during request processing, so that they show up
     in the error emails.  Taken from <http://stackoverflow.com/a/21158544>.
     """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
 
     def process_exception(self, request, exception):
         """Convert response to exceptions to JSONised version if the response

@@ -111,7 +111,7 @@ if DEBUG:
     TEMPLATES[0]["OPTIONS"]["loaders"] = ["django.template.loaders.app_directories.Loader",
                                           "django.template.loaders.filesystem.Loader"]
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "jb_common.middleware.MessageMiddleware",
