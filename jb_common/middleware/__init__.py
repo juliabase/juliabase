@@ -60,10 +60,6 @@ class LocaleMiddleware(object):
                 pass
         return translation.get_language_from_request(request)
 
-    def get_language_code_only(self, language):
-        match = self.language_pattern.match(language)
-        return match.group(0) if match else "en"
-
     def process_request(self, request):
         if is_json_requested(request):
             # JSON responses are made for programs, so strings must be stable
