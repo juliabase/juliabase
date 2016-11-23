@@ -392,7 +392,7 @@ LANGUAGES
 This settings determines which flags to offer at the top of the screen.  Since
 JuliaBase is available in English and German so far, a sensible value may be::
 
-    LANGUAGES = (("de", _("German")), ("en", _("English")))
+    LANGUAGES = [("de", _("German")), ("en", _("English"))]
 
 Note that the ``_(...)`` makes the language names themselves translatable.  To
 get this working, you must import ``ugettext_lazy`` into :file:`settings.py`::
@@ -444,7 +444,7 @@ INSTALLED_APPS
 
 The minimal set of installed apps for JuliaBase is::
 
-    INSTALLED_APPS = (
+    INSTALLED_APPS = [
         "django.contrib.auth",
         "django.contrib.contenttypes",
         "django.contrib.sessions",
@@ -454,7 +454,7 @@ The minimal set of installed apps for JuliaBase is::
         "institute",
         "samples",
         "jb_common"
-    )
+    ]
 
 Of course, you must replace ``j_institute`` by your own institute's app.
 Furthermore, you may add as many apps as you like, as long as the inner order
@@ -489,7 +489,7 @@ MIDDLEWARE
 
 The following is a minimal set of middleware JuliaBase is working with::
 
-    MIDDLEWARE = (
+    MIDDLEWARE = [
         "django.middleware.common.CommonMiddleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
         "jb_common.middleware.MessageMiddleware",
@@ -497,7 +497,7 @@ The following is a minimal set of middleware JuliaBase is working with::
         "django.contrib.auth.middleware.AuthenticationMiddleware",
         "jb_common.middleware.LocaleMiddleware",
         "samples.middleware.juliabase.ExceptionsMiddleware",
-    )
+    ]
 
 Note that while you may add further middleware, you must not change the inner
 ordering of existing middleware.
