@@ -482,14 +482,14 @@ application.  It is used in the default templates if you click on the
 “JuliaBase” name on the top.  You may simply set it to ``"/"``.
 
 
-.. index:: MIDDLEWARE_CLASSES
+.. index:: MIDDLEWARE
 
-MIDDLEWARE_CLASSES
-------------------
+MIDDLEWARE
+----------
 
 The following is a minimal set of middleware JuliaBase is working with::
 
-    MIDDLEWARE_CLASSES = (
+    MIDDLEWARE = (
         "django.middleware.common.CommonMiddleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
         "jb_common.middleware.MessageMiddleware",
