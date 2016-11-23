@@ -152,9 +152,8 @@ class JSONClientMiddleware(object):
     """Middleware to convert responses to JSON if this was requested by the client.
 
     It is important that this class comes after all non-JuliaBase middleware in
-    ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the
-    ``Http404`` exception may be already caught.  FixMe: Is this really the
-    case?
+    ``MIDDLEWARE`` in the ``settings`` module, otherwise the ``Http404``
+    exception may be already caught.  FixMe: Is this really the case?
     """
 
     def __init__(self, get_response):

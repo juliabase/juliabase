@@ -40,9 +40,9 @@ class ExceptionsMiddleware(object):
     These exceptions mean a redirect in one way or another.
 
     It is important that this class comes after non-JuliaBase middleware in
-    ``MIDDLEWARE_CLASSES`` in the ``settings`` module, otherwise the above
-    mentioned exceptions may propagate to other middleware which treats them as
-    real errors.
+    ``MIDDLEWARE`` in the ``settings`` module, otherwise the above mentioned
+    exceptions may propagate to other middleware which treats them as real
+    errors.
     """
 
     def __init__(self, get_response):
