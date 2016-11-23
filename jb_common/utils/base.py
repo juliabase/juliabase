@@ -414,6 +414,10 @@ def send_email(subject, content, recipients, format_dict=None):
     if settings.DEBUG:
         recipients = list(django.contrib.auth.models.User.objects.filter(username=settings.DEBUG_EMAIL_REDIRECT_USERNAME))
     for recipient in recipients:
+        # FixMe: This check is only necessary until
+        # https://code.djangoproject.com/ticket/27469 has landed.
+        if not recipient.email:
+            continue
         translation.activate(recipient.jb_user_details.language)
         subject, content = ugettext(subject), ugettext(content)
         if format_dict is not None:
