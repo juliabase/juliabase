@@ -474,7 +474,8 @@ class FormSet(object):
                 result = self.result_form.save(commit=False)
             result.quantities_and_values = self.serialize_quantities_and_values()
             result.save()
-            self.result_form.save_m2m()
+            if not self.result:
+                self.result_form.save_m2m()
             if self.related_data_form.cleaned_data["image_file"]:
                 save_image_file(post_files["image_file"], result, self.related_data_form)
             if self.related_data_form.is_valid():
