@@ -33,3 +33,8 @@ register = template.Library()
 @register.filter
 def nickname(user):
     return user.kicker_user_details.nickname or utils.get_really_full_name(user)
+
+
+@register.filter
+def pretty_print_win_points(win_points):
+    return "{:+0.1f}".format(win_points).replace("-", "−")

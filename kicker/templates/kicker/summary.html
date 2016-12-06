@@ -40,12 +40,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </table>
 
   <table cellspacing="10" style="font-size: x-small; margin-top: 3ex">
-    {% for match in latest_matches %}
+    {% for match, win_team_1 in latest_matches %}
       <tr>
         <td>{{ match.timestamp|date:"D" }}</td>
         <td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
           –<br/>{{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
         <td>{{ match.goals_a }}:{{ match.goals_b }}</td>
+        <td>{{ win_team_1|pretty_print_win_points }}</td>
         <td>({{ match.reporter|nickname }})</td>
       </tr>
     {% endfor %}

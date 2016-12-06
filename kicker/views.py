@@ -354,9 +354,10 @@ def plot(request, image_format):
 @require_http_methods(["GET"])
 def summary(request):
     eligible_players = get_eligible_players()
+    latest_matches = [(match, MatchResult(match).estimated_win_team_1) for match in models.Match.objects.reverse()[:20]]
     return render(request, "kicker/summary.html",
                   {"title": _("Kicker summary"), "kicker_numbers": eligible_players, "username": request.user.username,
-                   "latest_matches": models.Match.objects.reverse()[:20]})
+                   "latest_matches": latest_matches})
 
 
 class UserDetailsForm(forms.ModelForm):
