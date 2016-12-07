@@ -1,5 +1,8 @@
 """MIME-Type Parser
 
+This code is modified from its original version.  See the Git log for this file
+for details.
+
 This module provides basic functions for handling mime-types. It can handle
 matching mime-types against a list of media-ranges. See section 14.1 of 
 the HTTP specification [RFC 2616] for a complete explanation.
@@ -11,7 +14,7 @@ Contents:
     - parse_media_range(): Media-ranges are mime-types with wild-cards and a 'q' quality parameter.
     - quality():           Determines the quality ('q') of a mime-type when compared against a list of media-ranges.
     - quality_parsed():    Just like quality() except the second parameter must be pre-parsed.
-    - best_match():        Choose the mime-type with the highest quality ('q') from a list of candidates. 
+    - best_match():        Choose the mime-type with the highest quality ('q') from a list of candidates.
 """
 
 __version__ = "0.1.2"
@@ -28,9 +31,11 @@ def parse_mime_type(mime_type):
 
        ('application', 'xhtml', {'q', '0.5'})
        """
+    def split(param):
+        key, __, value = param.partition("=")
+        return key.strip(), value.strip()
     parts = mime_type.split(";")
-    params = dict([tuple([s.strip() for s in param.split("=")])\
-            for param in parts[1:] ])
+    params = dict(split(param) for param in parts[1:])
     full_type = parts[0].strip()
     # Java URLConnection class sends an Accept header that includes a single "*"
     # Turn it into a legal wildcard.
