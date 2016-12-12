@@ -46,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td>{{ match.player_a_1|nickname }} / {{ match.player_a_2|nickname }}
           –<br/>{{ match.player_b_1|nickname }} / {{ match.player_b_2|nickname }}</td>
         <td>{{ match.goals_a }}:{{ match.goals_b }}</td>
-        <td>{{ win_team_1|pretty_print_win_points }}</td>
+        <td>{{ win_team_1|pretty_print_win_points|default:"—" }}</td>
         <td>({{ match.reporter|nickname }})</td>
       </tr>
     {% endfor %}

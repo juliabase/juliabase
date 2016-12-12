@@ -37,4 +37,7 @@ def nickname(user):
 
 @register.filter
 def pretty_print_win_points(win_points):
-    return "{:+0.1f}".format(win_points).replace("-", "−")
+    if win_points is None:
+        return None
+    else:
+        return "{:+0.1f}".format(win_points).replace("-", "−")
