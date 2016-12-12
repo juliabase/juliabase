@@ -65,9 +65,9 @@ def average_match_duration(two_player_game):
 
 def get_elo_delta(goals_a, goals_b, number_player_a_1, number_player_a_2, number_player_b_1, number_player_b_2,
                   seconds, two_player_game):
-    S = 1 / 2 + 1 / 2 * (goals_a - goals_b) / (seconds * average_goal_frequency(two_player_game))
+    S_times_seconds = 1 / 2 * seconds + 1 / 2 * (goals_a - goals_b) / average_goal_frequency(two_player_game)
     E = 1 / (1 + 10 ** ((number_player_b_1 + number_player_b_2 - number_player_a_1 - number_player_a_2) / 800))
-    delta = seconds / average_match_duration(two_player_game) * (S - E)
+    delta = 1 / average_match_duration(two_player_game) * (S_times_seconds - E * seconds)
     return delta
 
 
