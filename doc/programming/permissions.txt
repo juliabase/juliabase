@@ -124,6 +124,4 @@ project.  This way, it's much easier to control which permissions exist for a
 certain model.  You switch them off by saying in your :file:`manage.py`::
 
    import django.contrib.auth.management
-   def _get_only_custom_permissions(opts):
-       return list(opts.permissions)
-   django.contrib.auth.management._get_all_permissions = _get_only_custom_permissions
+   django.contrib.auth.management._get_builtin_permissions = lambda opts: []
