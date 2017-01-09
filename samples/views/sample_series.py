@@ -34,6 +34,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms.utils import ValidationError
 from django.http import HttpResponse
+import django.utils.timezone
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.utils.text import capfirst
@@ -303,7 +304,7 @@ def new(request):
     if request.method == "POST":
         sample_series_form = SampleSeriesForm(request.user, request.POST)
         if sample_series_form.is_valid():
-            timestamp = datetime.datetime.today()
+            timestamp = django.utils.timezone.now()
             full_name = "{0}-{1}-{2}".format(
                 request.user.username, timestamp.strftime("%y"), sample_series_form.cleaned_data["short_name"])
             if models.SampleSeries.objects.filter(name=full_name).exists():
