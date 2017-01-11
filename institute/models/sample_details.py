@@ -208,6 +208,7 @@ class SampleDetails(models.Model):
 
         :type sample_details_context: dict mapping str to object
         """
+        self.informal_layers.all().delete()
         informal_layers = sample_details_context["informal_layers"].save(commit=False)
         for informal_layer in informal_layers:
             informal_layer.save(with_relations=False)
