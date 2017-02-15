@@ -94,7 +94,8 @@ class OriginalDataForm(Form):
         if "new_name" in cleaned_data:
             new_name = cleaned_data["new_name"]
             sample = cleaned_data.get("sample")
-            if sample and not sample_names.valid_new_sample_name(sample.name, new_name) and \
+            if sample and sample_names.sample_name_format(sample.name) is not None and \
+               not sample_names.valid_new_sample_name(sample.name, new_name) and \
                not new_name.startswith(sample.name):
                 error_message = _("The new name must begin with the old name.")
                 params = {}
