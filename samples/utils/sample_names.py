@@ -98,7 +98,7 @@ def normalize_sample_name(sample_name):
 def valid_new_sample_name(sample_name, new_sample_name):
     """Checks if the sample can be renamed in the new sample
     name. The new sample name must match any name pattern that are
-    listet in the possible_renames properties.
+    listed in the possible_renames properties.
 
     :param sample_name: The actual sample name
     :param new_sample_name: The new sample name
