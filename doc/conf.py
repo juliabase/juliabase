@@ -47,6 +47,10 @@ PygmentsBridge.latex_formatter = SmallerVerbatimLatexFormatter
 sys.path.extend([os.path.abspath('..'), os.path.abspath('../remote_client')])
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
+# In order to appease Django, see <https://stackoverflow.com/a/34462027>.
+import django
+django.setup()
+
 # General configuration
 # ---------------------
 
