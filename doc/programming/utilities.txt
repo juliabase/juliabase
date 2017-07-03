@@ -85,10 +85,14 @@ The following names are found in the module :py:mod:`samples.utils.views`.
 
 The following names are found in the module :py:mod:`samples.utils.sample_names`.
 
-.. autofunction:: samples.utils.views.sample_name_format
-.. autofunction:: samples.utils.views.get_sample
-.. autofunction:: samples.utils.views.does_sample_exist
-.. autofunction:: samples.utils.views.normalize_sample_name
+.. autofunction:: samples.utils.sample_names.get_sample
+.. autofunction:: samples.utils.sample_names.does_sample_exist
+.. autofunction:: samples.utils.sample_names.normalize_sample_name
+
+The following names are found in the module :py:mod:`samples.utils.sample_name_formats`.
+
+.. autofunction:: samples.utils.sample_name_formats.verbose_sample_name_format
+.. autofunction:: samples.utils.sample_name_formats.sample_name_format
 
 
 Miscellaneous
