@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -28,9 +28,6 @@ afterwards which would render old feed entries incorrect.  Therefore, the feed
 entries are self-contained.
 """
 
-from __future__ import absolute_import, unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
-
 import hashlib
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -42,7 +39,6 @@ from jb_common.models import Topic, PolymorphicModel
 from jb_common.utils.base import get_really_full_name
 
 
-@python_2_unicode_compatible
 class FeedEntry(PolymorphicModel):
     """Abstract base model for newsfeed entries.  This is also not really abstract
     as it has a table in the database, however, it is never instantiated

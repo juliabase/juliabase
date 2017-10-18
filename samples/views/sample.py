@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,11 +22,8 @@
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-from django.utils.six import BytesIO
-
 import hashlib, os.path, time, urllib, json
+from io import BytesIO
 import PIL
 import PIL.ImageOps
 from django.conf import settings

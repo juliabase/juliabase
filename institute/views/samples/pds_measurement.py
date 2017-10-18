@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -25,9 +25,6 @@
 the views for deposition systems (mostly because the rearrangement of layers
 doesn't happen here).
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 import datetime, os.path
 from django.conf import settings
@@ -60,7 +57,7 @@ def get_data_from_file(number):
 
     :rtype: dict mapping str to ``object``, `samples.models.Sample`
     """
-    result = {"number": six.text_type(number)}
+    result = {"number": str(number)}
     sample = None
     result["raw_datafile"] = "measurement-{}.dat".format(number)
     try:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -24,9 +24,6 @@ well as models for layers.
 :type default_location_of_deposited_samples: dict mapping `Deposition` to
   string.
 """
-
-from __future__ import absolute_import, unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
@@ -156,7 +153,6 @@ class Deposition(PhysicalProcess):
         return model_field
 
 
-@python_2_unicode_compatible
 class Layer(models.Model):
     """This is an abstract base model for deposition layers.  Now, this is the
     first *real* abstract model here.  It is abstract because it can never

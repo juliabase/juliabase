@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,8 +22,6 @@
 a list of them, and change user memberships in topics.  The list of topics is
 actually only a stepping stone to the membership edit view.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404

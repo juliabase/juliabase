@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -23,10 +23,6 @@
 
 """Django settings for a generic JuliaBase installation.
 """
-
-from __future__ import absolute_import, unicode_literals
-# Python3 note: Below, there are some str() calls that should be removed with
-# Python3.
 
 import os
 import django
@@ -72,16 +68,16 @@ DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
 
 
-STATIC_ROOT = str("/var/www/juliabase/static/")
-MEDIA_ROOT = str("/var/www/juliabase/uploads")
+STATIC_ROOT = "/var/www/juliabase/static/"
+MEDIA_ROOT = "/var/www/juliabase/uploads"
 
 
 # Make sure to use a trailing slash if there is a path component (optional in
 # other cases).  Examples: "http://media.lawrence.com",
 # "http://example.com/static/"
-STATIC_URL = str("/static/")
+STATIC_URL = "/static/"
 
-ADMIN_MEDIA_PREFIX = STATIC_URL + str("admin/")
+ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 
@@ -128,7 +124,7 @@ MIDDLEWARE = [
 
 APPEND_SLASH = False
 
-ROOT_URLCONF = str("urls")
+ROOT_URLCONF = "urls"
 
 INSTALLED_APPS = [
     "django.contrib.auth",
@@ -169,9 +165,9 @@ CACHE_MIDDLEWARE_KEY_PREFIX = ""
 
 ADD_SAMPLES_VIEW = "institute:add_samples"
 
-MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, str("remote_client"), str("examples"))
-PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("pds_raw_data"))
-SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, str("solarsimulator_raw_data"))
+MEASUREMENT_DATA_ROOT_DIR = os.path.join(BASE_DIR, "remote_client", "examples")
+PDS_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, "pds_raw_data")
+SOLARSIMULATOR_1_ROOT_DIR = os.path.join(MEASUREMENT_DATA_ROOT_DIR, "solarsimulator_raw_data")
 
 MERGE_CLEANUP_FUNCTION = "institute.utils.base.clean_up_after_merging"
 

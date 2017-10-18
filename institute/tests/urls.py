@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -23,8 +23,6 @@
 
 """Root URL dispach for testing the “institute” app.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url, include
 from django.conf import settings

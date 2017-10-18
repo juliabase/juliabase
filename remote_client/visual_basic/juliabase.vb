@@ -44,7 +44,7 @@ Rem    Default: ``jb_remote_inm``
 Rem
 Rem  ``JB_Interpreter_Path``
 Rem    contains the path of the Python interpreter.  Default:
-Rem    :file:'c:\Python34\python.exe'
+Rem    :file:'c:\Python36\python.exe'
 Rem
 Rem  ``JB_Open_Error_Page_In_Browser``
 Rem    If ``True``, in case of error the error page will be automatically opened

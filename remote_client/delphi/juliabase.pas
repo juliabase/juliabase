@@ -65,7 +65,7 @@ unit juliabase;
 
   ``jb_interpreter_path``
     contains the path of the Python interpreter.  Default:
-    :file:'c:/Python2.7/python.exe'
+    :file:'c:/Python3.6/python.exe'
 
   ``jb_open_error_page_in_browser``
     If ``true``, in case of error the error page will be automatically opened
@@ -222,6 +222,6 @@ end;
 begin
   jb_package_path := 'c:/JuliaBase/remote_client';
   jb_module_name := 'jb_remote_inm';
-  jb_interpreter_path := 'c:/Python34/python.exe';
+  jb_interpreter_path := 'c:/Python36/python.exe';
   jb_open_error_page_in_browser := true
 end.

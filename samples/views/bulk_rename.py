@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,8 +22,6 @@
 names must be “new-style” names.  It is also possible, however, to use this
 view just to rename *one* sample (but it *must* have a provisional name).
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime, string, itertools
 from django.shortcuts import render, get_object_or_404

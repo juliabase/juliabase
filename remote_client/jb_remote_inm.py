@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -34,11 +34,7 @@ I *know* that my deposition and other process IDs don't contain dangerous
 characters.
 """
 
-from __future__ import absolute_import, unicode_literals
-from jb_remote import six
-from jb_remote.six.moves import urllib
-
-import re, logging, datetime, os
+import re, logging, datetime, os, urllib
 from jb_remote import *
 
 
@@ -133,7 +129,7 @@ class ClusterToolHotWireLayer(object):
             self.time = self.comments = self.wire_material = self.base_pressure = self.h2 = self.sih4 = None
 
     def get_data(self, layer_index):
-        prefix = six.text_type(layer_index) + "-"
+        prefix = str(layer_index) + "-"
         data = {prefix + "number": layer_index + 1,
                 prefix + "step_type": "clustertoolhotwirelayer",
                 prefix + "time": self.time,
@@ -164,7 +160,7 @@ class ClusterToolPECVDLayer(object):
                 self.deposition_power = self.h2 = self.sih4 = None
 
     def get_data(self, layer_index):
-        prefix = six.text_type(layer_index) + "-"
+        prefix = str(layer_index) + "-"
         data = {prefix + "number": layer_index + 1,
                 prefix + "step_type": "clustertoolpecvdlayer",
                 prefix + "chamber": self.chamber,
@@ -420,7 +416,7 @@ class SolarsimulatorCellMeasurement(object):
             self.area = self.eta = self.isc = self.data_file = None
 
     def get_data(self, index):
-        prefix = six.text_type(index) + "-"
+        prefix = str(index) + "-"
         return {prefix + "position": self.position,
                 prefix + "area": self.area,
                 prefix + "eta": self.eta,
@@ -565,7 +561,7 @@ class FiveChamberLayer(object):
                 self.sih4 = self.h2 = self.silane_concentration = None
 
     def get_data(self, layer_index):
-        prefix = six.text_type(layer_index) + "-"
+        prefix = str(layer_index) + "-"
         data = {prefix + "number": layer_index + 1,
                 prefix + "chamber": self.chamber,
                 prefix + "temperature_1": self.temperature_1,

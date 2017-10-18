@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -17,11 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 """Add and show status messages for the apparatuses.
 """
-
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.contrib.auth.decorators import login_required

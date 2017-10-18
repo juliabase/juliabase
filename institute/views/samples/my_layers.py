@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -25,8 +25,6 @@ therefore, we call it My Layers.  However, you are free to add views for other
 “My …”, and filter the process classes as you need.  The ``my_steps`` field
 will always store the union of all these processes.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import re, json
 from django.utils.translation import ugettext_lazy as _, ugettext

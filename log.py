@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -26,7 +26,6 @@ reside on top-level because in institute, the settings would be implicitly impor
 which leads to a cyclic import.
 """
 
-from __future__ import unicode_literals
 import logging, sys
 from django.core import mail
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,9 +20,6 @@
 
 """Collection of tags and filters that I found useful for JuliaBase.
 """
-
-from __future__ import division, unicode_literals
-import django.utils.six as six
 
 import re, sys, decimal, math
 import markdown
@@ -82,7 +79,7 @@ def quantity(value, unit=None, autoescape=False):
             else:
                 value_string = "{0:e}".format(float(number))
         else:
-            value_string = six.text_type(number)
+            value_string = str(number)
         if autoescape:
             value_string = conditional_escape(value_string)
         result = ""
@@ -145,7 +142,7 @@ class VerboseNameNode(template.Node):
             break
         else:
             return ""
-        verbose_name = six.text_type(model._meta.get_field(field).verbose_name)
+        verbose_name = str(model._meta.get_field(field).verbose_name)
         if verbose_name:
             verbose_name = jb_common.utils.base.capitalize_first_letter(verbose_name)
         return verbose_name
@@ -312,7 +309,7 @@ def markdown_samples(value, margins="default"):
     however, I can't easily do that without allowing HTML tags, too.
     """
     value = jb_common.templatetags.juliabase.substitute_formulae(
-        jb_common.utils.base.substitute_html_entities(six.text_type(value)))
+        jb_common.utils.base.substitute_html_entities(str(value)))
     position = 0
     result = ""
     while position < len(value):
@@ -391,7 +388,7 @@ class ValueFieldNode(template.Node):
     def render(self, context):
         value = self.expression.resolve(context)
         if "." not in self.variable:
-            verbose_name = six.text_type(context[self.variable]._meta.verbose_name)
+            verbose_name = str(context[self.variable]._meta.verbose_name)
         else:
             instance, field_name = self.variable.rsplit(".", 1)
             match = self.display_method_regex.match(field_name)
@@ -399,7 +396,7 @@ class ValueFieldNode(template.Node):
                 field_name = match.group("field_name")
             model = context[instance].__class__
             model_field = model._meta.get_field(field_name)
-            verbose_name = six.text_type(model_field.verbose_name)
+            verbose_name = str(model_field.verbose_name)
             if self.unit is None:
                 try:
                     self.unit = model_field.unit
@@ -494,7 +491,7 @@ def split_field(*fields):
         id_for_label=fields[0].id_for_label, label=fields[0].label if from_to_field else fields[0].label.rpartition(" ")[0])
     help_text = """ <span class="help">({0})</span>""".format(fields[0].help_text) if fields[0].help_text else ""
     result += """<td class="field-input">{fields_string}{help_text}</td>""".format(
-        fields_string=separator.join(six.text_type(field) for field in fields), help_text=help_text)
+        fields_string=separator.join(str(field) for field in fields), help_text=help_text)
     return mark_safe(result)
 
 
@@ -511,12 +508,12 @@ class ValueSplitFieldNode(template.Node):
     def render(self, context):
         fields = [field.resolve(context) for field in self.fields]
         if "." not in self.field_name:
-            verbose_name = six.text_type(context[self.field_name]._meta.verbose_name)
+            verbose_name = str(context[self.field_name]._meta.verbose_name)
         else:
             instance, __, field_name = self.field_name.rpartition(".")
             model = context[instance].__class__
             model_field = model._meta.get_field(field_name)
-            verbose_name = six.text_type(model_field.verbose_name)
+            verbose_name = str(model_field.verbose_name)
             if self.unit is None:
                 try:
                     self.unit = model_field.unit
@@ -624,7 +621,7 @@ def display_search_tree(tree):
     if tree.children:
         result += """<tr><td colspan="2">"""
         for i, child in enumerate(tree.children):
-            result += six.text_type(child[0].as_p())
+            result += str(child[0].as_p())
             if child[1]:
                 result += display_search_tree(child[1])
             if i < len(tree.children) - 1:

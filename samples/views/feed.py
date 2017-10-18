@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,8 +20,6 @@
 
 """Generating an Atom 1.0 feed with the user's news.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime, time
 import xml.etree.ElementTree as ElementTree

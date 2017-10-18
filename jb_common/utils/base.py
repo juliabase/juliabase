@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -18,11 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import, division, unicode_literals
-import django.utils.six as six
-from django.utils.six.moves import urllib
-
-import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string, hashlib
+import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string, hashlib, urllib
 from contextlib import contextmanager
 from functools import wraps
 from smtplib import SMTPException
@@ -156,7 +152,7 @@ def get_really_full_name(user):
 
     :rtype: unicode
     """
-    return user.get_full_name() or six.text_type(user)
+    return user.get_full_name() or str(user)
 
 
 dangerous_markup_pattern = re.compile(r"([^\\]|\A)!\[|[\n\r](-+|=+)\s*$")
@@ -372,10 +368,7 @@ def unicode_strftime(timestamp, format_string):
     :rtype: unicode
     """
     format_string = force_text(format_string)
-    if six.PY2:
-        return timestamp.strftime(format_string.encode("utf-8")).decode("utf-8")
-    else:
-        return timestamp.strftime(format_string)
+    return timestamp.strftime(format_string)
 
 
 def send_email(subject, content, recipients, format_dict=None):
@@ -465,7 +458,7 @@ class JSONEncoder(DjangoJSONEncoder):
                 try:
                     return super(JSONEncoder, self).default(o)
                 except (ValueError, TypeError):
-                    return six.text_type(o)
+                    return str(o)
 
 
 def respond_in_json(value):
@@ -623,7 +616,7 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
         getmtime = blobs.storage.getmtime
     all_timestamps.extend(getmtime(filename) for filename in source_files)
     hash_ = hashlib.sha1()
-    hash_.update(";".join(six.text_type(timestamp) for timestamp in sorted(all_timestamps)).encode("ascii"))
+    hash_.update(";".join(str(timestamp) for timestamp in sorted(all_timestamps)).encode("ascii"))
     key = "file:{timestamp_hash}:{path}".format(timestamp_hash=hash_.hexdigest()[:10], path=path)
     content = get_from_cache(key)
     if content is None:
@@ -714,14 +707,7 @@ def mkdirs(path):
 
     :type path: str
     """
-    if six.PY3:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-    else:
-        try:
-            os.makedirs(os.path.dirname(path))
-        except OSError as error:
-            if "Errno 17" not in str(error):
-                raise
+    os.makedirs(os.path.dirname(path), exist_ok=True)
 
 
 @contextmanager
@@ -855,7 +841,7 @@ def format_enumeration(items):
 
     :rtype: unicode
     """
-    items = sorted(six.text_type(item) for item in items)
+    items = sorted(str(item) for item in items)
     if len(items) > 2:
         # Translators: Intended as a separator in an enumeration of three or more items
         return _(", ").join(items[:-1]) + _(", and ") + items[-1]
@@ -877,15 +863,8 @@ def unquote_view_parameters(view):
     :type view: function
     """
     # FixMe: Actually, percent-encoding "/" and "%" is enough.
-    #
-    # Python3 note: The "assigned=" can be dropped in Python 3.
-    @wraps(view, assigned=available_attrs(view))
+    @wraps(view)
     def unquoting_view(request, *args, **kwargs):
-        if six.PY2:
-            return view(request,
-                        *[urllib.parse.unquote(value.encode("utf-8")).decode("utf-8") for value in args],
-                        **dict((key, urllib.parse.unquote(value.encode("utf-8")).decode("utf-8"))
-                               for key, value in kwargs.items()))
         return view(request,
                     *[urllib.parse.unquote(value) for value in args],
                     **dict((key, urllib.parse.unquote(value)) for key, value in kwargs.items()))

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -163,8 +163,6 @@ is greater than 1:
 ``User``/``ExternalOperator`` → ``Result`` → ``SampleSeries``
 """
 
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime, hashlib
 from django.db.models import signals

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -25,8 +25,6 @@
 tool deposition system.  This includes adding, editing, and viewing such
 processes.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.utils.translation import ugettext_lazy as _, ugettext

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,10 +20,6 @@
 
 """Functions and classes for the advanced search.
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-from django.utils.encoding import python_2_unicode_compatible
 
 import re, datetime, calendar, copy
 from django import forms
@@ -80,7 +76,6 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
     return search_fields
 
 
-@python_2_unicode_compatible
 class SearchField(object):
     """Class representing one field in the advanced search.  This is an
     abstract base class for such fields.  It is instantiated in the
@@ -122,8 +117,7 @@ class SearchField(object):
         :type field_or_field_name: models.Field or str
         :type additional_query_path: str
         """
-        self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, six.string_types) \
-            else field_or_field_name
+        self.field = cls._meta.get_field(field_or_field_name) if isinstance(field_or_field_name, str) else field_or_field_name
         if additional_query_path:
             self.query_path = self.field.name + "__" + additional_query_path
         else:
@@ -430,7 +424,7 @@ class SearchModelForm(forms.Form):
     def __init__(self, models, data=None, **kwargs):
         super(SearchModelForm, self).__init__(data, **kwargs)
         choices = [(model.__name__, model._meta.verbose_name) for model in models]
-        choices.sort(key=lambda choice: six.text_type(choice[1]).lower())
+        choices.sort(key=lambda choice: str(choice[1]).lower())
         self.fields["_model"].choices = [("", "---------")] + choices
 
 
@@ -514,7 +508,6 @@ def get_search_results(search_tree, max_results, base_query=None):
     return results, too_many_results
 
 
-@python_2_unicode_compatible
 class SearchTreeNode(object):
     """Class which represents one node in the seach tree.  It is associated
     with a model class.
@@ -667,8 +660,8 @@ class SearchTreeNode(object):
         return "({0}[{1}]: {2};{3})".format(
             self.model_class.__name__,
             ",".join(choice[0] for choice in choices_last_child if choice[0]),
-            ",".join(six.text_type(search_field) for search_field in self.search_fields),
-            ",".join(six.text_type(child[1]) for child in self.children if child[1]))
+            ",".join(str(search_field) for search_field in self.search_fields),
+            ",".join(str(child[1]) for child in self.children if child[1]))
 
 
 class AbstractSearchTreeNode(SearchTreeNode):

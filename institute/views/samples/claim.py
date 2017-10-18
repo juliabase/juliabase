@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -25,8 +25,6 @@
 JuliaBase-samples.  The additional feature is that one can claim samples with
 old-style names which do not exist in the database yet.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import django.contrib.auth.models
 from django.shortcuts import render, get_object_or_404

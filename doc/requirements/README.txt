@@ -30,14 +30,8 @@ just remove the numbers and the equal signs. For detailed informations see the
 The files also includes the database connectors for PostgreSQL and MySQL. 
 If you use other databases you need to add the connectors yourself.
 
-To install Python2 packages use:
+To install the Python packages use:
 
 .. code-block:: shell-session
 
-    username@server:~$ sudo pip install -r requirements/python2.txt
-
-For Python3 use:
-
-.. code-block:: shell-session
-
-    username@server:~$ sudo pip install -r requirements/python3.txt
+    username@server:~$ sudo pip3 install -r requirements/base.txt

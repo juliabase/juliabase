@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -23,8 +23,6 @@
 
 """Views to add and edit substrates.
 """
-
-from __future__ import unicode_literals, absolute_import
 
 from django.db.models import Max
 from django.forms.utils import ValidationError

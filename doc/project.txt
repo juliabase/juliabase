@@ -82,8 +82,8 @@ strict `GNU General Public License`_ (GPL):
 
 .. _`GNU General Public License`: http://www.gnu.org/licenses/gpl-3.0.html
 
-Finally, the “six” module and the “mimeparse” module are distributed under
-their own terms stated at the start of the respective file.
+Finally, the “mimeparse” module is distributed under its own terms stated at
+the start of the respective file.
 
 
 What does this mean?

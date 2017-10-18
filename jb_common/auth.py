@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -45,10 +45,7 @@ Portions of this module are inspired by
 <http://www.djangosnippets.org/snippets/501/>.
 """
 
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-from django.utils.six.moves import cStringIO as StringIO
-
+from io import StringIO
 import re, traceback
 from contextlib import contextmanager
 from django.contrib.auth.models import User, Permission

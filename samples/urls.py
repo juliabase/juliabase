@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -56,8 +56,6 @@ configuration file, though.
     http://docs.djangoproject.com/en/dev/topics/http/urls/
 
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 from samples.views import statistics, main, feed, my_samples, split_after_deposition, sample, split_and_rename, \

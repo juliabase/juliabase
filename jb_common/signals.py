@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -36,8 +36,6 @@
   a former version of the deployment at IEK-5/FZJ, this signal is used for
   triggering sychronisation of both nodes.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.db.models import signals

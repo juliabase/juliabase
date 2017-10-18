@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -27,8 +27,6 @@ Furthermore, if you'd like to add a lab notebook function, you must add its URL
 explicitly to ``urls.py``.  See :py:mod:`samples.utils.urls` for further
 information.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime, re
 from django.http import Http404, HttpResponse

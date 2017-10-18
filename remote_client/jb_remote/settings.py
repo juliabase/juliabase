@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -34,7 +34,6 @@ It is important to change the settings before the login into JuliaBase takes
 place.
 """
 
-from __future__ import absolute_import, unicode_literals, division
 
 # Must end in "/".
 ROOT_URL = None

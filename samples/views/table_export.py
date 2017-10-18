@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -108,9 +108,6 @@ Additionally, the various instances of the ``get_data`` method in various
 database model classes will show you how to use it (they are all very
 strightforward).
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 from django.forms.utils import ValidationError
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -420,7 +417,7 @@ def generate_table_rows(flattened_tree, columns, selected_key_indices, label_col
     """
     generate_label_column = any(label_column)
     head_row = [label_column_heading] if generate_label_column else []
-    head_row.extend([six.text_type(columns[key_index].heading) for key_index in selected_key_indices])
+    head_row.extend([str(columns[key_index].heading) for key_index in selected_key_indices])
     table_rows = [head_row]
     for i, row in enumerate(flattened_tree):
         table_row = [label_column[i]] if generate_label_column else []

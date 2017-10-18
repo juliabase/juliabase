@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,8 +22,6 @@
 to the actual split view, you see all samples of the deposition at once, and
 you can rename and/or split them.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime, json
 from django.http import Http404

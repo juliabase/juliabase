@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -21,9 +21,6 @@
 """Model for the main menu view and some miscellaneous views that don't have a
 better place to be (yet).
 """
-
-from __future__ import absolute_import, unicode_literals, division
-import django.utils.six as six
 
 from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
@@ -234,7 +231,7 @@ def show_process(request, process_id, process_name="Process"):
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())
-    template_context = {"title": six.text_type(process), "samples": process.samples.all(), "process": process}
+    template_context = {"title": str(process), "samples": process.samples.all(), "process": process}
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)
 

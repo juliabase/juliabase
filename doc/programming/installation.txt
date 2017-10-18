@@ -43,9 +43,7 @@ worth, the authors run Ubuntu Server.
 .. _Django's own installation guide:
    https://docs.djangoproject.com/en/1.7/topics/install/
 
-While JuliaBase works with both Python 2 and Python 3, it is highly recommended
-to start a JuliaBase project using Python 3.  Support for Python 2 will be
-dropped in a future JuliaBase release.
+JuliaBase requires Python_3.4 or higher.
 
 Mostly, no sophisticated finetuning of the components is necessary because
 JuliaBase deployments will serve only a few (< 1000) people.  In particular,

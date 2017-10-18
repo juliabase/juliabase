@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -19,8 +19,6 @@
 
 """The view for merging samples together.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst

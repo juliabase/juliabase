@@ -21,8 +21,6 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import, unicode_literals
-
 import sys, os
 from django.core.management import execute_from_command_line
 

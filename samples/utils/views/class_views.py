@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -23,8 +23,6 @@ defines a couple of mixins that can be combined with the base classes.  The
 main difference between mixin and base class is that the latter instantiates a
 samples form, whereas the mixin class doesn't do this.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import re, json
 from django.db.models import Max

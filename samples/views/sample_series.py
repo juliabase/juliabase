@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -25,9 +25,6 @@ Names of sample series are of the form ``originator-YY-name``, where
 year (two digits). ``name`` is almost arbitrary.  Names of sample series can't
 be changed once they have been created.
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 import hashlib, datetime
 from django import forms
@@ -76,7 +73,7 @@ class SampleSeriesForm(forms.ModelForm):
         if sample_series:
             self.fields["currently_responsible_person"].set_users(user, sample_series.currently_responsible_person)
         else:
-            self.fields["currently_responsible_person"].choices = ((user.pk, six.text_type(user)),)
+            self.fields["currently_responsible_person"].choices = ((user.pk, str(user)),)
         self.fields["topic"].set_topics(user, sample_series.topic if sample_series else None)
 
     def clean_short_name(self):

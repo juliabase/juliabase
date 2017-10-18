@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -21,9 +21,6 @@
 """Code for generating feed entries.  They are called by views shortly after
 the database was changed in one way or another.
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 from django.contrib.contenttypes.models import ContentType
 import jb_common.models
@@ -245,7 +242,7 @@ class Reporter(object):
 
         :type process: `samples.models.Process`
         """
-        entry = models.FeedDeletedProcess.objects.create(originator=self.originator, process_name=six.text_type(process))
+        entry = models.FeedDeletedProcess.objects.create(originator=self.originator, process_name=str(process))
         self.__add_watchers(process)
         if isinstance(process, models.Result):
             for sample_series in process.sample_series.all():

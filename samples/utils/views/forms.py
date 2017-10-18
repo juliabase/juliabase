@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -21,9 +21,6 @@
 """Helper classes and function which have something to do with form generation
 and validation.
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 import re, datetime, json
 from django.core.exceptions import ObjectDoesNotExist
@@ -613,7 +610,7 @@ def clean_quantity_field(value, units):
     """
     if not value:
         return ""
-    value = six.text_type(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
+    value = str(value).replace(",", ".").replace("μ", "µ")  # No, these µ are not the same!
     match = quantity_pattern.match(value)
     if not match:
         raise ValidationError(_("Must be a physical quantity with number and unit."), code="invalid")
@@ -723,7 +720,7 @@ def normalize_prefixes(post_data):
     if normalization_necessary:
         new_post_data = QueryDict("").copy()
         for key, value in digested_post_data.items():
-            if isinstance(key, six.string_types):
+            if isinstance(key, str):
                 new_post_data.setlist(key, value)
             elif len(key) == 2:
                 new_post_data.setlist("{0}-{1}".format(level0_indices.index(key[0]), key[1]), value)
@@ -767,7 +764,7 @@ def choices_of_content_types(classes):
     can be picked by the user.
 
     This routine is necessary for two reasons: It translates the model names
-    behind the content types – ``six.text_type(contentype_instance)`` yields the
+    behind the content types – ``str(contentype_instance)`` yields the
     English model name only.  And secondly, it sorts the choices by their
     (translated) names.
 

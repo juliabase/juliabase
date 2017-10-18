@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -23,8 +23,6 @@
 
 """Collection of tags and filters that are used in the institute templates.
 """
-
-from __future__ import division, absolute_import, unicode_literals
 
 import os.path
 from django import template

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,9 +22,6 @@
 priviledged users to become the currently responsible person of a sample or a
 set of samples.
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 import django.contrib.auth.models
 from django.db.models import Q
@@ -229,7 +226,7 @@ def show(request, claim_id):
                 for sample in sample_list:
                     sample.currently_responsible_person = claim.requester
                     sample.save()
-                sample_enumeration = "    " + ",\n    ".join(six.text_type(sample) for sample in sample_list)
+                sample_enumeration = "    " + ",\n    ".join(str(sample) for sample in sample_list)
                 _ = lambda x: x
                 send_email(_("Sample request approved"),
                        _("""Hello {requester},

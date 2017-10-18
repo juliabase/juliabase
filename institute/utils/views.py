@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -25,8 +25,6 @@
 It supplements :py:mod:`samples.views.form_utils` with institute specific
 classes and functions.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import re
 from django.utils.translation import ugettext as _

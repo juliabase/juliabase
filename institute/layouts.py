@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -32,8 +32,6 @@ layouts are realised with masks.
 So far, we have only the cell structuring layouts implemented.  They are used
 in the solarsimulator measurements.
 """
-
-from __future__ import division, unicode_literals
 
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import mm

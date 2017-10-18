@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -18,11 +18,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-u"""Collection of tags and filters that I found useful for ther Kicker app of
+"""Collection of tags and filters that I found useful for ther Kicker app of
 JuliaBase.
 """
 
-from __future__ import absolute_import
 
 from django import template
 import jb_common.utils.base as utils

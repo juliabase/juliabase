@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -17,9 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from __future__ import absolute_import, unicode_literals, division
-import django.utils.six as six
 
 import django.forms as forms
 import django.contrib.auth.models
@@ -172,7 +169,7 @@ class TopicField(forms.ChoiceField):
         """
         def topics_and_sub_topics(parent_topics):
             for topic in parent_topics:
-                name = 2 * " " + six.text_type(topic) if topic.has_parent() else six.text_type(topic)
+                name = 2 * " " + str(topic) if topic.has_parent() else str(topic)
                 self.choices.append((topic.pk, name))
                 child_topics = topic.child_topics.all()
                 if child_topics:

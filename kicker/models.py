@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -17,10 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
 import django.contrib.auth.models
@@ -92,7 +88,6 @@ class StockValue(models.Model):
         verbose_name_plural = _("stock values")
 
 
-@python_2_unicode_compatible
 class UserDetails(models.Model):
     """Model for further details about a user, beyond
     ``django.contrib.auth.models.User``.  Here, you have all data about a
@@ -108,7 +103,7 @@ class UserDetails(models.Model):
         verbose_name_plural = _("user details")
 
     def __str__(self):
-        return six.text_type(self.user)
+        return str(self.user)
 
 
 _ = ugettext

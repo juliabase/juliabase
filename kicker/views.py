@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -18,10 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import division, absolute_import, unicode_literals
-from django.utils.six import BytesIO
-
 import datetime, os, mimetypes
+from io import BytesIO
 from functools import partial
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure

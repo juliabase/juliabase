@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -32,8 +32,6 @@ The error codes for a JSON client are the following:
     6       Access denied
     ======= ===============================================
 """
-
-from __future__ import absolute_import, unicode_literals
 
 
 default_app_config = "jb_common.apps.JBCommonConfig"

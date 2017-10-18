@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -23,8 +23,6 @@
 directly, it is not really useful what they get there.  Note that the whole
 communication to the remote client happens in JSON format.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import sys, json
 from django.db.utils import IntegrityError

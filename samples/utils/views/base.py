@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,11 +22,8 @@
 views package.
 """
 
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-from django.utils.six.moves import cStringIO as StringIO
-
 import copy, re, csv
+from io import StringIO
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
@@ -45,7 +42,7 @@ import jb_common.utils.base
 __all__ = ("AmbiguityException", "lookup_sample", "convert_id_to_int",
            "successful_response", "remove_samples_from_my_samples", "StructuredSeries", "StructuredTopic",
            "build_structured_sample_list", "extract_preset_sample", "digest_process", "restricted_samples_query",
-           "enforce_clearance", "UnicodeWriter", "table_export", "median", "average")
+           "enforce_clearance", "table_export", "median", "average")
 
 
 class AmbiguityException(Exception):
@@ -504,79 +501,6 @@ def enforce_clearance(user, clearance_processes, destination_user, sample, clear
                           split_origin.timestamp)
 
 
-class UnicodeWriter(object):
-    """Convert a two-dimensional data structure into a UTF-8-encoded CSV byte
-    string.  Inspired by <http://docs.python.org/library/csv.html#examples>.
-    """
-    # FixMe: This must go when dropping support for Python 2.
-
-    def __init__(self, stream=None, dialect=csv.excel_tab, encoding="utf-8", **kwargs):
-        """Additional keyword arguments are passed to the
-        ``csv.writer`` factory function in Python's ``csv`` module.  After
-        having instantiated this class, you can use `writerow` and `writerows`
-        to add data to it, and then extract it in the CSV format using
-        `getvalue`.
-
-        :param stream: the writable file-like object where the output should be
-            sent; if ``None``, you must get the outout with `getvalue`.
-        :param dialect: the CSV format; it defaults to Excel's TAB format
-            (TAB-separated, double-quotes)
-        :param encoding: name of the output encoding to be used; defaults to
-            UTF-8
-
-        :type stream: file
-        :type dialect: ``csv.Dialect``
-        :type encoding: str
-        """
-        import codecs
-        self.queue = StringIO()
-        self.writer = csv.writer(self.queue, dialect=dialect, **kwargs)
-        self.stream = stream if stream else StringIO()
-        self.encoder = codecs.getincrementalencoder(encoding)()
-
-    def writerow(self, row):
-        """Add the given row to the output.
-
-        :param row: list of the table cells
-
-        :type row: list of object
-        """
-        output_row = []
-        for s in row:
-            if s is None:
-                output_row.append("")
-            else:
-                output_row.append(six.text_type(s).encode("utf-8"))
-        self.writer.writerow(output_row)
-        data = self.queue.getvalue()
-        data = data.decode("utf-8")
-        data = self.encoder.encode(data)
-        self.stream.write(data)
-        self.queue.truncate(0)
-
-    def writerows(self, rows):
-        """Add the given rows to the output.
-
-        :param rows: list of rows; each row is a list of table cells
-
-        :type rows: list of list of object
-        """
-        for row in rows:
-            self.writerow(row)
-
-    def getvalue(self):
-        """Get the output so far.  Normally, you will call this method after
-        the instance was filled with all data.  Thus, after called this method,
-        the instance of ``UnicodeWriter`` is no longer used.
-
-        :return:
-          the table in CSV format, as an encoded octet string
-
-        :rtype: str
-        """
-        return self.stream.getvalue()
-
-
 def table_export(request, data, label_column_heading):
     """Helper function which does almost all work needed for a CSV table
     export view.  This is not a view per se, however, it is called by views,
@@ -649,7 +573,7 @@ def table_export(request, data, label_column_heading):
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \
                         "attachment; filename=juliabase--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
-                    writer = UnicodeWriter(response) if six.PY2 else csv.writer(response, dialect=csv.excel_tab)
+                    writer = csv.writer(response, dialect=csv.excel_tab)
                     writer.writerows(reduced_table)
                 return response
     if selected_column_groups != previous_column_groups:

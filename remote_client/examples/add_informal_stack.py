@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -17,14 +17,13 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 """This is simply a helper program to get the demo site complete.  It fetches
 the ID of the sample 14S-001 and attaches informal layers to it by leading an
 ad-hoc generated fixture.  This is not very elegangt but as long as there is no
 facility in the remote client library to add informal stacks, this is the way
 to go.
 """
-
-from __future__ import unicode_literals
 
 import sys, os, subprocess
 sys.path.append(os.path.abspath(".."))

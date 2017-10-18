@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -21,8 +21,6 @@
 """Mapping URL patterns to function calls.  This is the local URL dispatch of
 the Django application “kicker”.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.conf.urls import url
 from kicker.views import edit_match, cancel_match, set_start_kicker_number, edit_user_details, get_player, summary, plot

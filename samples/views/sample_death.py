@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,8 +20,6 @@
 
 """View for killing a sample.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.shortcuts import render
 from django.http import Http404

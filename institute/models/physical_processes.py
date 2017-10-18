@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -25,9 +25,6 @@
 includes substrates and measurements.  For other institutions, etching
 processes, clean room work etc. will go here, too.
 """
-
-from __future__ import absolute_import, unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
 
 import os.path
 import numpy
@@ -62,7 +59,6 @@ substrate_materials = (
 """Contains all possible choices for `Substrate.material`.
 """
 
-@python_2_unicode_compatible
 class Substrate(PhysicalProcess):
     """Model for substrates.  It is the very first process of a sample.  It is
     some sort of birth certificale of the sample.  If it doesn't exist, we
@@ -228,7 +224,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         return model_field
 
 
-@python_2_unicode_compatible
 class SolarsimulatorCellMeasurement(models.Model):
     measurement = models.ForeignKey(SolarsimulatorMeasurement, models.CASCADE, related_name="cells",
                                     verbose_name=_("solarsimulator measurement"))

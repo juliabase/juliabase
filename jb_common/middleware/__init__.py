@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -17,9 +17,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 import re, json, hashlib, random, time
 from django.contrib.messages.storage import default_storage
@@ -171,10 +168,10 @@ class JSONClientMiddleware(object):
                 # Login view was returned
                 return HttpResponseUnauthorised()
             hash_ = hashlib.sha1()
-            hash_.update(six.text_type(random.random()).encode("ascii"))
+            hash_.update(str(random.random()).encode("ascii"))
             # For some very obscure reason, a random number was not enough --
             # it led to collisions time after time.
-            hash_.update(six.text_type(time.time()).encode("ascii"))
+            hash_.update(str(time.time()).encode("ascii"))
             hash_value = hash_.hexdigest()
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
                                      html=response.content)
@@ -212,6 +209,6 @@ class UserTracebackMiddleware(object):
         is requested to be JSON.
         """
         if request.user.is_authenticated:
-            request.META["AUTH_USER"] = six.text_type(request.user.username)
+            request.META["AUTH_USER"] = str(request.user.username)
         else:
             request.META["AUTH_USER"] = "Anonymous User"

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -26,8 +26,6 @@ also users can visit these links with their browser directly, it is not really
 useful what they get there.  Note that the whole communication to the remote
 client happens in JSON format.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.db.utils import IntegrityError

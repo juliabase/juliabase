@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -27,12 +27,7 @@ import, it is sometimes (e.g. for ``samples.permissions``) necessary to avoid
 the ``from`` keyword.
 """
 
-from __future__ import absolute_import, division, unicode_literals
-import django.utils.six as six
-
-from django.utils.encoding import python_2_unicode_compatible
-
-import hashlib, os.path, json, collections, datetime
+import hashlib, os.path, json, collections, datetime, html
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
@@ -49,12 +44,6 @@ from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
-
-if six.PY2:
-    import HTMLParser
-    html = HTMLParser.HTMLParser()
-else:
-    import html
 
 
 _table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
@@ -112,7 +101,6 @@ def remove_data_item(instance, data_node, field_name):
     data_node.items = [item for item in data_node.items if item.key != key]
 
 
-@python_2_unicode_compatible
 class ExternalOperator(models.Model):
     """Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
@@ -159,7 +147,6 @@ timestamp_inaccuracy_choices = (
     (6, _("not even accurate to the year")),
     )
 
-@python_2_unicode_compatible
 class Process(PolymorphicModel):
     """This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
@@ -514,7 +501,7 @@ class Process(PolymorphicModel):
         if "process" not in context:
             context["process"] = self
         if "name" not in context:
-            name = six.text_type(self._meta.verbose_name) if not isinstance(self, Result) else self.title
+            name = str(self._meta.verbose_name) if not isinstance(self, Result) else self.title
             context["name"] = name[:1].upper() + name[1:]
         if hasattr(self, "get_sample_position_context"):
             context = self.get_sample_position_context(user, context)
@@ -757,7 +744,6 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
-@python_2_unicode_compatible
 class Sample(models.Model):
     """The model for samples.
     """
@@ -842,7 +828,7 @@ class Sample(models.Model):
         leading zeroes in this routine.
 
         Thus be careful how to access the sample name.  If you want to get a
-        human-readable name, use ``six.text_type(sample)`` or simply ``{{ sample }}``
+        human-readable name, use ``str(sample)`` or simply ``{{ sample }}``
         in templates.  If you need the *real* sample name in the database
         (e.g. for creating a hyperlink), access it by ``sample.name``.
         """
@@ -889,7 +875,7 @@ class Sample(models.Model):
 
         :rtype: unicode
         """
-        return six.text_type(self) + self.tags_suffix(user)
+        return str(self) + self.tags_suffix(user)
 
     def get_absolute_url(self):
         if self.name.startswith("*"):
@@ -1000,7 +986,7 @@ class Sample(models.Model):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        data_node = DataNode(self, six.text_type(self))
+        data_node = DataNode(self, str(self))
         fields_to_data_items(self, data_node)
         sample_details = self.get_sample_details()
         if sample_details:
@@ -1066,7 +1052,6 @@ class Sample(models.Model):
             return super(Sample, self).delete(*args, **kwargs)
 
 
-@python_2_unicode_compatible
 class SampleAlias(models.Model):
     """Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
@@ -1095,7 +1080,6 @@ class SampleAlias(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class SampleSplit(Process):
     """A process where a sample is split into many child samples.  The sample
     split itself is a process of the *parent*, whereas the children point to it
@@ -1167,7 +1151,6 @@ class SampleSplit(Process):
             return super(SampleSplit, self).delete(*args, **kwargs)
 
 
-@python_2_unicode_compatible
 class Clearance(models.Model):
     """Model for clearances for specific samples to specific users.  Apart
     from unblocking the sample itself (at least, some fields), particular
@@ -1191,7 +1174,6 @@ class Clearance(models.Model):
         return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
 
 
-@python_2_unicode_compatible
 class SampleClaim(models.Model):
         # Translators: someone who assert a claim to samples
     requester = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("requester"),
@@ -1247,7 +1229,6 @@ image_type_choices = (("none", _("none")),
                     ("jpeg", "JPEG"),
                     )
 
-@python_2_unicode_compatible
 class Result(Process):
     """Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
@@ -1421,7 +1402,6 @@ class Result(Process):
         return super(Result, self).delete(*args, **kwargs)
 
 
-@python_2_unicode_compatible
 class SampleSeries(models.Model):
     """A sample series groups together zero or more `Sample`.  It must belong
     to a topic, and it may contain processes, however, only *result processes*.
@@ -1494,7 +1474,7 @@ class SampleSeries(models.Model):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        data_node = DataNode(self, six.text_type(self))
+        data_node = DataNode(self, str(self))
         data_node.children.extend(sample.get_data_for_table_export() for sample in self.samples.all())
         # I don't think that any sample series properties are interesting for
         # table export; people only want to see the *sample* data.  Thus, I
@@ -1538,7 +1518,6 @@ class SampleSeries(models.Model):
         return hashlib.sha1(self.name.encode("utf-8")).hexdigest()
 
 
-@python_2_unicode_compatible
 class Initials(models.Model):
     """Model for initials of people or external operators.  They are used to build
     namespaces for sample names and sample series names.  They must match the
@@ -1566,7 +1545,6 @@ class Initials(models.Model):
         return self.initials
 
 
-@python_2_unicode_compatible
 class UserDetails(models.Model):
     """Model for further details about a user, beyond
     django.contrib.auth.models.User.  Here, you have all data about a
@@ -1642,7 +1620,7 @@ class UserDetails(models.Model):
                         _("Can edit permissions for all physical processes")),)
 
     def __str__(self):
-        return six.text_type(self.user)
+        return str(self.user)
 
     def touch_display_settings(self):
         """Set the last modifications of sample settings to the current time.  This
@@ -1663,7 +1641,6 @@ status_level_choices = (
     ("green", _("green"))
 )
 
-@python_2_unicode_compatible
 class StatusMessage(models.Model):
     """This class is for the current status of the processes.  The class
     discusses whether the process is available, or is currently out of service.
@@ -1704,7 +1681,6 @@ priority_choices = (
     ("3 low", _("low"))
 )
 
-@python_2_unicode_compatible
 class Task(models.Model):
     """
     """
@@ -1786,7 +1762,7 @@ class ProcessWithSamplePositions(models.Model):
                                               samples.permissions.has_permission_to_add_edit_physical_process(
                                                   user, self, self.content_type.model_class())
                                               else _("confidential sample"),
-                                              sample_positions_dict[six.text_type(sample.id)])
+                                              sample_positions_dict[str(sample.id)])
         if "sample_positions" not in context:
             sample_positions_dict = json.loads(self.sample_positions)
             if sample_positions_dict:
@@ -1796,7 +1772,7 @@ class ProcessWithSamplePositions(models.Model):
                                              samples.permissions.has_permission_to_add_edit_physical_process(
                                                  user, self, self.content_type.model_class())
                                              else _("confidential sample"),
-                                             sample_positions_dict[six.text_type(sample.id)])
+                                             sample_positions_dict[str(sample.id)])
                                             for sample in self.samples.order_by("name").iterator())
         return context
 

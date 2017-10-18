@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -37,8 +37,6 @@ contrast, the ``has_permission_to_...`` functions are used where a missing
 permission just means that e.g. a link is not generated (for example, in the
 ``get_context_for_user`` methods in the models).
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import hashlib, re
 from django.db.models import Q
@@ -371,8 +369,6 @@ class NoDepartment(object):
         return True
     def __bool__(self):
         return False
-    # For Python 2.x
-    __nonzero__ = __bool__
 
 
 def assert_can_fully_view_sample(user, sample):

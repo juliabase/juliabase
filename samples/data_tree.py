@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,9 +22,6 @@
 data contain in a certain model instance.  Such tree-like representations are
 used e.g. for the CSV export of model instances.
 """
-
-from __future__ import unicode_literals
-import django.utils.six as six
 
 from django.utils.functional import Promise
 
@@ -64,11 +61,11 @@ class DataNode(object):
         :type instance: ``models.Model`` or unicode or str
         :type descriptive_name: unicode
         """
-        if isinstance(instance, six.string_types):
+        if isinstance(instance, str):
             self.name = self.descriptive_name = instance
         else:
-            self.name = six.text_type(instance._meta.verbose_name)
-        self.descriptive_name = six.text_type(descriptive_name) or self.name
+            self.name = str(instance._meta.verbose_name)
+        self.descriptive_name = str(descriptive_name) or self.name
         self.items = []
         self.children = []
 
@@ -202,5 +199,5 @@ class DataItem(object):
         :type value: object
         :type origin: unicode or NoneType
         """
-        assert isinstance(key, (six.string_types, Promise))
+        assert isinstance(key, (str, Promise))
         self.key, self.value, self.origin = key, value, origin

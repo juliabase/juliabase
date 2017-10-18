@@ -17,7 +17,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 import os
+
 
 settings = {"ADDITIONAL_LDAP_USERS": "LDAP_ADDITIONAL_USERS",
             "AD_LDAP_ACCOUNT_FILTER": "LDAP_ACCOUNT_FILTER",

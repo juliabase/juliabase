@@ -137,7 +137,6 @@ Replace the file :file:`jb_remote_inm.py` with your own institute's code,
 and give your file a name derived from your institution's name.  Your file
 should start with something like::
 
-    from __future__ import absolute_import
     from jb_remote import *
 
     settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = "https://juliabase.my-institute.edu/"

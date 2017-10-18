@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -21,8 +21,6 @@
 """Views for showing and editing user data, i.e. real names, contact
 information, and preferences.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import json, copy
 from django.shortcuts import render, get_object_or_404

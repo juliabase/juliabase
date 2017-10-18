@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,8 +20,6 @@
 
 """Here are the views for an ordinary sample split.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import datetime
 from django.conf import settings

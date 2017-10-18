@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -24,9 +24,6 @@
 """View for showing an informal layer stack as a PDF file.
 """
 
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-
 import subprocess, uuid, os
 from functools import partial
 from django.http import Http404
@@ -45,7 +42,7 @@ def generate_stack(thumbnail, locations, sample, sample_details):
     pdf_filename = "/tmp/stack_{}.pdf".format(uuid.uuid4())
     informal_stacks.generate_diagram(
         pdf_filename, [informal_stacks.Layer(layer) for layer in sample_details.informal_layers.all()],
-        six.text_type(sample), _("Layer stack of {0}").format(sample))
+        str(sample), _("Layer stack of {0}").format(sample))
     if thumbnail:
         content = subprocess.check_output(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
                                            "-sOutputFile=-", pdf_filename])
@@ -84,5 +81,5 @@ def show_stack(request, sample_id, thumbnail):
     content = jb_common.utils.base.get_cached_file_content(
         filepath, partial(generate_stack, thumbnail, locations, sample, sample_details), timestamps=[sample.last_modified])
     return jb_common.utils.base.static_response(
-        content, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(six.text_type(sample))),
+        content, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(str(sample))),
         "image/png" if thumbnail else "application/pdf")

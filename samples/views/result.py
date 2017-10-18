@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -24,8 +24,6 @@
 # new result process is connected to a sample.  If you want to change the
 # behavior of this function, keep in mind that you have to check the signal for
 # modification purposes.
-
-from __future__ import absolute_import, unicode_literals
 
 import os, datetime, json, subprocess
 from functools import partial

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,8 +22,6 @@
 have only one statistics page with cache status data.  However, one can extend
 this in the institution's app.
 """
-
-from __future__ import absolute_import, division, unicode_literals
 
 import sys
 import matplotlib

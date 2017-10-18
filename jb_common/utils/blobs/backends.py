@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -26,19 +26,12 @@
                             (MEDIA_ROOT,))
 """
 
-from __future__ import absolute_import, division, unicode_literals
-import django.utils.six as six
-
 import os, uuid, datetime
 from contextlib import contextmanager
 import psycopg2
 from django.conf import settings
 from jb_common.utils.base import mkdirs, getmtime_utc
 from jb_common.signals import storage_changed
-
-
-if six.PY2:
-    FileNotFoundError = OSError
 
 
 class BlobStorage(object):

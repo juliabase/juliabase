@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -17,13 +17,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, unicode_literals, division
-from six.moves import cPickle as pickle
-from six.moves.email_mime_multipart import MIMEMultipart
-from six.moves.email_mime_text import MIMEText
 
-import os, sys, re, subprocess, time, smtplib, email, logging
-
+import os, sys, re, subprocess, time, smtplib, email, logging, pickle
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from . import settings
 
 

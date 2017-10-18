@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,9 +20,6 @@
 
 """Collection of tags and filters that I found useful for JuliaBase.
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 import re, json
 from django.template.defaultfilters import stringfilter
@@ -137,7 +134,7 @@ def markdown(value, margins="default"):
     It can only be solved by getting python-markdown to replace the entities,
     however, I can't easily do that without allowing HTML tags, too.
     """
-    result = markup.markdown(substitute_formulae(utils.substitute_html_entities(six.text_type(value))))
+    result = markup.markdown(substitute_formulae(utils.substitute_html_entities(str(value))))
     if result.startswith("<p>"):
         if margins == "collapse":
             result = """<p style="margin: 0pt">""" + result[3:]
@@ -204,7 +201,7 @@ def input_field(field):
 
         {% input_field deposition.number %}
     """
-    if isinstance(field, six.string_types):
+    if isinstance(field, str):
         # If ``field`` is the empty string, generate a generic error message.
         # Set ``string_if_invalid`` for clearer error messages in
         # non-production deployments.

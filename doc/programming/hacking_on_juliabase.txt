@@ -86,19 +86,6 @@ within functions and methods which are executed on each request, it should be
 the beginning of the module, and to ``ugettext`` at the end.
 
 
-.. index:: Python 3
-
-Python 3
---------
-
-JuliaBase runs on both Python 2.7 and Python 3.2+.  Take care that your
-contributions do the same.  We found the `Django documentation on this topic`_
-extremely useful.  The remote client comes with its own copy of the ``six``
-module in order to keep external dependencies at a minimum.
-
-.. _`Django documentation on this topic`: https://docs.djangoproject.com/en/dev/topics/python3/
-
-
 Boilerplate code
 ----------------
 
@@ -114,16 +101,7 @@ Start every file with:
     """{Module docstring}
     """
     
-    from __future__ import absolute_import, unicode_literals, division
-    {Python 3 compatibility statements}
-
     {Python standard library imports}
     {Non-standard imports (Numpy, Scipy, matplotlib etc)
     {Django imports}
     {JuliaBase imports}
-
-The “Python 3 compatibility statements“ may be lines like::
-
-    import django.utils.six as six
-    from django.utils.six.moves import cStringIO as StringIO
-    from django.utils.encoding import python_2_unicode_compatible

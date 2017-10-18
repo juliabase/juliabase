@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -22,8 +22,6 @@
 example, copying them to the “My Samples” list of another user, or simply
 removing them from the list.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import re
 from django.shortcuts import render, get_object_or_404

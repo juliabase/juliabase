@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -23,8 +23,6 @@ nightly as a cronjob.  For example, one line in the crontab may read::
 
     0 3 * * * /home/juliabase/juliabase/manage.py maintenance
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.core.management.base import BaseCommand
 from jb_common.signals import maintain

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -24,9 +24,6 @@
 """Models for INM-specific depositions.  This includes the deposition models
 themselves as well as models for layers.
 """
-
-from __future__ import absolute_import, unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.core.urlresolvers
@@ -86,7 +83,6 @@ class ClusterToolDeposition(samples.models.Deposition):
 samples.models.default_location_of_deposited_samples[ClusterToolDeposition] = _("cluster tool deposition lab")
 
 
-@python_2_unicode_compatible
 class ClusterToolLayer(samples.models.Layer, jb_common_models.PolymorphicModel):
     """Model for a layer of the “cluster tool”.  Note that this is the common
     base class for the actual layer models `ClusterToolHotWireLayer` and
@@ -182,7 +178,6 @@ five_chamber_layer_type_choices = (
     ("n", "n"),
 )
 
-@python_2_unicode_compatible
 class FiveChamberLayer(samples.models.Layer):
     """One layer in a 5-chamber deposition.
     """

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -38,15 +38,8 @@
             mapping topic names to topic IDs.
 """
 
-from __future__ import absolute_import, unicode_literals, division
-from . import six
-from .six.moves import urllib, http_cookiejar, _thread
-
-import mimetypes, json, logging, os, datetime, time, random, re, decimal
-from io import IOBase
-if six.PY3:
-    file = IOBase
-
+import mimetypes, json, logging, os, datetime, time, random, re, decimal, urllib, _thread, io
+from http import cookiejar
 from . import settings
 
 
@@ -105,13 +98,10 @@ def clean_header(value):
     """
     if isinstance(value, bool):
         return "on" if value else None
-    elif isinstance(value, file):
+    elif isinstance(value, io.IOBase):
         return value
     else:
-        if six.PY2:
-            return unicode(value).encode("utf-8")
-        else:
-            return str(value)
+        return str(value)
 
 
 def comma_separated_ids(ids):
@@ -169,26 +159,6 @@ def format_timestamp(timestamp):
         return timestamp.strftime("%Y-%m-%d %H:%M:%S")
     except AttributeError:
         return timestamp or datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-
-def python_2_unicode_compatible(klass):
-    """Taken from Django 1.7.  See
-    https://github.com/django/django/blob/master/LICENSE for the license.
-
-    A decorator that defines __unicode__ and __str__ methods under Python 2.
-    Under Python 3 it does nothing.
-
-    To support Python 2 and 3 with a single code base, define a __str__ method
-    returning text and apply this decorator to the class.
-    """
-    if six.PY2:
-        if '__str__' not in klass.__dict__:
-            raise ValueError("@python_2_unicode_compatible cannot be applied "
-                             "to %s because it doesn't define __str__()." %
-                             klass.__name__)
-        klass.__unicode__ = klass.__str__
-        klass.__str__ = lambda self: self.__unicode__().encode('utf-8')
-    return klass
 
 
 # The following is taken from Python2's mimetools.py.  FixMe: Find a better way
@@ -259,7 +229,7 @@ def encode_multipart_formdata(data):
     non_file_items = []
     file_items = []
     for key, value in data.items():
-        if isinstance(value, file):
+        if isinstance(value, io.IOBase):
             file_items.append((key, value))
         else:
             if isinstance(value, list):
@@ -296,7 +266,6 @@ def encode_multipart_formdata(data):
     return content_type, body
 
 
-@python_2_unicode_compatible
 class JuliaBaseError(Exception):
     """Exception class for high-level JuliaBase errors.
 
@@ -323,7 +292,7 @@ class JuliaBaseConnection(object):
     This is a singleton class, and its only instance resides at top-level in
     this module.
     """
-    cookie_jar = http_cookiejar.CookieJar()
+    cookie_jar = cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
     http_headers = [("User-agent", "JuliaBase-Remote/1.0"),
                     ("X-requested-with", "XMLHttpRequest"),
@@ -353,8 +322,6 @@ class JuliaBaseConnection(object):
                     raise JuliaBaseError(error_code, error_message)
                 server_error_message = error.read().decode("utf-8")
                 error.msg = "{}\n\n{}".format(error.msg, server_error_message)
-                if six.PY2:
-                    error.msg = error.msg.encode("utf-8")
                 raise error
             except urllib.error.URLError:
                 if max_cycles == 0:
@@ -558,7 +525,7 @@ class JSONEncoder(json.JSONEncoder):
                     else:
                         return super(JSONEncoder, self).default(o)
                 except (ValueError, TypeError):
-                    return six.text_type(o)
+                    return str(o)
 
 
 def as_json(value):

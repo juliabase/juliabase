@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -26,9 +26,6 @@ to ``settings.TEMPLATES``.  They add further data to the dictionary passed to
 the templates.
 """
 
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext
 
@@ -51,7 +48,7 @@ def default(request):
     """
     user = request.user
     if user.username in special_salutations:
-        return {"salutation": six.text_type(special_salutations[user.username]).format(user=user)}
+        return {"salutation": str(special_salutations[user.username]).format(user=user)}
     else:
         return {}
 

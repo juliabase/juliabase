@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -24,8 +24,6 @@
 """Permission checking for special institute extensions.  It is an extension to
 :py:mod:`samples.permissions`.  See there for further information.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext as _
 from samples.permissions import PermissionError

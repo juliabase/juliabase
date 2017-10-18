@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,9 +20,6 @@
 
 """Helper functions concerning sample names, and getting sample by name.
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 from django.conf import settings
 from samples import models

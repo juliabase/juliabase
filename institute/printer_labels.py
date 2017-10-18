@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -29,10 +29,7 @@ All dimension variables here are in big points (bp) because this is the native
 unit of measurement in ReportLab.
 """
 
-from __future__ import division, unicode_literals, absolute_import
-import django.utils.six as six
-from django.utils.six import BytesIO
-
+from io import BytesIO
 import re
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm

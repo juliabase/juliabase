@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -21,9 +21,7 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import absolute_import, unicode_literals, division
-from django.utils.six.moves import cStringIO as StringIO
-
+from io import StringIO
 import datetime, re
 import numpy
 from samples import models

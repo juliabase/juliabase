@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -21,10 +21,8 @@
 """View for showing a plot as a PDF file.
 """
 
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
-
 import os.path, mimetypes
+from io import BytesIO
 from functools import partial
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
@@ -40,7 +38,7 @@ from samples.utils.plots import PlotError
 
 def generate_plot(process, plot_id, thumbnail, datafile_name):
     try:
-        output = six.BytesIO()
+        output = BytesIO()
         if thumbnail:
             figure = Figure(frameon=False, figsize=(4, 3))
             canvas = FigureCanvasAgg(figure)
@@ -54,13 +52,13 @@ def generate_plot(process, plot_id, thumbnail, datafile_name):
             canvas = FigureCanvasAgg(figure)
             axes = figure.add_subplot(111)
             axes.grid(True)
-            axes.set_title(six.text_type(process))
+            axes.set_title(str(process))
             process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=False)
             # FixMe: Activate this line with Matplotlib 1.1.0.
 #                figure.tight_layout()
             canvas.print_figure(output, format="pdf")
     except PlotError as e:
-        raise Http404(six.text_type(e) or "Plot could not be generated.")
+        raise Http404(str(e) or "Plot could not be generated.")
     except ValueError as e:
         raise Http404("Plot could not be generated: " + e.args[0])
     else:

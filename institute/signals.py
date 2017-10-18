@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -26,8 +26,6 @@
 Among other things, this module contains the signal listener for maintenance
 work, which is called nightly.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 import re
 from django.db.models import signals

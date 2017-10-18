@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -20,8 +20,6 @@
 
 """Views for showing, editing, and creating external operators.
 """
-
-from __future__ import absolute_import, unicode_literals
 
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required

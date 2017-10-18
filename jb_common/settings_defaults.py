@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase, see http://www.juliabase.org.
@@ -19,10 +19,6 @@
 
 
 """Default values of jb_common settings."""
-
-from __future__ import absolute_import, unicode_literals
-# Python3 note: Below, there are some str() calls that should be removed with
-# Python3.
 
 import sys, os
 from django.utils.translation import ugettext_lazy as _, ugettext

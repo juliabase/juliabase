@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -21,7 +21,6 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from __future__ import unicode_literals
 import samples.utils.views as utils
 from institute.models import LayerThicknessMeasurement
 

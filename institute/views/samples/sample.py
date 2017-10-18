@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
@@ -25,9 +25,6 @@
 default view for adding samples in JuliaBase-samples because I wanto to have a
 substrate with every sample, too (and possibly a cleaning process).
 """
-
-from __future__ import absolute_import, unicode_literals
-import django.utils.six as six
 
 from django.db import transaction, IntegrityError
 from django.shortcuts import render, get_object_or_404
@@ -179,7 +176,7 @@ def add_samples_to_database(add_samples_form, user):
         if topic:
             for watcher in (user_details.user for user_details in topic.auto_adders.all()):
                 watcher.my_samples.add(sample)
-        new_names.append(six.text_type(sample))
+        new_names.append(str(sample))
     return new_names, samples
 
 
