@@ -29,6 +29,7 @@ from __future__ import absolute_import, unicode_literals
 # Python3.
 
 import os
+import django
 from django.utils.translation import ugettext_lazy as _
 from jb_common.settings_defaults import *
 from samples.settings_defaults import *
@@ -90,7 +91,7 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR],
+        "DIRS": [BASE_DIR, django.__path__[0] + "/forms/templates"],
         "OPTIONS": {
             "context_processors": ["django.contrib.auth.context_processors.auth",
                                    "django.template.context_processors.debug",
@@ -110,6 +111,8 @@ if DEBUG:
     # Switch off caching, so that edits are active immediately
     TEMPLATES[0]["OPTIONS"]["loaders"] = ["django.template.loaders.app_directories.Loader",
                                           "django.template.loaders.filesystem.Loader"]
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",

@@ -33,9 +33,7 @@ from django.db import transaction, IntegrityError
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.forms.utils import ValidationError
-from django.forms import widgets
 from django.http import HttpResponse
-from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.text import capfirst
 import django.utils.timezone
@@ -47,12 +45,6 @@ from samples import models, permissions
 import samples.utils.views as utils
 from institute import models as institute_models
 from institute import printer_labels
-
-
-class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
-    def render(self):
-        inner = format_html_join("\n", '<li style="white-space: nowrap">{0}</li>', zip(self))
-        return format_html('<ul class="radio-select">\n{0}\n</ul>', inner)
 
 
 rename_choices = (("", _("no names")),
@@ -79,8 +71,7 @@ class AddSamplesForm(forms.Form):
     tags = forms.CharField(label=_("Tags"), max_length=255, required=False,
                            help_text=_("separated with commas, no whitespace"))
     topic = TopicField(label=_("Topic"), required=False)
-    rename = forms.ChoiceField(label=_("Rename"), choices=rename_choices, required=False,
-                               widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+    rename = forms.ChoiceField(label=_("Rename"), choices=rename_choices, required=False, widget=forms.RadioSelect)
     cleaning_number = forms.CharField(label=capfirst(_("cleaning number")), max_length=8, required=False)
 
     def __init__(self, user, data=None, **kwargs):

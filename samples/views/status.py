@@ -27,12 +27,10 @@ import datetime
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.conf import settings
-from django.forms import widgets
 from django.forms.utils import ValidationError
 from django.shortcuts import render, get_object_or_404
 import django.core.urlresolvers
 import django.utils.timezone
-from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst
 import django.forms as forms
@@ -43,18 +41,12 @@ from samples.permissions import get_all_addable_physical_process_models, Permiss
 import samples.utils.views as utils
 
 
-class SimpleRadioSelectRenderer(widgets.RadioFieldRenderer):
-    def render(self):
-        inner = format_html_join("\n", "<li>{0}</li>", zip(self))
-        return format_html('<ul class="radio-select">\n{0}\n</ul>', inner)
-
-
 class StatusForm(forms.ModelForm):
     """The status message model form class.
     """
     operator = utils.FixedOperatorField(label=capfirst(_("operator")))
     status_level = forms.ChoiceField(label=capfirst(_("status level")), choices=models.status_level_choices,
-                                     widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+                                     widget=forms.RadioSelect)
     begin = DateTimeField(label=capfirst(_("begin")), start=True, required=False, with_inaccuracy=True,
                           help_text=_("YYYY-MM-DD HH:MM:SS"))
     end = DateTimeField(label=capfirst(_("end")), start=False, required=False, with_inaccuracy=True,

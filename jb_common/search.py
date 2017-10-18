@@ -27,7 +27,6 @@ from django.utils.encoding import python_2_unicode_compatible
 
 import re, datetime, calendar, copy
 from django import forms
-from django.utils.html import format_html, format_html_join
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.conf import settings
 from django.db import models
@@ -399,16 +398,11 @@ class BooleanSearchField(SearchField):
     matter”.
     """
 
-    class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
-        def render(self):
-            inner = format_html_join("\n", "<li>{0}</li>", zip(self))
-            return format_html('<ul class="radio-select">\n{0}\n</ul>', inner)
-
     def parse_data(self, data, prefix):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name] = self.field.formfield(form_class=forms.ChoiceField, required=False, initial="",
                                                 choices=(("", _("doesn't matter")), ("yes", _("yes")), ("no", _("no"))),
-                                                widget=forms.RadioSelect(renderer=self.SimpleRadioSelectRenderer))
+                                                widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
 
     def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]

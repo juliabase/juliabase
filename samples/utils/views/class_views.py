@@ -36,7 +36,6 @@ import django.utils.timezone
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.text import capfirst
-from django.utils.html import format_html, format_html_join
 import django.forms as forms
 from django.forms.models import modelform_factory
 from django.forms.utils import ValidationError
@@ -50,7 +49,7 @@ from samples import models
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SamplePositionsMixin",
            "SubprocessForm", "SubprocessesMixin",
-           "MultipleStepsMixin", "SubprocessMultipleTypesForm", "MultipleStepTypesMixin", "SimpleRadioSelectRenderer",
+           "MultipleStepsMixin", "SubprocessMultipleTypesForm", "MultipleStepTypesMixin",
            "DepositionView", "DepositionMultipleTypeView")
 
 
@@ -982,17 +981,10 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         return process
 
 
-class SimpleRadioSelectRenderer(forms.widgets.RadioFieldRenderer):
-    def render(self):
-        inner = format_html_join("\n", "<li>{0}</li>", zip(self))
-        return format_html('<ul class="radio-select">\n{0}\n</ul>', inner)
-
-
 class AddMultipleTypeStepsForm(AddMyStepsForm):
     """Form for adding a new step in case of steps of different types.
     """
-    step_to_be_added = forms.ChoiceField(label=_("Step to be added"), required=False,
-                                         widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+    step_to_be_added = forms.ChoiceField(label=_("Step to be added"), required=False, widget=forms.RadioSelect)
 
     def __init__(self, view, data=None, **kwargs):
         super(AddMultipleTypeStepsForm, self).__init__(view, data, **kwargs)
