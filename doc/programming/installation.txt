@@ -127,7 +127,7 @@ Django
 
 A certain version of JuliaBase works only with a certain version of Django.
 For the JuliaBase 1.0 release, this is Django 1.7.  For the current Git source
-code, it is Django 1.10.  Install it according to `Django's own instructions`_.
+code, it is Django 1.11.  Install it according to `Django's own instructions`_.
 No further configuration is necessary.
 
 .. _Django's own instructions: https://www.djangoproject.com/download/
