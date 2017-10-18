@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
-# Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+# Copyright © 2008–2017 Forschungszentrum Jülich GmbH, Jülich, Germany
 #
 # This program is free software: you can redistribute it and/or modify it under
 # the terms of the GNU General Public License as published by the Free Software
