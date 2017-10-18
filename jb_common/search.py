@@ -396,7 +396,7 @@ class BooleanSearchField(SearchField):
         self.form = forms.Form(data, prefix=prefix)
         self.form.fields[self.field.name] = self.field.formfield(form_class=forms.ChoiceField, required=False, initial="",
                                                 choices=(("", _("doesn't matter")), ("yes", _("yes")), ("no", _("no"))),
-                                                widget=forms.RadioSelect(renderer=SimpleRadioSelectRenderer))
+                                                widget=forms.RadioSelect)
 
     def get_values(self, query_paths={}):
         result = self.form.cleaned_data[self.field.name]
