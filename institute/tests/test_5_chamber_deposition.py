@@ -50,7 +50,7 @@ class FiveChamberDepositionTest(TestCase):
         self.assertEqual(process_form["operator"].value(), 7)
         self.assertEqual(process_form["combined_operator"].value(), 7)
         self.assertEqual(process_form["number"].value(), self.deposition_number)
-        self.assertLess(abs((process_form["timestamp"].value() - datetime.datetime.now()).total_seconds()), 1)
+        self.assertLess(abs((process_form["timestamp"].value() - datetime.datetime.now()).total_seconds()), 2)
         self.assertEqual(response.context["samples"]["sample_list"].value(), [])
         self.assertEqual(response.context["samples"].fields["sample_list"].choices,
                          [("Cooperation with Paris University",

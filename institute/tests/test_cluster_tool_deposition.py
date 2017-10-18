@@ -127,7 +127,7 @@ class ClusterToolDepositionTest(TestCase):
         self.assertEqual(response.context["steps_and_change_steps"][0][0]["sih4"].value(), decimal.Decimal("2"))
         self.assertEqual(response.context["steps_and_change_steps"][1][0]["sih4"].value(), decimal.Decimal("3"))
         self.assertEqual(response.context["steps_and_change_steps"][2][0]["sih4"].value(), decimal.Decimal("7"))
-        self.assertLess(abs((response.context["process"]["timestamp"].value() - datetime.datetime.now()).total_seconds()), 1)
+        self.assertLess(abs((response.context["process"]["timestamp"].value() - datetime.datetime.now()).total_seconds()), 2)
         self.assertEqual(response.context["process"]["operator"].value(), 6)
         self.assertEqual(response.context["process"]["combined_operator"].value(), 6)
 
