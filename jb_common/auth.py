@@ -73,7 +73,7 @@ class ActiveDirectoryBackend:
     supports_anonymous_user = False
     supports_inactive_user = False
 
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         if not password:
             return None
         if username.lower() != username:
