@@ -35,7 +35,7 @@ from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.views.i18n import JavaScriptCatalog
 from django.utils.http import urlquote_plus
-from django.contrib.auth.views import password_change, password_change_done, login, logout
+from django.contrib.auth import views as auth_views
 from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page
 
 
@@ -48,15 +48,16 @@ jb_common_patterns = ([
     url(r"^jsi18n/$", cache_page(3600)(JavaScriptCatalog.as_view(packages=settings.JAVASCRIPT_I18N_APPS)), name="jsi18n"),
 ], "jb_common")
 
-# Unfortunately, the ``password_change`` view expects the
-# ``password_change_done`` URL name to live in the global namespace, therefore,
-# I have to define these separately.
+# Unfortunately, the ``PasswordChangeView`` view expects the
+# ``PasswordChangeDoneView`` URL name to live in the global namespace,
+# therefore, I have to define these separately.
 login_related_patterns = [
-    url(r"^change_password$", password_change, {"template_name": "jb_common/change_password.html"}, "password_change"),
-    url(r"^change_password/done/$", password_change_done,
-        {"template_name": "jb_common/password_changed.html"}, "password_change_done"),
-    url(r"^login$", login, {"template_name": "jb_common/login.html"}, "login"),
-    url(r"^logout$", logout, {"template_name": "jb_common/logout.html"}, "logout"),
+    url(r"^change_password$", auth_views.PasswordChangeView.as_view(template_name="jb_common/change_password.html"),
+        name="password_change"),
+    url(r"^change_password/done/$", auth_views.PasswordChangeDoneView.as_view(
+        template_name="jb_common/password_changed.html"), name="password_change_done"),
+    url(r"^login$", auth_views.LoginView.as_view(template_name="jb_common/login.html"), name="login"),
+    url(r"^logout$", auth_views.LogoutView.as_view(template_name="jb_common/logout.html"), name="logout"),
 ]
 
 urlpatterns = [
