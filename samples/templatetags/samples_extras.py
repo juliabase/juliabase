@@ -32,7 +32,7 @@ from django.utils.html import format_html
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.utils.http
 import django.utils.timezone
-import django.core.urlresolvers
+import django.urls
 import samples.models, django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.conf import settings
@@ -189,7 +189,7 @@ def get_really_full_name(user, anchor_type="http"):
     elif isinstance(user, samples.models.ExternalOperator):
         full_name = user.name
         if anchor_type == "http":
-            return format_html('<a href="{0}">{1}</a>', mark_safe(django.core.urlresolvers.reverse(
+            return format_html('<a href="{0}">{1}</a>', mark_safe(django.urls.reverse(
                 "samples:show_external_operator", kwargs={"external_operator_id": user.pk})), full_name)
         elif anchor_type == "mailto":
             return format_html('<a href="mailto:{0}">{1}</a>', user.email, full_name)
@@ -210,7 +210,7 @@ def get_safe_operator_name(user):
             (isinstance(user, samples.models.ExternalOperator) and not user.confidential):
         return get_really_full_name(user, "http")
     name = _("Confidential operator #{number}").format(number=user.pk)
-    return format_html('<a href="{0}">{1}</a>', mark_safe(django.core.urlresolvers.reverse(
+    return format_html('<a href="{0}">{1}</a>', mark_safe(django.urls.reverse(
         "samples:show_external_operator", kwargs={"external_operator_id": user.pk})), name)
 
 

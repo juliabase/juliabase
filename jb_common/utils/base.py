@@ -25,7 +25,7 @@ from smtplib import SMTPException
 from functools import update_wrapper
 import django.http
 import django.contrib.auth.models
-import django.core.urlresolvers
+import django.urls
 from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
@@ -342,7 +342,7 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
         query_string = "?" + query_string
     # FixMe: Once jb_common has gotten its main menu view, this must be
     # used here as default for ``view`` instead of the bogus ``None``.
-    return HttpResponseSeeOther(django.core.urlresolvers.reverse(view or None, kwargs=kwargs) + query_string)
+    return HttpResponseSeeOther(django.urls.reverse(view or None, kwargs=kwargs) + query_string)
 
 
 def unicode_strftime(timestamp, format_string):

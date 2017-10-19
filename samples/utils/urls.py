@@ -21,7 +21,7 @@
 import importlib
 from django.apps import apps
 from django.conf.urls import url
-from django.core.urlresolvers import get_callable
+from django.urls import get_callable
 from jb_common.utils.base import camel_case_to_underscores
 from samples.views import lab_notebook
 import samples.views.main

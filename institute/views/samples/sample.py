@@ -35,7 +35,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from django.utils.text import capfirst
 import django.utils.timezone
 from django.contrib.auth.decorators import login_required
-import django.core.urlresolvers
+import django.urls
 from jb_common.utils.base import help_link, get_really_full_name, int_or_zero
 from jb_common.utils.views import TopicField
 from samples import models, permissions
@@ -78,7 +78,7 @@ class AddSamplesForm(forms.Form):
         self.fields["substrate_comments"].help_text = \
             """<span class="markdown-hint">""" + _("""with {markdown_link} syntax""").format(
             markdown_link="""<a href="{0}">Markdown</a>""".format(
-                    django.core.urlresolvers.reverse("jb_common:markdown_sandbox"))) + "</span>"
+                django.urls.reverse("jb_common:markdown_sandbox"))) + "</span>"
         self.fields["substrate_originator"].choices = [("<>", get_really_full_name(user))]
         external_contacts = user.external_contacts.all()
         if external_contacts:

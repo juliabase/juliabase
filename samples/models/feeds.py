@@ -33,7 +33,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 import django.contrib.auth.models
-import django.core.urlresolvers
+import django.urls
 from samples.models import Sample, Process, Result, SampleSplit, SampleSeries, StatusMessage, Task
 from jb_common.models import Topic, PolymorphicModel
 from jb_common.utils.base import get_really_full_name
@@ -466,7 +466,7 @@ class FeedStatusMessage(FeedEntry):
         metadata["title"] = _("New status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "new status message"
-        metadata["link"] = django.core.urlresolvers.reverse("samples:show_status")
+        metadata["link"] = django.urls.reverse("samples:show_status")
         return metadata
 
 
@@ -487,7 +487,7 @@ class FeedWithdrawnStatusMessage(FeedEntry):
         metadata["title"] = _("Withdrawn status message for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "withdrawn status message"
-        metadata["link"] = django.core.urlresolvers.reverse("samples:show_status")
+        metadata["link"] = django.urls.reverse("samples:show_status")
         return metadata
 
 
@@ -544,7 +544,7 @@ class FeedRemovedTask(FeedEntry):
         metadata["title"] = _("Removed a task for {process_class}").format(
             process_class=self.process_class.model_class()._meta.verbose_name)
         metadata["category term"] = metadata["category label"] = "removed task"
-        metadata["link"] = django.core.urlresolvers.reverse("samples:show_task_lists")
+        metadata["link"] = django.urls.reverse("samples:show_task_lists")
         return metadata
 
 

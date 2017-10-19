@@ -26,7 +26,7 @@ from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
 from django.http import HttpResponsePermanentRedirect, Http404
 from django.views.decorators.http import require_http_methods
-import django.core.urlresolvers
+import django.urls
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -111,7 +111,7 @@ def main_menu(request):
                   {"title": _("Main menu"),
                    "my_topics": my_topics,
                    "topicless_samples": topicless_samples,
-                   "add_samples_url": django.core.urlresolvers.reverse(settings.ADD_SAMPLES_VIEW),
+                   "add_samples_url": django.urls.reverse(settings.ADD_SAMPLES_VIEW),
                    "user_hash": permissions.get_user_hash(request.user),
                    "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
                    "can_edit_topics": permissions.can_edit_any_topics(request.user),

@@ -31,7 +31,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.contrib.staticfiles.storage import staticfiles_storage
-import django.core.urlresolvers
+import django.urls
 import django.forms as forms
 from django.core.cache import cache
 from django.db.models import Q
@@ -259,18 +259,16 @@ def get_allowed_processes(user, sample):
     sample_processes = []
     if permissions.has_permission_to_edit_sample(user, sample) and not sample.is_dead():
         sample_processes.append({"label": _("split"),
-                                 "url": django.core.urlresolvers.reverse("samples:split_and_rename",
-                                                                         kwargs={"parent_name": sample.name}),
+                                 "url": django.urls.reverse("samples:split_and_rename", kwargs={"parent_name": sample.name}),
                                  "type": "split"})
         # Translators: Of a sample
         sample_processes.append({"label": _("cease of existence"),
-                                 "url": django.core.urlresolvers.reverse("samples:kill_sample",
-                                                                         kwargs={"sample_name": sample.name}),
+                                 "url": django.urls.reverse("samples:kill_sample", kwargs={"sample_name": sample.name}),
                                  "type": "death"})
     general_processes = []
     if permissions.has_permission_to_add_result_process(user, sample):
         general_processes.append({"label": models.Result._meta.verbose_name, "type": "result",
-                                  "url": django.core.urlresolvers.reverse("samples:add_result")})
+                                  "url": django.urls.reverse("samples:add_result")})
     general_processes.extend(permissions.get_allowed_physical_processes(user))
     if not sample_processes and not general_processes:
         raise permissions.PermissionError(user, _("You are not allowed to add any processes to the sample {sample} "
@@ -770,7 +768,7 @@ def by_id(request, sample_id, path_suffix):
     permissions.get_sample_clearance(request.user, sample)
     query_string = request.META["QUERY_STRING"] or ""
     return HttpResponseSeeOther(
-        django.core.urlresolvers.reverse("samples:show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
+        django.urls.reverse("samples:show_sample_by_name", kwargs={"sample_name": sample.name}) + path_suffix +
         ("?" + query_string if query_string else ""))
 
 

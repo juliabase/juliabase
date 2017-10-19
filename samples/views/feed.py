@@ -30,7 +30,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.views.decorators.cache import cache_page
 from django.conf import settings
-import django.core.urlresolvers
+import django.urls
 from jb_common.utils.base import get_really_full_name, camel_case_to_underscores
 from jb_common import __version__
 from samples import permissions, models
@@ -150,7 +150,7 @@ def show(request, username, user_hash):
     """
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     permissions.assert_can_view_feed(user_hash, user)
-    feed_absolute_url = request.build_absolute_uri(django.core.urlresolvers.reverse(
+    feed_absolute_url = request.build_absolute_uri(django.urls.reverse(
         "samples:show_feed", kwargs={"username": username, "user_hash": user_hash}))
     feed = ElementTree.Element("feed", xmlns="http://www.w3.org/2005/Atom")
     feed.attrib["xml:base"] = request.build_absolute_uri("/")

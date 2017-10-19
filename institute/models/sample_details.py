@@ -28,7 +28,7 @@ particular, it contains the informal layer stacks.
 import os.path
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 from django.db import models
-import django.core.urlresolvers
+import django.urls
 from django import forms
 from django.forms.utils import ValidationError
 from django.forms.models import inlineformset_factory
@@ -87,11 +87,9 @@ class SampleDetails(models.Model):
         :rtype: dict mapping str to str
         """
         return {"diagram_file": os.path.join("stacks", str(self.pk) + ".pdf"),
-                "diagram_url": django.core.urlresolvers.reverse("institute:stack_diagram",
-                                                                kwargs={"sample_id": str(self.pk)}),
+                "diagram_url": django.urls.reverse("institute:stack_diagram", kwargs={"sample_id": str(self.pk)}),
                 "thumbnail_file": os.path.join("stacks", str(self.pk) + ".png"),
-                "thumbnail_url": django.core.urlresolvers.reverse("institute:stack_diagram_thumbnail",
-                                                                  kwargs={"sample_id": str(self.pk)})}
+                "thumbnail_url": django.urls.reverse("institute:stack_diagram_thumbnail", kwargs={"sample_id": str(self.pk)})}
 
     def has_producible_stack_diagram(self):
         """Returns whether it is possible to print a stack diagram for this

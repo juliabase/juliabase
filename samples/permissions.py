@@ -41,7 +41,7 @@ permission just means that e.g. a link is not generated (for example, in the
 import hashlib, re
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
-import django.core.urlresolvers
+import django.urls
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
@@ -230,10 +230,10 @@ def get_lab_notebooks(user):
     lab_notebooks = []
     for process_class, process in get_all_addable_physical_process_models().items():
         try:
-            url = django.core.urlresolvers.reverse(
+            url = django.urls.reverse(
                 process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                 kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
-        except django.core.urlresolvers.NoReverseMatch:
+        except django.urls.NoReverseMatch:
             pass
         else:
             if has_permission_to_view_lab_notebook(user, process_class):

@@ -24,7 +24,7 @@ from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth import logout
-import django.core.urlresolvers
+import django.urls
 from jb_common.models import UserDetails, ErrorPage
 from jb_common.utils.base import is_json_requested, JSONRequestException
 from django.conf import settings
@@ -177,7 +177,7 @@ class JSONClientMiddleware(object):
                                      html=response.content)
             return HttpResponseUnprocessableEntity(
                 json.dumps((1, request.build_absolute_uri(
-                    django.core.urlresolvers.reverse("jb_common:show_error_page", kwargs={"hash_value": hash_value})))),
+                    django.urls.reverse("jb_common:show_error_page", kwargs={"hash_value": hash_value})))),
                 content_type="application/json")
         return response
 

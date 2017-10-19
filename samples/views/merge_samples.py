@@ -27,7 +27,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.forms.utils import ValidationError
-from django.core.urlresolvers import get_callable
+from django.urls import get_callable
 from samples import models
 import samples.utils.views as utils
 

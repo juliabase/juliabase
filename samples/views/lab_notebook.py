@@ -31,7 +31,7 @@ information.
 import datetime, re
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
-import django.core.urlresolvers
+import django.urls
 from django.template import loader, RequestContext
 import django.forms as forms
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -114,16 +114,14 @@ def get_previous_next_urls(process_name, namespace, year, month):
         previous_month = 12
         previous_year -= 1
     if previous_year >= 1990:
-        previous_url = django.core.urlresolvers.reverse(
-            "{}:lab_notebook_{}".format(namespace, process_name),
-            kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
+        previous_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+                                           kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
     next_month += 1
     if next_month == 13:
         next_month = 1
         next_year += 1
-    next_url = django.core.urlresolvers.reverse(
-        "{}:lab_notebook_{}".format(namespace, process_name),
-        kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
+    next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+                                   kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
     return previous_url, next_url
 
 
@@ -163,9 +161,9 @@ def show(request, process_name, year_and_month):
     if request.method == "POST":
         year_month_form = YearMonthForm(request.POST)
         if year_month_form.is_valid():
-            return HttpResponseSeeOther(django.core.urlresolvers.reverse(
-                    "{}:lab_notebook_{}".format(namespace, process_name),
-                    kwargs={"year_and_month": "{year}/{month}".format(**year_month_form.cleaned_data)}))
+            return HttpResponseSeeOther(django.urls.reverse(
+                "{}:lab_notebook_{}".format(namespace, process_name),
+                kwargs={"year_and_month": "{year}/{month}".format(**year_month_form.cleaned_data)}))
     else:
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
     template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
@@ -173,10 +171,10 @@ def show(request, process_name, year_and_month):
     html_body = template.render(template_context.flatten())
     previous_url, next_url = get_previous_next_urls(process_name, namespace, year, month)
     try:
-        export_url = django.core.urlresolvers.reverse(
+        export_url = django.urls.reverse(
             "{}:export_lab_notebook_{}".format(namespace, process_name),
             kwargs={"year_and_month": year_and_month}) + "?next=" + urlquote_plus(request.path)
-    except django.core.urlresolvers.NoReverseMatch:
+    except django.urls.NoReverseMatch:
         export_url = None
     return render(request, "samples/lab_notebook.html",
                   {"title": capitalize_first_letter(_("lab notebook for {process_name}")

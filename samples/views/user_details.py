@@ -28,7 +28,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
 from django import forms
-import django.core.urlresolvers
+import django.urls
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst
 from django.conf import settings
@@ -166,7 +166,7 @@ def topics_and_permissions(request, login_name):
                    "topics": user.topics.all(), "managed_topics": user.managed_topics.all(),
                    "permissions": permissions.get_user_permissions(user),
                    "full_user_name": get_really_full_name(request.user),
-                   "permissions_url": django.core.urlresolvers.reverse("samples:list_permissions")})
+                   "permissions_url": django.urls.reverse("samples:list_permissions")})
 
 
 _ = ugettext

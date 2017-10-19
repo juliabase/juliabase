@@ -21,7 +21,7 @@ import re, importlib
 from django.apps import AppConfig
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from jb_common.nav_menu import MenuItem
 
 

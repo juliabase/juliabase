@@ -29,7 +29,7 @@ from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.forms.utils import ValidationError
 from django.contrib.auth.decorators import login_required
-import django.core.urlresolvers
+import django.urls
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.conf import settings
@@ -115,8 +115,7 @@ to withdraw the request.
 
 JuliaBase.
 """), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
-                 "url": request.build_absolute_uri(django.core.urlresolvers.reverse("samples:show_claim",
-                                                                                    kwargs={"claim_id": claim.pk}))})
+                 "url": request.build_absolute_uri(django.urls.reverse("samples:show_claim", kwargs={"claim_id": claim.pk}))})
             _ = ugettext
             claim.samples = samples_form.cleaned_data["samples"]
             return utils.successful_response(request,

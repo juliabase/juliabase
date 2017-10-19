@@ -26,7 +26,7 @@ themselves as well as models for layers.
 """
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-import django.core.urlresolvers
+import django.urls
 from django.utils.http import urlquote_plus
 from django.db import models
 from jb_common import models as jb_common_models, model_fields
@@ -58,7 +58,7 @@ class ClusterToolDeposition(samples.models.Deposition):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.core.urlresolvers.reverse("institute:add_cluster_tool_deposition"), urlquote_plus(self.number))
+                django.urls.reverse("institute:add_cluster_tool_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super(ClusterToolDeposition, self).get_context_for_user(user, context)
@@ -155,7 +155,7 @@ class FiveChamberDeposition(samples.models.Deposition):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.core.urlresolvers.reverse("institute:add_five_chamber_deposition"), urlquote_plus(self.number))
+                django.urls.reverse("institute:add_five_chamber_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super(FiveChamberDeposition, self).get_context_for_user(user, context)

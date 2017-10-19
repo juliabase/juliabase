@@ -30,7 +30,7 @@ import os.path
 import numpy
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db import models
-import django.core.urlresolvers
+import django.urls
 from django.conf import settings
 from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
@@ -141,7 +141,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         if "shapes" not in context:
             layout = institute.layouts.get_layout(sample, self)
             context["shapes"] = layout.get_map_shapes() if layout else {}
-        context["thumbnail_layout"] = django.core.urlresolvers.reverse(
+        context["thumbnail_layout"] = django.urls.reverse(
             "institute:show_layout", kwargs={"sample_id": sample.id, "process_id": self.id})
         cells = self.cells.all()
         if "image_urls" not in context:
