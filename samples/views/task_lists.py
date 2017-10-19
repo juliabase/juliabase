@@ -205,7 +205,7 @@ class ChooseTaskListsForm(forms.Form):
         self.fields["visible_task_lists"].widget.attrs["size"] = "15"
 
 
-class TaskForTemplate(object):
+class TaskForTemplate:
     """Class for preparing the tasks for the show template.
     """
     def __init__(self, task, user):

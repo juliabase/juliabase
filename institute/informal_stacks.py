@@ -101,7 +101,7 @@ def get_circled_number(number, largest_number):
         return "➀➁➂➃➄➅➆➇➈➉"[number - 1]
 
 
-class Path(object):
+class Path:
     """Helper class for drawing the layer stack.  It is used in a late stage
     of drawing the diagram, when the PDF canvas is already prepared.  It helps
     to draw the outline of a single layer consisting of basic shapes like
@@ -292,7 +292,7 @@ class Path(object):
             self.canvas.drawPath(self.p, fill=False, stroke=True)
 
 
-class Layer(object):
+class Layer:
     """Class which holds one layer of a stack.
 
     :ivar name: the name or label of the layer
@@ -447,7 +447,7 @@ class Layer(object):
             draw_column("whole")
 
 
-class Scale(object):
+class Scale:
     """Class which holds the scale of the diagram.  This covers two tasks:
     First, to draw the scale at the top of the diagram, and secondly, to
     convert lengths given in nm to bp.
@@ -588,7 +588,7 @@ def build_stack(layers, scale):
     return total_height
 
 
-class Label(object):
+class Label:
     """Class for labels of layers.
 
     :cvar needs_left_row: whether the space left to the stack must be used for

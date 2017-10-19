@@ -231,7 +231,7 @@ class ValueForm(forms.Form):
         self.fields["value"].widget.attrs.update({"size": 10})
 
 
-class FormSet(object):
+class FormSet:
     """Class for holding all forms of the result views, and for all methods
     working on these forms.  The main advantage of putting all this into a big
     class is to avoid long parameter and return tuples because one can use

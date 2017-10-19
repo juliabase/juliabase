@@ -82,7 +82,7 @@ def setup_logging(destination=None):
                             format="%(asctime)s %(levelname)-8s %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S")
     else:
-        class LogSink(object):
+        class LogSink:
             def write(self, *args, **kwargs):
                 pass
             def flush(self, *args, **kwargs):
@@ -287,7 +287,7 @@ class JuliaBaseError(Exception):
         return "({0}) {1}".format(self.error_code, self.error_message)
 
 
-class JuliaBaseConnection(object):
+class JuliaBaseConnection:
     """Class for the routines that connect to the database at HTTP level.
     This is a singleton class, and its only instance resides at top-level in
     this module.
@@ -437,7 +437,7 @@ def logout():
     logging.info("Successfully logged-out.")
 
 
-class PrimaryKeys(object):
+class PrimaryKeys:
     """Dictionary-like class for storing primary keys.  I use this class only
     to delay the costly loading of the primary keys until they are really
     accessed.  This way, GET-request-only usage of the Remote Client becomes

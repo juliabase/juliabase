@@ -41,7 +41,7 @@ from jb_remote import *
 settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = os.environ.get("JULIABASE_SERVER_URL", "http://localhost/")
 
 
-class ClusterToolDeposition(object):
+class ClusterToolDeposition:
     """Class representing Cluster Tool depositions.
     """
 
@@ -112,7 +112,7 @@ class ClusterToolDeposition(object):
         return set(connection.open("available_items/ClusterToolDeposition"))
 
 
-class ClusterToolHotWireLayer(object):
+class ClusterToolHotWireLayer:
     """Class representing Cluster Tool hot-wire layer.
     """
 
@@ -141,7 +141,7 @@ class ClusterToolHotWireLayer(object):
         return data
 
 
-class ClusterToolPECVDLayer(object):
+class ClusterToolPECVDLayer:
     """Class representing Cluster Tool PECVD layer.
     """
 
@@ -194,7 +194,7 @@ def rename_after_deposition(deposition_number, new_names):
     connection.open("depositions/split_and_rename_samples/" + deposition_number, data)
 
 
-class PDSMeasurement(object):
+class PDSMeasurement:
     """Class representing PDS measurements.
     """
 
@@ -256,7 +256,7 @@ class PDSMeasurement(object):
         return set(connection.open("available_items/PDSMeasurement"))
 
 
-class Substrate(object):
+class Substrate:
     """Class representing substrates in the database.
     """
 
@@ -350,7 +350,7 @@ def get_sample(sample_name):
         raise SampleNotFound(new_sample)
 
 
-class SolarsimulatorMeasurement(object):
+class SolarsimulatorMeasurement:
 
     def __init__(self, process_id=None):
         if process_id:
@@ -402,7 +402,7 @@ class SolarsimulatorMeasurement(object):
         return self.id
 
 
-class SolarsimulatorCellMeasurement(object):
+class SolarsimulatorCellMeasurement:
 
     def __init__(self, measurement, position, data={}):
         self.position = position
@@ -424,7 +424,7 @@ class SolarsimulatorCellMeasurement(object):
                 prefix + "data_file": self.data_file}
 
 
-class Structuring(object):
+class Structuring:
 
     def __init__(self):
         """Currently, you can only *add* such processes.
@@ -461,7 +461,7 @@ class Structuring(object):
         return self.id
 
 
-class FiveChamberDeposition(object):
+class FiveChamberDeposition:
     """Class that represents 5-chamber depositions.
     """
 
@@ -543,7 +543,7 @@ class FiveChamberDeposition(object):
         return set(connection.open("available_items/FiveChamberDeposition"))
 
 
-class FiveChamberLayer(object):
+class FiveChamberLayer:
     """Class representing a single 5-chamber layer.
     """
 

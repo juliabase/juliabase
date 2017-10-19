@@ -278,7 +278,7 @@ def get_allowed_processes(user, sample):
     return sample_processes, general_processes
 
 
-class SamplesAndProcesses(object):
+class SamplesAndProcesses:
     """This is a container data structure for holding (almost) all data for
     the “show sample” template.  It represents one sample.  By nesting it,
     child samples can be embedded, too.

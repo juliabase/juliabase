@@ -114,7 +114,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import django.forms as forms
 
 
-class ColumnGroup(object):
+class ColumnGroup:
     """Class for representing of set of columns in the table output which
     corresponds to one node type in the input tree.  In the output, the column
     groups are arranged next to each other to form the complete table.  The
@@ -169,7 +169,7 @@ class ColumnGroup(object):
         return self.name == other.name
 
 
-class Column(object):
+class Column:
     """Class for one column in the exported table.  The list of ``Column``
     instances is built in `build_column_group_list`.  It contains *all*
     columns, even those that the user doesn't choose for output.  The index in

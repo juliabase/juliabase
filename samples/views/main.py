@@ -38,7 +38,7 @@ import samples.utils.views as utils
 from samples.models import ExternalOperator, Process
 
 
-class MySeries(object):
+class MySeries:
     """Helper class to pass sample series data to the main menu template.  It
     is used in `main_menu`.  This is *not* a data strcuture for sample series.
     It just stores all data needed to display a certain sample series to a

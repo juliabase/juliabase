@@ -252,7 +252,7 @@ def find_file_in_directory(filename, path, max_depth=None):
             dirs[:] = []
 
 
-class _AddHelpLink(object):
+class _AddHelpLink:
     """Internal helper class in order to realise the `help_link` function
     decorator.
     """

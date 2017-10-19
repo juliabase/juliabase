@@ -35,7 +35,7 @@ import django.http
 """Middleware classes for various totally unrelated things."""
 
 
-class LocaleMiddleware(object):
+class LocaleMiddleware:
     """This is a simple middleware that parses a request and decides what
     translation object to install in the current thread context depending on
     what's found in `models.UserDetails`. This allows pages to be dynamically
@@ -77,7 +77,7 @@ class LocaleMiddleware(object):
         return response
 
 
-class MessageMiddleware(object):
+class MessageMiddleware:
     """Middleware that handles temporary messages.  It is a copy of Django's
     original ``MessageMiddleware`` but it adds cache disabling.  This way,
     pages with messages are never cached by the browser, so that the messages
@@ -114,7 +114,7 @@ class MessageMiddleware(object):
         return response
 
 
-class ActiveUserMiddleware(object):
+class ActiveUserMiddleware:
     """Middleware to prevent a non-active user from using the site.  Unfortunately,
     ``is_active=False`` only prevents a user from logging in.  If he was
     already logged in before ``is_active`` was set to ``False`` and doesn't log
@@ -145,7 +145,7 @@ class HttpResponseUnprocessableEntity(django.http.HttpResponse):
     status_code = 422
 
 
-class JSONClientMiddleware(object):
+class JSONClientMiddleware:
     """Middleware to convert responses to JSON if this was requested by the client.
 
     It is important that this class comes after all non-JuliaBase middleware in
@@ -193,7 +193,7 @@ class JSONClientMiddleware(object):
                                                    content_type="application/json")
 
 
-class UserTracebackMiddleware(object):
+class UserTracebackMiddleware:
     """Adds user to request context during request processing, so that they show up
     in the error emails.  Taken from <http://stackoverflow.com/a/21158544>.
     """

@@ -24,7 +24,7 @@ from email.mime.text import MIMEText
 from . import settings
 
 
-class PIDLock(object):
+class PIDLock:
     """Class for process locking in with statements.  It works only on UNIX.  You
     can use this class like this::
 

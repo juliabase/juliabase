@@ -30,7 +30,7 @@ from samples import models, permissions
 __all__ = ("Reporter",)
 
 
-class Reporter(object):
+class Reporter:
     """This class contains all feed-generating routines as methods.  Their
     names start with ``report_...``.  The main reason for putting them into a
     class is that this class assures that no user gets two feed entries.

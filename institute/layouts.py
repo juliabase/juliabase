@@ -163,7 +163,7 @@ def _draw_constrained_text(canvas, text, x, y, fontsize, width, graylevel, backg
     canvas.drawCentredString(x, y - ascent / 2, text)
 
 
-class Layout(object):
+class Layout:
     """Abstract base class for structuring layouts.  The main purpose of
     layouts is to have something to draw.
 

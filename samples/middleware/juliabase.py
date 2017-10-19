@@ -32,7 +32,7 @@ from samples.permissions import PermissionError
 
 # FixMe: A JSON client should see JSON responses.
 
-class ExceptionsMiddleware(object):
+class ExceptionsMiddleware:
     """Middleware for catching JuliaBase-samples-specific exceptions raised by
     views.  I handle only `PermissionError` and `AmbiguityException` here.
     These exceptions mean a redirect in one way or another.

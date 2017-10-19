@@ -76,7 +76,7 @@ def convert_fields_to_search_fields(cls, excluded_fieldnames=[]):
     return search_fields
 
 
-class SearchField(object):
+class SearchField:
     """Class representing one field in the advanced search.  This is an
     abstract base class for such fields.  It is instantiated in the
     ``get_search_tree_node`` methods in the models.
@@ -508,7 +508,7 @@ def get_search_results(search_tree, max_results, base_query=None):
     return results, too_many_results
 
 
-class SearchTreeNode(object):
+class SearchTreeNode:
     """Class which represents one node in the seach tree.  It is associated
     with a model class.
 

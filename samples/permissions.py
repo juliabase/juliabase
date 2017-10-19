@@ -354,7 +354,7 @@ class PermissionError(Exception):
         self.user, self.description, self.new_topic_would_help = user, description, new_topic_would_help
 
 
-class NoDepartment(object):
+class NoDepartment:
     """Singleton class used to define an unset department attribute, so that an
     unset department is never equal to another unset department.
     """

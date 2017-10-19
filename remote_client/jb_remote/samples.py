@@ -28,7 +28,7 @@ __all__ = ["TemporaryMySamples", "Sample", "Result", "User"]
 primary_keys.components.add("external_operators=*")
 
 
-class TemporaryMySamples(object):
+class TemporaryMySamples:
     """Context manager for adding samples to the “My Samples” list
     temporarily.  This is used when editing or adding processes.  In order to
     be able to link the process with samples, they must be on your “My Samples”
@@ -62,7 +62,7 @@ class TemporaryMySamples(object):
             connection.open("change_my_samples", {"remove": comma_separated_ids(self.changed_sample_ids)})
 
 
-class Sample(object):
+class Sample:
     """Class representing samples.
     """
 
@@ -128,7 +128,7 @@ class Sample(object):
         connection.open("change_my_samples", data)
 
 
-class Result(object):
+class Result:
     """Class representing result processes.
     """
 
@@ -216,7 +216,7 @@ class Result(object):
         return self.id
 
 
-class User(object):
+class User:
     """Class representing a user.
     """
 

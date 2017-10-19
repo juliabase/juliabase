@@ -34,7 +34,7 @@ from jb_common.utils.base import mkdirs, getmtime_utc
 from jb_common.signals import storage_changed
 
 
-class BlobStorage(object):
+class BlobStorage:
     """Abstract base class for blob storage backends.  It lists all methods that
     may be implemented and their signatures.  Currently, core JuliaBase only
     calls the methods `open` and `export`.
@@ -136,7 +136,7 @@ class Filesystem(BlobStorage):
     CACHE_ROOT or to the root directory.
     """
 
-    class File(object):
+    class File:
         """A very simplistic file-like objects.  It only defines the methods that are
         needed in JuliaBase: `write` (with one parameter) and `close`.  I need
         this wrapper to have a hook in the `close` method to call the
@@ -209,7 +209,7 @@ class PostgreSQL(BlobStorage):
     (OIDs) with the pathname and an mtime timestamp.
     """
 
-    class BlobFile(object):
+    class BlobFile:
         """A very simplistic file-like objects.  It only defines the methods that are
         needed in JuliaBase: `write` (with one parameter) and `close`.
         """

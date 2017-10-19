@@ -394,7 +394,7 @@ class EditDescriptionForm(forms.Form):
         return description
 
 
-class GeneralSampleField(object):
+class GeneralSampleField:
     """Mixin class for the samples selection box.  It is used in the two form
     field classes `SampleField` and `MultipleSamplesField`.  Never instantiate
     this class.

@@ -103,7 +103,7 @@ then change the former collegue's login name.
             return None
 
 
-class LDAPConnection(object):
+class LDAPConnection:
     """Class with represents an LDAP connection.  It creates and stores the
     connection instance itself and configures it.
 

@@ -124,7 +124,7 @@ def get_old_stock_value(player):
         return 100
 
 
-class MatchResult(object):
+class MatchResult:
 
     def __init__(self, match):
         self.player_a_1, self.player_a_2, self.player_b_1, self.player_b_2 = \

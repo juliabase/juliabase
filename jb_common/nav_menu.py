@@ -24,7 +24,7 @@
 import collections
 
 
-class MenuItem(object):
+class MenuItem:
     """Class which represents one main menu item and – if available – its subitems
     in the instance attribute ``sub_items`` (a list of `MenuItem`).  This
     yields a nested data structure which may be interpreted to create a main

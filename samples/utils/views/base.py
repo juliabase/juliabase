@@ -191,7 +191,7 @@ def remove_samples_from_my_samples(samples, user):
         sample.watchers.remove(user)
 
 
-class StructuredSeries(object):
+class StructuredSeries:
     """Helper class to pass sample series data to the main menu template.
     This is *not* a data strcuture for sample series.  It just stores all data
     needed to display a certain sample series to a certain user.  It is used in
@@ -241,7 +241,7 @@ class StructuredSeries(object):
         return self.__is_complete
 
 
-class StructuredTopic(object):
+class StructuredTopic:
     """Class that represents one topic which contains samples and sample
     series, used for `build_structured_sample_list`.
 

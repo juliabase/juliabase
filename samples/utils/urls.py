@@ -27,7 +27,7 @@ from samples.views import lab_notebook
 import samples.views.main
 
 
-class PatternGenerator(object):
+class PatternGenerator:
     """This class helps to build URL pattern lists for physical processes.  You
     instantiate it once in your URLconf file.  Then, you add URLs by calling
     `physical_process` for every physical process::

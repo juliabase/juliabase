@@ -26,7 +26,7 @@ used e.g. for the CSV export of model instances.
 from django.utils.functional import Promise
 
 
-class DataNode(object):
+class DataNode:
     """Class for a node in a data tree intended to hold instance data.
 
     :ivar name: name of this node; must be the same for node whose items carry
@@ -157,7 +157,7 @@ class DataNode(object):
         return repr(self.name)
 
 
-class DataItem(object):
+class DataItem:
     """This class represents a key–value pair, holding the actual data in a
     `DataNode` tree.
 
