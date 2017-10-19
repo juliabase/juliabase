@@ -73,6 +73,7 @@ operating system by default anyway, you must install:
 - Redis (and the Django module for it)
 - matplotlib
 - reportlab
+- tzlocal
 - Python modules for YAML and markdown
 
 
