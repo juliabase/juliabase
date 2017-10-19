@@ -35,11 +35,12 @@ register = template.Library()
 
 
 @register.filter
+@mark_safe
 def three_digits(number):
     """Filter for padding an integer with zeros so that it has at least three
     digits.
     """
-    return mark_safe("{0:03}".format(number))
+    return "{0:03}".format(number)
 
 
 @register.filter
@@ -86,13 +87,13 @@ def basename(filepath):
 
 
 @register.filter
+@mark_safe
 def solarsimulator_color(measurement):
     """Returns the colour which is associated with the solarsimulator
     measurement.  The returned string is ready-to-be-used in CSS directives as
     a colour name.
     """
-    return mark_safe(
-        {"dark": "gray", "AM1.5": "inherited", "BG7": "lightblue", "OG590": "darkorange"}[measurement.irradiation])
+    return {"dark": "gray", "AM1.5": "inherited", "BG7": "lightblue", "OG590": "darkorange"}[measurement.irradiation]
 
 
 @register.filter
@@ -108,6 +109,7 @@ def sort_cells(cells):
 
 
 @register.filter
+@mark_safe
 def depostion_time(time):
     if time:
         time_components = time.split(":")
@@ -116,9 +118,9 @@ def depostion_time(time):
             hours = 0
         else:
             hours, minutes, seconds = time_components
-        return mark_safe("{0}:{1:02}:{2:02}".format(int(hours), int(minutes), int(seconds)))
+        return "{0}:{1:02}:{2:02}".format(int(hours), int(minutes), int(seconds))
     else:
-        return mark_safe("—")
+        return "—"
 
 @register.filter
 def short_filepath(filepath):
