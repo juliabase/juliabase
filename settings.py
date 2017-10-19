@@ -59,6 +59,7 @@ DATABASES = {
 
 USE_TZ = True
 TIME_ZONE = "UTC"
+EMAIL_USE_LOCALTIME = True
 
 LANGUAGE_CODE = "en-us"
 
