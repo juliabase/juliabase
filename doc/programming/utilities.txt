@@ -39,7 +39,6 @@ String-related
 
 The following names are found in the module :py:mod:`jb_common.utils.base`.
 
-.. autofunction:: jb_common.utils.base.format_lazy
 .. autofunction:: jb_common.utils.base.format_enumeration
 .. autofunction:: jb_common.utils.base.camel_case_to_underscores
 .. autofunction:: jb_common.utils.base.camel_case_to_human_text

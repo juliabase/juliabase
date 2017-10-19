@@ -625,18 +625,6 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     return content
 
 
-@keep_lazy_text
-def format_lazy(string, *args, **kwargs):
-    """Implements a lazy variant of the ``format`` string method.  For
-    example, you might say::
-
-        verbose_name = format_lazy(_(u"Raman {0} measurement"), 1)
-
-    Here, “``_``” is ``ugettext_lazy``.
-    """
-    return string.format(*args, **kwargs)
-
-
 def static_response(content, served_filename="", content_type=None):
     """Serves a bytes string as static content.
 

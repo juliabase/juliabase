@@ -29,6 +29,7 @@ processes, clean room work etc. will go here, too.
 import os.path
 import numpy
 from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.text import format_lazy
 from django.db import models
 import django.urls
 from django.conf import settings
@@ -36,7 +37,7 @@ from samples import permissions
 from samples.models import Process, Sample, PhysicalProcess
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
-from jb_common.utils.base import format_lazy, generate_permissions
+from jb_common.utils.base import generate_permissions
 import jb_common.utils.base
 import samples.utils.views as utils
 from samples.utils.plots import PlotError
