@@ -26,7 +26,6 @@ well as models for layers.
 """
 
 from django.utils.translation import ugettext_lazy as _, ugettext
-import django.core.urlresolvers
 from django.db import models
 from jb_common import search
 from samples.models import PhysicalProcess, fields_to_data_items, remove_data_item

@@ -27,7 +27,6 @@ from django.views.decorators.http import require_http_methods
 from django.conf import settings
 from django.forms.utils import ValidationError
 from django.shortcuts import render, get_object_or_404
-import django.core.urlresolvers
 import django.utils.timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import capfirst
