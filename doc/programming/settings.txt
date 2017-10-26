@@ -346,6 +346,18 @@ that tries to login into JuliaBase.  A typical value for this setting is
    LDAP_LOGIN_TEMPLATE = "{username}@mycompany.com"
 
 
+.. index:: LDAP_PASSWORD
+
+LDAP_PASSWORD
+---------
+
+Default: ``None``
+
+Login password of the functional LDAP user that is used to bind to the LDAP for
+retrieving data.  In some LDAP configurations, anonymous binding is allowed.
+Then, you don't need this setting.
+
+
 .. index:: LDAP_SEARCH_DN
 
 LDAP_SEARCH_DN
@@ -375,6 +387,19 @@ working one.  An example value may be::
 
 Here, 636 is the port number of LDAP-over-TLS.  Note that in order to use TLS,
 you must start the URL with ``ldaps://``.
+
+
+.. index:: LDAP_USER
+
+LDAP_USER
+---------
+
+Default: ``None``
+
+Login name of the functional LDAP user that is used to bind to the LDAP for
+retrieving data.  In some LDAP configurations, anonymous binding is allowed.
+Then, you don't need this setting.  Note that `LDAP_LOGIN_TEMPLATE`_ is applied
+to this name.
 
 
 Django settings with special meaning in JuliaBase

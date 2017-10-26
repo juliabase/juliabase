@@ -217,7 +217,10 @@ class LDAPConnection:
         try:
             ad_data = self.cached_ad_data[username]
         except KeyError:
-            with self.server_connection() as connection:
+            with self.server_connection(user=settings.LDAP_USER and
+                                             settings.LDAP_LOGIN_TEMPLATE.format(username=settings.LDAP_USER).encode("utf-8"),
+                                        password=settings.LDAP_PASSWORD and
+                                                 settings.LDAP_PASSWORD.encode("utf-8")) as connection:
                 if connection is None:
                     return None
                 connection.search(search_base=settings.LDAP_SEARCH_DN,

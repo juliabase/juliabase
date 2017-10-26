@@ -40,8 +40,10 @@ LDAP_ADDITIONAL_USERS = {}
 LDAP_DEPARTMENTS = {}
 LDAP_GROUPS_TO_PERMISSIONS = {}
 LDAP_LOGIN_TEMPLATE = "{username}"
+LDAP_PASSWORD = None
 LDAP_SEARCH_DN = ""
 LDAP_URLS = []
+LDAP_USER = None
 
 # Django settings which are used in jb_common
 
