@@ -166,8 +166,8 @@ def sample_series_etag(request, name):
     embed_timestamp(request, name)
     if request._sample_series_timestamp:
         hash_ = hashlib.sha1()
-        hash_.update(str(request._sample_series_timestamp).encode("utf-8"))
-        hash_.update(str(request.user.pk).encode("utf-8"))
+        hash_.update(str(request._sample_series_timestamp).encode())
+        hash_.update(str(request.user.pk).encode())
         return hash_.hexdigest()
 
 

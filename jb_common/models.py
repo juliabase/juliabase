@@ -104,9 +104,9 @@ class UserDetails(models.Model):
         :rtype: str
         """
         hash_ = hashlib.sha1()
-        hash_.update(self.language.encode("utf-8"))
+        hash_.update(self.language.encode())
         hash_.update(b"\x03")
-        hash_.update(self.browser_system.encode("utf-8"))
+        hash_.update(self.browser_system.encode())
         return hash_.hexdigest()
 
 

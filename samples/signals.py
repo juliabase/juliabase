@@ -222,11 +222,11 @@ def get_identifying_data_hash(user):
     :rtype: str
     """
     hash_ = hashlib.sha1()
-    hash_.update(user.username.encode("utf-8"))
+    hash_.update(user.username.encode())
     hash_.update(b"\x03")
-    hash_.update(user.first_name.encode("utf-8"))
+    hash_.update(user.first_name.encode())
     hash_.update(b"\x03")
-    hash_.update(user.last_name.encode("utf-8"))
+    hash_.update(user.last_name.encode())
     return hash_.hexdigest()
 
 

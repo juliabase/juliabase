@@ -680,8 +680,8 @@ def sample_etag(request, sample_name):
     embed_timestamp(request, sample_name)
     if request._sample_timestamp:
         hash_ = hashlib.sha1()
-        hash_.update(str(request._sample_timestamp).encode("utf-8"))
-        hash_.update(str(request.user.pk).encode("utf-8"))
+        hash_.update(str(request._sample_timestamp).encode())
+        hash_.update(str(request.user.pk).encode())
         return hash_.hexdigest()
 
 
@@ -889,7 +889,7 @@ def advanced_search(request):
     search_performed = False
     no_permission_message = None
     _search_parameters_hash = hashlib.sha1(json.dumps(sorted(dict((key, value) for key, value in request.GET.items()
-                                    if not "__" in key and key != "_search_parameters_hash").items())).encode("utf-8")).hexdigest()
+                                    if not "__" in key and key != "_search_parameters_hash").items())).encode()).hexdigest()
     column_groups_form = columns_form = table = switch_row_forms = old_data_form = None
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
         search_tree = get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
@@ -1033,7 +1033,7 @@ def data_matrix_code(request):
     except KeyError:
         raise Http404('GET parameter "data" missing.')
     hash_ = hashlib.sha1()
-    hash_.update(data.encode("utf-8"))
+    hash_.update(data.encode())
     filename = hash_.hexdigest() + ".png"
     filepath = os.path.join(settings.STATIC_ROOT, "data_matrix", filename)
     url = staticfiles_storage.url("data_matrix/" + filename)

@@ -228,9 +228,9 @@ def send_error_mail(from_, subject, text, html=None):
                 format(from_.replace('"', ""), settings.EMAIL_FROM).encode("ascii", "replace")
             message["To"] = settings.EMAIL_TO
             message["Date"] = email.utils.formatdate()
-            message.attach(MIMEText(text.encode("utf-8"), _charset="utf-8"))
+            message.attach(MIMEText(text.encode(), _charset="utf-8"))
             if html:
-                message.attach(MIMEText(html.encode("utf-8"), "html", _charset="utf-8"))
+                message.attach(MIMEText(html.encode(), "html", _charset="utf-8"))
             server.sendmail(settings.EMAIL_FROM, message["To"], message.as_string())
             server.quit()
         except smtplib.SMTPException:

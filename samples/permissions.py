@@ -135,8 +135,8 @@ def get_user_hash(user):
     :rtype: str
     """
     user_hash = hashlib.sha1()
-    user_hash.update(settings.SECRET_KEY.encode("utf-8"))
-    user_hash.update(user.username.encode("utf-8"))
+    user_hash.update(settings.SECRET_KEY.encode())
+    user_hash.update(user.username.encode())
     return user_hash.hexdigest()[:10]
 
 

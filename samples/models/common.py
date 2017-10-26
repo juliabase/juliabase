@@ -1106,10 +1106,10 @@ class SampleSplit(Process):
         very same sample split on the data sheet of a child sample.
         """
         hash_ = hashlib.sha1()
-        hash_.update(user_settings_hash.encode("utf-8"))
+        hash_.update(user_settings_hash.encode())
         hash_.update("\x04{0}\x04{1}\x04{2}".format(local_context.get("original_sample", ""),
                                                     local_context.get("latest_descendant", ""),
-                                                    local_context.get("sample", "")).encode("utf-8"))
+                                                    local_context.get("sample", "")).encode())
         return "process:{0}-{1}".format(self.id, hash_.hexdigest())
 
     def get_context_for_user(self, user, old_context):
@@ -1508,7 +1508,7 @@ class SampleSeries(models.Model):
 
         :rtype: str
         """
-        return hashlib.sha1(self.name.encode("utf-8")).hexdigest()
+        return hashlib.sha1(self.name.encode()).hexdigest()
 
 
 class Initials(models.Model):
@@ -1779,8 +1779,8 @@ class ProcessWithSamplePositions(models.Model):
         For the parameter description see :py:meth:`Process.get_cache_key`.
         """
         hash_ = hashlib.sha1()
-        hash_.update(user_settings_hash.encode("utf-8"))
-        hash_.update("\x04{0}".format(local_context.get("sample", "")).encode("utf-8"))
+        hash_.update(user_settings_hash.encode())
+        hash_.update("\x04{0}".format(local_context.get("sample", "")).encode())
         return "process:{0}-{1}".format(self.id, hash_.hexdigest())
 
 

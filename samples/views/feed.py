@@ -203,7 +203,7 @@ def show(request, username, user_hash):
 #    indent(feed)
     return HttpResponse("""<?xml version="1.0"?>\n"""
                         """<?xml-stylesheet type="text/xsl" href="/static/samples/xslt/atom2html.xslt"?>\n"""
-                        + ElementTree.tostring(feed, "utf-8").decode("utf-8"),
+                        + ElementTree.tostring(feed, "utf-8").decode(),
                         content_type="application/xml; charset=utf-8")
 
 

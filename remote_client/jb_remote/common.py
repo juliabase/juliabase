@@ -241,7 +241,7 @@ def encode_multipart_formdata(data):
     # http://www.w3.org/TR/html401/interact/forms.html#h-17.13.4.2
     assert len(file_items) <= 1
     if not file_items:
-        return "application/x-www-form-urlencoded", urllib.parse.urlencode(data, doseq=True).encode("utf-8")
+        return "application/x-www-form-urlencoded", urllib.parse.urlencode(data, doseq=True).encode()
     boundary = choose_boundary()
     lines = []
     for key, value in non_file_items:
@@ -318,9 +318,9 @@ class JuliaBaseConnection:
                 return self.opener.open(request)
             except urllib.error.HTTPError as error:
                 if error.code in [404, 422] and error.info()["Content-Type"].startswith("application/json"):
-                    error_code, error_message = json.loads(error.read().decode("utf-8"))
+                    error_code, error_message = json.loads(error.read().decode())
                     raise JuliaBaseError(error_code, error_message)
-                server_error_message = error.read().decode("utf-8")
+                server_error_message = error.read().decode()
                 error.msg = "{}\n\n{}".format(error.msg, server_error_message)
                 raise error
             except urllib.error.URLError:
@@ -381,7 +381,7 @@ class JuliaBaseConnection:
         response = self._do_http_request(self.root_url + relative_url, self._clean_data(data))
         if response_is_json:
             assert response.info()["Content-Type"].startswith("application/json")
-            return json.loads(response.read().decode("utf-8"))
+            return json.loads(response.read().decode())
         else:
             return response.read()
 

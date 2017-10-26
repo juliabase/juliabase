@@ -76,9 +76,9 @@ class FeedEntry(PolymorphicModel):
         """
         super(FeedEntry, self).save(*args, **kwargs)
         entry_hash = hashlib.sha1()
-        entry_hash.update(repr(self.timestamp).encode("utf-8"))
-        entry_hash.update(repr(self.originator).encode("utf-8"))
-        entry_hash.update(repr(self.id).encode("utf-8"))
+        entry_hash.update(repr(self.timestamp).encode())
+        entry_hash.update(repr(self.originator).encode())
+        entry_hash.update(repr(self.id).encode())
         self.sha1_hash = entry_hash.hexdigest()
         super(FeedEntry, self).save()
 

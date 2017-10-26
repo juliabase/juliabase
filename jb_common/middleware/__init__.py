@@ -168,10 +168,10 @@ class JSONClientMiddleware:
                 # Login view was returned
                 return HttpResponseUnauthorised()
             hash_ = hashlib.sha1()
-            hash_.update(str(random.random()).encode("ascii"))
+            hash_.update(str(random.random()).encode())
             # For some very obscure reason, a random number was not enough --
             # it led to collisions time after time.
-            hash_.update(str(time.time()).encode("ascii"))
+            hash_.update(str(time.time()).encode())
             hash_value = hash_.hexdigest()
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
                                      html=response.content)

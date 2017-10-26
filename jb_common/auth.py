@@ -195,8 +195,8 @@ class LDAPConnection:
         :rtype: bool
         """
         try:
-            with self.server_connection(user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode("utf-8"),
-                                        password=password.encode("utf-8")) as connection:
+            with self.server_connection(user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode(),
+                                        password=password.encode()) as connection:
                 return connection is not None
         except ldap3.LDAPInvalidCredentialsResult:
             return False
@@ -218,9 +218,8 @@ class LDAPConnection:
             ad_data = self.cached_ad_data[username]
         except KeyError:
             with self.server_connection(user=settings.LDAP_USER and
-                                             settings.LDAP_LOGIN_TEMPLATE.format(username=settings.LDAP_USER).encode("utf-8"),
-                                        password=settings.LDAP_PASSWORD and
-                                                 settings.LDAP_PASSWORD.encode("utf-8")) as connection:
+                                             settings.LDAP_LOGIN_TEMPLATE.format(username=settings.LDAP_USER).encode(),
+                                        password=settings.LDAP_PASSWORD and settings.LDAP_PASSWORD.encode()) as connection:
                 if connection is None:
                     return None
                 connection.search(search_base=settings.LDAP_SEARCH_DN,

@@ -616,7 +616,7 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
         getmtime = blobs.storage.getmtime
     all_timestamps.extend(getmtime(filename) for filename in source_files)
     hash_ = hashlib.sha1()
-    hash_.update(";".join(str(timestamp) for timestamp in sorted(all_timestamps)).encode("ascii"))
+    hash_.update(";".join(str(timestamp) for timestamp in sorted(all_timestamps)).encode())
     key = "file:{timestamp_hash}:{path}".format(timestamp_hash=hash_.hexdigest()[:10], path=path)
     content = get_from_cache(key)
     if content is None:
