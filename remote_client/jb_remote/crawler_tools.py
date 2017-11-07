@@ -126,7 +126,7 @@ def find_changed_files(root, diff_file, pattern=""):
     """
     compiled_pattern = re.compile(pattern, re.IGNORECASE)
     if os.path.exists(diff_file):
-        statuses, last_pattern = pickle.load(open(diff_file, "rb"))
+        statuses, last_pattern = pickle.load(open(diff_file, "rb"), encoding="utf-8")
         if last_pattern != pattern:
             for relative_filepath in [relative_filepath for relative_filepath in statuses
                                       if not compiled_pattern.match(os.path.basename(relative_filepath))]:
@@ -154,11 +154,11 @@ def find_changed_files(root, diff_file, pattern=""):
     timestamps = {}
     if touched:
         xargs_process = subprocess.Popen(["xargs", "-0", "md5sum"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        xargs_output = xargs_process.communicate(b"\0".join(touched))[0]
+        xargs_output = xargs_process.communicate(b"\0".join(path.encode() for path in touched))[0]
         if xargs_process.returncode != 0:
             raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
-        for line in xargs_output.splitlines():
-            md5sum, __, filepath = line.partition(b"  ")
+        for line in xargs_output.decode().splitlines():
+            md5sum, __, filepath = line.partition("  ")
             status = statuses[os.path.relpath(filepath, root)]
             if md5sum != status[1]:
                 status[1] = md5sum
