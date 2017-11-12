@@ -192,7 +192,7 @@ def defer_files(diff_file, filepaths):
     :type diff_file: str
     :type filepaths: iterable of str
     """
-    statuses, pattern = pickle.load(open(diff_file, "rb"))
+    statuses, pattern = pickle.load(open(diff_file, "rb"), encoding="utf-8")
     twelve_weeks_ago = time.time() - 12 * 7 * 24 * 3600
     for filepath in filepaths:
         if filepath in statuses and statuses[filepath][0] > twelve_weeks_ago:
