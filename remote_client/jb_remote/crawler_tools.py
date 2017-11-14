@@ -282,6 +282,7 @@ def changed_files(root, diff_file, pattern=""):
     """
     def relative(path):
         return os.path.relpath(path, root)
+
     compiled_pattern = re.compile(pattern, re.IGNORECASE)
     if os.path.exists(diff_file):
         statuses, last_pattern = pickle.load(open(diff_file, "rb"), encoding="utf-8")
