@@ -147,6 +147,8 @@ def find_changed_files(root, diff_file, pattern=""):
 
     :rtype: list of str, list of str
     """
+    def relative(path):
+        return os.path.relpath(path, root)
     compiled_pattern = re.compile(pattern, re.IGNORECASE)
     if os.path.exists(diff_file):
         statuses, last_pattern = pickle.load(open(diff_file, "rb"), encoding="utf-8")
@@ -163,13 +165,12 @@ def find_changed_files(root, diff_file, pattern=""):
         for filename in filenames:
             if compiled_pattern.match(filename):
                 filepath = os.path.join(dirname, filename)
-                relative_filepath = os.path.relpath(filepath, root)
-                found.add(relative_filepath)
+                found.add(relative(filepath))
                 mtime = os.path.getmtime(filepath)
                 try:
-                    status = statuses[relative_filepath]
+                    status = statuses[relative(filepath)]
                 except KeyError:
-                    status = new_statuses[relative_filepath] = [None, None]
+                    status = new_statuses[relative(filepath)] = [None, None]
                 if mtime != status[0]:
                     status[0] = mtime
                     touched.append(filepath)
@@ -182,8 +183,7 @@ def find_changed_files(root, diff_file, pattern=""):
             raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
         for line in xargs_output.decode().splitlines():
             md5sum, __, filepath = line.partition("  ")
-            relative_filepath = os.path.relpath(filepath, root)
-            status = statuses.get(relative_filepath) or new_statuses[relative_filepath]
+            status = statuses.get(relative(filepath)) or new_statuses[relative(filepath)]
             if md5sum != status[1]:
                 status[1] = md5sum
                 changed.append(filepath)
