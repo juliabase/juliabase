@@ -96,6 +96,48 @@ class PIDLock:
             logging.info("Removed lock {0}".format(self.lockfile_path))
 
 
+class PathsIterator:
+
+    def __init__(self, paths):
+        self.paths = paths
+        self.current = None
+        self.done_paths = set()
+        self.errors = {}
+        self.warnings = {}
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            self.current = next(self.paths)
+        except StopIteration:
+            self.current = None
+            raise
+        return self.current
+
+    def done(self):
+        assert self.current
+        if self.current in self.errors:
+            raise ValueError("An error is already connected to {}".format(self.current))
+        self.done_paths.add(self.current)
+
+    def error(self, error):
+        assert self.current
+        if self.current in self.done_paths:
+            raise ValueError("{} is already marked as “done”".format(self.current))
+        self.errors.setdefault(self.current, []).append(error)
+
+    def warning(self, warning):
+        assert self.current
+        self.warnings.setdefault(self.current, []).append(warning)
+
+    def log_messages(messages, type_, log_function):
+        for path, errors in messages:
+            for error in errors:
+                log_function('Crawler {0} at "{1}": {2}'.format(type_, os.path.relpath(path, root), error))
+
+
 def find_changed_files(root, diff_file, pattern=""):
     """Returns the files changed or removed since the last run of this
     function.  The files are given as a list of absolute paths.  Changed files
