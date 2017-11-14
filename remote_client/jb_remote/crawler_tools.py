@@ -250,6 +250,20 @@ def changed_files(root, diff_file, pattern=""):
     modification status of the last run only refers to file paths relative to
     ``root``.
 
+    You use this context manager like this (for example)::
+
+        with changed_files(root, diff_file) as changed, removed:
+            for path in changed:
+                ...  # process `path`
+                if any_error:
+                    continue
+                changed.done()
+            for path in removed:
+                ...  # process `path`
+                if any_error:
+                    continue
+                removed.done()
+
     :param root: absolute root path of the files to be scanned
     :param diff_file: path to a writable pickle file which contains the
         modification status of all files of the last run; it is created if it
