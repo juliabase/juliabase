@@ -183,11 +183,13 @@ def find_changed_files(root, diff_file, pattern=""):
             raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
         for line in xargs_output.decode().splitlines():
             md5sum, __, filepath = line.partition("  ")
-            status = statuses.get(relative(filepath)) or new_statuses[relative(filepath)]
-            if md5sum != status[1]:
-                status[1] = md5sum
+            status = statuses.get(relative(filepath))
+            if not status or md5sum != status[1]:
+                new_status = new_statuses.setdefault(relative(filepath), statuses[relative(filepath)].copy())
+                new_status[1] = md5sum
                 changed.append(filepath)
-                timestamps[filepath] = status[0]
+                timestamps[filepath] = new_status[0]
+    assert set(changed) == set(os.path.join(root, path) for path in new_statuses), (set(changed), set(new_statuses))
     changed.sort(key=lambda filepath: timestamps[filepath])
     removed = set(statuses) - found
     for relative_filepath in removed:
