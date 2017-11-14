@@ -97,8 +97,31 @@ class PIDLock:
 
 
 class PathsIterator:
+    """Iterator class over paths that allows to check off paths that have been
+    dealt with successfully.  All paths in this class are absolute.  This
+    iterator is returned by the context manager `find_changed_files` to denote
+    absolute paths to raw data files that have changed since its last run.
+
+    :ivar paths: iterable over all paths that should be yielded by this
+      iterator
+
+    :ivar current: The latest path as returned by `__next__`.  This is
+      guaranteed to be None after the iteration stopped successfully.
+
+    :ivar done_paths: all paths checked off as done
+
+    :type paths: iterable of str
+    :type current: str
+    :type done_paths: set of str
+    """
 
     def __init__(self, paths):
+        """Class constructor
+
+        :param paths: all absolutepaths that should be yielded by this iterator
+
+        :type paths: iterable of str
+        """
         self.paths = paths
         self.current = None
         self.done_paths = set()
@@ -115,6 +138,10 @@ class PathsIterator:
         return self.current
 
     def done(self):
+        """Check off the current path as done.  Call this only if the path has be dealt
+        with completely successfully, so that it does not need to be
+        re-visited.
+        """
         assert self.current
         self.done_paths.add(self.current)
 
