@@ -166,12 +166,13 @@ def find_changed_files(root, diff_file, pattern=""):
         for filename in filenames:
             if compiled_pattern.match(filename):
                 filepath = os.path.join(dirname, filename)
-                found.add(relative(filepath))
+                relative_filepath = relative(filepath)
+                found.add(relative_filepath)
                 mtime = os.path.getmtime(filepath)
                 try:
-                    status = statuses[relative(filepath)]
+                    status = statuses[relative_filepath]
                 except KeyError:
-                    status = new_statuses[relative(filepath)] = [None, None]
+                    status = new_statuses[relative_filepath] = [None, None]
                 if mtime != status[0]:
                     status[0] = mtime
                     touched.append(filepath)
@@ -184,9 +185,10 @@ def find_changed_files(root, diff_file, pattern=""):
             raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
         for line in xargs_output.decode().splitlines():
             md5sum, __, filepath = line.partition("  ")
-            status = statuses.get(relative(filepath))
+            relative_filepath = relative(filepath)
+            status = statuses.get(relative_filepath)
             if not status or md5sum != status[1]:
-                new_status = new_statuses.setdefault(relative(filepath), statuses[relative(filepath)].copy())
+                new_status = new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
                 new_status[1] = md5sum
                 changed.append(filepath)
                 timestamps[filepath] = new_status[0]
