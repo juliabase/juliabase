@@ -146,6 +146,96 @@ class PathsIterator:
         self.done_paths.add(self.current)
 
 
+def _crawl_all(root, statuses, compiled_pattern):
+    """Crawls through the `root` directory and scans for all files matching
+    `compiled_pattern`.  This is a helper function for `find_changed_files`.
+    It creates data structures that document the found files.  In this
+    function, “relative” path means relative to `root`.
+
+    :param root: absolute root path of the files to be scanned
+    :param statuses: Mapping of relative file paths to the current mtime of the
+      file, and its MD5 checksum.  It contains the content of the pickle file
+      as read as at the beginning of `find_changed_files`, or is empty.
+    :param compiled_pattern: compiled regular expression for filenames (without
+        path) that should be scanned.
+
+    :type root: unicode
+    :type statuses: dict mapping str to (float, str)
+    :type compiled_pattern: ``_sre.SRE_Pattern``
+
+    :returns:
+      all found relative paths, all new or mtime-changed absolute paths, and a
+      mapping of all new relative paths to (mtime, ``None``)
+
+    :rtype: set of str, list of str, dict mapping str to (float, ``NoneType``)
+    """
+    touched = []
+    found = set()
+    new_statuses = {}
+    for dirname, __, filenames in os.walk(root):
+        for filename in filenames:
+            if compiled_pattern.match(filename):
+                filepath = os.path.join(dirname, filename)
+                relative_filepath = os.path.relpath(filepath, root)
+                found.add(relative_filepath)
+                mtime = os.path.getmtime(filepath)
+                try:
+                    status = statuses[relative_filepath]
+                except KeyError:
+                    status = new_statuses[relative_filepath] = [None, None]
+                if mtime != status[0]:
+                    status[0] = mtime
+                    touched.append(filepath)
+    return found, touched, new_statuses
+
+def _enrich_new_statuses(new_statuses, root, statuses, touched):
+    """Adds MD5-changed files to `new_statuses`.  This is a helper function for
+    `find_changed_files`.  Before calling this function, `new_statuses` only
+    contains new files.  In this function, “relative” path means relative to
+    `root`.
+
+    :param new_statuses: Mapping of relative file paths to the current mtime of
+      the file, and its MD5 checksum.  It is modified in place.  After this
+      function, it contains all files that are new or have changed content
+      (based on checksum).
+    :param root: absolute root path of the files to be scanned
+    :param statuses: Mapping of relative file paths to the current mtime of the
+      file, and its MD5 checksum.  It contains the content of the pickle file
+      as read as at the beginning of `find_changed_files`, or is empty.
+    :param touched: list of all files which are new or have their mtime changed
+      since the last run (i.e., the last pickle file)
+
+    :type new_statuses: dict mapping str to (float, str)
+    :type root: unicode
+    :type statuses: dict mapping str to (float, str)
+    :type touched: list of str
+
+    :returns:
+      all absolute paths which are new or have changed (checksum-wise) content,
+      sorted by mtime (ascending)
+
+    :rtype: list of str
+    """
+    changed = []
+    timestamps = {}
+    if touched:
+        xargs_process = subprocess.Popen(["xargs", "-0", "md5sum"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        xargs_output = xargs_process.communicate(b"\0".join(path.encode() for path in touched))[0]
+        if xargs_process.returncode != 0:
+            raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
+        for line in xargs_output.decode().splitlines():
+            md5sum, __, filepath = line.partition("  ")
+            relative_filepath = os.path.relpath(filepath, root)
+            status = statuses.get(relative_filepath)
+            if not status or md5sum != status[1]:
+                new_status = new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
+                new_status[1] = md5sum
+                changed.append(filepath)
+                timestamps[filepath] = new_status[0]
+    assert set(changed) == set(os.path.join(root, path) for path in new_statuses), (set(changed), set(new_statuses))
+    changed.sort(key=lambda filepath: timestamps[filepath])
+    return changed
+
 @contextlib.contextmanager
 def find_changed_files(root, diff_file, pattern=""):
     """Returns the files changed or removed since the last run of this
@@ -186,43 +276,12 @@ def find_changed_files(root, diff_file, pattern=""):
                 del statuses[relative_filepath]
     else:
         statuses, last_pattern = {}, None
-    touched = []
-    found = set()
-    new_statuses = {}
-    for dirname, __, filenames in os.walk(root):
-        for filename in filenames:
-            if compiled_pattern.match(filename):
-                filepath = os.path.join(dirname, filename)
-                relative_filepath = relative(filepath)
-                found.add(relative_filepath)
-                mtime = os.path.getmtime(filepath)
-                try:
-                    status = statuses[relative_filepath]
-                except KeyError:
-                    status = new_statuses[relative_filepath] = [None, None]
-                if mtime != status[0]:
-                    status[0] = mtime
-                    touched.append(filepath)
-    changed = []
-    timestamps = {}
-    if touched:
-        xargs_process = subprocess.Popen(["xargs", "-0", "md5sum"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-        xargs_output = xargs_process.communicate(b"\0".join(path.encode() for path in touched))[0]
-        if xargs_process.returncode != 0:
-            raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
-        for line in xargs_output.decode().splitlines():
-            md5sum, __, filepath = line.partition("  ")
-            relative_filepath = relative(filepath)
-            status = statuses.get(relative_filepath)
-            if not status or md5sum != status[1]:
-                new_status = new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
-                new_status[1] = md5sum
-                changed.append(filepath)
-                timestamps[filepath] = new_status[0]
-    assert set(changed) == set(os.path.join(root, path) for path in new_statuses), (set(changed), set(new_statuses))
-    changed.sort(key=lambda filepath: timestamps[filepath])
+
+    found, touched, new_statuses = _crawl_all(root, statuses, compiled_pattern)
+    changed = _enrich_new_statuses(new_statuses, root, statuses, touched)
     removed = set(statuses) - found
     removed = [os.path.join(root, relative_filepath) for relative_filepath in removed]
+
     changed_iterator, removed_iterator = PathsIterator(changed), PathsIterator(removed)
     try:
         yield changed_iterator, removed_iterator
@@ -230,6 +289,7 @@ def find_changed_files(root, diff_file, pattern=""):
         path = changed_iterator.current or removed_iterator.current
         relative_path = '"{}"'.format(relative(path)) if path else "unknown file"
         logging.critical('Crawler error at {0} (aborting): {1}'.format(relative_path, error))
+
     for relative_path in (relative(path) for path in changed_iterator.done_paths):
         statuses[relative_path] = new_statuses[relative_path]
     for relative_path in (relative(path) for path in removed_iterator.done_paths):
