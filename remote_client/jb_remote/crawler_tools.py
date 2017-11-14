@@ -102,8 +102,6 @@ class PathsIterator:
         self.paths = paths
         self.current = None
         self.done_paths = set()
-        self.errors = {}
-        self.warnings = {}
 
     def __iter__(self):
         return self
@@ -118,24 +116,7 @@ class PathsIterator:
 
     def done(self):
         assert self.current
-        if self.current in self.errors:
-            raise ValueError("An error is already connected to {}".format(self.current))
         self.done_paths.add(self.current)
-
-    def error(self, error):
-        assert self.current
-        if self.current in self.done_paths:
-            raise ValueError("{} is already marked as “done”".format(self.current))
-        self.errors.setdefault(self.current, []).append(error)
-
-    def warning(self, warning):
-        assert self.current
-        self.warnings.setdefault(self.current, []).append(warning)
-
-    def log_messages(messages, type_, log_function):
-        for path, errors in messages:
-            for error in errors:
-                log_function('Crawler {0} at "{1}": {2}'.format(type_, os.path.relpath(path, root), error))
 
 
 def find_changed_files(root, diff_file, pattern=""):
