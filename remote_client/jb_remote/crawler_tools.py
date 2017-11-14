@@ -99,7 +99,7 @@ class PIDLock:
 class PathsIterator:
     """Iterator class over paths that allows to check off paths that have been
     dealt with successfully.  All paths in this class are absolute.  This
-    iterator is returned by the context manager `find_changed_files` to denote
+    iterator is returned by the context manager `changed_files` to denote
     absolute paths to raw data files that have changed since its last run.
 
     :ivar paths: iterable over all paths that should be yielded by this
@@ -148,14 +148,14 @@ class PathsIterator:
 
 def _crawl_all(root, statuses, compiled_pattern):
     """Crawls through the `root` directory and scans for all files matching
-    `compiled_pattern`.  This is a helper function for `find_changed_files`.
-    It creates data structures that document the found files.  In this
-    function, “relative” path means relative to `root`.
+    `compiled_pattern`.  This is a helper function for `changed_files`.  It
+    creates data structures that document the found files.  In this function,
+    “relative” path means relative to `root`.
 
     :param root: absolute root path of the files to be scanned
     :param statuses: Mapping of relative file paths to the current mtime of the
       file, and its MD5 checksum.  It contains the content of the pickle file
-      as read as at the beginning of `find_changed_files`, or is empty.
+      as read as at the beginning of `changed_files`, or is empty.
     :param compiled_pattern: compiled regular expression for filenames (without
         path) that should be scanned.
 
@@ -190,7 +190,7 @@ def _crawl_all(root, statuses, compiled_pattern):
 
 def _enrich_new_statuses(new_statuses, root, statuses, touched):
     """Adds MD5-changed files to `new_statuses`.  This is a helper function for
-    `find_changed_files`.  Before calling this function, `new_statuses` only
+    `changed_files`.  Before calling this function, `new_statuses` only
     contains new files.  In this function, “relative” path means relative to
     `root`.
 
@@ -201,7 +201,7 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
     :param root: absolute root path of the files to be scanned
     :param statuses: Mapping of relative file paths to the current mtime of the
       file, and its MD5 checksum.  It contains the content of the pickle file
-      as read as at the beginning of `find_changed_files`, or is empty.
+      as read as at the beginning of `changed_files`, or is empty.
     :param touched: list of all files which are new or have their mtime changed
       since the last run (i.e., the last pickle file)
 
@@ -237,7 +237,7 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
     return changed
 
 @contextlib.contextmanager
-def find_changed_files(root, diff_file, pattern=""):
+def changed_files(root, diff_file, pattern=""):
     """Returns the files changed or removed since the last run of this
     function.  The files are given as a list of absolute paths.  Changed files
     are files which have been added or modified.  If a file was moved, the new
@@ -296,6 +296,80 @@ def find_changed_files(root, diff_file, pattern=""):
         del statuses[relative_path]
     if changed_iterator.done_paths or removed_iterator.done_paths or last_pattern != pattern:
         pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
+
+
+def find_changed_files(root, diff_file, pattern=""):
+    """Returns the files changed or removed since the last run of this
+    function.  The files are given as a list of absolute paths.  Changed files
+    are files which have been added or modified.  If a file was moved, the new
+    path is returned in the “changed” list, and the old one in the “removed”
+    list.  Changed files are sorted by timestamp, oldest first.
+
+    If you move all files to another root and give that new root to this
+    function, still only the modified files are returned.  In other words, the
+    modification status of the last run only refers to file paths relative to
+    ``root``.
+
+    :param root: absolute root path of the files to be scanned
+    :param diff_file: path to a writable pickle file which contains the
+        modification status of all files of the last run; it is created if it
+        doesn't exist yet
+    :param pattern: Regular expression for filenames (without path) that should
+        be scanned.  By default, all files are scanned.
+
+    :type root: unicode
+    :type diff_file: unicode
+    :type pattern: unicode
+
+    :return:
+      files changed, files removed
+
+    :rtype: list of str, list of str
+    """
+    compiled_pattern = re.compile(pattern, re.IGNORECASE)
+    if os.path.exists(diff_file):
+        statuses, last_pattern = pickle.load(open(diff_file, "rb"), encoding="utf-8")
+        if last_pattern != pattern:
+            for relative_filepath in [relative_filepath for relative_filepath in statuses
+                                      if not compiled_pattern.match(os.path.basename(relative_filepath))]:
+                del statuses[relative_filepath]
+    else:
+        statuses, last_pattern = {}, None
+    touched = []
+    found = set()
+    for dirname, __, filenames in os.walk(root):
+        for filename in filenames:
+            if compiled_pattern.match(filename):
+                filepath = os.path.join(dirname, filename)
+                relative_filepath = os.path.relpath(filepath, root)
+                found.add(relative_filepath)
+                mtime = os.path.getmtime(filepath)
+                status = statuses.setdefault(relative_filepath, [None, None])
+                if mtime != status[0]:
+                    status[0] = mtime
+                    touched.append(filepath)
+    removed = set(statuses) - found
+    for relative_filepath in removed:
+        del statuses[relative_filepath]
+    removed = [os.path.join(root, relative_filepath) for relative_filepath in removed]
+    changed = []
+    timestamps = {}
+    if touched:
+        xargs_process = subprocess.Popen(["xargs", "-0", "md5sum"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        xargs_output = xargs_process.communicate(b"\0".join(path.encode() for path in touched))[0]
+        if xargs_process.returncode != 0:
+            raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
+        for line in xargs_output.decode().splitlines():
+            md5sum, __, filepath = line.partition("  ")
+            status = statuses[os.path.relpath(filepath, root)]
+            if md5sum != status[1]:
+                status[1] = md5sum
+                changed.append(filepath)
+                timestamps[filepath] = status[0]
+    changed.sort(key=lambda filepath: timestamps[filepath])
+    if touched or removed or last_pattern != pattern:
+        pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
+    return changed, removed
 
 
 def defer_files(diff_file, filepaths):
