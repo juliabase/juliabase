@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, sys, re, subprocess, time, smtplib, email, logging, pickle
+import os, sys, re, subprocess, time, smtplib, email, logging, pickle, contextlib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from . import settings
@@ -119,6 +119,7 @@ class PathsIterator:
         self.done_paths.add(self.current)
 
 
+@contextlib.contextmanager
 def find_changed_files(root, diff_file, pattern=""):
     """Returns the files changed or removed since the last run of this
     function.  The files are given as a list of absolute paths.  Changed files
@@ -192,13 +193,20 @@ def find_changed_files(root, diff_file, pattern=""):
     assert set(changed) == set(os.path.join(root, path) for path in new_statuses), (set(changed), set(new_statuses))
     changed.sort(key=lambda filepath: timestamps[filepath])
     removed = set(statuses) - found
-    for relative_filepath in removed:
-        del statuses[relative_filepath]
-    statuses.update(new_statuses)
-    if touched or removed or last_pattern != pattern:
-        pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
     removed = [os.path.join(root, relative_filepath) for relative_filepath in removed]
-    return changed, removed
+    changed_iterator, removed_iterator = PathsIterator(changed), PathsIterator(removed)
+    try:
+        yield changed_iterator, removed_iterator
+    except Exception as error:
+        path = changed_iterator.current or removed_iterator.current
+        relative_path = '"{}"'.format(relative(path)) if path else "unknown file"
+        logging.critical('Crawler error at {0} (aborting): {1}'.format(relative_path, error))
+    for relative_path in (relative(path) for path in changed_iterator.done_paths):
+        statuses[relative_path] = new_statuses[relative_path]
+    for relative_path in (relative(path) for path in removed_iterator.done_paths):
+        del statuses[relative_path]
+    if changed_iterator.done_paths or removed_iterator.done_paths or last_pattern != pattern:
+        pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
 
 
 def defer_files(diff_file, filepaths):
