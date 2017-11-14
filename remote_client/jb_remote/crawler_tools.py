@@ -21,6 +21,7 @@
 import os, sys, re, subprocess, time, smtplib, email, logging, pickle, contextlib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import deprecation
 from . import settings
 
 
@@ -298,6 +299,7 @@ def changed_files(root, diff_file, pattern=""):
         pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
 
 
+@deprecation.deprecated()
 def find_changed_files(root, diff_file, pattern=""):
     """Returns the files changed or removed since the last run of this
     function.  The files are given as a list of absolute paths.  Changed files
@@ -372,6 +374,7 @@ def find_changed_files(root, diff_file, pattern=""):
     return changed, removed
 
 
+@deprecation.deprecated()
 def defer_files(diff_file, filepaths):
     """Removes filepaths from a diff file created by `find_changed_files`.
     This is interesting if you couldn't process certain files so they should be
