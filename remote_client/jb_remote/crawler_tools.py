@@ -238,11 +238,11 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
 
 @contextlib.contextmanager
 def changed_files(root, diff_file, pattern=""):
-    """Returns the files changed or removed since the last run of this
-    function.  The files are given as a list of absolute paths.  Changed files
-    are files which have been added or modified.  If a file was moved, the new
-    path is returned in the “changed” list, and the old one in the “removed”
-    list.  Changed files are sorted by timestamp, oldest first.
+    """Returns the files changed or removed since the last run of this function.
+    The files are given as a list of absolute paths.  Changed files are files
+    which have been added or modified.  If a file was moved, the new path is
+    returned in the “changed” list, and the old one in the “removed” list.
+    Changed files are sorted by timestamp, oldest first.
 
     If you move all files to another root and give that new root to this
     function, still only the modified files are returned.  In other words, the
