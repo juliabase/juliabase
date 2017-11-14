@@ -158,6 +158,7 @@ def find_changed_files(root, diff_file, pattern=""):
         statuses, last_pattern = {}, None
     touched = []
     found = set()
+    new_statuses = {}
     for dirname, __, filenames in os.walk(root):
         for filename in filenames:
             if compiled_pattern.match(filename):
@@ -165,14 +166,13 @@ def find_changed_files(root, diff_file, pattern=""):
                 relative_filepath = os.path.relpath(filepath, root)
                 found.add(relative_filepath)
                 mtime = os.path.getmtime(filepath)
-                status = statuses.setdefault(relative_filepath, [None, None])
+                try:
+                    status = statuses[relative_filepath]
+                except KeyError:
+                    status = new_statuses[relative_filepath] = [None, None]
                 if mtime != status[0]:
                     status[0] = mtime
                     touched.append(filepath)
-    removed = set(statuses) - found
-    for relative_filepath in removed:
-        del statuses[relative_filepath]
-    removed = [os.path.join(root, relative_filepath) for relative_filepath in removed]
     changed = []
     timestamps = {}
     if touched:
@@ -182,14 +182,20 @@ def find_changed_files(root, diff_file, pattern=""):
             raise subprocess.CalledProcessError(xargs_process.returncode, "xargs")
         for line in xargs_output.decode().splitlines():
             md5sum, __, filepath = line.partition("  ")
-            status = statuses[os.path.relpath(filepath, root)]
+            relative_filepath = os.path.relpath(filepath, root)
+            status = statuses.get(relative_filepath) or new_statuses[relative_filepath]
             if md5sum != status[1]:
                 status[1] = md5sum
                 changed.append(filepath)
                 timestamps[filepath] = status[0]
     changed.sort(key=lambda filepath: timestamps[filepath])
+    removed = set(statuses) - found
+    for relative_filepath in removed:
+        del statuses[relative_filepath]
+    statuses.update(new_statuses)
     if touched or removed or last_pattern != pattern:
         pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
+    removed = [os.path.join(root, relative_filepath) for relative_filepath in removed]
     return changed, removed
 
 
