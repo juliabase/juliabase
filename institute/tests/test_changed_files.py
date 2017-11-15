@@ -25,8 +25,7 @@ from django.test import TestCase, override_settings
 from remote_client.jb_remote.crawler_tools import changed_files, find_changed_files, defer_files
 
 
-@override_settings(ROOT_URLCONF="institute.tests.urls")
-class FindChangedFilesTest(TestCase):
+class Common:
 
     def touch(self, path):
         """Inspired by <https://stackoverflow.com/a/1160227>.
@@ -42,16 +41,24 @@ class FindChangedFilesTest(TestCase):
             return result_set
         return os.path.relpath(path, self.tempdir.name)
 
-    def find_changed_files(self, *args, **kwargs):
-        changed, removed = find_changed_files(self.tempdir.name, self.diff_file, *args, **kwargs)
-        return self.relative(changed), self.relative(removed)
-
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()
         self.diffdir = tempfile.TemporaryDirectory()
         self.diff_file = os.path.join(self.diffdir.name, "test.pickle")
         self.touch("1.dat")
         self.touch("a.dat")
+
+    def tearDown(self):
+        self.tempdir.cleanup()
+        self.diffdir.cleanup()
+
+
+@override_settings(ROOT_URLCONF="institute.tests.urls")
+class FindChangedFilesTest(Common, TestCase):
+
+    def find_changed_files(self, *args, **kwargs):
+        changed, removed = find_changed_files(self.tempdir.name, self.diff_file, *args, **kwargs)
+        return self.relative(changed), self.relative(removed)
 
     def test_basic(self):
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"}, set()))
@@ -85,39 +92,14 @@ class FindChangedFilesTest(TestCase):
         defer_files(self.diff_file, ["1.dat"])
         self.assertEqual(self.find_changed_files(), ({"1.dat"}, set()))
 
-    def tearDown(self):
-        self.tempdir.cleanup()
-        self.diffdir.cleanup()
-
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
-class ChangedFilesTest(TestCase):
-
-    def touch(self, path):
-        """Inspired by <https://stackoverflow.com/a/1160227>.
-        """
-        with os.fdopen(os.open(os.path.join(self.tempdir.name, path), flags=os.O_CREAT | os.O_APPEND)) as f:
-            os.utime(f.fileno())
-
-    def relative(self, path):
-        if not isinstance(path, str):
-            result = [self.relative(single_path) for single_path in path]
-            result_set = set(result)
-            self.assertEqual(len(result), len(result_set))
-            return result_set
-        return os.path.relpath(path, self.tempdir.name)
+class ChangedFilesTest(Common, TestCase):
 
     def changed_files(self, *args, **kwargs):
         with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as changed, removed:
             pass
         return self.relative(changed), self.relative(removed)
-
-    def setUp(self):
-        self.tempdir = tempfile.TemporaryDirectory()
-        self.diffdir = tempfile.TemporaryDirectory()
-        self.diff_file = os.path.join(self.diffdir.name, "test.pickle")
-        self.touch("1.dat")
-        self.touch("a.dat")
 
     def test_basic(self):
         self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
@@ -154,7 +136,3 @@ class ChangedFilesTest(TestCase):
 
     def test_call_done_twice(self):
         ...
-
-    def tearDown(self):
-        self.tempdir.cleanup()
-        self.diffdir.cleanup()
