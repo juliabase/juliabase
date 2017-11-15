@@ -88,3 +88,73 @@ class FindChangedFilesTest(TestCase):
     def tearDown(self):
         self.tempdir.cleanup()
         self.diffdir.cleanup()
+
+
+@override_settings(ROOT_URLCONF="institute.tests.urls")
+class ChangedFilesTest(TestCase):
+
+    def touch(self, path):
+        """Inspired by <https://stackoverflow.com/a/1160227>.
+        """
+        with os.fdopen(os.open(os.path.join(self.tempdir.name, path), flags=os.O_CREAT | os.O_APPEND)) as f:
+            os.utime(f.fileno())
+
+    def relative(self, path):
+        if not isinstance(path, str):
+            result = [self.relative(single_path) for single_path in path]
+            result_set = set(result)
+            self.assertEqual(len(result), len(result_set))
+            return result_set
+        return os.path.relpath(path, self.tempdir.name)
+
+    def changed_files(self, *args, **kwargs):
+        with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as changed, removed:
+            pass
+        return self.relative(changed), self.relative(removed)
+
+    def setUp(self):
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.diffdir = tempfile.TemporaryDirectory()
+        self.diff_file = os.path.join(self.diffdir.name, "test.pickle")
+        self.touch("1.dat")
+        self.touch("a.dat")
+
+    def test_basic(self):
+        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
+        self.assertEqual(self.changed_files(), (set(), set()))
+        self.touch("2.dat")
+        self.assertEqual(self.changed_files(), ({"2.dat"}, set()))
+
+    def test_removed(self):
+        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
+        os.unlink(os.path.join(self.tempdir.name, "1.dat"))
+        self.assertEqual(self.changed_files(), (set(), {"1.dat"}))
+
+    def test_touched_only(self):
+        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
+        self.touch("1.dat")
+        self.assertEqual(self.changed_files(), (set(), set()))
+
+    def test_changed_content(self):
+        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
+        with open(os.path.join(self.tempdir.name, "1.dat"), "w") as outfile:
+            outfile.write(".")
+        self.assertEqual(self.changed_files(), ({"1.dat"}, set()))
+
+    def test_pattern(self):
+        self.assertEqual(self.changed_files(r"[a-z]\.dat"), ({"a.dat"}, set()))
+        self.assertEqual(self.changed_files(r"[a-z]\.dat"), (set(), set()))
+        self.assertEqual(self.changed_files(), ({"1.dat"}, set()))
+
+    def test_fail_during_iteration(self):
+        ...
+
+    def test_dont_call_done(self):
+        ...
+
+    def test_call_done_twice(self):
+        ...
+
+    def tearDown(self):
+        self.tempdir.cleanup()
+        self.diffdir.cleanup()
