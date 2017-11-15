@@ -141,7 +141,8 @@ class PathsIterator:
     def done(self):
         """Check off the current path as done.  Call this only if the path has be dealt
         with completely successfully, so that it does not need to be
-        re-visited.
+        re-visited.  You may call this method multiple times for the same
+        filepath; it is idempotent.
         """
         assert self.current
         self.done_paths.add(self.current)
