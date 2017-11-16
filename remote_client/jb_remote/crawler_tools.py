@@ -99,9 +99,9 @@ class PIDLock:
 
 class Path:
 
-    def __init__(self, path, type_, root=None):
+    def __init__(self, path, type_, mtime, root=None):
         self.path = pathlib.Path(os.path.join(root, path) if root else path)
-        self.type_ = type_
+        self.type_, self.mtime = type_, mtime
         self.done = False
 
     @property
@@ -132,6 +132,9 @@ class Path:
 
     def __hash__(self):
         return hash(self.path)
+
+    def __lt__(self, other):
+        return self.mtime < other.mtime
 
 
 class TrackingIterator:
@@ -249,7 +252,6 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
     :rtype: list of str
     """
     changed = []
-    timestamps = {}
     if touched:
         xargs_process = subprocess.Popen(["xargs", "-0", "md5sum"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         xargs_output = xargs_process.communicate(b"\0".join(path.encode() for path in touched))[0]
@@ -263,11 +265,10 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
                 new_status = new_statuses.get(relative_filepath) or \
                     new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
                 new_status[1] = md5sum
-                path = Path(filepath, "changed")
+                path = Path(filepath, "changed", new_status[0])
                 changed.append(path)
-                timestamps[path] = new_status[0]
-    assert set(changed) == set(Path(path, "changed", root) for path in new_statuses), (set(changed), set(new_statuses))
-    changed.sort(key=lambda path: timestamps[path])
+    assert set(changed) == set(Path(path, "changed", 0, root) for path in new_statuses), (set(changed), set(new_statuses))
+    changed.sort()
     return changed
 
 @contextlib.contextmanager
@@ -275,10 +276,9 @@ def changed_files(root, diff_file, pattern=""):
     """Returns the files changed since the last run of this function.  The files
     are given as a list of absolute paths.  Changed files are files which have
     been added, modified or removed.  If a file was moved, the new path is
-    returned in the “changed” list, and the old one in the “removed” list.  The
-    returned files are clustered in two groups: first the new and modified,
-    then the removed ones.  The first group is sorted by timestamp, oldest
-    first.
+    returned as “new or modified”, and the old one as “removed”.  The returned
+    files are sorted by timestamp; first the removed, then from oldest to
+    newest.
 
     If you move all files to another root and give that new root to this
     function, still only the modified files are returned.  In other words, the
@@ -326,7 +326,7 @@ def changed_files(root, diff_file, pattern=""):
     found, touched, new_statuses = _crawl_all(root, statuses, compiled_pattern)
     changed = _enrich_new_statuses(new_statuses, root, statuses, touched)
     removed = set(statuses) - found
-    removed = [Path(relative_filepath, "removed", root) for relative_filepath in removed]
+    removed = [Path(relative_filepath, "removed", 0, root) for relative_filepath in removed]
 
     iterator = TrackingIterator(changed, removed)
     try:
