@@ -113,11 +113,11 @@ class ChangedFilesTest(Common, TestCase):
         logging.basicConfig(stream=log)
         with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
             for path in changed:
-                changed_ = path
+                failed_path = self.relative(path)
                 changed.done()
                 raise Exception("Bad")
-        self.assertEqual(log.getvalue().strip(), 'CRITICAL:root:Crawler error at "a.dat" (aborting): Bad')
-        self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"} - {self.relative(changed_)}, set()))
+        self.assertEqual(log.getvalue().strip(), 'CRITICAL:root:Crawler error at "{}" (aborting): Bad'.format(failed_path))
+        self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"} - {failed_path}, set()))
 
     def test_dont_call_done(self):
         with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
