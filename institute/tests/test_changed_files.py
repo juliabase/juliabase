@@ -141,12 +141,12 @@ class ChangedFilesTest(Common, TestCase):
         with changed_files(self.tempdir.name, self.diff_file) as paths:
             for path in paths:
                 self.assertTrue(path.was_changed)
-                self.assertTrue(path.was_new)
+                self.assertTrue(path.was_created)
                 self.assertFalse(path.was_modified)
         with open(os.path.join(self.tempdir.name, "1.dat"), "w") as outfile:
             outfile.write(".")
         with changed_files(self.tempdir.name, self.diff_file) as paths:
             for path in paths:
                 self.assertTrue(path.was_changed)
-                self.assertTrue(path.was_new)
+                self.assertTrue(path.was_created)
                 self.assertFalse(path.was_modified)
