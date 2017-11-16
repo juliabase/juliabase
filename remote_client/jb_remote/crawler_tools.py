@@ -98,6 +98,22 @@ class PIDLock:
 
 
 class Path:
+    """Class that holds one absolut file system path.  All the “``was_...``”
+    properties compare to the situation at the last run of `changed_files`.
+
+    :ivar was_changed: this path was changed (i.e. created or modified)
+
+    :ivar was_modified: this path was modified
+
+    :ivar was_created: this path was newly created
+
+    :ivar was_removed: this path was removed
+
+    :type was_changed: bool
+    :type was_modified: bool
+    :type was_created: bool
+    :type was_removed: bool
+    """
 
     def __init__(self, path, type_, mtime, root=None):
         self.path = pathlib.Path(os.path.join(root, path) if root else path)
