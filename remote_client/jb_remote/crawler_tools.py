@@ -230,7 +230,8 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
             relative_filepath = os.path.relpath(filepath, root)
             status = statuses.get(relative_filepath)
             if not status or md5sum != status[1]:
-                new_status = new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
+                new_status = new_statuses.get(relative_filepath) or \
+                    new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
                 new_status[1] = md5sum
                 changed.append(filepath)
                 timestamps[filepath] = new_status[0]
