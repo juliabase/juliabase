@@ -108,10 +108,25 @@ class ChangedFilesTest(Common, TestCase):
         return self.relative(changed_), self.relative(removed_)
 
     def test_fail_during_iteration(self):
-        ...
+        with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
+            for path in changed:
+                changed_ = path
+                changed.done()
+                raise Exception("Bad")
+        self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"} - {self.relative(changed_)}, set()))
 
     def test_dont_call_done(self):
-        ...
+        with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
+            for path in changed:
+                if os.path.basename(path) != "1.dat":
+                    changed.done()
+            assert len(list(removed)) == 0
+        self.assertEqual(self.find_changed_files(), ({"1.dat"}, set()))
 
     def test_call_done_twice(self):
-        ...
+        with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
+            for path in changed:
+                changed.done()
+                changed.done()
+            assert len(list(removed)) == 0
+        self.assertEqual(self.find_changed_files(), (set(), set()))
