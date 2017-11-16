@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, sys, re, subprocess, time, smtplib, email, logging, pickle, contextlib
+import os, sys, re, subprocess, time, smtplib, email, logging, pickle, contextlib, pathlib, itertools
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import deprecation
@@ -97,56 +97,85 @@ class PIDLock:
             logging.info("Removed lock {0}".format(self.lockfile_path))
 
 
-class PathsIterator:
-    """Iterator class over paths that allows to check off paths that have been
-    dealt with successfully.  All paths in this class are absolute.  This
-    iterator is returned by the context manager `changed_files` to denote
-    absolute paths to raw data files that have changed since its last run.
+class Path:
 
-    :ivar paths: iterable over all paths that should be yielded by this
+    def __init__(self, path, type_, root=None):
+        self.path = pathlib.Path(os.path.join(root, path) if root else path)
+        self.type_ = type_
+        self.done = False
+
+    @property
+    def is_changed(self):
+        return self.type_ == "changed"
+
+    @property
+    def is_removed(self):
+        return self.type_ == "removed"
+
+    def check_off(self):
+        """Checks off the path as done.  Call this only if the path has be dealt with
+        completely successfully, so that it does not need to be re-visited.
+        You may call this method multiple times for the same filepath; it is
+        idempotent.
+
+        :param path: path to be checked off as done
+
+        :type path: `Path`
+        """
+        self.done = True
+
+    def __str__(self):
+        return str(self.path)
+
+    def __eq__(self, other):
+        return self.path == other.path
+
+    def __hash__(self):
+        return hash(self.path)
+
+
+class TrackingIterator:
+    """Iterator class that allows to get the previous items.  Moreover, it allows
+    multiple iterators to be given in its constructor.  This iterator is
+    returned by the context manager `changed_files` to denote absolute paths to
+    raw data files that have changed since its last run.
+
+    :ivar iterator: iterable over all items that should be yielded by this
       iterator
 
-    :ivar current: The latest path as returned by `__next__`.  This is
-      guaranteed to be None after the iteration stopped successfully.
+    :ivar items: The items as returned by `__next__` so far.
 
-    :ivar done_paths: all paths checked off as done
+    :ivar finished: whether the iterator has finished
 
-    :type paths: iterable of str
+    :type iterator: iterable of str
     :type current: str
-    :type done_paths: set of str
+    :type finished: bool
     """
 
-    def __init__(self, paths):
-        """Class constructor
+    def __init__(self, *iterators):
+        """Class constructor.
 
-        :param paths: all absolute paths that should be yielded by this
-          iterator
+        :param iterators: all iterators the items of which should be yielded by
+          this iterator
 
-        :type paths: iterable of str
+        :type iterators: tuple of iterators
         """
-        self.paths = iter(paths)
-        self.current = None
-        self.done_paths = set()
+        self.iterator = itertools.chain(*iterators)
+        self.items = []
+        self.finished = False
 
     def __iter__(self):
         return self
 
     def __next__(self):
         try:
-            self.current = next(self.paths)
+            current = next(self.iterator)
         except StopIteration:
-            self.current = None
+            self.finished = True
             raise
-        return self.current
-
-    def done(self):
-        """Check off the current path as done.  Call this only if the path has be dealt
-        with completely successfully, so that it does not need to be
-        re-visited.  You may call this method multiple times for the same
-        filepath; it is idempotent.
-        """
-        assert self.current
-        self.done_paths.add(self.current)
+        else:
+            self.items.append(current)
+            return current
 
 
 def _crawl_all(root, statuses, compiled_pattern):
@@ -234,19 +263,22 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
                 new_status = new_statuses.get(relative_filepath) or \
                     new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
                 new_status[1] = md5sum
-                changed.append(filepath)
-                timestamps[filepath] = new_status[0]
-    assert set(changed) == set(os.path.join(root, path) for path in new_statuses), (set(changed), set(new_statuses))
-    changed.sort(key=lambda filepath: timestamps[filepath])
+                path = Path(filepath, "changed")
+                changed.append(path)
+                timestamps[path] = new_status[0]
+    assert set(changed) == set(Path(path, "changed", root) for path in new_statuses), (set(changed), set(new_statuses))
+    changed.sort(key=lambda path: timestamps[path])
     return changed
 
 @contextlib.contextmanager
 def changed_files(root, diff_file, pattern=""):
-    """Returns the files changed or removed since the last run of this function.
-    The files are given as a list of absolute paths.  Changed files are files
-    which have been added or modified.  If a file was moved, the new path is
-    returned in the “changed” list, and the old one in the “removed” list.
-    Changed files are sorted by timestamp, oldest first.
+    """Returns the files changed since the last run of this function.  The files
+    are given as a list of absolute paths.  Changed files are files which have
+    been added, modified or removed.  If a file was moved, the new path is
+    returned in the “changed” list, and the old one in the “removed” list.  The
+    returned files are clustered in two groups: first the new and modified,
+    then the removed ones.  The first group is sorted by timestamp, oldest
+    first.
 
     If you move all files to another root and give that new root to this
     function, still only the modified files are returned.  In other words, the
@@ -255,17 +287,12 @@ def changed_files(root, diff_file, pattern=""):
 
     You use this context manager like this (for example)::
 
-        with changed_files(root, diff_file) as changed, removed:
-            for path in changed:
+        with changed_files(root, diff_file) as paths:
+            for path in path:
                 ...  # process `path`
                 if any_error:
                     continue
-                changed.done()
-            for path in removed:
-                ...  # process `path`
-                if any_error:
-                    continue
-                removed.done()
+                path.check_off()
 
     :param root: absolute root path of the files to be scanned
     :param diff_file: path to a writable pickle file which contains the
@@ -274,17 +301,17 @@ def changed_files(root, diff_file, pattern=""):
     :param pattern: Regular expression for filenames (without path) that should
         be scanned.  By default, all files are scanned.
 
-    :type root: unicode
-    :type diff_file: unicode
-    :type pattern: unicode
+    :type root: str
+    :type diff_file: str
+    :type pattern: str
 
     :return:
-      files changed, files removed
+      files changed
 
-    :rtype: list of str, list of str
+    :rtype: iterator of `Path`
     """
     def relative(path):
-        return os.path.relpath(path, root)
+        return os.path.relpath(str(path), root)
 
     compiled_pattern = re.compile(pattern, re.IGNORECASE)
     if os.path.exists(diff_file):
@@ -299,21 +326,27 @@ def changed_files(root, diff_file, pattern=""):
     found, touched, new_statuses = _crawl_all(root, statuses, compiled_pattern)
     changed = _enrich_new_statuses(new_statuses, root, statuses, touched)
     removed = set(statuses) - found
-    removed = [os.path.join(root, relative_filepath) for relative_filepath in removed]
+    removed = [Path(relative_filepath, "removed", root) for relative_filepath in removed]
 
-    changed_iterator, removed_iterator = PathsIterator(changed), PathsIterator(removed)
+    iterator = TrackingIterator(changed, removed)
     try:
-        yield changed_iterator, removed_iterator
+        yield iterator
     except Exception as error:
-        path = changed_iterator.current or removed_iterator.current
+        path = iterator.items and iterator.items[-1]
         relative_path = '"{}"'.format(relative(path)) if path else "unknown file"
         logging.critical('Crawler error at {0} (aborting): {1}'.format(relative_path, error))
 
-    for relative_path in (relative(path) for path in changed_iterator.done_paths):
-        statuses[relative_path] = new_statuses[relative_path]
-    for relative_path in (relative(path) for path in removed_iterator.done_paths):
-        del statuses[relative_path]
-    if changed_iterator.done_paths or removed_iterator.done_paths or last_pattern != pattern:
+    statuses_changed = False
+    for path in iterator.items:
+        if path.done:
+            statuses_changed = True
+            relative_path = relative(path)
+            if path.is_changed:
+                statuses[relative_path] = new_statuses[relative_path]
+            elif path.is_removed:
+                del statuses[relative_path]
+
+    if statuses_changed or last_pattern != pattern:
         pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
 
 

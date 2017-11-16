@@ -22,7 +22,7 @@
 
 import tempfile, os
 from django.test import TestCase, override_settings
-from remote_client.jb_remote.crawler_tools import changed_files, find_changed_files, defer_files
+from remote_client.jb_remote.crawler_tools import changed_files, find_changed_files, defer_files, Path
 
 
 class Common:
@@ -34,12 +34,12 @@ class Common:
             os.utime(f.fileno())
 
     def relative(self, path):
-        if not isinstance(path, str):
+        if not isinstance(path, (str, Path)):
             result = [self.relative(single_path) for single_path in path]
             result_set = set(result)
             self.assertEqual(len(result), len(result_set))
             return result_set
-        return os.path.relpath(path, self.tempdir.name)
+        return os.path.relpath(str(path), self.tempdir.name)
 
     def test_basic(self):
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"}, set()))
@@ -97,40 +97,42 @@ class FindChangedFilesTest(Common, TestCase):
 class ChangedFilesTest(Common, TestCase):
 
     def find_changed_files(self, *args, **kwargs):
-        with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as (changed, removed):
+        with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as paths:
             changed_, removed_ = [], []
-            for path in changed:
-                changed_.append(path)
-                changed.done()
-            for path in removed:
-                removed_.append(path)
-                removed.done()
+            for path in paths:
+                if path.is_changed:
+                    changed_.append(path)
+                    path.check_off()
+                elif path.is_removed:
+                    removed_.append(path)
+                    path.check_off()
         return self.relative(changed_), self.relative(removed_)
 
     def test_fail_during_iteration(self):
         import logging, io
         log = io.StringIO()
         logging.basicConfig(stream=log)
-        with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
-            for path in changed:
+        with changed_files(self.tempdir.name, self.diff_file) as paths:
+            for path in paths:
+                self.assertTrue(path.is_changed)
                 failed_path = self.relative(path)
-                changed.done()
+                path.check_off()
                 raise Exception("Bad")
         self.assertEqual(log.getvalue().strip(), 'CRITICAL:root:Crawler error at "{}" (aborting): Bad'.format(failed_path))
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"} - {failed_path}, set()))
 
-    def test_dont_call_done(self):
-        with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
-            for path in changed:
-                if os.path.basename(path) != "1.dat":
-                    changed.done()
-            assert len(list(removed)) == 0
+    def test_dont_call_check_off(self):
+        with changed_files(self.tempdir.name, self.diff_file) as paths:
+            for path in paths:
+                self.assertTrue(path.is_changed)
+                if os.path.basename(str(path)) != "1.dat":
+                    path.check_off()
         self.assertEqual(self.find_changed_files(), ({"1.dat"}, set()))
 
-    def test_call_done_twice(self):
-        with changed_files(self.tempdir.name, self.diff_file) as (changed, removed):
-            for path in changed:
-                changed.done()
-                changed.done()
-            assert len(list(removed)) == 0
+    def test_call_check_off_twice(self):
+        with changed_files(self.tempdir.name, self.diff_file) as paths:
+            for path in paths:
+                self.assertTrue(path.is_changed)
+                path.check_off()
+                path.check_off()
         self.assertEqual(self.find_changed_files(), (set(), set()))
