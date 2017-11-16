@@ -75,6 +75,7 @@ operating system by default anyway, you must install:
 - reportlab
 - tzlocal
 - Python modules for YAML and markdown
+- Python module “deprecation”
 
 
 .. _PostgreSQL:
