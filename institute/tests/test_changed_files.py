@@ -41,25 +41,6 @@ class Common:
             return result_set
         return os.path.relpath(path, self.tempdir.name)
 
-    def setUp(self):
-        self.tempdir = tempfile.TemporaryDirectory()
-        self.diffdir = tempfile.TemporaryDirectory()
-        self.diff_file = os.path.join(self.diffdir.name, "test.pickle")
-        self.touch("1.dat")
-        self.touch("a.dat")
-
-    def tearDown(self):
-        self.tempdir.cleanup()
-        self.diffdir.cleanup()
-
-
-@override_settings(ROOT_URLCONF="institute.tests.urls")
-class FindChangedFilesTest(Common, TestCase):
-
-    def find_changed_files(self, *args, **kwargs):
-        changed, removed = find_changed_files(self.tempdir.name, self.diff_file, *args, **kwargs)
-        return self.relative(changed), self.relative(removed)
-
     def test_basic(self):
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"}, set()))
         self.assertEqual(self.find_changed_files(), (set(), set()))
@@ -87,6 +68,25 @@ class FindChangedFilesTest(Common, TestCase):
         self.assertEqual(self.find_changed_files(r"[a-z]\.dat"), (set(), set()))
         self.assertEqual(self.find_changed_files(), ({"1.dat"}, set()))
 
+    def setUp(self):
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.diffdir = tempfile.TemporaryDirectory()
+        self.diff_file = os.path.join(self.diffdir.name, "test.pickle")
+        self.touch("1.dat")
+        self.touch("a.dat")
+
+    def tearDown(self):
+        self.tempdir.cleanup()
+        self.diffdir.cleanup()
+
+
+@override_settings(ROOT_URLCONF="institute.tests.urls")
+class FindChangedFilesTest(Common, TestCase):
+
+    def find_changed_files(self, *args, **kwargs):
+        changed, removed = find_changed_files(self.tempdir.name, self.diff_file, *args, **kwargs)
+        return self.relative(changed), self.relative(removed)
+
     def test_defer_files(self):
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"}, set()))
         defer_files(self.diff_file, ["1.dat"])
@@ -96,7 +96,7 @@ class FindChangedFilesTest(Common, TestCase):
 @override_settings(ROOT_URLCONF="institute.tests.urls")
 class ChangedFilesTest(Common, TestCase):
 
-    def changed_files(self, *args, **kwargs):
+    def find_changed_files(self, *args, **kwargs):
         with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as (changed, removed):
             changed_, removed_ = [], []
             for path in changed:
@@ -106,33 +106,6 @@ class ChangedFilesTest(Common, TestCase):
                 removed_.append(path)
                 removed.done()
         return self.relative(changed_), self.relative(removed_)
-
-    def test_basic(self):
-        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
-        self.assertEqual(self.changed_files(), (set(), set()))
-        self.touch("2.dat")
-        self.assertEqual(self.changed_files(), ({"2.dat"}, set()))
-
-    def test_removed(self):
-        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
-        os.unlink(os.path.join(self.tempdir.name, "1.dat"))
-        self.assertEqual(self.changed_files(), (set(), {"1.dat"}))
-
-    def test_touched_only(self):
-        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
-        self.touch("1.dat")
-        self.assertEqual(self.changed_files(), (set(), set()))
-
-    def test_changed_content(self):
-        self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
-        with open(os.path.join(self.tempdir.name, "1.dat"), "w") as outfile:
-            outfile.write(".")
-        self.assertEqual(self.changed_files(), ({"1.dat"}, set()))
-
-    def test_pattern(self):
-        self.assertEqual(self.changed_files(r"[a-z]\.dat"), ({"a.dat"}, set()))
-        self.assertEqual(self.changed_files(r"[a-z]\.dat"), (set(), set()))
-        self.assertEqual(self.changed_files(), ({"1.dat"}, set()))
 
     def test_fail_during_iteration(self):
         ...
