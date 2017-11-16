@@ -123,7 +123,7 @@ class PathsIterator:
 
         :type paths: iterable of str
         """
-        self.paths = paths
+        self.paths = iter(paths)
         self.current = None
         self.done_paths = set()
 
