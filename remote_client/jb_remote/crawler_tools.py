@@ -318,6 +318,9 @@ def changed_files(root, diff_file, pattern=""):
                     continue
                 path.check_off()
 
+    Files older than 12 weeks are checked off implicitly.  In other words, they
+    are tried to be processed only once.
+
     :param root: absolute root path of the files to be scanned
     :param diff_file: path to a writable pickle file which contains the
         modification status of all files of the last run; it is created if it
@@ -360,15 +363,18 @@ def changed_files(root, diff_file, pattern=""):
         relative_path = '"{}"'.format(relative(path)) if path else "unknown file"
         logging.critical('Crawler error at {0} (aborting): {1}'.format(relative_path, error))
 
+    twelve_weeks_ago = time.time() - 12 * 7 * 24 * 3600
     statuses_changed = False
     for path in iterator.items:
+        relative_path = relative(path)
         if path.done:
             statuses_changed = True
-            relative_path = relative(path)
             if path.was_changed:
                 statuses[relative_path] = new_statuses[relative_path]
             elif path.was_removed:
                 del statuses[relative_path]
+        elif path.was_changed and path.mtime < twelve_weeks_ago:
+            statuses[relative_path] = new_statuses[relative_path]
 
     if statuses_changed or last_pattern != pattern:
         pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)

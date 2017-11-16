@@ -157,3 +157,12 @@ class ChangedFilesTest(Common, TestCase):
                 self.assertTrue(path.was_changed)
                 self.assertTrue(path.was_created)
                 self.assertFalse(path.was_modified)
+
+    def test_too_old_file(self):
+        self.touch("1.dat", 0)
+        with changed_files(self.tempdir.name, self.diff_file) as paths:
+            for path in paths:
+                self.assertTrue(path.was_changed)
+                if os.path.basename(str(path)) != "1.dat":
+                    path.check_off()
+        self.assertEqual(self.find_changed_files(), (set(), set()))
