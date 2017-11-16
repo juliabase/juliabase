@@ -27,11 +27,12 @@ from remote_client.jb_remote.crawler_tools import changed_files, find_changed_fi
 
 class Common:
 
-    def touch(self, path):
+    def touch(self, path, mtime=None):
         """Inspired by <https://stackoverflow.com/a/1160227>.
         """
+        times = (mtime, mtime) if mtime is not None else None
         with os.fdopen(os.open(os.path.join(self.tempdir.name, path), flags=os.O_CREAT | os.O_APPEND)) as f:
-            os.utime(f.fileno())
+            os.utime(f.fileno(), times)
 
     def relative(self, path):
         if not isinstance(path, (str, Path)):
@@ -91,6 +92,12 @@ class FindChangedFilesTest(Common, TestCase):
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"}, set()))
         defer_files(self.diff_file, ["1.dat"])
         self.assertEqual(self.find_changed_files(), ({"1.dat"}, set()))
+
+    def test_defer_too_old_file(self):
+        self.touch("1.dat", 0)
+        self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"}, set()))
+        defer_files(self.diff_file, ["1.dat"])
+        self.assertEqual(self.find_changed_files(), (set(), set()))
 
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
