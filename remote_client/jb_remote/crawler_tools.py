@@ -284,7 +284,7 @@ def changed_files(root, diff_file, pattern=""):
     """Returns the files changed since the last run of this function.  The files
     are given as a list of absolute paths.  Changed files are files which have
     been added, modified or removed.  If a file was moved, the new path is
-    returned as “new or modified”, and the old one as “removed”.  The returned
+    returned as “created”, and the old one as “removed”.  The returned
     files are sorted by timestamp; first the removed, then from oldest to
     newest.
 
