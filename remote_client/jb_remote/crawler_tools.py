@@ -106,7 +106,15 @@ class Path:
 
     @property
     def is_changed(self):
-        return self.type_ == "changed"
+        return self.type_ in {"modified", "new"}
+
+    @property
+    def is_modified(self):
+        return self.type_ == "modified"
+
+    @property
+    def is_new(self):
+        return self.type_ == "new"
 
     @property
     def is_removed(self):
@@ -265,9 +273,9 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
                 new_status = new_statuses.get(relative_filepath) or \
                     new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
                 new_status[1] = md5sum
-                path = Path(filepath, "changed", new_status[0])
+                path = Path(filepath, "modified" if status else "new", new_status[0])
                 changed.append(path)
-    assert set(changed) == set(Path(path, "changed", 0, root) for path in new_statuses), (set(changed), set(new_statuses))
+    assert set(changed) == set(Path(path, "modified", 0, root) for path in new_statuses), (set(changed), set(new_statuses))
     changed.sort()
     return changed
 

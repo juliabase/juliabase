@@ -136,3 +136,17 @@ class ChangedFilesTest(Common, TestCase):
                 path.check_off()
                 path.check_off()
         self.assertEqual(self.find_changed_files(), (set(), set()))
+
+    def test_new_and_modified(self):
+        with changed_files(self.tempdir.name, self.diff_file) as paths:
+            for path in paths:
+                self.assertTrue(path.is_changed)
+                self.assertTrue(path.is_new)
+                self.assertFalse(path.is_modified)
+        with open(os.path.join(self.tempdir.name, "1.dat"), "w") as outfile:
+            outfile.write(".")
+        with changed_files(self.tempdir.name, self.diff_file) as paths:
+            for path in paths:
+                self.assertTrue(path.is_changed)
+                self.assertTrue(path.is_new)
+                self.assertFalse(path.is_modified)
