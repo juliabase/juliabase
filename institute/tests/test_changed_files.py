@@ -100,10 +100,10 @@ class ChangedFilesTest(Common, TestCase):
         with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as paths:
             changed_, removed_ = [], []
             for path in paths:
-                if path.is_changed:
+                if path.was_changed:
                     changed_.append(path)
                     path.check_off()
-                elif path.is_removed:
+                elif path.was_removed:
                     removed_.append(path)
                     path.check_off()
         return self.relative(changed_), self.relative(removed_)
@@ -114,7 +114,7 @@ class ChangedFilesTest(Common, TestCase):
         logging.basicConfig(stream=log)
         with changed_files(self.tempdir.name, self.diff_file) as paths:
             for path in paths:
-                self.assertTrue(path.is_changed)
+                self.assertTrue(path.was_changed)
                 failed_path = self.relative(path)
                 path.check_off()
                 raise Exception("Bad")
@@ -124,7 +124,7 @@ class ChangedFilesTest(Common, TestCase):
     def test_dont_call_check_off(self):
         with changed_files(self.tempdir.name, self.diff_file) as paths:
             for path in paths:
-                self.assertTrue(path.is_changed)
+                self.assertTrue(path.was_changed)
                 if os.path.basename(str(path)) != "1.dat":
                     path.check_off()
         self.assertEqual(self.find_changed_files(), ({"1.dat"}, set()))
@@ -132,7 +132,7 @@ class ChangedFilesTest(Common, TestCase):
     def test_call_check_off_twice(self):
         with changed_files(self.tempdir.name, self.diff_file) as paths:
             for path in paths:
-                self.assertTrue(path.is_changed)
+                self.assertTrue(path.was_changed)
                 path.check_off()
                 path.check_off()
         self.assertEqual(self.find_changed_files(), (set(), set()))
@@ -140,13 +140,13 @@ class ChangedFilesTest(Common, TestCase):
     def test_new_and_modified(self):
         with changed_files(self.tempdir.name, self.diff_file) as paths:
             for path in paths:
-                self.assertTrue(path.is_changed)
-                self.assertTrue(path.is_new)
-                self.assertFalse(path.is_modified)
+                self.assertTrue(path.was_changed)
+                self.assertTrue(path.was_new)
+                self.assertFalse(path.was_modified)
         with open(os.path.join(self.tempdir.name, "1.dat"), "w") as outfile:
             outfile.write(".")
         with changed_files(self.tempdir.name, self.diff_file) as paths:
             for path in paths:
-                self.assertTrue(path.is_changed)
-                self.assertTrue(path.is_new)
-                self.assertFalse(path.is_modified)
+                self.assertTrue(path.was_changed)
+                self.assertTrue(path.was_new)
+                self.assertFalse(path.was_modified)

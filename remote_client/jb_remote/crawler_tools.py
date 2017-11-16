@@ -105,19 +105,19 @@ class Path:
         self.done = False
 
     @property
-    def is_changed(self):
+    def was_changed(self):
         return self.type_ in {"modified", "new"}
 
     @property
-    def is_modified(self):
+    def was_modified(self):
         return self.type_ == "modified"
 
     @property
-    def is_new(self):
+    def was_new(self):
         return self.type_ == "new"
 
     @property
-    def is_removed(self):
+    def was_removed(self):
         return self.type_ == "removed"
 
     def check_off(self):
@@ -349,9 +349,9 @@ def changed_files(root, diff_file, pattern=""):
         if path.done:
             statuses_changed = True
             relative_path = relative(path)
-            if path.is_changed:
+            if path.was_changed:
                 statuses[relative_path] = new_statuses[relative_path]
-            elif path.is_removed:
+            elif path.was_removed:
                 del statuses[relative_path]
 
     if statuses_changed or last_pattern != pattern:
