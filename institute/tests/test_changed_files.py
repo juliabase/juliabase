@@ -97,9 +97,15 @@ class FindChangedFilesTest(Common, TestCase):
 class ChangedFilesTest(Common, TestCase):
 
     def changed_files(self, *args, **kwargs):
-        with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as changed, removed:
-            pass
-        return self.relative(changed), self.relative(removed)
+        with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as (changed, removed):
+            changed_, removed_ = [], []
+            for path in changed:
+                changed_.append(path)
+                changed.done()
+            for path in removed:
+                removed_.append(path)
+                removed.done()
+        return self.relative(changed_), self.relative(removed_)
 
     def test_basic(self):
         self.assertEqual(self.changed_files(), ({"1.dat", "a.dat"}, set()))
