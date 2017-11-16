@@ -119,7 +119,8 @@ class PathsIterator:
     def __init__(self, paths):
         """Class constructor
 
-        :param paths: all absolutepaths that should be yielded by this iterator
+        :param paths: all absolute paths that should be yielded by this
+          iterator
 
         :type paths: iterable of str
         """
