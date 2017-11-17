@@ -25,15 +25,17 @@ import deprecation
 from . import settings
 
 
+class Locked(Exception):
+    def __init__(self, lockfile_path):
+        super().__init__("Could not acquire lock for {}".format(lockfile_path))
+
+
 class PIDLock:
     """Class for process locking in with statements.  It works only on UNIX.  You
     can use this class like this::
 
-        with PIDLock("my_program") as locked:
-            if locked:
-                do_work()
-            else:
-                print "I'am already running.  I just exit."
+        with PIDLock("my_program"):
+            ...
 
     The parameter ``"my_program"`` is used for determining the name of the PID
     lock file.
@@ -41,9 +43,9 @@ class PIDLock:
 
     def __init__(self, name):
         self.lockfile_path = os.path.join("/tmp/", name + ".pid")
-        self.locked = False
+        self.lockfile = None
 
-    def __enter__(self):
+    def try_acquire_lock(self):
         import fcntl  # local because only available on Unix
         try:
             self.lockfile = open(self.lockfile_path, "r+")
@@ -85,16 +87,28 @@ class PIDLock:
         if not already_running:
             self.lockfile.write(str(os.getpid()))
             self.lockfile.flush()
-            self.locked = True
-        return self.locked
+        else:
+            self.lockfile.close()
+            self.lockfile = None
+
+    def __enter__(self):
+        self.try_acquire_lock()
+        stop_timestamp = time.time() + 10 * 60
+        while time.time() < stop_timestamp and not self.lockfile:
+            time.sleep(5)
+            self.try_acquire_lock()
+        if not self.lockfile:
+            raise Locked(self.lockfile_path)
+        # FixMe: Only for compatibility.  This should be removed in future
+        # versions.
+        return True
 
     def __exit__(self, type_, value, tb):
         import fcntl
-        if self.locked:
-            fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_UN)
-            self.lockfile.close()
-            os.remove(self.lockfile_path)
-            logging.info("Removed lock {0}".format(self.lockfile_path))
+        fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_UN)
+        self.lockfile.close()
+        os.remove(self.lockfile_path)
+        logging.info("Removed lock {0}".format(self.lockfile_path))
 
 
 class Path:
