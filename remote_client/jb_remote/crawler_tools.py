@@ -93,7 +93,7 @@ class PIDLock:
         self.try_acquire_lock()
         stop_timestamp = time.time() + 10 * 60
         while time.time() < stop_timestamp and not self.lockfile:
-            time.sleep(5)
+            time.sleep(30)
             self.try_acquire_lock()
         if not self.lockfile:
             raise Locked(self.lockfile_path)
