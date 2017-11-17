@@ -209,6 +209,6 @@ class UserTracebackMiddleware:
         is requested to be JSON.
         """
         if request.user.is_authenticated:
-            request.META["AUTH_USER"] = str(request.user.username)
+            request.META["AUTH_USER"] = request.user.username
         else:
             request.META["AUTH_USER"] = "Anonymous User"

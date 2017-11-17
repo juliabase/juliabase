@@ -624,7 +624,7 @@ def display_search_tree(tree):
     if tree.children:
         result += """<tr><td colspan="2">"""
         for i, child in enumerate(tree.children):
-            result += str(child[0].as_p())
+            result += child[0].as_p()
             if child[1]:
                 result += display_search_tree(child[1])
             if i < len(tree.children) - 1:

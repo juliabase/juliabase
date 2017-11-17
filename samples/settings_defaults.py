@@ -23,7 +23,7 @@
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 ADD_SAMPLES_VIEW = ""
-CACHE_ROOT = str("/tmp/juliabase_cache")
+CACHE_ROOT = "/tmp/juliabase_cache"
 CRAWLER_LOGS_ROOT = ""
 CRAWLER_LOGS_WHITELIST = []
 INITIALS_FORMATS = {"user": {"pattern": r"[A-Z]{2,4}|[A-Z]{2,3}\d|[A-Z]{2}\d{2}",
