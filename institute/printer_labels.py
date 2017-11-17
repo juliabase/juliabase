@@ -73,7 +73,7 @@ def print_line(canvas, y, fontsize, line, force=False):
     :type canvas: canvas.Canvas
     :type y: float
     :type fontsize: float
-    :type line: unicode
+    :type line: str
     :type force: bool
 
     :raises ExcessException: if the line is too long and `force` is ``False``
@@ -101,12 +101,12 @@ def best_split(text):
 
     :param text: the text to be split
 
-    :type text: unicode
+    :type text: str
 
     :return:
       The first and the second part of `text` into which it was split.
 
-    :rtype: unicode, unicode
+    :rtype: str, str
     """
     half_position = len(text) // 2
     best_break_position = (None, None)
@@ -129,7 +129,7 @@ def printer_label(sample):
     :return:
       the PDF as a byte stream
 
-    :rtype: str
+    :rtype: bytes
     """
     output = BytesIO()
     text = sample.name

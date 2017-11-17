@@ -61,7 +61,7 @@ def view(request, process_class_name):
         shown
 
     :type request: HttpRequest
-    :type process_class_name: unicode
+    :type process_class_name: str
 
     :return:
       the HTTP response object

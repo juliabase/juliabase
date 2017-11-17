@@ -110,19 +110,19 @@ entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
 
 def substitute_html_entities(text):
     """Searches for all ``&entity;`` named entities in the input and replaces
-    them by their unicode counterparts.  For example, ``&alpha;``
+    them by their Unicode counterparts.  For example, ``&alpha;``
     becomes ``α``.  Escaping is not possible unless you spoil the pattern with
     a character that is later removed.  But this routine doesn't have an
     escaping mechanism.
 
     :param text: the user's input to be processed
 
-    :type text: unicode
+    :type text: str
 
     :return:
-      ``text`` with all named entities replaced by single unicode characters
+      ``text`` with all named entities replaced by single Unicode characters
 
-    :rtype: unicode
+    :rtype: str
     """
     result = ""
     position = 0
@@ -150,7 +150,7 @@ def get_really_full_name(user):
     :return:
       The full, human-friendly name of the user
 
-    :rtype: unicode
+    :rtype: str
     """
     return user.get_full_name() or str(user)
 
@@ -311,10 +311,10 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
         using this option to generate some sort of nested forwarding.
 
     :type request: HttpRequest
-    :type success_report: unicode
+    :type success_report: str
     :type view: str
     :type kwargs: dict
-    :type query_string: unicode
+    :type query_string: str
     :type forced: bool
 
     :return:
@@ -360,12 +360,12 @@ def unicode_strftime(timestamp, format_string):
         the calling context.
 
     :type timestamp: datetime.datetime
-    :type format_string: unicode
+    :type format_string: str
 
     :return:
       the formatted timestamp, as a Unicode string
 
-    :rtype: unicode
+    :rtype: str
     """
     format_string = force_text(format_string)
     return timestamp.strftime(format_string)
@@ -395,11 +395,11 @@ def send_email(subject, content, recipients, format_dict=None):
     :param format_dict: the substitions used for the ``format`` string method
         for both the subject and the content
 
-    :type subject: unicode
-    :type content: unicode
+    :type subject: str
+    :type content: str
     :type recipient: django.contrib.auth.models.User or list of
       django.contrib.auth.models.User
-    :type format_dict: dict mapping unicode to unicode
+    :type format_dict: dict mapping str to str
     """
     current_language = translation.get_language()
     if not isinstance(recipients, list):
@@ -491,7 +491,7 @@ def get_all_models(app_label=None):
 
     :param app_label: the name of the app whose models should be returned
 
-    :type app_label: unicode
+    :type app_label: str
 
     :return:
       all models of all apps
@@ -557,8 +557,8 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
         this.  Note that usually, JuliaBase *copies* *existing* timestamps, so
         inaccurate clocks should not be a problem.
 
-    :type destination: unicode
-    :type source_files: list of unicode
+    :type destination: str
+    :type source_files: list of str
     :type timestamps: list of datetime.datetime
     :type additional_inaccuracy: int or float
 
@@ -597,9 +597,9 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
         assumed to be in the blob storage.
     :param timestamps: timestamps of non-file source objects
 
-    :type destination: unicode
+    :type destination: str
     :type generator: callable with no arguments returning bytes
-    :type source_files: list of unicode
+    :type source_files: list of str
     :type timestamps: list of datetime.datetime
 
     :return:
@@ -783,16 +783,16 @@ def cache_hit_rate():
 
 def convert_bytes_to_str(byte_array):
     """Converts an array of bytes representing the string literals as decimal
-    integers to unicode letters.
+    integers to Unicode letters.
 
-    :param byte_array: list of integers representing unicode codes.
+    :param byte_array: list of integers representing Unicode codes.
 
     :type byte_array: list of int
 
     :return:
-        the unicode string
+        the Unicode string
 
-    :rtype: unicode
+    :rtype: str
     """
     try:
         return "".join(map(unichr, byte_array)).strip()
@@ -822,12 +822,12 @@ def format_enumeration(items):
 
     :param items: iterable of names to be put into the enumeration
 
-    :type items: iterable of unicode
+    :type items: iterable of str
 
     :return:
       human-friendly enumeration of all names
 
-    :rtype: unicode
+    :rtype: str
     """
     items = sorted(str(item) for item in items)
     if len(items) > 2:
@@ -864,7 +864,7 @@ def int_or_zero(number):
 
     :param number: a string that is supposed to contain an integer number
 
-    :type number: str or unicode or NoneType
+    :type number: str or NoneType
 
     :return:
       the ``int`` representation of ``number``, or 0 if it didn't represent a
@@ -951,12 +951,12 @@ def capitalize_first_letter(text):
 
     :param text: text whose first letter should be capitalised
 
-    :type text: unicode
+    :type text: str
 
     :return:
       the text with capitalised first letter
 
-    :rtype: unicode
+    :rtype: str
     """
     # FixMe: Remove this function in favour of django.utils.text.capfirst.
     if text:
@@ -1046,13 +1046,13 @@ def generate_permissions(permissions, class_name):
     :param class_name: python class name of the model class,
       e.g. ``"LayerThicknessMeasurement"``.
 
-    :type permissions: set of unicode
+    :type permissions: set of str
     :type class_name: str
 
     :return:
       the permissions tuple
 
-    :rtype: tuple of (unicode, unicode)
+    :rtype: tuple of (str, str)
     """
     class_name_lower = class_name.lower()
     class_name_human = camel_case_to_human_text(class_name)
@@ -1082,7 +1082,7 @@ def pretty_print_query_dict(query_dict):
     :return:
       the pretty-printed representation of the query dictionary
 
-    :rtype: unicode
+    :rtype: str
     """
     def format_single_value(value):
         return '"{}"'.format(value.encode("unicode_escape").decode("ascii").replace('"', r'\"').replace("\\'", "'"))

@@ -185,8 +185,8 @@ class LDAPConnection:
         :param username: the login name of the user
         :param password: the cleartext password that the user has given
 
-        :type username: unicode
-        :type password: unicode
+        :type username: str
+        :type password: str
 
         :return:
           whether the username/password combination is known in the AD, and
@@ -206,7 +206,7 @@ class LDAPConnection:
 
         :param username: the login name of the user
 
-        :type username: unicode
+        :type username: str
 
         :return:
           the dataset of the user as found in the AD; ``None`` if the user was
@@ -240,7 +240,7 @@ class LDAPConnection:
 
         :param username: the login name of the user
 
-        :type username: unicode
+        :type username: str
 
         :return:
           whether the user is in one of the JuliaBase departments, or a

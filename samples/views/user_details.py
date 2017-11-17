@@ -97,7 +97,7 @@ def edit_preferences(request, login_name):
         edited.
 
     :type request: HttpRequest
-    :type login_name: unicode
+    :type login_name: str
 
     :return:
       the HTTP response object

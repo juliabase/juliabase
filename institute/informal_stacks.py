@@ -93,7 +93,7 @@ def get_circled_number(number, largest_number):
     :return:
       a nice-looking string representation of the number
 
-    :rtype: unicode
+    :rtype: str
     """
     if largest_number > 10:
         return "({0})".format(number)
@@ -331,7 +331,7 @@ class Layer:
       if it is ``None``, the current layer “grows” on the very bottom of the
       stack.
 
-    :type name: unicode
+    :type name: str
     :type nm: float
     :type color: str
     :type structured: bool
@@ -385,7 +385,7 @@ class Layer:
         :return:
           the pretty-printed version of the thickness including the unit
 
-        :rtype: unicode
+        :rtype: str
         """
         if nm >= decimal.Decimal("1e6"):
             value = nm / decimal.Decimal("1e6")
@@ -603,7 +603,7 @@ class Label:
     :ivar right_row: see constructor
 
     :type needs_left_row: bool
-    :type text: unicode
+    :type text: str
     :type voffset: float
     :type right_row: bool
     """
@@ -710,7 +710,7 @@ def place_labels(layers):
     :return:
       all labels, all labels intended to be displaced to the legend
 
-    :rtype: list of `Label`, list of unicode
+    :rtype: list of `Label`, list of str
     """
     labels = []
     displaced_labels = []
@@ -745,7 +745,7 @@ def build_legend(displaced_labels, width):
     :param displaced_labels: all labels intended to be displaced to the legend
     :param width: the width of the printed legend
 
-    :type displaced_labels: list of unicode
+    :type displaced_labels: list of str
     :type width: float
 
     :return:
@@ -778,8 +778,8 @@ def generate_diagram(filepath, layers, title, subject):
 
     :type filepath: str
     :type layers: list of `Layer`
-    :type title: unicode
-    :type subject: unicode
+    :type title: str
+    :type subject: str
     """
     scale = Scale(layers)
     stack_height = build_stack(layers, scale)

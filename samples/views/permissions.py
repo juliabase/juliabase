@@ -76,7 +76,7 @@ class PermissionsModels:
       show all users of a model.  Note that this excludes superusers, unless
       they have the distinctive permissions.
 
-    :type name: unicode
+    :type name: str
     :type codename: str
     :type edit_permissions_permission: django.contrib.auth.models.Permission
     :type add_permission: django.contrib.auth.models.Permission
@@ -298,7 +298,7 @@ def edit(request, username):
         changed
 
     :type request: HttpRequest
-    :type username: unicode
+    :type username: str
 
     :return:
       the HTTP response object

@@ -71,7 +71,7 @@ def translate_permission(permission_codename):
       current langauge.  It starts with a capital letter but doesn't end in a
       full stop.
 
-    :rtype: unicode
+    :rtype: str
     """
     permission_codename = permission_codename.partition(".")[2]
     try:
@@ -101,7 +101,7 @@ def get_user_permissions(user):
       that the user doesn't have got.  Both lists contain translated
       descriptions.
 
-    :rtype: list of unicode, list of unicode
+    :rtype: list of str, list of str
     """
     has = []
     has_not = []
@@ -169,7 +169,7 @@ def get_all_addable_physical_process_models():
       the process (starting lowercase), and ``"type"`` with the process'
       class name.
 
-    :rtype: dict mapping class to dict mapping str to unicode
+    :rtype: dict mapping class to dict mapping str to str
     """
     global all_addable_physical_process_models
     if all_addable_physical_process_models is None:
@@ -202,7 +202,7 @@ def get_allowed_physical_processes(user):
       ``"label"`` with the name of the process (starting lowercase), and
       ``"type"`` with the process' class name.
 
-    :rtype: list of dict mapping str to unicode
+    :rtype: list of dict mapping str to str
     """
     allowed_physical_processes = []
     for physical_process_class, add_data in get_all_addable_physical_process_models().items():
@@ -225,7 +225,7 @@ def get_lab_notebooks(user):
       to the lab book, and ``"label"`` with the name of the process (starting
       lowercase).
 
-    :rtype: list of dict mapping str to unicode
+    :rtype: list of dict mapping str to str
     """
     lab_notebooks = []
     for process_class, process in get_all_addable_physical_process_models().items():
@@ -334,7 +334,7 @@ class PermissionError(Exception):
       because you're not … Note that a head of an institute groups may add you
       to new topics.”.
 
-    :type description: unicode
+    :type description: str
     """
 
     def __init__(self, user, description, new_topic_would_help=False):
@@ -347,7 +347,7 @@ class PermissionError(Exception):
             topic would grant him the permission for the action
 
         :type user: django.contrib.auth.models.User
-        :type description: unicode
+        :type description: str
         :type new_topic_would_help: bool
         """
         super(PermissionError, self).__init__(_("Permission denied: ") + description)

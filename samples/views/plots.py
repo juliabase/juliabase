@@ -77,8 +77,8 @@ def show_plot(request, process_id, plot_id, thumbnail):
     :param thumbnail: whether we serve a thumbnail instead of a real PDF plot
 
     :type request: HttpRequest
-    :type process_id: unicode
-    :type plot_id: unicode
+    :type process_id: str
+    :type plot_id: str
     :type thumbnail: bool
 
     :return:

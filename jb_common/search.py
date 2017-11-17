@@ -192,9 +192,9 @@ class SearchField:
         return self.form.is_valid()
 
     def __str__(self):
-        """Returns a unicode representation of this search field.  It is only
-        useful for debugging purposes.  Note that if a derived class doesn't
-        store a model field in ``self.field``, this must be overridden.
+        """Returns a str representation of this search field.  It is only useful for
+        debugging purposes.  Note that if a derived class doesn't store a model
+        field in ``self.field``, this must be overridden.
         """
         return '"{0}"'.format(self.field.verbose_name)
 
@@ -653,8 +653,8 @@ class SearchTreeNode:
         return is_all_valid
 
     def __str__(self):
-        """Returns a unicode representation of this node and its subtree.  It
-        is only useful for debugging purposes.
+        """Returns a str representation of this node and its subtree.  It is only
+        useful for debugging purposes.
         """
         choices_last_child = self.children[-1][0].fields["_model"].choices if self.children else []
         return "({0}[{1}]: {2};{3})".format(
@@ -742,8 +742,8 @@ class AbstractSearchTreeNode(SearchTreeNode):
           str
         :type search_fields: list of `SearchField`
         :type derivatives: list of class (decendant of models.Model)
-        :type choice_field_label: unicode
-        :type choice_field_help_text: unicode
+        :type choice_field_label: str
+        :type choice_field_help_text: str
         """
         super(AbstractSearchTreeNode, self).__init__(common_base_class, related_models, search_fields)
         self.derivatives = []

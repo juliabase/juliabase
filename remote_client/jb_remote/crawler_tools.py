@@ -241,7 +241,7 @@ def _crawl_all(root, statuses, compiled_pattern):
     :param compiled_pattern: compiled regular expression for filenames (without
         path) that should be scanned.
 
-    :type root: unicode
+    :type root: str
     :type statuses: dict mapping str to (float, str)
     :type compiled_pattern: ``_sre.SRE_Pattern``
 
@@ -288,7 +288,7 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
       since the last run (i.e., the last pickle file)
 
     :type new_statuses: dict mapping str to (float, str)
-    :type root: unicode
+    :type root: str
     :type statuses: dict mapping str to (float, str)
     :type touched: list of str
 
@@ -423,9 +423,9 @@ def find_changed_files(root, diff_file, pattern=""):
     :param pattern: Regular expression for filenames (without path) that should
         be scanned.  By default, all files are scanned.
 
-    :type root: unicode
-    :type diff_file: unicode
-    :type pattern: unicode
+    :type root: str
+    :type diff_file: str
+    :type pattern: str
 
     :return:
       files changed, files removed
@@ -519,10 +519,10 @@ def send_error_mail(from_, subject, text, html=None):
     :param text: text body of the message
     :param html: optional HTML attachment
 
-    :type from_: unicode
-    :type subject: unicode
-    :type text: unicode
-    :type html: unicode
+    :type from_: str
+    :type subject: str
+    :type text: str
+    :type html: str
     """
     cycles = 5
     while cycles:

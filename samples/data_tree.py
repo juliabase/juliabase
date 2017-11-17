@@ -40,8 +40,8 @@ class DataNode:
     :ivar children: the child nodes of this node in the three; for example,
       they may be the samples of a sample series
 
-    :type name: unicode
-    :type descriptive_name: unicode
+    :type name: str
+    :type descriptive_name: str
     :type items: list of `DataItem`
     :type childen: list of `DataNode`
     """
@@ -58,8 +58,8 @@ class DataNode:
             for example, it is the sample's name.  By default, it is the type
             of the instance or the string you gave as ``instance``.
 
-        :type instance: ``models.Model`` or unicode or str
-        :type descriptive_name: unicode
+        :type instance: ``models.Model`` or str
+        :type descriptive_name: str
         """
         if isinstance(instance, str):
             self.name = self.descriptive_name = instance
@@ -129,8 +129,8 @@ class DataNode:
             for performance's sake.  If you call this method, you never give
             this parameter.
 
-        :type key_sets: dict mapping unicode to set of (unicode, str)
-        :type item_cache: dict mapping `DataNode` to set of (unicode, str)
+        :type key_sets: dict mapping str to set of (str, str)
+        :type item_cache: dict mapping `DataNode` to set of (str, str)
         """
         if key_sets is None:
             item_cache = {}
@@ -182,9 +182,9 @@ class DataItem:
       a non-``None`` ``origin`` parameter which just contains a symbol for the
       model class, e.g. ``"process"`` for ``samples.models.Process``.
 
-    :type key: unicode
+    :type key: str
     :type value: object
-    :type origin: unicode or NoneType
+    :type origin: str or NoneType
     """
 
     def __init__(self, key, value, origin=None):
@@ -195,9 +195,9 @@ class DataItem:
         :param origin: an optional name of the class from where this data item
             comes from.
 
-        :type key: unicode or Promise (Django lazy string object)
+        :type key: str or Promise (Django lazy string object)
         :type value: object
-        :type origin: unicode or NoneType
+        :type origin: str or NoneType
         """
         assert isinstance(key, (str, Promise))
         self.key, self.value, self.origin = key, value, origin

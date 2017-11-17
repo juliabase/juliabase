@@ -202,10 +202,10 @@ class DimensionsForm(forms.Form):
 
 
 class QuantityForm(forms.Form):
-    """Form for one quantity field (i.e., one heading in the result values
-    table).  All HTML entities in it are immediately converted to their unicode
-    pendant (i.e., the conversion is not delayed until display, as with
-    Markdown content).  Furthermore, all whitespace is normalised.
+    """Form for one quantity field (i.e., one heading in the result values table).
+    All HTML entities in it are immediately converted to their Unicode pendant
+    (i.e., the conversion is not delayed until display, as with Markdown
+    content).  Furthermore, all whitespace is normalised.
     """
     quantity = forms.CharField(label=_("Quantity name"), max_length=50)
 
@@ -219,8 +219,8 @@ class QuantityForm(forms.Form):
 
 
 class ValueForm(forms.Form):
-    """Form for one value entry in the result values table.  Note that this is
-    a pure unicode field and not a number field, so you may enter whatever you
+    """Form for one value entry in the result values table.  Note that this is a
+    pure string field and not a number field, so you may enter whatever you
     like here.  Whitespace is not normalised, and no other conversion takes
     place.
     """
@@ -283,7 +283,7 @@ class FormSet:
             create a new one
 
         :type request: HttpRequest
-        :type process_id: unicode or NoneType
+        :type process_id: str or NoneType
         """
         self.result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id)) if process_id else None
         self.user = request.user
@@ -551,7 +551,7 @@ def show(request, process_id):
     :param process_id: the database ID of the result to show
 
     :type request: HttpRequest
-    :type process_id: unicode
+    :type process_id: str
 
     :return:
       the HTTP response object
@@ -578,7 +578,7 @@ def show_image(request, process_id):
     :param process_id: the database ID of the result to show
 
     :type request: HttpRequest
-    :type process_id: unicode
+    :type process_id: str
 
     :return:
       the HTTP response object with the image
@@ -610,7 +610,7 @@ def show_thumbnail(request, process_id):
     :param process_id: the database ID of the result to show
 
     :type request: HttpRequest
-    :type process_id: unicode
+    :type process_id: str
 
     :return:
       the HTTP response object with the thumbnail image
@@ -636,7 +636,7 @@ def export(request, process_id):
     :param process_id: the database ID of the result to show
 
     :type request: HttpRequest
-    :type process_id: unicode
+    :type process_id: str
 
     :return:
       the HTTP response object

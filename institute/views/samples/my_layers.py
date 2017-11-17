@@ -171,7 +171,7 @@ def edit(request, login_name):
         changed
 
     :type request: HttpRequest
-    :type login_name: unicode
+    :type login_name: str
 
     :return:
       the HTTP response object

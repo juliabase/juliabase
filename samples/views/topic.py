@@ -213,7 +213,7 @@ def edit(request, id):
     :param id: the id of the topic
 
     :type request: HttpRequest
-    :type name: unicode
+    :type name: str
 
     :return:
       the HTTP response object

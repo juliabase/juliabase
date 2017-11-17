@@ -95,7 +95,7 @@ def substrate_by_sample(request, sample_id):
     :param sample_id: the primary key of the sample
 
     :type request: HttpRequest
-    :type sample_id: unicode
+    :type sample_id: str
 
     :return:
       the HTTP response object
@@ -139,7 +139,7 @@ def _get_solarsimulator_measurement_by_filepath(filepath, user):
         database
     :param user: the logged-in user
 
-    :type filepath: unicode
+    :type filepath: str
     :type user: django.contrib.auth.models.User
 
     :return:
@@ -207,10 +207,10 @@ def get_matching_solarsimulator_measurement(request, sample_id, irradiation, cel
     :param date: the day (not the time) of the measurement in YYYY-MM-DD format
 
     :type request: HttpRequest
-    :type sample_id: unicode
-    :type irradiation: unicode
-    :type cell_position: unicode
-    :type date: unicode
+    :type sample_id: str
+    :type irradiation: str
+    :type cell_position: str
+    :type date: str
 
     :return:
       the HTTP response object
@@ -257,7 +257,7 @@ def get_current_structuring(request, sample_id):
     :param sample_id: the ID of the sample
 
     :type request: HttpRequest
-    :type sample_id: unicode
+    :type sample_id: str
 
     :return:
       the HTTP response object

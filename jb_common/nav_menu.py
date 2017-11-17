@@ -44,11 +44,11 @@ class MenuItem:
         :param position: the position of the menu, e.g. left-flushed or
           right-flushed
 
-        :type label: unicode
+        :type label: str
         :type url: str
-        :type icon_name: unicode
+        :type icon_name: str
         :type icon_url: str
-        :type icon_description: unicode
+        :type icon_description: str
         :type position: str
         """
         self.label, self.url, self.icon_name, self.icon_url, self.icon_description, self.position = \
@@ -96,7 +96,7 @@ class MenuItem:
 
         :param label: the text of the heading
 
-        :type label: unicode
+        :type label: str
         """
         self.sub_items.append(MenuHeading(label))
 
@@ -111,7 +111,7 @@ class MenuItem:
           latter is senseful for top-level menus that have only subitems, but no
           URL or icon.
 
-        :type item_or_label: `MenuItem` or unicode
+        :type item_or_label: `MenuItem` or str
 
         :return:
           the found item, or newly created and inserted item
@@ -149,7 +149,7 @@ class MenuItem:
         :param after_separator: whether separators after the found item should
            be skipped
 
-        :type label: unicode
+        :type label: str
         :type items: list of `MenuItem` or `MenuItem`
         :type after_separator: bool
         """

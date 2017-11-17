@@ -138,7 +138,7 @@ def _draw_constrained_text(canvas, text, x, y, fontsize, width, graylevel, backg
         needs to be supported by a background rectangle
 
     :type canvas: canvas.Canvas
-    :type text: unicode
+    :type text: str
     :type x: float
     :type y: float
     :type fontsize: float
@@ -213,7 +213,7 @@ class Layout:
 
         :param filename: the full path to the PDF that should be created
 
-        :type filename: unicode
+        :type filename: str
         """
         canvas = Canvas(filename, pagesize=(self.width, self.height))
         self.draw_layout(canvas)
@@ -235,7 +235,7 @@ class CellsLayout(Layout):
       The position of the cell must consist only of letters, digits,
       underscores and dashs.  Don't assume that it is case-sensitive.
 
-    :type shapes: dict mapping unicode to ((float, float), (float, float))
+    :type shapes: dict mapping str to ((float, float), (float, float))
     """
     shapes = {}
 
@@ -257,7 +257,7 @@ class CellsLayout(Layout):
                ...
                }
 
-        :rtype: dict mapping unicode to dict mapping str to str
+        :rtype: dict mapping str to dict mapping str to str
         """
         map_shapes = {}
         resolution = settings.THUMBNAIL_WIDTH / self.width
@@ -287,7 +287,7 @@ class CellsLayout(Layout):
           tuple (colour, label), where “colour” is given as a (red, green,
           blue) tuple.
 
-        :rtype: dict mapping unicode to ((float, float, float), unicode)
+        :rtype: dict mapping str to ((float, float, float), str)
         """
         def map_value_to_RGB(value, thresholds):
             """Returns the cell colour associated with `value`.  `thresholds`

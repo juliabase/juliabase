@@ -92,7 +92,7 @@ class FeedEntry(PolymorphicModel):
           a dictionary with the keys ``"title"``, ``"category term"``,
           ``"link"``, and ``"category label"``.  ``"link"`` is optional.
 
-        :rtype: dict mapping str to unicode
+        :rtype: dict mapping str to str
         """
         raise NotImplementedError
 

@@ -111,7 +111,7 @@ def embed_timestamp(request, name):
     :param name: the name of the sample series
 
     :type request: HttpRequest
-    :type name: unicode
+    :type name: str
 
     :return:
       the timestamp of the last modification of the sample's datasheet
@@ -137,7 +137,7 @@ def sample_series_timestamp(request, name):
     :param name: the name of the sample series
 
     :type request: HttpRequest
-    :type name: unicode
+    :type name: str
 
     :return:
       the timestamp of the last modification of the sample series' datasheet
@@ -156,7 +156,7 @@ def sample_series_etag(request, name):
     :param name: the name of the sample series
 
     :type request: HttpRequest
-    :type name: unicode
+    :type name: str
 
     :return:
       the ETag of the sample series' page
@@ -183,7 +183,7 @@ def show(request, name):
     :param name: name of the sample series
 
     :type request: HttpRequest
-    :type name: unicode
+    :type name: str
 
     :return:
       the HTTP response object
@@ -242,7 +242,7 @@ def edit(request, name):
     :param name: name of the sample series
 
     :type request: HttpRequest
-    :type name: unicode
+    :type name: str
 
     :return:
       the HTTP response object
@@ -341,7 +341,7 @@ def export(request, name):
     :param name: the name of the sample series
 
     :type request: HttpRequest
-    :type name: unicode
+    :type name: str
 
     :return:
       the HTTP response object

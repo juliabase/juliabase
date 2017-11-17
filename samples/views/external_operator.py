@@ -113,7 +113,7 @@ def edit(request, external_operator_id):
     :param external_operator_id: the database ID for the external operator
 
     :type request: HttpRequest
-    :type external_operator_id: unicode
+    :type external_operator_id: str
 
     :return:
       the HTTP response object
@@ -148,7 +148,7 @@ def show(request, external_operator_id):
     :param external_operator_id: the database ID for the external operator
 
     :type request: HttpRequest
-    :type external_operator_id: unicode
+    :type external_operator_id: str
 
     :return:
       the HTTP response object

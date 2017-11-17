@@ -63,7 +63,7 @@ def show_stack(request, sample_id, thumbnail):
     :param thumbnail: whether we should deliver a thumbnail version
 
     :type request: HttpRequest
-    :type process_id: unicode
+    :type process_id: str
     :type thumbnail: bool
 
     :return:

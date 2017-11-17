@@ -260,7 +260,7 @@ class Process(PolymorphicModel):
         :param plot_id: the unique ID of the image.  This is mostly ``""``
             because most measurement models have only one graphics.
 
-        :type plot_id: unicode
+        :type plot_id: str
 
         :return:
           a dictionary containing the following keys:
@@ -313,7 +313,7 @@ class Process(PolymorphicModel):
             simple plots, this can be ignored
 
         :type axes: matplotlib.axes.Axes
-        :type plot_id: unicode
+        :type plot_id: str
         :type filename: str or list of str
         :type for_thumbnail: bool
 
@@ -335,7 +335,7 @@ class Process(PolymorphicModel):
             this method.  Note that you must not assume that its value is
             valid.
 
-        :type plot_id: unicode
+        :type plot_id: str
 
         :return:
           The absolute path of the file(s) with the original data for this plot
@@ -362,12 +362,12 @@ class Process(PolymorphicModel):
             this can only be the empty string and as such is not used it all in
             this method then.
 
-        :type plot_id: unicode
+        :type plot_id: str
 
         :return:
           the base name for the plot files, without directories or extension
 
-        :rtype: unicode
+        :rtype: str
         """
         basename = "{0}_{1}".format(camel_case_to_underscores(self.__class__.__name__), self.id)
         if plot_id:
@@ -849,7 +849,7 @@ class Sample(models.Model):
         :return:
           the shortened tags in parentheses
 
-        :rtype: unicode
+        :rtype: str
         """
         if self.tags and samples.permissions.has_permission_to_fully_view_sample(user, self):
             tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + "…"
@@ -870,7 +870,7 @@ class Sample(models.Model):
         :return:
           the name of the sample, possibly with shortened tags
 
-        :rtype: unicode
+        :rtype: str
         """
         return str(self) + self.tags_suffix(user)
 

@@ -74,7 +74,7 @@ def new(request, sample_name):
     :param sample_name: name of the sample to be killed
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object

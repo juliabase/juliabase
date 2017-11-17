@@ -285,7 +285,7 @@ class Reporter:
 
         :type samples: list of `samples.models.Sample`
         :type recipient: django.contrib.auth.models.User
-        :type comments: unicode
+        :type comments: str
         """
         entry = models.FeedCopiedMySamples.objects.create(originator=self.originator, comments=comments)
         entry.samples = samples

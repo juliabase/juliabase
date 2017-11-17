@@ -119,7 +119,7 @@ def edit(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object
@@ -178,7 +178,7 @@ def delete(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object
@@ -208,7 +208,7 @@ def delete_confirmation(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object
@@ -250,8 +250,7 @@ def get_allowed_processes(user, sample):
       The first list is sample split and sample death, the second list are
       results and physical processes.
 
-    :rtype: list of dict mapping str to unicode/str, list of dict mapping str
-      to unicode/str
+    :rtype: list of dict mapping str to str, list of dict mapping str to str
 
     :raises permissions.PermissionError: if the user is not allowed to add any
         process to the sample
@@ -322,7 +321,7 @@ class SamplesAndProcesses:
         :param post_data: the POST dictionary if it was an HTTP POST request, or
             ``None`` otherwise
 
-        :type sample_name: unicode
+        :type sample_name: str
         :type user: django.contrib.auth.models.User
         :type post_data: QueryDict
 
@@ -569,7 +568,7 @@ class SamplesAndProcesses:
         :return:
           names of added samples, names of removed samples
 
-        :rtype: set of unicode, set of unicode
+        :rtype: set of str, set of str
         """
         added = set()
         removed = set()
@@ -612,7 +611,7 @@ def embed_timestamp(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
     """
     if not hasattr(request, "_sample_timestamp"):
         timestamps = []
@@ -645,7 +644,7 @@ def sample_timestamp(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the timestamp of the last modification of the sample's datasheet
@@ -670,7 +669,7 @@ def sample_etag(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the ETag of the sample's datasheet
@@ -696,7 +695,7 @@ def show(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object
@@ -748,8 +747,8 @@ def by_id(request, sample_id, path_suffix):
         a sample, it is empty (or only the query string)
 
     :type request: HttpRequest
-    :type sample_id: unicode
-    :type path_suffix: unicode
+    :type sample_id: str
+    :type path_suffix: str
 
     :return:
       the HTTP response object
@@ -781,7 +780,7 @@ def add_process(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object
@@ -967,7 +966,7 @@ def export(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object

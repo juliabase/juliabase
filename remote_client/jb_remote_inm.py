@@ -107,7 +107,7 @@ class ClusterToolDeposition:
         :return:
           all already available deposition numbers
 
-        :rtype: set of unicode
+        :rtype: set of str
         """
         return set(connection.open("available_items/ClusterToolDeposition"))
 
@@ -183,8 +183,8 @@ def rename_after_deposition(deposition_number, new_names):
         are the sample IDs.  The values are the new names.  Note that they must
         start with the deposition number.
 
-    :type deposition_number: unicode
-    :type new_samples: dict mapping int to unicode
+    :type deposition_number: str
+    :type new_samples: dict mapping int to str
     """
     data = {}
     for i, id_ in enumerate(new_names):
@@ -251,7 +251,7 @@ class PDSMeasurement:
         :return:
           all already available PDS numbers
 
-        :rtype: set of unicode
+        :rtype: set of str
         """
         return set(connection.open("available_items/PDSMeasurement"))
 
@@ -322,7 +322,7 @@ def get_sample(sample_name):
 
     :param sample_name: the name of the sample
 
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the ID of the sample
@@ -472,7 +472,7 @@ class FiveChamberDeposition:
             of the database.  Note that this triggers an exception if the
             deposition number is not found in the database.
 
-        :type number: unicode
+        :type number: str
         """
         if number:
             data = connection.open("5-chamber_depositions/{0}".format(number))
@@ -504,7 +504,7 @@ class FiveChamberDeposition:
         :return:
           the deposition number if succeeded.
 
-        :rtype: unicode
+        :rtype: str
         """
         if not self.operator:
             self.operator = connection.username
@@ -538,7 +538,7 @@ class FiveChamberDeposition:
         :return:
           all already available deposition numbers
 
-        :rtype: set of unicode
+        :rtype: set of str
         """
         return set(connection.open("available_items/FiveChamberDeposition"))
 

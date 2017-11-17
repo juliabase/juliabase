@@ -246,7 +246,7 @@ def timestamp(value, minimal_inaccuracy=0):
     :return:
       the rendered timestamp
 
-    :rtype: unicode
+    :rtype: str
     """
     try:
         timestamp_ = value.timestamp
@@ -272,7 +272,7 @@ def status_timestamp(value, type_):
     :return:
       the rendered timestamp
 
-    :rtype: unicode
+    :rtype: str
     """
     if type_ == "begin":
         timestamp_ = value.begin

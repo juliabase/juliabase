@@ -127,7 +127,7 @@ def show_error_page(request, hash_value):
     :param hash_value: the hash value (primary key) of the error page
 
     :type request: HttpRequest
-    :type hash_value: unicode
+    :type hash_value: str
 
     :return:
       the HTTP response object

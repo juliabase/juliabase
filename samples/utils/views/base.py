@@ -67,7 +67,7 @@ def lookup_sample(sample_name, user, with_clearance=False):
     :param with_clearance: whether also clearances should be serached for and
         returned
 
-    :type sample_name: unicode
+    :type sample_name: str
     :type user: django.contrib.auth.models.User
     :type with_clearance: bool
 
@@ -159,10 +159,10 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
         the remote client; defaults to ``True``.
 
     :type request: HttpRequest
-    :type success_report: unicode
+    :type success_report: str
     :type view: str
     :type kwargs: dict
-    :type query_string: unicode
+    :type query_string: str
     :type forced: bool
     :type json_response: ``object``
 
@@ -209,7 +209,7 @@ class StructuredSeries:
       incomplete list of samples and should be informed about it.
 
     :type sample_series: `samples.models.SampleSeries`
-    :type name: unicode
+    :type name: str
     :type timestamp: datetime.datetime
     :type samples: list of `samples.models.Sample`
     :type is_complete: bool
@@ -517,7 +517,7 @@ def table_export(request, data, label_column_heading):
 
     :type request: HttpRequest
     :type data: `samples.data_tree.DataNode`
-    :type label_column_heading: unicode
+    :type label_column_heading: str
 
     :return:
       the HTTP response object or a tuple with all needed forms to create the export view

@@ -42,13 +42,13 @@ def clean_deposition_number_field(value, letter):
     :param letter: the single uppercase letter denoting the deposition system;
         it may also be a list containing multiple possibily letters
 
-    :type value: unicode
-    :type letter: unicode or list of unicode
+    :type value: str
+    :type letter: str or list of str
 
     :return:
       the original `value` (unchanged)
 
-    :rtype: unicode
+    :rtype: str
 
     :raises ValidationError: if the deposition number was not a valid deposition
         number

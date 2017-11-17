@@ -82,7 +82,7 @@ def add(request, username):
         the currently logged-in user
 
     :type request: HttpRequest
-    :type username: unicode
+    :type username: str
 
     :return:
       the HTTP response object
@@ -142,7 +142,7 @@ def list_(request, username):
         be the currently logged-in user
 
     :type request: HttpRequest
-    :type username: unicode
+    :type username: str
 
     :return:
       the HTTP response object
@@ -198,7 +198,7 @@ def show(request, claim_id):
     :param claim_id: the primary key of the claim to be viewed
 
     :type request: HttpRequest
-    :type claim_id: unicode
+    :type claim_id: str
 
     :return:
       the HTTP response object

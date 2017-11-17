@@ -33,7 +33,7 @@ def get_sample(sample_name):
 
     :param sample_name: the name or alias of the sample
 
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the found sample.  If more than one sample was found, a list of them.  If
@@ -58,7 +58,7 @@ def does_sample_exist(sample_name):
 
     :param sample_name: the name or alias of the sample
 
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       whether a sample with this name exists
@@ -74,13 +74,13 @@ def normalize_sample_name(sample_name):
 
     :param sample_name: the name or alias of the sample
 
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       The current name of the sample.  This is only different from the input if
       you gave an alias.
 
-    :rtype: unicode
+    :rtype: str
     """
     if models.Sample.objects.filter(name=sample_name).exists():
         return sample_name
@@ -100,8 +100,8 @@ def valid_new_sample_name(sample_name, new_sample_name):
     :param sample_name: The actual sample name
     :param new_sample_name: The new sample name
 
-    :type sample_name: unicode
-    :type new_sample_name: unicode
+    :type sample_name: str
+    :type new_sample_name: str
 
     :return:
       `True` if the sample can be renamed, `False` otherwise.

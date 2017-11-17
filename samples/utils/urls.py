@@ -53,8 +53,8 @@ class PatternGenerator:
             belong to.  Defaults to the first component of ``views_prefix``.
 
         :type url_patterns: list of `url()` instances
-        :type views_prefix: unicode
-        :type app_label: unicode
+        :type views_prefix: str
+        :type app_label: str
         """
         self.views_prefix = views_prefix + "."
         self.url_patterns = url_patterns
@@ -89,10 +89,10 @@ class PatternGenerator:
             You may choose from ``"add"``, ``"edit"``, ``"custom_show"``, and
             ``"lab_notebook"``.
 
-        :type class_name: unicode
-        :type identifying_field: unicode
-        :type url_name: unicode
-        :type views: set of unicode
+        :type class_name: str
+        :type identifying_field: str
+        :type url_name: str
+        :type views: set of str
         """
         class_name_with_underscores = camel_case_to_underscores(class_name)
         if not url_name:
@@ -151,8 +151,8 @@ class PatternGenerator:
             You may choose from ``"add"``, ``"edit"``, ``"custom_show"``, and
             ``"lab_notebook"``.
 
-        :type class_name: unicode
-        :type url_name: unicode
-        :type views: set of unicode
+        :type class_name: str
+        :type url_name: str
+        :type views: set of str
         """
         self.physical_process(class_name, "number", url_name, views)

@@ -56,7 +56,7 @@ class MySeries:
       incomplete list of samples and should be informed about it.
 
     :type sample_series: `samples.models.SampleSeries`
-    :type name: unicode
+    :type name: str
     :type timestamp: datetime.datetime
     :type samples: list of `samples.models.Sample`
     :type is_complete: bool
@@ -181,7 +181,7 @@ def show_deposition(request, deposition_number):
     :param deposition_number: the number of the deposition to be displayed
 
     :type request: HttpRequest
-    :type deposition_number: unicode
+    :type deposition_number: str
 
     :return:
       the HTTP response object
@@ -209,8 +209,8 @@ def show_process(request, process_id, process_name="Process"):
         is assumed
 
     :type request: HttpRequest
-    :type process_id: unicode
-    :type process_name: unicode
+    :type process_id: str
+    :type process_name: str
 
     :return:
       the HTTP response object
@@ -246,7 +246,7 @@ def delete_process(request, process_id):
     :param process_id: the process's ID
 
     :type request: HttpRequest
-    :type process_id: unicode
+    :type process_id: str
 
     :return:
       the HTTP response object
@@ -276,7 +276,7 @@ def delete_process_confirmation(request, process_id):
     :param process_id: the ID of the process
 
     :type request: HttpRequest
-    :type process_id: unicode
+    :type process_id: str
 
     :return:
       the HTTP response object

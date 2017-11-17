@@ -72,7 +72,7 @@ class Sample:
             given
         :param id_: the ID of an existing sample
 
-        :type name: unicode
+        :type name: str
         :type id_: int
         """
         if name or id_:
@@ -139,7 +139,7 @@ class Result:
             result ID is not found in the database.
         :param with_image: whether the image data should be loaded, too
 
-        :type id_: int or unicode
+        :type id_: int or str
         :type with_image: bool
         """
         if id_:

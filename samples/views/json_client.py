@@ -207,7 +207,7 @@ def available_items(request, model_name):
     :param model_name: the name of the database model
 
     :type request: HttpRequest
-    :type model_name: unicode
+    :type model_name: str
 
     :return:
       The HTTP response object.  It is a JSON list object with all the ids of
@@ -416,7 +416,7 @@ def fold_process(request, sample_id):
     :param sample_id: The sample ID represent the data sheet where the process has to be changed.
 
     :type request: HttpRequest
-    :type sample_id: unicode
+    :type sample_id: str
 
     :return:
       True if the process is now folded else False.
@@ -444,7 +444,7 @@ def get_folded_processes(request, sample_id):
     :param sample_id: The sample ID represent the data sheet the user wants to see.
 
     :type request: HttpRequest
-    :type sample_id: unicode
+    :type sample_id: str
 
     :return:
      The process IDs of the processes, who have to be folded on the samples data sheet.

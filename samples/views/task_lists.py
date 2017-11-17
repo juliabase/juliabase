@@ -259,7 +259,7 @@ def edit(request, task_id):
         ``None``, create a new one.
 
     :type request: HttpRequest
-    :type task_id: unicode
+    :type task_id: str
 
     :return:
       the HTTP response object

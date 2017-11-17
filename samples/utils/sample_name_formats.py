@@ -32,12 +32,12 @@ def verbose_sample_name_format(name_format):
 
     :param name_format: The name format
 
-    :type name_format: unicode
+    :type name_format: str
 
     :return:
       The verbose human-friendly name of this sample name format.
 
-    :rtype: unicode
+    :rtype: str
     """
     return settings.SAMPLE_NAME_FORMATS[name_format]["verbose_name"]
 
@@ -48,14 +48,14 @@ def sample_name_format(name, with_match_object=False):
 
     :param name: the sample name
 
-    :type name: unicode
+    :type name: str
 
     :return:
       The name of the sample name format and the respective match object.  The
       latter can be used to extract groups, for exampe.  ``None`` if the name
       had no valid format.
 
-    :rtype: (unicode, re.MatchObject) or NoneType.
+    :rtype: (str, re.MatchObject) or NoneType.
     """
     for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
         match = properties["regex"].match(name)

@@ -85,12 +85,12 @@ def substitute_formulae(string):
 
     :param string: raw text from the user or the database
 
-    :type string: unicode
+    :type string: str
 
     :return:
       The HTML-safe string with any LaTeX formulae replaced by Google images.
 
-    :rtype: unicode
+    :rtype: str
     """
     if "$" not in string:
         return escape(string)
@@ -241,8 +241,8 @@ def error_list(form, form_error_title, outest_tag="<table>", colspan=1):
         http://www.w3.org/Bugs/Public/show_bug.cgi?id=13770
 
     :type form: forms.Form
-    :type form_error_title: unicode
-    :type outest_tag: unicode
+    :type form_error_title: str
+    :type outest_tag: str
     :type colspan: int
     """
     if outest_tag == "<table>":

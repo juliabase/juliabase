@@ -426,7 +426,7 @@ def forms_from_database(user, deposition, remote_client, new_names):
     :type user: django.contrib.auth.models.User
     :type deposition: `samples.models.Deposition`
     :type remote_client: bool
-    :type new_names: dict mapping int to unicode
+    :type new_names: dict mapping int to str
 
     :return:
       list of original data (i.e. old names) of every sample, list of lists of
@@ -479,7 +479,7 @@ def split_and_rename_after_deposition(request, deposition_number):
         should be split and/or renamed
 
     :type request: HttpRequest
-    :type deposition_number: unicode
+    :type deposition_number: str
 
     :return:
       the HTTP response object

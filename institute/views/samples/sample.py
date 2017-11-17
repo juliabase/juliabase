@@ -130,7 +130,7 @@ def add_samples_to_database(add_samples_form, user):
     :return:
       the names of the new samples
 
-    :rtype: list of unicode
+    :rtype: list of str
     """
     cleaned_data = add_samples_form.cleaned_data
     cleaning_number = cleaned_data.get("cleaning_number")
@@ -258,7 +258,7 @@ def copy_informal_stack(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object
@@ -301,7 +301,7 @@ def printer_label(request, sample_id):
     :param sample_id: the ID of the sample
 
     :type request: HttpRequest
-    :type sample_id: unicode
+    :type sample_id: str
 
     :return:
       the HTTP response object

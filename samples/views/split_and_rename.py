@@ -275,7 +275,7 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
       the sample split instance, new pieces as a dictionary mapping the new
       names to the sample IDs
 
-    :rtype: `samples.models.SampleSplit`, dict mapping unicode to int
+    :rtype: `samples.models.SampleSplit`, dict mapping str to int
     """
     now = django.utils.timezone.now()
     if not sample_split:
@@ -323,7 +323,7 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     :param old_split_id: if given the process ID of the split to be modified
 
     :type request: HttpRequest
-    :type parent_name: unicode or NoneType
+    :type parent_name: str or NoneType
     :type old_split_id: int or NoneType
 
     :return:
@@ -382,7 +382,7 @@ def latest_split(request, sample_name):
     :param sample_name: the name of the sample
 
     :type request: HttpRequest
-    :type sample_name: unicode
+    :type sample_name: str
 
     :return:
       the HTTP response object

@@ -326,7 +326,7 @@ class ProcessWithoutSamplesView(TemplateView):
         :Return:
           the title of the response
 
-        :rtype: unicode
+        :rtype: str
         """
         return capfirst(_("edit {process}").format(process=self.process)) if self.id else \
             capfirst(_("add {class_name}").format(class_name=self.model._meta.verbose_name))
@@ -874,7 +874,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
 
         :param prefix: the prefix of the resulting form
 
-        :type prefix: unicode
+        :type prefix: str
 
         :Return:
           the step form
@@ -1049,7 +1049,7 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
       :py:class:`~samples.utils.views.SubprocessMultipleTypesForm`
     :type process_field: str
     :type short_labels: dict mapping
-      :py:class:`~samples.utils.views.SubprocessMultipleTypesForm` to unicode.
+      :py:class:`~samples.utils.views.SubprocessMultipleTypesForm` to str.
     """
     model = None
     form_class = None
@@ -1175,7 +1175,7 @@ class DepositionMultipleTypeView(MultipleStepTypesMixin, DepositionWithoutLayers
     :type step_form_classes: tuple of
       :py:class:`~samples.utils.views.SubprocessForm`
     :type short_labels: dict mapping
-      :py:class:`~samples.utils.views.SubprocessForm` to unicode.
+      :py:class:`~samples.utils.views.SubprocessForm` to str.
     """
 
     process_field = "deposition"

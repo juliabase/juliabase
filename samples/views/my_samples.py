@@ -254,7 +254,7 @@ def edit(request, username):
         changed
 
     :type request: HttpRequest
-    :type username: unicode
+    :type username: str
 
     :return:
       the HTTP response object

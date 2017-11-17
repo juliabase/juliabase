@@ -215,8 +215,7 @@ def encode_multipart_formdata(data):
 
     :param data: the POST data; it must not be ``None``
 
-    :type data: dict mapping unicode to unicode, int, float, bool, file, or
-      list
+    :type data: dict mapping str to str, int, float, bool, file, or list
 
     :return:
       the content type, the HTTP body
@@ -277,7 +276,7 @@ class JuliaBaseError(Exception):
       contains the URL to the error page (without the domain name).
 
     :type error_code: int
-    :type error_message: unicode
+    :type error_message: str
     """
 
     def __init__(self, error_code, message):
@@ -360,8 +359,7 @@ class JuliaBaseConnection:
             be JSON
 
         :type relative_url: str
-        :type data: dict mapping unicode to unicode, int, float, bool, file, or
-          list
+        :type data: dict mapping str to str, int, float, bool, file, or list
         :type response_is_json: bool
 
         :return:
@@ -417,8 +415,8 @@ def login(username, password, testserver=False):
     :param testserver: whether the testserver should be user.  If ``False``, the
         production server is used.
 
-    :type username: unicode
-    :type password: unicode
+    :type username: str
+    :type password: str
     :type testserver: bool
     """
     setup_logging()
@@ -471,12 +469,12 @@ def sanitize_for_markdown(text):
 
     :param text: the original string
 
-    :type text: unicode
+    :type text: str
 
     :return:
       the Markdown-ready string
 
-    :rtype: unicode
+    :rtype: str
     """
     text = text.replace("\r\n", "\n").replace("\r", "\n").replace("_", "\\_").replace("*", "\\*").replace("`", "\\`"). \
         replace("\n#", "\n\\#").replace("\n>", "\n\\>").replace("\n+", "\n\\+").replace("\n-", "\n\\-")

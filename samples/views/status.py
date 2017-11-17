@@ -182,7 +182,7 @@ def withdraw(request, id_):
     :param id_: the id of the message to be withdrawn
 
     :type request: HttpRequest
-    :type id_: unicode
+    :type id_: str
 
     :return:
       the HTTP response object

@@ -775,7 +775,7 @@ def choices_of_content_types(classes):
     :return:
       the choices, ready to be used for a ``MultipleChoiceField``
 
-    :rtype: list of (int, unicode)
+    :rtype: list of (int, str)
     """
     # FixMe: The translation functionality in this function may become
     # superfluous when Django Ticket #16803 is fixed.

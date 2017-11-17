@@ -143,7 +143,7 @@ def add_oldstyle(request, username):
         the currently logged-in user
 
     :type request: HttpRequest
-    :type username: unicode
+    :type username: str
 
     :return:
       the HTTP response object

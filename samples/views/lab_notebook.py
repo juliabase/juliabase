@@ -64,7 +64,7 @@ def parse_year_and_month(year_and_month):
     :param year_and_month: the year-and-month part of the URL given in the
         request, i.e. of the form ``"YYYY/MM"`` (the month may be single-digit)
 
-    :type year_and_month: unicode
+    :type year_and_month: str
 
     :return:
       year found in the URL, month found in the URL
@@ -104,7 +104,7 @@ def get_previous_next_urls(process_name, namespace, year, month):
       the full relative URL to the previous month, the full relative URL to the
       next month
 
-    :rtype: unicode, unicode
+    :rtype: str, str
     """
     previous_year = next_year = year
     previous_month = next_month = month
