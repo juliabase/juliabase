@@ -59,16 +59,16 @@ class PIDLock:
                 already_running = False
             except BlockingIOError:
                 already_running = True
-                logging.warning("WARNING: Lock {0} of other process active".format(self.lockfile_path))
+                logging.warning("Lock {0} of other process active".format(self.lockfile_path))
         except BlockingIOError:
             already_running = True
-            logging.warning("WARNING: Lock {0} of other process active".format(self.lockfile_path))
+            logging.warning("Lock {0} of other process active".format(self.lockfile_path))
         except ValueError:
             # Ignore invalid lock
             already_running = False
             self.lockfile.seek(0)
             self.lockfile.truncate()
-            logging.warning("WARNING: Lock {0} of other process has invalid content".format(self.lockfile_path))
+            logging.warning("Lock {0} of other process has invalid content".format(self.lockfile_path))
         else:
             try:
                 os.kill(pid, 0)
@@ -77,12 +77,11 @@ class PIDLock:
                 already_running = False
                 self.lockfile.seek(0)
                 self.lockfile.truncate()
-                logging.warning("WARNING: Lock {0} of other process is orphaned".format(self.lockfile_path))
+                logging.warning("Lock {0} of other process is orphaned".format(self.lockfile_path))
             else:
                 # sister process is already active
                 already_running = True
-                logging.warning("WARNING: Lock {0} of other process active (but strangely not locked)".
-                                format(self.lockfile_path))
+                logging.warning("Lock {0} of other process active (but strangely not locked)".format(self.lockfile_path))
         if not already_running:
             self.lockfile.write(str(os.getpid()))
             self.lockfile.flush()
