@@ -21,8 +21,13 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import logging, io
 import django.test
 import jb_remote.common
+
+
+log = io.StringIO()
+logging.basicConfig(stream=log)
 
 
 class TestCase(django.test.TestCase):

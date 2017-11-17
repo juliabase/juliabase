@@ -22,6 +22,7 @@
 
 from django.test import TestCase, override_settings
 from remote_client.jb_remote.crawler_tools import Locked, PIDLock
+from .tools import log
 
 
 @override_settings(ROOT_URLCONF="institute.tests.urls")
@@ -32,10 +33,9 @@ class LockingTest(TestCase):
             pass
 
     def test_double_locking(self):
-        import logging, io
-        log = io.StringIO()
-        logging.basicConfig(stream=log)
+        position = log.tell()
         with self.assertRaises(Locked):
             with PIDLock("test_program"), PIDLock("test_program", 0):
                 pass
-        self.assertEqual(log.getvalue().strip(), 'WARNING:root:Lock /tmp/test_program.pid of other process active')
+        log.seek(position)
+        self.assertEqual(log.read().strip(), 'WARNING:root:Lock /tmp/test_program.pid of other process active')
