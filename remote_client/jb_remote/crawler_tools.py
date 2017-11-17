@@ -53,8 +53,12 @@ class PIDLock:
             pid = int(self.lockfile.read().strip())
         except FileNotFoundError:
             self.lockfile = open(self.lockfile_path, "w")
-            fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX)
-            already_running = False
+            try:
+                fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX)
+                already_running = False
+            except BlockingIOError:
+                already_running = True
+                logging.warning("WARNING: Lock {0} of other process active".format(self.lockfile_path))
         except BlockingIOError:
             already_running = True
             logging.warning("WARNING: Lock {0} of other process active".format(self.lockfile_path))
