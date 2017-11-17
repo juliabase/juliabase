@@ -63,7 +63,7 @@ class PIDLock:
             already_running = False
             self.lockfile.seek(0)
             self.lockfile.truncate()
-            logging.error("ERROR: Lock {0} of other process has invalid content".format(self.lockfile_path))
+            logging.warning("WARNING: Lock {0} of other process has invalid content".format(self.lockfile_path))
         else:
             try:
                 os.kill(pid, 0)
