@@ -41,9 +41,10 @@ class PIDLock:
     lock file.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, timeout=10*60):
         self.lockfile_path = os.path.join("/tmp/", name + ".pid")
         self.lockfile = None
+        self.timeout = timeout
 
     def try_acquire_lock(self):
         import fcntl  # local because only available on Unix
@@ -91,8 +92,8 @@ class PIDLock:
 
     def __enter__(self):
         self.try_acquire_lock()
-        stop_timestamp = time.time() + 10 * 60
-        while time.time() < stop_timestamp and not self.lockfile:
+        stop_timestamp = time.time() + self.timeout
+        while self.timeout and time.time() < stop_timestamp and not self.lockfile:
             time.sleep(30)
             self.try_acquire_lock()
         if not self.lockfile:
