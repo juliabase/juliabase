@@ -115,8 +115,9 @@ class Path:
     :type was_removed: bool
     """
 
-    def __init__(self, path, type_, mtime, root=None):
-        self.path = pathlib.Path(os.path.join(root, path) if root else path)
+    def __init__(self, root, relative_path, type_, mtime):
+        self.relative_path = relative_path
+        self.path = pathlib.Path(os.path.join(root, relative_path))
         self.type_, self.mtime = type_, mtime
         self.done = False
 
@@ -289,9 +290,9 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
                 new_status = new_statuses.get(relative_filepath) or \
                     new_statuses.setdefault(relative_filepath, statuses[relative_filepath].copy())
                 new_status[1] = md5sum
-                path = Path(filepath, "modified" if status else "created", new_status[0])
+                path = Path(root, relative_filepath, "modified" if status else "created", new_status[0])
                 changed.append(path)
-    assert set(changed) == set(Path(path, "modified", 0, root) for path in new_statuses), (set(changed), set(new_statuses))
+    assert set(changed) == set(Path(root, path, "modified", 0) for path in new_statuses), (set(changed), set(new_statuses))
     changed.sort()
     return changed
 
@@ -353,7 +354,7 @@ def changed_files(root, diff_file, pattern=""):
     found, touched, new_statuses = _crawl_all(root, statuses, compiled_pattern)
     changed = _enrich_new_statuses(new_statuses, root, statuses, touched)
     removed = set(statuses) - found
-    removed = [Path(relative_filepath, "removed", 0, root) for relative_filepath in removed]
+    removed = [Path(root, relative_filepath, "removed", 0) for relative_filepath in removed]
 
     iterator = TrackingIterator(changed, removed)
     try:
