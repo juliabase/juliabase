@@ -18,83 +18,95 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, sys, re, subprocess, time, smtplib, email, logging, pickle, contextlib, pathlib, itertools
+import os, re, subprocess, time, smtplib, email, logging, pickle, contextlib, pathlib, itertools
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import deprecation
 from . import settings
 
 
+class Locked(Exception):
+    def __init__(self, lockfile_path):
+        super().__init__("Could not acquire lock for {}".format(lockfile_path))
+
+
 class PIDLock:
     """Class for process locking in with statements.  It works only on UNIX.  You
     can use this class like this::
 
-        with PIDLock("my_program") as locked:
-            if locked:
-                do_work()
-            else:
-                print "I'am already running.  I just exit."
+        with PIDLock("my_program"):
+            ...
 
     The parameter ``"my_program"`` is used for determining the name of the PID
     lock file.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, timeout=10*60):
         self.lockfile_path = os.path.join("/tmp/", name + ".pid")
-        self.locked = False
+        self.lockfile = None
+        self.timeout = timeout
 
-    def __enter__(self):
+    def try_acquire_lock(self):
         import fcntl  # local because only available on Unix
         try:
             self.lockfile = open(self.lockfile_path, "r+")
             fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             pid = int(self.lockfile.read().strip())
-        except IOError as e:
-            if e.strerror == "No such file or directory":
-                self.lockfile = open(self.lockfile_path, "w")
+        except FileNotFoundError:
+            self.lockfile = open(self.lockfile_path, "w")
+            try:
                 fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX)
                 already_running = False
-            elif e.strerror == "Resource temporarily unavailable":
+            except BlockingIOError:
                 already_running = True
-                sys.stderr.write("WARNING: Lock {0} of other process active\n".format(self.lockfile_path))
-            else:
-                raise
+                logging.warning("Lock {0} of other process active".format(self.lockfile_path))
+        except BlockingIOError:
+            already_running = True
+            logging.warning("Lock {0} of other process active".format(self.lockfile_path))
         except ValueError:
             # Ignore invalid lock
             already_running = False
             self.lockfile.seek(0)
             self.lockfile.truncate()
-            sys.stderr.write("ERROR: Lock {0} of other process has invalid content\n".format(self.lockfile_path))
+            logging.warning("Lock {0} of other process has invalid content".format(self.lockfile_path))
         else:
             try:
                 os.kill(pid, 0)
-            except OSError as error:
-                if error.strerror == "No such process":
-                    # Ignore invalid lock
-                    already_running = False
-                    self.lockfile.seek(0)
-                    self.lockfile.truncate()
-                    sys.stderr.write("WARNING: Lock {0} of other process is orphaned\n".format(self.lockfile_path))
-                else:
-                    raise
+            except ProcessLookupError:
+                # Ignore invalid lock
+                already_running = False
+                self.lockfile.seek(0)
+                self.lockfile.truncate()
+                logging.warning("Lock {0} of other process is orphaned".format(self.lockfile_path))
             else:
                 # sister process is already active
                 already_running = True
-                sys.stderr.write("WARNING: Lock {0} of other process active (but strangely not locked)\n".
-                                 format(self.lockfile_path))
+                logging.warning("Lock {0} of other process active (but strangely not locked)".format(self.lockfile_path))
         if not already_running:
             self.lockfile.write(str(os.getpid()))
             self.lockfile.flush()
-            self.locked = True
-        return self.locked
+        else:
+            self.lockfile.close()
+            self.lockfile = None
+
+    def __enter__(self):
+        self.try_acquire_lock()
+        stop_timestamp = time.time() + self.timeout
+        while self.timeout and time.time() < stop_timestamp and not self.lockfile:
+            time.sleep(30)
+            self.try_acquire_lock()
+        if not self.lockfile:
+            raise Locked(self.lockfile_path)
+        # FixMe: Only for compatibility.  This should be removed in future
+        # versions.
+        return True
 
     def __exit__(self, type_, value, tb):
         import fcntl
-        if self.locked:
-            fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_UN)
-            self.lockfile.close()
-            os.remove(self.lockfile_path)
-            logging.info("Removed lock {0}".format(self.lockfile_path))
+        fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_UN)
+        self.lockfile.close()
+        os.remove(self.lockfile_path)
+        logging.info("Removed lock {0}".format(self.lockfile_path))
 
 
 class Path:
