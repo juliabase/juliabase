@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, sys, re, subprocess, time, smtplib, email, logging, pickle, contextlib, pathlib, itertools
+import os, re, subprocess, time, smtplib, email, logging, pickle, contextlib, pathlib, itertools
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import deprecation
@@ -57,13 +57,13 @@ class PIDLock:
             already_running = False
         except BlockingIOError:
             already_running = True
-            sys.stderr.write("WARNING: Lock {0} of other process active\n".format(self.lockfile_path))
+            logging.warning("WARNING: Lock {0} of other process active".format(self.lockfile_path))
         except ValueError:
             # Ignore invalid lock
             already_running = False
             self.lockfile.seek(0)
             self.lockfile.truncate()
-            sys.stderr.write("ERROR: Lock {0} of other process has invalid content\n".format(self.lockfile_path))
+            logging.error("ERROR: Lock {0} of other process has invalid content".format(self.lockfile_path))
         else:
             try:
                 os.kill(pid, 0)
@@ -72,12 +72,12 @@ class PIDLock:
                 already_running = False
                 self.lockfile.seek(0)
                 self.lockfile.truncate()
-                sys.stderr.write("WARNING: Lock {0} of other process is orphaned\n".format(self.lockfile_path))
+                logging.warning("WARNING: Lock {0} of other process is orphaned".format(self.lockfile_path))
             else:
                 # sister process is already active
                 already_running = True
-                sys.stderr.write("WARNING: Lock {0} of other process active (but strangely not locked)\n".
-                                 format(self.lockfile_path))
+                logging.warning("WARNING: Lock {0} of other process active (but strangely not locked)".
+                                format(self.lockfile_path))
         if not already_running:
             self.lockfile.write(str(os.getpid()))
             self.lockfile.flush()
