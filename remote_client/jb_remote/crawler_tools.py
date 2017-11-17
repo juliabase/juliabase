@@ -42,6 +42,16 @@ class PIDLock:
     """
 
     def __init__(self, name, timeout=10*60):
+        """Class constructor.  If the lock cannot be acquired at the first try, it is
+        re-tried every 30 seconds.
+
+        :param name: program name, from which the PID lock file name is derived
+        :param timeout: time to wait for the lock in seconds; if set to 0, it
+          is tried to acquire the lock exactly once.
+
+        :type name: str
+        :type timeout: int
+        """
         self.lockfile_path = os.path.join("/tmp/", name + ".pid")
         self.lockfile = None
         self.timeout = timeout
