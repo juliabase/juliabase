@@ -51,16 +51,13 @@ class PIDLock:
             self.lockfile = open(self.lockfile_path, "r+")
             fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             pid = int(self.lockfile.read().strip())
-        except IOError as e:
-            if e.strerror == "No such file or directory":
-                self.lockfile = open(self.lockfile_path, "w")
-                fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX)
-                already_running = False
-            elif e.strerror == "Resource temporarily unavailable":
-                already_running = True
-                sys.stderr.write("WARNING: Lock {0} of other process active\n".format(self.lockfile_path))
-            else:
-                raise
+        except FileNotFoundError:
+            self.lockfile = open(self.lockfile_path, "w")
+            fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX)
+            already_running = False
+        except BlockingIOError:
+            already_running = True
+            sys.stderr.write("WARNING: Lock {0} of other process active\n".format(self.lockfile_path))
         except ValueError:
             # Ignore invalid lock
             already_running = False
@@ -70,15 +67,12 @@ class PIDLock:
         else:
             try:
                 os.kill(pid, 0)
-            except OSError as error:
-                if error.strerror == "No such process":
-                    # Ignore invalid lock
-                    already_running = False
-                    self.lockfile.seek(0)
-                    self.lockfile.truncate()
-                    sys.stderr.write("WARNING: Lock {0} of other process is orphaned\n".format(self.lockfile_path))
-                else:
-                    raise
+            except ProcessLookupError:
+                # Ignore invalid lock
+                already_running = False
+                self.lockfile.seek(0)
+                self.lockfile.truncate()
+                sys.stderr.write("WARNING: Lock {0} of other process is orphaned\n".format(self.lockfile_path))
             else:
                 # sister process is already active
                 already_running = True
