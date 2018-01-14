@@ -345,32 +345,6 @@ def successful_response(request, success_report=None, view=None, kwargs={}, quer
     return HttpResponseSeeOther(django.urls.reverse(view or None, kwargs=kwargs) + query_string)
 
 
-def unicode_strftime(timestamp, format_string):
-    """Formats a timestamp to a string.  Unfortunately, the built-in method
-    ``strftime`` of datetime.datetime objects is not unicode-safe.  Therefore,
-    I have to do a conversion into an UTF-8 intermediate representation.  In
-    Python 3.0, this problem is gone.  Note that this routine does not change
-    the timezone of the timestamp.  It may be necessary to convert to the
-    current time zone first.
-
-    :param timestamp: the timestamp to be converted
-    :param format_string: The format string that contains the pattern (i.e. all
-        the ``"%..."`` sequences) according to which the timestamp should be
-        formatted.  Note that if it should be translatable, you mast do this in
-        the calling context.
-
-    :type timestamp: datetime.datetime
-    :type format_string: str
-
-    :return:
-      the formatted timestamp, as a Unicode string
-
-    :rtype: str
-    """
-    format_string = force_text(format_string)
-    return timestamp.strftime(format_string)
-
-
 def send_email(subject, content, recipients, format_dict=None):
     """Sends one email to a user.  Both subject and content are translated to
     the recipient's language.  To make this work, you must tag the original

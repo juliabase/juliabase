@@ -255,7 +255,7 @@ def timestamp(value, minimal_inaccuracy=0):
         timestamp_ = value["timestamp"]
         inaccuracy = value.get("timestamp_inaccuracy", 0)
     timestamp_ = timestamp_.astimezone(django.utils.timezone.get_current_timezone())
-    return jb_common.utils.base.unicode_strftime(timestamp_, timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)])
+    return timestamp_.strftime(timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)])
 
 
 @register.filter
@@ -283,7 +283,7 @@ def status_timestamp(value, type_):
     if inaccuracy == 6:
         return None
     timestamp_ = timestamp_.astimezone(django.utils.timezone.get_current_timezone())
-    return mark_safe(jb_common.utils.base.unicode_strftime(timestamp_, timestamp_formats[inaccuracy]))
+    return mark_safe(timestamp_.strftime(timestamp_formats[inaccuracy]))
 
 
 # FixMe: This pattern should probably be moved to settings.py.
