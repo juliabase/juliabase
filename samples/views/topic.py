@@ -257,7 +257,7 @@ def edit(request, id):
                 request, _("Members of topic “{name}” were successfully updated.").format(name=topic.name))
     else:
         edit_topic_form = \
-            EditTopicForm(request.user, topic, initial={"members": topic.members.values_list("pk", flat=True),
+            EditTopicForm(request.user, topic, initial={"members": list(topic.members.values_list("pk", flat=True)),
                                                         "topic_manager": topic.manager.pk})
     return render(request, "samples/edit_topic.html", {"title": _("Change topic memberships of “{0}”").format(topic.name),
                                                        "edit_topic": edit_topic_form})
