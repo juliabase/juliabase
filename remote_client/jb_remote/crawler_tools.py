@@ -165,10 +165,6 @@ class Path:
         completely successfully, so that it does not need to be re-visited.
         You may call this method multiple times for the same filepath; it is
         idempotent.
-
-        :param path: path to be checked off as done
-
-        :type path: `Path`
         """
         self.done = True
 
