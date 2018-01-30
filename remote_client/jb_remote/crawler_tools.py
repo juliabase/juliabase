@@ -121,7 +121,8 @@ class PIDLock:
 
 class Path:
     """Class that holds one absolut file system path.  All the “``was_...``”
-    properties compare to the situation at the last run of `changed_files`.
+    properties compare to the situation at the last run of `changed_files`.  It
+    implements the path-like protocol.
 
     :ivar was_changed: this path was changed (i.e. created or modified)
 
@@ -172,6 +173,9 @@ class Path:
         self.done = True
 
     def __str__(self):
+        return str(self.path)
+
+    def __fspath__(self):
         return str(self.path)
 
     def __eq__(self, other):
