@@ -132,10 +132,16 @@ class Path:
 
     :ivar was_removed: this path was removed
 
+    :ivar path: the actual absolute path
+
+    :ivar relative_path: the original relative path given to the constructor
+
     :type was_changed: bool
     :type was_modified: bool
     :type was_created: bool
     :type was_removed: bool
+    :type path: pathlib.path
+    :type relative_path: str
     """
 
     def __init__(self, root, relative_path, type_, mtime):
