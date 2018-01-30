@@ -140,7 +140,7 @@ class Path:
 
     def __init__(self, root, relative_path, type_, mtime):
         self.relative_path = relative_path
-        self.path = pathlib.Path(os.path.join(root, relative_path))
+        self.path = pathlib.Path(root)/relative_path
         self.type_, self.mtime = type_, mtime
         self.done = False
 
