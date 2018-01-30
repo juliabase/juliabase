@@ -360,9 +360,6 @@ def changed_files(root, diff_file, pattern=""):
 
     :rtype: iterator of `Path`
     """
-    def relative(path):
-        return os.path.relpath(str(path), root)
-
     compiled_pattern = re.compile(pattern, re.IGNORECASE)
     if os.path.exists(diff_file):
         statuses, last_pattern = pickle.load(open(diff_file, "rb"), encoding="utf-8")
@@ -383,13 +380,13 @@ def changed_files(root, diff_file, pattern=""):
         yield iterator
     except Exception as error:
         path = iterator.items and iterator.items[-1]
-        relative_path = '"{}"'.format(relative(path)) if path else "unknown file"
+        relative_path = '"{}"'.format(path.relative_path) if path else "unknown file"
         logging.critical('Crawler error at {0} (aborting): {1}'.format(relative_path, error))
 
     twelve_weeks_ago = time.time() - 12 * 7 * 24 * 3600
     statuses_changed = False
     for path in iterator.items:
-        relative_path = relative(path)
+        relative_path = path.relative_path
         if path.done:
             statuses_changed = True
             if path.was_changed:
