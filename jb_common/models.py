@@ -83,7 +83,7 @@ class UserDetails(models.Model):
         verbose_name_plural = _("user details")
 
     def __init__(self, *args, **kwargs):
-        super(UserDetails, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._old = self.get_data_hash()
 
     def __str__(self):
@@ -92,7 +92,7 @@ class UserDetails(models.Model):
     def save(self, *args, **kwargs):
         if self._old != self.get_data_hash():
             self.layout_last_modified = django.utils.timezone.now()
-        super(UserDetails, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def get_data_hash(self):
         """Get the hash of all fields that change the HTML's appearance,
@@ -204,7 +204,7 @@ class Topic(models.Model):
         """When the topic was edited, the sub topics must be updated.
         """
         self.__check_duplicate()
-        super(Topic, self).save()
+        super().save()
         for child_topic in self.child_topics.iterator():
             child_topic.confidential = self.confidential
             child_topic.members = self.members.all()
@@ -245,10 +245,10 @@ class PolymorphicModel(models.Model):
     def save(self, *args, **kwargs):
         """Saves the instance and assures that `actual_instance` is set.
         """
-        super(PolymorphicModel, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if not self.actual_object_id:
             self.actual_instance = self
-            super(PolymorphicModel, self).save()
+            super().save()
 
     class Meta:
         abstract = True

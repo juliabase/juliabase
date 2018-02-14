@@ -63,7 +63,7 @@ class JuliaBaseConnection(jb_remote.common.JuliaBaseConnection):
         :type client: ``django.test.Client``
         """
         self.client = client
-        super(JuliaBaseConnection, self).__init__()
+        super().__init__()
         self.root_url = "/"
         self.extra = {"HTTP_ACCEPT": "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7"}
 

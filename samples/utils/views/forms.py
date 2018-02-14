@@ -144,7 +144,7 @@ class OperatorField(forms.ChoiceField):
         :rtype: django.contrib.auth.models.User,
           django.contrib.auth.models.User
         """
-        value = super(OperatorField, self).clean(value)
+        value = super().clean(value)
         if value.startswith("extern-"):
             external_operator = models.ExternalOperator.objects.get(pk=int(value[7:]))
             return None, external_operator
@@ -176,7 +176,7 @@ class ProcessForm(ModelForm):
         if not self.process:
             kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
             kwargs["initial"].setdefault("combined_operator", user.pk)
-        super(ProcessForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if self.process and self.process.finished:
             self.fields["finished"].disabled = True
         self.fields["combined_operator"].set_choices(user, self.process)
@@ -208,7 +208,7 @@ class ProcessForm(ModelForm):
         return True
 
     def clean(self):
-        cleaned_data = super(ProcessForm, self).clean()
+        cleaned_data = super().clean()
         final_operator = cleaned_data.get("operator")
         final_external_operator = cleaned_data.get("external_operator")
         if cleaned_data.get("combined_operator"):
@@ -268,7 +268,7 @@ class DepositionForm(ProcessForm):
     """Model form for depositions (not their layers).
     """
     def __init__(self, user, data=None, **kwargs):
-        super(DepositionForm, self).__init__(user, data, **kwargs)
+        super().__init__(user, data, **kwargs)
         if self.process and self.process.finished:
             self.fields["number"].widget.attrs.update({"readonly": "readonly"})
 
@@ -330,7 +330,7 @@ class InitialsForm(forms.Form):
     initials = forms.CharField(label=capfirst(_("initials")), max_length=4, required=False)
 
     def __init__(self, person, initials_mandatory, *args, **kwargs):
-        super(InitialsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["initials"].required = initials_mandatory
         self.person = person
         self.is_user = isinstance(person, django.contrib.auth.models.User)
@@ -383,7 +383,7 @@ class EditDescriptionForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         kwargs["prefix"] = "edit_description"
-        super(EditDescriptionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["description"].widget.attrs["rows"] = 3
 
     def clean_description(self):
@@ -465,7 +465,7 @@ class SampleField(GeneralSampleField, forms.ChoiceField):
     """
 
     def clean(self, value):
-        value = super(SampleField, self).clean(value)
+        value = super().clean(value)
         if value:
             return models.Sample.objects.get(pk=int(value))
 
@@ -479,7 +479,7 @@ class MultipleSamplesField(GeneralSampleField, forms.MultipleChoiceField):
     def clean(self, value):
         if value == [""]:
             value = []
-        value = super(MultipleSamplesField, self).clean(value)
+        value = super().clean(value)
         return models.Sample.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
@@ -515,7 +515,7 @@ class FixedOperatorField(forms.ChoiceField):
             self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
 
     def clean(self, value):
-        value = super(FixedOperatorField, self).clean(value)
+        value = super().clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
 
@@ -851,7 +851,7 @@ class SampleSelectForm(forms.Form):
         :type process_instance: `samples.models.Process`
         :type preset_sample: `samples.models.Sample`
         """
-        super(SampleSelectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         samples = user.my_samples.all()
         important_samples = set()
         if process_instance:
@@ -876,7 +876,7 @@ class MultipleSamplesSelectForm(GenericMultipleSamplesSelectForm):
     """Form for the list selection of samples that took part in a process.
     """
     def __init__(self, user, process_instance, preset_sample, *args, **kwargs):
-        super(MultipleSamplesSelectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         samples = user.my_samples.all()
         important_samples = set()
         if process_instance:
@@ -908,14 +908,14 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
                 # submitting.  This is necessary for depositions because they can
                 # change the name of samples, and so changing the affected samples
                 # afterwards is a source of big trouble.
-                super(DepositionSamplesForm, self).__init__(**kwargs)
+                super().__init__(**kwargs)
                 self.fields["sample_list"].disabled = True
                 self.dont_check_validity = True
             else:
-                super(DepositionSamplesForm, self).__init__(data, **kwargs)
+                super().__init__(data, **kwargs)
             important_samples.update(deposition.samples.all())
         else:
-            super(DepositionSamplesForm, self).__init__(data, **kwargs)
+            super().__init__(data, **kwargs)
             self.fields["sample_list"].initial = []
             if preset_sample:
                 important_samples.add(preset_sample)

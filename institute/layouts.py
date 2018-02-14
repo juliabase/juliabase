@@ -46,7 +46,7 @@ class NoStructuringFound(Exception):
     def __init__(self, sample, timestamp):
         message = "No structuring process before {0} for sample {1} found.".format(timestamp, sample) if timestamp else \
             "No structuring process for sample {0} found.".format(sample)
-        super(NoStructuringFound, self).__init__(message)
+        super().__init__(message)
 
 
 def get_current_structuring(sample, timestamp=None):

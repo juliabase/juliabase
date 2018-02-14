@@ -42,7 +42,7 @@ class SamplesForm(forms.Form):
     samples = utils.MultipleSamplesField(label=_("Claimed samples"), help_text=_("“My Samples” are eligible."))
 
     def __init__(self, user, *args, **kwargs):
-        super(SamplesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["samples"].set_samples(user,
             user.my_samples.exclude(currently_responsible_person=user).
             filter(Q(topic__confidential=False) | Q(topic__members=user)).distinct())
@@ -61,7 +61,7 @@ class ReviewerForm(forms.Form):
     """
     reviewer = ReviewerChoiceField(label=_("Requested reviewer"), queryset=None)
     def __init__(self, *args, **kwargs):
-        super(ReviewerForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         permission = django.contrib.auth.models.Permission.objects.get(
             codename="adopt_samples", content_type=ContentType.objects.get_for_model(models.Sample))
         self.fields["reviewer"].queryset = django.contrib.auth.models.User.objects.filter(
@@ -162,7 +162,7 @@ class CloseForm(forms.Form):
     close = forms.BooleanField(required=False)
 
     def __init__(self, label, *args, **kwargs):
-        super(CloseForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["close"].label = label
 
 

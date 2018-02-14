@@ -53,7 +53,7 @@ class UserDetailsForm(forms.ModelForm):
         fields = ("auto_addition_topics", "only_important_news", "subscribed_feeds",)
 
     def __init__(self, user, *args, **kwargs):
-        super(UserDetailsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["auto_addition_topics"].queryset = user.topics
         choices = []
         processes = [process_class for process_class in jb_common_utils.get_all_models().values()

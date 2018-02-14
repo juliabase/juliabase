@@ -49,7 +49,7 @@ class PrefixesForm(forms.Form):
     prefix = forms.ChoiceField(label=_("Prefix"))
 
     def __init__(self, available_prefixes, *args, **kwargs):
-        super(PrefixesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["prefix"].choices = available_prefixes
 
 
@@ -72,7 +72,7 @@ class NewNameForm(forms.Form):
         :type prefix_: str
         :type sample: samples.models.Sample
         """
-        super(NewNameForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.prefix_ = prefix_
         old_name_format = sample_names.sample_name_format(sample.name)
         if old_name_format:

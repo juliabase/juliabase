@@ -120,7 +120,7 @@ class PDSMeasurement(PhysicalProcess):
         context = old_context.copy()
         plot_locations = self.calculate_plot_locations()
         context["thumbnail"], context["figure"] = plot_locations["thumbnail_url"], plot_locations["plot_url"]
-        return super(PDSMeasurement, self).get_context_for_user(user, context)
+        return super().get_context_for_user(user, context)
 
 
 irradiation_choices = (("AM1.5", "AM1.5"),
@@ -157,11 +157,11 @@ class SolarsimulatorMeasurement(PhysicalProcess):
             else:
                 default_cell = sorted([(cell.isc, cell.position) for cell in cells], reverse=True)[0][1]
             context["default_cell"] = (default_cell,) + context["image_urls"][default_cell]
-        return super(SolarsimulatorMeasurement, self).get_context_for_user(user, context)
+        return super().get_context_for_user(user, context)
 
     def get_data(self):
         # See `Process.get_data` for documentation of this method.
-        data = super(SolarsimulatorMeasurement, self).get_data()
+        data = super().get_data()
         for cell in self.cells.all():
             cell_data = cell.get_data()
             del cell_data["measurement"]
@@ -170,7 +170,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
-        data_node = super(SolarsimulatorMeasurement, self).get_data_for_table_export()
+        data_node = super().get_data_for_table_export()
         best_eta = self.cells.aggregate(models.Max("eta"))["eta__max"]
         data_node.items.append(DataItem(_("η of best cell") + "/%", jb_common.utils.base.round(best_eta, 3)))
         return data_node
@@ -215,7 +215,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
         :rtype: `jb_common.search.SearchTreeNode`
         """
-        model_field = super(SolarsimulatorMeasurement, cls).get_search_tree_node()
+        model_field = super().get_search_tree_node()
         model_field.search_fields = [search.TextSearchField(cls, "operator", "username"),
                          search.TextSearchField(cls, "external_operator", "name"),
                          search.DateTimeSearchField(cls, "timestamp"),

@@ -54,7 +54,7 @@ class OriginalDataForm(Form):
     def __init__(self, remote_client, deposition_number, post_data=None, *args, **kwargs):
         if "initial" not in kwargs:
             kwargs["initial"] = {}
-        super(OriginalDataForm, self).__init__(post_data, *args, **kwargs)
+        super().__init__(post_data, *args, **kwargs)
         self.remote_client, self.deposition_number = remote_client, deposition_number
 
     def clean_new_name(self):
@@ -88,7 +88,7 @@ class OriginalDataForm(Form):
         return self.cleaned_data["number_of_pieces"]
 
     def clean(self):
-        cleaned_data = super(OriginalDataForm, self).clean()
+        cleaned_data = super().clean()
         if "new_name" in cleaned_data:
             new_name = cleaned_data["new_name"]
             sample = cleaned_data.get("sample")
@@ -118,7 +118,7 @@ class NewNameForm(Form):
     new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30)
 
     def __init__(self, user, readonly, data=None, **kwargs):
-        super(NewNameForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         self.fields["new_name"].widget = forms.TextInput(attrs={"size": "15"})
         if readonly:
             self.fields["new_name"].widget.attrs["readonly"] = "readonly"
@@ -144,7 +144,7 @@ class GlobalNewDataForm(Form):
         value and their layout.
         """
         deposition_instance = kwargs.pop("deposition_instance")
-        super(GlobalNewDataForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         self.fields["new_location"].initial = \
             models.default_location_of_deposited_samples.get(deposition_instance.__class__, "")
         self.fields["new_location"].widget = forms.TextInput(attrs={"size": "40"})

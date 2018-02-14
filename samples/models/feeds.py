@@ -75,13 +75,13 @@ class FeedEntry(PolymorphicModel):
         :return:
           ``None``
         """
-        super(FeedEntry, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         entry_hash = hashlib.sha1()
         entry_hash.update(repr(self.timestamp).encode())
         entry_hash.update(repr(self.originator).encode())
         entry_hash.update(repr(self.id).encode())
         self.sha1_hash = entry_hash.hexdigest()
-        super(FeedEntry, self).save()
+        super().save()
 
     def get_metadata(self):
         """Return the title of this feed entry, as a plain string (no HTML),

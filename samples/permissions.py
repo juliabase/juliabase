@@ -350,7 +350,7 @@ class PermissionError(Exception):
         :type description: str
         :type new_topic_would_help: bool
         """
-        super(PermissionError, self).__init__(_("Permission denied: ") + description)
+        super().__init__(_("Permission denied: ") + description)
         self.user, self.description, self.new_topic_would_help = user, description, new_topic_would_help
 
 
@@ -361,7 +361,7 @@ class NoDepartment:
     _instance = None
     def __new__(cls, *args, **kwargs):
         if cls._instance is not None:
-            cls._instance = super(NoDepartment, cls).__new__(cls, *args, **kwargs)
+            cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
     def __eq__(self, other):
         return False

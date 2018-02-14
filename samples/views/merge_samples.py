@@ -45,7 +45,7 @@ class MergeSamplesForm(forms.Form):
         *drastically* faster.
         """
         choices = kwargs.pop("choices", None)
-        super(MergeSamplesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.user = user
         if choices is None:
             self.fields["from_sample"].set_samples(user)
@@ -70,7 +70,7 @@ class MergeSamplesForm(forms.Form):
             except IndexError:
                 return None
 
-        cleaned_data = super(MergeSamplesForm, self).clean()
+        cleaned_data = super().clean()
         from_sample = cleaned_data.get("from_sample")
         to_sample = cleaned_data.get("to_sample")
         if from_sample and not to_sample:

@@ -241,7 +241,7 @@ class TextNullSearchField(SearchField):
 
     class TextNullForm(forms.Form):
         def clean(self):
-            cleaned_data = super(TextNullSearchField.TextNullForm, self).clean()
+            cleaned_data = super().clean()
             text = [value for key, value in self.cleaned_data.items() if key.endswith("_main")][0]
             explicitly_empty = [value for key, value in self.cleaned_data.items() if key.endswith("_null")][0]
             if explicitly_empty and text:
@@ -333,7 +333,7 @@ class DateTimeField(forms.Field):
     def __init__(self, *args, **kwargs):
         self.start = kwargs.pop("start")
         self.with_inaccuracy = kwargs.pop("with_inaccuracy", False)
-        super(DateTimeField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self, value):
         if not value:
@@ -422,7 +422,7 @@ class SearchModelForm(forms.Form):
     _search_parameters_hash = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, models, data=None, **kwargs):
-        super(SearchModelForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         choices = [(model.__name__, model._meta.verbose_name) for model in models]
         choices.sort(key=lambda choice: str(choice[1]).lower())
         self.fields["_model"].choices = [("", "---------")] + choices
@@ -745,7 +745,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
         :type choice_field_label: str
         :type choice_field_help_text: str
         """
-        super(AbstractSearchTreeNode, self).__init__(common_base_class, related_models, search_fields)
+        super().__init__(common_base_class, related_models, search_fields)
         self.derivatives = []
         for derivative in derivatives:
             node = SearchTreeNode(derivative, related_models, copy.copy(search_fields))
@@ -825,7 +825,7 @@ class DetailsSearchTreeNode(SearchTreeNode):
         :type search_fields: list of `SearchField`
         :type details_model_attribute: str
         """
-        super(DetailsSearchTreeNode, self).__init__(model_class, related_models, search_fields)
+        super().__init__(model_class, related_models, search_fields)
         self.details_model_attribute = details_model_attribute
         self.details_model_class = getattr(model_class, details_model_attribute).related.related_model
         self.details_node = self.details_model_class.get_search_tree_node()

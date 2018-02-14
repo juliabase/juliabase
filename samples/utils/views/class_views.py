@@ -123,7 +123,7 @@ class ProcessWithoutSamplesView(TemplateView):
         self.model = self.model or self.form_class.Meta.model
         self.class_name = camel_case_to_underscores(self.model.__name__)
         self.template_name = "samples/edit_{}.html".format(self.class_name)
-        super(ProcessWithoutSamplesView, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.forms = {}
 
     def startup(self):
@@ -274,7 +274,7 @@ class ProcessWithoutSamplesView(TemplateView):
         """
         self.startup()
         self.build_forms()
-        return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """Processes a POST request.  This method is part of the Django API for
@@ -297,7 +297,7 @@ class ProcessWithoutSamplesView(TemplateView):
             self.process = self.save_to_database()
             return self.create_successful_response(request)
         else:
-            return super(ProcessWithoutSamplesView, self).get(request, *args, **kwargs)
+            return super().get(request, *args, **kwargs)
 
     def create_successful_response(self, request):
         """Creates a `success` response and triggers a HTTP redirect.
@@ -345,7 +345,7 @@ class ProcessWithoutSamplesView(TemplateView):
         context["title"] = self.get_title()
         context.update(kwargs)
         context.update(self.forms)
-        return super(ProcessWithoutSamplesView, self).get_context_data(**context)
+        return super().get_context_data(**context)
 
 
 class ProcessView(ProcessWithoutSamplesView):
@@ -365,17 +365,17 @@ class ProcessView(ProcessWithoutSamplesView):
     """
 
     def build_forms(self):
-        super(ProcessView, self).build_forms()
+        super().build_forms()
         if "sample" not in self.forms:
             self.forms["sample"] = utils.SampleSelectForm(self.request.user, self.process, self.preset_sample, self.data)
 
     def is_referentially_valid(self):
-        referentially_valid = super(ProcessView, self).is_referentially_valid()
+        referentially_valid = super().is_referentially_valid()
         referentially_valid = self.forms["process"].is_referentially_valid(self.forms["sample"]) and referentially_valid
         return referentially_valid
 
     def save_to_database(self):
-        process = super(ProcessView, self).save_to_database()
+        process = super().save_to_database()
         if self.forms["sample"].is_bound:
             process.samples = [self.forms["sample"].cleaned_data["sample"]]
         return process
@@ -388,18 +388,18 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
     """
 
     def build_forms(self):
-        super(ProcessMultipleSamplesView, self).build_forms()
+        super().build_forms()
         if "samples" not in self.forms:
             self.forms["samples"] = utils.MultipleSamplesSelectForm(self.request.user, self.process, self.preset_sample,
                                                                     self.data)
 
     def is_referentially_valid(self):
-        referentially_valid = super(ProcessMultipleSamplesView, self).is_referentially_valid()
+        referentially_valid = super().is_referentially_valid()
         referentially_valid = referentially_valid and self.forms["process"].is_referentially_valid(self.forms["samples"])
         return referentially_valid
 
     def save_to_database(self):
-        process = super(ProcessMultipleSamplesView, self).save_to_database()
+        process = super().save_to_database()
         if self.forms["samples"].is_bound:
             process.samples = self.forms["samples"].cleaned_data["sample_list"]
         return process
@@ -423,11 +423,11 @@ class RemoveFromMySamplesMixin(ProcessWithoutSamplesView):
     """
 
     def build_forms(self):
-        super(RemoveFromMySamplesMixin, self).build_forms()
+        super().build_forms()
         self.forms["remove_from_my_samples"] = RemoveFromMySamplesForm(self.data) if not self.id else None
 
     def save_to_database(self):
-        process = super(RemoveFromMySamplesMixin, self).save_to_database()
+        process = super().save_to_database()
         if self.forms["remove_from_my_samples"] and \
            self.forms["remove_from_my_samples"].cleaned_data["remove_from_my_samples"]:
             remove_samples_from_my_samples(process.samples.all(), self.request.user)
@@ -445,7 +445,7 @@ class SamplePositionForm(forms.Form):
         :type sample: `samples.models.Sample`
         """
         kwargs["prefix"] = "sample_positions-{}".format(sample.id)
-        super(SamplePositionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.sample = sample
 
 
@@ -481,7 +481,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
 
     def build_forms(self):
         self.form_class = self._form_class_with_exclude()
-        super(SamplePositionsMixin, self).build_forms()
+        super().build_forms()
         self.forms["sample_positions"] = []
         if self.request.method == "POST":
             sample_ids = self.data.getlist("sample_list") or self.data.getlist("sample")
@@ -509,7 +509,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
                         self.forms["sample_positions"].append(SamplePositionForm(sample))
 
     def save_to_database(self):
-        process = super(SamplePositionsMixin, self).save_to_database()
+        process = super().save_to_database()
         sample_positions = {}
         for sample_position_form in self.forms["sample_positions"]:
             sample_id = sample_position_form.sample.id
@@ -529,7 +529,7 @@ class SubprocessForm(forms.ModelForm):
     constructor every time.
     """
     def __init__(self, view, *args, **kwargs):
-        super(SubprocessForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.view = view
 
 
@@ -568,11 +568,11 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
     sub_model = None
 
     def __init__(self, **kwargs):
-        super(SubprocessesMixin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sub_model = self.sub_model or self.subform_class.Meta.model
 
     def build_forms(self):
-        super(SubprocessesMixin, self).build_forms()
+        super().build_forms()
         if self.id:
             subprocesses = getattr(self.process, self.subprocess_field)
             if not self.sub_model._meta.ordering:
@@ -601,14 +601,14 @@ class SubprocessesMixin(ProcessWithoutSamplesView):
                                           for index, subprocess in enumerate(subprocesses.all())]
 
     def is_referentially_valid(self):
-        referentially_valid = super(SubprocessesMixin, self).is_referentially_valid()
+        referentially_valid = super().is_referentially_valid()
         if not self.forms["subprocesses"]:
             self.forms["process"].add_error(None, ValidationError(_("No subprocesses given."), code="required"))
             referentially_valid = False
         return referentially_valid
 
     def save_to_database(self):
-        process = super(SubprocessesMixin, self).save_to_database()
+        process = super().save_to_database()
         getattr(process, self.subprocess_field).all().delete()
         for form in self.forms["subprocesses"]:
             subprocess = form.save(commit=False)
@@ -628,7 +628,7 @@ class ChangeStepForm(forms.Form):
                                         choices=(("", "---------"), ("up", _("up")), ("down", _("down"))))
 
     def clean(self):
-        cleaned_data = super(ChangeStepForm, self).clean()
+        cleaned_data = super().clean()
         operations = 0
         if cleaned_data["duplicate_this_step"]:
             operations += 1
@@ -649,7 +649,7 @@ class AddMyStepsForm(forms.Form):
     my_step_to_be_added = forms.ChoiceField(label=_("Nickname of My Step to be added"), required=False)
 
     def __init__(self, view, data=None, **kwargs):
-        super(AddMyStepsForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         self.fields["my_step_to_be_added"].choices = utils.get_my_steps(view.request.user.samples_user_details, view.model)
         self.model = view.model
 
@@ -704,7 +704,7 @@ class AddStepsForm(AddMyStepsForm):
                                                  required=False)
 
     def __init__(self, view, data=None, **kwargs):
-        super(AddStepsForm, self).__init__(view, data, **kwargs)
+        super().__init__(view, data, **kwargs)
         self.fields["number_of_steps_to_add"].widget.attrs["size"] = "5"
         self.model = view.model
 
@@ -712,7 +712,7 @@ class AddStepsForm(AddMyStepsForm):
         return int_or_zero(self.cleaned_data["number_of_steps_to_add"])
 
     def change_structure(self, structure_changed, new_steps):
-        structure_changed, new_steps = super(AddStepsForm, self).change_structure(structure_changed, new_steps)
+        structure_changed, new_steps = super().change_structure(structure_changed, new_steps)
         for i in range(self.cleaned_data["number_of_steps_to_add"]):
             new_steps.append(("new", {}))
             structure_changed = True
@@ -923,7 +923,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
                     self.forms["steps"] = []
             self.forms["change_steps"] = [self.change_step_form_class(prefix=str(index))
                                            for index in range(len(self.forms["steps"]))]
-        super(MultipleStepsMixin, self).build_forms()
+        super().build_forms()
 
     def is_all_valid(self):
         """Tests the “inner” validity of all forms belonging to this view.  This
@@ -936,7 +936,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
         :rtype: bool
         """
         all_valid = not self._change_structure() if not is_json_requested(self.request) else True
-        all_valid = super(MultipleStepsMixin, self).is_all_valid() and all_valid
+        all_valid = super().is_all_valid() and all_valid
         return all_valid
 
     def is_referentially_valid(self):
@@ -948,14 +948,14 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
 
         :rtype: bool
         """
-        referentially_valid = super(MultipleStepsMixin, self).is_referentially_valid()
+        referentially_valid = super().is_referentially_valid()
         if not self.forms["steps"]:
             self.forms["process"].add_error(None, ValidationError(self.error_message_no_steps, code="required"))
             referentially_valid = False
         return referentially_valid
 
     def get_context_data(self, **kwargs):
-        context = super(MultipleStepsMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context["steps_and_change_steps"] = list(zip(self.forms["steps"], self.forms["change_steps"]))
         return context
 
@@ -969,7 +969,7 @@ class MultipleStepsMixin(ProcessWithoutSamplesView):
 
         :rtype: `samples.models.PhysicalProcess` or NoneType
         """
-        process = super(MultipleStepsMixin, self).save_to_database()
+        process = super().save_to_database()
         process.get_steps().all().delete()
         for step_form in self.forms["steps"]:
             step = step_form.save(commit=False)
@@ -985,13 +985,13 @@ class AddMultipleTypeStepsForm(AddMyStepsForm):
     step_to_be_added = forms.ChoiceField(label=_("Step to be added"), required=False, widget=forms.RadioSelect)
 
     def __init__(self, view, data=None, **kwargs):
-        super(AddMultipleTypeStepsForm, self).__init__(view, data, **kwargs)
+        super().__init__(view, data, **kwargs)
         # Translators: No further step
         self.fields["step_to_be_added"].choices = view.new_step_choices + (("", _("none")),)
         self.new_step_choices = view.new_step_choices
 
     def change_structure(self, structure_changed, new_steps):
-        structure_changed, new_steps = super(AddMultipleTypeStepsForm, self).change_structure(structure_changed, new_steps)
+        structure_changed, new_steps = super().change_structure(structure_changed, new_steps)
         new_step_type = self.cleaned_data["step_to_be_added"]
         if new_step_type:
             new_steps.append(("new " + new_step_type, {}))
@@ -1012,7 +1012,7 @@ class SubprocessMultipleTypesForm(SubprocessForm):
     """
 
     def __init__(self, view, data=None, **kwargs):
-        super(SubprocessMultipleTypesForm, self).__init__(view, data, **kwargs)
+        super().__init__(view, data, **kwargs)
         self.fields["step_type"].initial = self.type = self.Meta.model.__name__.lower()
 
     def clean_step_type(self):
@@ -1065,7 +1065,7 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
         step_type = forms.CharField()
 
     def __init__(self, **kwargs):
-        super(MultipleStepTypesMixin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if not self.short_labels:
             self.short_labels = {cls: cls.Meta.model._meta.verbose_name for cls in self.step_form_classes}
         self.new_step_choices = tuple((cls.Meta.model.__name__.lower(), self.short_labels[cls])
@@ -1144,7 +1144,7 @@ class DepositionWithoutLayersView(ProcessMultipleSamplesView):
         if "samples" not in self.forms:
             self.forms["samples"] = utils.DepositionSamplesForm(self.request.user, self.process, self.preset_sample,
                                                                 self.data)
-        super(DepositionWithoutLayersView, self).build_forms()
+        super().build_forms()
 
 
 class DepositionView(MultipleStepsMixin, DepositionWithoutLayersView):

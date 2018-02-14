@@ -26,10 +26,10 @@ class DecimalQuantityField(models.DecimalField):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(DecimalQuantityField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        result = super(DecimalQuantityField, self).formfield(**kwargs)
+        result = super().formfield(**kwargs)
         result.unit = self.unit
         return result
 
@@ -39,10 +39,10 @@ class FloatQuantityField(models.FloatField):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(FloatQuantityField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        result = super(FloatQuantityField, self).formfield(**kwargs)
+        result = super().formfield(**kwargs)
         result.unit = self.unit
         return result
 
@@ -52,10 +52,10 @@ class IntegerQuantityField(models.IntegerField):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(IntegerQuantityField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        result = super(IntegerQuantityField, self).formfield(**kwargs)
+        result = super().formfield(**kwargs)
         result.unit = self.unit
         return result
 
@@ -65,10 +65,10 @@ class PositiveIntegerQuantityField(models.PositiveIntegerField):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(PositiveIntegerQuantityField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        result = super(PositiveIntegerQuantityField, self).formfield(**kwargs)
+        result = super().formfield(**kwargs)
         result.unit = self.unit
         return result
 
@@ -78,10 +78,10 @@ class SmallIntegerQuantityField(models.SmallIntegerField):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(SmallIntegerQuantityField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        result = super(SmallIntegerQuantityField, self).formfield(**kwargs)
+        result = super().formfield(**kwargs)
         result.unit = self.unit
         return result
 
@@ -91,10 +91,10 @@ class PositiveSmallIntegerQuantityField(models.PositiveSmallIntegerField):
 
     def __init__(self, *args, **kwargs):
         self.unit = kwargs.pop("unit", None)
-        super(PositiveSmallIntegerQuantityField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        result = super(PositiveSmallIntegerQuantityField, self).formfield(**kwargs)
+        result = super().formfield(**kwargs)
         result.unit = self.unit
         return result
 

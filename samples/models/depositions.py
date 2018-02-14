@@ -116,7 +116,7 @@ class Deposition(PhysicalProcess):
 
         :rtype: `dict`
         """
-        data = super(Deposition, self).get_data()
+        data = super().get_data()
         del data["deposition_ptr"]
         for layer in self._get_layers():
             layer_data = layer.get_data()
@@ -128,7 +128,7 @@ class Deposition(PhysicalProcess):
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
-        data_node = super(Deposition, self).get_data_for_table_export()
+        data_node = super().get_data_for_table_export()
         remove_data_item(self, data_node, "split_done")
         for layer in self._get_layers():
             data_node.children.append(layer.get_data_for_table_export())
@@ -148,7 +148,7 @@ class Deposition(PhysicalProcess):
             # So that only derived classes get included into the searchable
             # models in the advanced search
             raise NotImplementedError
-        model_field = super(Deposition, cls).get_search_tree_node()
+        model_field = super().get_search_tree_node()
         return model_field
 
 

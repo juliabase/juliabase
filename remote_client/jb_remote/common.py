@@ -521,7 +521,7 @@ class JSONEncoder(json.JSONEncoder):
                     elif isinstance(o, decimal.Decimal):
                         return str(o)
                     else:
-                        return super(JSONEncoder, self).default(o)
+                        return super().default(o)
                 except (ValueError, TypeError):
                     return str(o)
 

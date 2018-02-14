@@ -41,7 +41,7 @@ class MySamplesForm(forms.Form):
     samples = utils.MultipleSamplesField(label=_("My Samples"))
 
     def __init__(self, user, *args, **kwargs):
-        super(MySamplesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["samples"].set_samples(user)
         self.fields["samples"].widget.attrs["size"] = "30"
 
@@ -65,7 +65,7 @@ class ActionForm(forms.Form):
 
         :type user: django.contrib.auth.models.User
         """
-        super(ActionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["new_currently_responsible_person"].set_users(user, user)
         self.fields["copy_to_user"].set_users(user)
         try:
@@ -94,7 +94,7 @@ class ActionForm(forms.Form):
         return tags
 
     def clean(self):
-        cleaned_data = super(ActionForm, self).clean()
+        cleaned_data = super().clean()
         if cleaned_data["copy_to_user"]:
             if not cleaned_data["comment"]:
                 self.add_error("comment", ValidationError(

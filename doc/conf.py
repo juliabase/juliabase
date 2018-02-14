@@ -37,7 +37,7 @@ from sphinx.highlighting import PygmentsBridge
 from pygments.formatters.latex import LatexFormatter
 class SmallerVerbatimLatexFormatter(LatexFormatter):
     def __init__(self, **options):
-        super(SmallerVerbatimLatexFormatter, self).__init__(**options)
+        super().__init__(**options)
         self.verboptions = r"formatcom=\scriptsize"
 PygmentsBridge.latex_formatter = SmallerVerbatimLatexFormatter
 

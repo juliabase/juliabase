@@ -143,7 +143,7 @@ class UserListForm(forms.Form):
     selected_user = UserField(label=_("Change the permissions of"))
 
     def __init__(self, user, *args, **kwargs):
-        super(UserListForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["selected_user"].set_users(user)
 
 
@@ -260,7 +260,7 @@ class PermissionsForm(forms.Form):
                              "can_view_all": edited_user in model.full_viewers,
                              "can_edit_all": edited_user in model.full_editors,
                              "can_edit_permissions": edited_user in model.permission_editors}
-        super(PermissionsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if not model.add_permission:
             self.fields["can_add"].disabled = True
             self.fields["can_add"].widget.attrs["style"] = "display: none"
@@ -280,7 +280,7 @@ class PermissionsForm(forms.Form):
         function anyway.  Moreover, superfluous values in the POST request are
         always ignored.
         """
-        cleaned_data = super(PermissionsForm, self).clean()
+        cleaned_data = super().clean()
         if cleaned_data["can_edit_permissions"]:
             cleaned_data["can_add"] = cleaned_data["can_view_all"] = cleaned_data["can_edit_all"] = True
         return cleaned_data

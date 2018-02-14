@@ -303,7 +303,7 @@ class SampleNotFound(Exception):
     :type sample: `jb_remote.Sample`
     """
     def __init__(self, sample):
-        super(SampleNotFound, self).__init__()
+        super().__init__()
         self.sample = sample
 
 name_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}([-A-Za-z_/][-A-Za-z_/0-9#()]*)?"

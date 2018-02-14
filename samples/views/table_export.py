@@ -433,7 +433,7 @@ class ColumnGroupsForm(forms.Form):
 
     def __init__(self, column_groups, *args, **kwargs):
         kwargs["prefix"] = kwargs.get("prefix", "") + "__"
-        super(ColumnGroupsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["column_groups"].choices = ((column_group.name, column_group.name) for column_group in column_groups)
         self.fields["column_groups"].widget.attrs["size"] = "10"
 
@@ -449,7 +449,7 @@ class ColumnsForm(forms.Form):
 
     def __init__(self, column_groups, columns, selected_column_groups, *args, **kwargs):
         kwargs["prefix"] = kwargs.get("prefix", "") + "__"
-        super(ColumnsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["columns"].choices = \
             ((column_group.name, [(i, columns[i].key) for i in sorted(column_group.key_indices.values())])
              for column_group in column_groups if column_group.name in selected_column_groups)
@@ -475,7 +475,7 @@ class OldDataForm(forms.Form):
     def __init__(self, *args, **kwargs):
         initial = kwargs.pop("initial", {})
         kwargs["prefix"] = kwargs.get("prefix", "") + "__old_data"
-        super(OldDataForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if "column_groups" in initial:
             self.fields["column_groups"].initial = "\t".join(column_group for column_group in initial["column_groups"])
         if "columns" in initial:
@@ -508,7 +508,7 @@ class SwitchRowForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         kwargs["prefix"] = kwargs.get("prefix", "") + "__"
-        super(SwitchRowForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 _ = ugettext

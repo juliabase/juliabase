@@ -54,7 +54,7 @@ class SamplesForm(forms.Form):
     samples = forms.CharField(label=_("Samples"), help_text=_("Comma-separated"), widget=forms.widgets.Textarea)
 
     def __init__(self, *args, **kwargs):
-        super(SamplesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["samples"].widget.attrs.update({"cols": 30, "rows": 5})
 
     def clean_samples(self):
@@ -98,11 +98,11 @@ class SubstrateForm(forms.ModelForm):
         fields = ("material", "comments")
 
     def __init__(self, *args, **kwargs):
-        super(SubstrateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["comments"].widget.attrs.update({"cols": 30, "rows": 5})
 
     def clean(self):
-        cleaned_data = super(SubstrateForm, self).clean()
+        cleaned_data = super().clean()
         if "material" in cleaned_data and "comments" in cleaned_data:
             if cleaned_data["material"] == "custom" and not cleaned_data["comments"]:
                 self.add_error("comments", ValidationError(_("For a custom substrate, you must give substrate comments."),

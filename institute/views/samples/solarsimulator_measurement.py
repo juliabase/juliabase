@@ -34,7 +34,7 @@ class SolarsimulatorMeasurementForm(utils.ProcessForm):
         fields = "__all__"
 
     def __init__(self, user, *args, **kwargs):
-        super(SolarsimulatorMeasurementForm, self).__init__(user, *args, **kwargs)
+        super().__init__(user, *args, **kwargs)
         self.fields["temperature"].widget.attrs.update({"size": "5"})
 
 

@@ -51,7 +51,7 @@ class YearMonthForm(forms.Form):
     month = forms.IntegerField(label=_("month"), min_value=1, max_value=12)
 
     def __init__(self, *args, **kwargs):
-        super(YearMonthForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["year"].widget.attrs["style"] = "width: 4em"
         self.fields["month"].widget.attrs["style"] = "width: 4em"
 

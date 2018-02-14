@@ -696,7 +696,7 @@ class NumberedLabel(Label):
         else:
             self.text = "{0}–{1}".format(get_circled_number(self.lower, self.largest_number),
                                           get_circled_number(self.upper - 1, self.largest_number))
-        super(NumberedLabel, self).print_label(canvas)
+        super().print_label(canvas)
 
 
 def place_labels(layers):

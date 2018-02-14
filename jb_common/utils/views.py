@@ -108,7 +108,7 @@ class UserField(forms.ChoiceField):
                        _user_choices_by_department(user, exclude=[excluded_user] if excluded_user else [])
 
     def clean(self, value):
-        value = super(UserField, self).clean(value)
+        value = super().clean(value)
         if value:
             return django.contrib.auth.models.User.objects.get(pk=int(value))
 
@@ -119,7 +119,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
     """
 
     def __init__(self, *args, **kwargs):
-        super(MultipleUsersField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.widget.attrs["size"] = 15
 
     def set_users(self, user, additional_users=[]):
@@ -142,7 +142,7 @@ class MultipleUsersField(forms.MultipleChoiceField):
     def clean(self, value):
         if value == [""]:
             value = []
-        value = super(MultipleUsersField, self).clean(value)
+        value = super().clean(value)
         return django.contrib.auth.models.User.objects.in_bulk([int(pk) for pk in set(value)]).values()
 
 
@@ -189,6 +189,6 @@ class TopicField(forms.ChoiceField):
         topics_and_sub_topics(top_level_topics)
 
     def clean(self, value):
-        value = super(TopicField, self).clean(value)
+        value = super().clean(value)
         if value:
             return Topic.objects.get(pk=int(value))

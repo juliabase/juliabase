@@ -38,7 +38,7 @@ class SubstrateForm(utils.ProcessForm):
         fields = "__all__"
 
     def clean(self):
-        cleaned_data = super(SubstrateForm, self).clean()
+        cleaned_data = super().clean()
         if cleaned_data.get("material") == "custom" and not cleaned_data.get("comments"):
             self.add_error("comments", ValidationError(_("For a custom substrate, you must give substrate comments."),
                                                        code="required"))
@@ -57,7 +57,7 @@ class EditView(utils.ProcessMultipleSamplesView):
 
         :rtype: bool
         """
-        referentially_valid = super(EditView, self).is_referentially_valid()
+        referentially_valid = super().is_referentially_valid()
         if self.forms["samples"].is_valid() and self.forms["process"].is_valid():
             for sample in self.forms["samples"].cleaned_data["sample_list"]:
                 processes = sample.processes

@@ -51,13 +51,13 @@ class SamplesForm(forms.Form):
         if task:
             kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
             if user != task.customer or task.status != "1 new":
-                super(SamplesForm, self).__init__(**kwargs)
+                super().__init__(**kwargs)
                 self.fields["sample_list"].disabled = True
             else:
-                super(SamplesForm, self).__init__(data, **kwargs)
+                super().__init__(data, **kwargs)
             important_samples.update(task.samples.all())
         else:
-            super(SamplesForm, self).__init__(data, **kwargs)
+            super().__init__(data, **kwargs)
             self.fields["sample_list"].initial = []
             if preset_sample:
                 important_samples.add(preset_sample)
@@ -111,7 +111,7 @@ class TaskForm(forms.ModelForm):
                 initial = kwargs.get("initial", {})
                 initial.update({"status": "1 new"})
                 data.update(initial)
-        super(TaskForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         self.fields["customer"].required = False
         self.fields["operator"].choices = [("", "---------")]
         if self.task:
@@ -176,7 +176,7 @@ class TaskForm(forms.ModelForm):
             return User.objects.get(pk=int(pk))
 
     def clean(self):
-        cleaned_data = super(TaskForm, self).clean()
+        cleaned_data = super().clean()
         if cleaned_data.get("status") in ["2 accepted", "3 in progress", "0 finished"]:
             if not cleaned_data.get("operator"):
                 self.add_error("operator", ValidationError(_("With this status, you must set an operator."), code="required"))
@@ -189,7 +189,7 @@ class ChooseTaskListsForm(forms.Form):
     visible_task_lists = forms.MultipleChoiceField(label=capfirst(_("show task lists for")), required=False)
 
     def __init__(self, user, data=None, **kwargs):
-        super(ChooseTaskListsForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         choices = []
         for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().keys()

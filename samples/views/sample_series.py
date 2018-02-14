@@ -61,7 +61,7 @@ class SampleSeriesForm(forms.ModelForm):
         because the sample set to choose from must be found and the name of an
         existing series must not be changed.
         """
-        super(SampleSeriesForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         sample_series = kwargs.get("instance")
         samples = user.my_samples.all()
         important_samples = sample_series.samples.all() if sample_series else set()

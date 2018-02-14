@@ -95,7 +95,7 @@ class ResultForm(utils.ProcessForm):
         exclude = ("image_type", "quantities_and_values")
 
     def __init__(self, user, *args, **kwargs):
-        super(ResultForm, self).__init__(user, *args, **kwargs)
+        super().__init__(user, *args, **kwargs)
         self.fields["comments"].required = True
         self.fields["title"].widget.attrs["size"] = 40
 
@@ -119,7 +119,7 @@ class RelatedDataForm(forms.Form):
         electable sample series, but unallowed series will be rejected by
         `clean` anyway.
         """
-        super(RelatedDataForm, self).__init__(data, files, **kwargs)
+        super().__init__(data, files, **kwargs)
         self.old_relationships = set(old_result.samples.all()) | set(old_result.sample_series.all()) if old_result else set()
         self.user = user
         now = django.utils.timezone.now() + datetime.timedelta(seconds=5)
@@ -156,7 +156,7 @@ class RelatedDataForm(forms.Form):
         one sample or sample series was selected, and whether the user is
         allowed to add results to the selected objects.
         """
-        cleaned_data = super(RelatedDataForm, self).clean()
+        cleaned_data = super().clean()
         samples = cleaned_data.get("samples")
         sample_series = cleaned_data.get("sample_series")
         if samples is not None and sample_series is not None:
@@ -186,7 +186,7 @@ class DimensionsForm(forms.Form):
     number_of_values = forms.IntegerField(label=_("Number of values"), min_value=0, max_value=100)
 
     def __init__(self, *args, **kwargs):
-        super(DimensionsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["number_of_quantities"].widget.attrs.update({"size": 1, "style": "text-align: center"})
         self.fields["number_of_values"].widget.attrs.update({"size": 1, "style": "text-align: center"})
 
@@ -194,7 +194,7 @@ class DimensionsForm(forms.Form):
         """If one of the two dimensions is set to zero, the other is set to
         zero, too.
         """
-        cleaned_data = super(DimensionsForm, self).clean()
+        cleaned_data = super().clean()
         if "number_of_quantities" in cleaned_data and "number_of_values" in cleaned_data:
             if cleaned_data["number_of_quantities"] == 0 or cleaned_data["number_of_values"] == 0:
                 cleaned_data["number_of_quantities"] = cleaned_data["number_of_values"] = 0
@@ -210,7 +210,7 @@ class QuantityForm(forms.Form):
     quantity = forms.CharField(label=_("Quantity name"), max_length=50)
 
     def __init__(self, *args, **kwargs):
-        super(QuantityForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["quantity"].widget.attrs.update({"size": 10, "style": "font-weight: bold; text-align: center"})
 
     def clean_quantity(self):
@@ -227,7 +227,7 @@ class ValueForm(forms.Form):
     value = forms.CharField(label=_("Value"), max_length=50, required=False)
 
     def __init__(self, *args, **kwargs):
-        super(ValueForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["value"].widget.attrs.update({"size": 10})
 
 

@@ -61,7 +61,7 @@ class ClusterToolDeposition(samples.models.Deposition):
                 django.urls.reverse("institute:add_cluster_tool_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
-        return super(ClusterToolDeposition, self).get_context_for_user(user, context)
+        return super().get_context_for_user(user, context)
 
     @classmethod
     def get_search_tree_node(cls):
@@ -75,7 +75,7 @@ class ClusterToolDeposition(samples.models.Deposition):
 
         :rtype: ``jb_common.search.SearchTreeNode``
         """
-        model_field = super(ClusterToolDeposition, cls).get_search_tree_node()
+        model_field = super().get_search_tree_node()
         model_field.related_models.update({ClusterToolHotWireLayer: "layers", ClusterToolPECVDLayer: "layers"})
         del model_field.related_models[ClusterToolLayer]
         return model_field
@@ -158,7 +158,7 @@ class FiveChamberDeposition(samples.models.Deposition):
                 django.urls.reverse("institute:add_five_chamber_deposition"), urlquote_plus(self.number))
         else:
             context["duplicate_url"] = None
-        return super(FiveChamberDeposition, self).get_context_for_user(user, context)
+        return super().get_context_for_user(user, context)
 
 
 samples.models.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
@@ -203,7 +203,7 @@ class FiveChamberLayer(samples.models.Layer):
         # See `Layer.get_data_for_table_export` for the documentation.  This is
         # a good example for adding an additional field to the table output
         # which is not a field but calculated from fields.
-        data_node = super(FiveChamberLayer, self).get_data_for_table_export()
+        data_node = super().get_data_for_table_export()
         if self.sih4 and self.h2:
             silane_normalized = 0.6 * float(self.sih4)
             silane_concentration = silane_normalized / (silane_normalized + float(self.h2)) * 100

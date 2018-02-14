@@ -206,7 +206,7 @@ class MenuSeparator(MenuItem):
     All other attributes of `MenuItem` are ignored.
     """
     def __init__(self):
-        super(MenuSeparator, self).__init__("")
+        super().__init__("")
 
 
 class MenuHeading(MenuItem):
@@ -215,4 +215,4 @@ class MenuHeading(MenuItem):
     are ignored.
     """
     def __init__(self, label):
-        super(MenuHeading, self).__init__(label)
+        super().__init__(label)

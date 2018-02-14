@@ -45,7 +45,7 @@ class NewNameForm(forms.Form):
     delete = forms.BooleanField(label=_("Delete"), required=False)
 
     def __init__(self, user, parent_name, *args, **kwargs):
-        super(NewNameForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.parent_name = parent_name
         parent_name_format = sample_names.sample_name_format(parent_name)
         if parent_name_format:
@@ -88,7 +88,7 @@ class GlobalDataForm(forms.Form):
     sample_series = forms.ModelChoiceField(label=capfirst(_("sample series")), queryset=None, required=False)
 
     def __init__(self, parent, user_details, data=None, **kwargs):
-        super(GlobalDataForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         now = django.utils.timezone.now() + datetime.timedelta(seconds=5)
         three_months_ago = now - datetime.timedelta(days=90)
         self.fields["sample_series"].queryset = permissions.get_editable_sample_series(user_details.user)

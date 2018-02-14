@@ -50,7 +50,7 @@ class NewTopicForm(forms.Form):
     topic_manager = UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, *args, **kwargs):
-        super(NewTopicForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["new_topic_name"].widget.attrs["size"] = 40
         self.user = user
         if user.is_superuser:
@@ -82,7 +82,7 @@ class NewTopicForm(forms.Form):
                                   code="forbidden")
 
     def clean(self):
-        cleaned_data = super(NewTopicForm, self).clean()
+        cleaned_data = super().clean()
         parent_topic = cleaned_data.get("parent_topic")
         if "new_topic_name" in cleaned_data:
             topic_name = cleaned_data["new_topic_name"]
@@ -185,7 +185,7 @@ class EditTopicForm(forms.Form):
     topic_manager = UserField(label=capfirst(_("topic manager")))
 
     def __init__(self, user, topic, *args, **kwargs):
-        super(EditTopicForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["members"].set_users(user, topic.members.all())
         self.fields["members"].widget.attrs["size"] = 30
         self.fields["confidential"].initial = topic.confidential
@@ -194,7 +194,7 @@ class EditTopicForm(forms.Form):
         self.fields["topic_manager"].set_users(user, topic.manager)
 
     def clean(self):
-        cleaned_data = super(EditTopicForm, self).clean()
+        cleaned_data = super().clean()
         if "members" in cleaned_data and "confidential" in cleaned_data:
             if cleaned_data["confidential"] and \
                     not any(permissions.has_permission_to_edit_topic(user, self.topic) for user in cleaned_data["members"]):

@@ -44,7 +44,7 @@ class SampleDeathForm(forms.ModelForm):
         fields = ("reason",)
 
     def __init__(self, sample, *args, **kwargs):
-        super(SampleDeathForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.sample = sample
         if not sample.last_process_if_split():
             new_choices = []

@@ -43,11 +43,11 @@ class DepositionForm(utils.DepositionForm):
         fields = "__all__"
 
     def clean_number(self):
-        number = super(DepositionForm, self).clean_number()
+        number = super().clean_number()
         return form_utils.clean_deposition_number_field(number, "C")
 
     def clean(self):
-        cleaned_data = super(DepositionForm, self).clean()
+        cleaned_data = super().clean()
         if "number" in cleaned_data and "timestamp" in cleaned_data:
             if cleaned_data["number"][:2] != cleaned_data["timestamp"].strftime("%y"):
                 self.add_error("number", ValidationError(_("The first two digits must match the year of the deposition."),
@@ -88,7 +88,7 @@ class HotWireLayerForm(ClusterToolLayerForm):
             }
 
     def __init__(self, view, data=None, **kwargs):
-        super(HotWireLayerForm, self).__init__(view, data, **kwargs)
+        super().__init__(view, data, **kwargs)
         if not view.request.user.is_superuser:
             self.fields["wire_material"].choices = \
                 [choice for choice in self.fields["wire_material"].choices if choice[0] != "unknown"]

@@ -126,7 +126,7 @@ class ExternalOperator(models.Model):
                        ("view_every_externaloperator", _("Can view all external operators")))
 
     def save(self, *args, **kwargs):
-        super(ExternalOperator, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         for process in self.processes.all():
             process.actual_instance.save()
 
@@ -207,7 +207,7 @@ class Process(PolymorphicModel):
                 cache.delete_many(keys)
             cache.delete(keys_list_key)
         with_relations = kwargs.pop("with_relations", True)
-        super(Process, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if with_relations:
             for sample in self.samples.all():
                 sample.save(with_relations=False)
@@ -612,7 +612,7 @@ class Process(PolymorphicModel):
             # FixMe: The following line is necessary only until
             # https://code.djangoproject.com/ticket/17688 is fixed.
             self.samples.clear()
-            return super(Process, self).delete(*args, **kwargs)
+            return super().delete(*args, **kwargs)
 
 
 class PhysicalProcess(Process):
@@ -681,7 +681,7 @@ class PhysicalProcess(Process):
             context["delete_url"] = django.urls.reverse("samples:delete_process_confirmation", kwargs={"process_id": self.pk})
         else:
             context["delete_url"] = None
-        return super(PhysicalProcess, self).get_context_for_user(user, context)
+        return super().get_context_for_user(user, context)
 
     @classmethod
     def get_add_link(cls):
@@ -722,7 +722,7 @@ class PhysicalProcess(Process):
             samples.permissions.assert_can_edit_physical_process(user, self)
             return set([self])
         else:
-            return super(PhysicalProcess, self).delete(*args, **kwargs)
+            return super().delete(*args, **kwargs)
 
 
 all_searchable_physical_processes = None
@@ -798,7 +798,7 @@ class Sample(models.Model):
             cache.delete(keys_list_key)
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
-        super(Sample, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=django.utils.timezone.now())
         if with_relations:
             for series in self.series.all():
@@ -1046,7 +1046,7 @@ class Sample(models.Model):
             kwargs.pop("dry_run", None)
             kwargs.pop("user", None)
             self.save()
-            return super(Sample, self).delete(*args, **kwargs)
+            return super().delete(*args, **kwargs)
 
 
 class SampleAlias(models.Model):
@@ -1070,7 +1070,7 @@ class SampleAlias(models.Model):
     def save(self, *args, **kwargs):
         """Saves the instance and touches the affected sample.
         """
-        super(SampleAlias, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.sample.save(with_relations=False)
 
     def __str__(self):
@@ -1125,7 +1125,7 @@ class SampleSplit(Process):
             context["resplit_url"] = django.urls.reverse("samples:resplit", kwargs={"old_split_id": self.id})
         else:
             context["resplit_url"] = None
-        return super(SampleSplit, self).get_context_for_user(user, context)
+        return super().get_context_for_user(user, context)
 
     @classmethod
     def get_search_tree_node(cls):
@@ -1146,7 +1146,7 @@ class SampleSplit(Process):
         if dry_run:
             return affected_objects
         else:
-            return super(SampleSplit, self).delete(*args, **kwargs)
+            return super().delete(*args, **kwargs)
 
 
 class Clearance(models.Model):
@@ -1256,7 +1256,7 @@ class Result(Process):
         connected sample series and the series themselves.
         """
         with_relations = kwargs.get("with_relations", True)
-        super(Result, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if with_relations:
             for sample_series in self.sample_series.all():
                 sample_series.save(touch_samples=True)
@@ -1340,7 +1340,7 @@ class Result(Process):
             context["edit_url"] = django.urls.reverse("samples:edit_result", kwargs={"process_id": self.pk})
         else:
             context["edit_url"] = None
-        return super(Result, self).get_context_for_user(user, context)
+        return super().get_context_for_user(user, context)
 
     def get_data(self):
         """Extract the data of this result process as a dictionary.  See
@@ -1351,7 +1351,7 @@ class Result(Process):
 
         :rtype: dict
         """
-        data = super(Result, self).get_data()
+        data = super().get_data()
         data["sample_series"] = self.sample_series.values_list("pk", flat=True)
         return data
 
@@ -1375,7 +1375,7 @@ class Result(Process):
 
         :rtype: `samples.data_tree.DataNode`
         """
-        data_node = super(Result, self).get_data_for_table_export()
+        data_node = super().get_data_for_table_export()
         remove_data_item(self, data_node, "quantities_and_values")
         data_node.name = data_node.descriptive_name = self.title
         quantities, value_lists = json.loads(self.quantities_and_values)
@@ -1394,7 +1394,7 @@ class Result(Process):
         # https://code.djangoproject.com/ticket/17688 is fixed.
         if not kwargs.get("dry_run", False):
             self.sample_series.clear()
-        return super(Result, self).delete(*args, **kwargs)
+        return super().delete(*args, **kwargs)
 
 
 class SampleSeries(models.Model):
@@ -1431,7 +1431,7 @@ class SampleSeries(models.Model):
         :type touch_samples: bool
         """
         touch_samples = kwargs.pop("touch_samples", False)
-        super(SampleSeries, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if touch_samples:
             for sample in self.samples.all():
                 sample.save(with_relations=False)

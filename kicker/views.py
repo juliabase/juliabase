@@ -367,7 +367,7 @@ class UserDetailsForm(forms.ModelForm):
         fields = ("nickname", "shortkey")
 
     def __init__(self, user, *args, **kwargs):
-        super(UserDetailsForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.user = user
 
     def clean_nickname(self):

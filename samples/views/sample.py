@@ -72,7 +72,7 @@ class SampleForm(forms.ModelForm):
         exclude = ("name", "split_origin", "processes", "watchers")
 
     def __init__(self, user, *args, **kwargs):
-        super(SampleForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["topic"].set_topics(user, kwargs["instance"].topic if kwargs.get("instance") else None)
         self.fields["currently_responsible_person"].set_users(user,
             kwargs["instance"].currently_responsible_person if kwargs.get("instance") else None)
@@ -1059,7 +1059,7 @@ class SampleRenameForm(forms.Form):
                                       required=False)
 
     def __init__(self, user, data=None, **kwargs):
-        super(SampleRenameForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         self.user = user
 
     def clean_old_name(self):
@@ -1081,7 +1081,7 @@ class SampleRenameForm(forms.Form):
         return new_name
 
     def clean(self):
-        cleaned_data = super(SampleRenameForm, self).clean()
+        cleaned_data = super().clean()
         old_name = cleaned_data.get("old_name", "").strip()
         new_name = cleaned_data.get("new_name", "").strip()
         if new_name and new_name == old_name:

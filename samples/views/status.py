@@ -62,7 +62,7 @@ class StatusForm(forms.ModelForm):
             return True
 
     def __init__(self, user, *args, **kwargs):
-        super(StatusForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.user = user
         self.fields["operator"].set_operator(user, user.is_superuser)
         self.fields["operator"].initial = user.pk
@@ -88,7 +88,7 @@ class StatusForm(forms.ModelForm):
         return timestamp
 
     def clean(self):
-        cleaned_data = super(StatusForm, self).clean()
+        cleaned_data = super().clean()
         begin, end = cleaned_data.get("begin"), cleaned_data.get("end")
         if begin:
             cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = cleaned_data["begin"]

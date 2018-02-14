@@ -42,14 +42,14 @@ class AddExternalOperatorForm(forms.ModelForm):
         exclude = ("contact_persons",)
 
     def __init__(self, user, *args, **kwargs):
-        super(AddExternalOperatorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.user = user
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"
         self.fields["institution"].widget.attrs["size"] = "60"
 
     def save(self):
-        external_operator = super(AddExternalOperatorForm, self).save()
+        external_operator = super().save()
         external_operator.contact_persons.add(self.user)
         return external_operator
 
@@ -96,7 +96,7 @@ class EditExternalOperatorForm(forms.ModelForm):
         fields = "__all__"
 
     def __init__(self, user, *args, **kwargs):
-        super(EditExternalOperatorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.external_operator = kwargs.get("instance")
         for fieldname in ["name", "email", "alternative_email"]:
             self.fields[fieldname].widget.attrs["size"] = "40"

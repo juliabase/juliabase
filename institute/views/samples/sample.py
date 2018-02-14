@@ -73,7 +73,7 @@ class AddSamplesForm(forms.Form):
     cleaning_number = forms.CharField(label=capfirst(_("cleaning number")), max_length=8, required=False)
 
     def __init__(self, user, data=None, **kwargs):
-        super(AddSamplesForm, self).__init__(data, **kwargs)
+        super().__init__(data, **kwargs)
         self.fields["timestamp"].initial = django.utils.timezone.now()
         self.fields["topic"].set_topics(user)
         self.fields["substrate_comments"].help_text = \
@@ -106,7 +106,7 @@ class AddSamplesForm(forms.Form):
         return models.ExternalOperator.objects.get(pk=int(key))
 
     def clean(self):
-        cleaned_data = super(AddSamplesForm, self).clean()
+        cleaned_data = super().clean()
         if cleaned_data["substrate"] == "custom" and not cleaned_data.get("substrate_comments"):
             self.add_error("substrate_comments",
                            ValidationError(_("For a custom substrate, you must give substrate comments."), code="required"))
@@ -244,7 +244,7 @@ class DestinationSamplesForm(forms.Form):
     samples = utils.MultipleSamplesField(label=_("Destination samples"))
 
     def __init__(self, user, current_sample, *args, **kwargs):
-        super(DestinationSamplesForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         samples = [sample for sample in user.my_samples.exclude(pk=current_sample.pk)
                    if permissions.has_permission_to_edit_sample(user, sample)]
         self.fields["samples"].set_samples(user, samples)

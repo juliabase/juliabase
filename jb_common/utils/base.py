@@ -65,7 +65,7 @@ class HttpResponseSeeOther(django.http.response.HttpResponseRedirectBase):
     status_code = 303
 
     def __init__(self, redirect_to):
-        super(HttpResponseSeeOther, self).__init__(redirect_to)
+        super().__init__(redirect_to)
         self["Location"] = iri_to_uri(redirect_to)
 
 
@@ -94,7 +94,7 @@ class JSONRequestException(Exception):
     """
 
     def __init__(self, error_number, error_message):
-        super(JSONRequestException, self).__init__()
+        super().__init__()
         # If ``error_number`` equals 1, it is a 404.  If it equals 2, it is an
         # error in a web form of a view which is used by both the browser and
         # the JSON client.
@@ -430,7 +430,7 @@ class JSONEncoder(DjangoJSONEncoder):
                 return list(o)
             except (ValueError, TypeError):
                 try:
-                    return super(JSONEncoder, self).default(o)
+                    return super().default(o)
                 except (ValueError, TypeError):
                     return str(o)
 

@@ -61,7 +61,7 @@ class SampleDetails(models.Model):
         too, so that it is marked as updated and the cache is cleaned up
         properly.
         """
-        super(SampleDetails, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         # I cannot use ``self.sample`` because it may be outdated (changed
         # through another instance of it in the view).
         samples.models.Sample.objects.get(id=self.sample.id).save(with_relations=False)
@@ -318,7 +318,7 @@ class InformalLayer(models.Model):
         :type with_relations: bool
         """
         with_relations = kwargs.pop("with_relations", True)
-        super(InformalLayer, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if with_relations:
             self.sample_details.save()
 
@@ -376,7 +376,7 @@ class InformalLayerForm(forms.ModelForm):
             }
 
     def clean(self):
-        cleaned_data = super(InformalLayerForm, self).clean()
+        cleaned_data = super().clean()
         if not cleaned_data.get("classification") and not cleaned_data.get("comments"):
             raise ValidationError(_("You must give a classification or comments or both."), code="invalid")
         return cleaned_data
