@@ -200,7 +200,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         assert os.path.isabs(default_root)
         assert all(os.path.isabs(path) for path in allowed_roots)
         default_root = os.path.normpath(default_root)
-        allowed_roots = set(os.path.normpath(path) for path in allowed_roots)
+        allowed_roots = {os.path.normpath(path) for path in allowed_roots}
         allowed_roots.add(default_root)
         assert all(os.path.isdir(path) for path in allowed_roots)
         absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
@@ -474,12 +474,12 @@ def get_all_models(app_label=None):
     """
     global all_models, abstract_models
     if app_label:
-        result = dict((model.__name__, model) for model in apps.get_app_config(app_label).get_models())
+        result = {model.__name__: model for model in apps.get_app_config(app_label).get_models()}
         result.update((model.__name__, model) for model in abstract_models if model._meta.app_label == app_label)
         return result
     if all_models is None:
         abstract_models = frozenset(abstract_models)
-        all_models = dict((model.__name__, model) for model in apps.get_models())
+        all_models = {model.__name__: model for model in apps.get_models()}
         all_models.update((model.__name__, model) for model in abstract_models)
     return all_models.copy()
 
@@ -829,7 +829,7 @@ def unquote_view_parameters(view):
     def unquoting_view(request, *args, **kwargs):
         return view(request,
                     *[urllib.parse.unquote(value) for value in args],
-                    **dict((key, urllib.parse.unquote(value)) for key, value in kwargs.items()))
+                    **{key: urllib.parse.unquote(value) for key, value in kwargs.items()})
     return unquoting_view
 
 

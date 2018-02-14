@@ -192,8 +192,8 @@ class ChooseTaskListsForm(forms.Form):
         super().__init__(data, **kwargs)
         choices = []
         for department in user.samples_user_details.show_users_from_departments.iterator():
-            process_from_department = set(process for process in permissions.get_all_addable_physical_process_models().keys()
-                                          if process._meta.app_label == department.app_label)
+            process_from_department = {process for process in permissions.get_all_addable_physical_process_models().keys()
+                                       if process._meta.app_label == department.app_label}
             choices.append((department.name, utils.choices_of_content_types(process_from_department)))
         if len(choices) == 1:
             choices = choices[0][1]

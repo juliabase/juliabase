@@ -368,7 +368,7 @@ def flatten_tree(root):
     """
 
     def flatten_row_tree(node):
-        name_dict = {node.name: dict((item.key, item.value if item.value is not None else "") for item in node.items)}
+        name_dict = {node.name: {item.key: item.value if item.value is not None else "" for item in node.items}}
         for child in node.children:
             name_dict.update(flatten_row_tree(child))
         return name_dict
@@ -457,7 +457,7 @@ class ColumnsForm(forms.Form):
 
     def clean_columns(self):
         try:
-            return set(int(i) for i in self.cleaned_data["columns"])
+            return {int(i) for i in self.cleaned_data["columns"]}
         except ValueError:
             # Untranslable because internal anyway
             raise ValidationError("Invalid number in column indices list")
@@ -494,7 +494,7 @@ class OldDataForm(forms.Form):
 
     def clean_columns(self):
         try:
-            return set(int(i) for i in self.cleaned_data["columns"].split())
+            return {int(i) for i in self.cleaned_data["columns"].split()}
         except ValueError:
             # Untranslable because internal anyway
             raise ValidationError("Invalid number in column indices list")

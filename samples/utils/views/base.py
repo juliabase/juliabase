@@ -566,8 +566,7 @@ def table_export(request, data, label_column_heading):
                     previous_column_groups == selected_column_groups and previous_columns == selected_columns:
                 reduced_table = [row for i, row in enumerate(table) if switch_row_forms[i].cleaned_data["active"] or i == 0]
                 if requested_mime_type == "application/json":
-                    data = [dict((reduced_table[0][i], cell) for i, cell in enumerate(row) if cell)
-                            for row in reduced_table[1:]]
+                    data = [{reduced_table[0][i]: cell for i, cell in enumerate(row) if cell} for row in reduced_table[1:]]
                     return jb_common.utils.base.respond_in_json(data)
                 else:
                     response = HttpResponse(content_type="text/csv; charset=utf-8")

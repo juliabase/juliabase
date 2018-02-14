@@ -320,7 +320,7 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
                 new_status[1] = md5sum
                 path = Path(root, relative_filepath, "modified" if status else "created", new_status[0])
                 changed.append(path)
-    assert set(changed) == set(Path(root, path, "modified", 0) for path in new_statuses), (set(changed), set(new_statuses))
+    assert set(changed) == {Path(root, path, "modified", 0) for path in new_statuses}, (set(changed), set(new_statuses))
     changed.sort()
     return changed
 

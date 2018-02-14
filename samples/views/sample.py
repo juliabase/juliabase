@@ -845,8 +845,7 @@ def search(request):
             found_samples = found_samples[:max_results] if too_many_results else found_samples
     my_samples = request.user.my_samples.all()
     if request.method == "POST":
-        sample_ids = set(int_or_zero(key.partition("-")[0]) for key, value in request.POST.items()
-                         if value == "on")
+        sample_ids = {int_or_zero(key.partition("-")[0]) for key, value in request.POST.items() if value == "on"}
         samples = base_query.in_bulk(sample_ids).values()
         request.user.my_samples.add(*samples)
     add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
@@ -887,8 +886,9 @@ def advanced_search(request):
     root_form = jb_common.search.SearchModelForm(model_list, request.GET)
     search_performed = False
     no_permission_message = None
-    _search_parameters_hash = hashlib.sha1(json.dumps(sorted(dict((key, value) for key, value in request.GET.items()
-                                    if not "__" in key and key != "_search_parameters_hash").items())).encode()).hexdigest()
+    _search_parameters_hash = hashlib.sha1(json.dumps(sorted(
+        {key: value for key, value in request.GET.items() if not "__" in key and key != "_search_parameters_hash"}
+        .items())).encode()).hexdigest()
     column_groups_form = columns_form = table = switch_row_forms = old_data_form = None
     if root_form.is_valid() and root_form.cleaned_data["_model"]:
         search_tree = get_all_models()[root_form.cleaned_data["_model"]].get_search_tree_node()
@@ -906,7 +906,8 @@ def advanced_search(request):
             results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
-                    sample_ids = set(int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items() if value == "on")
+                    sample_ids = {int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
+                                  if value == "on"}
                     samples = base_query.in_bulk(sample_ids).values()
                     request.user.my_samples.add(*samples)
                 my_samples = request.user.my_samples.all()

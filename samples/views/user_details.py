@@ -60,8 +60,7 @@ class UserDetailsForm(forms.ModelForm):
                     if issubclass(process_class, models.Process) and not process_class._meta.abstract
                     and process_class not in [models.Process, models.Deposition]]
         for department in user.samples_user_details.show_users_from_departments.iterator():
-            processes_from_department = set(process for process in processes
-                                            if process._meta.app_label == department.app_label)
+            processes_from_department = {process for process in processes if process._meta.app_label == department.app_label}
             choices.append((department.name, utils.choices_of_content_types(processes_from_department)))
         if not choices:
             choices = (("", 9 * "-"),)
@@ -107,8 +106,8 @@ def edit_preferences(request, login_name):
     def __change_folded_processes(default_folded_process_classes, user):
         """Creates the new exceptional processes dictionary and saves it into the user details.
         """
-        old_default_classes = set(cls.id for cls in ContentType.objects.filter(dont_show_to_user=user.samples_user_details))
-        new_default_classes = set(int(class_id) for class_id in default_folded_process_classes if class_id)
+        old_default_classes = {cls.id for cls in ContentType.objects.filter(dont_show_to_user=user.samples_user_details)}
+        new_default_classes = {int(class_id) for class_id in default_folded_process_classes if class_id}
         differences = old_default_classes ^ new_default_classes
         exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
         for process_id_list in exceptional_processes_dict.values():

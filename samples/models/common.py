@@ -720,7 +720,7 @@ class PhysicalProcess(Process):
                                 "one hour.").format(process=self)
                 raise samples.permissions.PermissionError(user, description)
             samples.permissions.assert_can_edit_physical_process(user, self)
-            return set([self])
+            return {self}
         else:
             return super().delete(*args, **kwargs)
 
@@ -1011,7 +1011,7 @@ class Sample(models.Model):
                          search.TextSearchField(cls, "currently_responsible_person", "username"),
                          search.TextSearchField(cls, "current_location"), search.TextSearchField(cls, "purpose"),
                          search.TextSearchField(cls, "tags"), search.TextNullSearchField(cls, "topic", "name")]
-        related_models = dict((model, "processes") for model in get_all_searchable_physical_processes())
+        related_models = {model: "processes" for model in get_all_searchable_physical_processes()}
         related_models[Result] = "processes"
         # FixMe: The following line must be removed but not before possible
         # problems are tackled.
@@ -1028,7 +1028,7 @@ class Sample(models.Model):
         """
         dry_run = kwargs.get("dry_run", False)
         if dry_run:
-            affected_objects = set([self])
+            affected_objects = {self}
             samples.permissions.assert_can_edit_sample(kwargs["user"], self)
         for process in self.processes.all():
             if process.samples.count() == 1:
@@ -1138,7 +1138,7 @@ class SampleSplit(Process):
             description = _("You are not allowed to delete the process “{process}” because it is older than "
                             "one hour.").format(process=self)
             raise samples.permissions.PermissionError(user, description)
-        affected_objects = set([self])
+        affected_objects = {self}
         for sample in self.pieces.all():
             result = sample.delete(*args, **kwargs)
             if dry_run:
@@ -1720,7 +1720,7 @@ class Task(models.Model):
                          search.TextSearchField(cls, "comments"), search.TextSearchField(cls, "priority"),
                          search.DateTimeSearchField(cls, "creating_timestamp"),
                          search.DateTimeSearchField(cls, "last_modified")]
-        related_models = dict((model, "finished_process") for model in get_all_searchable_physical_processes())
+        related_models = {model: "finished_process" for model in get_all_searchable_physical_processes()}
         related_models[Sample] = "samples"
         return search.SearchTreeNode(cls, related_models, search_fields)
 

@@ -140,7 +140,7 @@ class DataNode:
                 of node names (*not* node kinds) to item key sets.  We set both
                 the ``key_sets`` and the ``item_cache`` here.
                 """
-                item_cache[node] = set((item.key, item.origin) for item in node.items)
+                item_cache[node] = {(item.key, item.origin) for item in node.items}
                 key_sets = {node.name: item_cache[node]}
                 for child in node.children:
                     for name, key_set in collect_key_sets(child).items():

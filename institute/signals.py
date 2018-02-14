@@ -159,8 +159,8 @@ def update_informal_layers(sender, instance, created, **kwargs):
 
         for sample in instance.samples.all():
             old_layers = list(sample.sample_details.informal_layers.all())
-            non_process_layers = dict((layer, set(sub_layer for sub_layer in old_layers if sub_layer.index < layer.index))
-                                      for layer in old_layers if not layer.process)
+            non_process_layers = {layer: {sub_layer for sub_layer in old_layers if sub_layer.index < layer.index}
+                                  for layer in old_layers if not layer.process}
             informal_layers = []
             append_non_process_layers()
             modified_layers = set()
@@ -176,8 +176,7 @@ def update_informal_layers(sender, instance, created, **kwargs):
             informal_layers.extend(sorted(non_process_layers, key=lambda layer: layer.index))
             # This also removes layers whose processes have been withdrawn from
             # the sample.
-            sample.sample_details.informal_layers.exclude(
-                pk__in=set(layer.pk for layer in informal_layers if layer.pk)).delete()
+            sample.sample_details.informal_layers.exclude(pk__in={layer.pk for layer in informal_layers if layer.pk}).delete()
             for layer in modified_layers:
                 layer.verified = False
             for i, layer in enumerate(informal_layers):

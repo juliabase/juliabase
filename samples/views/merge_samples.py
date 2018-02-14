@@ -126,7 +126,7 @@ def merge_samples(from_sample, to_sample):
             current_sample = current_sample.split_origin.parent
         current_sample.processes.add(process)
     to_sample.series.add(*from_sample.series.all())
-    to_aliases = set(alias.name for alias in to_sample.aliases.all())
+    to_aliases = {alias.name for alias in to_sample.aliases.all()}
     to_sample.aliases.add(*(alias for alias in from_sample.aliases.all() if alias.name not in to_aliases))
     if not to_sample.aliases.filter(name=from_sample.name).exists():
         to_sample.aliases.create(name=from_sample.name)

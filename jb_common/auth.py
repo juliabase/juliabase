@@ -116,9 +116,9 @@ class LDAPConnection:
 
     def __init__(self):
         self.cached_ad_data = {}
-        self.permissions_of_ad_groups = dict(
-            (ad_groupname, set(Permission.objects.filter(codename__in=permission_codenames)))
-            for ad_groupname, permission_codenames in settings.LDAP_GROUPS_TO_PERMISSIONS.items())
+        self.permissions_of_ad_groups = {ad_groupname: set(Permission.objects.filter(codename__in=permission_codenames))
+                                         for ad_groupname, permission_codenames in
+                                         settings.LDAP_GROUPS_TO_PERMISSIONS.items()}
         managed_permissions_codenames = set().union(*settings.LDAP_GROUPS_TO_PERMISSIONS.values())
         self.managed_permissions = set(Permission.objects.filter(codename__in=managed_permissions_codenames))
 

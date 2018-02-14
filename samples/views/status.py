@@ -159,7 +159,7 @@ def show(request):
     for process_class in process_classes:
         current_status = eligible_status_messages.filter(process_classes=process_class).order_by("-begin", "-timestamp")[0]
         status_messages.append((current_status, process_class.model_class()._meta.verbose_name))
-    consumed_status_message_ids = set(item[0].id for item in status_messages)
+    consumed_status_message_ids = {item[0].id for item in status_messages}
     status_messages.sort(key=lambda item: item[1].lower())
     further_status_messages = {}
     for status_message in models.StatusMessage.objects.filter(withdrawn=False, end__gt=now).exclude(

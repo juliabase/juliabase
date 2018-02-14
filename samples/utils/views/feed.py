@@ -104,8 +104,8 @@ class Reporter:
         """
         self.interested_users -= self.already_informed_users
         if sending_model:
-            self.interested_users &= set(user_details.user for user_details in
-                                         ContentType.objects.get_for_model(sending_model).subscribed_users.all())
+            self.interested_users &= {user_details.user for user_details in
+                                      ContentType.objects.get_for_model(sending_model).subscribed_users.all()}
         self.already_informed_users.update(self.interested_users)
         self.interested_users.discard(self.originator)
         if self.interested_users:
@@ -514,7 +514,7 @@ class Reporter:
         """
         entry = models.FeedStatusMessage.objects.create(originator=self.originator, process_class=process_class,
                                                         status=status_message)
-        self.interested_users = set(user_details.user for user_details in process_class.subscribed_users.all())
+        self.interested_users = {user_details.user for user_details in process_class.subscribed_users.all()}
         self.__connect_with_users(entry)
 
     def report_withdrawn_status_message(self, process_class, status_message):
@@ -530,7 +530,7 @@ class Reporter:
         """
         entry = models.FeedWithdrawnStatusMessage.objects.create(
             originator=self.originator, process_class=process_class, status=status_message)
-        self.interested_users = set(user_details.user for user_details in process_class.subscribed_users.all())
+        self.interested_users = {user_details.user for user_details in process_class.subscribed_users.all()}
         self.__connect_with_users(entry)
 
     def report_task(self, task, edit_description=None):

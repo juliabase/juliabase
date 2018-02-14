@@ -48,11 +48,11 @@ def _user_choices_by_department(user, include=(), exclude=()):
     """
     choices = []
     for department in Department.objects.all():
-        users_from_department = set(user for user in include if user.jb_user_details.department == department)
+        users_from_department = {user for user in include if user.jb_user_details.department == department}
         if department in user.samples_user_details.show_users_from_departments.all():
             users_from_department |= set(django.contrib.auth.models.User.objects.
                                          filter(is_active=True, jb_user_details__department=department))
-        users_from_department -= set(user for user in exclude if user.jb_user_details.department == department)
+        users_from_department -= {user for user in exclude if user.jb_user_details.department == department}
         if users_from_department:
             choices.append((department.name, [(user.pk, get_really_full_name(user))
                                               for user in sorted_users_by_first_name(users_from_department)]))
@@ -180,11 +180,11 @@ class TopicField(forms.ChoiceField):
             all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
             user_topics = user.topics.all()
             top_level_topics = \
-                set(topic for topic in all_topics if (not topic.confidential or topic in user_topics) and not topic.has_parent())
+                {topic for topic in all_topics if (not topic.confidential or topic in user_topics) and not topic.has_parent()}
             if additional_topic:
                 top_level_topics.add(additional_topic.get_top_level_topic())
         else:
-            top_level_topics = set(topic for topic in Topic.objects.iterator() if not topic.has_parent())
+            top_level_topics = {topic for topic in Topic.objects.iterator() if not topic.has_parent()}
         top_level_topics = sorted(top_level_topics, key=lambda topic: topic.name.lower())
         topics_and_sub_topics(top_level_topics)
 

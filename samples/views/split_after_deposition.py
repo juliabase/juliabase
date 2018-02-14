@@ -506,8 +506,8 @@ def split_and_rename_after_deposition(request, deposition_number):
             return utils.successful_response(request, _("Samples were successfully split and/or renamed."),
                                              json_response=True)
     else:
-        new_names = dict((int_or_zero(key[len("new-name-"):]), new_name)
-                         for key, new_name in request.GET.items() if key.startswith("new-name-"))
+        new_names = {int_or_zero(key[len("new-name-"):]): new_name
+                     for key, new_name in request.GET.items() if key.startswith("new-name-")}
         new_names.pop(0, None)
         original_data_forms, new_name_form_lists, global_new_data_form = \
             forms_from_database(request.user, deposition, remote_client, new_names)
