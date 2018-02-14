@@ -50,7 +50,8 @@ rename_choices = (("", _("no names")),
                   ("cleaning", _("cleaning number")))
 
 class AddSamplesForm(forms.Form):
-    """Form for adding new samples."""
+    """Form for adding new samples.
+    """
     # FixMe: Although this form can never represent *one* sample but allows the
     # user to add arbitrary samples with the same properties (except for the
     # name of course), this should be converted to a *model* form in order to

@@ -53,7 +53,8 @@ class FeedEntry(PolymorphicModel):
     important = models.BooleanField(_("is important"), default=True)
     sha1_hash = models.CharField(_("SHA1 hex digest"), max_length=40, blank=True, editable=False)
     """You'll never calculate the SHA-1 hash yourself.  It is done in
-    `save`."""
+    `save`.
+    """
 
     class Meta:
         verbose_name = _("feed entry")

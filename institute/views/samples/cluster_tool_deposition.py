@@ -56,7 +56,8 @@ class DepositionForm(utils.DepositionForm):
 
 
 class ClusterToolLayerForm(utils.SubprocessMultipleTypesForm):
-    """Abstract model form for both layer types in the cluster tool."""
+    """Abstract model form for both layer types in the cluster tool.
+    """
 
     class Meta:
         exclude = ("deposition",)

@@ -47,7 +47,8 @@ from samples.data_tree import DataNode, DataItem
 
 
 _table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
-"""Set of field names that should never be included by `fields_to_data_items`."""
+"""Set of field names that should never be included by `fields_to_data_items`.
+"""
 
 def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
     """Adds all fields of a model instance to the items of a data node.  This
@@ -1086,7 +1087,8 @@ class SampleSplit(Process):
     parent = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("parent"))
     """This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
-    find the parent via the samples attribute every process has, too."""
+    find the parent via the samples attribute every process has, too.
+    """
 
     class Meta(PolymorphicModel.Meta):
         verbose_name = _("sample split")

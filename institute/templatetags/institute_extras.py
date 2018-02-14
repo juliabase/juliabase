@@ -73,7 +73,8 @@ def calculate_silane_concentration(value):
 def cluster_tool_layer_type(value, type_="standard"):
     """Filter for detecting the layer type (hot-wire, PECVD) for
     cluster-tool layers.  ``type_`` may be ``"standard"``, ``"short"``, or
-    ``"verbose"``."""
+    ``"verbose"``.
+    """
     if isinstance(value, models.ClusterToolHotWireLayer):
         return {"verbose": _("hot-wire"), "short": "HW"}.get(type_, "hot-wire")
     elif isinstance(value, models.ClusterToolPECVDLayer):

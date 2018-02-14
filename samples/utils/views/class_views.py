@@ -1008,7 +1008,8 @@ class SubprocessMultipleTypesForm(SubprocessForm):
 
     step_type = forms.CharField(widget=forms.HiddenInput)
     """This is for being able to distinguish the form types; it is not given by the
-    user directy."""
+    user directy.
+    """
 
     def __init__(self, view, data=None, **kwargs):
         super(SubprocessMultipleTypesForm, self).__init__(view, data, **kwargs)
@@ -1059,7 +1060,8 @@ class MultipleStepTypesMixin(MultipleStepsMixin):
 
     class StepForm(forms.Form):
         """Dummy form class for detecting the actual step type.  It is used
-        only in `from_post_data`."""
+        only in `from_post_data`.
+        """
         step_type = forms.CharField()
 
     def __init__(self, **kwargs):

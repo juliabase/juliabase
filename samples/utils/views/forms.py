@@ -521,7 +521,8 @@ class FixedOperatorField(forms.ChoiceField):
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 """Standard regular expression pattern for time durations in JuliaBase:
-HH:MM:SS, where hours can also be 3-digit and are optional."""
+HH:MM:SS, where hours can also be 3-digit and are optional.
+"""
 def clean_time_field(value):
     """General helper function for use in the ``clean_...`` methods in forms.
     It tests whether the time format is correct, and normalises the duration so
@@ -588,7 +589,8 @@ def clean_timestamp_field(value):
 
 
 quantity_pattern = re.compile(r"^\s*(?P<number>[-+]?\d+(\.\d+)?(e[-+]?\d+)?)\s*(?P<unit>[a-uA-Zµ]+)\s*$")
-"""Regular expression pattern for valid physical quantities."""
+"""Regular expression pattern for valid physical quantities.
+"""
 def clean_quantity_field(value, units):
     """General helper function for use in the ``clean_...`` methods in forms.
     It tests whether the format of the physical quantity is correct, and

@@ -106,8 +106,8 @@ def substitute_formulae(string):
                 end = match.start()
                 latex_markup = string[start:end]
                 result += escape(string[position:start - 1]) + \
-                    """<img style="vertical-align: middle" alt="{0}" """ \
-                    """src="https://chart.googleapis.com/chart?chf=bg,s,00000000&cht=tx&chl={1}"/>""".\
+                    '<img style="vertical-align: middle" alt="{0}" ' \
+                    'src="https://chart.googleapis.com/chart?chf=bg,s,00000000&cht=tx&chl={1}"/>'.\
                     format(escape(" ".join(latex_markup.split())).replace("\\", "&#x5c;"),
                            urlquote_plus(r"\Large " + latex_markup))
                 position = end + 1
@@ -275,7 +275,8 @@ def actual_instances(instances):
 
 @register.filter
 def dejson(json_value):
-    """Takes a JSON string and returns it as a Python data structure."""
+    """Takes a JSON string and returns it as a Python data structure.
+    """
     return json.loads(json_value)
 
 

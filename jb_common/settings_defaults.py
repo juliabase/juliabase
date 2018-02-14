@@ -18,7 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Default values of jb_common settings."""
+"""Default values of jb_common settings.
+"""
 
 import sys, os
 from django.utils.translation import ugettext_lazy as _, ugettext

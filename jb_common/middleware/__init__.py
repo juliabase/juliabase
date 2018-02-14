@@ -32,7 +32,8 @@ from django.utils.translation import ugettext as _
 import django.http
 
 
-"""Middleware classes for various totally unrelated things."""
+"""Middleware classes for various totally unrelated things.
+"""
 
 
 class LocaleMiddleware:

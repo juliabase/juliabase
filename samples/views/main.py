@@ -131,7 +131,8 @@ class SearchDepositionsForm(forms.Form):
 
 
 max_results = 50
-"""Maximal number of search results to be displayed."""
+"""Maximal number of search results to be displayed.
+"""
 @login_required
 def deposition_search(request):
     """View for search for depositions.  Currently, this search is very
