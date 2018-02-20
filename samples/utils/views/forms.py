@@ -881,7 +881,7 @@ class MultipleSamplesSelectForm(GenericMultipleSamplesSelectForm):
         important_samples = set()
         if process_instance:
             important_samples.update(process_instance.samples.all())
-            self.fields["sample_list"].initial = process_instance.samples.values_list("pk", flat=True)
+            self.fields["sample_list"].initial = list(process_instance.samples.values_list("pk", flat=True))
         else:
             self.fields["sample_list"].initial = []
         if preset_sample:
@@ -900,7 +900,7 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
         samples = user.my_samples.all()
         important_samples = set()
         if deposition:
-            kwargs["initial"] = {"sample_list": deposition.samples.values_list("pk", flat=True)}
+            kwargs["initial"] = {"sample_list": list(deposition.samples.values_list("pk", flat=True))}
             if deposition.finished:
                 # If editing a finished, existing deposition, always have an
                 # *unbound* form so that the samples are set although sample

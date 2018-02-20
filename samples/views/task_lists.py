@@ -49,7 +49,7 @@ class SamplesForm(forms.Form):
         samples = user.my_samples.all()
         important_samples = set()
         if task:
-            kwargs["initial"] = {"sample_list": task.samples.values_list("pk", flat=True)}
+            kwargs["initial"] = {"sample_list": list(task.samples.values_list("pk", flat=True))}
             if user != task.customer or task.status != "1 new":
                 super().__init__(**kwargs)
                 self.fields["sample_list"].disabled = True

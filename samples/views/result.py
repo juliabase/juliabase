@@ -133,8 +133,8 @@ class RelatedDataForm(forms.Form):
                 Q(samples__watchers=user) | (Q(currently_responsible_person=user) &
                                               Q(timestamp__range=(three_months_ago, now)))
                 | Q(pk__in=old_result.sample_series.values_list("pk", flat=True))).distinct()
-            self.fields["samples"].initial = old_result.samples.values_list("pk", flat=True)
-            self.fields["sample_series"].initial = old_result.sample_series.values_list("pk", flat=True)
+            self.fields["samples"].initial = list(old_result.samples.values_list("pk", flat=True))
+            self.fields["sample_series"].initial = list(old_result.sample_series.values_list("pk", flat=True))
         else:
             if "sample" in query_string_dict:
                 preset_sample = get_object_or_404(models.Sample, name=query_string_dict["sample"])

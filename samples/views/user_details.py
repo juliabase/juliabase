@@ -74,7 +74,7 @@ class UserDetailsForm(forms.ModelForm):
         self.fields["show_users_from_departments"].choices = [(department.pk, department.name)
                                                             for department in Department.objects.iterator()]
         self.fields["show_users_from_departments"].initial = \
-                    user.samples_user_details.show_users_from_departments.values_list("id", flat=True)
+                    list(user.samples_user_details.show_users_from_departments.values_list("id", flat=True))
 
 
 @login_required
@@ -157,8 +157,8 @@ def topics_and_permissions(request, login_name):
         raise permissions.PermissionError(
             request.user, _("You can't access the list of topics and permissions of another user."))
     if jb_common_utils.is_json_requested(request):
-        return jb_common_utils.respond_in_json((user.topics.values_list("pk", flat=True),
-                                                user.managed_topics.values_list("pk", flat=True),
+        return jb_common_utils.respond_in_json((list(user.topics.values_list("pk", flat=True)),
+                                                list(user.managed_topics.values_list("pk", flat=True)),
                                                 user.get_all_permissions()))
     return render(request, "samples/topics_and_permissions.html",
                   {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),

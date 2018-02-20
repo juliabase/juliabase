@@ -395,7 +395,7 @@ class Process(PolymorphicModel):
         """
         data = {field.name: getattr(self, field.name) for field in self._meta.fields
                 if field.name not in {"actual_object_id", "process_ptr"}}
-        data["samples"] = self.samples.values_list("id", flat=True)
+        data["samples"] = list(self.samples.values_list("id", flat=True))
         if "sample_positions" in data:
             data["sample_positions"] = json.loads(data["sample_positions"])
         return data
@@ -1352,7 +1352,7 @@ class Result(Process):
         :rtype: dict
         """
         data = super().get_data()
-        data["sample_series"] = self.sample_series.values_list("pk", flat=True)
+        data["sample_series"] = list(self.sample_series.values_list("pk", flat=True))
         return data
 
     def get_data_for_table_export(self):
@@ -1455,7 +1455,7 @@ class SampleSeries(models.Model):
         :rtype: `dict`
         """
         data = {field.name: getattr(self, field.name) for field in self._meta.fields}
-        data["samples"] = self.samples.values_list("id", flat=True)
+        data["samples"] = list(self.samples.values_list("id", flat=True))
         return data
 
     def get_data_for_table_export(self):
