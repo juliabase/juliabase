@@ -239,9 +239,9 @@ def add_user_details(sender, instance, created=True, **kwargs):
     # the calling order, and have to trigger the respective initialisers
     # ourselves if necessary.
     def set_subscribed_feeds(user_details):
-        user_details.subscribed_feeds = [ContentType.objects.get(app_label="samples", model="sample"),
-                                         ContentType.objects.get(app_label="samples", model="sampleseries"),
-                                         ContentType.objects.get(app_label="jb_common", model="topic")]
+        user_details.subscribed_feeds.set([ContentType.objects.get(app_label="samples", model="sample"),
+                                           ContentType.objects.get(app_label="samples", model="sampleseries"),
+                                           ContentType.objects.get(app_label="jb_common", model="topic")])
     if created:
         user_details = samples_app.UserDetails.objects.create(
             user=instance, identifying_data_hash=get_identifying_data_hash(instance))
@@ -258,7 +258,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
             jb_common.signals.add_user_details(User, instance, created=True)
             department = instance.jb_user_details.department
         if department:
-            user_details.show_users_from_departments = [department]
+            user_details.show_users_from_departments.set([department])
 
         user_details.save()
 

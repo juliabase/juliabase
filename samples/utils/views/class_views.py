@@ -401,7 +401,7 @@ class ProcessMultipleSamplesView(ProcessWithoutSamplesView):
     def save_to_database(self):
         process = super().save_to_database()
         if self.forms["samples"].is_bound:
-            process.samples = self.forms["samples"].cleaned_data["sample_list"]
+            process.samples.set(self.forms["samples"].cleaned_data["sample_list"])
         return process
 
 
