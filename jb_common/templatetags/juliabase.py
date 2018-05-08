@@ -121,9 +121,9 @@ def substitute_formulae(string):
     return result
 
 
+@mark_safe
 @register.filter
 @stringfilter
-@mark_safe
 def markdown(value, margins="default"):
     """Filter for formatting the value by assuming Markdown syntax.  Embedded
     HTML tags are always escaped.  Warning: You need at least Python Markdown
@@ -142,8 +142,8 @@ def markdown(value, margins="default"):
     return result
 
 
-@register.simple_tag
 @mark_safe
+@register.simple_tag
 def markdown_hint():
     """Tag for inserting a short remark that Markdown syntax must be used
     here, with a link to further information.
@@ -194,8 +194,8 @@ def urlquote_plus(value):
     return django.utils.http.urlquote_plus(value, safe="/")
 
 
-@register.simple_tag
 @mark_safe
+@register.simple_tag
 def input_field(field):
     """Tag for inserting a field value into an HTML table as an editable
     field.  It consists of two ``<td>`` elements, one for the label and one for
@@ -280,8 +280,8 @@ def dejson(json_value):
     return json.loads(json_value)
 
 
-@register.filter
 @mark_safe
+@register.filter
 def checkmark(value):
     """Returns a checkmark if the given value resolves to ``True``, and the empty
     string otherwise.

@@ -34,8 +34,8 @@ from django.template.defaultfilters import stringfilter
 register = template.Library()
 
 
-@register.filter
 @mark_safe
+@register.filter
 def three_digits(number):
     """Filter for padding an integer with zeros so that it has at least three
     digits.
@@ -87,8 +87,8 @@ def basename(filepath):
     return os.path.basename(filepath)
 
 
-@register.filter
 @mark_safe
+@register.filter
 def solarsimulator_color(measurement):
     """Returns the colour which is associated with the solarsimulator
     measurement.  The returned string is ready-to-be-used in CSS directives as
@@ -109,8 +109,8 @@ def sort_cells(cells):
     return sorted(cells, key=sort_function)
 
 
-@register.filter
 @mark_safe
+@register.filter
 def depostion_time(time):
     if time:
         time_components = time.split(":")

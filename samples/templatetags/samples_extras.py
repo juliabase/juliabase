@@ -224,8 +224,8 @@ timestamp_formats = ("%Y-%m-%d %H:%M:%S",
                      "%Y",
                      _("date unknown"))
 
-@register.filter
 @mark_safe
+@register.filter
 def timestamp(value, minimal_inaccuracy=0):
     """Filter for formatting the timestamp of a process properly to reflect the
     inaccuracy connected with this timestamp.  It works not strictly only for
@@ -294,9 +294,9 @@ sample_name_pattern = \
                             -[-A-Za-z_/0-9#]+)(\W|\Z)""", re.UNICODE | re.VERBOSE)
 sample_series_name_pattern = re.compile(r"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-A-Za-zÄÖÜäöüß_/0-9]+)(\W|\Z)", re.UNICODE)
 
+@mark_safe
 @register.filter
 @stringfilter
-@mark_safe
 def markdown_samples(value, margins="default"):
     """Filter for formatting the value by assuming Markdown syntax.
     Additionally, sample names and sample series names are converted to
@@ -471,8 +471,8 @@ def value_field(parser, token):
     return ValueFieldNode(parser.compile_filter(field), unit or None, significant_digits)
 
 
-@register.simple_tag
 @mark_safe
+@register.simple_tag
 def split_field(*fields):
     """Tag for combining two or three input fields wich have the same label and
     help text.  It consists of three or more ``<td>`` elements, one for the
@@ -585,8 +585,8 @@ def value_split_field(parser, token):
     return ValueSplitFieldNode(fields, unit)
 
 
-@register.simple_tag
 @mark_safe
+@register.simple_tag
 def display_search_tree(tree):
     """Tag for displaying the forms tree for the advanced search.  This tag is
     used only in the advanced search.  It walks through the search node tree
@@ -646,8 +646,8 @@ def hms_to_minutes(time_string):
     return round(minutes, 2)
 
 
-@register.simple_tag
 @mark_safe
+@register.simple_tag
 def lab_notebook_comments(process, position):
     """This tag allows to set a stand-alone comment in a lab notebook.
     The comment string will be extracted from the process comment and should be placed
@@ -702,8 +702,8 @@ def get_hash_value(instance):
     return instance.get_hash_value()
 
 
-@register.simple_tag
 @mark_safe
+@register.simple_tag
 def expand_topic(topic, user):
     topic_id = topic.topic.id
     result = """<h3><img src="{group_icon_url}" alt="topic icon" style="margin-right: 0.5em" class="topics"
