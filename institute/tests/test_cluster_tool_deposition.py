@@ -49,7 +49,7 @@ class ClusterToolDepositionTest(TestCase):
              "sample_list": ["13", "14"],
              "0-step_type": "clustertoolhotwirelayer", "0-number": "1", "0-wire_material": "rhenium",
              "1-step_type": "clustertoolpecvdlayer", "1-number": "2", "1-chamber": "#1"}, follow=True)
-        self.assertRedirects(response, "http://testserver/", 303)
+        self.assertRedirects(response, "/", 303)
         response = self.client.get("/cluster_tool_depositions/" + self.deposition_number, HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertEqual(response.status_code, 200)
