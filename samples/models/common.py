@@ -656,7 +656,7 @@ class PhysicalProcess(Process):
         except AttributeError:
             field_name, parameter_name = "id", class_name + "_id"
         # Quote it in order to allow slashs in values.
-        field_value = urlquote(getattr(self, field_name), safe="")
+        field_value = urlquote(str(getattr(self, field_name)), safe="")
         try:
             return django.urls.reverse(prefix + class_name, kwargs={parameter_name: field_value})
         except django.urls.NoReverseMatch:
