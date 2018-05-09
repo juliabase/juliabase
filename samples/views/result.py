@@ -477,8 +477,8 @@ class FormSet:
             if self.related_data_form.cleaned_data["image_file"]:
                 save_image_file(post_files["image_file"], result, self.related_data_form)
             if self.related_data_form.is_valid():
-                result.samples = self.related_data_form.cleaned_data["samples"]
-                result.sample_series = self.related_data_form.cleaned_data["sample_series"]
+                result.samples.set(self.related_data_form.cleaned_data["samples"])
+                result.sample_series.set(self.related_data_form.cleaned_data["sample_series"])
                 return result
 
     def update_previous_dimensions_form(self):

@@ -204,7 +204,7 @@ class Reporter:
         if topic:
             common_purpose = samples[0].purpose
             entry = models.FeedNewSamples.objects.create(originator=self.originator, topic=topic, purpose=common_purpose)
-            entry.samples = samples
+            entry.samples.set(samples)
             entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
             self.__add_topic_members(topic)
             self.__connect_with_users(entry, jb_common.models.Topic)
@@ -288,7 +288,7 @@ class Reporter:
         :type comments: str
         """
         entry = models.FeedCopiedMySamples.objects.create(originator=self.originator, comments=comments)
-        entry.samples = samples
+        entry.samples.set(samples)
         self.interested_users.add(recipient)
         self.__connect_with_users(entry, models.Sample)
 
@@ -312,7 +312,7 @@ class Reporter:
         entry = models.FeedEditedSamples.objects.create(
             originator=self.originator, description=edit_description["description"],
             important=edit_description["important"], responsible_person_changed=True)
-        entry.samples = samples
+        entry.samples.set(samples)
         self.interested_users.add(samples[0].currently_responsible_person)
         self.__connect_with_users(entry, models.Sample)
 
@@ -340,7 +340,7 @@ class Reporter:
         entry = models.FeedMovedSamples.objects.create(
             originator=self.originator, description=edit_description["description"],
             important=important, topic=topic, old_topic=old_topic)
-        entry.samples = samples
+        entry.samples.set(samples)
         entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
         if old_topic:
             self.__add_topic_members(old_topic)
@@ -363,7 +363,7 @@ class Reporter:
         important = edit_description["important"]
         entry = models.FeedEditedSamples.objects.create(
             originator=self.originator, description=edit_description["description"], important=important)
-        entry.samples = samples
+        entry.samples.set(samples)
         self.__add_interested_users(samples, important)
         self.__connect_with_users(entry, models.Sample)
 
@@ -568,5 +568,5 @@ class Reporter:
         self.interested_users.add(task.customer)
         entry = models.FeedRemovedTask.objects.create(old_id=task.id, originator=self.originator,
                                                       process_class=task.process_class)
-        entry.samples = task.samples.all()
+        entry.samples.set(task.samples.all())
         self.__connect_with_users(entry)
