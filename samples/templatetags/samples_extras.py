@@ -225,7 +225,6 @@ timestamp_formats = ("%Y-%m-%d %H:%M:%S",
                      _("date unknown"))
 
 @register.filter
-@mark_safe
 def timestamp(value, minimal_inaccuracy=0):
     """Filter for formatting the timestamp of a process properly to reflect the
     inaccuracy connected with this timestamp.  It works not strictly only for
@@ -255,7 +254,7 @@ def timestamp(value, minimal_inaccuracy=0):
         timestamp_ = value["timestamp"]
         inaccuracy = value.get("timestamp_inaccuracy", 0)
     timestamp_ = timestamp_.astimezone(django.utils.timezone.get_current_timezone())
-    return timestamp_.strftime(str(timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)]))
+    return mark_safe(timestamp_.strftime(str(timestamp_formats[max(int(minimal_inaccuracy), inaccuracy)])))
 
 
 @register.filter
@@ -296,7 +295,6 @@ sample_series_name_pattern = re.compile(r"(\W|\A)(?P<name>[a-z_]+-[0-9][0-9]-[-A
 
 @register.filter
 @stringfilter
-@mark_safe
 def markdown_samples(value, margins="default"):
     """Filter for formatting the value by assuming Markdown syntax.
     Additionally, sample names and sample series names are converted to
@@ -344,7 +342,7 @@ def markdown_samples(value, margins="default"):
     if result.startswith("<p>"):
         if margins == "collapse":
             result = """<p style="margin: 0pt">""" + result[3:]
-    return result
+    return mark_safe(result)
 
 
 @register.filter(is_safe=True)
@@ -472,7 +470,6 @@ def value_field(parser, token):
 
 
 @register.simple_tag
-@mark_safe
 def split_field(*fields):
     """Tag for combining two or three input fields wich have the same label and
     help text.  It consists of three or more ``<td>`` elements, one for the
@@ -494,7 +491,7 @@ def split_field(*fields):
     help_text = """ <span class="help">({0})</span>""".format(fields[0].help_text) if fields[0].help_text else ""
     result += """<td class="field-input">{fields_string}{help_text}</td>""".format(
         fields_string=separator.join(str(field) for field in fields), help_text=help_text)
-    return result
+    return mark_safe(result)
 
 
 class ValueSplitFieldNode(template.Node):
@@ -586,7 +583,6 @@ def value_split_field(parser, token):
 
 
 @register.simple_tag
-@mark_safe
 def display_search_tree(tree):
     """Tag for displaying the forms tree for the advanced search.  This tag is
     used only in the advanced search.  It walks through the search node tree
@@ -631,7 +627,7 @@ def display_search_tree(tree):
                 result += """</td></tr><tr><td colspan="2">"""
         result += "</td></tr>"
     result += "</table>"
-    return result
+    return mark_safe(result)
 
 
 @register.filter
@@ -647,7 +643,6 @@ def hms_to_minutes(time_string):
 
 
 @register.simple_tag
-@mark_safe
 def lab_notebook_comments(process, position):
     """This tag allows to set a stand-alone comment in a lab notebook.
     The comment string will be extracted from the process comment and should be placed
@@ -667,7 +662,7 @@ def lab_notebook_comments(process, position):
         try:
             start_index = process.comments.index(keyword) + len(keyword)
         except ValueError:
-            return ""
+            return mark_safe("")
         try:
             keyword = "AFTER:"
             end_index = process.comments.index(keyword)
@@ -678,14 +673,14 @@ def lab_notebook_comments(process, position):
         try:
             start_index = process.comments.index(keyword) + len(keyword)
         except ValueError:
-            return ""
+            return mark_safe("")
         end_index = len(process.comments)
     else:
-        return ""
+        return mark_safe("")
     notebook_comment = """<tr style="vertical-align: top" class="topline">
                             <td colspan="100" style="text-align: center">{0}</td></tr>""" \
         .format(markdown_samples(process.comments[start_index: end_index].strip()))
-    return notebook_comment
+    return mark_safe(notebook_comment)
 
 
 @register.filter
@@ -703,7 +698,6 @@ def get_hash_value(instance):
 
 
 @register.simple_tag
-@mark_safe
 def expand_topic(topic, user):
     topic_id = topic.topic.id
     result = """<h3><img src="{group_icon_url}" alt="topic icon" style="margin-right: 0.5em" class="topics"
@@ -750,7 +744,7 @@ def expand_topic(topic, user):
             """
     result += """</div>
           """
-    return result
+    return mark_safe(result)
 
 
 @register.filter
