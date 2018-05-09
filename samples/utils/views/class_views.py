@@ -377,7 +377,7 @@ class ProcessView(ProcessWithoutSamplesView):
     def save_to_database(self):
         process = super().save_to_database()
         if self.forms["sample"].is_bound:
-            process.samples = [self.forms["sample"].cleaned_data["sample"]]
+            process.samples.set([self.forms["sample"].cleaned_data["sample"]])
         return process
 
 

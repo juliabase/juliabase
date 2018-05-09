@@ -93,7 +93,7 @@ def new(request, sample_name):
             sample_death.operator = request.user
             sample_death.save()
             sample_death_form.save_m2m()
-            sample_death.samples = [sample]
+            sample_death.samples.set([sample])
             # FixMe: Feed entries
             return utils.successful_response(request, _("Sample “{sample}” was killed.").format(sample=sample),
                                              "samples:show_sample_by_name", {"sample_name": sample_name})
