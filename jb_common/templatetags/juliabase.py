@@ -121,7 +121,6 @@ def substitute_formulae(string):
     return result
 
 
-@mark_safe
 @register.filter
 @stringfilter
 def markdown(value, margins="default"):
@@ -139,18 +138,17 @@ def markdown(value, margins="default"):
     if result.startswith("<p>"):
         if margins == "collapse":
             result = """<p style="margin: 0pt">""" + result[3:]
-    return result
+    return mark_safe(result)
 
 
-@mark_safe
 @register.simple_tag
 def markdown_hint():
     """Tag for inserting a short remark that Markdown syntax must be used
     here, with a link to further information.
     """
-    return """<span class="markdown-hint">(""" + _("""with {markdown_link} syntax""") \
-        .format(markdown_link="""<a href="{0}">Markdown</a>""".format(
-            django.urls.reverse("jb_common:markdown_sandbox"))) + ")</span>"
+    return mark_safe("""<span class="markdown-hint">(""" + _("""with {markdown_link} syntax""")
+                     .format(markdown_link="""<a href="{0}">Markdown</a>""".format(
+                         django.urls.reverse("jb_common:markdown_sandbox"))) + ")</span>")
 
 
 @register.filter
@@ -194,7 +192,6 @@ def urlquote_plus(value):
     return django.utils.http.urlquote_plus(value, safe="/")
 
 
-@mark_safe
 @register.simple_tag
 def input_field(field):
     """Tag for inserting a field value into an HTML table as an editable
@@ -218,7 +215,7 @@ def input_field(field):
     else:
         unit = """<span class="unit-of-measurement">{unit}</span>""".format(unit=unit)
     result += """<td class="field-input">{field}{unit}{help_text}</td>""".format(field=field, unit=unit, help_text=help_text)
-    return result
+    return mark_safe(result)
 
 
 @register.inclusion_tag("error_list.html")
@@ -280,10 +277,9 @@ def dejson(json_value):
     return json.loads(json_value)
 
 
-@mark_safe
 @register.filter
 def checkmark(value):
     """Returns a checkmark if the given value resolves to ``True``, and the empty
     string otherwise.
     """
-    return "✓" if value else ""
+    return mark_safe("✓" if value else "")
