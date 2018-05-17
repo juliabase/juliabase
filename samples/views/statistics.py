@@ -23,7 +23,7 @@ have only one statistics page with cache status data.  However, one can extend
 this in the institution's app.
 """
 
-import sys
+import sys, math
 import matplotlib
 from django.views.decorators.cache import cache_page, cache_control
 from django.utils.translation import ugettext as _
@@ -50,7 +50,7 @@ def statistics(request):
     """
     cache_hit_rate = utils.cache_hit_rate()
     if cache_hit_rate is not None:
-        cache_hit_rate = int(round(utils.cache_hit_rate() * 100))
+        cache_hit_rate = float("NaN") if math.isnan(cache_hit_rate) else int(round(utils.cache_hit_rate() * 100))
     return render(request, "samples/statistics.html",
                   {"title": _("JuliaBase server statistics"), "cache_hit_rate": cache_hit_rate})
 
