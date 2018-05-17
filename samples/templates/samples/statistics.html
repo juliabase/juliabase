@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     data.addColumn("number", "Value");
     data.addRows(1);
     data.setValue(0, 0, "{% trans 'hit rate' %}/%");
-    data.setValue(0, 1, {{ cache_hit_rate }});
+    data.setValue(0, 1, {{ cache_hit_rate|default:"0" }});
     var chart = new google.visualization.Gauge(document.getElementById("cache_hit_rate"));
     var options = {width: 200, height: 200, redFrom: 0, redTo: 10, majorTicks: ["0", "", "", "", "", "100"],
                        minorTicks: 2};
@@ -62,6 +62,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <h2>{% trans 'Cache status' %}</h2>
 
-<div id="cache_hit_rate"></div>
+{% if cache_hit_rate is None %}
+  <p>{% blocktrans %}No caching statistics available because caching is disabled.{% endblocktrans %}</p>
+{% else %}
+  <div id="cache_hit_rate"></div>
+{% endif %}
 
 {% endblock %}

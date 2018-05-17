@@ -48,9 +48,11 @@ def statistics(request):
 
     :rtype: HttpResponse
     """
+    cache_hit_rate = utils.cache_hit_rate()
+    if cache_hit_rate is not None:
+        cache_hit_rate = int(round(utils.cache_hit_rate() * 100))
     return render(request, "samples/statistics.html",
-                  {"title": _("JuliaBase server statistics"),
-                   "cache_hit_rate": int(round((utils.cache_hit_rate() or 0) * 100))})
+                  {"title": _("JuliaBase server statistics"), "cache_hit_rate": cache_hit_rate})
 
 
 @cache_control(max_age=0)  # This is for language switching
