@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-settings\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-27 16:29+0000\n"
+"POT-Creation-Date: 2018-05-17 23:20+0200\n"
 "PO-Revision-Date: 2015-01-02 22:56+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -29,18 +29,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: settings.py:148
+#: settings.py:149
 msgid "English"
 msgstr "Englisch"
 
-#: settings.py:148
+#: settings.py:149
 msgid "German"
 msgstr "Deutsch"
 
-#: settings.py:179
+#: settings.py:180
 msgid "old-style"
 msgstr "Altschema"
 
-#: settings.py:181
+#: settings.py:182
 msgid "new-style"
 msgstr "Neuschema"

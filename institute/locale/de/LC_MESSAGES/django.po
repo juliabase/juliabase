@@ -23,8 +23,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-27 16:29+0000\n"
-"PO-Revision-Date: 2016-10-27 18:37+0200\n"
+"POT-Creation-Date: 2018-05-17 23:20+0200\n"
+"PO-Revision-Date: 2018-05-17 23:22+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -36,499 +36,520 @@ msgstr ""
 msgid "Institute"
 msgstr "Institut"
 
-#: institute/context_processors.py:36
+#: institute/apps.py:45
+msgctxt "top-level menu item"
+msgid "explore"
+msgstr "erkunden"
+
+#: institute/apps.py:46
+msgid "samples by name"
+msgstr "Proben nach Name"
+
+#: institute/apps.py:46
+msgid "depositions by number"
+msgstr "Depositionen nach Nummer"
+
+#: institute/apps.py:48
+msgid "manage"
+msgstr "verwalten"
+
+#: institute/apps.py:49
+msgid "edit “My Layers”"
+msgstr "“Meine Schichten” ändern"
+
+#: institute/context_processors.py:33
 #, python-brace-format
 msgid "Mrs {user.last_name}"
 msgstr "Frau {user.last_name}"
 
-#: institute/context_processors.py:36
+#: institute/context_processors.py:33
 #, python-brace-format
 msgid "Mr. {user.last_name}"
 msgstr "Herr {user.last_name}"
 
-#: institute/models/depositions.py:53
+#: institute/models/depositions.py:50
 msgid "carrier"
 msgstr "Carrier"
 
-#: institute/models/depositions.py:56
+#: institute/models/depositions.py:53
 msgid "cluster tool deposition"
 msgstr "Cluster-Tool-Deposition"
 
-#: institute/models/depositions.py:57
+#: institute/models/depositions.py:54
 msgid "cluster tool depositions"
 msgstr "Cluster-Tool-Depositionen"
 
-#: institute/models/depositions.py:86
+#: institute/models/depositions.py:83
 msgid "cluster tool deposition lab"
 msgstr "Labor des Cluster-Tools"
 
-#: institute/models/depositions.py:98 institute/models/depositions.py:189
+#: institute/models/depositions.py:94 institute/models/depositions.py:184
 msgid "deposition"
 msgstr "Deposition"
 
-#: institute/models/depositions.py:102
+#: institute/models/depositions.py:98
 msgid "cluster tool layer"
 msgstr "Schicht des Cluster-Tools"
 
-#: institute/models/depositions.py:103
+#: institute/models/depositions.py:99
 msgid "cluster tool layers"
 msgstr "Schichten des Cluster-Tools"
 
-#: institute/models/depositions.py:106 institute/models/depositions.py:205
+#: institute/models/depositions.py:102 institute/models/depositions.py:200
 #, python-brace-format
 msgid "layer {number} of {deposition}"
 msgstr "Schicht {number} von {deposition}"
 
-#: institute/models/depositions.py:110
+#: institute/models/depositions.py:106
 msgid "unknown"
 msgstr "unbekannt"
 
-#: institute/models/depositions.py:111
+#: institute/models/depositions.py:107
 msgid "rhenium"
 msgstr "Rhenium"
 
-#: institute/models/depositions.py:112
+#: institute/models/depositions.py:108
 msgid "tantalum"
 msgstr "Tantal"
 
-#: institute/models/depositions.py:113
+#: institute/models/depositions.py:109
 msgid "tungsten"
 msgstr "Wolfram"
 
-#: institute/models/depositions.py:119 institute/models/depositions.py:138
+#: institute/models/depositions.py:115 institute/models/depositions.py:134
 msgid "deposition time"
 msgstr "Depositionszeit"
 
-#: institute/models/depositions.py:119 institute/models/depositions.py:138
+#: institute/models/depositions.py:115 institute/models/depositions.py:134
 msgid "format HH:MM:SS"
 msgstr "Format HH:MM:SS"
 
-#: institute/models/depositions.py:120 institute/models/depositions.py:139
-#: institute/models/sample_details.py:290
+#: institute/models/depositions.py:116 institute/models/depositions.py:135
+#: institute/models/sample_details.py:283
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:41
 msgid "comments"
 msgstr "Kommentare"
 
-#: institute/models/depositions.py:121
+#: institute/models/depositions.py:117
 msgid "wire material"
 msgstr "Drahtmaterial"
 
-#: institute/models/depositions.py:122
+#: institute/models/depositions.py:118
 msgid "base pressure"
 msgstr "Basisdruck"
 
-#: institute/models/depositions.py:125
+#: institute/models/depositions.py:121
 msgid "cluster tool hot-wire layer"
 msgstr "Hot-Wire-Schicht im Cluster-Tool"
 
-#: institute/models/depositions.py:126
+#: institute/models/depositions.py:122
 msgid "cluster tool hot-wire layers"
 msgstr "Hot-Wire-Schichten im Cluster-Tool"
 
-#: institute/models/depositions.py:137 institute/models/depositions.py:191
+#: institute/models/depositions.py:133 institute/models/depositions.py:186
 #: institute/templates/samples/lab_notebook_five_chamber_deposition.html:36
 msgid "chamber"
 msgstr "Kammer"
 
-#: institute/models/depositions.py:140
+#: institute/models/depositions.py:136
 msgid "plasma start with shutter"
 msgstr "Plasma startet mit Shutter"
 
-#: institute/models/depositions.py:141
+#: institute/models/depositions.py:137
 msgid "deposition power"
 msgstr "Depositionsleistung"
 
-#: institute/models/depositions.py:146
+#: institute/models/depositions.py:142
 msgid "cluster tool PECVD layer"
 msgstr "PECVD-Schicht im Cluster-Tool"
 
-#: institute/models/depositions.py:147
+#: institute/models/depositions.py:143
 msgid "cluster tool PECVD layers"
 msgstr "PECVD-Schichten im Cluster-Tool"
 
-#: institute/models/depositions.py:154
+#: institute/models/depositions.py:150
 msgid "5-chamber deposition"
 msgstr "5-Kammer-Deposition"
 
-#: institute/models/depositions.py:155
+#: institute/models/depositions.py:151
 msgid "5-chamber depositions"
 msgstr "5-Kammer-Depositionen"
 
-#: institute/models/depositions.py:168
+#: institute/models/depositions.py:164
 msgid "5-chamber deposition lab"
 msgstr "5-Kammer-Depositionslabor"
 
-#: institute/models/depositions.py:190
+#: institute/models/depositions.py:185
 msgid "layer type"
 msgstr "Schichttyp"
 
-#: institute/models/depositions.py:194
+#: institute/models/depositions.py:189
 msgid "temperature 1"
 msgstr "Temperatur 1"
 
-#: institute/models/depositions.py:196
+#: institute/models/depositions.py:191
 msgid "temperature 2"
 msgstr "Temperatur 2"
 
-#: institute/models/depositions.py:201
+#: institute/models/depositions.py:196
 msgid "5-chamber layer"
 msgstr "5-Kammer-Schicht"
 
-#: institute/models/depositions.py:202
+#: institute/models/depositions.py:197
 msgid "5-chamber layers"
 msgstr "5-Kammer-Schichten"
 
 #. Translators: sample substrate type
-#: institute/models/physical_processes.py:52
-#: institute/models/physical_processes.py:280
+#: institute/models/physical_processes.py:50
+#: institute/models/physical_processes.py:276
 msgid "custom"
 msgstr "speziell"
 
-#: institute/models/physical_processes.py:55
+#: institute/models/physical_processes.py:53
 msgid "Corning glass"
 msgstr "Corning-Glas"
 
-#: institute/models/physical_processes.py:56
-#: institute/models/sample_details.py:275
+#: institute/models/physical_processes.py:54
+#: institute/models/sample_details.py:269
 msgid "glass"
 msgstr "Glas"
 
-#: institute/models/physical_processes.py:57
-#: institute/models/sample_details.py:274
+#: institute/models/physical_processes.py:55
+#: institute/models/sample_details.py:268
 msgid "silicon wafer"
 msgstr "Silizium-Wafer"
 
-#: institute/models/physical_processes.py:58
+#: institute/models/physical_processes.py:56
 msgid "quartz"
 msgstr "Quarz"
 
-#: institute/models/physical_processes.py:59
+#: institute/models/physical_processes.py:57
 msgid "sapphire"
 msgstr "Saphir"
 
-#: institute/models/physical_processes.py:60
+#: institute/models/physical_processes.py:58
 msgid "aluminium foil"
 msgstr "Alufolie"
 
-#: institute/models/physical_processes.py:75
+#: institute/models/physical_processes.py:72
 msgid "substrate material"
 msgstr "Substratmaterial"
 
-#: institute/models/physical_processes.py:78
+#: institute/models/physical_processes.py:75
 #: institute/templates/samples/add_claim_oldstyle.html:33
-#: institute/views/samples/sample.py:72
+#: institute/views/samples/sample.py:62
 msgid "substrate"
 msgstr "Substrat"
 
-#: institute/models/physical_processes.py:79
+#: institute/models/physical_processes.py:76
 msgid "substrates"
 msgstr "Substrate"
 
-#: institute/models/physical_processes.py:85
+#: institute/models/physical_processes.py:82
 #, python-brace-format
 msgid "{material} substrate #{number}"
 msgstr "{material}-Substrat Nr. {number}"
 
-#: institute/models/physical_processes.py:89
+#: institute/models/physical_processes.py:86
 msgid "PDS #1"
 msgstr "PDS 1"
 
-#: institute/models/physical_processes.py:90
+#: institute/models/physical_processes.py:87
 msgid "PDS #2"
 msgstr "PDS 2"
 
-#: institute/models/physical_processes.py:96
+#: institute/models/physical_processes.py:93
 msgid "PDS number"
 msgstr "PDS-Nummer"
 
-#: institute/models/physical_processes.py:97
+#: institute/models/physical_processes.py:94
 msgid "raw data file"
 msgstr "Rohdaten-Datei"
 
-#: institute/models/physical_processes.py:98
-#: institute/models/physical_processes.py:237
+#: institute/models/physical_processes.py:95
+#: institute/models/physical_processes.py:233
 #, python-brace-format
 msgid "only the relative path below \"{path}\""
 msgstr "nur der relative Pfad unterhalb von \"{path}\""
 
-#: institute/models/physical_processes.py:99
+#: institute/models/physical_processes.py:96
 msgid "apparatus"
 msgstr "Anlage"
 
-#: institute/models/physical_processes.py:102
+#: institute/models/physical_processes.py:99
 msgid "PDS measurement"
 msgstr "PDS-Messung"
 
-#: institute/models/physical_processes.py:103
+#: institute/models/physical_processes.py:100
 msgid "PDS measurements"
 msgstr "PDS-Messungen"
 
-#: institute/models/physical_processes.py:113
+#: institute/models/physical_processes.py:110
 msgid "energy in eV"
 msgstr "Energie in eV"
 
-#: institute/models/physical_processes.py:114
+#: institute/models/physical_processes.py:111
 msgid "α in cm⁻¹"
 msgstr "α in cm⁻¹"
 
-#: institute/models/physical_processes.py:134
+#: institute/models/physical_processes.py:131
 msgid "irradiation"
 msgstr "Beleuchtung"
 
-#: institute/models/physical_processes.py:135
+#: institute/models/physical_processes.py:132
 msgid "temperature"
 msgstr "Temperatur"
 
-#: institute/models/physical_processes.py:138
-#: institute/models/physical_processes.py:234
+#: institute/models/physical_processes.py:135
+#: institute/models/physical_processes.py:230
 msgid "solarsimulator measurement"
 msgstr "Sonnensimulator-Messung"
 
-#: institute/models/physical_processes.py:139
+#: institute/models/physical_processes.py:136
 msgid "solarsimulator measurements"
 msgstr "Sonnensimulator-Messungen"
 
-#: institute/models/physical_processes.py:178
+#: institute/models/physical_processes.py:175
 msgid "η of best cell"
 msgstr "η der besten Zelle"
 
-#: institute/models/physical_processes.py:194
+#: institute/models/physical_processes.py:191
 msgid "voltage in V"
 msgstr "Spannung in V"
 
-#: institute/models/physical_processes.py:195
+#: institute/models/physical_processes.py:192
 msgid "current density in mA/cm²"
 msgstr "Stromdichte in mA/cm²"
 
-#: institute/models/physical_processes.py:235
+#: institute/models/physical_processes.py:231
 msgid "cell position"
 msgstr "Zellposition"
 
-#: institute/models/physical_processes.py:236
+#: institute/models/physical_processes.py:232
 msgid "data file"
 msgstr "Datendatei"
 
-#: institute/models/physical_processes.py:239
+#: institute/models/physical_processes.py:235
 msgid "area"
 msgstr "Fläche"
 
-#: institute/models/physical_processes.py:240
+#: institute/models/physical_processes.py:236
 msgid "efficiency η"
 msgstr "Effizienz η"
 
-#: institute/models/physical_processes.py:241
+#: institute/models/physical_processes.py:237
 msgid "short-circuit current density"
 msgstr "Kurzschluss­strom­dichte"
 
-#: institute/models/physical_processes.py:244
+#: institute/models/physical_processes.py:240
 msgid "solarsimulator cell measurement"
 msgstr "Sonnensimulator-Zellmessung"
 
-#: institute/models/physical_processes.py:245
+#: institute/models/physical_processes.py:241
 msgid "solarsimulator cell measurements"
 msgstr "Sonnensimulator-Zellmessungen"
 
-#: institute/models/physical_processes.py:250
+#: institute/models/physical_processes.py:246
 #, python-brace-format
 msgid "cell {position} of {solarsimulator_measurement}"
 msgstr "Zelle {position} von {solarsimulator_measurement}"
 
-#: institute/models/physical_processes.py:304
+#: institute/models/physical_processes.py:300
 msgid "layout"
 msgstr "Layout"
 
-#: institute/models/physical_processes.py:305
+#: institute/models/physical_processes.py:301
 msgid "length"
 msgstr "Länge"
 
-#: institute/models/physical_processes.py:306
+#: institute/models/physical_processes.py:302
 msgid "width"
 msgstr "Breite"
 
-#: institute/models/physical_processes.py:307
+#: institute/models/physical_processes.py:303
 msgid "parameters"
 msgstr "Parameter"
 
-#: institute/models/physical_processes.py:310
+#: institute/models/physical_processes.py:306
 msgid "structuring"
 msgstr "Strukturierung"
 
-#: institute/models/physical_processes.py:311
+#: institute/models/physical_processes.py:307
 msgid "structurings"
 msgstr "Strukturierungen"
 
-#: institute/models/physical_processes.py:314
+#: institute/models/physical_processes.py:310
 msgid "profilometer + edge"
 msgstr "Profilometer + Kante"
 
-#: institute/models/physical_processes.py:315
+#: institute/models/physical_processes.py:311
 msgid "ellipsometer"
 msgstr "Ellipsometer"
 
-#: institute/models/physical_processes.py:316
+#: institute/models/physical_processes.py:312
 msgid "calculated from deposition parameters"
 msgstr "berechnet aus Depo-Parametern."
 
-#: institute/models/physical_processes.py:317
+#: institute/models/physical_processes.py:313
 msgid "estimate"
 msgstr "Schätzung"
 
-#: institute/models/physical_processes.py:318
+#: institute/models/physical_processes.py:314
 msgid "other"
 msgstr "anderes"
 
-#: institute/models/physical_processes.py:325
+#: institute/models/physical_processes.py:321
 msgid "layer thickness"
 msgstr "Schichtdicke"
 
-#: institute/models/physical_processes.py:326
+#: institute/models/physical_processes.py:322
 msgid "measurement method"
 msgstr "Messmethode"
 
-#: institute/models/physical_processes.py:329
+#: institute/models/physical_processes.py:325
 msgid "layer thickness measurement"
 msgstr "Schichtdickenmessung"
 
-#: institute/models/physical_processes.py:330
+#: institute/models/physical_processes.py:326
 msgid "layer thickness measurements"
 msgstr "Schichtdickenmessungen"
 
-#: institute/models/sample_details.py:54
+#: institute/models/sample_details.py:49
 msgid "sample"
 msgstr "Probe"
 
-#: institute/models/sample_details.py:58 institute/models/sample_details.py:285
+#: institute/models/sample_details.py:53 institute/models/sample_details.py:278
 msgid "sample details"
 msgstr "Probendetails"
 
-#: institute/models/sample_details.py:59
+#: institute/models/sample_details.py:54
 msgctxt "plural"
 msgid "sample details"
 msgstr "Probendetails"
 
-#: institute/models/sample_details.py:268
+#: institute/models/sample_details.py:262
 msgid "black"
 msgstr "schwarz"
 
-#: institute/models/sample_details.py:268
+#: institute/models/sample_details.py:262
 msgid "blue"
 msgstr "blau"
 
-#: institute/models/sample_details.py:268
+#: institute/models/sample_details.py:262
 msgid "brown"
 msgstr "braun"
 
-#: institute/models/sample_details.py:268
+#: institute/models/sample_details.py:262
 msgid "darkgray"
 msgstr "dunkelgrau"
 
-#: institute/models/sample_details.py:269
+#: institute/models/sample_details.py:263
 msgid "green"
 msgstr "grün"
 
-#: institute/models/sample_details.py:269
+#: institute/models/sample_details.py:263
 msgid "lightblue"
 msgstr "hellblau"
 
-#: institute/models/sample_details.py:270
+#: institute/models/sample_details.py:264
 msgid "lightgreen"
 msgstr "hellgrün"
 
-#: institute/models/sample_details.py:270
+#: institute/models/sample_details.py:264
 msgid "magenta"
 msgstr "magenta"
 
-#: institute/models/sample_details.py:271
+#: institute/models/sample_details.py:265
 msgid "orange"
 msgstr "orange"
 
-#: institute/models/sample_details.py:271
+#: institute/models/sample_details.py:265
 msgid "red"
 msgstr "rot"
 
-#: institute/models/sample_details.py:271
+#: institute/models/sample_details.py:265
 msgctxt "color"
 msgid "silver"
 msgstr "silbern"
 
-#: institute/models/sample_details.py:272
+#: institute/models/sample_details.py:266
 msgid "white"
 msgstr "weiß"
 
-#: institute/models/sample_details.py:272
+#: institute/models/sample_details.py:266
 msgid "yellow"
 msgstr "gelb"
 
-#: institute/models/sample_details.py:275
+#: institute/models/sample_details.py:269
 msgctxt "metall"
 msgid "silver"
 msgstr "Silber"
 
-#: institute/models/sample_details.py:276
+#: institute/models/sample_details.py:270
 msgid "HF dip"
 msgstr "HF-Dipp"
 
-#: institute/models/sample_details.py:284
+#: institute/models/sample_details.py:277
 msgid "index"
 msgstr "Index"
 
-#: institute/models/sample_details.py:287
+#: institute/models/sample_details.py:280
 msgid "doping"
 msgstr "Dotierung"
 
-#: institute/models/sample_details.py:288
+#: institute/models/sample_details.py:281
 msgid "classification"
 msgstr "Klassifikation"
 
-#: institute/models/sample_details.py:291
+#: institute/models/sample_details.py:284
 msgid "color"
 msgstr "Farbe"
 
-#: institute/models/sample_details.py:292
+#: institute/models/sample_details.py:285
 msgid "thickness"
 msgstr "Dicke"
 
-#: institute/models/sample_details.py:293
+#: institute/models/sample_details.py:286
 msgid "thickness reliable"
 msgstr "Dicke zuverlässig"
 
-#: institute/models/sample_details.py:294
+#: institute/models/sample_details.py:287
 msgid "structured"
 msgstr "strukturiert"
 
-#: institute/models/sample_details.py:295
+#: institute/models/sample_details.py:288
 msgid "textured"
 msgstr "texturiert"
 
-#: institute/models/sample_details.py:296
+#: institute/models/sample_details.py:289
 msgid "always collapsed"
 msgstr "immer verkürzt"
 
-#: institute/models/sample_details.py:297
+#: institute/models/sample_details.py:290
 msgid "process"
 msgstr "Prozess"
 
-#: institute/models/sample_details.py:299
+#: institute/models/sample_details.py:292
 msgid "additional process data"
 msgstr "zuzätzliche Prozessdaten"
 
-#: institute/models/sample_details.py:300
+#: institute/models/sample_details.py:293
 msgid "verified"
 msgstr "überprüft"
 
-#: institute/models/sample_details.py:305
+#: institute/models/sample_details.py:298
 msgid "informal layer"
 msgstr "informelle Schicht"
 
-#: institute/models/sample_details.py:306
+#: institute/models/sample_details.py:299
 msgid "informal layers"
 msgstr "informelle Schichten"
 
-#: institute/models/sample_details.py:388
+#: institute/models/sample_details.py:381
 msgid "You must give a classification or comments or both."
 msgstr "Sie müssen eine Klassifikation oder Kommentare angeben, oder beides."
 
-#: institute/permissions.py:58
+#: institute/permissions.py:56
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the substrate #{number} because you are not "
@@ -537,7 +558,7 @@ msgstr ""
 "Sie dürfen das Substrat Nr. {number} nicht ändern, weil Sie nicht alle "
 "beteiligten Proben ändern dürfen."
 
-#: institute/permissions.py:61
+#: institute/permissions.py:59
 msgid ""
 "You are not allowed to add a substrate because you are not allowed to edit "
 "all affected samples."
@@ -545,12 +566,12 @@ msgstr ""
 "Sie dürfen kein Substrat hinzufügen, weil Sie nicht alle beteiligten Proben "
 "ändern dürfen."
 
-#: institute/signals.py:72
+#: institute/signals.py:70
 #, python-brace-format
 msgid "{user_name} uses {apparatus}"
 msgstr "{user_name} benutzt {apparatus}"
 
-#: institute/signals.py:73
+#: institute/signals.py:71
 #, python-brace-format
 msgid ""
 "Dear supervisors of {apparatus_plural},\n"
@@ -649,15 +670,15 @@ msgstr ""
 "Bugtracking benutzen, oder auf eine <a href=\"https://github.com\">GitHub</"
 "a>-Seite verlinken.  "
 
-#: institute/templates/jb_base.html:30
+#: institute/templates/jb_base.html:38
 msgid "INM logo"
 msgstr "Logo des INM"
 
-#: institute/templates/jb_base.html:32
+#: institute/templates/jb_base.html:40
 msgid "Institute of Nifty New<br/>Materials (INM)"
 msgstr "Institut für pfiffige neue<br/>Materialien (INM)"
 
-#: institute/templates/jb_base.html:36
+#: institute/templates/jb_base.html:44
 msgid "JuliaBase logo"
 msgstr "JuliaBase-Logo"
 
@@ -708,7 +729,7 @@ msgstr "Fehler in der Schicht"
 msgid "layer number"
 msgstr "Schichtnummer"
 
-#: institute/templates/samples/edit_cluster_tool_deposition.html:149
+#: institute/templates/samples/edit_cluster_tool_deposition.html:152
 msgid "Gas flows in sccm"
 msgstr "Gasflüsse in sccm"
 
@@ -808,7 +829,7 @@ msgstr "Depositionen nach Nummer"
 msgid "Edit “My Layers”"
 msgstr "“Meine Schichten” ändern"
 
-#: institute/templates/samples/show_five_chamber_deposition.html:54
+#: institute/templates/samples/show_five_chamber_deposition.html:65
 msgid "Silane conc."
 msgstr "Silankonz."
 
@@ -820,7 +841,7 @@ msgstr "Probenetikette"
 msgid "copy informal stack"
 msgstr "informellen Stapel kopieren"
 
-#: institute/templates/samples/show_solarsimulator_measurement.html:67
+#: institute/templates/samples/show_solarsimulator_measurement.html:64
 msgid "cell layout"
 msgstr "Zelllayout"
 
@@ -828,67 +849,67 @@ msgstr "Zelllayout"
 msgid "Material"
 msgstr "Material"
 
-#: institute/templatetags/institute_extras.py:79
-#: institute/views/samples/cluster_tool_deposition.py:114
+#: institute/templatetags/institute_extras.py:78
+#: institute/views/samples/cluster_tool_deposition.py:113
 msgid "hot-wire"
 msgstr "Hot-Wire"
 
 #. Translators: “YY” is year, “L” is letter, and “NNN” is number
-#: institute/utils/views.py:60
+#: institute/utils/views.py:58
 msgid "Invalid deposition number.  It must be of the form YYL-NNN."
 msgstr "Ungültige Depositionsnummer.  Sie muss von der Form JJB-NNN sein."
 
-#: institute/utils/views.py:63 institute/utils/views.py:67
+#: institute/utils/views.py:61 institute/utils/views.py:65
 #, python-format
 msgid "The deposition letter must be an uppercase “%(letter)s”."
 msgstr "Der Anlangen-Buchstabe muss ein großes „%(letter)s“ sein."
 
-#: institute/views/samples/claim.py:56
+#: institute/views/samples/claim.py:54
 msgid "Samples"
 msgstr "Proben"
 
-#: institute/views/samples/claim.py:56
+#: institute/views/samples/claim.py:54
 msgid "Comma-separated"
 msgstr "Komma-separiert"
 
-#: institute/views/samples/claim.py:71
+#: institute/views/samples/claim.py:69
 #, python-format
 msgid "The name %(name)s appears more than once."
 msgstr "Der Name %(name)s kommt mehr als einmal vor."
 
-#: institute/views/samples/claim.py:78
+#: institute/views/samples/claim.py:76
 #, python-format
 msgid "The name %(invalid_names)s is not valid."
 msgid_plural "The names %(invalid_names)s are not valid."
 msgstr[0] "Der Name %(invalid_names)s ist ungültig."
 msgstr[1] "Die Namen %(invalid_names)s sind ungültig."
 
-#: institute/views/samples/claim.py:89
+#: institute/views/samples/claim.py:87
 #, python-format
 msgid "The name %(existing_names)s is already existing."
 msgid_plural "The names %(existing_names)s are already existing."
 msgstr[0] "Der Name %(existing_names)s existiert schon."
 msgstr[1] "Die Namen %(existing_names)s existieren schon."
 
-#: institute/views/samples/claim.py:110 institute/views/samples/sample.py:123
-#: institute/views/samples/substrate.py:45
+#: institute/views/samples/claim.py:108 institute/views/samples/sample.py:112
+#: institute/views/samples/substrate.py:43
 msgid "For a custom substrate, you must give substrate comments."
 msgstr ""
 "Sie müssen ein „spezielles Substrat“ in den Substrat-Kommentaren näher "
 "beschreiben."
 
-#: institute/views/samples/claim.py:158
+#: institute/views/samples/claim.py:156
 msgid "You are not allowed to add a claim in another user's name."
 msgstr ""
 "Sie dürfen keinen Anspruch auf Proben im Namen eines anderen Benutzers "
 "erheben."
 
-#: institute/views/samples/claim.py:168
+#: institute/views/samples/claim.py:166
 #, python-brace-format
 msgid "Sample request from {requester}"
 msgstr "Probenanfrage von {requester}"
 
-#: institute/views/samples/claim.py:169
+#: institute/views/samples/claim.py:167
 #, python-brace-format
 msgid ""
 "Hello {reviewer},\n"
@@ -917,159 +938,159 @@ msgstr ""
 "\n"
 "JuliaBase.\n"
 
-#: institute/views/samples/claim.py:199
+#: institute/views/samples/claim.py:196
 #, python-brace-format
 msgid "Sample claim {id_} was successfully submitted."
 msgstr "Der Anspruch {id_} wurde erfolgreich eingereicht."
 
-#: institute/views/samples/claim.py:205
+#: institute/views/samples/claim.py:202
 msgid "Assert claim"
 msgstr "Anspruch erheben"
 
-#: institute/views/samples/cluster_tool_deposition.py:55
-#: institute/views/samples/five_chamber_deposition.py:49
+#: institute/views/samples/cluster_tool_deposition.py:53
+#: institute/views/samples/five_chamber_deposition.py:47
 msgid "The first two digits must match the year of the deposition."
 msgstr "Die ersten zwei Ziffern müssen zum Jahr der Deposition passen."
 
-#: institute/views/samples/cluster_tool_deposition.py:114
+#: institute/views/samples/cluster_tool_deposition.py:113
 msgid "PECVD"
 msgstr "PECVD"
 
-#: institute/views/samples/my_layers.py:46
+#: institute/views/samples/my_layers.py:44
 msgid "Nickname"
 msgstr "Spitzname"
 
-#: institute/views/samples/my_layers.py:47
+#: institute/views/samples/my_layers.py:45
 msgid "Layer identifier"
 msgstr "Schichtbezeichner"
 
-#: institute/views/samples/my_layers.py:48
+#: institute/views/samples/my_layers.py:46
 msgid "in the form \"deposition number\"-\"layer number\""
 msgstr "in der Form \"Depositionsnummer\"-\"Schichtnummer\""
 
-#: institute/views/samples/my_layers.py:49
+#: institute/views/samples/my_layers.py:47
 msgid "Delete"
 msgstr "Löschen"
 
-#: institute/views/samples/my_layers.py:57
+#: institute/views/samples/my_layers.py:55
 msgid "Deposition and layer number must be separated by \"-\"."
 msgstr "Depositions- und Schichtnummer müssen mit \"-\" getrennt sein."
 
-#: institute/views/samples/my_layers.py:62
+#: institute/views/samples/my_layers.py:60
 msgid "Deposition number doesn't exist."
 msgstr "Diese Depositionsnummer existiert nicht."
 
-#: institute/views/samples/my_layers.py:66
+#: institute/views/samples/my_layers.py:64
 msgid "Layer number isn't a number."
 msgstr "Schichtnummer ist keine Nummer."
 
-#: institute/views/samples/my_layers.py:69
+#: institute/views/samples/my_layers.py:67
 msgid "This layer does not exist in this deposition."
 msgstr "Diese Schicht existiert nicht in dieser Deposition."
 
-#: institute/views/samples/my_layers.py:146
+#: institute/views/samples/my_layers.py:144
 msgid "Nickname is already given."
 msgstr "Dieser Spitzname ist schon vergeben."
 
-#: institute/views/samples/my_layers.py:163
+#: institute/views/samples/my_layers.py:161
 msgid "Successfully changed “My Layers”"
 msgstr "“Meine Schichten” erfolgreich geändert"
 
-#: institute/views/samples/my_layers.py:165
+#: institute/views/samples/my_layers.py:163
 msgid "Nothing changed."
 msgstr "Nichts geändert."
 
-#: institute/views/samples/my_layers.py:185
+#: institute/views/samples/my_layers.py:183
 msgid "You can't access the “My Layers” section of another user."
 msgstr ""
 "Sie können nicht auf die „Meine-Schichten“-Seite eines anderen Benutzes "
 "zugreifen."
 
-#: institute/views/samples/my_layers.py:194
+#: institute/views/samples/my_layers.py:192
 msgid "Changes are not saved yet."
 msgstr "Die Änderungen sind noch nicht gespeichert."
 
-#: institute/views/samples/my_layers.py:198
+#: institute/views/samples/my_layers.py:196
 msgid "My Layers"
 msgstr "Meine Schichten"
 
-#: institute/views/samples/pds_measurement.py:103
+#: institute/views/samples/pds_measurement.py:100
 msgid "This PDS number exists already."
 msgstr "Diese PDS-Nummer ist schon vergeben."
 
-#: institute/views/samples/pds_measurement.py:120
+#: institute/views/samples/pds_measurement.py:117
 msgid "Overwrite with file data"
 msgstr "Mit Datei-Daten überschreiben"
 
-#: institute/views/samples/sample.py:58
+#: institute/views/samples/sample.py:47
 msgid "no names"
 msgstr "keine Namen"
 
 #. Translators: "new-style" names
-#: institute/views/samples/sample.py:60
+#: institute/views/samples/sample.py:49
 msgid "new-style"
 msgstr "neue Art"
 
-#: institute/views/samples/sample.py:61 institute/views/samples/sample.py:84
+#: institute/views/samples/sample.py:50 institute/views/samples/sample.py:73
 msgid "cleaning number"
 msgstr "Reinigungsnummer"
 
-#: institute/views/samples/sample.py:71
+#: institute/views/samples/sample.py:61
 msgid "Number of samples"
 msgstr "Anzahl der Proben"
 
-#: institute/views/samples/sample.py:73
+#: institute/views/samples/sample.py:63
 msgid "Substrate comments"
 msgstr "Substrat-Kommentare"
 
-#: institute/views/samples/sample.py:74
+#: institute/views/samples/sample.py:64
 msgid "Substrate originator"
 msgstr "Substrat-Urheber"
 
-#: institute/views/samples/sample.py:75
+#: institute/views/samples/sample.py:65
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: institute/views/samples/sample.py:77
+#: institute/views/samples/sample.py:67
 msgid "Current location"
 msgstr "Aktueller Probenort"
 
-#: institute/views/samples/sample.py:78
+#: institute/views/samples/sample.py:68
 msgid "Purpose"
 msgstr "Zweck"
 
-#: institute/views/samples/sample.py:79
+#: institute/views/samples/sample.py:69
 msgid "Tags"
 msgstr "Tags"
 
-#: institute/views/samples/sample.py:80
+#: institute/views/samples/sample.py:70
 msgid "separated with commas, no whitespace"
 msgstr "getrennt durch Kommas, keine Leerzeichen"
 
-#: institute/views/samples/sample.py:81
+#: institute/views/samples/sample.py:71
 msgid "Topic"
 msgstr "Thema"
 
-#: institute/views/samples/sample.py:82
+#: institute/views/samples/sample.py:72
 msgid "Rename"
 msgstr "Namen vergeben"
 
-#: institute/views/samples/sample.py:91
+#: institute/views/samples/sample.py:80
 #, python-brace-format
 msgid "with {markdown_link} syntax"
 msgstr "mit {markdown_link}-Syntax"
 
-#: institute/views/samples/sample.py:107
+#: institute/views/samples/sample.py:96
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: institute/views/samples/sample.py:126
+#: institute/views/samples/sample.py:115
 msgid "You must provide a cleaning number if you want to use it for the names."
 msgstr ""
 "Sie müssen eine Renigungsnummer angeben, wenn Sie diese für die Namen "
 "verwenden wollen."
 
-#: institute/views/samples/sample.py:236
+#: institute/views/samples/sample.py:225
 #, python-brace-format
 msgid ""
 "Your samples have the names from {first_name} to {last_name}.  They were "
@@ -1078,41 +1099,45 @@ msgstr ""
 "Ihre Proben haben die Namen {first_name} bis {last_name}.  Sie wurden zu "
 "„Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:239
+#: institute/views/samples/sample.py:228
 #, python-brace-format
 msgid "Your sample has the name {name}.  It was added to “My Samples”."
 msgstr ""
 "Ihre Probe hat den Namen {name}.  Sie wurde zu „Meine Proben“ hinzugefügt."
 
-#: institute/views/samples/sample.py:249
+#: institute/views/samples/sample.py:238
 msgid "Add samples"
 msgstr "Proben hinzufügen"
 
-#: institute/views/samples/sample.py:255
+#: institute/views/samples/sample.py:244
 msgid "Destination samples"
 msgstr "Zielproben"
 
-#: institute/views/samples/sample.py:293
+#: institute/views/samples/sample.py:282
 #, python-brace-format
 msgid "Informal stack was copied from sample {sample}."
 msgstr "Der informelle Stapel von Probe {sample} wurde übernommen."
 
-#: institute/views/samples/sample.py:297
+#: institute/views/samples/sample.py:286
 #, python-brace-format
 msgid "Informal stack of {sample} was successfully copied."
 msgstr "Der informelle Stapel von Probe {sample} wurde erfolgreich kopiert."
 
-#: institute/views/samples/sample.py:301
+#: institute/views/samples/sample.py:290
 #, python-brace-format
 msgid "Copy informal stack of “{sample}”"
 msgstr "Informellen Stapel von „{sample}“ kopieren"
 
-#: institute/views/samples/stack.py:48
+#: institute/views/samples/stack.py:45
 #, python-brace-format
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: institute/views/samples/substrate.py:70
+#: institute/views/samples/statistics.py:26
+msgid "JuliaBase server statistics"
+msgstr "JuliaBase-Server-Statistiken"
+
+#: institute/views/samples/substrate.py:68
 #, python-brace-format
 msgid ""
 "Sample {0} has already processes before the timestamp of this substrate, "
@@ -1121,7 +1146,7 @@ msgstr ""
 "Probe {0} hat bereits Prozesse vor dem Zeitstempel dieses Substrates, "
 "nämlich von {1}."
 
-#: institute/views/samples/substrate.py:76
+#: institute/views/samples/substrate.py:74
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
