@@ -740,17 +740,21 @@ def get_from_cache(key, default=None, hits=1, misses=1):
 
 def cache_hit_rate():
     """Returns the current cache hit rate.  This value is between 0 and 1.  It
-    returns ``None`` is no such value could be calculated.
+    returns ``None`` if caching is deactivated.
 
     :return:
-      the hit rate, or ``None`` if neither hits nor misses have been recorded
+      The hit rate, or ``None`` if caching is deactivated.  If the hit rate
+      cannot be determined because there haven't been any hits or misses yet,
+      the hit rate is NaN.
 
     :rtype: float or NoneType
     """
+    if settings.CACHES["default"]["BACKEND"] == "django.core.cache.backends.dummy.DummyCache":
+        return None
     hits = cache.get("samples-cache-hits", 0)
     misses = cache.get("samples-cache-misses", 0)
     if hits + misses == 0:
-        return None
+        return float("NaN")
     else:
         return hits / (hits + misses)
 
