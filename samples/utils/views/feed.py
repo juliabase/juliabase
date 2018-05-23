@@ -109,7 +109,7 @@ class Reporter:
         self.already_informed_users.update(self.interested_users)
         self.interested_users.discard(self.originator)
         if self.interested_users:
-            entry.users = self.interested_users
+            entry.users.set(self.interested_users)
         else:
             entry.delete()
         self.interested_users = set()
@@ -205,7 +205,7 @@ class Reporter:
             common_purpose = samples[0].purpose
             entry = models.FeedNewSamples.objects.create(originator=self.originator, topic=topic, purpose=common_purpose)
             entry.samples.set(samples)
-            entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
+            entry.auto_adders.set(user_details.user for user_details in topic.auto_adders.all())
             self.__add_topic_members(topic)
             self.__connect_with_users(entry, jb_common.models.Topic)
 
@@ -341,7 +341,7 @@ class Reporter:
             originator=self.originator, description=edit_description["description"],
             important=important, topic=topic, old_topic=old_topic)
         entry.samples.set(samples)
-        entry.auto_adders = [user_details.user for user_details in topic.auto_adders.all()]
+        entry.auto_adders.set(user_details.user for user_details in topic.auto_adders.all())
         if old_topic:
             self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
