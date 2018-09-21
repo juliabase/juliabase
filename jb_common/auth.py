@@ -168,9 +168,9 @@ class LDAPConnection:
                 with ldap3.Connection(server, **connection_kwargs) as connection:
                     yield connection
                     break
-            except ldap3.LDAPInvalidCredentialsResult:
+            except ldap3.core.exceptions.LDAPInvalidCredentialsResult:
                 raise
-            except ldap3.LDAPException:
+            except ldap3.core.exceptions.LDAPException:
                 message = StringIO()
                 traceback.print_exc(file=message)
                 continue
@@ -195,10 +195,10 @@ class LDAPConnection:
         :rtype: bool
         """
         try:
-            with self.server_connection(user=settings.LDAP_LOGIN_TEMPLATE.format(username=username).encode(),
-                                        password=password.encode()) as connection:
+            with self.server_connection(user=settings.LDAP_LOGIN_TEMPLATE.format(username=username),
+                                        password=password) as connection:
                 return connection is not None
-        except ldap3.LDAPInvalidCredentialsResult:
+        except ldap3.core.exceptions.LDAPInvalidCredentialsResult:
             return False
 
     def get_ad_data(self, username):
@@ -218,15 +218,15 @@ class LDAPConnection:
             ad_data = self.cached_ad_data[username]
         except KeyError:
             with self.server_connection(user=settings.LDAP_USER and
-                                             settings.LDAP_LOGIN_TEMPLATE.format(username=settings.LDAP_USER).encode(),
-                                        password=settings.LDAP_PASSWORD and settings.LDAP_PASSWORD.encode()) as connection:
+                                             settings.LDAP_LOGIN_TEMPLATE.format(username=settings.LDAP_USER),
+                                        password=settings.LDAP_PASSWORD and settings.LDAP_PASSWORD) as connection:
                 if connection is None:
                     return None
                 connection.search(search_base=settings.LDAP_SEARCH_DN,
                                   search_scope=ldap3.SUBTREE,
                                   search_filter="(&(sAMAccountName={0}){1})".format(username,
                                                                                     settings.LDAP_ACCOUNT_FILTER),
-                                  attributes=list({b"mail", b"givenName", b"sn", b"department", b"memberOf"}.union(
+                                  attributes=list({"mail", "givenName", "sn", "department", "memberOf"}.union(
                                       settings.LDAP_ADDITIONAL_ATTRIBUTES)))
                 ad_data = connection.response[0]["attributes"] if connection.response[0]["type"] == "searchResEntry" else None
                 self.cached_ad_data[username] = ad_data
@@ -306,9 +306,9 @@ class LDAPConnection:
         if self.is_eligible_ldap_member(user.username):
             attributes = self.get_ad_data(user.username)
             if "givenName" in attributes:
-                user.first_name = attributes["givenName"][0]
+                user.first_name = attributes["givenName"]
             if "sn" in attributes:
-                user.last_name = attributes["sn"][0]
+                user.last_name = attributes["sn"]
             if "department" in attributes:
                 try:
                     user.jb_user_details.department = Department.objects.get(

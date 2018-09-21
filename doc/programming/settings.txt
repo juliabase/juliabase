@@ -265,11 +265,10 @@ Default: ``[]`` (Empty list)
 
 JuliaBase limits the attributes it receives for every user to a certain subset,
 e.g. the user's real name and their department.  If your code needs additional
-LDAP attributes, put their names into this list.  Note that its members must be
-byte strings.  An example might be::
+LDAP attributes, put their names into this list.  An example might be::
 
-    LDAP_ADDITIONAL_ATTRIBUTES = [b"telephoneNumber", b"msExchUserCulture",
-                                  b"physicalDeliveryOfficeName"]
+    LDAP_ADDITIONAL_ATTRIBUTES = ["telephoneNumber", "msExchUserCulture",
+                                  "physicalDeliveryOfficeName"]
 
 
 .. index:: LDAP_ADDITIONAL_USERS
