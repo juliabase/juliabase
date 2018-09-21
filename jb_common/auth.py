@@ -324,7 +324,7 @@ class LDAPConnection:
             for group in self.get_group_names(attributes):
                 permissions |= self.permissions_of_ad_groups.get(group, set())
             if permissions != old_permissions:
-                user.user_permissions = permissions
+                user.user_permissions.set(permissions)
         else:
             user.is_active = user.is_staff = user.is_superuser = False
             user.save()
