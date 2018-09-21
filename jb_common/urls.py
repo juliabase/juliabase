@@ -34,7 +34,6 @@ from django.conf.urls import url, include
 from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.views.i18n import JavaScriptCatalog
-from django.utils.http import urlquote_plus
 from django.contrib.auth import views as auth_views
 from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page
 
