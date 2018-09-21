@@ -250,8 +250,7 @@ class LDAPConnection:
         """
         attributes = self.get_ad_data(username)
         return attributes is not None and (
-            not settings.LDAP_DEPARTMENTS or
-            attributes.get("department", [""])[0] in settings.LDAP_DEPARTMENTS
+            not settings.LDAP_DEPARTMENTS or attributes.get("department", "") in settings.LDAP_DEPARTMENTS
             or username in settings.LDAP_ADDITIONAL_USERS)
 
     @staticmethod
@@ -314,9 +313,9 @@ class LDAPConnection:
                     user.jb_user_details.department = Department.objects.get(
                         name=settings.LDAP_ADDITIONAL_USERS[user.username])
                 except KeyError:
-                    jb_department_name = settings.LDAP_DEPARTMENTS[attributes["department"][0]]
+                    jb_department_name = settings.LDAP_DEPARTMENTS[attributes["department"]]
                     user.jb_user_details.department = Department.objects.get(name=jb_department_name)
-            user.email = attributes["mail"][0]
+            user.email = attributes["mail"]
             user.jb_user_details.save()
             user.save()
 
