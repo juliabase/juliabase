@@ -207,7 +207,7 @@ class Topic(models.Model):
         super().save()
         for child_topic in self.child_topics.iterator():
             child_topic.confidential = self.confidential
-            child_topic.members = self.members.all()
+            child_topic.members.set(self.members.all())
             child_topic.manager = self.manager
             child_topic.save()
 

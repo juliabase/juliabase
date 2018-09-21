@@ -232,7 +232,7 @@ def edit(request, id):
             topic.manager = new_manager
             old_members = list(topic.members.all())
             new_members = list(edit_topic_form.cleaned_data["members"]) + [new_manager]
-            topic.members = new_members
+            topic.members.set(new_members)
             topic.confidential = edit_topic_form.cleaned_data["confidential"]
             topic.save()
             if old_manager != new_manager:
