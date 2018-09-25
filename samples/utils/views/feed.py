@@ -465,7 +465,7 @@ class Reporter:
         entry = models.FeedMovedSampleSeries.objects.create(
             originator=self.originator, description=edit_description["description"],
             important=important, sample_series=sample_series, old_topic=old_topic, topic=sample_series.topic)
-        entry.subscribers = self.__get_subscribers(sample_series)
+        entry.subscribers.set(self.__get_subscribers(sample_series))
         self.__add_topic_members(old_topic)
         self.__add_topic_members(topic)
         self.__connect_with_users(entry, models.SampleSeries)
@@ -480,7 +480,7 @@ class Reporter:
         topic = sample_series.topic
         entry = models.FeedNewSampleSeries.objects.create(
             originator=self.originator, sample_series=sample_series, topic=topic)
-        entry.subscribers = self.__get_subscribers(sample_series)
+        entry.subscribers.set(self.__get_subscribers(sample_series))
         self.__add_topic_members(topic)
         self.__connect_with_users(entry, models.SampleSeries)
 
