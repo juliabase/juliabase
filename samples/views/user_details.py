@@ -132,10 +132,10 @@ def edit_preferences(request, login_name):
         if user_details_form.is_valid() and initials_form.is_valid():
             __change_folded_processes(user_details_form.cleaned_data["default_folded_process_classes"], user)
             user_details = user_details_form.save(commit=False)
-            user_details.show_users_from_departments = Department.objects.filter(id__in=
-                                                        user_details_form.cleaned_data["show_users_from_departments"])
-            user_details.default_folded_process_classes = [ContentType.objects.get_for_id(int(id_))
-                 for id_ in user_details_form.cleaned_data["default_folded_process_classes"]]
+            user_details.show_users_from_departments.set(Department.objects.filter(id__in=
+                                                        user_details_form.cleaned_data["show_users_from_departments"]))
+            user_details.default_folded_process_classes.set([ContentType.objects.get_for_id(int(id_))
+                 for id_ in user_details_form.cleaned_data["default_folded_process_classes"]])
             user_details.save()
             user_details_form.save_m2m()
             initials_form.save()

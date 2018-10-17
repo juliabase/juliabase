@@ -275,7 +275,7 @@ def edit(request, task_id):
         task_form = TaskForm(user, request.POST, instance=task)
         samples_form = SamplesForm(user, preset_sample, task, request.POST)
         if task_id:
-            old_task = copy.copy(task)
+            old_task = copy.deepcopy(task)
             old_samples = set(task.samples.all())
         if task_form.is_valid() and (not samples_form.is_bound or samples_form.is_valid()):
             task = save_to_database(task_form, samples_form, old_task=old_task if task_id else None)
