@@ -1767,7 +1767,7 @@ class ProcessWithSamplePositions(models.Model):
                                              samples.permissions.has_permission_to_add_edit_physical_process(
                                                  user, self, self.content_type.model_class())
                                              else _("confidential sample"),
-                                             sample_positions_dict[str(sample.id)])
+                                             sample_positions_dict.get(str(sample.id)))
                                             for sample in self.samples.order_by("name").iterator())
         return context
 
