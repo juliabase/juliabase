@@ -124,9 +124,9 @@ class LDAPConnection:
 
     def get_server_parameters(self, url):
         """Parses the given URL and returns parameters for ``ldap3.Server``.  This
-        method is necessary to work around at least some ldap3 version that are
-        unable to properly parse the port part in the URL.  Therefore, I do my
-        own parsing here.
+        method is necessary to work around at least some ldap3 versions that
+        are unable to properly parse the port part in the URL.  Therefore, I do
+        my own parsing here.
 
         :param url: URL to the LDAP server.
 
@@ -157,7 +157,7 @@ class LDAPConnection:
         Note that “connection” here means a Python ldap3 object rather than the
         :py:class:`LDAPConnection` class.
 
-        :raises ldap3.LDAPInvalidCredentialsResult: if you proveded user
+        :raises ldap3.LDAPInvalidCredentialsResult: if you provided user
           credentials in ``kwargs`` and they were invalid.
         """
         connection_kwargs = {"raise_exceptions": True, "read_only": True}
