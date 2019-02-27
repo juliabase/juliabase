@@ -1121,7 +1121,8 @@ def rename_sample(request):
                 sample = models.Sample.objects.get(name=old_name)
             sample.name = sample_rename_form.cleaned_data["new_name"]
             sample.save()
-            if sample_rename_form.cleaned_data["create_alias"]:
+            if sample_rename_form.cleaned_data["create_alias"] and \
+               not models.SampleAlias.objects.filter(name=old_name, sample=sample).exists():
                 models.SampleAlias.objects.create(name=old_name, sample=sample)
             feed_reporter = utils.Reporter(request.user)
             feed_reporter.report_edited_samples([sample], {"important": True,
