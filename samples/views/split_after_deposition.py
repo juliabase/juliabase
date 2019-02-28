@@ -98,8 +98,7 @@ class OriginalDataForm(Form):
                 error_message = _("The new name must begin with the old name.")
                 params = {}
                 old_sample_name_format = sample_names.sample_name_format(sample.name)
-                possible_new_name_formats = \
-                        settings.SAMPLE_NAME_FORMATS[old_sample_name_format].get("possible_renames", set())
+                possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_sample_name_format].get("possible_renames", set())
                 if possible_new_name_formats:
                     error_message += ungettext("  Alternatively, it must be a valid “%(sample_formats)s” name.",
                                                "  Alternatively, it must be a valid name of one of these types: "
