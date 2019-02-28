@@ -409,9 +409,7 @@ def assert_can_fully_view_sample(user, sample):
 
 
 def assert_can_rename_sample(user, sample):
-    """Tests whether the user can rename all samples from his/her department.  It
-    is recommended that only a few administrative users should get this
-    permission.
+    """Tests whether the user can rename the given sample.
 
     :param user: the user whose permission should be checked
     :param sample: the sample to be renamed

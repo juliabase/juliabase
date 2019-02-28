@@ -1094,9 +1094,9 @@ class SampleRenameForm(forms.Form):
 
 @login_required
 def rename_sample(request):
-    """Rename a sample given by its id.  This view should only be available for
-    adminstative users.  For normal users use
-    ``samples.views.bulk_rename.bulk_rename``
+    """Rename a sample given by its id.  Note that for bulk renames (usually
+    immediately after sample creation), there exists
+    ``samples.views.bulk_rename.bulk_rename``.
 
     :param request: the current HTTP Request object
 
