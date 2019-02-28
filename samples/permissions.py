@@ -427,7 +427,7 @@ def assert_can_rename_sample(user, sample):
     user_department = user.jb_user_details.department or NoDepartment()
     if (not user.has_perm("samples.rename_samples" or sample_department != user_department)
         and not sample_name_format(sample.name) in get_renamable_name_formats()) \
-       and not user.is_superuser:
+        and not user.is_superuser:
         description = _("You are not allowed to rename the sample.")
         raise PermissionError(user, description)
 
