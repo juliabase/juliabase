@@ -1108,17 +1108,13 @@ def rename_sample(request):
     :rtype: HttpResponse
     """
     sample_id = request.GET.get("sample_id")
-    if sample_id:
-        sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
-        permissions.assert_can_rename_sample(request.user, sample)
-    else:
-        sample = None
+    sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id)) if sample_id else None
     if request.method == "POST":
         sample_rename_form = SampleRenameForm(request.user, request.POST)
         if sample_rename_form.is_valid():
             old_name = sample_rename_form.cleaned_data["old_name"]
-            if not sample:
-                sample = models.Sample.objects.get(name=old_name)
+            sample = models.Sample.objects.get(name=old_name)
+            permissions.assert_can_rename_sample(request.user, sample)
             sample.name = sample_rename_form.cleaned_data["new_name"]
             sample.save()
             if sample_rename_form.cleaned_data["create_alias"] and \
