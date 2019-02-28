@@ -789,9 +789,9 @@ def choices_of_content_types(classes):
 def check_sample_name(match, user):
     """Check whether the sample name match contains valid data.  This enforces
     additional constraints to sample names.  With `utils.sample_name_format`,
-    you check whether the sample names matches and pattern, given as a regular
-    explression.  However, if the pattern contains e.g. user initials, it is
-    not checked whether the user initials actually belong to the current user.
+    you check whether the sample names matches a pattern, given as a regular
+    expression.  However, if the pattern contains e.g. user initials, it is not
+    checked whether the user initials actually belong to the current user.
     This is done here.  If anything fails, a `ValidationError` is raised.  This
     way, it can be called conveniently from ``Form`` methods.
 
