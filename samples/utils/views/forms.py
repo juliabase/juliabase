@@ -786,7 +786,7 @@ def choices_of_content_types(classes):
     return choices
 
 
-def check_sample_name(match, user, is_new=True):
+def check_sample_name(match, user):
     """Check whether the sample name match contains valid data.  This enforces
     additional constraints to sample names.  With `utils.sample_name_format`,
     you check whether the sample names matches and pattern, given as a regular
@@ -797,13 +797,9 @@ def check_sample_name(match, user, is_new=True):
 
     :param match: the match object as returned by `utils.sample_name_format`.
     :param user: the currently logged-in user
-    :param is_new: whether the sample name is created right in this moment; if
-        ``False``, we are checking old sample names, which results in _much_
-        lesser checks
 
     :type match: re.MatchObject
     :type user: django.contrib.auth.models.User
-    :type is_new: bool
 
     :raises ValidationError: if the sample name (represented by the match object)
         contained invalid fields.
