@@ -1074,21 +1074,37 @@ class SampleRenameForm(forms.Form):
         return old_name
 
     def clean_new_name(self):
-        new_name = self.cleaned_data.get("new_name", "")
-        if not new_name.strip():
-            raise ValidationError(_("New name is required."), code="required")
-        if models.Sample.objects.filter(name=new_name).exists():
-            raise ValidationError(_("A sample with this name already exists."), code="duplicate")
+        new_name = self.cleaned_data["new_name"]
+        name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
+        if name_format is None:
+            raise ValidationError(_("This sample name is not valid."), code="invalid")
+        utils.check_sample_name(match, self.user)
+        if sample_names.does_sample_exist(new_name):
+            raise ValidationError(_("This sample name exists already."), code="duplicate")
         return new_name
 
     def clean(self):
         cleaned_data = super().clean()
-        old_name = cleaned_data.get("old_name", "").strip()
-        new_name = cleaned_data.get("new_name", "").strip()
-        if new_name and new_name == old_name:
-            self.add_error("new_name", ValidationError(_("The new name must be different from the old name."),
-                                                       code="invalid"))
-            del cleaned_data["new_name"]
+        old_name = cleaned_data.get("old_name")
+        new_name = cleaned_data.get("new_name")
+        if old_name is not None and new_name is not None:
+            if new_name == old_name:
+                self.add_error("new_name", ValidationError(_("The new name must be different from the old name."),
+                                                           code="invalid"))
+            old_name_format = sample_names.sample_name_format(old_name)
+            possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_name_format].get("possible_renames", set()) \
+                if old_name_format else set()
+            name_format = sample_names.sample_name_format(new_name)
+            if name_format not in possible_new_name_formats:
+                error_message = ungettext("New name must be a valid “%(sample_formats)s” name.",
+                                          "New name must be a valid name of one of these types: %(sample_formats)s.",
+                                          len(possible_new_name_formats))
+                self.add_error("new_name", ValidationError(
+                    error_message,
+                    params={"sample_formats": format_enumeration(
+                        sample_names.verbose_sample_name_format(name_format) for name_format in possible_new_name_formats)},
+                    code="invalid"))
+
         return cleaned_data
 
 
