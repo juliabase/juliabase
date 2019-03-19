@@ -62,8 +62,6 @@ class UserDetailsForm(forms.ModelForm):
         for department in user.samples_user_details.show_users_from_departments.iterator():
             processes_from_department = {process for process in processes if process._meta.app_label == department.app_label}
             choices.append((department.name, utils.choices_of_content_types(processes_from_department)))
-        if not choices:
-            choices = (("", 9 * "-"),)
         self.fields["default_folded_process_classes"].choices = choices
         self.fields["default_folded_process_classes"].initial = [content_type.id for content_type
                                                      in user.samples_user_details.default_folded_process_classes.iterator()]
