@@ -135,6 +135,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "oai_pmh",
     "institute",
     "samples",
     "jb_common"
