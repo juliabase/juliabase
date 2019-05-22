@@ -1,4 +1,9 @@
 #!/bin/sh
+
+SCRIPT=`readlink -f "$0"`
+SCRIPTPATH=`dirname "$SCRIPT"`
+cd $SCRIPTPATH
+
 if [ "$1" = "build_test_main" ]
 then
     ./five_chamber.py
