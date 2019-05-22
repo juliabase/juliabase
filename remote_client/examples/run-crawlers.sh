@@ -17,6 +17,10 @@ then
     ./pds.py
     ./solarsimulator.py
 else
-    ./five_chamber.py & ./cluster_tool.py
-    ./pds.py & ./solarsimulator.py
+    ./five_chamber.py &
+    ./cluster_tool.py
+    wait
+    ./pds.py &
+    ./solarsimulator.py
+    wait
 fi
