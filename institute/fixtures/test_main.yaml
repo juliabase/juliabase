@@ -347,7 +347,7 @@
     is_superuser: true
     last_login: "2015-01-21T11:15:23Z"
     last_name: ''
-    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
     user_permissions: []
     username: juliabase
   model: auth.user
@@ -377,7 +377,7 @@
     is_superuser: false
     last_login: "2015-01-21T11:15:01Z"
     last_name: Burkhardt
-    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
     user_permissions:
     - [add_pdsmeasurement, institute, pdsmeasurement]
     - [edit_permissions_for_pdsmeasurement, institute, pdsmeasurement]
@@ -395,7 +395,7 @@
     is_superuser: false
     last_login: "2015-01-21T11:15:01Z"
     last_name: Griffin
-    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
     user_permissions:
     - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
     - [edit_permissions_for_solarsimulatormeasurement, institute, solarsimulatormeasurement]
@@ -413,7 +413,7 @@
     is_superuser: false
     last_login: "2015-01-21T11:15:01Z"
     last_name: Silverton
-    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
     user_permissions:
     - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
     username: j.silverton
@@ -429,7 +429,7 @@
     is_superuser: false
     last_login: "2015-01-21T11:15:01Z"
     last_name: Monroe
-    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
     user_permissions:
     - [add_clustertooldeposition, institute, clustertooldeposition]
     - [change_clustertooldeposition, institute, clustertooldeposition]
@@ -448,7 +448,7 @@
     is_superuser: false
     last_login: "2015-01-21T11:15:01Z"
     last_name: Calvert
-    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
     user_permissions:
     - [add_fivechamberdeposition, institute, fivechamberdeposition]
     - [change_fivechamberdeposition, institute, fivechamberdeposition]
@@ -467,7 +467,7 @@
     is_superuser: false
     last_login: "2015-01-21T11:15:01Z"
     last_name: Renard
-    password: md5$yzNo0wCcuRVo$6817b5abc9adac3785e92ee6278652e6
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
     user_permissions:
     - [add_topic, jb_common, topic]
     - [change_topic, jb_common, topic]
