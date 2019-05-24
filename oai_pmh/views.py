@@ -32,24 +32,6 @@ from jb_common.utils.base import get_all_models
 from samples.models import Process
 
 
-class HttpPmhResponse(HttpResponse):
-    def __init__(self, tree):
-        super().__init__(ElementTree.tostring(tree, encoding="utf8", method="xml"), content_type="application/xml")
-
-
-class PmhError(Exception):
-
-    def __init__(self, code, description=""):
-        self.code, self.description = code, description
-
-    def response(self, request):
-        tree = create_response_tree(request)
-        response_element = ElementTree.Element("error", {"code": self.code})
-        response_element.text = self.description
-        tree.append(response_element)
-        return HttpPmhResponse(tree)
-
-
 def timestamp_isoformat(timestamp):
     timestamp = timestamp.isoformat(timespec="seconds")
     assert timestamp.endswith("+00:00")
@@ -81,6 +63,11 @@ def get_all_processes():
     return all_processes
 
 
+class HttpPmhResponse(HttpResponse):
+    def __init__(self, tree):
+        super().__init__(ElementTree.tostring(tree, encoding="utf8", method="xml"), content_type="application/xml")
+
+
 def create_response_tree(request):
     tree = ElementTree.Element("OAI-PMH", {"xmlns": "http://www.openarchives.org/OAI/2.0/",
                                            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
@@ -93,6 +80,30 @@ def create_response_tree(request):
     for key, value in request.GET.items():
         request_element.attrib[key] = value
     return tree
+
+
+class PmhError(Exception):
+
+    def __init__(self, code, description=""):
+        self.code, self.description = code, description
+
+    def response(self, request):
+        tree = create_response_tree(request)
+        response_element = ElementTree.Element("error", {"code": self.code})
+        response_element.text = self.description
+        tree.append(response_element)
+        return HttpPmhResponse(tree)
+
+
+def parse_timestamp(request, query_string_key):
+    timestamp = request.GET.get(query_string_key)
+    if timestamp:
+        try:
+            timestamp = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            raise PmhError("badArgument", "The timestamp has an invalid format.")
+        timestamp = make_aware(timestamp, utc)
+    return timestamp
 
 
 def build_record(process):
@@ -157,17 +168,6 @@ def identify(request):
     SubElement(response_element, "adminEmail").text = settings.ADMINS[0][1]
     tree.append(response_element)
     return HttpPmhResponse(tree)
-
-
-def parse_timestamp(request, query_string_key):
-    timestamp = request.GET.get(query_string_key)
-    if timestamp:
-        try:
-            timestamp = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
-        except ValueError:
-            raise PmhError("badArgument", "The timestamp has an invalid format.")
-        timestamp = make_aware(timestamp, utc)
-    return timestamp
 
 
 def list_identifiers(request):
