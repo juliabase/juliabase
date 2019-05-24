@@ -41,7 +41,7 @@ import oai_pmh.urls, institute.urls, jb_common.urls, samples.urls
 
 
 urlpatterns = [
-    url(r"^oai-pmh", include(oai_pmh.urls)),
+#    url(r"^oai-pmh", include(oai_pmh.urls)),
     url(r"", include(institute.urls)),
     url(r"", include(jb_common.urls)),
     url(r"", include(samples.urls)),
