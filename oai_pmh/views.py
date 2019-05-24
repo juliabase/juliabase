@@ -124,6 +124,17 @@ def identify(request):
     return HttpPmhResponse(tree)
 
 
+def parse_timestamp(request, query_string_key):
+    timestamp = request.GET.get(query_string_key)
+    if timestamp:
+        try:
+            timestamp = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            raise PmhError("badArgument", "The timestamp has an invalid format.")
+        timestamp = make_aware(timestamp, utc)
+    return timestamp
+
+
 def list_identifiers(request):
     def process_model(response_element, model, from_, until):
         query = model.objects.values_list("pk", "timestamp")
@@ -140,14 +151,8 @@ def list_identifiers(request):
     tree = create_response_tree(request)
     response_element = ElementTree.Element("ListIdentifiers")
     assert request.GET["metadataPrefix"] == "oai_dc"
-    from_ = request.GET.get("from")
-    if from_:
-        assert from_[-1] == "Z"
-        from_ = make_aware(datetime.datetime.strptime(from_[:-1], "%Y-%m-%dT%H:%M:%S"), utc)
-    until = request.GET.get("until")
-    if until:
-        assert until[-1] == "Z"
-        until = make_aware(datetime.datetime.strptime(until[:-1], "%Y-%m-%dT%H:%M:%S"), utc)
+    from_ = parse_timestamp(request, "from")
+    until = parse_timestamp(request, "until")
     set_spec = request.GET.get("set", "all")
     if set_spec == "all":
         for model in get_all_processes().values():
@@ -196,14 +201,8 @@ def list_records(request):
     tree = create_response_tree(request)
     response_element = ElementTree.Element("ListRecords")
     assert request.GET["metadataPrefix"] == "oai_dc"
-    from_ = request.GET.get("from")
-    if from_:
-        assert from_[-1] == "Z"
-        from_ = make_aware(datetime.datetime.strptime(from_[:-1], "%Y-%m-%dT%H:%M:%S"), utc)
-    until = request.GET.get("until")
-    if until:
-        assert until[-1] == "Z"
-        until = make_aware(datetime.datetime.strptime(until[:-1], "%Y-%m-%dT%H:%M:%S"), utc)
+    from_ = parse_timestamp(request, "from")
+    until = parse_timestamp(request, "until")
     set_spec = request.GET.get("set", "all")
     if set_spec == "all":
         for model in get_all_processes().values():
