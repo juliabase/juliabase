@@ -35,7 +35,7 @@ from samples.models import Process
 def timestamp_isoformat(timestamp):
     timestamp = timestamp.isoformat(timespec="seconds")
     assert timestamp.endswith("+00:00")
-    timestamp = timestamp[:-6]
+    timestamp = timestamp[:-6] + "Z"
     return timestamp
 
 
