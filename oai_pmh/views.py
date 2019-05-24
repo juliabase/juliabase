@@ -57,6 +57,14 @@ def timestamp_isoformat(timestamp):
     return timestamp
 
 
+def escape_pk(pk):
+    return str(pk).replace("\\", "\\\\").replace(":", "\\:")
+
+
+def unescape_pk(pk):
+    return pk.replace("\\:", ":").replace("\\\\", "\\")
+
+
 @lru_cache()
 def get_all_processes():
     all_processes = {}
@@ -90,7 +98,7 @@ def create_response_tree(request):
 def build_record(process):
     record = ElementTree.Element("record")
     header = SubElement(record, "header")
-    SubElement(header, "identifier").text = process.__class__.__name__ + ":" + str(process.pk)
+    SubElement(header, "identifier").text = process.__class__.__name__ + ":" + escape_pk(process.pk)
     SubElement(header, "datestamp").text = process.timestamp.date().strftime("%Y-%m-%d")
     SubElement(header, "setSpec").text = "all"
     SubElement(header, "setSpec").text = process.__class__.__name__
@@ -100,7 +108,7 @@ def build_record(process):
                                                 "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
                                                 "xsi:schemaLocation": "http://www.openarchives.org/OAI/2.0/ "
                                                 "http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"})
-    SubElement(oai_dc, "dc:identifier").text = process.__class__.__name__ + ":" + str(process.pk)
+    SubElement(oai_dc, "dc:identifier").text = process.__class__.__name__ + ":" + escape_pk(process.pk)
     SubElement(oai_dc, "dc:title").text = str(process)
     SubElement(oai_dc, "dc:creator").text = str(process.operator)
     SubElement(oai_dc, "dc:date").text = process.timestamp.date().strftime("%Y-%m-%d")
@@ -119,6 +127,7 @@ def get_record(request):
         model_name, colon, pk = request.GET["identifier"].rpartition(":")
     except KeyError:
         raise PmhError("identifier is missing")
+    pk = unescape_pk(pk)
     if colon != ":" or model_name not in get_all_processes():
         raise PmhError("identifier is invalid")
     model = get_all_processes()[model_name]
@@ -172,7 +181,7 @@ def list_identifiers(request):
             raise PmhError("noRecordsMatch")
         for id_, timestamp in query.iterator():
             header = SubElement(response_element, "header")
-            SubElement(header, "identifier").text = model.__name__ + ":" + str(id_)
+            SubElement(header, "identifier").text = model.__name__ + ":" + escape_pk(id_)
             SubElement(header, "datestamp").text = timestamp.date().strftime("%Y-%m-%d")
             SubElement(header, "setSpec").text = "all"
             SubElement(header, "setSpec").text = model.__name__
