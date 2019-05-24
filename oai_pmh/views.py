@@ -87,20 +87,46 @@ def create_response_tree(request):
     return tree
 
 
+def build_record(process):
+    record = ElementTree.Element("record")
+    header = SubElement(record, "header")
+    SubElement(header, "identifier").text = process.__class__.__name__ + ":" + str(process.pk)
+    SubElement(header, "datestamp").text = process.timestamp.date().strftime("%Y-%m-%d")
+    SubElement(header, "setSpec").text = "all"
+    SubElement(header, "setSpec").text = process.__class__.__name__
+    metadata = SubElement(record, "metadata")
+    oai_dc = SubElement(metadata, "oai_dc:dc", {"xmlns:oai_dc": "http://www.openarchives.org/OAI/2.0/oai_dc/",
+                                                "xmlns:dc": "http://purl.org/dc/elements/1.1/",
+                                                "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                                                "xsi:schemaLocation": "http://www.openarchives.org/OAI/2.0/ "
+                                                "http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"})
+    SubElement(oai_dc, "dc:identifier").text = process.__class__.__name__ + ":" + str(process.pk)
+    SubElement(oai_dc, "dc:title").text = str(process)
+    SubElement(oai_dc, "dc:creator").text = str(process.operator)
+    SubElement(oai_dc, "dc:date").text = process.timestamp.date().strftime("%Y-%m-%d")
+    return record
+
+
 def get_record(request):
     tree = create_response_tree(request)
     response_element = ElementTree.Element("GetRecord")
-    header = SubElement(response_element, "header")
-    SubElement(header, "identifier").text = "1"
-    SubElement(header, "datestamp").text = timezone.now().date().isoformat()
-    SubElement(header, "setSpec").text = "all"
-    dublin_core = SubElement(SubElement(response_element, "metadata"), "oai_dc:dc",
-                             {"xmlns:oai_dc": "http://www.openarchives.org/OAI/2.0/oai_dc/",
-                              "xmlns:dc": "http://purl.org/dc/elements/1.1/",
-                              "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-                              "xsi:schemaLocation": "http://www.openarchives.org/OAI/2.0/oai_dc/ "
-                              "http://www.openarchives.org/OAI/2.0/oai_dc.xsd"})
-    SubElement(dublin_core, "dc:title").text = "Toller Titel"
+    try:
+        if request.GET["metadataPrefix"] != "oai_dc":
+            raise PmhError("cannotDisseminateFormat", "Only oai_dc is allowed currently")
+    except KeyError:
+        raise PmhError("badArgument", "metadataPrefix is missing")
+    try:
+        model_name, colon, pk = request.GET["identifier"].rpartition(":")
+    except KeyError:
+        raise PmhError("identifier is missing")
+    if colon != ":" or model_name not in get_all_processes():
+        raise PmhError("identifier is invalid")
+    model = get_all_processes()[model_name]
+    try:
+        process = model.objects.get(pk=pk)
+    except model.DoesNotExist:
+        raise PmhError("idDoesNotExist")
+    response_element.append(build_record(process))
     tree.append(response_element)
     return HttpPmhResponse(tree)
 
@@ -190,22 +216,7 @@ def list_records(request):
         if not query.exists():
             raise PmhError("noRecordsMatch")
         for process in query.iterator():
-            record = SubElement(response_element, "record")
-            header = SubElement(record, "header")
-            SubElement(header, "identifier").text = model.__name__ + ":" + str(process.pk)
-            SubElement(header, "datestamp").text = process.timestamp.date().strftime("%Y-%m-%d")
-            SubElement(header, "setSpec").text = "all"
-            SubElement(header, "setSpec").text = model.__name__
-            metadata = SubElement(record, "metadata")
-            oai_dc = SubElement(metadata, "oai_dc:dc", {"xmlns:oai_dc": "http://www.openarchives.org/OAI/2.0/oai_dc/",
-                                                        "xmlns:dc": "http://purl.org/dc/elements/1.1/",
-                                                        "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-                                                        "xsi:schemaLocation": "http://www.openarchives.org/OAI/2.0/ "
-                                                        "http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"})
-            SubElement(oai_dc, "dc:identifier").text = model.__name__ + ":" + str(process.pk)
-            SubElement(oai_dc, "dc:title").text = str(process)
-            SubElement(oai_dc, "dc:creator").text = str(process.operator)
-            SubElement(oai_dc, "dc:date").text = process.timestamp.date().strftime("%Y-%m-%d")
+            response_element.append(build_record(process))
     tree = create_response_tree(request)
     response_element = ElementTree.Element("ListRecords")
     try:
