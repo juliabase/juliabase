@@ -17,6 +17,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+"""Views for the OAI-PMH app.  Here, I implement everything realising the
+OAI-PMH protocol.
+
+Todos:
+
+- resumptionToken is not implemented at all.  It may be advisable to implement
+  it at least for `ListIdentifiers` and `ListRecords`.
+- Besides oai_dc, I need to implement Dataverse’s own OAI_PMH metadata format,
+  filling the fields with the same content also used for CSV export.
+- Authentication needs to be added by moving the root of the OAI-PMH endpoints
+  into a secret subpath like ``https://jb.example.com/krz54kr9182ad/oai-pmh/``.
+"""
+
 import datetime
 from functools import lru_cache
 from xml.etree import ElementTree
@@ -33,6 +46,16 @@ from samples.models import Process
 
 
 def timestamp_isoformat(timestamp):
+    """Convert a timestamp into ISO 8601 format with Zulu time zone.
+
+    :param datetime.datetime timestamp: timestamp to be converted; it must be
+      time zone aware and in UTC
+
+    :returns:
+      the ISO 8601 timestamp
+
+    :rtype: str
+    """
     timestamp = timestamp.isoformat(timespec="seconds")
     assert timestamp.endswith("+00:00")
     timestamp = timestamp[:-6] + "Z"
@@ -40,15 +63,46 @@ def timestamp_isoformat(timestamp):
 
 
 def escape_pk(pk):
+    """Returns the escaped version of the PK (primary key).  The primary key is
+    concetanated with the model name to the identifier, with a colon in
+    between.  Thus, to be able to saftly parse this string and extract both
+    components, I need to escape all colons in the primary key.
+
+    :param object pk: the primary key
+
+    :returns:
+      the escaped version of the PK, guaranteed to be without any no colon
+
+    :rtype: str
+    """
     return str(pk).replace("\\", "\\\\").replace(":", "\\-")
 
 
 def unescape_pk(pk):
+    """Unescaped the primary key.  This is the inverse of `escape_pk`.
+
+    :param str pk: the escaped primary key
+
+    :returns:
+      the original PK; note that this is always a string, even though it may
+      have originally be an int
+
+    :rtype: str
+    """
     return pk.replace("\\-", ":").replace("\\\\", "\\")
 
 
 @lru_cache()
 def get_all_processes():
+    """Returns all editable processes in this JuliaBase instance.  It is heavily
+    inspired from `permissions.get_addable_models`.  The result is cached, so
+    you may call this function as often as you like.
+
+    :returns:
+      dictionary mapping model class names to model classes
+
+    :rtype: dict[str, Process]
+    """
     all_processes = {}
     for model in get_all_models().values():
         if issubclass(model, Process):
@@ -64,11 +118,24 @@ def get_all_processes():
 
 
 class HttpPmhResponse(HttpResponse):
+    """HTTP response class for OAI-PMH responses.  It takes an XML tree and
+    serialises it appropriately.
+    """
     def __init__(self, tree):
         super().__init__(ElementTree.tostring(tree, encoding="utf8", method="xml"), content_type="application/xml")
 
 
 def create_response_tree(request):
+    """Creates an XML tree with fixed OAI-PMH elements.  In particular, it contains
+    the ``<responseDate>`` and ``<request>`` elements.
+
+    :param HttpRequest request: the original HTTP request object
+
+    :returns:
+      an XML tree ready to be filled with the result of the OAI-PMH request
+
+    :rtype: ElementTree.ElementTree
+    """
     tree = ElementTree.Element("OAI-PMH", {"xmlns": "http://www.openarchives.org/OAI/2.0/",
                                            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
                                            "xsi:schemaLocation": "http://www.openarchives.org/OAI/2.0/ "
@@ -83,11 +150,29 @@ def create_response_tree(request):
 
 
 class PmhError(Exception):
+    """Exception class of OAI-PMH errors.
+    """
 
     def __init__(self, code, description=""):
+        """Class constructor.
+
+        :param str code: error code according to
+          <http://www.openarchives.org/OAI/openarchivesprotocol.html#ErrorConditions>.
+        :param str description: optional human-readable description of the
+          error condition.
+        """
         self.code, self.description = code, description
 
     def response(self, request):
+        """Returns a HTTP response object representing the error condition.
+
+        :param HttpRequest request: the original HTTP request object
+
+        :returns:
+          HTTP response object representing the error condition
+
+        :rtype: HttpPmhResponse
+        """
         tree = create_response_tree(request)
         response_element = ElementTree.Element("error", {"code": self.code})
         response_element.text = self.description
@@ -96,6 +181,18 @@ class PmhError(Exception):
 
 
 def parse_timestamp(request, query_string_key):
+    """Returns the timestamp found in the query string.  Note that the timestamp
+    may be optional, so this function may return ``None``.
+
+    :param HttpRequest request: the original HTTP request object
+    :param str query_string_key: name of the query string parameter containing
+      the timestamp
+
+    :returns:
+      the timestamp, or ``None`` of none was given
+
+    :rtype: datetime.datetime or ``NoneType``
+    """
     timestamp = request.GET.get(query_string_key)
     if timestamp:
         try:
@@ -107,6 +204,17 @@ def parse_timestamp(request, query_string_key):
 
 
 def build_record(process):
+    """Returns the metadata record for the given process, ready to be included into
+    an OAI-PMH response.
+
+    :param Process process: the process to build a record for
+
+    :returns:
+      the XML fragment with the ``<record>`` element as the top-level element
+      representing the data for the given process.
+
+    :rtype: ElementTree.ElementTree
+    """
     record = ElementTree.Element("record")
     header = SubElement(record, "header")
     SubElement(header, "identifier").text = process.__class__.__name__ + ":" + escape_pk(process.pk)
@@ -127,6 +235,15 @@ def build_record(process):
 
 
 def get_record(request):
+    """Handles the ``GetRecord`` verb of the OAI-PMH protocol.
+
+    :param HttpRequest request: the original HTTP request object
+
+    :returns:
+      the HTTP response to the request
+
+    :rtype: HttpPmhResponse
+    """
     tree = create_response_tree(request)
     response_element = ElementTree.Element("GetRecord")
     try:
@@ -152,6 +269,15 @@ def get_record(request):
 
 
 def identify(request):
+    """Handles the ``Identify`` verb of the OAI-PMH protocol.
+
+    :param HttpRequest request: the original HTTP request object
+
+    :returns:
+      the HTTP response to the request
+
+    :rtype: HttpPmhResponse
+    """
     tree = create_response_tree(request)
     response_element = ElementTree.Element("Identify")
     SubElement(response_element, "repositoryName").text = "JuliaBase"
@@ -171,6 +297,15 @@ def identify(request):
 
 
 def list_identifiers(request):
+    """Handles the ``ListIdentifiers`` verb of the OAI-PMH protocol.
+
+    :param HttpRequest request: the original HTTP request object
+
+    :returns:
+      the HTTP response to the request
+
+    :rtype: HttpPmhResponse
+    """
     def process_model(response_element, model, from_, until):
         query = model.objects.values_list("pk", "timestamp")
         if from_:
@@ -205,6 +340,15 @@ def list_identifiers(request):
 
 
 def list_metadata_formats(request):
+    """Handles the ``ListMetadataFormats`` verb of the OAI-PMH protocol.
+
+    :param HttpRequest request: the original HTTP request object
+
+    :returns:
+      the HTTP response to the request
+
+    :rtype: HttpPmhResponse
+    """
     tree = create_response_tree(request)
     response_element = ElementTree.Element("ListMetadataFormats")
     oai_dc = SubElement(response_element, "metadataFormat")
@@ -216,6 +360,15 @@ def list_metadata_formats(request):
 
 
 def list_records(request):
+    """Handles the ``ListRecords`` verb of the OAI-PMH protocol.
+
+    :param HttpRequest request: the original HTTP request object
+
+    :returns:
+      the HTTP response to the request
+
+    :rtype: HttpPmhResponse
+    """
     def process_model(response_element, model, from_, until):
         query = model.objects.all()
         if from_:
@@ -250,6 +403,15 @@ def list_records(request):
 
 
 def list_sets(request):
+    """Handles the ``ListSets`` verb of the OAI-PMH protocol.
+
+    :param HttpRequest request: the original HTTP request object
+
+    :returns:
+      the HTTP response to the request
+
+    :rtype: HttpPmhResponse
+    """
     tree = create_response_tree(request)
     response_element = ElementTree.Element("ListSets")
     set_element = SubElement(response_element, "set")
@@ -267,7 +429,8 @@ views = {"GetRecord": get_record, "Identify": identify, "ListIdentifiers": list_
          "ListMetadataFormats": list_metadata_formats, "ListRecords": list_records, "ListSets": list_sets}
 
 def root(request):
-    """TBD
+    """Implements the single endpoint of the OAI-PMH server.  Thus, this view is a
+    dispatch for the functions above that hangle the OAI-PMH verbs.
 
     :param request: the current HTTP Request object
 
