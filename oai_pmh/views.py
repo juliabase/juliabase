@@ -142,6 +142,8 @@ def list_identifiers(request):
             query = query.filter(timestamp__gte=from_)
         if until:
             query = query.filter(timestamp__lte=until)
+        if not query.exists():
+            raise PmhError("noRecordsMatch")
         for id_, timestamp in query.iterator():
             header = SubElement(response_element, "header")
             SubElement(header, "identifier").text = model.__name__ + ":" + str(id_)
@@ -150,7 +152,11 @@ def list_identifiers(request):
             SubElement(header, "setSpec").text = model.__name__
     tree = create_response_tree(request)
     response_element = ElementTree.Element("ListIdentifiers")
-    assert request.GET["metadataPrefix"] == "oai_dc"
+    try:
+        if request.GET["metadataPrefix"] != "oai_dc":
+            raise PmhError("cannotDisseminateFormat", "Only oai_dc is allowed currently")
+    except KeyError:
+        raise PmhError("badArgument", "metadataPrefix is missing")
     from_ = parse_timestamp(request, "from")
     until = parse_timestamp(request, "until")
     set_spec = request.GET.get("set", "all")
@@ -181,6 +187,8 @@ def list_records(request):
             query = query.filter(timestamp__gte=from_)
         if until:
             query = query.filter(timestamp__lte=until)
+        if not query.exists():
+            raise PmhError("noRecordsMatch")
         for process in query.iterator():
             record = SubElement(response_element, "record")
             header = SubElement(record, "header")
@@ -200,7 +208,11 @@ def list_records(request):
             SubElement(oai_dc, "dc:date").text = process.timestamp.date().strftime("%Y-%m-%d")
     tree = create_response_tree(request)
     response_element = ElementTree.Element("ListRecords")
-    assert request.GET["metadataPrefix"] == "oai_dc"
+    try:
+        if request.GET["metadataPrefix"] != "oai_dc":
+            raise PmhError("cannotDisseminateFormat", "Only oai_dc is allowed currently")
+    except KeyError:
+        raise PmhError("badArgument", "metadataPrefix is missing")
     from_ = parse_timestamp(request, "from")
     until = parse_timestamp(request, "until")
     set_spec = request.GET.get("set", "all")
@@ -208,7 +220,11 @@ def list_records(request):
         for model in get_all_processes().values():
             process_model(response_element, model, from_, until)
     else:
-        process_model(response_element, get_all_processes()[set_spec], from_, until)
+        try:
+            model = get_all_processes()[set_spec]
+        except KeyError:
+            raise PmhError("badArgument", "This set name is unknown")
+        process_model(response_element, model, from_, until)
     tree.append(response_element)
     return HttpPmhResponse(tree)
 
