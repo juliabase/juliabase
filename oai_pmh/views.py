@@ -37,6 +37,19 @@ class HttpPmhResponse(HttpResponse):
         super().__init__(ElementTree.tostring(tree, encoding="utf8", method="xml"), content_type="application/xml")
 
 
+class PmhError(Exception):
+
+    def __init__(self, code, description=""):
+        self.code, self.description = code, description
+
+    def response(self, request):
+        tree = create_response_tree(request)
+        response_element = ElementTree.Element("error", {"code": self.code})
+        response_element.text = self.description
+        tree.append(response_element)
+        return HttpPmhResponse(tree)
+
+
 def timestamp_isoformat(timestamp):
     timestamp = timestamp.isoformat(timespec="seconds")
     assert timestamp.endswith("+00:00")
@@ -230,9 +243,11 @@ def root(request):
 
     :rtype: HttpResponse
     """
-    verb = request.GET.get("verb")
-    view_function = views.get(verb)
-    if view_function:
+    try:
+        try:
+            view_function = views[request.GET["verb"]]
+        except KeyError:
+            raise PmhError("badVerb")
         return view_function(request)
-    else:
-        raise Http404
+    except PmhError as error:
+        return error.response(request)
