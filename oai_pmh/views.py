@@ -40,11 +40,11 @@ def timestamp_isoformat(timestamp):
 
 
 def escape_pk(pk):
-    return str(pk).replace("\\", "\\\\").replace(":", "\\:")
+    return str(pk).replace("\\", "\\\\").replace(":", "\\-")
 
 
 def unescape_pk(pk):
-    return pk.replace("\\:", ":").replace("\\\\", "\\")
+    return pk.replace("\\-", ":").replace("\\\\", "\\")
 
 
 @lru_cache()
