@@ -20,9 +20,9 @@
 .. index::
    pair: class-based; views
 
-====================
+=================
 Class-based views
-====================
+=================
 
 Class-based views are highly practical for the add/edit view of physical
 processes because they keep code duplication at a minimum.  In some cases, you
@@ -35,7 +35,7 @@ will detect it and create the URL dispatch for it.
 
 
 The API
-=========
+=======
 
 The API of JuliaBase's class-based view classes is best described by discussing
 the attributes and methods of the common base class
@@ -54,7 +54,7 @@ This class is found in the module :py:mod:`samples.utils.views.class_views`.
 
 
 Main classes
-==============
+============
 
 The following names are found in the module :py:mod:`samples.utils.views`.
 
@@ -67,7 +67,7 @@ The following names are found in the module :py:mod:`samples.utils.views`.
 
 
 Mixins
-=======
+======
 
 .. autoclass:: samples.utils.views.RemoveFromMySamplesMixin
 .. autoclass:: samples.utils.views.SamplePositionsMixin
@@ -79,7 +79,7 @@ Mixins
 .. index:: sub-processes
 
 Sub-processes
-================
+=============
 
 Quite often, there is the need to divide a process further into sub-processes.
 JuliaBase realises this by special mixin classes.  In this section, I discuss

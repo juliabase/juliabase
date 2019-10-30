@@ -18,15 +18,15 @@
 
 .. index:: installation
 
-==============
+============
 Installation
-==============
+============
 
 
 .. index:: prerequisites
 
 Prerequisites
-===============
+=============
 
 Basically, you only need the current version of the `Django web framework`_
 together with its prerequisites.  Typically, this will be a computer with a
@@ -63,7 +63,7 @@ point for your own configuration.
 
 
 Linux configuration
-=======================
+===================
 
 Additionally to the software that is running on any recent and decent Linux
 operating system by default anyway, you must install:
@@ -84,7 +84,7 @@ operating system by default anyway, you must install:
    pair: PostgreSQL; configuration
 
 PostgreSQL
-==============
+==========
 
 If you have PostgreSQL and Apache on the same computer, PostgreSQL's default
 configuration should work for you.  The defaults are quite restrictive, so they
@@ -123,7 +123,7 @@ password.  Finally, create the database with:
    pair: Django; configuration
 
 Django
-=========
+======
 
 A certain version of JuliaBase works only with a certain version of Django.
 For the JuliaBase 1.0 release, this is Django 1.7.  For the current Git source
@@ -134,7 +134,7 @@ No further configuration is necessary.
 
 
 JuliaBase
-===========
+=========
 
 Download the `latest public release`_ of JuliaBase.  Moreover, JuliaBase's
 source code is hosted in a public Git `repository on GitHub`_.  So if you want
@@ -171,7 +171,7 @@ to actually using JuliaBase.
    pair: Apache; configuration
 
 Apache
-==========
+======
 
 Add to your Apache configuration something like the following:
 

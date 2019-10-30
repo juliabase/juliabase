@@ -23,9 +23,9 @@
                  research and development.
 
 
-=============
+============
 Introduction
-=============
+============
 
 Your scientific institute or working group creates lots of samples, and your
 team needs a tool to keep track of them?  JuliaBase is made for exactly that!
@@ -67,7 +67,7 @@ measurement setups that you can use as a starting point.
 
 
 Contact
-=========
+=======
 
 See :doc:`project` for how to find the right contact person and how to get in
 touch with the JuliaBase community.
@@ -78,7 +78,7 @@ See also the `impressum`_ of JuliaBase's website.
 
 
 Technical overview
-======================
+==================
 
 For better evaluation, here is a short list of the technical aspects of
 JuliaBase:
@@ -96,7 +96,7 @@ JuliaBase:
 .. _Public releases:
 
 Public releases
-=================
+===============
 
 You can `download JuliaBase`_ from GitHub as .tar.gz or zip files.
 Alternatively, you may visit the current state of the `source code repository`_
@@ -107,7 +107,7 @@ there.
 
 
 Getting started
-====================
+===============
 
 If you want to give JuliaBase a try, visit the :doc:`demo site <demo>`.  If you
 like it, the next step could be :doc:`installing it

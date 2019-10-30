@@ -19,9 +19,9 @@
 .. index::
    pair: sample; names
 
-==================
+============
 Sample names
-==================
+============
 
 .. index:: SAMPLE_NAME_FORMATS
 
@@ -48,7 +48,7 @@ and “new”.  They are mapped to dictionaries which contain their properties.
 
 
 Name format properties
-==========================
+======================
 
 ``"pattern"``
 -------------
@@ -108,7 +108,7 @@ enclose it with ``_("...")`` to make it translatable.
    triple: sample; provisional; names
 
 Provisional sample names
-============================
+========================
 
 There is a special name format in JuliaBase called “provisional”.  It has a
 fixed pattern ``r"\*\d{5}$"`` and a default verbose name.  It is used for newly
@@ -171,7 +171,7 @@ is used for error messages.
    triple: name; prefix; templates
 
 Name prefix templates
-========================
+=====================
 
 In the bulk rename sample view (the view to which the user is redirected after
 having created new samples, in order to give them a name), the user can select

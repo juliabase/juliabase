@@ -20,13 +20,13 @@
    pair: template; tags
    pair: template; filters
 
-==========================
+=========================
 Template tags and filters
-==========================
+=========================
 
 
 JuliaBase core
-================
+==============
 
 You use these tags and filter with::
 
@@ -52,7 +52,7 @@ Filters
 
 
 Samples
-=========
+=======
 
 You use these tags and filter with::
 

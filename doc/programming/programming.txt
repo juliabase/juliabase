@@ -18,9 +18,9 @@
 
 .. index:: adapting
 
-===============
+===========
 Programming
-===============
+===========
 
 This document explains JuliaBase for the programmer who wants to adapt it to
 their institute, research department, or scientific group.  It contains an
@@ -47,7 +47,7 @@ Furthermode, some admin skills are necessary to get everything running.
 .. _Organizing your source code:
 
 Organizing your source code
-===============================
+===========================
 
 It would be a bad idea to download JuliaBase's source code and modify it
 directly to your needs because then, any JuliaBase update would destroy your
@@ -121,7 +121,7 @@ A new version is pulled into your repo with:
 
 
 Creating a new Django app
-=============================
+=========================
 
 Okay, now let's dive into the serious stuff.
 
@@ -226,7 +226,7 @@ the moment.
    triple: add; process; module
 
 Adding a new process module
-=================================
+===========================
 
 So you want to add a new measurement device or manufacturing process to your
 JuliaBase installation.  You do so by adding new models, views, URLs, and
@@ -397,7 +397,7 @@ modifications.  Put them into the directory
 
 
 A more complex example: Writing a deposition module
-===========================================================
+===================================================
 
 I will show how to write a module for a deposition system by creating an
 example module step-by-step.  The crucial difference to the simple measurement
@@ -542,7 +542,7 @@ displayed in a lab notebook table in the context variable ``processes``.
 
 
 Process glossary
-===================
+================
 
 .. glossary::
 

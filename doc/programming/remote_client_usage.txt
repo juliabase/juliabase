@@ -18,9 +18,9 @@
 
 .. index:: remote client
 
-======================
+====================
 Talking to JuliaBase
-======================
+====================
 
 You have a measurement or processing setup, and you have access to the
 program(s) that run this setup?  This is the ideal situation to make a direct,
@@ -42,7 +42,7 @@ This chapter is intended as a gentle introduction to how to realise this.
 
 
 The big picture
-================
+===============
 
 JuliaBase is written in the Python programming language.  This is also true for
 the :doc:`Remote Client <remote_client>`, which is a Python library that you
@@ -80,7 +80,7 @@ PYTHONPATH.  In the following, I call the adapted module
    pair: bindings; language
 
 Basic usage
-=============
+===========
 
 The next steps differ depending on the programming language you use.  The basic
 principle is always the same, though: You log in on server with user name and
@@ -223,7 +223,7 @@ function.
 
 
 Error handling
-================
+==============
 
 If something goes wrong while executing the commands, an exception is raised.
 If it is a JuliaBase-related error, this is a special exception class:
@@ -258,7 +258,7 @@ to :code:`false`.
 
 
 About passwords
-===================
+===============
 
 Passwords are sensitive data.  Never store them on the disk.  Assure that they
 never appear anywhere on the screen (use the •••• display).  Let the user input
@@ -267,7 +267,7 @@ that's all.
 
 
 How do I …
-=============
+==========
 
 
 … check whether the user is known to JuliaBase?

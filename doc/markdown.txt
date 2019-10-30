@@ -21,9 +21,9 @@
    single: markdown
    pair: process; comments
 
-===========
+========
 Markdown
-===========
+========
 
 If you enter a comment, this is just plain text at first.  However, JuliaBase
 supports a special syntax in these comments.  This makes them more useful.
@@ -45,7 +45,7 @@ If you like to test JuliaBase's comment syntax, visit the `Markdown sandbox
 
 
 Paragraphs
-=============
+==========
 
 Paragraphs are separated by an empty line:
 
@@ -63,7 +63,7 @@ Output:
 
 
 Emphasis
-===========
+========
 
 .. code-block:: none
 
@@ -75,7 +75,7 @@ Emphasis
 
 
 Escaping characters
-======================
+===================
 
 If you like to use a character as-is but Markdown interprets it as something
 special, put a backslash before it:
@@ -93,7 +93,7 @@ Note that this is not necessary in sample names.  For example, in
 
 
 Special characters
-====================
+==================
 
 .. code-block:: none
 
@@ -113,7 +113,7 @@ for a full list of these characters.
 .. index:: maths, equations, formulae
 
 Math equations
-=================
+==============
 
 You can use LaTeX equations between $...$:
 
@@ -127,7 +127,7 @@ You can use LaTeX equations between $...$:
 
 
 Links
-======
+=====
 
 .. code-block:: none
 
@@ -142,7 +142,7 @@ automatically.
 
 
 Lists
-======
+=====
 
 .. code-block:: none
 
@@ -173,7 +173,7 @@ way.
 
 
 Line breaks
-=============
+===========
 
 Put two spaces at the end of the line:
 

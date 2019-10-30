@@ -18,7 +18,7 @@
 
 
 Setup with pip
-===============
+==============
 
 Requirements files to install all Python packages you need to run JuliaBase.
 All Packages are provided with fixed version numbers. To get the latest versions,

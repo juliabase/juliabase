@@ -19,9 +19,9 @@
 
 .. index:: permissions
 
-=====================
+=================
 Model permissions
-=====================
+=================
 
 Permissions defined in the ``Meta`` class of models are used in Django to
 define user permissions connected with this model.  JuliaBase also makes use of
@@ -30,7 +30,7 @@ into account when defining model permissions for JuliaBase model classes.
 
 
 Semantics and conventions
-==============================
+=========================
 
 For models derived from :py:class:`~samples.models.PhysicalProcess`, there are
 four permissions with a special meaning to JuliaBase.  Their codenames must
@@ -86,7 +86,7 @@ simplified::
 
 
 Omitting permissions
-=======================
+====================
 
 You may define all four permissions above.  However, if you omit some of them,
 this has influence on JuliaBase's treatment of that process class.  The obvious
@@ -104,7 +104,7 @@ creates his/her very first process of that kind.
 
 
 Django's default permissions
-===============================
+============================
 
 By default, Django generates an ``add_...``, ``change_...``, and ``delete_...``
 permission for every model.  You can switch it off for a certain model by

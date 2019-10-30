@@ -17,15 +17,15 @@
 .. along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-===========================
+========================
 A walk through JuliaBase
-===========================
+========================
 
 
 .. index:: demo
 
 The demo site
-===============
+=============
 
 At https://demo.juliabase.org, a demo of JuliaBase is installed so that you can
 play with it a little bit.  You can log in with various accounts with different
@@ -44,7 +44,7 @@ client code.
 
 
 The demo accounts
-=====================
+=================
 
 The demo site is the JuliaBase installation of the “Institute of Nifty New
 Materials” (INM).  It's a very small institute with only six employees.  All
@@ -96,7 +96,7 @@ lists” feature in order to commission the work.
 
 
 Rosalee: The everyday work
-==============================
+==========================
 
 .. image:: images/ss_main.png
    :alt: Main menu screenshot
@@ -464,7 +464,7 @@ wait for Sean (who got an automatic email) for approving it.
 
 
 Juliette: The assigner of work
-================================
+==============================
 
 Juliette has a lot to do and cannot deal with such things as sample preparation
 and characterization itself.  Thus, she assigns tasks to other people and
@@ -527,7 +527,7 @@ able to see the whole data sheet of 14-JS-1.
 
 
 Nick: Technical service for others
-====================================
+==================================
 
 Now login as n.burkhardt/12345.  You can see 14-JS-1 under “My Samples”, and
 you can view its data sheet.  The transfer has worked.
@@ -583,7 +583,7 @@ all of the features offered by task lists.  Or anything in between.
 
 
 Sean: The team leader
-========================
+=====================
 
 .. index:: permissions
 

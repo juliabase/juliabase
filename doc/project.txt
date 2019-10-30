@@ -20,9 +20,9 @@
 .. index:: community, source code, repository, mailing list, chat room, irc,
            usenet, newsgroup
 
-=======================
+=====================
 The JuliaBase project
-=======================
+=====================
 
 JuliaBase is an open-source project in the spirit of Free Software.  As such,
 its community is equally open.  Our first goal is to have a large community of
@@ -63,7 +63,7 @@ of JuliaBase is Torsten Bronger, bronger@physik.rwth-aachen.de.
 .. index:: license
 
 Licenses
-==========
+========
 
 JuliaBase's core is licensed under the terms of the `Affero GNU Public
 License`_ (AGPL).
@@ -116,7 +116,7 @@ Thank you!*
    pair: project; history
 
 Short project history
-======================
+=====================
 
 JuliaBase was started in 2008 in one institute of the Forschungszentrum Jülich
 under the name of “Chantal” by Torsten Bronger.  In 2009, Marvin Goblet was

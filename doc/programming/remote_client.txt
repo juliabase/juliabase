@@ -18,9 +18,9 @@
 
 .. index:: remote client
 
-====================
+=================
 The remote client
-====================
+=================
 
 The “remote client” is a programming library for contacting JuliaBase over the
 network.  Being a library, it is not a program per se but used by your own code
@@ -36,7 +36,7 @@ examples in :file:`remote_client/examples/`.
 
 
 Use cases
-===========
+=========
 
 The remote client has many applications.
 
@@ -112,7 +112,7 @@ on the series' pages, and in every sample's data sheet.
 .. _Extending the remote client:
 
 Extending the remote client
-=============================
+===========================
 
 As for JuliaBase itself, also the remote client should be extended with the
 functionality special to your institution.  This is not absolutely necessary,
@@ -180,7 +180,7 @@ your :file:`jb_remote_inm.py`:
 
 
 Local installation and usage
-==============================
+============================
 
 Once you finished extending the default remote client, *your* remote client
 consists of the files listed :ref:`above <remote-client-file-list>`, with
@@ -209,7 +209,7 @@ replace the :file:`jb_remote/` subdirectory with the new one.
 
 
 Classes and functions
-========================
+=====================
 
 As explained in `Extending the remote client`_, the following names become
 available by saying
