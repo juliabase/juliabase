@@ -151,7 +151,7 @@ Default: ``["django.contrib.auth", "samples", "jb_common"]``
 List containing all apps which contain translations that should be used in
 JavaScript code.  The apps are named as in the Django setting
 ``INSTALLED_APPS``.  See the `Django documentation
-<https://docs.djangoproject.com/en/dev/topics/i18n/translation/#internationalization-in-javascript-code>`_
+<https://docs.djangoproject.com/en/dev/topics/i18n/translation/#internationalization-in-javascript-code>`__
 for further information.
 
 
@@ -617,6 +617,6 @@ TIME_ZONE
 ---------
 
 If ``USE_TZ`` is set to ``True``, you should also consider setting
-``TIME_ZONE``.  See the `Django documentation`_ for details.
-
-.. _Django documentation: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TIME_ZONE
+``TIME_ZONE``.  See the `Django documentation
+<https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TIME_ZONE>`__
+for details.
