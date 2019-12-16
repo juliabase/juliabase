@@ -87,7 +87,7 @@ class BlobStorage:
         objects is guaranteed to have two simple methods: ``write(data)``
         writes ``data`` to the file and can be called multiple times.  And
         ``close()`` closes the file and should be called when all data is
-        written.
+        written.  It is important to call ``close()`` explicitly!
 
         :param path: full path to a file
         :param mode: mode in which the file should be opened; may be ``"r"`` or
