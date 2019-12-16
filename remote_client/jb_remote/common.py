@@ -54,9 +54,9 @@ def setup_logging(destination=None):
     :param destination: Where to log to; possible values are:
 
         ``"file"``
-            Log to :file:`/tmp/jb_remote.log` if :file:`/tmp` is existing,
-            otherwise (i.e. on Windows), log to :file:`jb_remote.log` in the
-            current directory.
+            Log to :file:`/var/lib/crawlers/jb_remote.log` if
+            :file:`/var/lib/crawlers` is existing, otherwise (i.e. on Windows),
+            log to :file:`jb_remote.log` in the current directory.
 
         ``"console"``
             Log to stderr.
@@ -75,7 +75,8 @@ def setup_logging(destination=None):
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s %(levelname)-8s %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S",
-                            filename="/tmp/jb_remote.log" if os.path.exists("/tmp") else "jb_remote.log",
+                            filename="/var/lib/crawlers/jb_remote.log" if os.path.exists("/var/lib/crawlers")
+                                     else "jb_remote.log",
                             filemode="w")
     elif destination == "console":
         logging.basicConfig(level=logging.INFO,

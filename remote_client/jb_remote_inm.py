@@ -27,7 +27,7 @@
     logout()
 
 This module writes a log file.  On Windows, it is in the current directory.  On
-Unix-like systems, it is in :file:`/tmp`.
+Unix-like systems, it is in :file:`/var/lib/crawlers`.
 
 Note that I don't use :py:func:`jb_remote.common.double_urlquote` here because
 I *know* that my deposition and other process IDs don't contain dangerous

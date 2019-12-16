@@ -38,4 +38,4 @@ class LockingTest(TestCase):
             with PIDLock("test_program"), PIDLock("test_program", 0):
                 pass
         log.seek(position)
-        self.assertEqual(log.read().strip(), 'WARNING:root:Lock /tmp/test_program.pid of other process active')
+        self.assertEqual(log.read().strip(), 'WARNING:root:Lock /var/lib/crawlers/test_program.pid of other process active')
