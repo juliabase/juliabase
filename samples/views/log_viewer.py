@@ -46,7 +46,7 @@ def read_crawler_log(filepath):
     if start_index < 0:
         return None, None
     content = ""
-    for i in xrange(start_index, len(lines)):
+    for i in range(start_index, len(lines)):
         content += lines[i][20:]
     return content, django.utils.timezone.make_aware(datetime.datetime.strptime(lines[start_index][:19], "%Y-%m-%d %H:%M:%S"))
 
