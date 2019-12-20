@@ -175,7 +175,7 @@ class JSONClientMiddleware:
             hash_.update(str(time.time()).encode())
             hash_value = hash_.hexdigest()
             ErrorPage.objects.create(hash_value=hash_value, user=user, requested_url=request.get_full_path(),
-                                     html=response.content)
+                                     html=response.content.decode())
             return HttpResponseUnprocessableEntity(
                 json.dumps((1, request.build_absolute_uri(
                     django.urls.reverse("jb_common:show_error_page", kwargs={"hash_value": hash_value})))),
