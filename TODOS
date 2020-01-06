@@ -1,0 +1,2 @@
+- https://code.djangoproject.com/ticket/11385 has been fixed.  This makes some
+  locations in the code simpler.
