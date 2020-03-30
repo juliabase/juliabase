@@ -2,3 +2,4 @@
 *.mo
 doc/.build
 mysite/
+/TAGS
