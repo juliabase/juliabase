@@ -27,6 +27,7 @@
 from settings import *
 
 
+os.environ["CRAWLERS_DATA_DIR"] = "/tmp"
 
 DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
 DATABASES["default"]["TEST"] = {"NAME": "/tmp/juliabase-test-db"}
