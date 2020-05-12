@@ -40,4 +40,4 @@ class LockingTest(TestCase):
                 pass
         log.seek(position)
         self.assertEqual(log.read().strip(),
-                         f'WARNING:root:Lock {settings.CRAWLERS_DATA_DIR}/test_program.pid of other process active')
+                         f"WARNING:root:Lock {settings.CRAWLERS_DATA_DIR}/test_program.pid of other process active")
