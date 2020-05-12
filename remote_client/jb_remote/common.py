@@ -56,7 +56,9 @@ def setup_logging(destination=None):
         ``"file"``
             Log to :file:`/var/lib/crawlers/jb_remote.log` if
             :file:`/var/lib/crawlers` is existing, otherwise (i.e. on Windows),
-            log to :file:`jb_remote.log` in the current directory.
+            log to :file:`jb_remote.log` in the current directory.  The
+            directory is configurable by the environment variable
+            ``CRAWLERS_DATA_DIR``.
 
         ``"console"``
             Log to stderr.
@@ -75,7 +77,7 @@ def setup_logging(destination=None):
         logging.basicConfig(level=logging.INFO,
                             format="%(asctime)s %(levelname)-8s %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S",
-                            filename="/var/lib/crawlers/jb_remote.log" if os.path.exists("/var/lib/crawlers")
+                            filename=settings.CRAWLERS_DATA_DIR/"jb_remote.log" if settings.CRAWLERS_DATA_DIR.is_dir()
                                      else "jb_remote.log",
                             filemode="w")
     elif destination == "console":

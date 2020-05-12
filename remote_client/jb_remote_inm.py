@@ -26,8 +26,10 @@
     new_sample.current_location = "PECVD lab"
     logout()
 
-This module writes a log file.  On Windows, it is in the current directory.  On
-Unix-like systems, it is in :file:`/var/lib/crawlers`.
+This module writes a log file.  If the directory :file:`/var/lib/crawlers`
+exists, it is written there.  Otherwise, it is written to the current
+directory.  The directory is configurable by the environment variable
+``CRAWLERS_DATA_DIR``.
 
 Note that I don't use :py:func:`jb_remote.common.double_urlquote` here because
 I *know* that my deposition and other process IDs don't contain dangerous

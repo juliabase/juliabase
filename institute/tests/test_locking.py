@@ -22,6 +22,7 @@
 
 from django.test import TestCase, override_settings
 from remote_client.jb_remote.crawler_tools import Locked, PIDLock
+from remote_client.jb_remote import settings
 from .tools import log
 
 
@@ -38,4 +39,5 @@ class LockingTest(TestCase):
             with PIDLock("test_program"), PIDLock("test_program", 0):
                 pass
         log.seek(position)
-        self.assertEqual(log.read().strip(), 'WARNING:root:Lock /var/lib/crawlers/test_program.pid of other process active')
+        self.assertEqual(log.read().strip(),
+                         f'WARNING:root:Lock {settings.CRAWLERS_DATA_DIR}/test_program.pid of other process active')

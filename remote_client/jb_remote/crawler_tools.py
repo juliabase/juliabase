@@ -52,7 +52,7 @@ class PIDLock:
         :type name: str
         :type timeout: int
         """
-        self.lockfile_path = os.path.join("/var/lib/crawlers/", name + ".pid")
+        self.lockfile_path = settings.CRAWLERS_DATA_DIR/(name + ".pid")
         self.lockfile = None
         self.timeout = timeout
 

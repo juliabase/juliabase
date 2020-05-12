@@ -34,6 +34,9 @@ It is important to change the settings before the login into JuliaBase takes
 place.
 """
 
+import os
+from pathlib import Path
+
 
 # Must end in "/".
 ROOT_URL = None
@@ -45,3 +48,4 @@ SMTP_LOGIN = "username"
 SMTP_PASSWORD = "password"
 EMAIL_FROM = "me@example.com"
 EMAIL_TO = "admins@example.com"
+CRAWLERS_DATA_DIR = Path(os.environ.get("CRAWLERS_DATA_DIR", "/var/lib/crawlers"))
