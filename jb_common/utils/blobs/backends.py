@@ -290,7 +290,7 @@ class PostgreSQL(BlobStorage):
             oid = self.get_oid(cursor, path)
             if oid is None:
                 raise FileNotFoundError("No such blob: {}".format(repr(path)))
-            large_object = connection.lobject(oid)
+            large_object = connection.lobject(oid, "rb")
             try:
                 yield large_object, cursor
             finally:
