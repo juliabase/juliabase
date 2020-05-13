@@ -26,6 +26,7 @@
 # modification purposes.
 
 import os, datetime, json, subprocess
+from io import BytesIO
 from functools import partial
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -37,7 +38,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import django.forms as forms
-from jb_common.utils.base import static_response, static_file_response, get_cached_file_content, help_link
+from jb_common.utils.base import static_response, static_file_response, get_cached_bytes_stream, help_link
 import jb_common.utils.base
 import jb_common.utils.blobs
 from samples import models, permissions
@@ -597,7 +598,7 @@ def generate_thumbnail(result, image_filename):
     content = subprocess.check_output(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
                                        "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), "png:-"])
     os.unlink(image_file)
-    return content
+    return BytesIO(content)
 
 
 @login_required
@@ -622,9 +623,9 @@ def show_thumbnail(request, process_id):
     image_locations = result.get_image_locations()
     image_filename = image_locations["image_file"]
     thumbnail_file = image_locations["thumbnail_file"]
-    content = get_cached_file_content(thumbnail_file, partial(generate_thumbnail, result, image_filename),
-                                      [image_filename])
-    return static_response(content, content_type="image/png")
+    stream = get_cached_bytes_stream(thumbnail_file, partial(generate_thumbnail, result, image_filename),
+                                     [image_filename])
+    return static_response(stream, content_type="image/png")
 
 
 @login_required

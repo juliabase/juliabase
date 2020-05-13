@@ -37,7 +37,7 @@ import django.contrib.auth.models
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, \
-    int_or_zero, static_response, get_cached_file_content
+    int_or_zero, static_response, get_cached_bytes_stream
 import samples.utils.views as utils
 from kicker import models
 
@@ -334,7 +334,7 @@ def generate_plot(image_format):
     output = BytesIO()
     canvas.print_figure(output, format=image_format)
     figure.clf()
-    return output.getvalue()
+    return output
 
 
 @login_required
@@ -344,8 +344,8 @@ def plot(request, image_format):
         timestamps = [models.KickerNumber.objects.latest().timestamp]
     except models.KickerNumber.DoesNotExist:
         timestamps = []
-    content = get_cached_file_content(plot_filepath, partial(generate_plot, image_format), timestamps=timestamps)
-    return static_response(content, "kicker.pdf" if image_format == "pdf" else None, mimetypes.guess_type(plot_filepath))
+    stream = get_cached_bytes_stream(plot_filepath, partial(generate_plot, image_format), timestamps=timestamps)
+    return static_response(stream, "kicker.pdf" if image_format == "pdf" else None, mimetypes.guess_type(plot_filepath))
     
 
 @login_required

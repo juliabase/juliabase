@@ -30,7 +30,7 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from jb_common.utils.base import get_cached_file_content, static_response
+from jb_common.utils.base import get_cached_bytes_stream, static_response
 from samples import models, permissions
 import samples.utils.views as utils
 from samples.utils.plots import PlotError
@@ -62,7 +62,7 @@ def generate_plot(process, plot_id, thumbnail, datafile_name):
     except ValueError as e:
         raise Http404("Plot could not be generated: " + e.args[0])
     else:
-        return output.getvalue()
+        return output
 
 
 @login_required
@@ -98,7 +98,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
     datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
     if not all(os.path.exists(filename) for filename in datafile_names):
         raise Http404("One of the raw datafiles was not found.")
-    content = get_cached_file_content(plot_filepath, partial(generate_plot, process, plot_id, thumbnail, datafile_name),
-                                      datafile_names, timestamps)
-    return static_response(content, None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf",
+    stream = get_cached_bytes_stream(plot_filepath, partial(generate_plot, process, plot_id, thumbnail, datafile_name),
+                                     datafile_names, timestamps)
+    return static_response(stream, None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf",
                            mimetypes.guess_type(plot_filepath))

@@ -19,6 +19,7 @@
 
 
 import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string, hashlib, urllib
+from io import BytesIO
 from contextlib import contextmanager
 from functools import wraps
 from smtplib import SMTPException
@@ -557,7 +558,7 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
         getmtime_utc(destination) + datetime.timedelta(seconds=additional_inaccuracy + 1) < max(all_timestamps)
 
 
-def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
+def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
     """Returns the content of the file denoted by ``path``.  It tries to get this
     from cache, taking the timestamps of all ``source_files`` and the
     ``timestamps`` into account.  If the cache lookup fails, ``generator`` is
@@ -565,21 +566,21 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     cached.
 
     :param path: the path to the destination file; may also be a symbolic name
-    :param generator: callable which returns the file content; it is only
-      called of the cache lookup yields a miss
+    :param generator: callable which returns the file content as a binary
+      stream; it is only called of the cache lookup yields a miss
     :param source_files: the paths of the source files; if relative, they are
         assumed to be in the blob storage.
     :param timestamps: timestamps of non-file source objects
 
     :type path: str
-    :type generator: callable with no arguments returning bytes
+    :type generator: callable with no arguments returning binary stream
     :type source_files: list of str
     :type timestamps: list of datetime.datetime
 
     :return:
       content of the file denoted by ``path``
 
-    :rtype: bytes
+    :rtype: binary stream
 
     :raises OSError: if one of the source paths is not found
     """
@@ -592,22 +593,22 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     hash_ = hashlib.sha1()
     hash_.update(";".join(str(timestamp) for timestamp in sorted(all_timestamps)).encode())
     key = "file:{timestamp_hash}:{path}".format(timestamp_hash=hash_.hexdigest()[:10], path=path)
-    content = get_from_cache(key)
-    if content is None:
-        content = generator()
-        cache.set(key, content)
-    return content
+    stream = BytesIO(get_from_cache(key))
+    if stream is None:
+        stream = generator()
+        cache.set(key, stream.getvalue())
+    return stream
 
 
-def static_response(content, served_filename="", content_type=None):
+def static_response(stream, served_filename="", content_type=None):
     """Serves a bytes string as static content.
 
-    :param content: the content to be served
+    :param stream: the content to be served
     :param served_filename: the filename the should be transmitted; if given,
         the response will be an "attachment"
     :param content_type: the MIME type of the content
 
-    :type content: bytes
+    :type stream: file-like object
     :type served_filename: str
     :type content_type: str
 
@@ -616,13 +617,8 @@ def static_response(content, served_filename="", content_type=None):
 
     :rype: ``django.http.HttpResponse``
     """
-    response = django.http.HttpResponse()
-    response.write(content)
-    response["Content-Type"] = content_type or mimetypes.guess_type(served_filename)[0] or "application/octet-stream"
-    response["Content-Length"] = len(content)
-    if served_filename:
-        response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
-    return response
+    return django.http.FileResponse(stream, as_attachment=bool(served_filename), filename=served_filename,
+                                    content_type=content_type)
 
 
 def static_file_response(filepath, served_filename=None):

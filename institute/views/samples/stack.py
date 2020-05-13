@@ -44,12 +44,13 @@ def generate_stack(thumbnail, locations, sample, sample_details):
         pdf_filename, [informal_stacks.Layer(layer) for layer in sample_details.informal_layers.all()],
         str(sample), _("Layer stack of {0}").format(sample))
     if thumbnail:
-        content = subprocess.check_output(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
-                                           "-sOutputFile=-", pdf_filename])
+        stream = BytesIO(subprocess.check_output(
+            ["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
+             "-sOutputFile=-", pdf_filename]))
     else:
-        content = open(pdf_filename, "rb").read()
+        stream = open(pdf_filename, "rb")
     os.unlink(pdf_filename)
-    return content
+    return stream
 
 
 @login_required
@@ -78,8 +79,8 @@ def show_stack(request, sample_id, thumbnail):
         raise Http404("No stack diagram available.")
     locations = sample_details.get_stack_diagram_locations()
     filepath = locations["thumbnail_file" if thumbnail else "diagram_file"]
-    content = jb_common.utils.base.get_cached_file_content(
+    stream = jb_common.utils.base.get_cached_bytes_stream(
         filepath, partial(generate_stack, thumbnail, locations, sample, sample_details), timestamps=[sample.last_modified])
     return jb_common.utils.base.static_response(
-        content, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(str(sample))),
+        stream, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(str(sample))),
         "image/png" if thumbnail else "application/pdf")

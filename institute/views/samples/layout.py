@@ -22,6 +22,7 @@
 
 
 import os, subprocess, uuid
+from io import BytesIO
 from functools import partial
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -44,7 +45,7 @@ def generate_layout(sample, process):
     content = subprocess.check_output(["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r{0}".format(resolution),
                                        "-dEPSCrop", "-sOutputFile=-", pdf_filename])
     os.unlink(pdf_filename)
-    return content
+    return BytesIO(content)
 
 
 @login_required
@@ -52,6 +53,6 @@ def show_layout(request, process_id, sample_id):
     sample = get_object_or_404(models.Sample, pk=utils.convert_id_to_int(sample_id))
     process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id)).actual_instance
     png_filename = os.path.join("layouts", "{0}-{1}.png".format(process.id, sample.id))
-    content = jb_common.utils.base.get_cached_file_content(
+    stream = jb_common.utils.base.get_cached_bytes_stream(
         png_filename, partial(generate_layout, sample, process), timestamps=[sample.last_modified, process.last_modified])
-    return jb_common.utils.base.static_response(content, png_filename)
+    return jb_common.utils.base.static_response(stream, png_filename)
