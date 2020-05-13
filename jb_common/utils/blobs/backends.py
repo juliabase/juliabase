@@ -210,7 +210,7 @@ class PostgreSQL(BlobStorage):
     """
 
     class BlobFile:
-        """A very simplistic file-like objects.  It only defines the methods that are
+        """A very simplistic file-like object.  It only defines the methods that are
         needed in JuliaBase: `write` (with one parameter) and `close`.
         """
 
