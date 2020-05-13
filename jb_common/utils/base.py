@@ -564,7 +564,7 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     called (without arguments!) to generate the file content, which is then
     cached.
 
-    :param path: the absolute path to the destination file
+    :param path: the path to the destination file; may also be a symbolic name
     :param generator: callable which returns the file content; it is only
       called of the cache lookup yields a miss
     :param source_files: the paths of the source files; if relative, they are
