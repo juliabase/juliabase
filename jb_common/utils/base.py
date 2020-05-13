@@ -584,7 +584,7 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     :raises OSError: if one of the source paths is not found
     """
     all_timestamps = copy.copy(timestamps)
-    if all(os.path.isabs(path) for path in source_files):
+    if all(os.path.isabs(path_) for path_ in source_files):
         getmtime = getmtime_utc
     else:
         getmtime = blobs.storage.getmtime
