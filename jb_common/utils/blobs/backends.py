@@ -156,7 +156,7 @@ class Filesystem(BlobStorage):
     def unlink(self, path):
         os.unlink(os.path.join(self.root, path))
 
-    def open(self, path, mode):
+    def open(self, path, mode="r"):
         filepath = os.path.join(self.root, path)
         if mode == "w":
             mkdirs(filepath)
@@ -288,7 +288,7 @@ class PostgreSQL(BlobStorage):
             cursor.execute("DELETE FROM blobs WHERE large_object_id=%s;", (large_object.oid,))
             large_object.unlink()
 
-    def open(self, path, mode):
+    def open(self, path, mode="r"):
         mode += "b"
         connection = psycopg2.connect(database=self.database, user=self.user, password=self.password, host=self.host)
         cursor = connection.cursor()
