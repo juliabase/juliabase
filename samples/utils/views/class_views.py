@@ -259,22 +259,10 @@ class ProcessWithoutSamplesView(TemplateView):
         process = self.forms["process"].save()
         return process
 
-    def get(self, request, *args, **kwargs):
-        """Processes a GET request.  This method is part of the Django API for
-        class-based views.
-
-        :param request: the HTTP request object
-
-        :type request: ``django.http.HttpRequest``
-
-        :Return:
-          the HTTP response
-
-        :rtype: ``django.http.HttpResponse``
-        """
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
         self.startup()
         self.build_forms()
-        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         """Processes a POST request.  This method is part of the Django API for
@@ -289,15 +277,13 @@ class ProcessWithoutSamplesView(TemplateView):
 
         :rtype: ``django.http.HttpResponse``
         """
-        self.startup()
-        self.build_forms()
         all_valid = self.is_all_valid()
         referentially_valid = self.is_referentially_valid()
         if all_valid and referentially_valid:
             self.process = self.save_to_database()
             return self.create_successful_response(request)
         else:
-            return super().get(request, *args, **kwargs)
+            return self.get(request, *args, **kwargs)
 
     def create_successful_response(self, request):
         """Creates a `success` response and triggers a HTTP redirect.
