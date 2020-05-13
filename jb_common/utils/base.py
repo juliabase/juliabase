@@ -564,14 +564,14 @@ def get_cached_file_content(path, generator, source_files=[], timestamps=[]):
     called (without arguments!) to generate the file content, which is then
     cached.
 
-    :param destination: the absolute path to the destination file
+    :param path: the absolute path to the destination file
     :param generator: callable which returns the file content; it is only
       called of the cache lookup yields a miss
     :param source_files: the paths of the source files; if relative, they are
         assumed to be in the blob storage.
     :param timestamps: timestamps of non-file source objects
 
-    :type destination: str
+    :type path: str
     :type generator: callable with no arguments returning bytes
     :type source_files: list of str
     :type timestamps: list of datetime.datetime
