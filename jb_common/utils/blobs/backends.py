@@ -26,7 +26,7 @@
                             (MEDIA_ROOT,))
 """
 
-import os, uuid, datetime
+import os, uuid, datetime, io
 from contextlib import contextmanager
 import psycopg2
 from django.conf import settings
@@ -83,11 +83,8 @@ class BlobStorage:
         raise NotImplementedError
 
     def open(self, path, mode="r"):
-        """Opens the file at ``path``.  This must be a regular file.  The returned
-        objects is guaranteed to have two simple methods: ``write(data)``
-        writes ``data`` to the file and can be called multiple times.  And
-        ``close()`` closes the file and should be called when all data is
-        written.  It is important to call ``close()`` explicitly!
+        """Opens the file at ``path`` as a binary stream.  Note that ``close()`` should
+        be called explicitly!
 
         :param path: full path to a file
         :param mode: mode in which the file should be opened; may be ``"r"`` or
@@ -98,7 +95,7 @@ class BlobStorage:
         :return:
           the opened file
 
-        :rtype: almost-file-like object
+        :rtype: binary stream
         """
         raise NotImplementedError
 
@@ -136,21 +133,10 @@ class Filesystem(BlobStorage):
     CACHE_ROOT or to the root directory.
     """
 
-    class File:
-        """A very simplistic file-like objects.  It only defines the methods that are
-        needed in JuliaBase: `write` (with one parameter) and `close`.  I need
-        this wrapper to have a hook in the `close` method to call the
-        ``storage_changed`` signal.
-        """
-
-        def __init__(self, file):
-            self.file = file
-
-        def write(self, data):
-            self.file.write(data)
+    class File(io.FileIO):
 
         def close(self):
-            self.file.close()
+            super().close()
             storage_changed.send(Filesystem)
 
 
@@ -174,7 +160,7 @@ class Filesystem(BlobStorage):
         filepath = os.path.join(self.root, path)
         if mode == "w":
             mkdirs(filepath)
-        return Filesystem.File(open(filepath, mode + "b"))
+        return Filesystem.File(filepath, mode + "b")
 
     def export(self, path):
         """Create a hard link to the file.  Three directories are tried, in this order:
@@ -209,20 +195,15 @@ class PostgreSQL(BlobStorage):
     (OIDs) with the pathname and an mtime timestamp.
     """
 
-    class BlobFile:
-        """A very simplistic file-like object.  It only defines the methods that are
-        needed in JuliaBase: `write` (with one parameter) and `close`.
-        """
+    class BlobFile(psycopg2.extensions.lobject):
 
-        def __init__(self, path, connection, cursor, large_object):
-            self.path, self.connection, self.cursor, self.large_object = path, connection, cursor, large_object
-
-        def write(self, data):
-            self.large_object.write(data)
+        def init_additional_attributes(self, path, connection, cursor):
+            self.path, self.connection, self.cursor = path, connection, cursor
 
         def close(self):
-            self.cursor.execute("UPDATE blobs SET mtime=now() WHERE path=%s;", (self.path,))
-            self.large_object.close()
+            if self.mode == "wb":
+                self.cursor.execute("UPDATE blobs SET mtime=now() WHERE path=%s;", (self.path,))
+            super().close()
             self.connection.commit()
             self.cursor.close()
             self.connection.close()
@@ -308,17 +289,18 @@ class PostgreSQL(BlobStorage):
             large_object.unlink()
 
     def open(self, path, mode):
-        assert mode == "w"
+        mode += "b"
         connection = psycopg2.connect(database=self.database, user=self.user, password=self.password, host=self.host)
         cursor = connection.cursor()
         oid = self.get_oid(cursor, path)
         if oid is None:
-            large_object = connection.lobject(mode="wb")
+            large_object = connection.lobject(mode=mode, lobject_factory=BlobFile)
             cursor.execute("INSERT INTO blobs VALUES (%s, %s, now());", (path, large_object.oid))
         else:
-            large_object = connection.lobject(oid, mode="wb")
+            large_object = connection.lobject(oid, mode, lobject_factory=BlobFile)
             large_object.truncate()
-        return PostgreSQL.BlobFile(path, connection, cursor, large_object)
+        large_object.init_additional_attributes(path, connection, cursor)
+        return large_object
 
     def export(self, path):
         with self.existing_large_object(path) as (large_object, cursor):
