@@ -30,7 +30,7 @@ from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.contrib.contenttypes.models import ContentType
-from django.template import defaultfilters
+import django.utils.text
 from jb_common import mimeparse
 from samples import models, permissions
 from samples.utils import sample_names
@@ -571,7 +571,7 @@ def table_export(request, data, label_column_heading):
                 else:
                     response = HttpResponse(content_type="text/csv; charset=utf-8")
                     response['Content-Disposition'] = \
-                        "attachment; filename=juliabase--{0}.txt".format(defaultfilters.slugify(data.descriptive_name))
+                        "attachment; filename=juliabase--{0}.txt".format(django.utils.text.slugify(data.descriptive_name))
                     writer = csv.writer(response, dialect=csv.excel_tab)
                     writer.writerows(reduced_table)
                 return response

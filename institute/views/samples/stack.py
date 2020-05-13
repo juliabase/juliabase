@@ -29,7 +29,7 @@ from functools import partial
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.template import defaultfilters
+import django.utils.text
 from django.utils.translation import ugettext as _
 import jb_common.utils.base
 from samples import permissions
@@ -82,5 +82,5 @@ def show_stack(request, sample_id, thumbnail):
     stream = jb_common.utils.base.get_cached_bytes_stream(
         filepath, partial(generate_stack, thumbnail, locations, sample, sample_details), timestamps=[sample.last_modified])
     return jb_common.utils.base.static_response(
-        stream, None if thumbnail else "{0}_stack.pdf".format(defaultfilters.slugify(str(sample))),
+        stream, None if thumbnail else "{0}_stack.pdf".format(django.utils.text.slugify(str(sample))),
         "image/png" if thumbnail else "application/pdf")

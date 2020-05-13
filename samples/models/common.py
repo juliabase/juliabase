@@ -33,7 +33,8 @@ from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pg
 from django.utils.http import urlquote
 import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
-from django.template import defaultfilters, Context, TemplateDoesNotExist
+from django.template import Context, TemplateDoesNotExist
+import django.utils.text
 from django.template.loader import render_to_string
 import django.urls
 from django.conf import settings
@@ -1316,7 +1317,7 @@ class Result(Process):
         assert self.image_type != "none"
         original_extension = "." + self.image_type
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
-        sluggified_filename = defaultfilters.slugify(self.title) + original_extension
+        sluggified_filename = django.utils.text.slugify(self.title) + original_extension
         return {"image_file": os.path.join("results", str(self.pk), "0" + original_extension),
                 "image_url": django.urls.reverse("samples:show_result_image", kwargs={"process_id": str(self.pk)}),
                 "thumbnail_file": os.path.join("results_thumbnails", str(self.pk), "0" + thumbnail_extension),
