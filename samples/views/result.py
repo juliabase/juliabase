@@ -38,7 +38,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
 from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import django.forms as forms
-from jb_common.utils.base import static_response, static_file_response, get_cached_bytes_stream, help_link
+from jb_common.utils.base import static_response, get_cached_bytes_stream, help_link
 import jb_common.utils.base
 import jb_common.utils.blobs
 from samples import models, permissions
@@ -589,8 +589,8 @@ def show_image(request, process_id):
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
     image_locations = result.get_image_locations()
-    return static_file_response(jb_common.utils.blobs.storage.export(image_locations["image_file"]),
-                                image_locations["sluggified_filename"])
+    return static_response(jb_common.utils.blobs.storage.open(image_locations["image_file"]),
+                           image_locations["sluggified_filename"])
 
 
 def generate_thumbnail(result, image_filename):
