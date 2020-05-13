@@ -64,7 +64,7 @@ The following names are found in the module :py:mod:`jb_common.utils.base`.
 .. autoexception:: jb_common.utils.base.JSONRequestException
 .. autofunction:: jb_common.utils.base.is_json_requested
 .. autofunction:: jb_common.utils.base.respond_in_json
-.. autofunction:: jb_common.utils.base.static_file_response
+.. autofunction:: jb_common.utils.base.static_response
 
 The following name is found in the module :py:mod:`samples.utils.views`.
 

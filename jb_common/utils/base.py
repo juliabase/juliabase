@@ -621,40 +621,6 @@ def static_response(stream, served_filename="", content_type=None):
                                     content_type=content_type)
 
 
-def static_file_response(filepath, served_filename=None):
-    """Serves a file of the local file system.
-
-    :param filepath: the absolute path to the file to be served
-    :param served_filename: the filename the should be transmitted; if given,
-        the response will be an "attachment"
-
-    :return:
-      the HTTP response with the static file
-
-    :rype: ``django.http.HttpResponse``
-    """
-    filepath = os.path.realpath(filepath)
-    for path in settings.TEMP_STATIC_DIRS:
-        path = os.path.join(os.path.realpath(path), "")
-        if os.path.commonprefix([filepath, path]) == path:
-            is_temporary = True
-    else:
-        is_temporary = False
-
-    response = django.http.HttpResponse()
-    if settings.USE_X_SENDFILE:
-        response["X-Sendfile-Temporary" if is_temporary else "X-Sendfile"] = filepath
-    else:
-        response.write(open(filepath, "rb").read())
-        if is_temporary:
-            os.unlink(filepath)
-    response["Content-Type"] = mimetypes.guess_type(filepath)[0] or "application/octet-stream"
-    response["Content-Length"] = os.path.getsize(filepath)
-    if served_filename:
-        response["Content-Disposition"] = 'attachment; filename="{0}"'.format(served_filename)
-    return response
-
-
 def mkdirs(path):
     """Creates a directory and all of its parents if necessary.  If the given
     path doesn't end with a slash, it's interpreted as a filename and removed.
