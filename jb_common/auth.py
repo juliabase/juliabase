@@ -49,6 +49,7 @@ from io import StringIO
 import re, traceback
 from contextlib import contextmanager
 from django.contrib.auth.models import User, Permission
+from django.contrib.auth.backends import BaseBackend
 from django.contrib.sessions.models import Session
 import django.utils.timezone
 from django.conf import settings
@@ -67,7 +68,7 @@ except AttributeError:
     ldap3.SUBTREE = ldap3.SEARCH_SCOPE_WHOLE_SUBTREE
 
 
-class ActiveDirectoryBackend:
+class ActiveDirectoryBackend(BaseBackend):
 
     def authenticate(self, request, username=None, password=None):
         if not password:
