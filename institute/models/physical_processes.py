@@ -82,18 +82,18 @@ class Substrate(PhysicalProcess):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
 
-pds_apparatus_choices = (
-    ("pds1", _("PDS #1")),
-    ("pds2", _("PDS #2"))
-)
-
 class PDSMeasurement(PhysicalProcess):
     """Model for PDS measurements.
     """
+
+    class Apparatus(models.TextChoices):
+        PDS1 = "pds1", _("PDS #1")
+        PDS2 = "pds2", _("PDS #2")
+
     number = models.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
     raw_datafile = models.CharField(_("raw data file"), max_length=200,
                                     help_text=format_lazy(_('only the relative path below "{path}"'), path="pds_raw_data/"))
-    apparatus = models.CharField(_("apparatus"), max_length=15, choices=pds_apparatus_choices, default="pds1")
+    apparatus = models.CharField(_("apparatus"), max_length=15, choices=Apparatus.choices, default=Apparatus.PDS1)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("PDS measurement")
@@ -123,12 +123,14 @@ class PDSMeasurement(PhysicalProcess):
         return super().get_context_for_user(user, context)
 
 
-irradiation_choices = (("AM1.5", "AM1.5"),
-                       ("OG590", "OG590"),
-                       ("BG7", "BG7"))
-
 class SolarsimulatorMeasurement(PhysicalProcess):
-    irradiation = models.CharField(_("irradiation"), max_length=10, choices=irradiation_choices)
+
+    class Irradiation(models.TextChoices):
+        AM1_5 = "AM1.5", "AM1.5"
+        OG590 = "OG590", "OG590"
+        BG7 = "BG7", "BG7"
+
+    irradiation = models.CharField(_("irradiation"), max_length=10, choices=Irradiation.choices)
     temperature = model_fields.DecimalQuantityField(_("temperature"), max_digits=3, decimal_places=1, unit="℃", default=25.0)
 
     class Meta(PhysicalProcess.Meta):
@@ -271,10 +273,6 @@ class SolarsimulatorCellMeasurement(models.Model):
         return search.SearchTreeNode(cls, {}, search_fields)
 
 
-layout_choices = (("inm standard", "INM Standard"),
-                  ("acme1", "ACME 1"),
-                  ("custom", _("custom")),)
-
 class Structuring(PhysicalProcess):
     """Pseudo-Process which contains structuring/mask/layout information.  It
     may contain the cell layout for solarsimulator measurements, or the
@@ -297,7 +295,13 @@ class Structuring(PhysicalProcess):
     If the layout is fixed anyway, don't use ``length``, ``width``, or
     ``parameters``.
     """
-    layout = models.CharField(_("layout"), max_length=30, choices=layout_choices)
+
+    class Layout(models.TextChoices):
+        INM_STANDARD = "inm standard", "INM Standard"
+        ACME1 = "acme1", "ACME 1"
+        CUSTOM = "custom", _("custom")
+
+    layout = models.CharField(_("layout"), max_length=30, choices=Layout.choices)
     length = model_fields.FloatQuantityField(_("length"), unit="mm", blank=True, null=True)
     width = model_fields.FloatQuantityField(_("width"), unit="mm", blank=True, null=True)
     parameters = models.TextField(_("parameters"), blank=True)
@@ -307,19 +311,21 @@ class Structuring(PhysicalProcess):
         verbose_name_plural = _("structurings")
 
 
-method_choices = (("profilers&edge", _("profilometer + edge")),
-                  ("ellipsometer", _("ellipsometer")),
-                  ("calculated", _("calculated from deposition parameters")),
-                  ("estimate", _("estimate")),
-                  ("other", _("other")))
-
 class LayerThicknessMeasurement(PhysicalProcess):
     """Database model for the layer thickness measurement.
 
     Note that it doesn't define permissions because everyone can create them.
     """
+
+    class Method(models.TextChoices):
+        PROFILERS_EDGE = "profilers&edge", _("profilometer + edge")
+        ELLIPSOMETER = "ellipsometer", _("ellipsometer")
+        CALCULATED = "calculated", _("calculated from deposition parameters")
+        ESTIMATE = "estimate", _("estimate")
+        OTHER = "other", _("other")
+
     thickness = model_fields.FloatQuantityField(_("layer thickness"), unit="nm")
-    method = models.CharField(_("measurement method"), max_length=30, choices=method_choices, default="profilers&edge")
+    method = models.CharField(_("measurement method"), max_length=30, choices=Method.choices, default=Method.PROFILERS_EDGE)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("layer thickness measurement")

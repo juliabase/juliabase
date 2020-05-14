@@ -102,19 +102,20 @@ class ClusterToolLayer(samples.models.Layer, jb_common_models.PolymorphicModel):
         return _("layer {number} of {deposition}").format(number=self.number, deposition=self.deposition)
 
 
-cluster_tool_wire_material_choices = (
-    ("unknown", _("unknown")),
-    ("rhenium", _("rhenium")),
-    ("tantalum", _("tantalum")),
-    ("tungsten", _("tungsten")),
-)
 class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     """Model for a hot-wire layer in the cluster tool.  We have no
     “chamber” field here because there is only one hot-wire chamber anyway.
     """
+
+    class ClusterToolWireMaterial(models.TextChoices):
+        UNKNOWN = "unknown", _("unknown")
+        RHENIUM = "rhenium", _("rhenium")
+        TANTALUM = "tantalum", _("tantalum")
+        TUNGSTEN = "tungsten", _("tungsten")
+
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
-    wire_material = models.CharField(_("wire material"), max_length=20, choices=cluster_tool_wire_material_choices)
+    wire_material = models.CharField(_("wire material"), max_length=20, choices=ClusterToolWireMaterial.choices)
     base_pressure = model_fields.FloatQuantityField(_("base pressure"), unit="mbar", null=True, blank=True)
 
     class Meta(samples.models.Layer.Meta):
@@ -122,15 +123,16 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         verbose_name_plural = _("cluster tool hot-wire layers")
 
 
-cluster_tool_pecvd_chamber_choices = (
-    ("#1", "#1"),
-    ("#2", "#2"),
-    ("#3", "#3"),
-)
 class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
     """Model for a PECDV layer in the cluster tool.
     """
-    chamber = models.CharField(_("chamber"), max_length=5, choices=cluster_tool_pecvd_chamber_choices)
+
+    class ClusterToolPECVDChamber(models.TextChoices):
+        ONE = "#1", "#1"
+        TWO = "#2", "#2"
+        THREE = "#3", "#3"
+
+    chamber = models.CharField(_("chamber"), max_length=5, choices=ClusterToolPECVDChamber.choices)
     time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
     comments = models.TextField(_("comments"), blank=True)
     plasma_start_with_shutter = models.BooleanField(_("plasma start with shutter"), default=False)
@@ -164,26 +166,25 @@ class FiveChamberDeposition(samples.models.Deposition):
 samples.models.default_location_of_deposited_samples[FiveChamberDeposition] = _("5-chamber deposition lab")
 
 
-five_chamber_chamber_choices = (
-    ("i1", "i1"),
-    ("i2", "i2"),
-    ("i3", "i3"),
-    ("p", "p"),
-    ("n", "n"),
-)
-
-five_chamber_layer_type_choices = (
-    ("p", "p"),
-    ("i", "i"),
-    ("n", "n"),
-)
-
 class FiveChamberLayer(samples.models.Layer):
     """One layer in a 5-chamber deposition.
     """
+
+    class LayerType(models.TextChoices):
+        P = "p", "p"
+        I = "i", "i"
+        N = "n", "n"
+
+    class Chamber(models.TextChoices):
+        I1 = "i1", "i1"
+        I2 = "i2", "i2"
+        I3 = "i3", "i3"
+        P = "p", "p"
+        N = "n", "n"
+
     deposition = models.ForeignKey(FiveChamberDeposition, models.CASCADE, related_name="layers", verbose_name=_("deposition"))
-    layer_type = models.CharField(_("layer type"), max_length=2, choices=five_chamber_layer_type_choices, blank=True)
-    chamber = models.CharField(_("chamber"), max_length=2, choices=five_chamber_chamber_choices)
+    layer_type = models.CharField(_("layer type"), max_length=2, choices=LayerType.choices, blank=True)
+    chamber = models.CharField(_("chamber"), max_length=2, choices=Chamber.choices)
     sih4 = model_fields.DecimalQuantityField("SiH₄", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
     h2 = model_fields.DecimalQuantityField("H₂", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
     temperature_1 = model_fields.DecimalQuantityField(_("temperature 1"), max_digits=7, decimal_places=3, unit="℃",

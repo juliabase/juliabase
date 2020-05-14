@@ -425,17 +425,17 @@ class FeedMovedSampleSeries(FeedEntry):
         return {"subscribed": self.subscribers.filter(pk=user.pk).exists()}
 
 
-changed_topic_action_choices = (
-    ("added", _("added")),
-    ("removed", _("removed")),
-    )
-
 class FeedChangedTopic(FeedEntry):
     """Model for feed entries for sample series moved to a new topic.
     """
+
+    class Action(models.TextChoices):
+        ADDED = "added", _("added")
+        REMOVED = "removed", _("removed")
+
     topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("topic"))
         # Translators: Action is either addition or removal
-    action = models.CharField(_("action"), max_length=7, choices=changed_topic_action_choices)
+    action = models.CharField(_("action"), max_length=7, choices=Action.choices)
 
     class Meta(PolymorphicModel.Meta):
         verbose_name = _("changed topic feed entry")

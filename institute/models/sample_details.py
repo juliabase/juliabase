@@ -259,29 +259,49 @@ class SampleDetails(models.Model):
         return search.SearchTreeNode(cls, related_models, search_fields=search.convert_fields_to_search_fields(cls))
 
 
-color_choices = (("black", _("black")), ("blue", _("blue")), ("brown", _("brown")), ("darkgray", _("darkgray")),
-                 ("green", _("green")), ("lightblue", _("lightblue")),
-                 ("lightgreen", _("lightgreen")), ("magenta", _("magenta")),
-                 ("orange", _("orange")), ("red", _("red")), ("silver", pgettext_lazy("color", "silver")),
-                 ("white", _("white")), ("yellow", _("yellow")))
-
-classification_choices = (("a-Si:H", "a-Si:H"), ("muc-Si:H", "µc-Si:H"), ("si-wafer", _("silicon wafer")),
-                          ("SiC", "SiC"), ("glass", _("glass")), ("silver", pgettext_lazy("metall", "silver")),
-                          ("ZnO", "ZnO"), ("HF dip", _("HF dip")), ("SiO2", "SiO₂"))
-
-doping_choices = (("p", "p"), ("i", "i"), ("n", "n"))
-
 class InformalLayer(models.Model):
     """Model for one layer in the informal layer stack diagram.
     """
+
+    class Color(models.TextChoices):
+        BLACK = "black", _("black")
+        BLUE = "blue", _("blue")
+        BROWN = "brown", _("brown")
+        DARKGRAY = "darkgray", _("darkgray")
+        GREEN = "green", _("green")
+        LIGHTBLUE = "lightblue", _("lightblue")
+        LIGHTGREEN = "lightgreen", _("lightgreen")
+        MAGENTA = "magenta", _("magenta")
+        ORANGE = "orange", _("orange")
+        RED = "red", _("red")
+        SILVER = "silver", pgettext_lazy("color", "silver")
+        WHITE = "white", _("white")
+        YELLOW = "yellow", _("yellow")
+
+    class Classification(models.TextChoices):
+        A_SI_H = "a-Si:H", "a-Si:H"
+        MUC_SI_H = "muc-Si:H", "µc-Si:H"
+        SI_WAFER = "si-wafer", _("silicon wafer")
+        SIC = "SiC", "SiC"
+        GLASS = "glass", _("glass")
+        SILVER = "silver", pgettext_lazy("metall", "silver")
+        ZNO = "ZnO", "ZnO"
+        HF_DIP = "HF dip", _("HF dip")
+        SIO2 = "SiO2", "SiO₂"
+
+    class Doping(models.TextChoices):
+        P = "p", "p"
+        I = "i", "i"
+        N = "n", "n"
+
     index = models.PositiveIntegerField(_("index"))
     sample_details = models.ForeignKey(SampleDetails, models.CASCADE, verbose_name=_("sample details"),
                                        related_name="informal_layers")
-    doping = models.CharField(_("doping"), max_length=10, null=True, blank=True, choices=doping_choices)
+    doping = models.CharField(_("doping"), max_length=10, null=True, blank=True, choices=Doping.choices)
     classification = models.CharField(_("classification"), max_length=30, null=True, blank=True,
-                                      choices=classification_choices)
+                                      choices=Classification.choices)
     comments = models.CharField(_("comments"), max_length=100, null=True, blank=True)
-    color = models.CharField(_("color"), max_length=30, choices=color_choices)
+    color = models.CharField(_("color"), max_length=30, choices=Color.choices)
     thickness = model_fields.DecimalQuantityField(_("thickness"), max_digits=8, decimal_places=1, unit="nm")
     thickness_reliable = models.BooleanField(_("thickness reliable"), default=False)
     structured = models.BooleanField(_("structured"), default=False)

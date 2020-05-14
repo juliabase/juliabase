@@ -42,7 +42,7 @@ class StatusForm(forms.ModelForm):
     """The status message model form class.
     """
     operator = utils.FixedOperatorField(label=capfirst(_("operator")))
-    status_level = forms.ChoiceField(label=capfirst(_("status level")), choices=models.status_level_choices,
+    status_level = forms.ChoiceField(label=capfirst(_("status level")), choices=models.StatusMessage.StatusLevel.choices,
                                      widget=forms.RadioSelect)
     begin = DateTimeField(label=capfirst(_("begin")), start=True, required=False, with_inaccuracy=True,
                           help_text=_("YYYY-MM-DD HH:MM:SS"))

@@ -138,17 +138,6 @@ class ExternalOperator(models.Model):
         return django.urls.reverse("samples:show_external_operator", args=(self.pk,))
 
 
-timestamp_inaccuracy_choices = (
-        # Translators: It's about timestamps
-    (0, _("totally accurate")),
-    (1, _("accurate to the minute")),
-    (2, _("accurate to the hour")),
-    (3, _("accurate to the day")),
-    (4, _("accurate to the month")),
-    (5, _("accurate to the year")),
-    (6, _("not even accurate to the year")),
-    )
-
 class Process(PolymorphicModel):
     """This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
@@ -167,9 +156,20 @@ class Process(PolymorphicModel):
         process = get_object_or_404(models.Process, pk=utils.convert_id_to_int(process_id))
         process = process.actual_instance
     """
+
+    class TimestampInaccuracy(models.IntegerChoices):
+            # Translators: It's about timestamps
+        TOTAL = 0, _("totally accurate")
+        MINUTE = 1, _("accurate to the minute")
+        HOUR = 2, _("accurate to the hour")
+        DAY = 3, _("accurate to the day")
+        MONTH = 4, _("accurate to the month")
+        YEAR = 5, _("accurate to the year")
+        NOT_EVEN_YEAR = 6, _("not even accurate to the year")
+
     timestamp = models.DateTimeField(_("timestamp"))
-    timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=timestamp_inaccuracy_choices,
-                                                            default=0)
+    timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=TimestampInaccuracy.choices,
+                                                            default=TimestampInaccuracy.TOTAL)
     operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("operator"),
                                  related_name="processes")
     external_operator = models.ForeignKey(ExternalOperator, models.CASCADE, verbose_name=_("external operator"),
@@ -1194,22 +1194,22 @@ class SampleClaim(models.Model):
         return django.urls.reverse("samples:show_claim", args=(self.pk,))
 
 
-sample_death_reasons = (
-    ("split", _("completely split")),
-    ("lost", _("lost and unfindable")),
-    ("destroyed", _("completely destroyed")),
-    )
-"""Contains all possible choices for :py:attr:`SampleDeath.reason`.
-"""
-
 class SampleDeath(Process):
     """This special process marks the end of the sample.  It can have various
     reasons according to :py:data:`sample_death_reasons`.  It is impossible to
     add processes to a sample if it has a `SampleDeath` process, and its
     timestamp must be the last.
     """
+
+    class Reason(models.TextChoices):
+        """Contains all possible choices for :py:attr:`SampleDeath.reason`.
+        """
+        SPLIT = "split", _("completely split")
+        LOST = "lost", _("lost and unfindable")
+        DESTROYED = "destroyed", _("completely destroyed")
+
         # Translators: Of a sample
-    reason = models.CharField(_("cause of death"), max_length=50, choices=sample_death_reasons)
+    reason = models.CharField(_("cause of death"), max_length=50, choices=Reason.choices)
 
     class Meta(PolymorphicModel.Meta):
             # Translators: Of a sample
@@ -1222,19 +1222,20 @@ class SampleDeath(Process):
         raise NotImplementedError
 
 
-image_type_choices = (("none", _("none")),
-                    ("pdf", "PDF"),
-                    ("png", "PNG"),
-                    ("jpeg", "JPEG"),
-                    )
-
 class Result(Process):
     """Adds a result to the history of a sample.  This may be just a comment,
     or a plot, or an image, or a link.
     """
+
+    class ImageType(models.TextChoices):
+        NONE = "none", _("none")
+        PDF = "pdf", "PDF"
+        PNG = "png", "PNG"
+        JPEG = "jpeg", "JPEG"
+
         # Translators: Of a result
     title = models.CharField(_("title"), max_length=50)
-    image_type = models.CharField(_("image file type"), max_length=4, choices=image_type_choices, default="none")
+    image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
         # Translators: Physical quantities are meant
     quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_("in JSON format"))
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
@@ -1630,30 +1631,31 @@ class UserDetails(models.Model):
         self.save()
 
 
-status_level_choices = (
-    ("undefined", _("undefined")),
-    ("red", _("red")),
-    ("yellow", _("yellow")),
-    ("green", _("green"))
-)
-
 class StatusMessage(models.Model):
     """This class is for the current status of the processes.  The class
     discusses whether the process is available, or is currently out of service.
     It provides a many to many relationship between the status messages and the
     processes.
     """
+
+    class StatusLevel(models.TextChoices):
+        UNDEFINED = "undefined", _("undefined")
+        RED = "red", _("red")
+        YELLOW = "yellow", _("yellow")
+        GREEN = "green", _("green")
+
     process_classes = models.ManyToManyField(ContentType, related_name="status_messages", verbose_name=_("processes"))
     timestamp = models.DateTimeField(_("timestamp"))
     begin = models.DateTimeField(_("begin"), null=True, blank=True, help_text=_("YYYY-MM-DD HH:MM:SS"))
     end = models.DateTimeField(_("end"), null=True, blank=True, help_text=_("YYYY-MM-DD HH:MM:SS"))
-    begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=timestamp_inaccuracy_choices,
-                                                        default=0)
-    end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=timestamp_inaccuracy_choices, default=0)
+    begin_inaccuracy = models.PositiveSmallIntegerField(_("begin inaccuracy"), choices=Process.TimestampInaccuracy.choices,
+                                                        default=Process.TimestampInaccuracy.TOTAL)
+    end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=Process.TimestampInaccuracy.choices,
+                                                        default=Process.TimestampInaccuracy.TOTAL)
     operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="status_messages",
                                  verbose_name=_("reporter"))
     message = models.TextField(_("message"), blank=True)
-    status_level = models.CharField(_("level"), choices=status_level_choices, default="undefined", max_length=10)
+    status_level = models.CharField(_("level"), choices=StatusLevel.choices, default=StatusLevel.UNDEFINED, max_length=10)
     withdrawn = models.BooleanField(_("withdrawn"), default=False)
 
     class Meta:
@@ -1664,23 +1666,23 @@ class StatusMessage(models.Model):
         return _("status message #{number}").format(number=self.pk)
 
 
-status_choices = (
-    ("0 finished", _("finished")),
-    ("1 new", _("new")),
-    ("2 accepted", _("accepted")),
-    ("3 in progress", _("in progress"))
-)
-priority_choices = (
-    ("0 critical", _("critical")),
-    ("1 high", _("high")),
-    ("2 normal", _("normal")),
-    ("3 low", _("low"))
-)
-
 class Task(models.Model):
     """
     """
-    status = models.CharField(_("status"), max_length=15, choices=status_choices, default="1 new")
+
+    class Status(models.TextChoices):
+        FINISHED = "0 finished", _("finished")
+        NEW = "1 new", _("new")
+        ACCEPTED = "2 accepted", _("accepted")
+        IN_PROGRESS = "3 in progress", _("in progress")
+
+    class Priority(models.TextChoices):
+        CRITICAL = "0 critical", _("critical")
+        HIGH = "1 high", _("high")
+        NORMAL = "2 normal", _("normal")
+        LOW = "3 low", _("low")
+
+    status = models.CharField(_("status"), max_length=15, choices=Status.choices, default=Status.NEW)
     customer = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="tasks",
                                  verbose_name=_("customer"))
     creating_timestamp = models.DateTimeField(_("created at"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now_add=True)
@@ -1692,7 +1694,7 @@ class Task(models.Model):
                                          verbose_name=_("finished process"))
     samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_("samples"))
     comments = models.TextField(_("comments"), blank=True)
-    priority = models.CharField(_("priority"), max_length=15, choices=priority_choices, default="2 normal")
+    priority = models.CharField(_("priority"), max_length=15, choices=Priority.choices, default=Priority.NORMAL)
 
     class Meta:
         verbose_name = _("task")
