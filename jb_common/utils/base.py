@@ -36,7 +36,6 @@ from django.forms.utils import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.decorators import available_attrs
 from django.utils.translation import ugettext_lazy as _, ugettext_lazy, ugettext
 from django.utils.functional import keep_lazy_text
 import django.utils.timezone
