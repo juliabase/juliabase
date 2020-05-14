@@ -69,10 +69,6 @@ except AttributeError:
 
 class ActiveDirectoryBackend:
 
-    supports_object_permissions = False
-    supports_anonymous_user = False
-    supports_inactive_user = False
-
     def authenticate(self, request, username=None, password=None):
         if not password:
             return None
