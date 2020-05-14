@@ -67,9 +67,9 @@ def inform_process_supervisors(sender, instance, **kwargs):
                 list(django.contrib.auth.models.User.objects.filter(is_superuser=True).exclude(email=""))
             if recipients:
                 _ = lambda x: x
-                utils.send_email(_(u"{user_name} uses {apparatus}"),
-                                 _(u"Dear supervisors of {apparatus_plural},\n\n{user_name} has "
-                                   u"created their first {apparatus}.\n"), recipients,
+                utils.send_email(_("{user_name} uses {apparatus}"),
+                                 _("Dear supervisors of {apparatus_plural},\n\n{user_name} has "
+                                   "created their first {apparatus}.\n"), recipients,
                                  {"apparatus_plural": process_class._meta.verbose_name_plural,
                                   "apparatus": process_class._meta.verbose_name,
                                   "user_name": utils.get_really_full_name(user)})

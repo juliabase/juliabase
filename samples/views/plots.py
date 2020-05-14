@@ -72,7 +72,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
 
     :param request: the current HTTP Request object
     :param process_id: the database ID of the process to show
-    :param plot_id: the plot_id of the image.  This is mostly ``u""`` because
+    :param plot_id: the plot_id of the image.  This is mostly ``""`` because
         most measurement models have only one graphics.
     :param thumbnail: whether we serve a thumbnail instead of a real PDF plot
 

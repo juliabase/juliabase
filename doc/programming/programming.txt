@@ -273,15 +273,15 @@ Thus, add the following code to your ``models.py``::
     class ThicknessMeasurement(PhysicalProcess):
 
         class Method(models.TextChoices):
-            PROFILERS_EDGE = u"profilers&edge", _(u"profilers + edge")
-            ELLIPSOMETER = u"ellipsometer", _(u"ellipsometer")
-            CALCULATED = u"calculated", _(u"calculated from deposition parameters")
-            ESTIMATE = u"estimate", _(u"estimate")
-            OTHER = u"other", _(u"other")
+            PROFILERS_EDGE = "profilers&edge", _("profilers + edge")
+            ELLIPSOMETER = "ellipsometer", _("ellipsometer")
+            CALCULATED = "calculated", _("calculated from deposition parameters")
+            ESTIMATE = "estimate", _("estimate")
+            OTHER = "other", _("other")
 
-        thickness = models.DecimalField(_(u"layer thickness"), max_digits=6,
-                                        decimal_places=2, help_text=_(u"in nm"))
-        method = models.CharField(_(u"measurement method"), max_length=30,
+        thickness = models.DecimalField(_("layer thickness"), max_digits=6,
+                                        decimal_places=2, help_text=_("in nm"))
+        method = models.CharField(_("measurement method"), max_length=30,
                                   choices=Method.choices, default=Method.PROFILERS_EDGE)
 
 The first part defines the five choices – note that it defines pairs of
