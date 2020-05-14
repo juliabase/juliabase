@@ -162,7 +162,7 @@ class DeletionFailureTest(TestCase):
 
     def test_delete_sample_not_viewable(self):
         response = self.client.post("/samples/14-JS-1/delete/")
-        self.assertContains(response, "You are not allowed to view the sample since you are not in the sample&#39;s topic, "
+        self.assertContains(response, "You are not allowed to view the sample since you are not in the sample&#x27;s topic, "
                             "nor are you its currently responsible person (Juliette Silverton), nor can you view all "
                             "samples.", status_code=401)
 
