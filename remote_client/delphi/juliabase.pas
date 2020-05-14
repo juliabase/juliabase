@@ -195,7 +195,7 @@ var
   line_ending, closing_brace: integer;
 begin
   if testserver then testserver_string := 'True' else testserver_string := 'False';
-  full_input := format('# -*- coding: utf-8 -*-'#13#10'import sys; sys.path.append("%s");from %s import *;' +
+  full_input := format('import sys; sys.path.append("%s");from %s import *;' +
                        'login("%s", "%s", testserver=%s);%s;logout()'#26,
 		       [jb_package_path, jb_module_name, login, password, testserver_string, commands]);
   if not ExecConsoleCommand(jb_interpreter_path, utf8encode(full_input), output, errors, exit_code) then

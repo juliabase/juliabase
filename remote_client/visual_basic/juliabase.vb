@@ -82,8 +82,7 @@ Module Juliabase
     Function Execute_JB(ByVal login As String, ByVal password As String, ByVal commands As String,
         Optional ByVal testserver As Boolean = False) As String
 
-        Dim pythonCode = "# -*- coding: utf-8 -*-" & Environment.NewLine &
-                         "import sys" & Environment.NewLine &
+        Dim pythonCode = "import sys" & Environment.NewLine &
                          "sys.path.append(""" & SanitizeString(JB_Package_Path) & """)" & Environment.NewLine &
                          "from " & JB_Module_Name & " import *" & Environment.NewLine &
                          "login(""" & SanitizeString(login) & """, """ & SanitizeString(password) & """, testserver="

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # This file is part of JuliaBase-Institute, see http://www.juliabase.org.
 # Copyright © 2008–2017 Forschungszentrum Jülich GmbH, Jülich, Germany
