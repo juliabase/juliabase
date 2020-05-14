@@ -61,9 +61,9 @@ class ClusterToolDeposition:
             self.layers = []
             layers = [(int(key[6:]), value) for key, value in data.items() if key.startswith("layer ")]
             for __, layer_data in sorted(layers):
-                if layer_data["content_type"] == "cluster tool PECVD layer":
+                if layer_data["content_type"] == "institute | cluster tool PECVD layer":
                     ClusterToolPECVDLayer(self, layer_data)
-                elif layer_data["content_type"] == "cluster tool hot-wire layer":
+                elif layer_data["content_type"] == "institute | cluster tool hot-wire layer":
                     ClusterToolHotWireLayer(self, layer_data)
                 else:
                     raise Exception("{} is an unknown layer type".format(layer_data["content_type"]))
