@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 if [ ! -e manage.py ]; then echo "Must be run from repo root directory."; exit; fi
 dropdb -U juliabase juliabase || true
