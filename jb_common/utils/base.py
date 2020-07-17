@@ -591,10 +591,12 @@ def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
     hash_ = hashlib.sha1()
     hash_.update(";".join(str(timestamp) for timestamp in sorted(all_timestamps)).encode())
     key = "file:{timestamp_hash}:{path}".format(timestamp_hash=hash_.hexdigest()[:10], path=path)
-    stream = BytesIO(get_from_cache(key))
-    if stream is None:
+    cache_result = get_from_cache(key)
+    if cache_result is None:
         stream = generator()
         cache.set(key, stream.getvalue())
+    else:
+        stream = BytesIO(cache_result)
     return stream
 
 
