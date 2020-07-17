@@ -598,7 +598,7 @@ def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
     return stream
 
 
-def static_response(stream, served_filename="", content_type=None):
+def static_response(stream, served_filename=None, content_type=None):
     """Serves a bytes string as static content.
 
     :param stream: the content to be served
@@ -615,8 +615,13 @@ def static_response(stream, served_filename="", content_type=None):
 
     :rype: ``django.http.HttpResponse``
     """
-    return django.http.FileResponse(stream, as_attachment=bool(served_filename), filename=served_filename,
-                                    content_type=content_type)
+    kwargs = {}
+    if served_filename:
+        kwargs["filename"] = served_filename
+        kwargs["as_attachment"] = True
+    if content_type:
+        kwargs["content_type"] = content_type
+    return django.http.FileResponse(stream, **kwargs)
 
 
 def mkdirs(path):
