@@ -47,8 +47,10 @@ __all__ = ["login", "logout", "connection", "primary_keys", "JuliaBaseError", "s
 
 
 def setup_logging(destination=None):
-    """If the user wants to call this in order to enable logging, he must do
-    so before logging in.  Note that it is a no-op if called a second time.
+    """If the user wants to call this in order to enable logging, he must do so
+    before logging in.  It additionally enables logging to stderr, in order to
+    be useful in containers.  Note that it replaces the old logging
+    configuration fully.
 
     :param destination: Where to log to; possible values are:
 
@@ -73,14 +75,16 @@ def setup_logging(destination=None):
     # boilerplate code for the end-user, which I don't want, or replacing all
     # ``logging.info`` etc. calls with an own wrapper.
     if destination == "file":
-        logging.basicConfig(level=logging.INFO,
+        logging.basicConfig(force=True,
+                            level=logging.INFO,
                             format="%(asctime)s %(levelname)-8s %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S",
                             filename=settings.CRAWLERS_DATA_DIR/"jb_remote.log" if settings.CRAWLERS_DATA_DIR.is_dir()
                                      else "jb_remote.log",
                             filemode="w")
     elif destination == "console":
-        logging.basicConfig(level=logging.INFO,
+        logging.basicConfig(force=True,
+                            level=logging.INFO,
                             format="%(asctime)s %(levelname)-8s %(message)s",
                             datefmt="%Y-%m-%d %H:%M:%S")
     else:
@@ -89,7 +93,8 @@ def setup_logging(destination=None):
                 pass
             def flush(self, *args, **kwargs):
                 pass
-        logging.basicConfig(stream=LogSink())
+        logging.basicConfig(force=True, stream=LogSink())
+    logging.getLogger("").addHandler(logging.StreamHandler())
 
 
 def clean_header(value):
