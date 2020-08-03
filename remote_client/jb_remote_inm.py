@@ -19,6 +19,7 @@
 """Library for communicating with JuliaBase through HTTP.  Typical usage is::
 
     from jb_remote_institute import *
+    setup_logging("console")
     login("r.miller", "mysecurepassword")
     new_sample = Sample()
     new_sample.name = "14-RM-1"

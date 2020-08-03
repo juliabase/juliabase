@@ -102,6 +102,7 @@ current location:
 
     from jb_remote_inm import *
 
+    setup_logging("file")
     login("juliabase", "12345")
 
     sample = Sample("14-JS-1")

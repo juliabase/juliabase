@@ -426,7 +426,6 @@ def login(username, password, testserver=False):
     :type password: str
     :type testserver: bool
     """
-    setup_logging()
     if testserver:
         logging.info("Logging into the testserver.")
         connection.login(settings.TESTSERVER_ROOT_URL, username, password)

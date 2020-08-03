@@ -29,6 +29,7 @@ sys.path.append(os.path.abspath(".."))
 from jb_remote_inm import *
 
 
+setup_logging("console")
 login("juliabase", "12345")
 sample_id = Sample("14S-001").id
 logout()
