@@ -46,11 +46,10 @@ __all__ = ["login", "logout", "connection", "primary_keys", "JuliaBaseError", "s
            "format_timestamp", "parse_timestamp", "as_json"]
 
 
-def setup_logging(destination=None):
-    """If the user wants to call this in order to enable logging, he must do so
-    before logging in.  It additionally enables logging to stderr, in order to
-    be useful in containers.  Note that it replaces the old logging
-    configuration fully.
+def setup_logging(destination=None, filepath=None):
+    """Sets up the root logger.  Note that it replaces the old root logger
+    configuration fully.  Client code should call this function as early as
+    possibly.
 
     :param destination: Where to log to; possible values are:
 
@@ -59,34 +58,40 @@ def setup_logging(destination=None):
             :file:`/var/lib/crawlers` is existing, otherwise (i.e. on Windows),
             log to :file:`jb_remote.log` in the current directory.  The
             directory is configurable by the environment variable
-            ``CRAWLERS_DATA_DIR``.
+            ``CRAWLERS_DATA_DIR``.  See also the `filepath` parameter.
+
+            Logging is appended to that file.
+
+            It additionally enables logging to stderr, in order to be useful in
+            containers.
 
         ``"console"``
             Log to stderr.
 
         ``None``
             Do not log.
+    :param str filepath: Makes sense only if `destination` is “file”.  If
+      given, the log output is sent to this path, and to stderr.
 
     :type destination: str
     """
-    # This is not totally clean because it doesn't guarantee that logging is
-    # properly configured *before* the first log message is generated but I'm
-    # pretty sure that this is the case.  The clean solution would involve more
-    # boilerplate code for the end-user, which I don't want, or replacing all
-    # ``logging.info`` etc. calls with an own wrapper.
+    format_string = "%(asctime)s %(levelname)-8s %(message)s"
+    date_format = "%Y-%m-%d %H:%M:%S"
     if destination == "file":
-        logging.basicConfig(force=True,
-                            level=logging.INFO,
-                            format="%(asctime)s %(levelname)-8s %(message)s",
-                            datefmt="%Y-%m-%d %H:%M:%S",
-                            filename=settings.CRAWLERS_DATA_DIR/"jb_remote.log" if settings.CRAWLERS_DATA_DIR.is_dir()
-                                     else "jb_remote.log",
-                            filemode="w")
+        if filepath is None:
+            if settings.CRAWLERS_DATA_DIR.is_dir():
+                filepath = settings.CRAWLERS_DATA_DIR/"jb_remote.log"
+            else:
+                filepath = "jb_remote.log"
+        logging.basicConfig(force=True, level=logging.INFO, format=format_string, datefmt=date_format,
+                            filename=filepath, filemode="a")
+        formatter = logging.Formatter(format_string, date_format)
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+        handler.setLevel(logging.INFO)
+        logging.getLogger("").addHandler(handler)
     elif destination == "console":
-        logging.basicConfig(force=True,
-                            level=logging.INFO,
-                            format="%(asctime)s %(levelname)-8s %(message)s",
-                            datefmt="%Y-%m-%d %H:%M:%S")
+        logging.basicConfig(force=True, level=logging.INFO, format=format_string, datefmt=date_format)
     else:
         class LogSink:
             def write(self, *args, **kwargs):
@@ -94,7 +99,6 @@ def setup_logging(destination=None):
             def flush(self, *args, **kwargs):
                 pass
         logging.basicConfig(force=True, stream=LogSink())
-    logging.getLogger("").addHandler(logging.StreamHandler())
 
 
 def clean_header(value):
