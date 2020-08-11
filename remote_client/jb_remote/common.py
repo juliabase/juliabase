@@ -49,7 +49,7 @@ __all__ = ["login", "logout", "connection", "primary_keys", "JuliaBaseError", "s
 def setup_logging(destination=None, filepath=None):
     """Sets up the root logger.  Note that it replaces the old root logger
     configuration fully.  Client code should call this function as early as
-    possibly.
+    possible.
 
     :param destination: Where to log to; possible values are:
 
