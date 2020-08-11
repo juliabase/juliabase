@@ -594,7 +594,8 @@ def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
     cache_result = get_from_cache(key)
     if cache_result is None:
         stream = generator()
-        cache.set(key, stream.getvalue())
+        cache.set(key, stream.read())
+        stream.seek(0)
     else:
         stream = BytesIO(cache_result)
     return stream
