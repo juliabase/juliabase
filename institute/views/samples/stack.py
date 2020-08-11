@@ -23,7 +23,7 @@
 """View for showing an informal layer stack as a PDF file.
 """
 
-import subprocess, uuid, os
+import subprocess, uuid, os, io
 from functools import partial
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -43,7 +43,7 @@ def generate_stack(thumbnail, locations, sample, sample_details):
         pdf_filename, [informal_stacks.Layer(layer) for layer in sample_details.informal_layers.all()],
         str(sample), _("Layer stack of {0}").format(sample))
     if thumbnail:
-        stream = BytesIO(subprocess.check_output(
+        stream = io.BytesIO(subprocess.check_output(
             ["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
              "-sOutputFile=-", pdf_filename]))
     else:
