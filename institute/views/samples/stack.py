@@ -46,9 +46,9 @@ def generate_stack(thumbnail, locations, sample, sample_details):
         stream = io.BytesIO(subprocess.check_output(
             ["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
              "-sOutputFile=-", pdf_filename]))
+        os.remove(pdf_filename)
     else:
-        stream = open(pdf_filename, "rb")
-    os.unlink(pdf_filename)
+        stream = jb_common.utils.base.open_and_unlink(pdf_filename)
     return stream
 
 

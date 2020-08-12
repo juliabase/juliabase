@@ -556,6 +556,26 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
         getmtime_utc(destination) + datetime.timedelta(seconds=additional_inaccuracy + 1) < max(all_timestamps)
 
 
+def open_and_unlink(path):
+    """Opens `path` and removes it from the file system.  This way, its space in
+    the file system can be reclaimed after the file was closed.  Note that the
+    returned file is unnamed (its ``name`` attribute is an integer) because a
+    file with a non-existing ``name`` confuses ``django.http.FileResponse``.
+
+    The file is opened in binary mode for reading.
+
+    :param (str or pathlike) path: the path to the existing file
+
+    :returns:
+      the file object to the given file path
+
+    :rtype: file
+    """
+    file_ = open(os.open(path, os.O_RDONLY), "rb")
+    os.unlink(path)
+    return file_
+
+
 def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
     """Returns the content of the file denoted by ``path``.  It tries to get this
     from cache, taking the timestamps of all ``source_files`` and the
