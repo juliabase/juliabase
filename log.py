@@ -20,9 +20,7 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Custom logging class which adds an “X-JuliaBase” header.  This module must
-reside on top-level because in institute, the settings would be implicitly
-imported, which leads to a cyclic import.
+"""Custom logging class which adds an “X-JuliaBase” header.
 """
 
 from django.conf import settings
