@@ -23,9 +23,9 @@
 """Django settings for a generic JuliaBase installation.
 """
 
-import os
+import os, copy
 from tzlocal import get_localzone
-import django
+import django, django.utils.log
 from django.utils.translation import ugettext_lazy as _
 from jb_common.settings_defaults import *
 from samples.settings_defaults import *
@@ -67,6 +67,10 @@ USE_I18N = True
 USE_L10N = False
 DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
+
+
+LOGGING = copy.deepcopy(django.utils.log.DEFAULT_LOGGING)
+LOGGING["handlers"]["mail_admins"]["class"] = "log.AdminEmailHandler"
 
 
 STATIC_ROOT = "/var/www/juliabase/static/"

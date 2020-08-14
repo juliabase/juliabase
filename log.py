@@ -20,53 +20,40 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""Custom logging class which doesn't send HTML emails.  This module must
-reside on top-level because in institute, the settings would be implicitly imported,
-which leads to a cyclic import.
+"""Custom logging class which adds an “X-JuliaBase” header.  This module must
+reside on top-level because in institute, the settings would be implicitly
+imported, which leads to a cyclic import.
 """
 
-import logging, sys
-from django.core import mail
+from django.conf import settings
+import django.utils.log
+from django.core.mail.message import EmailMultiAlternatives
 
 
-class AdminEmailHandler(logging.Handler):
-    """Modified version of ``AdminEmailHandler`` in ``django/utils/log.py``.
-    The only thing that is changed is that it doesn't send HTML parts in
-    emails.
-    """
-    def emit(self, record):
-        import traceback
-        from django.conf import settings
-        from django.views.debug import ExceptionReporter
+class AdminEmailHandler(django.utils.log.AdminEmailHandler):
 
-        try:
-            if sys.version_info < (2,5):
-                # A nasty workaround required because Python 2.4's logging
-                # module doesn't support passing in extra context.
-                # For this handler, the only extra data we need is the
-                # request, and that's in the top stack frame.
-                request = record.exc_info[2].tb_frame.f_locals['request']
-            else:
-                request = record.request
+    def send_mail(self, subject, message, *args, **kwargs):
+        # This is taken from the parent class, except that instead of
+        # ``mail.mail_admins``, we call the function below.
+        mail_admins(subject, message, *args, connection=self.connection(), **kwargs)
 
-            subject = '%s (%s IP): %s' % (
-                record.levelname,
-                (request.META.get('REMOTE_ADDR') in settings.INTERNAL_IPS and 'internal' or 'EXTERNAL'),
-                record.msg
-            )
-            request_repr = repr(request)
-        except:
-            subject = 'Error: Unknown URL'
-            request = None
-            request_repr = "Request repr() unavailable"
 
-        if record.exc_info:
-            exc_info = record.exc_info
-            stack_trace = '\n'.join(traceback.format_exception(*record.exc_info))
-        else:
-            exc_info = ()
-            stack_trace = 'No stack trace available'
-
-        message = "%s\n\n%s" % (stack_trace, request_repr)
-        reporter = ExceptionReporter(request, is_email=True, *exc_info)
-        mail.mail_admins(subject, message, fail_silently=True)
+# This is taken from ``django.core.mail`` with the addition of the X-JuliaBase
+# header.
+def mail_admins(subject, message, fail_silently=False, connection=None,
+                html_message=None):
+    """Send a message to the admins, as defined by the ADMINS setting."""
+    if not settings.ADMINS:
+        return
+    if not all(isinstance(a, (list, tuple)) and len(a) == 2 for a in settings.ADMINS):
+        raise ValueError('The ADMINS setting must be a list of 2-tuples.')
+    mail = EmailMultiAlternatives(
+        '%s%s' % (settings.EMAIL_SUBJECT_PREFIX, subject), message,
+        settings.SERVER_EMAIL, [a[1] for a in settings.ADMINS],
+        connection=connection,
+        # The following line is added
+        headers={"X-JuliaBase": "Admins"}
+    )
+    if html_message:
+        mail.attach_alternative(html_message, 'text/html')
+    mail.send(fail_silently=fail_silently)
