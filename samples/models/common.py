@@ -46,6 +46,13 @@ from jb_common import search
 from samples.data_tree import DataNode, DataItem
 
 
+def empty_list():
+    return []
+
+def empty_dict():
+    return {}
+
+
 _table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
 """Set of field names that should never be included by `fields_to_data_items`.
 """
@@ -1236,7 +1243,7 @@ class Result(Process):
     title = models.CharField(_("title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
         # Translators: Physical quantities are meant
-    quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_("in JSON format"))
+    quantities_and_values = models.JSONField(_("quantities and values"), blank=True)
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
     a tuple with two items.  The first is a list of unicodes with all
     quantities (the table headings).  The second is a list of lists with
@@ -1552,7 +1559,7 @@ class UserDetails(models.Model):
         Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
         help_text=_("new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_("get only important news"), default=False)
-    my_steps = models.TextField(_("My Steps"), blank=True, help_text=_("in JSON format"))
+    my_steps = models.JSONField(_("My Steps"), blank=True)
     """This string is the JSON serialisation of the list with contains 3-tuples of
     the the form ``(nickname, process, step)``, where “process” is the
     process id (``Process.id``) of the process, and “step” is the step number
@@ -1591,19 +1598,16 @@ class UserDetails(models.Model):
                                               verbose_name=_("subscribed newsfeeds"), blank=True)
     default_folded_process_classes = models.ManyToManyField(ContentType, related_name="dont_show_to_user",
                                               verbose_name=_("process classes folded by default"), blank=True)
-    folded_processes = models.TextField(_("folded processes"), blank=True, help_text=_("in JSON format"),
-                                        default="{}")
+    folded_processes = models.JSONField(_("folded processes"), blank=True, default=empty_dict)
     """Dictionary mapping the ID of a sample to a list of all processes that are
     folded by the user.  Note that due to JSON's constraints, the sample ID is
     a string.
     """
     visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",
                                                 verbose_name=_("visible task lists"), blank=True)
-    folded_topics = models.TextField(_("folded topics"), blank=True, help_text=_("in JSON format"),
-                                     default="[]")
+    folded_topics = models.JSONField(_("folded topics"), blank=True, default=empty_list)
     # Translators: This is plural.
-    folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
-                                     default="[]")
+    folded_series = models.JSONField(_("folded sample series"), blank=True, default=empty_list)
     show_users_from_departments = models.ManyToManyField(Department, related_name="shown_users",
                                                         verbose_name=_("show users from department"), blank=True)
 
@@ -1739,7 +1743,7 @@ class ProcessWithSamplePositions(models.Model):
     applicable.  (For example, this can be given in the query string.)
     """
 
-    sample_positions = models.TextField(_("sample positions"), default="{}", help_text=_("in JSON format"))
+    sample_positions = models.JSONField(_("sample positions"), default=empty_dict)
     """In JSON format, mapping sample IDs to positions.  Positions can be numbers
     or strings.  Note that due to JSON constraints, the sample IDs are
     strings.
