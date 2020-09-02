@@ -296,7 +296,7 @@ class FormSet:
         self.result_form = ResultForm(self.user, instance=self.result)
         self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result)
         self.edit_description_form = utils.EditDescriptionForm() if self.result else None
-        if self.result and self.result.quantities_and_values:
+        if self.result:
             quantities, values = self.result.quantities_and_values
         else:
             quantities, values = [], []

@@ -52,6 +52,9 @@ def empty_list():
 def empty_dict():
     return {}
 
+def empty_double_list():
+    return [[], []]
+
 
 _table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
 """Set of field names that should never be included by `fields_to_data_items`.
@@ -1243,7 +1246,7 @@ class Result(Process):
     title = models.CharField(_("title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
         # Translators: Physical quantities are meant
-    quantities_and_values = models.JSONField(_("quantities and values"), blank=True)
+    quantities_and_values = models.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
     a tuple with two items.  The first is a list of unicodes with all
     quantities (the table headings).  The second is a list of lists with
@@ -1559,7 +1562,7 @@ class UserDetails(models.Model):
         Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
         help_text=_("new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_("get only important news"), default=False)
-    my_steps = models.JSONField(_("My Steps"), blank=True)
+    my_steps = models.JSONField(_("My Steps"), blank=True, default=empty_list)
     """This string is the JSON serialisation of the list with contains 3-tuples of
     the the form ``(nickname, process, step)``, where “process” is the
     process id (``Process.id``) of the process, and “step” is the step number

@@ -83,13 +83,12 @@ def forms_from_database(user):
     :rtype: list of `MyLayerForm`
     """
     my_layer_forms = []
-    if user.samples_user_details.my_steps:
-        for nickname, process_id, layer_number in user.samples_user_details.my_steps:
-            # We know that there are only depositions in ``my_steps``
-            deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
-            deposition_and_layer = "{0}-{1}".format(deposition_number, layer_number)
-            my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
-                                              prefix=str(len(my_layer_forms))))
+    for nickname, process_id, layer_number in user.samples_user_details.my_steps:
+        # We know that there are only depositions in ``my_steps``
+        deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
+        deposition_and_layer = "{0}-{1}".format(deposition_number, layer_number)
+        my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
+                                          prefix=str(len(my_layer_forms))))
     return my_layer_forms
 
 
