@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='result',
             name='quantities_and_values',
-            field=models.JSONField(blank=True, verbose_name='quantities and values'),
+            field=models.JSONField(blank=True, default=samples.models.common.empty_double_list, verbose_name='quantities and values'),
         ),
         migrations.AlterField(
             model_name='userdetails',
@@ -34,6 +34,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='userdetails',
             name='my_steps',
-            field=models.JSONField(blank=True, verbose_name='My Steps'),
+            field=models.JSONField(blank=True, default=samples.models.common.empty_list, verbose_name='My Steps'),
         ),
     ]
