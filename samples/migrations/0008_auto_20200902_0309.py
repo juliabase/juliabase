@@ -7,22 +7,22 @@ def set_blank_json_to_null(apps, schema_editor):
     Result = apps.get_model("samples", "Result")
     for result in Result.objects.all():
         if not result.quantities_and_values:
-            result.quantities_and_values = "null"
+            result.quantities_and_values = "[[], []]"
             result.save()
     UserDetails = apps.get_model("samples", "UserDetails")
     for user_details in UserDetails.objects.all():
         changed = False
         if not user_details.folded_processes:
-            user_details.folded_processes = "null"
+            user_details.folded_processes = "{}"
             changed = True
         if not user_details.folded_series:
-            user_details.folded_series = "null"
+            user_details.folded_series = "[]"
             changed = True
         if not user_details.folded_topics:
-            user_details.folded_topics = "null"
+            user_details.folded_topics = "[]"
             changed = True
         if not user_details.my_steps:
-            user_details.my_steps = "null"
+            user_details.my_steps = "[]"
             changed = True
         if changed:
             user_details.save()
