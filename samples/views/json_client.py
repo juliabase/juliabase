@@ -23,7 +23,7 @@ directly, it is not really useful what they get there.  Note that the whole
 communication to the remote client happens in JSON format.
 """
 
-import sys, json
+import sys, copy
 from django.db.utils import IntegrityError
 from django.db.models import Q
 from django.conf import settings
@@ -424,10 +424,10 @@ def fold_process(request, sample_id):
     """
     process_id = int_or_zero(request.POST["process_id"])
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
-    folded_processes = json.loads(request.user.samples_user_details.folded_processes)
+    folded_processes = request.user.samples_user_details.folded_processes
     exceptional_processes = folded_processes.setdefault(sample_id, [])
     is_folded = _is_folded(process_id, folded_process_classes, exceptional_processes, switch=True)
-    request.user.samples_user_details.folded_processes = json.dumps(folded_processes)
+    request.user.samples_user_details.folded_processes = folded_processes
     request.user.samples_user_details.save()
     return respond_in_json(is_folded)
 
@@ -456,7 +456,7 @@ def get_folded_processes(request, sample_id):
         raise JSONRequestException(3, '"process_ids" missing')
     utils.convert_id_to_int(sample_id)
     folded_process_classes = ContentType.objects.filter(dont_show_to_user=request.user.samples_user_details)
-    exceptional_processes_by_sample_id = json.loads(request.user.samples_user_details.folded_processes).get(sample_id, [])
+    exceptional_processes_by_sample_id = request.user.samples_user_details.folded_processes.get(sample_id, [])
     folded_process_ids = []
     for process_id in process_ids:
         if _is_folded(process_id, folded_process_classes, exceptional_processes_by_sample_id, switch=False):
@@ -482,14 +482,13 @@ def fold_main_menu_element(request):
     :rtype: HttpResponse
     """
     def fold_element(element_id, folded_elements):
-        folded_elements = json.loads(folded_elements)
+        folded_elements = copy.deepcopy(folded_elements)
         if element_id in folded_elements:
             folded_elements.remove(element_id)
             is_folded = False
         else:
             folded_elements.append(element_id)
             is_folded = True
-        folded_elements = json.dumps(folded_elements)
         return is_folded, folded_elements
 
     element_id = int_or_zero(request.POST["element_id"])
@@ -520,6 +519,5 @@ def get_folded_main_menu_elements(request):
 
     :rtype: HttpResponse
     """
-    folded_elements = (json.loads(request.user.samples_user_details.folded_topics),
-                       json.loads(request.user.samples_user_details.folded_series))
+    folded_elements = (request.user.samples_user_details.folded_topics, request.user.samples_user_details.folded_series)
     return respond_in_json(folded_elements)

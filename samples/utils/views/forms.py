@@ -21,7 +21,7 @@
 and validation.
 """
 
-import re, datetime, json
+import re, datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 import django.utils.timezone
@@ -304,7 +304,7 @@ def get_my_steps(user_details, process_model):
     """
     choices = [("", "---------")]
     if user_details.my_steps:
-        for nickname, process_id, step_number in json.loads(user_details.my_steps):
+        for nickname, process_id, step_number in user_details.my_steps:
             try:
                 process = process_model.objects.get(pk=process_id)
             except process_model.DoesNotExist:
@@ -438,8 +438,8 @@ class GeneralSampleField:
         if important_samples:
             important_samples = set(important_samples)
             samples = set(samples or []) | important_samples
-        folded_topics_and_sample_series = set(json.loads(user.samples_user_details.folded_topics)) | \
-                                          set(json.loads(user.samples_user_details.folded_series))
+        folded_topics_and_sample_series = set(user.samples_user_details.folded_topics) | \
+                                          set(user.samples_user_details.folded_series)
         important_topics = set()
         for series in models.SampleSeries.objects.filter(samples__in=important_samples).distinct():
             folded_topics_and_sample_series.discard(series.get_hash_value())

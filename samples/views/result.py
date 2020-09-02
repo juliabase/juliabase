@@ -24,7 +24,7 @@
 # behavior of this function, keep in mind that you have to check the signal for
 # modification purposes.
 
-import os, datetime, json, subprocess
+import os, datetime, subprocess
 from io import BytesIO
 from functools import partial
 from django.conf import settings
@@ -297,7 +297,7 @@ class FormSet:
         self.related_data_form = RelatedDataForm(self.user, self.query_string_dict, self.result)
         self.edit_description_form = utils.EditDescriptionForm() if self.result else None
         if self.result and self.result.quantities_and_values:
-            quantities, values = json.loads(self.result.quantities_and_values)
+            quantities, values = self.result.quantities_and_values
         else:
             quantities, values = [], []
         self.dimensions_form = DimensionsForm(initial={"number_of_quantities": len(quantities),
@@ -425,20 +425,20 @@ class FormSet:
             # Actually, this should never happen unless the browser is broken.
             return True
 
-    def serialize_quantities_and_values(self):
-        """Serialise the result table data (quantities and values) to a string
-        which is ready to be written to the database.  See the
+    def compose_quantities_and_values(self):
+        """Composes the DB field ``quantities_and_values`` from the form data.  See the
         ``quantities_and_values`` attribute of `samples.models.Result` for
         further information.
 
         :return:
-          the serialised result values table, as an ASCII-only JSON string
+          the value for ``quantities_and_values``, ready to be saved to the
+          database
 
-        :rtype: str
+        :rtype: tuple[list[str], list[list[str]]]
         """
         result = [form.cleaned_data["quantity"] for form in self.quantity_forms], \
             [[form.cleaned_data["value"] for form in form_list] for form_list in self.value_form_lists]
-        return json.dumps(result)
+        return result
 
     def save_to_database(self, post_files):
         """Save the forms to the database.  One peculiarity here is that I
@@ -470,7 +470,7 @@ class FormSet:
                 result = self.result_form.save()
             else:
                 result = self.result_form.save(commit=False)
-            result.quantities_and_values = self.serialize_quantities_and_values()
+            result.quantities_and_values = self.compose_quantities_and_values()
             result.save()
             if not self.result:
                 self.result_form.save_m2m()

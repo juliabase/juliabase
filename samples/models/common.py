@@ -26,7 +26,7 @@ import, it is sometimes (e.g. for ``samples.permissions``) necessary to avoid
 the ``from`` keyword.
 """
 
-import hashlib, os.path, json, collections, datetime, html
+import hashlib, os.path, collections, datetime, html
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
@@ -404,7 +404,7 @@ class Process(PolymorphicModel):
                 if field.name not in {"actual_object_id", "process_ptr"}}
         data["samples"] = list(self.samples.values_list("id", flat=True))
         if "sample_positions" in data:
-            data["sample_positions"] = json.loads(data["sample_positions"])
+            data["sample_positions"] = data["sample_positions"]
         return data
 
     def get_data_for_table_export(self):
@@ -1335,7 +1335,7 @@ class Result(Process):
         context = old_context.copy()
         if self.quantities_and_values:
             if "quantities" not in context or "value_lists" not in context:
-                context["quantities"], context["value_lists"] = json.loads(self.quantities_and_values)
+                context["quantities"], context["value_lists"] = self.quantities_and_values
             context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
             if self.image_type != "none":
@@ -1386,7 +1386,7 @@ class Result(Process):
         data_node = super().get_data_for_table_export()
         remove_data_item(self, data_node, "quantities_and_values")
         data_node.name = data_node.descriptive_name = self.title
-        quantities, value_lists = json.loads(self.quantities_and_values)
+        quantities, value_lists = self.quantities_and_values
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translators: In a table
@@ -1756,7 +1756,7 @@ class ProcessWithSamplePositions(models.Model):
         context = old_context.copy()
         if "sample_position" not in context:
             sample = context.get("sample")
-            sample_positions_dict = json.loads(self.sample_positions)
+            sample_positions_dict = self.sample_positions
             if sample_positions_dict and sample:
                 context["sample_position"] = (sample if sample.topic and not sample.topic.confidential or
                                               samples.permissions.has_permission_to_fully_view_sample(user, sample) or
@@ -1765,7 +1765,7 @@ class ProcessWithSamplePositions(models.Model):
                                               else _("confidential sample"),
                                               sample_positions_dict[str(sample.id)])
         if "sample_positions" not in context:
-            sample_positions_dict = json.loads(self.sample_positions)
+            sample_positions_dict = self.sample_positions
             if sample_positions_dict:
                 context["sample_positions"] = \
                     collections.OrderedDict((sample if sample.topic and not sample.topic.confidential or

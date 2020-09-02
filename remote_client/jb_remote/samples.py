@@ -17,7 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import json
 from .common import connection, primary_keys, comma_separated_ids, double_urlquote, format_timestamp, parse_timestamp, logging
 
 
@@ -155,7 +154,7 @@ class Result:
             if self.image_type != "none" and with_image:
                 self.image_data = connection.open("results/images/{0}".format(id_), response_is_json=False)
             self.external_operator = data["external_operator"]
-            self.quantities, self.values = json.loads(data["quantities_and_values"])
+            self.quantities, self.values = data["quantities_and_values"]
         else:
             self.id = None
             self.sample_ids = []

@@ -23,7 +23,7 @@ main difference between mixin and base class is that the latter instantiates a
 samples form, whereas the mixin class doesn't do this.
 """
 
-import re, json
+import re
 from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -482,7 +482,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
                 self.forms["sample_positions"].append(form)
         else:
             if self.id:
-                sample_positions = json.loads(self.process.sample_positions)
+                sample_positions = self.process.sample_positions
                 sample_positions = {int(id): position for id, position in sample_positions.items()}
                 for sample in self.process.samples.all():
                     if sample.id in sample_positions:
@@ -499,7 +499,7 @@ class SamplePositionsMixin(ProcessWithoutSamplesView):
         for sample_position_form in self.forms["sample_positions"]:
             sample_id = sample_position_form.sample.id
             sample_positions[sample_id] = sample_position_form.cleaned_data["position"]
-        process.sample_positions = json.dumps(sample_positions)
+        process.sample_positions = sample_positions
         process.save()
         return process
 

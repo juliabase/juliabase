@@ -21,7 +21,7 @@
 information, and preferences.
 """
 
-import json, copy
+import copy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
@@ -106,7 +106,7 @@ def edit_preferences(request, login_name):
         old_default_classes = {cls.id for cls in ContentType.objects.filter(dont_show_to_user=user.samples_user_details)}
         new_default_classes = {int(class_id) for class_id in default_folded_process_classes if class_id}
         differences = old_default_classes ^ new_default_classes
-        exceptional_processes_dict = json.loads(user.samples_user_details.folded_processes)
+        exceptional_processes_dict = user.samples_user_details.folded_processes
         for process_id_list in exceptional_processes_dict.values():
             for process_id in copy.copy(process_id_list):
                 try:
@@ -115,7 +115,7 @@ def edit_preferences(request, login_name):
                 except models.Process.DoesNotExist:
                     # FixMe: the missing process should be removed from the exceptional_processes_dict
                     pass
-        user.samples_user_details.folded_processes = json.dumps(exceptional_processes_dict)
+        user.samples_user_details.folded_processes = exceptional_processes_dict
         user.samples_user_details.save()
 
     user = get_object_or_404(django.contrib.auth.models.User, username=login_name)
