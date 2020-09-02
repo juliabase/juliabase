@@ -63,34 +63,34 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
 {% block frame_content %}
   {% for sample_start, sample, process in samples_and_processes %}
     {% if sample_start %}
-      {% spaceless %}<div class="page-header"><h1>{% trans 'Sample “' %}{{ sample.sample }}{% trans '”' %}<span class="aliases">
+      {% spaceless %}<div class="page-header"><h1>{% translate 'Sample “' %}{{ sample.sample }}{% translate '”' %}<span class="aliases">
       {% for alias in sample.sample.aliases.all %}
         alias <strong>{{ alias }}</strong> {% endfor %}</span>{% block sample_icons %}{% if sample.can_edit %}<a class="edit-icon"
            href="{% url 'samples:edit_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                          ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% trans 'edit' %}"
+                          ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% translate 'edit' %}"
                                 width="16" height="16"/></a>
         {% if sample.id_for_rename %}<a class="edit-icon"
            href="{% url 'samples:bulk_rename' %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-    ><img src="{% static "juliabase/icons/tag_blue.png" %}" alt="give-name icon" title="{% trans 'give name' %}"
+    ><img src="{% static "juliabase/icons/tag_blue.png" %}" alt="give-name icon" title="{% translate 'give name' %}"
           width="16" height="16"/></a>
         {% endif %}
       {% endif %}
       {% if sample.can_delete %}<a class="edit-icon"
                                    href="{% url 'samples:delete_sample_confirmation' sample_name=sample.sample.name %}"
                                    ><img src="{% static "juliabase/icons/delete.png" %}" alt="delete icon"
-                                       title="{% trans 'delete' %}" width="16" height="16"/></a>
+                                       title="{% translate 'delete' %}" width="16" height="16"/></a>
       {% endif %}
       {% if sample.can_add_process %}<a class="edit-icon" href="{% url 'samples:add_process' sample_name=sample.sample.name %}"
                                  ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add-process icon"
-                                       title="{% trans 'add process' %}" width="16" height="16"/></a>{% endif %}
+                                       title="{% translate 'add process' %}" width="16" height="16"/></a>{% endif %}
       {% if not sample.clearance %}<a class="edit-icon"
          href="{% url 'samples:export_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
          ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" width="16" height="16"
-               title="{% trans 'export as table' %}"/></a>{% endif %}
+               title="{% translate 'export as table' %}"/></a>{% endif %}
      {% if sample.can_rename_sample %}
       <a class="edit-icon"
            href="{% url 'samples:rename_sample' %}?sample_id={{ sample.id_for_rename }}&amp;next={% url 'samples:show_sample_by_id' sample_id=sample.sample.id path_suffix='' %}"
-    ><img src="{% static "juliabase/icons/tag_red.png" %}" alt="rename icon" title="{% trans 'rename sample' %}"
+    ><img src="{% static "juliabase/icons/tag_red.png" %}" alt="rename icon" title="{% translate 'rename sample' %}"
           width="16" height="16"/></a>{% endif %}{% endblock sample_icons %}</h1></div>{% endspaceless %}
 
       {% block extra_sample_header %}
@@ -98,11 +98,11 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
         <div class="screen-only" style="float: right"><a
                 href="{% url 'samples:qr_code' %}?data={{ sample.sample.id|urlquote_plus }}"
                                                          ><img width="40" height="40" style="display: block"
-                alt="{% trans 'Data Matrix code' %}" src="{% static "samples/qrcode.png" %}"/></a></div>
+                alt="{% translate 'Data Matrix code' %}" src="{% static "samples/qrcode.png" %}"/></a></div>
       {% endblock %}
       {% if sample.clearance %}
         <p style="color: red">
-          {% trans "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
+          {% translate "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
         </p>
       {% endif %}
       {% with sample.clearance as clearance %}
@@ -118,7 +118,7 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
               {% else %}
                 <td class="field-label">{% verbose_name Sample.topic %}:</td>
                 <td class="field-value">— <span style="color: red; font-weight: normal; margin-left: 1em"
-                                          >({% trans 'Attention: Topicless samples may be viewed and edited by anyone.' %})</span></td>
+                                          >({% translate 'Attention: Topicless samples may be viewed and edited by anyone.' %})</span></td>
               {% endif %}
               </tr>
             {% endif %}
@@ -142,11 +142,11 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
               {% with sample.series.all as sample_serieses %}
                 {% if number_of_sample_series %}
                   <p>
-                    {% blocktrans count number_of_sample_series as counter with sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
+                    {% blocktranslate count number_of_sample_series as counter with sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
                       This sample is part of the sample series “<a href="{{ first_url }}">{{ first_series }}</a>”.
                     {% plural %}
                       This sample is part of the following sample series:  <!-- {{ first_url }}  {{ first_series }} -->
-                    {% endblocktrans %}
+                    {% endblocktranslate %}
                   </p>
 
                   {% if number_of_sample_series != 1 %}
@@ -181,29 +181,29 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
             <span id="process-heading-{{ process.process.id }}" class="process-heading"
                   >{{ process.name }}</span>{% block process_icons %}{% if process.edit_url %}<a class="edit-icon"
                        href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
+               ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% translate 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.delete_url %}<a class="edit-icon"
                        href="{{ process.delete_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/cog_delete.png" %}" alt="delete icon" title="{% trans 'delete' %}"
+               ><img src="{% static "juliabase/icons/cog_delete.png" %}" alt="delete icon" title="{% translate 'delete' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
-               ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% trans 'duplicate' %}"
+               ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% translate 'duplicate' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.export_url %}<a class="edit-icon"
                     href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" title="{% trans 'export as table' %}"
+               ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" title="{% translate 'export as table' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if process.resplit_url %}<a class="edit-icon"
                      href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% trans 'resplit' %}"
+               ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% translate 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}
             <a class="edit-icon" href="{{ process.process.get_absolute_url|urlquote_plus }}"
-            ><img src="{% static "juliabase/icons/zoom.png" %}" alt="show icon" title="{% trans 'show process' %}"
+            ><img src="{% static "juliabase/icons/zoom.png" %}" alt="show icon" title="{% translate 'show process' %}"
                 width="16" height="16"/></a>{% endblock process_icons %}
             {% if not process.process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
-                                                        >{% trans "(not finished)" %}</span>{% endif %}
+                                                        >{% translate "(not finished)" %}</span>{% endif %}
           </h2>
         {% endspaceless %}
         <p class="operator_and_timestamp" style="margin-top: 3.6ex">

@@ -94,11 +94,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "2015-01-21T11:15:01Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: ''
-    my_steps: '[["standard-hotwire", 14, 1]]'
+    my_steps: [["standard-hotwire", 14, 1]]
     my_samples_timestamp: "1990-01-01T00:00:00Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false

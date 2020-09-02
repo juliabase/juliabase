@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% with entry.samples.all as samples %}
   <p>
-    {% blocktrans count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
+    {% blocktranslate count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
       {{ originator }} has added the following sample in the topic “{{ topic }}” to the database:
     {% plural %}
       {{ originator }} has added the following samples in the topic “{{ topic }}” to the database:
-    {% endblocktrans %}
+    {% endblocktranslate %}
   </p>
 
   <ul>
@@ -36,20 +36,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <p>
     {% if entry.purpose %}
-      {% blocktrans with entry.purpose as purpose %}The given purpose is “{{ purpose }}”.{% endblocktrans %}
+      {% blocktranslate with entry.purpose as purpose %}The given purpose is “{{ purpose }}”.{% endblocktranslate %}
     {% endif %}
     {% if auto_added %}
-      {% blocktrans count samples|length as counter %}
+      {% blocktranslate count samples|length as counter %}
         The sample is amongst “My Samples”.
       {% plural %}
         The samples are amongst “My Samples”.
-      {% endblocktrans %}
+      {% endblocktranslate %}
     {% else %}
-      {% blocktrans count samples|length as counter %}
+      {% blocktranslate count samples|length as counter %}
         The sample was not (at least not <em>automatically</em>) added to “My Samples”.
       {% plural %}
 	The samples were not (at least not <em>automatically</em>) added to “My Samples”.
-      {% endblocktrans %}
+      {% endblocktranslate %}
     {% endif %}
   </p>
 

@@ -23,32 +23,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 {% if claim.closed %}
-  <p>{% trans 'This claim was either approved or withdrawn.' %}</p>
+  <p>{% translate 'This claim was either approved or withdrawn.' %}</p>
 {% else %}
-  <p>{% trans 'This claim is active and needs now to be approved by the reviewer or withdrawn by the requester.' %}</p>
+  <p>{% translate 'This claim is active and needs now to be approved by the reviewer or withdrawn by the requester.' %}</p>
   <table class="padding5">
     <tr>
-      <td>{% trans "requester"|capfirst %}:</td>
+      <td>{% translate "requester"|capfirst %}:</td>
       <td>{{ claim.requester|get_really_full_name }}</td>
     </tr>
     <tr>
-      <td>{% trans "reviewer"|capfirst %}:</td>
+      <td>{% translate "reviewer"|capfirst %}:</td>
       <td>{{ claim.reviewer|get_really_full_name }}</td>
     </tr>
   </table>
   <p style="margin-top: 4ex">
-    {% blocktrans with claim.requester|get_really_full_name as name %}
+    {% blocktranslate with claim.requester|get_really_full_name as name %}
       {{ name }} wishes to become the new “responsible person” of the following samples:
-    {% endblocktrans %}
+    {% endblocktranslate %}
   </p>
   <table border="1" class="padding10" style="margin-bottom: 4ex">
     <thead>
     <tr>
-      <th>{% trans "sample" %}</th>
+      <th>{% translate "sample" %}</th>
       {% if is_reviewer %}
-        <th>{% trans "currently responsible person" %}</th>
-        <th>{% trans "purpose" %}</th>
-        <th>{% trans "topic" %}</th>
+        <th>{% translate "currently responsible person" %}</th>
+        <th>{% translate "purpose" %}</th>
+        <th>{% translate "topic" %}</th>
       {% endif %}
     </tr>
     </thead>

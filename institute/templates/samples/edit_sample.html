@@ -26,13 +26,13 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 
 {% block sample_details %}
-  <h2>{% trans 'Informal stack' %}</h2>
+  <h2>{% translate 'Informal stack' %}</h2>
 
   {% if informal_layers.non_form_errors %}
     <table class="tight-fullwidth">
       <tr>
         <td class="error-messages">
-	  <p>{% trans "General error" %}</p>{{ informal_layers.non_form_errors }}
+	  <p>{% translate "General error" %}</p>{{ informal_layers.non_form_errors }}
         </td>
       </tr>
     </table>
@@ -51,7 +51,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <th style="font-size: x-small">{% verbose_name InformalLayer.textured %}</th>
       <th style="font-size: x-small">{% verbose_name InformalLayer.always_collapsed %}</th>
       <th style="font-size: x-small">{% verbose_name InformalLayer.verified %}</th>
-      <th style="font-size: x-small">{% trans 'delete' %}</th>
+      <th style="font-size: x-small">{% translate 'delete' %}</th>
     </tr>
     </thead>
     {% for layer in informal_layers.forms %}

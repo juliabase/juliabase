@@ -21,15 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <p>
   {% if entry.is_new %}
-    {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url as url and entry.result.title as title %}
+    {% blocktranslate with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url as url and entry.result.title as title %}
       {{ originator }} added the result “<a href="{{ url }}">{{ title }}</a>”.
-    {% endblocktrans %}
+    {% endblocktranslate %}
   {% else %}
-    {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url as url and entry.result.title as title %}
+    {% blocktranslate with entry.originator|get_really_full_name:"mailto" as originator and entry.result.get_absolute_url as url and entry.result.title as title %}
       {{ originator }} edited the result “<a href="{{ url }}">{{ title }}</a>”.
-    {% endblocktrans %}
+    {% endblocktranslate %}
   {% endif %}
-  {% trans 'This affected the following samples and/or sample series:' %}
+  {% translate 'This affected the following samples and/or sample series:' %}
 </p>
 
 {% if entry.result.samples.count %}
@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </ul>
 {% endif %}
 {% if entry.result.sample_series.count %}
-  <p>{% trans 'Series:' %}</p>
+  <p>{% translate 'Series:' %}</p>
   <ul>
     {% for sample_series in entry.result.sample_series.all %}
       <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series.name }}</a></li>
@@ -51,11 +51,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% if not entry.is_new %}
   <p>
     {% if entry.important %}
-      {% trans 'The change was significant.' %}
+      {% translate 'The change was significant.' %}
     {% else %}
-      {% trans 'The change was minor.' %}
+      {% translate 'The change was minor.' %}
     {% endif %}
-    {% trans 'Description of the change:' %}
+    {% translate 'Description of the change:' %}
   </p>
 {% endif %}
 

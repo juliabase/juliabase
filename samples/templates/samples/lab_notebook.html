@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon" 
      href="{{ export_url }}"><img src="{% static "juliabase/icons/table.png" %}" alt="export icon"
-        title="{% trans 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
+        title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
 
 {% block frame_content %}
 <form method="post">{% csrf_token %}
@@ -44,10 +44,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% block notebook_nav_icons %}
         <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %}>
           <img src="{% static "juliabase/icons/book_previous.png" %}" alt="previous month icon"
-               title="{% trans 'previous month' %}" width="16" height="16"/></a>
+               title="{% translate 'previous month' %}" width="16" height="16"/></a>
               
         <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %}>
-          <img src="{% static "juliabase/icons/book_next.png" %}" alt="next month icon" title="{% trans 'next month' %}"
+          <img src="{% static "juliabase/icons/book_next.png" %}" alt="next month icon" title="{% translate 'next month' %}"
                width="16" height="16"/>
         </a>
       {% endblock %}

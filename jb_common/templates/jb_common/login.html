@@ -20,12 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% load i18n %}
 
-{% block title %}{% trans 'JuliaBase login' %}{% endblock %}
-{% block content_title %}<div class="page-header"><h1>{% trans 'JuliaBase login' %}</h1></div>{% endblock %}
+{% block title %}{% translate 'JuliaBase login' %}{% endblock %}
+{% block content_title %}<div class="page-header"><h1>{% translate 'JuliaBase login' %}</h1></div>{% endblock %}
 {% block frame_content %}
 
 {% if form.errors %}
-<p>{% trans "Your username and password didn't match. Please try again." %}</p>
+<p>{% translate "Your username and password didn't match. Please try again." %}</p>
 {% endif %}
 
 <form method="post">{% csrf_token %}
@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </table>
 
   <p>
-    <input type="submit" value="{% trans 'login' %}"/>
+    <input type="submit" value="{% translate 'login' %}"/>
     <input type="hidden" name="next" value="{{ next }}"/>
   </p>
 </form>

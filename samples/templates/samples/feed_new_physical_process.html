@@ -20,14 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and process.get_absolute_url as url %}
+  {% blocktranslate with entry.originator|get_really_full_name:"mailto" as originator and process.get_absolute_url as url %}
     {{ originator }} finished <a href="{{ url }}">{{ process }}</a>.
-  {% endblocktrans %}
-  {% blocktrans count process.samples.all.count as counter %}
+  {% endblocktranslate %}
+  {% blocktranslate count process.samples.all.count as counter %}
     This affected the following sample:
   {% plural %}
     This affected the following samples:
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </p>
 
 <ul>

@@ -26,7 +26,7 @@ import, it is sometimes (e.g. for ``samples.permissions``) necessary to avoid
 the ``from`` keyword.
 """
 
-import hashlib, os.path, json, collections, datetime, html
+import hashlib, os.path, collections, datetime, html
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
@@ -44,6 +44,16 @@ from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
+
+
+def empty_list():
+    return []
+
+def empty_dict():
+    return {}
+
+def empty_double_list():
+    return [[], []]
 
 
 _table_export_blacklist = {"actual_object_id", "id", "content_type", "timestamp_inaccuracy", "last_modified"}
@@ -397,7 +407,7 @@ class Process(PolymorphicModel):
                 if field.name not in {"actual_object_id", "process_ptr"}}
         data["samples"] = list(self.samples.values_list("id", flat=True))
         if "sample_positions" in data:
-            data["sample_positions"] = json.loads(data["sample_positions"])
+            data["sample_positions"] = data["sample_positions"]
         return data
 
     def get_data_for_table_export(self):
@@ -1236,7 +1246,7 @@ class Result(Process):
     title = models.CharField(_("title"), max_length=50)
     image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
         # Translators: Physical quantities are meant
-    quantities_and_values = models.TextField(_("quantities and values"), blank=True, help_text=_("in JSON format"))
+    quantities_and_values = models.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
     a tuple with two items.  The first is a list of unicodes with all
     quantities (the table headings).  The second is a list of lists with
@@ -1328,7 +1338,7 @@ class Result(Process):
         context = old_context.copy()
         if self.quantities_and_values:
             if "quantities" not in context or "value_lists" not in context:
-                context["quantities"], context["value_lists"] = json.loads(self.quantities_and_values)
+                context["quantities"], context["value_lists"] = self.quantities_and_values
             context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
             if self.image_type != "none":
@@ -1379,7 +1389,7 @@ class Result(Process):
         data_node = super().get_data_for_table_export()
         remove_data_item(self, data_node, "quantities_and_values")
         data_node.name = data_node.descriptive_name = self.title
-        quantities, value_lists = json.loads(self.quantities_and_values)
+        quantities, value_lists = self.quantities_and_values
         if len(value_lists) > 1:
             for i, value_list in enumerate(value_lists):
                 # Translators: In a table
@@ -1552,7 +1562,7 @@ class UserDetails(models.Model):
         Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
         help_text=_("new samples in these topics are automatically added to “My Samples”"))
     only_important_news = models.BooleanField(_("get only important news"), default=False)
-    my_steps = models.TextField(_("My Steps"), blank=True, help_text=_("in JSON format"))
+    my_steps = models.JSONField(_("My Steps"), blank=True, default=empty_list)
     """This string is the JSON serialisation of the list with contains 3-tuples of
     the the form ``(nickname, process, step)``, where “process” is the
     process id (``Process.id``) of the process, and “step” is the step number
@@ -1591,19 +1601,16 @@ class UserDetails(models.Model):
                                               verbose_name=_("subscribed newsfeeds"), blank=True)
     default_folded_process_classes = models.ManyToManyField(ContentType, related_name="dont_show_to_user",
                                               verbose_name=_("process classes folded by default"), blank=True)
-    folded_processes = models.TextField(_("folded processes"), blank=True, help_text=_("in JSON format"),
-                                        default="{}")
+    folded_processes = models.JSONField(_("folded processes"), blank=True, default=empty_dict)
     """Dictionary mapping the ID of a sample to a list of all processes that are
     folded by the user.  Note that due to JSON's constraints, the sample ID is
     a string.
     """
     visible_task_lists = models.ManyToManyField(ContentType, related_name="task_lists_from_user",
                                                 verbose_name=_("visible task lists"), blank=True)
-    folded_topics = models.TextField(_("folded topics"), blank=True, help_text=_("in JSON format"),
-                                     default="[]")
+    folded_topics = models.JSONField(_("folded topics"), blank=True, default=empty_list)
     # Translators: This is plural.
-    folded_series = models.TextField(_("folded sample series"), blank=True, help_text=_("in JSON format"),
-                                     default="[]")
+    folded_series = models.JSONField(_("folded sample series"), blank=True, default=empty_list)
     show_users_from_departments = models.ManyToManyField(Department, related_name="shown_users",
                                                         verbose_name=_("show users from department"), blank=True)
 
@@ -1739,7 +1746,7 @@ class ProcessWithSamplePositions(models.Model):
     applicable.  (For example, this can be given in the query string.)
     """
 
-    sample_positions = models.TextField(_("sample positions"), default="{}", help_text=_("in JSON format"))
+    sample_positions = models.JSONField(_("sample positions"), default=empty_dict)
     """In JSON format, mapping sample IDs to positions.  Positions can be numbers
     or strings.  Note that due to JSON constraints, the sample IDs are
     strings.
@@ -1752,7 +1759,7 @@ class ProcessWithSamplePositions(models.Model):
         context = old_context.copy()
         if "sample_position" not in context:
             sample = context.get("sample")
-            sample_positions_dict = json.loads(self.sample_positions)
+            sample_positions_dict = self.sample_positions
             if sample_positions_dict and sample:
                 context["sample_position"] = (sample if sample.topic and not sample.topic.confidential or
                                               samples.permissions.has_permission_to_fully_view_sample(user, sample) or
@@ -1761,7 +1768,7 @@ class ProcessWithSamplePositions(models.Model):
                                               else _("confidential sample"),
                                               sample_positions_dict[str(sample.id)])
         if "sample_positions" not in context:
-            sample_positions_dict = json.loads(self.sample_positions)
+            sample_positions_dict = self.sample_positions
             if sample_positions_dict:
                 context["sample_positions"] = \
                     collections.OrderedDict((sample if sample.topic and not sample.topic.confidential or

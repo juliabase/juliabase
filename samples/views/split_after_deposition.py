@@ -22,7 +22,7 @@ to the actual split view, you see all samples of the deposition at once, and
 you can rename and/or split them.
 """
 
-import datetime, json
+import datetime
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
@@ -441,7 +441,7 @@ def forms_from_database(user, deposition, remote_client, new_names):
             and sample_names.valid_new_sample_name(sample.name, deposition.number):
                 name_postfix = ""
                 try:
-                    sample_positions = json.loads(deposition.sample_positions)
+                    sample_positions = deposition.sample_positions
                 except AttributeError:
                     pass
                 else:

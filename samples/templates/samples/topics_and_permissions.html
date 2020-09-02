@@ -21,70 +21,70 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load i18n %}
 
 {% block frame_content %}
-<h2>{% trans 'Topics' %}</h2>
+<h2>{% translate 'Topics' %}</h2>
 <p>
   {% if topics %}
-    {% blocktrans count topics|length as counter %}
+    {% blocktranslate count topics|length as counter %}
       {{ full_user_name }} is member of the following topic:
     {% plural %}
       {{ full_user_name }} is member of the following topics:
-    {% endblocktrans %}
+    {% endblocktranslate %}
     {% for topic in topics %}
       <strong>{{ topic }}</strong>{% if not forloop.last %},{% endif %}
     {% endfor %}
   {% else %}
-    {% blocktrans %}
+    {% blocktranslate %}
       {{ full_user_name }} isn't a member of any topic.
-    {% endblocktrans %}
+    {% endblocktranslate %}
   {% endif %}
 </p>
 
 <p>
   {% if managed_topics %}
-   {% blocktrans count managed_topics|length as counter %}
+   {% blocktranslate count managed_topics|length as counter %}
       {{ full_user_name }} is manager of the following topic:
     {% plural %}
       {{ full_user_name }} is manager of the following topics:
-    {% endblocktrans %}
+    {% endblocktranslate %}
     {% for topic in managed_topics %}
       <strong>{{ topic }}</strong>{% if not forloop.last %},{% endif %}
     {% endfor %}
   {% else %}
-    {% blocktrans %}
+    {% blocktranslate %}
       {{ full_user_name }} isn't a manager of any topic.
-    {% endblocktrans %}
+    {% endblocktranslate %}
   {% endif %}
 </p>
 
 
-<h2>{% trans 'permissions'|capfirst %}</h2>
+<h2>{% translate 'permissions'|capfirst %}</h2>
 
-<h3>{% trans 'General permissions' %}</h3>
+<h3>{% translate 'General permissions' %}</h3>
 
-<p>{% trans '(This is only a rough summary.)' %}</p>
+<p>{% translate '(This is only a rough summary.)' %}</p>
 
 <ul style="color: green; font-weight: bold">
-  <li>{% trans 'You can add new samples and sample series' %}</li>
-  <li>{% trans 'You can edit all samples and sample series that you are the currently responsible person for' %}</li>
-  <li>{% trans 'You can view all samples of your topics' %}</li>
-  <li>{% trans 'You can add results to all samples and sample series of your topics' %}</li>
-  <li>{% trans 'You can edit processes that you added' %}</li>
+  <li>{% translate 'You can add new samples and sample series' %}</li>
+  <li>{% translate 'You can edit all samples and sample series that you are the currently responsible person for' %}</li>
+  <li>{% translate 'You can view all samples of your topics' %}</li>
+  <li>{% translate 'You can add results to all samples and sample series of your topics' %}</li>
+  <li>{% translate 'You can edit processes that you added' %}</li>
 </ul>
 
 
-<h3>{% trans 'Special permissions' %}</h3>
+<h3>{% translate 'Special permissions' %}</h3>
 
 <p>
-  {% blocktrans with permissions_url as url %}
+  {% blocktranslate with permissions_url as url %}
     Have also a look at the <a href="{{ url }}">permissions for processes</a> for further information about your permissions.
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </p>
 
 <table border="1" class="padding5" style="width: 100%">
   <thead>
     <tr>
-      <th style="width: 50%">{% trans 'special permissions that you have' %}</th>
-      <th>{% trans "special permissions that you don't have" %}</th>
+      <th style="width: 50%">{% translate 'special permissions that you have' %}</th>
+      <th>{% translate "special permissions that you don't have" %}</th>
     </tr>
   </thead>
   <tr>
@@ -97,7 +97,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </ul>
       {% else %}
         <p style="text-align: center ">
-          {% trans 'none' %}
+          {% translate 'none' %}
         </p>
       {% endif %}
     </td>
@@ -110,7 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </ul>
       {% else %}
         <p style="text-align: center ">
-          {% trans 'none' %}
+          {% translate 'none' %}
         </p>
       {% endif %}
     </td>

@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load juliabase %}
 
 <p>
-  {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link %}
+  {% blocktranslate with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link %}
   {{ originator }} has reported the following <a href="{{ link }}">status message</a>:
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </p>
 <blockquote>
 {{ entry.status.message|markdown_samples }}

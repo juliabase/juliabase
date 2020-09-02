@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     data.addColumn("string", "Label");
     data.addColumn("number", "Value");
     data.addRows(1);
-    data.setValue(0, 0, "{% trans 'hit rate' %}/%");
+    data.setValue(0, 0, "{% translate 'hit rate' %}/%");
     data.setValue(0, 1, {{ cache_hit_rate|default:"0" }});
     var chart = new google.visualization.Gauge(document.getElementById("cache_hit_rate"));
     var options = {width: 200, height: 200, redFrom: 0, redTo: 10, majorTicks: ["0", "", "", "", "", "100"],
@@ -56,14 +56,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 
-<p>{% blocktrans %}This page is so rudimentary because it depends heavily on
+<p>{% blocktranslate %}This page is so rudimentary because it depends heavily on
   the particular server configuration.  You may extend this page
-  arbitrarily.{% endblocktrans %}</p>
+  arbitrarily.{% endblocktranslate %}</p>
 
-<h2>{% trans 'Cache status' %}</h2>
+<h2>{% translate 'Cache status' %}</h2>
 
 {% if cache_hit_rate is None %}
-  <p>{% blocktrans %}No caching statistics available because caching is disabled.{% endblocktrans %}</p>
+  <p>{% blocktranslate %}No caching statistics available because caching is disabled.{% endblocktranslate %}</p>
 {% else %}
   <div id="cache_hit_rate"></div>
 {% endif %}

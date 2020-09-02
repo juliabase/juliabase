@@ -30,36 +30,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div class="page-header"><h1>
             {{ title }}{% block process_icons %}{% if edit_url %}<a class="edit-icon"
                                              href="{{ edit_url }}?next={{ url|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% trans 'edit' %}"
+               ><img src="{% static "juliabase/icons/cog_edit.png" %}" alt="edit icon" title="{% translate 'edit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if delete_url %}<a class="edit-icon" href="{{ delete_url }}"
-               ><img src="{% static "juliabase/icons/cog_delete.png" %}" alt="delete icon" title="{% trans 'delete' %}"
+               ><img src="{% static "juliabase/icons/cog_delete.png" %}" alt="delete icon" title="{% translate 'delete' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if duplicate_url %}<a class="edit-icon" href="{{ duplicate_url }}"
-               ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% trans 'duplicate' %}"
+               ><img src="{% static "juliabase/icons/cog_add.png" %}" alt="add icon" title="{% translate 'duplicate' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if export_url %}<a class="edit-icon"
                     href="{{ export_url }}?next={{ url|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" title="{% trans 'export as table' %}"
+               ><img src="{% static "juliabase/icons/table.png" %}" alt="export icon" title="{% translate 'export as table' %}"
                      width="16" height="16"/></a>
             {% endif %}{% if resplit_url %}<a class="edit-icon"
                      href="{{ resplit_url }}?next={{ url|urlquote_plus }}"
-               ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% trans 'resplit' %}"
+               ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% translate 'resplit' %}"
                      width="16" height="16"/></a>
             {% endif %}{% endblock process_icons %}
             {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
-                                                        >{% trans "(not finished)" %}</span>{% endif %}
+                                                        >{% translate "(not finished)" %}</span>{% endif %}
           </h1></div>
         {% endspaceless %}
   <div class="process">
     {% if samples or sample_series %}
       <p>
         {% if samples %}
-          {% blocktrans count samples|length as counter with samples.0.get_absolute_url as link and samples.0.name as name %}
+          {% blocktranslate count samples|length as counter with samples.0.get_absolute_url as link and samples.0.name as name %}
             This process was applied to the sample <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
             This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
-          {% endblocktrans %}
+          {% endblocktranslate %}
           {% if not samples|length_is:"1" %}
             <ul>
               {% for sample in samples %}
@@ -69,12 +69,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% endif %}
         {% endif %}
         {% if sample_series %}
-          {% blocktrans count sample_series|length as counter with sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
+          {% blocktranslate count sample_series|length as counter with sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
             This process was applied to the sample series <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
             This process was applied to the following sample_series:
             <!-- To please compilemessages: {{ link }} {{ name }} -->
-          {% endblocktrans %}
+          {% endblocktranslate %}
           {% if not sample_series|length_is:"1" %}
             <ul>
               {% for single_sample_series in sample_series %}

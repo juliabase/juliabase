@@ -26,14 +26,14 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 
-<p>{% trans "Attention: The informal stacks of the selected destination samples will be overwritten!" %}</p>
+<p>{% translate "Attention: The informal stacks of the selected destination samples will be overwritten!" %}</p>
 
 <form method="post">{% csrf_token %}
   {% error_list destination_samples _("Error in destination samples") %}
 
   {% if informal_stack_thumbnail_url %}
     <div style="float:right; margin-left: 1em; margin-right: 1em; margin-bottom: 1ex">
-      <a href="{{ informal_stack_url }}"><img src="{{ informal_stack_thumbnail_url }}" alt="{% trans 'layer stack' %}"/></a>
+      <a href="{{ informal_stack_url }}"><img src="{{ informal_stack_thumbnail_url }}" alt="{% translate 'layer stack' %}"/></a>
     </div>
   {% endif %}
 

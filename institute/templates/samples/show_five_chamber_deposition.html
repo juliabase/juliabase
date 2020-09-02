@@ -51,7 +51,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
         </tr>
         <tr>
           {% value_field layer.get_chamber_display %}
-          <td class="field-label">{% trans 'Silane conc.' %}:</td>
+          <td class="field-label">{% translate 'Silane conc.' %}:</td>
           <td class="field-value">{{ layer|calculate_silane_concentration|quantity:"%"|default_if_none:"—" }}</td>
         </tr>
         <tr>

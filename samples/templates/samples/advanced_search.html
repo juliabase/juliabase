@@ -51,15 +51,15 @@ $(function() {
 {% if search_performed %}
   <p>
     {% if too_many_results %}
-      {% blocktrans %}
+      {% blocktranslate %}
         Too many matches were found.  I show only {{ max_results }} of them.
-      {% endblocktrans %}
+      {% endblocktranslate %}
     {% endif %}
   </p>
   <form method="post">{% csrf_token %}
     {% if results %}
       {% if something_to_add %}
-        <p>{% trans 'Mark samples to add them to “My Samples”.' %}</p>
+        <p>{% translate 'Mark samples to add them to “My Samples”.' %}</p>
       {% endif %}
       <ul>
         {% for result, add_form in results %}
@@ -71,14 +71,14 @@ $(function() {
         {% endfor %}
       </ul>
     {% else %}
-      <p>{% trans 'Nothing found.' %}</p>
+      <p>{% translate 'Nothing found.' %}</p>
     {% endif %}
 
-    <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'add samples' %}"/></p>
+    <p class="submit-button" style="clear: both"><input type="submit" value="{% translate 'add samples' %}"/></p>
   </form>
 
 {% else %}
-  <p>{% trans 'No search was performed yet.' %}</p>
+  <p>{% translate 'No search was performed yet.' %}</p>
 {% endif %}
 
 {% endblock %}

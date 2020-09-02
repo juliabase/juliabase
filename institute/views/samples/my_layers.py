@@ -25,7 +25,7 @@ therefore, we call it My Layers.  However, you are free to add views for other
 will always store the union of all these processes.
 """
 
-import re, json
+import re
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django import forms
 from django.contrib.auth.decorators import login_required
@@ -83,13 +83,12 @@ def forms_from_database(user):
     :rtype: list of `MyLayerForm`
     """
     my_layer_forms = []
-    if user.samples_user_details.my_steps:
-        for nickname, process_id, layer_number in json.loads(user.samples_user_details.my_steps):
-            # We know that there are only depositions in ``my_steps``
-            deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
-            deposition_and_layer = "{0}-{1}".format(deposition_number, layer_number)
-            my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
-                                              prefix=str(len(my_layer_forms))))
+    for nickname, process_id, layer_number in user.samples_user_details.my_steps:
+        # We know that there are only depositions in ``my_steps``
+        deposition_number = models.Process.objects.get(pk=process_id).actual_instance.number
+        deposition_and_layer = "{0}-{1}".format(deposition_number, layer_number)
+        my_layer_forms.append(MyLayerForm(initial={"nickname": nickname, "deposition_and_layer": deposition_and_layer},
+                                          prefix=str(len(my_layer_forms))))
     return my_layer_forms
 
 
@@ -152,8 +151,8 @@ def save_to_database(my_layer_forms, user):
     """
     user_details = user.samples_user_details
     old_layers = user_details.my_steps
-    user_details.my_steps = json.dumps(
-        [(form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"] for form in my_layer_forms])
+    user_details.my_steps = [(form.cleaned_data["nickname"],) + form.cleaned_data["deposition_and_layer"]
+                             for form in my_layer_forms]
 
     if not old_layers == user_details.my_steps:
         user_details.save()

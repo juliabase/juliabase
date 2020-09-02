@@ -35,13 +35,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="padding" border="1">
      <thead>
        <tr style="vertical-align: top">
-          <th>{% trans 'process'|capfirst %}</th>
+          <th>{% translate 'process'|capfirst %}</th>
           <th>{% verbose_name StatusMessage.message %}</th>
           <th>{% verbose_name StatusMessage.status_level %}</th>
           <th>{% verbose_name StatusMessage.begin %}</th>
           <th>{% verbose_name StatusMessage.end %}</th>
           <th>{% verbose_name StatusMessage.operator %}</th>
-          <th>{% trans 'posted at' %}</th>
+          <th>{% translate 'posted at' %}</th>
        </tr>
      </thead>
      {% for status_message, process_name in status_messages %}
@@ -67,8 +67,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                <form method="post" 
           action="{% url 'samples:withdraw_status' id_=status_message.id %}?next={{ next_url|urlquote_plus }}"
                      style="display: inline">{% csrf_token %}
-                 <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
-                        title="{% trans 'withdraw this status message for all processes' %}"/>
+                 <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% translate 'cancel' %}"
+                        title="{% translate 'withdraw this status message for all processes' %}"/>
                </form>
              {% endif %}
            </td>
@@ -76,28 +76,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% endfor %}
   </table>
 {% else %}
-  <p>{% trans 'There are no current status messages.' %}</p>
+  <p>{% translate 'There are no current status messages.' %}</p>
 {% endif %}
 
 <p><a href="{% url 'samples:add_status' %}?next={{ next_url|urlquote_plus }}" style="margin-right: 3em"
-      >{% trans 'Add a status message' %}</a>
+      >{% translate 'Add a status message' %}</a>
 <a href="{% url 'samples:edit_preferences' login_name=user.username %}?next={{ next_url|urlquote_plus }}"
-   >{% trans 'Subscribe to status messages' %}</a></p>
+   >{% translate 'Subscribe to status messages' %}</a></p>
 
 
 {% if further_status_messages %}
-  <h2>{% trans "Further status messages" %}</h2>
+  <h2>{% translate "Further status messages" %}</h2>
 
   <table class="padding" border="1">
     <thead>
        <tr style="vertical-align: top; font-weight:bold">
-          <th>{% trans 'process'|capfirst %}</th>
+          <th>{% translate 'process'|capfirst %}</th>
           <th>{% verbose_name StatusMessage.message %}</th>
           <th>{% verbose_name StatusMessage.status_level %}</th>
           <th>{% verbose_name StatusMessage.begin %}</th>
           <th>{% verbose_name StatusMessage.end %}</th>
           <th>{% verbose_name StatusMessage.operator %}</th>
-          <th>{% trans 'posted at' %}</th>
+          <th>{% translate 'posted at' %}</th>
        </tr>
     </thead>
     {% for process_name, status_messages in further_status_messages %}
@@ -109,13 +109,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <td>{{ status_message.message|markdown:"collapse" }}</td>
           <td style="text-align: center; vertical-align: middle">
             {% if status_message.status_level == "undefined" %}
-              <img src="{% static "juliabase/icons/grey.png" %}" alt="{% trans 'undefined' %}"/>
+              <img src="{% static "juliabase/icons/grey.png" %}" alt="{% translate 'undefined' %}"/>
             {% elif status_message.status_level == "red" %}
-              <img src="{% static "juliabase/icons/red.png" %}" alt="{% trans 'red' %}"/>
+              <img src="{% static "juliabase/icons/red.png" %}" alt="{% translate 'red' %}"/>
             {% elif status_message.status_level == "yellow" %}
-              <img src="{% static "juliabase/icons/yellow.png" %}" alt="{% trans 'yellow' %}"/>
+              <img src="{% static "juliabase/icons/yellow.png" %}" alt="{% translate 'yellow' %}"/>
             {% elif status_message.status_level == "green" %}
-              <img src="{% static "juliabase/icons/green.png" %}" alt="{% trans 'green' %}"/>
+              <img src="{% static "juliabase/icons/green.png" %}" alt="{% translate 'green' %}"/>
             {% endif %}
           </td>
           <td>{{ status_message|status_timestamp:"begin"|default_if_none:"—" }}</td>
@@ -126,8 +126,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               <form method="post" 
         action="{% url 'samples:withdraw_status' id_=status_message.id %}?next={% url 'samples:show_status' %}"
                     style="display: inline">{% csrf_token %}
-                <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% trans 'cancel' %}"
-                       title="{% trans 'withdraw this status message for all processes' %}"/>
+                <input type="image" src="{% static "juliabase/icons/cancel.png" %}" alt="{% translate 'cancel' %}"
+                       title="{% translate 'withdraw this status message for all processes' %}"/>
               </form>
             {% endif %}
           </td>

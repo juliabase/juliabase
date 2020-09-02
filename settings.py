@@ -36,7 +36,6 @@ if not os.path.exists(os.path.join(BASE_DIR, "jb_common")) and os.path.exists(os
     BASE_DIR = os.path.join(os.path.dirname(BASE_DIR), "juliabase")
 
 
-ALLOWED_HOSTS = ["0.0.0.0", "127.0.0.1"]
 DEBUG = True
 
 
@@ -100,6 +99,7 @@ TEMPLATES = [
                                    "django.template.context_processors.media",
                                    "django.template.context_processors.static",
                                    "django.template.context_processors.tz",
+                                   "django.template.context_processors.request",
                                    "django.contrib.messages.context_processors.messages",
                                    "jb_common.context_processors.default",
                                    "institute.context_processors.default"],

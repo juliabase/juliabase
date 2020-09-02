@@ -23,9 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
 
 {% if not log_timestamp %}
-  <p>{% trans "No log data found." %}</p>
+  <p>{% translate "No log data found." %}</p>
 {% else %}
-  <p>{% trans "Last run of crawler" %}: {{ log_timestamp }}.</p>
+  <p>{% translate "Last run of crawler" %}: {{ log_timestamp }}.</p>
 
   <pre>
 {{log_content }}

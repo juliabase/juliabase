@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and entry.sample_name as sample_name %}
+  {% blocktranslate with entry.originator|get_really_full_name:"mailto" as originator and entry.sample_name as sample_name %}
     {{ originator }} has deleted the sample {{ sample_name }}</a>.
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </p>

@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% with entry.samples.all as samples %}
   <p>
-    {% blocktrans count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and samples.0 as first_sample and samples.0.get_absolute_url as first_url %}
+    {% blocktranslate count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and samples.0 as first_sample and samples.0.get_absolute_url as first_url %}
       {{ originator }} has edited the sample <a href="{{ first_url }}">{{ first_sample }}</a>.
     {% plural %}
       {{ originator }} has edited the following samples:  <!-- {{ first_url }} {{ first_sample }} (to appease gettext) -->
-    {% endblocktrans %}
+    {% endblocktranslate %}
   </p>
 
   {% if not samples|length_is:"1" %}
@@ -39,18 +39,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <p>
     {% if entry.responsible_person_changed %}
       <em>
-	{% blocktrans count samples|length as counter %}
+	{% blocktranslate count samples|length as counter %}
 	  You are now the new responsible person for this sample.
 	{% plural %}
 	  You are now the new responsible person for these samples.
-	{% endblocktrans %}
+	{% endblocktranslate %}
       </em>
     {% elif entry.important %}
-      {% trans 'The change was significant.' %}
+      {% translate 'The change was significant.' %}
     {% else %}
-      {% trans 'The change was minor.' %}
+      {% translate 'The change was minor.' %}
     {% endif %}
-    {% trans 'Description of the change:' %}
+    {% translate 'Description of the change:' %}
   </p>
 
 {% endwith %}

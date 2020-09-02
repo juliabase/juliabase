@@ -33,11 +33,11 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block app_title %}<a style="color: inherit; text-decoration: inherit" href="{{ default_home_url }}"
                         >JuliaBase</a>{% endblock %}
 
-{% block title %}{% trans 'No bug tracker here' %}{% endblock %}
-{% block content_title %}<div class="page-header"><h1>{% trans 'No bug tracker here' %}</h1></div>{% endblock %}
+{% block title %}{% translate 'No bug tracker here' %}{% endblock %}
+{% block content_title %}<div class="page-header"><h1>{% translate 'No bug tracker here' %}</h1></div>{% endblock %}
 
 {% block frame_content %}
-<p>{% blocktrans %} Normally, clicking on the green bug icon would lead to a
+<p>{% blocktranslate %} Normally, clicking on the green bug icon would lead to a
 page where one could enter a new bug.  This way, users can report issues to the
 <em>local</em> web developer, who then may forward some of them
 to <a href="https://github.com/juliabase/juliabase/issues/new">JuliaBase's
@@ -45,7 +45,7 @@ central issue tracker</a>.  However, this demo site deliberately doesn't have a
 bug tracker installed so that this message can be delivered.  You may
 use <a href="http://trac.edgewall.org/">Trac</a>
 or <a href="http://www.redmine.org/">Redmine</a> for issue tracking, or link to
-a <a href="https://github.com">GitHub</a> page.{% endblocktrans %}</p>
+a <a href="https://github.com">GitHub</a> page.{% endblocktranslate %}</p>
 <p style="margin: 0pt"> </p> <!-- IE7 quirk -->
 <div style="clear: both"></div>
 {% endblock %}

@@ -32,9 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td class="field-label">
           {{ user_details.auto_addition_topics.label_tag }}
           <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
-            {% blocktrans %}(This list shows
+            {% blocktranslate %}(This list shows
             all topics you are a member of.  You can mark those topics that you want all new samples of which to be
-            implicitly added to “My Samples”.){% endblocktrans %}</div>
+            implicitly added to “My Samples”.){% endblocktranslate %}</div>
         </td>
         <td class="field-input">{{ user_details.auto_addition_topics }}</td>
       </tr>
@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">
         {{ initials.initials.label_tag }}
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
-          {% blocktrans %}(Once set, you can't change this anymore.){% endblocktrans %}</div>
+          {% blocktranslate %}(Once set, you can't change this anymore.){% endblocktranslate %}</div>
       </td>
       <td class="field-input">{{ initials.initials }}</td>
     </tr>
@@ -54,10 +54,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">
         <span style="margin-right: 0.5em; vertical-align: top">{{ user_details.subscribed_feeds.label_tag }}</span>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
-          {% blocktrans %}
+          {% blocktranslate %}
             (Choose the news feeds you are interested in. For example: If you only select “sample”, you will be informed
             about everything that happens to samples.)
-          {% endblocktrans %}</div>
+          {% endblocktranslate %}</div>
       </td>
       <td class="field-input">
         {{ user_details.subscribed_feeds }}
@@ -67,9 +67,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">
         <span style="margin-right: 0.5em; vertical-align: top">{{ user_details.default_folded_process_classes.label_tag }}</span>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
-          {% blocktrans %}
+          {% blocktranslate %}
             (With this setting, it is possible to fold less interesting processes in the sample data sheet by default.)
-          {% endblocktrans %}</div>
+          {% endblocktranslate %}</div>
       </td>
       <td class="field-input">
         {{ user_details.default_folded_process_classes }}
@@ -80,10 +80,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="field-label">
         <span style="margin-right: 0.5em; vertical-align: top">{{ user_details.show_users_from_departments.label_tag }}</span>
         <div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
-          {% blocktrans %}
+          {% blocktranslate %}
             (Select the departments from which you want to see the members in the selection lists.
             This also limits the processes offered for task lists to those of these departments.)
-          {% endblocktrans %}</div>
+          {% endblocktranslate %}</div>
       </td>
       <td class="field-input">
         {{ user_details.show_users_from_departments }}

@@ -32,13 +32,13 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
     <colgroup span="2"></colgroup>
     <thead>
       <tr>
-        <th>{% trans 'number' %}</th>
-        <th>{% trans 'chamber' %}</th>
+        <th>{% translate 'number' %}</th>
+        <th>{% translate 'chamber' %}</th>
         <th>SiH₄</th>
         <th>H₂</th>
         <th>SC</th>
         <th style="font-style: italic">T</th>
-        <th>{% trans 'comments' %}</th>
+        <th>{% translate 'comments' %}</th>
       </tr>
       <tr style="padding-top: -2ex">
         <th></th>
@@ -76,5 +76,5 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
     {% endfor %}
   </table>
 {% else %}
-  <p>{% trans 'No data found for this time range.' %}</p>
+  <p>{% translate 'No data found for this time range.' %}</p>
 {% endif %}

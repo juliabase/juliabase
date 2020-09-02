@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table style="margin-left: auto; margin-right: auto; margin-bottom: 2ex" class="padding10" border="1">
     <thead>
     <tr>
-      <th>{% trans 'Piece number' %}</th>
+      <th>{% translate 'Piece number' %}</th>
       <th>{{ new_names.0.1.new_name.label }}</th>
       <th>{{ new_names.0.1.new_purpose.label }}</th>
       <th>{{ new_names.0.1.delete.label }}</th>
@@ -50,10 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <td style="text-align: center">
           {% if forloop.last %}
             <div style="width: 15em; font-size: x-small">
-              {% blocktrans %}
+              {% blocktranslate %}
                 (you must change this last name in order to create an
                 additional piece)
-              {% endblocktrans %}
+              {% endblocktranslate %}
             </div>
           {% else %}
             {{ number }}.
