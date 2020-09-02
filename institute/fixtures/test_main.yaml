@@ -1118,11 +1118,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "2015-01-21T11:15:00Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: c0721478e7f85a572679622a1660fffcfe49d6e0
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "2015-01-21T11:15:22Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
@@ -1138,11 +1138,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "2015-01-21T11:15:01Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "2015-01-21T11:15:01Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
@@ -1158,11 +1158,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "2015-01-21T11:15:01Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: ''
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "1990-01-01T00:00:00Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
@@ -1178,11 +1178,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "1990-01-01T00:00:00Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: ''
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "1990-01-01T00:00:00Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
@@ -1198,11 +1198,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "2015-01-21T11:15:01Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: ''
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "2015-01-21T11:15:17Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
@@ -1218,11 +1218,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "2015-01-21T11:15:01Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: ''
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "1990-01-01T00:00:00Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
@@ -1238,11 +1238,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "2015-01-21T11:15:01Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: ''
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "2015-01-21T11:15:09Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
@@ -1258,11 +1258,11 @@
     auto_addition_topics: []
     default_folded_process_classes: []
     display_settings_timestamp: "1990-01-01T00:00:00Z"
-    folded_processes: '{}'
-    folded_series: '[]'
-    folded_topics: '[]'
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
     identifying_data_hash: ''
-    my_steps: ''
+    my_steps: []
     my_samples_timestamp: "1990-01-01T00:00:00Z"
     my_samples_list_timestamp: "1990-01-01T00:00:00Z"
     only_important_news: false
