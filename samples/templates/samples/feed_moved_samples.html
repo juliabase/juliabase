@@ -22,17 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% with entry.samples.all as samples %}
   <p>
     {% if entry.old_topic %}
-      {% blocktrans count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.old_topic as old_topic %}
+      {% blocktranslate count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic and entry.old_topic as old_topic %}
 	{{ originator }} has moved the following sample from topic “{{ old_topic }}” to the topic “{{ topic }}”:
       {% plural %}
 	{{ originator }} has added the following samples from topic “{{ old_topic }}” to the topic “{{ topic }}”:
-      {% endblocktrans %}
+      {% endblocktranslate %}
     {% else %}
-      {% blocktrans count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
+      {% blocktranslate count samples|length as counter with entry.originator|get_really_full_name:"mailto" as originator and entry.topic as topic %}
 	{{ originator }} has moved the following formerly topic-less sample to the topic “{{ topic }}”:
       {% plural %}
 	{{ originator }} has added the following formerly topic-less samples to the topic “{{ topic }}”:
-      {% endblocktrans %}
+      {% endblocktranslate %}
     {% endif %}
   </p>
 
@@ -44,24 +44,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <p>
     {% if auto_added %}
-      {% blocktrans count samples|length as counter %}
+      {% blocktranslate count samples|length as counter %}
         The sample is amongst “My Samples”.
       {% plural %}
         The samples are amongst “My Samples”.
-      {% endblocktrans %}
+      {% endblocktranslate %}
     {% else %}
-      {% blocktrans count samples|length as counter %}
+      {% blocktranslate count samples|length as counter %}
         The sample was not (at least not <em>automatically</em>) added to “My Samples”.
       {% plural %}
 	The samples were not (at least not <em>automatically</em>) added to “My Samples”.
-      {% endblocktrans %}
+      {% endblocktranslate %}
     {% endif %}
   </p>
 
 {% endwith %}
 
 <p>
-  {% trans 'Full description of the change:' %}
+  {% translate 'Full description of the change:' %}
 </p>
 
 <blockquote>

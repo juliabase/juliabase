@@ -25,14 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table>
     {{ search_depositions }}
   </table>
-  <p class="submit-button" style="clear: both"><input type="submit" value="{% trans 'search' %}"/></p>
+  <p class="submit-button" style="clear: both"><input type="submit" value="{% translate 'search' %}"/></p>
 </form>
 
 {% if too_many_results %}
   <p>
-    {% blocktrans %}
+    {% blocktranslate %}
       Too many matches were found.  I show only {{ max_results }} of them.
-    {% endblocktrans %}
+    {% endblocktranslate %}
   </p>
 {% endif %}
 
@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% endfor %}
   </ul>
 {% else %}
-   <p>{% trans 'Nothing found.' %}</p>
+   <p>{% translate 'Nothing found.' %}</p>
 {% endif %}
 
 {% endblock %}

@@ -20,14 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with entry.originator|get_really_full_name:"mailto" as originator and process.get_absolute_url as url %}
+  {% blocktranslate with entry.originator|get_really_full_name:"mailto" as originator and process.get_absolute_url as url %}
     {{ originator }} changed <a href="{{ url }}">{{ process }}</a>.
-  {% endblocktrans %}
-  {% blocktrans count process.samples.all.count as counter %}
+  {% endblocktranslate %}
+  {% blocktranslate count process.samples.all.count as counter %}
     This affected the following sample:
   {% plural %}
     This affected the following samples:
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </p>
 
 <ul>
@@ -38,11 +38,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <p>
   {% if entry.important %}
-    {% trans 'The change was significant.' %}
+    {% translate 'The change was significant.' %}
   {% else %}
-    {% trans 'The change was minor.' %}
+    {% translate 'The change was minor.' %}
   {% endif %}
-  {% trans 'Description of the change:' %}
+  {% translate 'Description of the change:' %}
 </p>
 
 <blockquote>

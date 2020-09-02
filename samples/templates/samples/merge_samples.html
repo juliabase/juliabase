@@ -25,10 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 <p>
-  {% blocktrans %}
+  {% blocktranslate %}
     Attention: The tags, purposes, topics, informal stacks, and current locations of the samples on the left hand side
     will be erased completely!
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </p>
 <form method="post">{% csrf_token %}
   <table class="padding5">
@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <tr>
         <td>{{ merge_form.from_sample }}</td>
         <td><img style="display: block; margin-left: 1em; margin-right: 1em" src="{% static "samples/red_arrow.png" %}"
-                 alt="{% trans 'red arrow' %}"/></td>
+                 alt="{% translate 'red arrow' %}"/></td>
         <td>{{ merge_form.to_sample }}</td>
       </tr>
     {% endfor %}

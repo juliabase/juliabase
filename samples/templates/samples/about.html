@@ -32,47 +32,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block frame_content %}
 <table class="about table">
   <tr>
-    <th>{% trans 'Top-level framework' %}:</th>
+    <th>{% translate 'Top-level framework' %}:</th>
     <td style="vertical-align: bottom">
-      <p><img class="helper-program-logo" src="{% static "juliabase/juliabase_logo_desat.png" %}" alt="{% trans 'JuliaBase logo' %}"
+      <p><img class="helper-program-logo" src="{% static "juliabase/juliabase_logo_desat.png" %}" alt="{% translate 'JuliaBase logo' %}"
                   width="50" height="50"/></p>
       <p><a href="http://www.juliabase.org">JuliaBase</a>
         <span class="version">{{ juliabase_version }}</span></p></td>
   </tr>
   <tr>
-    <th>{% trans 'Web framework' %}:</th>
+    <th>{% translate 'Web framework' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="https://www.djangoproject.com/"
-            ><img class="helper-program-logo" src="{% static "samples/django.png" %}" alt="{% trans 'Django logo' %}"
+            ><img class="helper-program-logo" src="{% static "samples/django.png" %}" alt="{% translate 'Django logo' %}"
                   width="75" height="32"/></a></p>
       <p><a href="https://www.djangoproject.com/">Django</a>
         <span class="version">{{ framework_version }}</span></p></td>
   </tr>
   <tr>
-    <th>{% trans 'Plotting system' %}:</th>
+    <th>{% translate 'Plotting system' %}:</th>
     <td style="vertical-align: bottom">
-      <p><a href="{% trans 'http://matplotlib.sourceforge.net/' %}"
+      <p><a href="{% translate 'http://matplotlib.sourceforge.net/' %}"
             ><img class="helper-program-logo" style="margin-bottom: 0pt" width="70" height="70"
-                  src="{% static "samples/matplotlib.png" %}" alt="{% trans 'Matplotlib logo' %}"/></a></p>
-      <p><a href="{% trans 'http://matplotlib.sourceforge.net/' %}">Matplotlib</a>
+                  src="{% static "samples/matplotlib.png" %}" alt="{% translate 'Matplotlib logo' %}"/></a></p>
+      <p><a href="{% translate 'http://matplotlib.sourceforge.net/' %}">Matplotlib</a>
         <span class="version">{{ matplotlib_version }}</span></p>
     </td>
   </tr>
   <tr>
-    <th>{% trans 'Runtime' %}:</th>
+    <th>{% translate 'Runtime' %}:</th>
     <td style="vertical-align: bottom">
       <p><a href="http://www.python.org"
-            ><img class="helper-program-logo" src="{% static "samples/python.png" %}" alt="{% trans 'Python logo' %}"
+            ><img class="helper-program-logo" src="{% static "samples/python.png" %}" alt="{% translate 'Python logo' %}"
                   width="125" height="37"/></a></p>
       <p><a href="http://www.python.org">Python</a>
         <span class="version">{{ language_version }}</span></p></td>
   </tr>
   {% if postgresql_version %}
     <tr>
-      <th>{% trans 'Database backend' %}:</th>
+      <th>{% translate 'Database backend' %}:</th>
       <td style="vertical-align: bottom">
         <p><a href="http://www.postgresql.org/"
-              ><img class="helper-program-logo" src="{% static "samples/postgresql.png" %}" alt="{% trans 'PostgreSQL logo' %}"
+              ><img class="helper-program-logo" src="{% static "samples/postgresql.png" %}" alt="{% translate 'PostgreSQL logo' %}"
                     width="49" height="50"/></a></p>
         <p><a href="http://www.postgresql.org/">PostgreSQL</a>
           <span class="version">{{ postgresql_version }}</span></p></td>

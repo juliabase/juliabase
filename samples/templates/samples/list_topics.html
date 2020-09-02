@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="padding5">
   <tbody>
     <tr>
-      <th>{% trans 'topic'|capfirst %}</th>
-      <th>{% trans 'topic manager'|capfirst %}</th>
+      <th>{% translate 'topic'|capfirst %}</th>
+      <th>{% translate 'topic manager'|capfirst %}</th>
     </tr>
     {% for topic, editable in topics %}
       {% with topic.id|urlquote as normalized_topicid %}
@@ -45,6 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </tbody>
   </table>
 {% else %}
-  <p>{% trans 'No topics available.' %}</p>
+  <p>{% translate 'No topics available.' %}</p>
 {% endif %}
 {% endblock %}

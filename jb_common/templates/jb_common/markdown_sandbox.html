@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 
-{% blocktrans %}
+{% blocktranslate %}
   <p>JuliaBase uses the lightweight markup language “Markdown” for comments.  It
   doesn't support images and headings though.  As compensation, it adds
   implicit sample and sample series linking.  Follow the help link at the top
@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <p>Here, you can test the markup as you like.  What you enter here is never
   saved.</p>
-{% endblocktrans %}
+{% endblocktranslate %}
 
 <form method="post">{% csrf_token %}
   {% error_list sandbox _("Error in markup") %}
@@ -47,9 +47,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <thead>
       <tr>
         {# Translators: Input for markdown conversion #}
-        <th style="width: 50%">{% trans 'input' %}</th>
+        <th style="width: 50%">{% translate 'input' %}</th>
         {# Translators: result of conversion #}
-        <th>{% trans 'result' %}</th>
+        <th>{% translate 'result' %}</th>
       </tr>
     </thead>
     <tr>
@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </tr>
   </table>
   {# Translators: result of markdown conversion #}
-  <p class="submit-button" style="clear: both"><button type="submit">{% trans 'Generate result' %}</button></p>
+  <p class="submit-button" style="clear: both"><button type="submit">{% translate 'Generate result' %}</button></p>
 </form>
 
 {% endblock %}

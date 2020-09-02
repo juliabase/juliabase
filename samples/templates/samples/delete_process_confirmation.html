@@ -23,10 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
 
-{% blocktrans %}
+{% blocktranslate %}
 <p>You are about to delete the process “{{ process }}”.  This action cannot be
   reverted.  The following objects will be deleted:</p>
-{% endblocktrans %}
+{% endblocktranslate %}
 
 <ul>
   {% for class_name, instances in affected_objects.items %}
@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 </ul>
 
 <form method="post" action="{% url 'samples:delete_process' process_id=process.id %}">{% csrf_token %}
-  <input type="submit" alt="delete icon" value="{% trans 'yes, I am sure'|capfirst %}"/>
+  <input type="submit" alt="delete icon" value="{% translate 'yes, I am sure'|capfirst %}"/>
 </form>
 
 {% endblock %}

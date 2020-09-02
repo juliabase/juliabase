@@ -20,31 +20,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans count entry.sample_split.pieces.count as counter with entry.sample_split.parent as parent and entry.sample_split.parent.get_absolute_url as url %}
+  {% blocktranslate count entry.sample_split.pieces.count as counter with entry.sample_split.parent as parent and entry.sample_split.parent.get_absolute_url as url %}
     From the sample <a href="{{ url }}">{{ parent }}</a>, the following piece was split:
   {% plural %}
     The sample <a href="{{ url }}">{{ parent }}</a> was split in the following pieces:
-  {% endblocktrans %}
+  {% endblocktranslate %}
 </p>
 
 <ul>
   {% for sample in entry.sample_split.pieces.all %}
     <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>
       {% if sample.purpose %}
-        ({% trans 'purpose:' %} {{ sample.purpose }})
+        ({% translate 'purpose:' %} {{ sample.purpose }})
       {% endif %}
     </li>
   {% endfor %}
 </ul>
 
 <p>
-  {% blocktrans count entry.sample_split.pieces.count as counter %}
+  {% blocktranslate count entry.sample_split.pieces.count as counter %}
     The piece was added to “My Samples”.
   {% plural %}
     All pieces were added to “My Samples”.
-  {% endblocktrans %}
+  {% endblocktranslate %}
   {% if entry.sample_completely_split %}
-    {% trans 'The sample was completely split, i.e. no piece of the parent is left.  Therefore, the parent was removed from “My Samples”.' %}
+    {% translate 'The sample was completely split, i.e. no piece of the parent is left.  Therefore, the parent was removed from “My Samples”.' %}
   {% endif %}
 </p>
 

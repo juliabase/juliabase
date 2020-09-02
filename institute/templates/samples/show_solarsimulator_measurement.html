@@ -64,7 +64,7 @@ function showCellData{{ process.id }}(process_id, position) {
 
 <div style="float: right">
   {% if shapes %}
-    <img src="{{ thumbnail_layout }}" alt="{% trans 'cell layout' %}" usemap="#map-{{ process.id }}"/>
+    <img src="{{ thumbnail_layout }}" alt="{% translate 'cell layout' %}" usemap="#map-{{ process.id }}"/>
   {% else %}
     <ul class="cells">
       {% for cell in process.cells.all|sort_cells %}

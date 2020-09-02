@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 
 <p>
-  {% blocktrans with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link task_id=entry.task.id process_name=entry.task.process_class|contenttype_name %}
+  {% blocktranslate with originator=entry.originator|get_really_full_name:"mailto" link=entry.get_metadata.link task_id=entry.task.id process_name=entry.task.process_class|contenttype_name %}
   {{ originator }} has changed <a href="{{ link }}">task #{{ task_id }}</a> for {{ process_name }}.
-  {% endblocktrans %}{% trans 'Description of the change:' %}
+  {% endblocktranslate %}{% translate 'Description of the change:' %}
 </p>
 <blockquote>
   {{ entry.description|markdown_samples }}

@@ -29,11 +29,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% if samples or sample_series %}
       <p>
         {% if samples %}
-          {% blocktrans count samples|length as counter with samples.0.get_absolute_url as link and samples.0.name as name %}
+          {% blocktranslate count samples|length as counter with samples.0.get_absolute_url as link and samples.0.name as name %}
             This result belongs to the sample <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
             This result belongs to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
-          {% endblocktrans %}
+          {% endblocktranslate %}
           {% if not samples|length_is:"1" %}
             <ul>
               {% for sample in samples %}
@@ -43,12 +43,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% endif %}
         {% endif %}
         {% if sample_series %}
-          {% blocktrans count sample_series|length as counter with sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
+          {% blocktranslate count sample_series|length as counter with sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
             This result belongs to the sample series <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
             This result belongs to the following sample_series:  
             <!-- To please compilemessages: {{ link }} {{ name }} -->
-          {% endblocktrans %}
+          {% endblocktranslate %}
           {% if not sample_series|length_is:"1" %}
             <ul>
               {% for single_sample_series in sample_series %}
@@ -62,6 +62,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               
     {{ html_body }}
 
-    {% if edit_url %}<p><a class="edit-button" href="{{ edit_url }}">{% trans 'Edit this result' %}</a></p>{% endif %}
+    {% if edit_url %}<p><a class="edit-button" href="{{ edit_url }}">{% translate 'Edit this result' %}</a></p>{% endif %}
   </div>
 {% endblock %}

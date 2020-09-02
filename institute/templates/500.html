@@ -30,7 +30,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
   <link rel="shortcut icon" href="/static/institute/favicon.ico" type="image/x-icon"/>
 {% endblock %}
 
-{% block title %}{% trans 'Internal JuliaBase error' %}{% endblock %}
+{% block title %}{% translate 'Internal JuliaBase error' %}{% endblock %}
 
 {% block content %}
   <table class="headbar">
@@ -38,7 +38,7 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
       <td class="info">
       </td>
       <td class="login-data">
-        <a href="/"><img src="/static/juliabase/icons/house.png" alt="home icon" title="{% trans 'Main menu' %}"
+        <a href="/"><img src="/static/juliabase/icons/house.png" alt="home icon" title="{% translate 'Main menu' %}"
                          width="16" height="16"/></a>
       </td>
     </tr>
@@ -51,8 +51,8 @@ this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <div class="outer-frame">
       <div class="inner-frame">
-        <div class="page-header"><h1>{% trans 'Internal server error' %}</h1></div>
-    {% blocktrans %}
+        <div class="page-header"><h1>{% translate 'Internal server error' %}</h1></div>
+    {% blocktranslate %}
 <p>You experienced an internal error in the JuliaBase server software.  The
 administrators have been contacted already and will do their best in
 eliminating the bug.  Typically, they will contact you as soon as the problem
@@ -62,7 +62,7 @@ is tackled.</p>
 It may be that the problem is being fixed and you are asked to go back
 and re-do your action, so that the data is actually written into the
 database.</p>
-{% endblocktrans %}
+{% endblocktranslate %}
 <p style="margin: 0pt"> </p> <!-- IE7 quirk -->
 <div style="clear: both"></div>
       </div>

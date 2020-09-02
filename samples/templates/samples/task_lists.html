@@ -30,12 +30,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <h2>{{ process_name }}<a
        class="edit-icon"
        href="{% url 'samples:add_task_list' %}?next={{ next_url|urlquote_plus }}&amp;process_class={{ process_class.id }}">
-        <img src="{% static "juliabase/icons/layout_add.png" %}" alt="add icon" title="{% trans 'add task'|capfirst %}"
+        <img src="{% static "juliabase/icons/layout_add.png" %}" alt="add icon" title="{% translate 'add task'|capfirst %}"
              width="16" height="16"/></a></h2>
   {% endspaceless %}
 
   {% if not task_list %}
-    <p>{% trans 'No current tasks.' %}</p>
+    <p>{% translate 'No current tasks.' %}</p>
   {% endif %}
 
   {% for task in task_list %}
@@ -47,15 +47,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% if task.user_can_edit %}
         <a class="edit-icon"
            href="{% url 'samples:edit_task_list' task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}">
-           <img src="{% static "juliabase/icons/layout_edit.png" %}" alt="edit icon" title="{% trans 'edit task' %}"
+           <img src="{% static "juliabase/icons/layout_edit.png" %}" alt="edit icon" title="{% translate 'edit task' %}"
            width="16" height="16"/></a>
       {% endif %}
       {% if task.user_can_delete %}
         <form method="post"
               action="{% url 'samples:remove_task_list' task_id=task.task.id %}?next={{ task.task.get_absolute_url|urlquote_plus }}"
               style="display: inline">{% csrf_token %}
-          <input type="image" src="{% static "juliabase/icons/layout_delete.png" %}" alt="{% trans 'remove task' %}"
-                 title="{% trans 'remove task' %}"/>
+          <input type="image" src="{% static "juliabase/icons/layout_delete.png" %}" alt="{% translate 'remove task' %}"
+                 title="{% translate 'remove task' %}"/>
         </form>
       {% endif %}
       </div>

@@ -186,7 +186,7 @@ def urlquote_plus(value):
     This is useful for added “next” URLs in query strings, for example::
 
         <a href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
-               >{% trans 'edit' %}</a>
+               >{% translate 'edit' %}</a>
     """
     return django.utils.http.urlquote_plus(value, safe="/")
 
