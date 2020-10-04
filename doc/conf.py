@@ -1,4 +1,3 @@
-#
 # This file is part of JuliaBase, see http://www.juliabase.org.
 # Copyright © 2008–2017 Forschungszentrum Jülich GmbH, Jülich, Germany
 #
