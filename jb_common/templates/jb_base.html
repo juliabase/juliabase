@@ -53,12 +53,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="headbar">
     <tr>
       <td class="info">
-        {% for language_code, language in translation_flags %}
-          <a href="{% url 'jb_common:switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
-             ><img src="{% static "juliabase/flags/"|add:language_code|add:".png" %}"
-                   alt="{% blocktranslate with language as language %}switch to {{ language }}{% endblocktranslate %}"
-                   width="16" height="11"/></a>
-        {% endfor %}
+        {% if user.is_authenticated %}
+          {% for language_code, language in translation_flags %}
+            <a href="{% url 'jb_common:switch_language' %}?lang={{ language_code }}&amp;next={{ url|urlquote_plus }}"
+               ><img src="{% static "juliabase/flags/"|add:language_code|add:".png" %}"
+                     alt="{% blocktranslate with language as language %}switch to {{ language }}{% endblocktranslate %}"
+                     width="16" height="11"/></a>
+          {% endfor %}
+        {% endif %}
       </td>
       <td class="login-data">
         {% if user.is_authenticated %}
