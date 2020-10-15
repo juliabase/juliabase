@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import re, json, hashlib, random, time
+import re, json, hashlib, random, time, logging
 from django.contrib.messages.storage import default_storage
 from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
@@ -210,3 +210,21 @@ class UserTracebackMiddleware:
             request.META["AUTH_USER"] = request.user.username
         else:
             request.META["AUTH_USER"] = "Anonymous User"
+
+
+class LoggingMiddleware:
+    """Keeps a request log at ``/var/log/jb_common.log``.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        self.logger = logging.getLogger("jb_common")
+        self.logger.setLevel(logging.DEBUG)
+        handler = logging.FileHandler("/var/log/jb_common.log")
+        handler.setLevel(logging.DEBUG)
+        handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+        self.logger.addHandler(handler)
+
+    def __call__(self, request):
+        self.logger.info(f"{request.user} {request.method} {request.path}")
+        return self.get_response(request)
