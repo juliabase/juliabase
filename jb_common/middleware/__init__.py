@@ -213,14 +213,14 @@ class UserTracebackMiddleware:
 
 
 class LoggingMiddleware:
-    """Keeps a request log at ``/var/log/jb_common.log``.
+    """Keeps a request log at ``/var/log/jb_common/jb_common.log``.
     """
 
     def __init__(self, get_response):
         self.get_response = get_response
         self.logger = logging.getLogger("jb_common")
         self.logger.setLevel(logging.DEBUG)
-        handler = logging.FileHandler("/var/log/jb_common.log")
+        handler = logging.FileHandler("/var/log/jb_common/jb_common.log")
         handler.setLevel(logging.DEBUG)
         handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
         self.logger.addHandler(handler)
