@@ -401,6 +401,17 @@ Then, you don't need this setting.  Note that `LDAP_LOGIN_TEMPLATE`_ is applied
 to this name.
 
 
+.. index:: JB_LOGGING_PATH
+
+JB_LOGGING_PATH
+---------------
+
+Default: ``"/tmp/jb_common.log"``
+
+Path to the log file of JuliaBase.  Currently, it only logs the requests with
+timestamps, URL, and the currently logged-in user.
+
+
 Django settings with special meaning in JuliaBase
 =================================================
 

@@ -29,6 +29,7 @@ USE_X_SENDFILE = False
 TEMP_STATIC_DIRS = []
 BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem", ())
 HELP_LINK_PREFIX = "http://www.juliabase.org/"
+JB_LOGGING_PATH = "/tmp/jb_common.log"
 
 # LDAP-related settings
 
