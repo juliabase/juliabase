@@ -27,10 +27,10 @@ harvesting JuliaBase.
 
 """
 
-from django.conf.urls import url
+from django.urls import re_path
 from oai_pmh.views import root
 
 
 urlpatterns = [
-    url(r"", root),
+    re_path(r"", root),
 ]

@@ -30,7 +30,7 @@ apps.
     http://docs.djangoproject.com/en/dev/topics/http/urls/
 """
 
-from django.conf.urls import url, include
+from django.urls import include, re_path
 from django.conf import settings
 from django.contrib import admin
 from django.conf.urls.static import static
@@ -38,12 +38,12 @@ import oai_pmh.urls, institute.urls, jb_common.urls, samples.urls
 
 
 urlpatterns = [
-#    url(r"^oai-pmh", include(oai_pmh.urls)),
-    url(r"", include(institute.urls)),
-    url(r"", include(jb_common.urls)),
-    url(r"", include(samples.urls)),
+#    re_path(r"^oai-pmh", include(oai_pmh.urls)),
+    re_path(r"", include(institute.urls)),
+    re_path(r"", include(jb_common.urls)),
+    re_path(r"", include(samples.urls)),
 
-    url(r"^admin/", admin.site.urls),
+    re_path(r"^admin/", admin.site.urls),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
