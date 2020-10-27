@@ -303,9 +303,9 @@ def build_structured_sample_list(user, samples=None):
 
     :rtype: list of `StructuredTopic`, list of `samples.models.Sample`
     """
-    def create_topic_tree(structured_topic):
-        """Goes through all given topics and makes sure that all parent
-        topics are also included.
+    def append_topic_to_ancestors(structured_topic):
+        """Appends the given topic to its parent’s subtopics list, and does this
+        recursively with all ancestors.
         """
         try:
             parent_structured_topic = structured_topics[structured_topic.topic.parent_topic.id]
@@ -315,7 +315,7 @@ def build_structured_sample_list(user, samples=None):
         parent_structured_topic.sort_sub_topics()
         structured_topic.sort_sample_series()
         if parent_structured_topic.topic.has_parent():
-            create_topic_tree(parent_structured_topic)
+            append_topic_to_ancestors(parent_structured_topic)
         return parent_structured_topic
 
     if samples is None:
@@ -352,7 +352,7 @@ def build_structured_sample_list(user, samples=None):
     _structured_topics = structured_topics.copy()
     for topic_id, structured_topic in _structured_topics.items():
         if structured_topic.topic.has_parent():
-            parent_structured_topic = create_topic_tree(structured_topic)
+            parent_structured_topic = append_topic_to_ancestors(structured_topic)
             structured_topics[parent_structured_topic.topic.id] = parent_structured_topic
             del structured_topics[topic_id]
     structured_topics = sorted(structured_topics.values(),
