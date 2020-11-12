@@ -241,7 +241,7 @@ def edit(request, id):
             for user in new_members:
                 if user not in old_members:
                     added_members.append(user)
-                    topic.auto_adders.add(user.samples_user_details)
+                    #topic.auto_adders.add(user.samples_user_details)  -> auto add of user to "auto addition" not wanted anymore
             for user in old_members:
                 if user not in new_members:
                     removed_members.append(user)
