@@ -36,6 +36,11 @@ class PIDLock:
 
     The parameter ``"my_program"`` is used for determining the name of the PID
     lock file.
+
+    Note that in containerised environments, or if crawlers may run on
+    different hosts on the same data, this lock is ineffective.  At least, it
+    does not block.  In such a scenario, you have to use other means
+    (e.g. settings in Kubernetes) to avoid cuncurrent running.
     """
 
     def __init__(self, name, timeout=10*60):
