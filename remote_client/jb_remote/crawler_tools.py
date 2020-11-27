@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, re, subprocess, time, smtplib, email, logging, pickle, contextlib, pathlib, itertools
+import os, re, subprocess, time, smtplib, email, logging, pickle, contextlib, pathlib, itertools, socket, json
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import deprecation
@@ -54,11 +54,12 @@ class PIDLock:
         self.timeout = timeout
 
     def try_acquire_lock(self):
+        my_hostname = socket.gethostname()
         import fcntl  # local because only available on Unix
         try:
             self.lockfile = open(self.lockfile_path, "r+")
             fcntl.flock(self.lockfile.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
-            pid = int(self.lockfile.read().strip())
+            hostname, pid = json.load(self.lockfile)
         except FileNotFoundError:
             self.lockfile = open(self.lockfile_path, "w")
             try:
@@ -70,27 +71,35 @@ class PIDLock:
         except BlockingIOError:
             already_running = True
             logging.warning("Lock {0} of other process active".format(self.lockfile_path))
-        except ValueError:
+        except (ValueError, json.decoder.JSONDecodeError):
             # Ignore invalid lock
             already_running = False
             self.lockfile.seek(0)
             self.lockfile.truncate()
             logging.warning("Lock {0} of other process has invalid content".format(self.lockfile_path))
         else:
-            try:
-                os.kill(pid, 0)
-            except ProcessLookupError:
-                # Ignore invalid lock
+            if hostname == my_hostname:
+                try:
+                    os.kill(pid, 0)
+                except ProcessLookupError:
+                    # Ignore invalid lock
+                    already_running = False
+                    self.lockfile.seek(0)
+                    self.lockfile.truncate()
+                    logging.warning("Lock {0} of other process is orphaned".format(self.lockfile_path))
+                else:
+                    # sister process is already active
+                    already_running = True
+                    logging.warning("Lock {0} of other process active (but strangely not locked)".format(self.lockfile_path))
+            else:
+                # Assume container orchestration avoids cuncurrent processes
                 already_running = False
                 self.lockfile.seek(0)
                 self.lockfile.truncate()
-                logging.warning("Lock {0} of other process is orphaned".format(self.lockfile_path))
-            else:
-                # sister process is already active
-                already_running = True
-                logging.warning("Lock {0} of other process active (but strangely not locked)".format(self.lockfile_path))
+                logging.warning("Lock {0} of other process belongs to process on other host; assume it is orphaned".format(
+                    self.lockfile_path))
         if not already_running:
-            self.lockfile.write(str(os.getpid()))
+            json.dump((my_hostname, os.getpid()), self.lockfile)
             self.lockfile.flush()
         else:
             self.lockfile.close()
