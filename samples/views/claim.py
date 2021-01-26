@@ -114,7 +114,7 @@ JuliaBase.
 """), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
                  "url": request.build_absolute_uri(django.urls.reverse("samples:show_claim", kwargs={"claim_id": claim.pk}))})
             _ = ugettext
-            claim.samples = samples_form.cleaned_data["samples"]
+            claim.samples.set(samples_form.cleaned_data["samples"])
             return utils.successful_response(request,
                                              _("Sample claim {id_} was successfully submitted.").format(id_=claim.pk),
                                              "samples:show_claim", kwargs={"claim_id": claim.pk})
