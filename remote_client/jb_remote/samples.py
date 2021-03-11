@@ -30,14 +30,14 @@ class TemporaryMySamples:
     be able to link the process with samples, they must be on your “My Samples”
     list.
 
-    This context manager should be used linke this::
+    This context manager should be used like this::
 
         with TemporaryMySamples(sample_ids):
             ...
 
     The code at ``...`` can safely assume that the ``sample_ids`` have been
-    added to “My Samples”.  After having execuded this code, those samples that
-    hadn't been on “My Samples” already are removed from “My Samples”.  This
+    added to “My Samples”.  After having executed this code, those samples that
+    hadn’t been on “My Samples” already are removed from “My Samples”.  This
     way, the “My Samples” list is unchanged eventually.
     """
 
