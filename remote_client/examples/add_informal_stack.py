@@ -67,5 +67,5 @@ open("/tmp/informal_stack.yaml", "w").write("""- fields: {{additional_process_da
   pk: 5
 """.format(sample_id))
 
-subprocess.check_call(["../../manage.py", "loaddata", "/tmp/informal_stack.yaml"])
+subprocess.check_call(["./manage.py", "loaddata", "/tmp/informal_stack.yaml"], cwd="../..")
 os.remove("/tmp/informal_stack.yaml")
