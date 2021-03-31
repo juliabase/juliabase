@@ -349,7 +349,8 @@ class SamplesAndProcesses:
         return samples_and_processes
 
     def __init__(self, sample, clearance, user, post_data):
-        """
+        """Class constructor.
+
         :param sample: the sample to which the processes belong
         :param clearance: the clearance object that was used to show the sample,
             or ``None`` if no clearance was necessary (though maybe existing)
