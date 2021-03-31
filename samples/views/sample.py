@@ -309,16 +309,18 @@ class SamplesAndProcesses:
     """
 
     @staticmethod
-    def samples_and_processes(sample_name, user, post_data=None):
+    def samples_and_processes(sample, clearance, user, post_data=None):
         """Returns the data structure used in the template to display the
         sample with all its processes.
 
-        :param sample_name: the sample or alias of the sample to display
+        :param sample: the sample for which the processes should be compiled
+        :param clearance: clearance for the `sample` and the `user`
         :param user: the currently logged-in user
         :param post_data: the POST dictionary if it was an HTTP POST request, or
             ``None`` otherwise
 
-        :type sample_name: str
+        :type sample: `samples.models.Sample`
+        :type clearance: `samples.models.Clearance` or NoneType
         :type user: django.contrib.auth.models.User
         :type post_data: QueryDict
 
@@ -328,7 +330,6 @@ class SamplesAndProcesses:
 
         :rtype: `SamplesAndProcesses`
         """
-        sample, clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
         cache_key = "sample:{0}-{1}".format(sample.pk, user.jb_user_details.get_data_hash())
         # The following ``10`` is the expectation value of the number of
         # processes.  To get accurate results, use
@@ -702,7 +703,8 @@ def show(request, sample_name):
     """
     start = time.time()
     if request.method == "POST":
-        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
+        sample, clearance = utils.lookup_sample(sample_name, request.user, with_clearance=True)
+        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user, request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
             if is_json_requested(request):
@@ -723,10 +725,10 @@ def show(request, sample_name):
                 success_message = _("Nothing was changed.")
             messages.success(request, success_message)
     else:
+        sample, clearance = utils.lookup_sample(sample_name, request.user, with_clearance=True)
         if is_json_requested(request):
-            sample = utils.lookup_sample(sample_name, request.user)
             return respond_in_json(sample.get_data())
-        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
+        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
