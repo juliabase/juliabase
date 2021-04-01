@@ -413,7 +413,7 @@ def is_json_requested(request):
 
     :rtype: bool
     """
-    requested_mime_type = mimeparse.best_match(["text/html", "application/xhtml+xml", "application/json"],
+    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/json"},
                                                request.META.get("HTTP_ACCEPT", "text/html"))
     return requested_mime_type == "application/json"
 

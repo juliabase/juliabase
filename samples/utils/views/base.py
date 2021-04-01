@@ -529,7 +529,7 @@ def table_export(request, data, label_column_heading):
         root_without_children.descriptive_name = None
         data.children = [root_without_children]
     get_data = request.GET if any(key.startswith("__old_data") for key in request.GET) else None
-    requested_mime_type = mimeparse.best_match(["text/csv", "application/json"], request.META.get("HTTP_ACCEPT", "text/csv"))
+    requested_mime_type = mimeparse.best_match({"text/csv", "application/json"}, request.META.get("HTTP_ACCEPT", "text/csv"))
     data.find_unambiguous_names()
     data.complete_items_in_children()
     column_groups, columns = build_column_group_list(data)
