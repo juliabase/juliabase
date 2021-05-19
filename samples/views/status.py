@@ -90,13 +90,13 @@ class StatusForm(forms.ModelForm):
         if begin:
             cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = cleaned_data["begin"]
         else:
-            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = \
-                    django.utils.timezone.make_aware(datetime.datetime(1900, 1, 1)), 6
+            cleaned_data["begin"], cleaned_data["begin_inaccuracy"] = datetime.datetime(1900, 1, 1), 6
+        cleaned_data["begin"] = django.utils.timezone.make_aware(cleaned_data["begin"])
         if end:
             cleaned_data["end"], cleaned_data["end_inaccuracy"] = cleaned_data["end"]
         else:
-            cleaned_data["end"], cleaned_data["end_inaccuracy"] = \
-                    django.utils.timezone.make_aware(datetime.datetime(9999, 12, 31)), 6
+            cleaned_data["end"], cleaned_data["end_inaccuracy"] = datetime.datetime(9999, 12, 31), 6
+        cleaned_data["end"] = django.utils.timezone.make_aware(cleaned_data["end"])
         if cleaned_data["begin"] > cleaned_data["end"]:
             self.add_error("begin", ValidationError(_("The begin must be before the end."), code="invalid"))
             del cleaned_data["begin"]
