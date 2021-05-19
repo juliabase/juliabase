@@ -294,5 +294,42 @@ def delete_process_confirmation(request, process_id):
                   {"title": _("Delete process “{process}”").format(process=process), "process": process,
                    "affected_objects": digested_affected_objects})
 
+@login_required
+@require_http_methods(["GET"])
+@unquote_view_parameters
+def export_process(request, process_id):
+    """View for exporting process data in CSV or JSON format.  Thus, the
+    return value is not an HTML response.  Note that you must also be allowed 
+    to see all *samples* in this process for the export.
 
+    :param request: the current HTTP Request object
+    :param name: the name of the process
+
+    :type request: HttpRequest
+    :type name: str
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    process = get_object_or_404(Process, pk=int_or_zero(process_id)).actual_instance
+
+    for sample in process.samples.all():
+        permissions.assert_can_fully_view_sample(request.user, sample)
+
+    data = process.get_data_for_table_export()
+    data.children.extend(sample.get_data_for_table_export() for sample in process.samples.all())
+
+    result = utils.table_export(request, data, _("sample"))
+    if isinstance(result, tuple):
+        column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
+    elif isinstance(result, HttpResponse):
+        return result
+    title = _("Table export for “{name}”").format(name=data.descriptive_name)
+    return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
+                                                         "columns": columns_form,
+                                                         "rows": list(zip(table, switch_row_forms)) if table else None,
+                                                         "old_data": old_data_form,
+                                                         "backlink": request.GET.get("next", "")})
 _ = ugettext

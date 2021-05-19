@@ -94,6 +94,7 @@ urlpatterns = [
     re_path(r"^resplit/(?P<old_split_id>.+)", split_and_rename.split_and_rename, name="resplit"),
 
     re_path(r"^processes/(?P<process_id>\d+)$", main.show_process, name="show_process"),
+    re_path(r"^processes/(?P<process_id>\d+)/export/$", main.export_process, name="export_process"),
     re_path(r"^processes/(?P<process_id>\d+)/delete/$", main.delete_process, name="delete_process"),
     re_path(r"^processes/(?P<process_id>\d+)/delete-confirmation$", main.delete_process_confirmation,
             name="delete_process_confirmation"),
