@@ -174,7 +174,7 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
       </form>
     {% endif %}
 
-    {% if process %}
+    {% if process and process.name != "Maria step" %}
       <div class="process">
         {% spaceless %}
           <h2 style="float: left">
