@@ -24,7 +24,7 @@ import, it is sometimes (e.g. for ``samples.permissions``) necessary to avoid
 the ``from`` keyword.
 """
 
-import hashlib, os.path, collections, datetime, html
+import hashlib, os.path, collections, datetime, html, urllib.parse, collections.abc, json
 import rdflib
 from samples import ontology_symbols
 import django.contrib.auth.models
@@ -39,7 +39,8 @@ import django.urls
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
-from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
+from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
+    JSONEncoder
 from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
@@ -1067,6 +1068,15 @@ class Sample(models.Model):
             graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.planned_process))
             graph.add((process_entity, ontology_symbols.RDF.type, process.rdf_uri()))
             graph.add((process_entity, ontology_symbols.has_specified_output, sample_intermediate_state))
+            for field_name, field_value in process.get_data().items():
+                if field_name in {"samples", "id", "content_type"}:
+                    continue
+                if isinstance(field_value, collections.abc.Mapping):
+                    del field_value["id"]
+                    field_value = json.dumps(field_value, cls=JSONEncoder)
+                graph.add((process_entity,
+                           process.rdf_uri() + "#" + urllib.parse.quote_plus(field_name),
+                           rdflib.term.Literal(field_value)))
             latest_process = process
         return graph
 
