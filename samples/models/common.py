@@ -25,6 +25,7 @@ the ``from`` keyword.
 """
 
 import hashlib, os.path, collections, datetime, html
+import rdflib
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
@@ -198,6 +199,14 @@ class Process(PolymorphicModel):
         get_latest_by = "timestamp"
         verbose_name = _("process")
         verbose_name_plural = _("processes")
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+
+    @classmethod
+    def rdf_uri(cls):
+        return getattr(cls.ontology_namespace(), cls.__name__)
 
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
@@ -780,6 +789,14 @@ class Sample(models.Model):
                        ("adopt_samples", _("Can adopt samples from his/her department")),
                        ("rename_samples", _("Can rename samples from his/her department")))
 
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+
+    @classmethod
+    def rdf_uri(cls):
+        return getattr(cls.ontology_namespace(), cls.__name__)
+
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
 
@@ -1177,6 +1194,14 @@ class Clearance(models.Model):
         verbose_name = _("clearance")
         verbose_name_plural = _("clearances")
 
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+
+    @classmethod
+    def rdf_uri(cls):
+        return getattr(cls.ontology_namespace(), cls.__name__)
+
     def __str__(self):
         return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
 
@@ -1194,6 +1219,14 @@ class SampleClaim(models.Model):
     class Meta:
         verbose_name = _("sample claim")
         verbose_name_plural = _("sample claims")
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+
+    @classmethod
+    def rdf_uri(cls):
+        return getattr(cls.ontology_namespace(), cls.__name__)
 
     def __str__(self):
         return _("sample claim #{number}").format(number=self.pk)
@@ -1704,6 +1737,14 @@ class Task(models.Model):
     class Meta:
         verbose_name = _("task")
         verbose_name_plural = _("tasks")
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+
+    @classmethod
+    def rdf_uri(cls):
+        return getattr(cls.ontology_namespace(), cls.__name__)
 
     def __str__(self):
         return _("task of {process_class} from {datetime}". format(
