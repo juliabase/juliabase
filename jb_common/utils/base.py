@@ -399,6 +399,26 @@ def send_email(subject, content, recipients, format_dict=None):
     translation.activate(current_language)
 
 
+def is_rdf_requested(request):
+    """Tests whether the current request should be answered in RDF format instead
+    of HTML.  Typically this means that the request was made by other JuliaBase
+    or ELN instances.  Currently, only the serialisation formats “turtle” and
+    “xml” are recognised.
+
+    :param request: the current HTTP Request object
+
+    :type request: HttpRequest
+
+    :return:
+      whether the request should be answered in RDF
+
+    :rtype: bool
+    """
+    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/rdf+xml", "text/turtle"},
+                                               request.META.get("HTTP_ACCEPT", "text/html"))
+    return requested_mime_type in {"application/rdf+xml", "text/turtle"}
+
+
 def is_json_requested(request):
     """Tests whether the current request should be answered in JSON format
     instead of HTML.  Typically this means that the request was made by the
