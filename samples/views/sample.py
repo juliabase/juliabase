@@ -41,12 +41,13 @@ from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
-from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
+from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_rdf_requested, \
+    is_json_requested, respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
 from samples.utils import sample_names
+from samples.graphs import respond_as_rdf
 
 
 class IsMySampleForm(forms.Form):
@@ -728,6 +729,8 @@ def show(request, sample_name):
         sample, clearance = utils.lookup_sample(sample_name, request.user, with_clearance=True)
         if is_json_requested(request):
             return respond_in_json(sample.get_data())
+        elif is_rdf_requested(request):
+            return respond_as_rdf(request, sample.get_graph())
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     return render(request, "samples/show_sample.html",

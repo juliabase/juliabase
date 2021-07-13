@@ -26,6 +26,7 @@ the ``from`` keyword.
 
 import hashlib, os.path, collections, datetime, html
 import rdflib
+from samples import ontology_symbols
 import django.contrib.auth.models
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
@@ -1046,6 +1047,27 @@ class Sample(models.Model):
             return search.DetailsSearchTreeNode(cls, related_models, search_fields, "sample_details")
         else:
             return search.SearchTreeNode(cls, related_models, search_fields)
+
+    def get_graph(self):
+        graph = rdflib.Graph()
+        sample_entity = ontology_symbols.URIRef(settings.RDF_ROOT_URL + self.get_absolute_url())
+        graph.add((sample_entity, ontology_symbols.RDF.type, Sample.rdf_uri()))
+        latest_process = None
+        for i, process in enumerate(self.processes.order_by("timestamp").iterator()):
+            # Protégé zur Visualisierung
+            # Beide Richtung einbauen, aber eventuell eigene „Anreicherungs-Routine“ implementieren
+            # Probe als solche als gemeinsamen Namen für die Zwischenzustände realisieren
+            process = process.actual_instance
+            process_entity = ontology_symbols.URIRef(settings.RDF_ROOT_URL + process.get_absolute_url())
+            sample_intermediate_state = sample_entity + f"#process-heading-{process.pk}"
+            graph.add((sample_intermediate_state, ontology_symbols.realizes, sample_entity))
+            graph.add((sample_entity, ontology_symbols.realized_in, sample_intermediate_state))
+            graph.add((process_entity, ontology_symbols.realizes, process.rdf_uri()))
+            graph.add((process.rdf_uri(), ontology_symbols.realized_in, process_entity))
+            graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.planned_process))
+            graph.add((process_entity, ontology_symbols.has_specified_output, sample_intermediate_state))
+            latest_process = process
+        return graph
 
     def delete(self, *args, **kwargs):
         """Deletes the sample and all of its processes that contain only this sample –
