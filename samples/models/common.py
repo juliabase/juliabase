@@ -1065,6 +1065,7 @@ class Sample(models.Model):
             graph.add((process_entity, ontology_symbols.realizes, process.rdf_uri()))
             graph.add((process.rdf_uri(), ontology_symbols.realized_in, process_entity))
             graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.planned_process))
+            graph.add((process_entity, ontology_symbols.RDF.type, process.rdf_uri()))
             graph.add((process_entity, ontology_symbols.has_specified_output, sample_intermediate_state))
             latest_process = process
         return graph
