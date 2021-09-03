@@ -47,6 +47,7 @@ from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
 from samples.utils import sample_names
+import datetime
 
 
 class IsMySampleForm(forms.Form):
@@ -792,6 +793,61 @@ def add_process(request, sample_name):
     return render(request, "samples/add_process.html",
                   {"title": _("Add process to sample “{sample}”").format(sample=sample),
                    "processes": sample_processes + general_processes})
+
+
+class CleanMySamplesForm(forms.Form):
+    """Form for searching for samples.  So far, you can only enter a name
+    substring for looking for samples.
+    """
+    allowed_age = forms.IntegerField(label=_("Samples older than (months)"), required=False)
+
+
+max_results = 1000
+@login_required
+def cleanmysamples(request):
+    """View for cleaning "My Samples". All samples will be listed that have their last modification
+       done to them longer ago than the amount of months (30 days) entered in the form.
+
+    A POST request on this URL will remove the samples from the “My Samples” list.
+    *All* search parameters are in the query string, so if you just want to
+    search, this is a GET requets.  Therefore, this view has two submit
+    buttons.
+
+    :param request: the current HTTP Request object
+
+    :type request: HttpRequest
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    too_many_results = False
+    base_query = utils.restricted_samples_query(request.user)
+    clean_my_samples_form = CleanMySamplesForm(request.GET)
+    found_samples = [s for s in request.user.my_samples.all()]
+    protected = []
+    for series in request.user.sample_series.all():
+        for sample in series.samples.all():
+            protected.append(sample)
+    to_be_removed = []
+    if clean_my_samples_form.is_valid():
+        allowed_age = clean_my_samples_form.cleaned_data["allowed_age"]
+        if allowed_age:
+            to_be_removed = []
+            for s in found_samples:
+                current_time = datetime.datetime.now(datetime.timezone.utc)
+                if s.processes.all():
+                    sample_age = s.processes.all().reverse()[0].timestamp
+                else:
+                    sample_age = s.last_modified
+                if (current_time - sample_age).days > allowed_age*30 and not s in protected:
+                    to_be_removed.append(s)
+    if request.method == "POST":
+        request.user.my_samples.remove(*to_be_removed)
+    return render(request, "samples/cleanmysamples.html", {"title": _("Clean up 'My samples'"),
+                                                           "allowed_age": clean_my_samples_form,
+                                                           "to_be_removed": to_be_removed})
 
 
 class SearchSamplesForm(forms.Form):
