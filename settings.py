@@ -55,7 +55,7 @@ DATABASES = {
     }
 
 USE_TZ = True
-TIME_ZONE = get_localzone().zone
+TIME_ZONE = get_localzone().key
 EMAIL_USE_LOCALTIME = True
 
 LANGUAGE_CODE = "en-us"
