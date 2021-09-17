@@ -25,6 +25,7 @@ processes, clean room work etc. will go here, too.
 
 import os.path
 import numpy
+import rdflib
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.utils.text import format_lazy
 from django.db import models
@@ -75,6 +76,10 @@ class Substrate(PhysicalProcess):
     class JBMeta:
         editable_status = False
 
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
+
     def __str__(self):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
@@ -100,6 +105,10 @@ class PDSMeasurement(PhysicalProcess):
 
     class JBMeta:
         identifying_field = "number"
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         x_values, y_values = numpy.loadtxt(filename, comments="#", unpack=True)
@@ -134,6 +143,10 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         verbose_name = _("solarsimulator measurement")
         verbose_name_plural = _("solarsimulator measurements")
         permissions = generate_permissions({"add", "view_every", "edit_permissions"}, "SolarsimulatorMeasurement")
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -241,6 +254,10 @@ class SolarsimulatorCellMeasurement(models.Model):
         unique_together = (("measurement", "position"), ("position", "data_file"))
         ordering = ("measurement", "position")
 
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
+
     def __str__(self):
         return _("cell {position} of {solarsimulator_measurement}").format(
             position=self.position, solarsimulator_measurement=self.measurement)
@@ -307,6 +324,10 @@ class Structuring(PhysicalProcess):
         verbose_name = _("structuring")
         verbose_name_plural = _("structurings")
 
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
+
 
 class LayerThicknessMeasurement(PhysicalProcess):
     """Database model for the layer thickness measurement.
@@ -330,6 +351,10 @@ class LayerThicknessMeasurement(PhysicalProcess):
 
     class JBMeta:
         editable_status = False
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
 
 
 _ = ugettext

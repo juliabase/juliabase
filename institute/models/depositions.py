@@ -22,6 +22,7 @@
 themselves as well as models for layers.
 """
 
+import rdflib
 from django.utils.translation import ugettext_lazy as _, ugettext
 import django.urls
 from django.utils.http import urlquote_plus
@@ -50,6 +51,10 @@ class ClusterToolDeposition(samples.models.Deposition):
         verbose_name = _("cluster tool deposition")
         verbose_name_plural = _("cluster tool depositions")
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "ClusterToolDeposition")
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -149,6 +154,10 @@ class FiveChamberDeposition(samples.models.Deposition):
         verbose_name = _("5-chamber deposition")
         verbose_name_plural = _("5-chamber depositions")
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "FiveChamberDeposition")
+
+    @staticmethod
+    def ontology_namespace():
+        return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
