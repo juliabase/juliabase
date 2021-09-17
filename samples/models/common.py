@@ -1053,7 +1053,14 @@ class Sample(models.Model):
         graph = rdflib.Graph()
         sample_entity = ontology_symbols.URIRef(settings.RDF_ROOT_URL + self.get_absolute_url())
         graph.add((sample_entity, ontology_symbols.RDF.type, Sample.rdf_uri()))
+        graph.add((sample_entity,
+                   ontology_symbols.JB_sample.currently_responsible_person,
+                   rdflib.term.Literal(self.currently_responsible_person)))
+        graph.add((sample_entity, ontology_symbols.JB_sample.current_location, rdflib.term.Literal(self.current_location)))
+        graph.add((sample_entity, ontology_symbols.JB_sample.topic, rdflib.term.Literal(self.topic)))
+        graph.add((sample_entity, ontology_symbols.JB_sample.name, rdflib.term.Literal(self.name)))
         latest_process = None
+        latest_sample_intermediate_state = None
         for i, process in enumerate(self.processes.order_by("timestamp").iterator()):
             # Protégé zur Visualisierung
             # Beide Richtung einbauen, aber eventuell eigene „Anreicherungs-Routine“ implementieren
@@ -1068,6 +1075,8 @@ class Sample(models.Model):
             graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.planned_process))
             graph.add((process_entity, ontology_symbols.RDF.type, process.rdf_uri()))
             graph.add((process_entity, ontology_symbols.has_specified_output, sample_intermediate_state))
+            if latest_sample_intermediate_state:
+                graph.add((process_entity, ontology_symbols.has_specified_input, latest_sample_intermediate_state))
             for field_name, field_value in process.get_data().items():
                 if field_name in {"samples", "id", "content_type"}:
                     continue
@@ -1078,6 +1087,7 @@ class Sample(models.Model):
                            process.rdf_uri() + "#" + urllib.parse.quote_plus(field_name),
                            rdflib.term.Literal(field_value)))
             latest_process = process
+            latest_sample_intermediate_state = sample_intermediate_state
         return graph
 
     def delete(self, *args, **kwargs):

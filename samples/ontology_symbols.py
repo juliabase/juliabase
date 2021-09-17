@@ -23,9 +23,12 @@ OBI = Namespace("http://purl.obolibrary.org/obo/")
 OMIT = Namespace("http://purl.obolibrary.org/obo/")
 TI = Namespace("https://www.w3.org/TR/owl-time/#")
 JB = Namespace("https://juliabase.org/jb/1.0#")
+JB_sample = Namespace("https://juliabase.org/jb/1.0/Sample#")
 
 planned_process = OBI.OBI_0000011
+has_specified_input = OBI.OBI_0000293
 has_specified_output = OBI.OBI_0000299
+is_specified_input_of = OBI.OBI_0000295
 is_specified_output_of = OBI.OBI_0000312
 realizes = BFO.BFO_0000055
 realized_in = BFO.BFO_0000054
