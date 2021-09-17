@@ -106,7 +106,7 @@ Anyway, you create a PostgreSQL user with this:
   psql (9.3.4)
   Type "help" for help.
 
-  postgres=# CREATE USER username WITH PASSWORD ’topsecret’ CREATEDB;
+  postgres=# CREATE USER username WITH PASSWORD 'topsecret' CREATEDB;
   CREATE ROLE
   postgres=# \q
 

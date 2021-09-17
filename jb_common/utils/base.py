@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import codecs, re, os, os.path, time, json, datetime, copy, mimetypes, string, hashlib, urllib
+import codecs, re, os, os.path, time, datetime, copy, mimetypes, string, hashlib, urllib
 from io import BytesIO
 from contextlib import contextmanager
 from functools import wraps

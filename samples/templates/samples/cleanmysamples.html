@@ -1,0 +1,53 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of JuliaBase, see http://www.juliabase.org.
+Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="get">
+  <table>
+    {{ allowed_age }}
+  </table>
+<div style="margin-top: 0.5ex; margin-right: 1em; font-size:smaller; max-width: 40em">
+{% blocktranslate %}
+ (All samples that have their latest action performed on them more months ago than entered above will be listed.
+  Samples from your own samples series are excluded. Click 'remove samples' after searching to remove the samples from your 'My Samples'.)
+{% endblocktranslate %}</div>
+  <p class="submit-button" style="clear: both"><input type="submit" value="{% translate 'search' %}"/></p>
+</form>
+  <p>
+
+<form method="post">{% csrf_token %}
+  <ul class="sample-list">
+    {% for sample in to_be_removed %}
+      <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>{{ sample|sample_tags:user }}
+      </li>
+    {% endfor %}
+  </ul>
+  
+  {% if to_be_removed %}
+    <p>{% translate 'Number of samples to be removed: ' %}{{ to_be_removed|length }}</p>
+  {% endif %}
+
+  <p class="submit-button" style="clear: both"><input type="submit" value="{% translate 'remove samples' %}"/></p>
+</form>
+
+{% endblock %}

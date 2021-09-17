@@ -151,6 +151,9 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
     <li style='list-style-image: url("{% static "juliabase/icons/key.png" %}")'>
       <a href="{% url 'samples:topics_and_permissions' login_name=user.username %}"
          >{% translate 'my topics and permissions'|capfirst %}</a></li>
+
+
+
     <li style='list-style-image: url("{% static "juliabase/icons/webcam.png" %}")'>
       <a href="{% url 'samples:list_permissions' %}"
          >{% translate "permissions"|capfirst %}</a></li>
@@ -163,6 +166,12 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
     <li style='list-style-image: url("{% static "juliabase/icons/feed.png" %}")'>
       <a href="{% url 'samples:show_feed' username=user.username user_hash=user_hash %}"
          >{% translate 'newsfeed'|capfirst %}</a></li>
+    
+    <li style='list-style-image: url("{% static "juliabase/icons/shape_square_edit.png" %}")'>
+      <a href="{% url 'samples:clean_my_samples' %}"
+         >{% translate 'clean up "My Samples"'|capfirst %}</a></li>
+    
+
     {% block miscellaneous_extras %}
       <li style='list-style-image: url("{% static "juliabase/icons/table.png" %}")'>
         <a href="{% url 'samples:show_status' %}">{% translate 'status messages'|capfirst %}</a></li>
