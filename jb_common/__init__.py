@@ -31,6 +31,4 @@ The error codes for a JSON client are the following:
 """
 
 
-default_app_config = "jb_common.apps.JBCommonConfig"
-
 __version__ = "1.0"
