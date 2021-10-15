@@ -1370,7 +1370,7 @@ class Result(Process):
                 return _("result #{number}").format(number=self.pk)
 
     def get_absolute_url(self):
-        return django.urls.reverse("samples:show_result", args=(self.pk,))
+        return django.urls.reverse("samples:show_result", args=(self.pk,)) if self.pk is not None else None
 
     def get_image_locations(self):
         """Get the location of the image in the local filesystem as well
@@ -1424,7 +1424,10 @@ class Result(Process):
         if self.quantities_and_values:
             if "quantities" not in context or "value_lists" not in context:
                 context["quantities"], context["value_lists"] = self.quantities_and_values
-            context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
+            if self.pk is not None:
+                context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
+            else:
+                context["export_url"] = None
         if "thumbnail_url" not in context or "image_url" not in context:
             if self.image_type != "none":
                 image_locations = self.get_image_locations()
@@ -1432,7 +1435,7 @@ class Result(Process):
                                 "image_url": image_locations["image_url"]})
             else:
                 context["thumbnail_url"] = context["image_url"] = None
-        if samples.permissions.has_permission_to_edit_result_process(user, self):
+        if samples.permissions.has_permission_to_edit_result_process(user, self) and self.pk is not None:
             context["edit_url"] = django.urls.reverse("samples:edit_result", kwargs={"process_id": self.pk})
         else:
             context["edit_url"] = None
