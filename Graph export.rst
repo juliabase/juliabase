@@ -19,7 +19,7 @@ Then, initialise the SQLite database with::
 
 Fill it with initial data::
 
-  ./manage.py loaddata test_main
+  ./manage.py loaddata test_main_1
 
 Run the local web server::
 

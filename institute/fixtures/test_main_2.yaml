@@ -1,0 +1,791 @@
+- fields: {}
+  model: institute.sampledetails
+  pk: 7
+- fields: {}
+  model: institute.sampledetails
+  pk: 8
+- fields: {}
+  model: institute.sampledetails
+  pk: 9
+- fields: {}
+  model: institute.sampledetails
+  pk: 10
+- fields: {}
+  model: institute.sampledetails
+  pk: 11
+- fields: {}
+  model: institute.sampledetails
+  pk: 12
+- fields: {}
+  model: institute.sampledetails
+  pk: 1
+- fields: {}
+  model: institute.sampledetails
+  pk: 2
+- fields: {}
+  model: institute.sampledetails
+  pk: 3
+- fields: {}
+  model: institute.sampledetails
+  pk: 4
+- fields: {}
+  model: institute.sampledetails
+  pk: 5
+- fields: {}
+  model: institute.sampledetails
+  pk: 6
+- fields: {additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
+    color: red, comments: '', doping: p, index: 2, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '50.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 1
+- fields: {additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
+    color: orange, comments: '', doping: i, index: 3, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '120.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 2
+- fields: {additional_process_data: '', always_collapsed: false, classification: 'a-Si:H',
+    color: green, comments: '', doping: n, index: 4, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '50.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 3
+- fields: {additional_process_data: '', always_collapsed: false, classification: glass,
+    color: lightblue, comments: '', doping: null, index: 1, process: null, sample_details: 1,
+    structured: false, textured: false, thickness: '1100000.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 4
+- fields: {additional_process_data: '', always_collapsed: false, classification: silver,
+    color: silver, comments: '', doping: null, index: 5, process: null, sample_details: 1,
+    structured: true, textured: false, thickness: '800.0', thickness_reliable: true,
+    verified: true}
+  model: institute.informallayer
+  pk: 5
+- fields: {app_label: institute, name: INM}
+  model: jb_common.department
+  pk: 1
+- fields:
+    date_joined: "2015-01-21T11:15:00Z"
+    email: ''
+    first_name: Julia
+    groups: []
+    is_active: true
+    is_staff: true
+    is_superuser: true
+    last_login: "2015-01-21T11:15:23Z"
+    last_name: ''
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
+    user_permissions: []
+    username: juliabase
+  model: auth.user
+  pk: 1
+- fields:
+    date_joined: "2015-01-21T11:15:01Z"
+    email: ''
+    first_name: ''
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: "2015-01-21T11:15:01Z"
+    last_name: Nobody
+    password: '!'
+    user_permissions: []
+    username: nobody
+  model: auth.user
+  pk: 2
+- fields:
+    date_joined: "2015-01-21T11:15:01Z"
+    email: ''
+    first_name: Nick
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: "2015-01-21T11:15:01Z"
+    last_name: Burkhardt
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
+    user_permissions:
+    - [add_pdsmeasurement, institute, pdsmeasurement]
+    - [edit_permissions_for_pdsmeasurement, institute, pdsmeasurement]
+    - [view_every_pdsmeasurement, institute, pdsmeasurement]
+    username: n.burkhardt
+  model: auth.user
+  pk: 3
+- fields:
+    date_joined: "2015-01-21T11:15:01Z"
+    email: ''
+    first_name: Hank
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: "2015-01-21T11:15:01Z"
+    last_name: Griffin
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
+    user_permissions:
+    - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    - [edit_permissions_for_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    - [view_every_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    username: h.griffin
+  model: auth.user
+  pk: 4
+- fields:
+    date_joined: "2015-01-21T11:15:01Z"
+    email: ''
+    first_name: Juliette
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: "2015-01-21T11:15:01Z"
+    last_name: Silverton
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
+    user_permissions:
+    - [add_solarsimulatormeasurement, institute, solarsimulatormeasurement]
+    username: j.silverton
+  model: auth.user
+  pk: 5
+- fields:
+    date_joined: "2015-01-21T11:15:01Z"
+    email: ''
+    first_name: Eddie
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: "2015-01-21T11:15:01Z"
+    last_name: Monroe
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
+    user_permissions:
+    - [add_clustertooldeposition, institute, clustertooldeposition]
+    - [change_clustertooldeposition, institute, clustertooldeposition]
+    - [edit_permissions_for_clustertooldeposition, institute, clustertooldeposition]
+    - [view_every_clustertooldeposition, institute, clustertooldeposition]
+    username: e.monroe
+  model: auth.user
+  pk: 6
+- fields:
+    date_joined: "2015-01-21T11:15:01Z"
+    email: ''
+    first_name: Rosalee
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: "2015-01-21T11:15:01Z"
+    last_name: Calvert
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
+    user_permissions:
+    - [add_fivechamberdeposition, institute, fivechamberdeposition]
+    - [change_fivechamberdeposition, institute, fivechamberdeposition]
+    - [edit_permissions_for_fivechamberdeposition, institute, fivechamberdeposition]
+    - [view_every_fivechamberdeposition, institute, fivechamberdeposition]
+    username: r.calvert
+  model: auth.user
+  pk: 7
+- fields:
+    date_joined: "2015-01-21T11:15:01Z"
+    email: ''
+    first_name: Jean
+    groups: []
+    is_active: true
+    is_staff: false
+    is_superuser: false
+    last_login: "2015-01-21T11:15:01Z"
+    last_name: Renard
+    password: pbkdf2_sha256$120000$qiTx8zpW6zYI$/Qm/jAB+7xhUG1lP4T2PlEhnxmhRHW7qiYtsCzNNoDg=
+    user_permissions:
+    - [add_topic, jb_common, topic]
+    - [change_topic, jb_common, topic]
+    - [add_externaloperator, samples, externaloperator]
+    - [view_every_externaloperator, samples, externaloperator]
+    - [adopt_samples, samples, sample]
+    - [view_every_sample, samples, sample]
+    - [edit_permissions_for_all_physical_processes, samples, userdetails]
+    username: s.renard
+  model: auth.user
+  pk: 8
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 13
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 1
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 15
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 3
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 17
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 5
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 19
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 7
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 21
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 9
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 11
+- fields: {material: corning}
+  model: institute.substrate
+  pk: 23
+- fields:
+    actual_object_id: 1
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:02Z"
+    operator: [r.calvert]
+    timestamp: "2014-10-01T10:29:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 1
+- fields:
+    actual_object_id: 3
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:05Z"
+    operator: [r.calvert]
+    timestamp: "2014-10-02T11:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 3
+- fields:
+    actual_object_id: 5
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:05Z"
+    operator: [r.calvert]
+    timestamp: "2014-10-02T12:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 5
+- fields:
+    actual_object_id: 7
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:06Z"
+    operator: [r.calvert]
+    timestamp: "2014-10-02T13:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 7
+- fields:
+    actual_object_id: 9
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:07Z"
+    operator: [r.calvert]
+    timestamp: "2014-10-02T14:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 9
+- fields:
+    actual_object_id: 11
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:08Z"
+    operator: [r.calvert]
+    timestamp: "2014-10-02T15:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 11
+- fields:
+    actual_object_id: 13
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:10Z"
+    operator: [e.monroe]
+    timestamp: "2014-10-01T10:29:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 13
+- fields:
+    actual_object_id: 15
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:13Z"
+    operator: [e.monroe]
+    timestamp: "2014-10-02T11:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 15
+- fields:
+    actual_object_id: 17
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:14Z"
+    operator: [e.monroe]
+    timestamp: "2014-10-02T12:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 17
+- fields:
+    actual_object_id: 19
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:15Z"
+    operator: [e.monroe]
+    timestamp: "2014-10-02T13:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 19
+- fields:
+    actual_object_id: 21
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:16Z"
+    operator: [e.monroe]
+    timestamp: "2014-10-02T14:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 21
+- fields:
+    actual_object_id: 23
+    comments: ''
+    content_type: [institute, substrate]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:17Z"
+    operator: [e.monroe]
+    timestamp: "2014-10-02T15:09:00Z"
+    timestamp_inaccuracy: 3
+  model: samples.process
+  pk: 23
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: "2015-01-21T11:15:04Z"
+    name: 14S-001
+    processes: [1]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 1
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: "2015-01-21T11:15:05Z"
+    name: 14S-002
+    processes: [3]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 2
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: "2015-01-21T11:15:06Z"
+    name: 14S-003
+    processes: [5]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 3
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: "2015-01-21T11:15:07Z"
+    name: 14S-004
+    processes: [7]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 4
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: "2015-01-21T11:15:08Z"
+    name: 14S-005
+    processes: [9]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 5
+- fields:
+    current_location: Rosalee's office
+    currently_responsible_person: [r.calvert]
+    last_modified: "2015-01-21T11:15:09Z"
+    name: 14S-006
+    processes: [11]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 3
+    watchers:
+    - [r.calvert]
+    - [juliabase]
+  model: samples.sample
+  pk: 6
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: "2015-01-21T11:15:20Z"
+    name: 14-JS-1
+    processes: [13]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 7
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: "2015-01-21T11:15:21Z"
+    name: 14-JS-2
+    processes: [15]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 8
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: "2015-01-21T11:15:21Z"
+    name: 14-JS-3
+    processes: [17]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 9
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: "2015-01-21T11:15:22Z"
+    name: 14-JS-4
+    processes: [19]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 10
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: "2015-01-21T11:15:22Z"
+    name: 14-JS-5
+    processes: [21]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 11
+- fields:
+    current_location: Juliette's office
+    currently_responsible_person: [j.silverton]
+    last_modified: "2015-01-21T11:15:23Z"
+    name: 14-JS-6
+    processes: [23]
+    purpose: ''
+    split_origin: null
+    tags: ''
+    topic: 2
+    watchers:
+    - [j.silverton]
+    - [juliabase]
+  model: samples.sample
+  pk: 12
+- fields:
+    external_operator: null
+    user: [j.silverton]
+  model: samples.initials
+  pk: JS
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "2015-01-21T11:15:00Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: c0721478e7f85a572679622a1660fffcfe49d6e0
+    my_steps: []
+    my_samples_timestamp: "2015-01-21T11:15:22Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: []
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 1
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "2015-01-21T11:15:01Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: 62b1374b0b51c3f252f2797f4e1bb018f46bf9f1
+    my_steps: []
+    my_samples_timestamp: "2015-01-21T11:15:01Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: []
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 2
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "2015-01-21T11:15:01Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: ''
+    my_steps: []
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 3
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "1990-01-01T00:00:00Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: ''
+    my_steps: []
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 4
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "2015-01-21T11:15:01Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: ''
+    my_steps: []
+    my_samples_timestamp: "2015-01-21T11:15:17Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 5
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "2015-01-21T11:15:01Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: ''
+    my_steps: []
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 6
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "2015-01-21T11:15:01Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: ''
+    my_steps: []
+    my_samples_timestamp: "2015-01-21T11:15:09Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 7
+- fields:
+    auto_addition_topics: []
+    default_folded_process_classes: []
+    display_settings_timestamp: "1990-01-01T00:00:00Z"
+    folded_processes: {}
+    folded_series: []
+    folded_topics: []
+    identifying_data_hash: ''
+    my_steps: []
+    my_samples_timestamp: "1990-01-01T00:00:00Z"
+    my_samples_list_timestamp: "1990-01-01T00:00:00Z"
+    only_important_news: false
+    show_users_from_departments: [1]
+    subscribed_feeds:
+    - [samples, sample]
+    - [samples, sampleseries]
+    - [jb_common, topic]
+    visible_task_lists: []
+  model: samples.userdetails
+  pk: 8
+- fields: {browser_system: windows, department: null, language: en, layout_last_modified: "2015-01-21T11:15:00Z"}
+  model: jb_common.userdetails
+  pk: 1
+- fields: {browser_system: windows, department: null, language: en, layout_last_modified: "2015-01-21T11:15:01Z"}
+  model: jb_common.userdetails
+  pk: 2
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: "1990-01-01T00:00:00Z"}
+  model: jb_common.userdetails
+  pk: 3
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: "1990-01-01T00:00:00Z"}
+  model: jb_common.userdetails
+  pk: 4
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: "1990-01-01T00:00:00Z"}
+  model: jb_common.userdetails
+  pk: 5
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: "1990-01-01T00:00:00Z"}
+  model: jb_common.userdetails
+  pk: 6
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: "1990-01-01T00:00:00Z"}
+  model: jb_common.userdetails
+  pk: 7
+- fields: {browser_system: windows, department: 1, language: en, layout_last_modified: "1990-01-01T00:00:00Z"}
+  model: jb_common.userdetails
+  pk: 8
+- fields:
+    confidential: false
+    department: 1
+    manager: [nobody]
+    members: []
+    name: Legacy
+    parent_topic: null
+  model: jb_common.topic
+  pk: 1
+- fields:
+    confidential: false
+    department: 1
+    manager: [j.silverton]
+    members:
+    - [j.silverton]
+    name: Juliette's PhD thesis
+    parent_topic: null
+  model: jb_common.topic
+  pk: 2
+- fields:
+    confidential: false
+    department: 1
+    manager: [r.calvert]
+    members:
+    - [n.burkhardt]
+    - [e.monroe]
+    - [r.calvert]
+    name: Cooperation with Paris University
+    parent_topic: null
+  model: jb_common.topic
+  pk: 3
