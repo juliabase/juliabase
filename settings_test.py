@@ -26,7 +26,8 @@ from settings import *
 
 os.environ["CRAWLERS_DATA_DIR"] = "/tmp"
 
+db_filename = os.environ.get("JULIABASE_DB_FILENAME", "juliabase-test-db")
 DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3",
-                        "NAME": "/tmp/juliabase-test-db"}
+                        "NAME": "/tmp/" + db_filename}
 
 RDF_ROOT_URL = "https://inm.example.com"

@@ -10,7 +10,8 @@ enables a local SQLite database for persistence.  This database will be written
 to the file ``juliabase``.  You activate the settings for the local shell
 session with::
 
-  export DJANGO_SETTINGS_MODULE=settings_test
+  export DJANGO_SETTINGS_MODULE=settings_test \
+         JULIABASE_DB_FILENAME=juliabase-test-db-1
 
 Then, initialise the SQLite database with::
 
