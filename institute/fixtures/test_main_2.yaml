@@ -245,6 +245,9 @@
 - fields: {material: corning}
   model: institute.substrate
   pk: 23
+- fields: {url: "http://localhost:8000/samples/14S-001", "login": "rosalee"}
+  model: samples.externaldata
+  pk: 31
 - fields:
     actual_object_id: 1
     comments: ''
@@ -390,11 +393,23 @@
   model: samples.process
   pk: 23
 - fields:
+    actual_object_id: 31
+    comments: ''
+    content_type: [samples, externaldata]
+    external_operator: null
+    finished: true
+    last_modified: "2015-01-21T11:15:23Z"
+    operator: [r.calvert]
+    timestamp: "2014-10-02T10:06:00Z"
+    timestamp_inaccuracy: 0
+  model: samples.process
+  pk: 31
+- fields:
     current_location: Rosalee's office
     currently_responsible_person: [r.calvert]
     last_modified: "2015-01-21T11:15:04Z"
     name: 14S-001
-    processes: [1]
+    processes: [1, 31]
     purpose: ''
     split_origin: null
     tags: ''
