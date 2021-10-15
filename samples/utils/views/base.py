@@ -414,7 +414,7 @@ def digest_process(process, user, local_context={}):
 
     :rtype: dict mapping str to ``object``
     """
-    process = process.actual_instance
+    process = process.actual_instance or process
     cache_key = process.get_cache_key(user.jb_user_details.get_data_hash(), local_context)
     cached_context = jb_common.utils.base.get_from_cache(cache_key) if cache_key else None
     if cached_context is None:
