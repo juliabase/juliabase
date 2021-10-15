@@ -762,6 +762,16 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
+class ExternalData(Process):
+
+    url = models.URLField("URL")
+    login = models.CharField(_("login name"), max_length=2048)
+
+    class Meta(PolymorphicModel.Meta):
+        verbose_name = _("external data")
+        verbose_name_plural = _("external data")
+
+
 class Sample(models.Model):
     """The model for samples.
     """
