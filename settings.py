@@ -37,6 +37,8 @@ if not os.path.exists(os.path.join(BASE_DIR, "jb_common")) and os.path.exists(os
 DEBUG = True
 
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
 DEFAULT_FROM_EMAIL = ""
 EMAIL_HOST = ""
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
