@@ -81,6 +81,8 @@ urlpatterns = [
  #   re_path(r"^samples/add/$", sample.add),
 
     re_path(r"^cleanmysamples/$", sample.cleanmysamples, name="clean_my_samples"),
+    re_path(r"^mysampleseries/$", sample_series.my_sample_series, name="my_sample_series"),
+
     re_path(r"^samples/(?P<parent_name>.+)/split/$", split_and_rename.split_and_rename, name="split_and_rename"),
     re_path(r"^samples/(?P<sample_name>.+)/kill/$", sample_death.new, name="kill_sample"),
     re_path(r"^samples/(?P<sample_name>.+)/add_process/$", sample.add_process, name="add_process"),

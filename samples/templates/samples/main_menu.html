@@ -170,6 +170,10 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
     <li style='list-style-image: url("{% static "juliabase/icons/shape_square_edit.png" %}")'>
       <a href="{% url 'samples:clean_my_samples' %}"
          >{% translate 'clean up "My Samples"'|capfirst %}</a></li>
+
+    <li style='list-style-image: url("{% static "juliabase/icons/shape_square_edit.png" %}")'>
+      <a href="{% url 'samples:my_sample_series' %}"
+         >{% translate 'edit my sample series'|capfirst %}</a></li>
     
 
     {% block miscellaneous_extras %}
