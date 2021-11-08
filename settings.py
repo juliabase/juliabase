@@ -22,7 +22,7 @@
 """
 
 import os, copy
-from tzlocal import get_localzone
+from tzlocal import get_localzone_name
 import django, django.utils.log
 from django.utils.translation import ugettext_lazy as _
 from jb_common.settings_defaults import *
@@ -57,7 +57,7 @@ DATABASES = {
     }
 
 USE_TZ = True
-TIME_ZONE = get_localzone().key
+TIME_ZONE = get_localzone_name()
 EMAIL_USE_LOCALTIME = True
 
 LANGUAGE_CODE = "en-us"

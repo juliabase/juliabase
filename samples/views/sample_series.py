@@ -169,6 +169,49 @@ def sample_series_etag(request, name):
 
 
 @login_required
+def my_sample_series(request):
+    """View for managing one's sample series.
+
+    :param request: the current HTTP Request object
+
+    :type request: HttpRequest
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+    """
+    if request.method == "POST":
+        if request.POST.get("remove.x"):
+            ss_name = request.POST.get("ss")
+            ss = models.SampleSeries.objects.get(name = ss_name)
+            request.user.my_samples.remove(*ss.samples.all())
+        elif request.POST.get("add.x"):
+            ss_name = request.POST.get("ss")
+            ss = models.SampleSeries.objects.get(name = ss_name)
+            request.user.my_samples.add(*ss.samples.all())
+    my_ss = request.user.sample_series.all()
+    addbools = []
+    removebools = []
+    for ss in my_ss:
+        completeness = 0
+        for sample in ss.samples.all():
+            if sample in request.user.my_samples.all():
+                completeness += 1
+        if completeness == len(ss.samples.all()):
+            addbools.append(False)
+            removebools.append(True)
+        elif completeness > 0:
+            addbools.append(True)
+            removebools.append(True)
+        else:
+            addbools.append(True)
+            removebools.append(False)
+    lines = list(zip(my_ss, addbools, removebools))
+    return render(request, "samples/my_sample_series.html", {"title": _("Edit my sample series"),
+                                                           "lines": lines})
+
+@login_required
 @unquote_view_parameters
 @condition(sample_series_etag, sample_series_timestamp)
 def show(request, name):

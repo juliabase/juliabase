@@ -1,0 +1,57 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of JuliaBase, see http://www.juliabase.org.
+Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+
+{% block frame_content %}
+
+<p>
+{% translate 'This is a tool, with which you can add and remove all the samples of a sample series to and from your "My Samples".' %}
+<br>
+{% translate 'There are 3 cases:' %}
+</p>
+<ul>
+    <li>{% translate 'There is only a red remove button: All the samples of this series are already in your "My Samples" and you can only remove them.' %}</li>
+    <li>{% translate 'There is only a green add button: Not a single sample of this series is in your "My Samples" and you can only add all of them.' %}</li>
+    <li>{% translate 'Both buttons are showing: Some but not all samples of this series are in your "My Samples" and you can either remove them or add the missing ones.' %}</li>
+</ul>
+
+{% for ss, addbool, removebool in lines %}
+<form method="post">{% csrf_token %}
+  <ul class="sample-series-list">
+    <li><a class="sample-series" href="{{ ss.get_absolute_url }}">{{ ss }}</a>
+    <input type="hidden" name="ss" value="{{ ss }}">
+    
+    {% if addbool %}
+    <input type="image" alt="add" name="add" src="/static/juliabase/icons/add.png" title="Add Samples to My Samples" width="16" height="16">
+    {% endif %}
+    
+    {% if removebool %}
+    <input type="image" alt="remove" name="remove" src="/static/juliabase/icons/delete.png" title="Remove Samples from My Samples" width="16" height="16">
+    {% endif %}
+
+    </li>
+    <p></p>
+    
+  </ul>  
+</form>
+{% endfor %}
+{% endblock %}
