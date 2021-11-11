@@ -1,0 +1,5 @@
+* Knowledge-graph-reated todos
+
+** TODO namespaces of process and sample fields must be as generic as possible
+
+Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber namespace, which is perfectly potty.
