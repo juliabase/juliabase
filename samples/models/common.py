@@ -202,8 +202,8 @@ class Process(PolymorphicModel):
         verbose_name = _("process")
         verbose_name_plural = _("processes")
 
-    @staticmethod
-    def ontology_namespace():
+    @classmethod
+    def ontology_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
@@ -811,8 +811,8 @@ class Sample(models.Model):
                        ("adopt_samples", _("Can adopt samples from his/her department")),
                        ("rename_samples", _("Can rename samples from his/her department")))
 
-    @staticmethod
-    def ontology_namespace():
+    @classmethod
+    def ontology_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
@@ -1257,8 +1257,8 @@ class Clearance(models.Model):
         verbose_name = _("clearance")
         verbose_name_plural = _("clearances")
 
-    @staticmethod
-    def ontology_namespace():
+    @classmethod
+    def ontology_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
@@ -1283,8 +1283,8 @@ class SampleClaim(models.Model):
         verbose_name = _("sample claim")
         verbose_name_plural = _("sample claims")
 
-    @staticmethod
-    def ontology_namespace():
+    @classmethod
+    def ontology_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
@@ -1804,8 +1804,8 @@ class Task(models.Model):
         verbose_name = _("task")
         verbose_name_plural = _("tasks")
 
-    @staticmethod
-    def ontology_namespace():
+    @classmethod
+    def ontology_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod

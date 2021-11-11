@@ -52,8 +52,8 @@ class ClusterToolDeposition(samples.models.Deposition):
         verbose_name_plural = _("cluster tool depositions")
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "ClusterToolDeposition")
 
-    @staticmethod
-    def ontology_namespace():
+    @classmethod
+    def ontology_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
@@ -155,8 +155,8 @@ class FiveChamberDeposition(samples.models.Deposition):
         verbose_name_plural = _("5-chamber depositions")
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "FiveChamberDeposition")
 
-    @staticmethod
-    def ontology_namespace():
+    @classmethod
+    def ontology_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
