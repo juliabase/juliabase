@@ -763,6 +763,16 @@ def get_all_searchable_physical_processes():
 
 
 class ExternalData(Process):
+    """A pseudo-process which triggers data import from an external source.
+    When displaying the sample data sheet and hitting such a process, the `url`
+    is polled for sample data that is used to enrich the local data.
+    Typically, the URL will point to the very same sample, but in another
+    electronic lab notebook, probably even in another institute.  This implies
+    that `url` is a deep, direct link.
+
+    `login` is not used currently.  It supposed to be used for authentication
+    against an external lab notebook but we have not yet agreed on a method.
+    """
 
     url = models.URLField("URL")
     login = models.CharField(_("login name"), max_length=2048)
