@@ -77,7 +77,7 @@ class Substrate(PhysicalProcess):
         editable_status = False
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def __str__(self):
@@ -107,7 +107,7 @@ class PDSMeasurement(PhysicalProcess):
         identifying_field = "number"
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
@@ -145,7 +145,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         permissions = generate_permissions({"add", "view_every", "edit_permissions"}, "SolarsimulatorMeasurement")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
@@ -255,7 +255,7 @@ class SolarsimulatorCellMeasurement(models.Model):
         ordering = ("measurement", "position")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def __str__(self):
@@ -325,7 +325,7 @@ class Structuring(PhysicalProcess):
         verbose_name_plural = _("structurings")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
 
@@ -353,7 +353,7 @@ class LayerThicknessMeasurement(PhysicalProcess):
         editable_status = False
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
 

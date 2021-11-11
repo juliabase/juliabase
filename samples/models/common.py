@@ -203,12 +203,12 @@ class Process(PolymorphicModel):
         verbose_name_plural = _("processes")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
     def rdf_uri(cls):
-        return getattr(cls.ontology_namespace(), cls.__name__)
+        return getattr(cls.uri_namespace(), cls.__name__)
 
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
@@ -812,12 +812,12 @@ class Sample(models.Model):
                        ("rename_samples", _("Can rename samples from his/her department")))
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
     def rdf_uri(cls):
-        return getattr(cls.ontology_namespace(), cls.__name__)
+        return getattr(cls.uri_namespace(), cls.__name__)
 
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
@@ -1258,12 +1258,12 @@ class Clearance(models.Model):
         verbose_name_plural = _("clearances")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
     def rdf_uri(cls):
-        return getattr(cls.ontology_namespace(), cls.__name__)
+        return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
         return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
@@ -1284,12 +1284,12 @@ class SampleClaim(models.Model):
         verbose_name_plural = _("sample claims")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
     def rdf_uri(cls):
-        return getattr(cls.ontology_namespace(), cls.__name__)
+        return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
         return _("sample claim #{number}").format(number=self.pk)
@@ -1805,12 +1805,12 @@ class Task(models.Model):
         verbose_name_plural = _("tasks")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
     def rdf_uri(cls):
-        return getattr(cls.ontology_namespace(), cls.__name__)
+        return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
         return _("task of {process_class} from {datetime}". format(

@@ -53,7 +53,7 @@ class ClusterToolDeposition(samples.models.Deposition):
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "ClusterToolDeposition")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
@@ -156,7 +156,7 @@ class FiveChamberDeposition(samples.models.Deposition):
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "FiveChamberDeposition")
 
     @classmethod
-    def ontology_namespace(cls):
+    def uri_namespace(cls):
         return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
