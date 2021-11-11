@@ -207,7 +207,7 @@ class Process(PolymorphicModel):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
-    def rdf_uri(cls):
+    def class_uri(cls):
         return getattr(cls.uri_namespace(), cls.__name__)
 
     def save(self, *args, **kwargs):
@@ -816,7 +816,7 @@ class Sample(models.Model):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
-    def rdf_uri(cls):
+    def class_uri(cls):
         return getattr(cls.uri_namespace(), cls.__name__)
 
     def save(self, *args, **kwargs):
@@ -1072,7 +1072,7 @@ class Sample(models.Model):
     def get_graph(self):
         graph = rdflib.Graph()
         sample_entity = ontology_symbols.URIRef(settings.RDF_ROOT_URL + self.get_absolute_url())
-        graph.add((sample_entity, ontology_symbols.RDF.type, Sample.rdf_uri()))
+        graph.add((sample_entity, ontology_symbols.RDF.type, Sample.class_uri()))
         graph.add((sample_entity,
                    ontology_symbols.JB_sample.currently_responsible_person,
                    rdflib.term.Literal(self.currently_responsible_person)))
@@ -1090,10 +1090,10 @@ class Sample(models.Model):
             sample_intermediate_state = sample_entity + f"#process-heading-{process.pk}"
             graph.add((sample_intermediate_state, ontology_symbols.realizes, sample_entity))
             graph.add((sample_entity, ontology_symbols.realized_in, sample_intermediate_state))
-            graph.add((process_entity, ontology_symbols.realizes, process.rdf_uri()))
-            graph.add((process.rdf_uri(), ontology_symbols.realized_in, process_entity))
+            graph.add((process_entity, ontology_symbols.realizes, process.class_uri()))
+            graph.add((process.class_uri(), ontology_symbols.realized_in, process_entity))
             graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.planned_process))
-            graph.add((process_entity, ontology_symbols.RDF.type, process.rdf_uri()))
+            graph.add((process_entity, ontology_symbols.RDF.type, process.class_uri()))
             graph.add((process_entity, ontology_symbols.has_specified_output, sample_intermediate_state))
             if latest_sample_intermediate_state:
                 graph.add((process_entity, ontology_symbols.has_specified_input, latest_sample_intermediate_state))
@@ -1104,7 +1104,7 @@ class Sample(models.Model):
                     del field_value["id"]
                     field_value = json.dumps(field_value, cls=JSONEncoder)
                 graph.add((process_entity,
-                           process.rdf_uri() + "#" + urllib.parse.quote_plus(field_name),
+                           process.class_uri() + "#" + urllib.parse.quote_plus(field_name),
                            rdflib.term.Literal(field_value)))
             latest_process = process
             latest_sample_intermediate_state = sample_intermediate_state
@@ -1262,7 +1262,7 @@ class Clearance(models.Model):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
-    def rdf_uri(cls):
+    def class_uri(cls):
         return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
@@ -1288,7 +1288,7 @@ class SampleClaim(models.Model):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
-    def rdf_uri(cls):
+    def class_uri(cls):
         return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
@@ -1809,7 +1809,7 @@ class Task(models.Model):
         return rdflib.Namespace("https://juliabase.org/jb/1.0/")
 
     @classmethod
-    def rdf_uri(cls):
+    def class_uri(cls):
         return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
