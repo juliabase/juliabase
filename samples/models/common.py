@@ -113,6 +113,34 @@ def remove_data_item(instance, data_node, field_name):
     data_node.items = [item for item in data_node.items if item.key != key]
 
 
+class GraphEntity:
+    """Mix-in class for classes which may form entities in a knowledge graph,
+    or its instances may do so.  If the latter is possible, the derived class
+    must override the `uri` method.
+    """
+
+    @classmethod
+    def uri_namespace(cls):
+        """Returns the namespace prefix for this class.  It should be called
+        only from other methods in this class, or derivatives of them.  The
+        reason why this is separated is that it may make sense to change the
+        namespace while keeping the logic that the class URI is the namespace
+        plus the class name.
+        """
+        return rdflib.Namespace("http://juliabase.org/jb/")
+
+    @classmethod
+    def class_uri(cls):
+        """Returns the URI of the class.
+        """
+        return getattr(cls.uri_namespace(), cls.__name__)
+
+    def uri(self):
+        """Returns the URI of this instance.
+        """
+        raise NotImplementedError
+
+
 class ExternalOperator(models.Model):
     """Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
@@ -148,7 +176,7 @@ class ExternalOperator(models.Model):
         return django.urls.reverse("samples:show_external_operator", args=(self.pk,))
 
 
-class Process(PolymorphicModel):
+class Process(PolymorphicModel, GraphEntity):
     """This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
@@ -201,14 +229,6 @@ class Process(PolymorphicModel):
         get_latest_by = "timestamp"
         verbose_name = _("process")
         verbose_name_plural = _("processes")
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("http://juliabase.org/jb/")
-
-    @classmethod
-    def class_uri(cls):
-        return getattr(cls.uri_namespace(), cls.__name__)
 
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
@@ -782,7 +802,7 @@ class ExternalData(Process):
         verbose_name_plural = _("external data")
 
 
-class Sample(models.Model):
+class Sample(models.Model, GraphEntity):
     """The model for samples.
     """
     name = models.CharField(_("name"), max_length=30, unique=True, db_index=True)
@@ -810,14 +830,6 @@ class Sample(models.Model):
         permissions = (("view_every_sample", _("Can view all samples from his/her department")),
                        ("adopt_samples", _("Can adopt samples from his/her department")),
                        ("rename_samples", _("Can rename samples from his/her department")))
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("http://juliabase.org/jb/")
-
-    @classmethod
-    def class_uri(cls):
-        return getattr(cls.uri_namespace(), cls.__name__)
 
     def save(self, *args, **kwargs):
         """Saves the instance and clears stalled cache items.
@@ -1235,7 +1247,7 @@ class SampleSplit(Process):
             return super().delete(*args, **kwargs)
 
 
-class Clearance(models.Model):
+class Clearance(models.Model, GraphEntity):
     """Model for clearances for specific samples to specific users.  Apart
     from unblocking the sample itself (at least, some fields), particular
     processes can be unblocked, too.
@@ -1254,19 +1266,11 @@ class Clearance(models.Model):
         verbose_name = _("clearance")
         verbose_name_plural = _("clearances")
 
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("http://juliabase.org/jb/")
-
-    @classmethod
-    def class_uri(cls):
-        return getattr(cls.uri_namespace(), cls.__name__)
-
     def __str__(self):
         return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
 
 
-class SampleClaim(models.Model):
+class SampleClaim(models.Model, GraphEntity):
         # Translators: someone who assert a claim to samples
     requester = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("requester"),
                                   related_name="claims")
@@ -1279,14 +1283,6 @@ class SampleClaim(models.Model):
     class Meta:
         verbose_name = _("sample claim")
         verbose_name_plural = _("sample claims")
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("http://juliabase.org/jb/")
-
-    @classmethod
-    def class_uri(cls):
-        return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
         return _("sample claim #{number}").format(number=self.pk)
@@ -1767,7 +1763,7 @@ class StatusMessage(models.Model):
         return _("status message #{number}").format(number=self.pk)
 
 
-class Task(models.Model):
+class Task(models.Model, GraphEntity):
     """
     """
 
@@ -1800,14 +1796,6 @@ class Task(models.Model):
     class Meta:
         verbose_name = _("task")
         verbose_name_plural = _("tasks")
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("http://juliabase.org/jb/")
-
-    @classmethod
-    def class_uri(cls):
-        return getattr(cls.uri_namespace(), cls.__name__)
 
     def __str__(self):
         return _("task of {process_class} from {datetime}". format(
