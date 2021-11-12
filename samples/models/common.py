@@ -1082,9 +1082,6 @@ class Sample(models.Model):
         latest_process = None
         latest_sample_intermediate_state = None
         for i, process in enumerate(self.processes.order_by("timestamp").iterator()):
-            # Protégé zur Visualisierung
-            # Beide Richtung einbauen, aber eventuell eigene „Anreicherungs-Routine“ implementieren
-            # Probe als solche als gemeinsamen Namen für die Zwischenzustände realisieren
             process = process.actual_instance
             process_entity = ontology_symbols.URIRef(settings.RDF_ROOT_URL + process.get_absolute_url())
             sample_intermediate_state = sample_entity + f"#process-heading-{process.pk}"
