@@ -204,7 +204,7 @@ class Process(PolymorphicModel):
 
     @classmethod
     def uri_namespace(cls):
-        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+        return rdflib.Namespace("http://juliabase.org/jb/")
 
     @classmethod
     def class_uri(cls):
@@ -813,7 +813,7 @@ class Sample(models.Model):
 
     @classmethod
     def uri_namespace(cls):
-        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+        return rdflib.Namespace("http://juliabase.org/jb/")
 
     @classmethod
     def class_uri(cls):
@@ -1259,7 +1259,7 @@ class Clearance(models.Model):
 
     @classmethod
     def uri_namespace(cls):
-        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+        return rdflib.Namespace("http://juliabase.org/jb/")
 
     @classmethod
     def class_uri(cls):
@@ -1285,7 +1285,7 @@ class SampleClaim(models.Model):
 
     @classmethod
     def uri_namespace(cls):
-        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+        return rdflib.Namespace("http://juliabase.org/jb/")
 
     @classmethod
     def class_uri(cls):
@@ -1806,7 +1806,7 @@ class Task(models.Model):
 
     @classmethod
     def uri_namespace(cls):
-        return rdflib.Namespace("https://juliabase.org/jb/1.0/")
+        return rdflib.Namespace("http://juliabase.org/jb/")
 
     @classmethod
     def class_uri(cls):
