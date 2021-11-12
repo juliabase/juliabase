@@ -3,3 +3,11 @@
 ** TODO namespaces of process and sample fields must be as generic as possible
 
 Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber namespace, which is perfectly potty.
+
+** TODO adapt export of sample graph to new internal API
+
+** TODO adapt export of sample graph to new SciMesh specification
+
+** TODO introduce a dedicated process class for external processes
+
+** TODO enrich the external process with as much original data as possible
