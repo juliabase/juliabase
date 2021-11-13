@@ -127,7 +127,8 @@ class GraphEntity:
         namespace while keeping the logic that the class URI is the namespace
         plus the class name.
         """
-        return rdflib.Namespace("http://juliabase.org/jb/")
+        assert settings.GRAPH_NAMESPACE_PREFIX
+        return rdflib.Namespace(settings.GRAPH_NAMESPACE_PREFIX)
 
     @classmethod
     def class_uri(cls):
@@ -136,9 +137,14 @@ class GraphEntity:
         return getattr(cls.uri_namespace(), cls.__name__)
 
     def uri(self):
-        """Returns the URI of this instance.
+        """Returns the URI of this instance.  It is important to check whether
+        this implementation, which uses the `pk` field as the entity is
+        suitable for any derived model.  In particular, the URI must be stable
+        forever, which may not be the case for internal numbering in a
+        PostgreSQL database.  In case of doubt, override this method and choose
+        a better field.
         """
-        raise NotImplementedError
+        return getattr(self.uri_namespace(), self.__class__.__name__ + "/" + str(self.pk))
 
 
 class ExternalOperator(models.Model):
@@ -1095,7 +1101,7 @@ class Sample(models.Model, GraphEntity):
         latest_sample_intermediate_state = None
         for i, process in enumerate(self.processes.order_by("timestamp").iterator()):
             process = process.actual_instance
-            process_entity = ontology_symbols.URIRef(settings.RDF_ROOT_URL + process.get_absolute_url())
+            process_entity = ontology_symbols.URIRef(settings.GRAPH_NAMESPACE_PREFIX + process.get_absolute_url())
             sample_intermediate_state = sample_entity + f"#process-heading-{process.pk}"
             graph.add((sample_intermediate_state, ontology_symbols.realizes, sample_entity))
             graph.add((sample_entity, ontology_symbols.realized_in, sample_intermediate_state))

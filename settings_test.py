@@ -30,4 +30,4 @@ db_filename = os.environ.get("JULIABASE_DB_FILENAME", "juliabase-test-db")
 DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3",
                         "NAME": "/tmp/" + db_filename}
 
-RDF_ROOT_URL = "https://inm.example.com"
+GRAPH_NAMESPACE_PREFIX = "https://inm.example.com"
