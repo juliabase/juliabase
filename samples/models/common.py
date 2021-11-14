@@ -1089,8 +1089,8 @@ class Sample(models.Model, GraphEntity):
 
     def get_graph(self):
         graph = rdflib.Graph()
-        sample_entity = ontology_symbols.URIRef(settings.RDF_ROOT_URL + self.get_absolute_url())
-        graph.add((sample_entity, ontology_symbols.RDF.type, Sample.class_uri()))
+        sample_entity = self.uri()
+        graph.add((sample_entity, ontology_symbols.RDF.type, self.class_uri()))
         graph.add((sample_entity,
                    ontology_symbols.JB_sample.currently_responsible_person,
                    rdflib.term.Literal(self.currently_responsible_person)))
