@@ -13,3 +13,5 @@ Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber n
 ** TODO enrich the external process with as much original data as possible
 
 ** TODO add views for ExternalData
+
+** TODO explain how to deal with processes with many samples
