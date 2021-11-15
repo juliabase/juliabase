@@ -1108,7 +1108,7 @@ class Sample(models.Model, GraphEntity):
         latest_sample_intermediate_state = None
         for i, process in enumerate(self.processes.order_by("timestamp").iterator()):
             process = process.actual_instance
-            process_entity = ontology_symbols.URIRef(settings.GRAPH_NAMESPACE_PREFIX + process.get_absolute_url())
+            process_entity = process.uri()
             sample_intermediate_state = sample_entity + f"#process-heading-{process.pk}"
             graph.add((sample_intermediate_state, ontology_symbols.realizes, sample_entity))
             graph.add((sample_entity, ontology_symbols.realized_in, sample_intermediate_state))
