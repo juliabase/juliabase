@@ -1106,7 +1106,7 @@ class Sample(models.Model, GraphEntity):
         graph.add((sample_entity, ontology_symbols.JB_sample.name, rdflib.term.Literal(self.name)))
         latest_process = None
         latest_sample_intermediate_state = None
-        for i, process in enumerate(self.processes.order_by("timestamp").iterator()):
+        for process in self.processes.order_by("timestamp"):
             process = process.actual_instance
             process_entity = process.uri()
             sample_intermediate_state = sample_entity + f"#process-heading-{process.pk}"
