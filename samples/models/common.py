@@ -1104,21 +1104,12 @@ class Sample(models.Model, GraphEntity):
         graph.add((sample_entity, ontology_symbols.JB_sample.current_location, rdflib.term.Literal(self.current_location)))
         graph.add((sample_entity, ontology_symbols.JB_sample.topic, rdflib.term.Literal(self.topic)))
         graph.add((sample_entity, ontology_symbols.JB_sample.name, rdflib.term.Literal(self.name)))
-        latest_process = None
-        latest_sample_intermediate_state = None
+        latest_process_entity = None
         for process in self.processes.order_by("timestamp"):
             process = process.actual_instance
             process_entity = process.uri()
-            sample_intermediate_state = sample_entity + f"#process-heading-{process.pk}"
-            graph.add((sample_intermediate_state, ontology_symbols.realizes, sample_entity))
-            graph.add((sample_entity, ontology_symbols.realized_in, sample_intermediate_state))
-            graph.add((process_entity, ontology_symbols.realizes, process.class_uri()))
-            graph.add((process.class_uri(), ontology_symbols.realized_in, process_entity))
-            graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.planned_process))
             graph.add((process_entity, ontology_symbols.RDF.type, process.class_uri()))
-            graph.add((process_entity, ontology_symbols.has_specified_output, sample_intermediate_state))
-            if latest_sample_intermediate_state:
-                graph.add((process_entity, ontology_symbols.has_specified_input, latest_sample_intermediate_state))
+            graph.add((process_entity, ontology_symbols.RDF.type, process.class_uri()))
             for field_name, field_value in process.get_data().items():
                 if field_name in {"samples", "id", "content_type"}:
                     continue
@@ -1128,8 +1119,10 @@ class Sample(models.Model, GraphEntity):
                 graph.add((process_entity,
                            process.class_uri() + "#" + urllib.parse.quote_plus(field_name),
                            rdflib.term.Literal(field_value)))
-            latest_process = process
-            latest_sample_intermediate_state = sample_intermediate_state
+            graph.add((process_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/parent"), latest_process_entity
+                       or ontology_symbols.RDF.nil))
+            latest_process_entity = process_entity
+        graph.add((sample_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/finalState"), latest_process_entity))
         return graph
 
     def delete(self, *args, **kwargs):
