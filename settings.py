@@ -141,11 +141,14 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
     "oai_pmh",
     "institute",
     "samples",
     "jb_common"
 ]
+
+SITE_ID = 1
 
 JAVASCRIPT_I18N_APPS += ["institute"]
 
