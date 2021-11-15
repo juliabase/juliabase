@@ -28,6 +28,7 @@ import hashlib, os.path, collections, datetime, html, urllib.parse, collections.
 import rdflib
 from samples import ontology_symbols
 import django.contrib.auth.models
+from django.contrib.sites.models import Site
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
 from django.utils.http import urlquote
 import django.utils.timezone
@@ -144,7 +145,13 @@ class GraphEntity:
         PostgreSQL database.  In case of doubt, override this method and choose
         a better field.
         """
-        return getattr(self.uri_namespace(), self.__class__.__name__ + "/" + str(self.pk))
+        try:
+            absolute_url = self.get_absolute_url()
+        except AttributeError:
+            return getattr(self.uri_namespace(), self.__class__.__name__ + "/" + str(self.pk))
+        else:
+            domain_namespace = rdflib.Namespace(f"http://{Site.objects.get_current()}")
+            return getattr(domain_namespace, absolute_url)
 
 
 class ExternalOperator(models.Model):

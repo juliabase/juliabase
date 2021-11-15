@@ -1185,3 +1185,8 @@
     parent_topic: null
   model: jb_common.topic
   pk: 3
+- model: sites.site
+  pk: 1
+  fields:
+    domain: inm.example.com
+    name: INM
