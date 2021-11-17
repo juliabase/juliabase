@@ -135,7 +135,7 @@ class GraphEntity:
     def class_uri(cls):
         """Returns the URI of the class.
         """
-        return getattr(cls.uri_namespace(), cls.__name__)
+        return cls.uri_namespace()[cls.__name__]
 
     def uri(self):
         """Returns the URI of this instance.  It is important to check whether
@@ -148,10 +148,10 @@ class GraphEntity:
         try:
             absolute_url = self.get_absolute_url()
         except AttributeError:
-            return getattr(self.uri_namespace(), self.__class__.__name__ + "/" + str(self.pk))
+            return self.uri_namespace()[self.__class__.__name__ + "/" + str(self.pk)]
         else:
             domain_namespace = rdflib.Namespace(f"http://{Site.objects.get_current()}")
-            return getattr(domain_namespace, absolute_url)
+            return domain_namespace[absolute_url]
 
 
 class ExternalOperator(models.Model):
