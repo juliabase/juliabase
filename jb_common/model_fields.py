@@ -16,9 +16,10 @@
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
+from jb_common.utils.graph_fields import GraphField
 
 
-class DecimalQuantityField(models.DecimalField):
+class DecimalQuantityField(GraphField, models.DecimalField):
     description = _("Fixed-point number in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -31,7 +32,7 @@ class DecimalQuantityField(models.DecimalField):
         return result
 
 
-class FloatQuantityField(models.FloatField):
+class FloatQuantityField(GraphField, models.FloatField):
     description = _("Floating-Point number in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -44,7 +45,7 @@ class FloatQuantityField(models.FloatField):
         return result
 
 
-class IntegerQuantityField(models.IntegerField):
+class IntegerQuantityField(GraphField, models.IntegerField):
     description = _("Integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -57,7 +58,7 @@ class IntegerQuantityField(models.IntegerField):
         return result
 
 
-class PositiveIntegerQuantityField(models.PositiveIntegerField):
+class PositiveIntegerQuantityField(GraphField, models.PositiveIntegerField):
     description = _("Positive integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -70,7 +71,7 @@ class PositiveIntegerQuantityField(models.PositiveIntegerField):
         return result
 
 
-class SmallIntegerQuantityField(models.SmallIntegerField):
+class SmallIntegerQuantityField(GraphField, models.SmallIntegerField):
     description = _("Small integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -83,7 +84,7 @@ class SmallIntegerQuantityField(models.SmallIntegerField):
         return result
 
 
-class PositiveSmallIntegerQuantityField(models.PositiveSmallIntegerField):
+class PositiveSmallIntegerQuantityField(GraphField, models.PositiveSmallIntegerField):
     description = _("Positive small integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
