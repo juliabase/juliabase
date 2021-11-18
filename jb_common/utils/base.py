@@ -886,6 +886,32 @@ def camel_case_to_underscores(name):
     return "".join(result)
 
 
+def underscores_to_camel_case(name, force_lower=False):
+    """Converts a underscore_style identifier to one using camelCase.  For
+    example, ``"my_samples"`` is converted to ``"mySamples"``, and
+    ``"PDS_measurement"`` to ``"PDSMeasurement"``.
+
+    :param str name: the identifier in underscore notation
+    :param bool force_lower: if ``True``, the result is guaranteed to start
+      with a lowercase letter
+
+    :return:
+      the camel-cased identifier
+
+    :rtype: str
+    """
+    result_components = []
+    first = True
+    for word in name.split("_"):
+        if word:
+            if first:
+                result_components.append(word.lower() if force_lower else word)
+                first = False
+            else:
+                result_components.append(word[0].upper() + word[1:])
+    return "".join(result_components)
+
+
 def camel_case_to_human_text(name):
     """Converts a CamelCase identifier to one intended to be read by humans.
     For example, ``"MySamples"`` is converted to ``"my samples"``, and

@@ -76,10 +76,6 @@ class Substrate(PhysicalProcess):
     class JBMeta:
         editable_status = False
 
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
-
     def __str__(self):
         return _("{material} substrate #{number}").format(material=self.get_material_display(), number=self.id)
 
@@ -105,10 +101,6 @@ class PDSMeasurement(PhysicalProcess):
 
     class JBMeta:
         identifying_field = "number"
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def draw_plot(self, axes, plot_id, filename, for_thumbnail):
         x_values, y_values = numpy.loadtxt(filename, comments="#", unpack=True)
@@ -143,10 +135,6 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         verbose_name = _("solarsimulator measurement")
         verbose_name_plural = _("solarsimulator measurements")
         permissions = generate_permissions({"add", "view_every", "edit_permissions"}, "SolarsimulatorMeasurement")
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
@@ -254,10 +242,6 @@ class SolarsimulatorCellMeasurement(models.Model):
         unique_together = (("measurement", "position"), ("position", "data_file"))
         ordering = ("measurement", "position")
 
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
-
     def __str__(self):
         return _("cell {position} of {solarsimulator_measurement}").format(
             position=self.position, solarsimulator_measurement=self.measurement)
@@ -324,10 +308,6 @@ class Structuring(PhysicalProcess):
         verbose_name = _("structuring")
         verbose_name_plural = _("structurings")
 
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
-
 
 class LayerThicknessMeasurement(PhysicalProcess):
     """Database model for the layer thickness measurement.
@@ -351,10 +331,6 @@ class LayerThicknessMeasurement(PhysicalProcess):
 
     class JBMeta:
         editable_status = False
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
 
 
 _ = ugettext

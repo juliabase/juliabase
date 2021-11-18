@@ -14,11 +14,82 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
+import rdflib
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
+from jb_common.utils.base import underscores_to_camel_case
 
 
-class DecimalQuantityField(models.DecimalField):
+class GraphField:
+    """Mixin class for generating RDF graphs.  The triples created for the graph
+    have the following structure:
+
+    subject
+      The URI to the model instance.  Mostly, it will be the URL to the view of the
+      instance, i.e. where you can get all the data of it.
+
+    predicate
+      The URI to the field of that model.  It does not resolve.  It is not a
+      working URL.  It has the format ``ClassURI/fieldName``.
+
+    object
+      The value literal for the field, or the URI of the graph containing the value
+      (e.g. in case of compound data structures)
+
+    Example triple::
+
+        <http://inm.example.com/substrates/34>
+        <http://inm.example.com/Substrate/wafer_type>
+        "Si"
+    """
+
+    def uri(self):
+        """Returns the URI of this field, in this class.  It is supposed to be used as
+        an RDF property.
+
+        :returns:
+          The URI of this field in its class.  Thus, the result does not point
+          to a concrete model instance but to one of its fields per se.
+
+        :rtype: `rdflib.term.URIRef`
+        """
+        return self.model.uri_namespace()[self.model.__name__ + "/" +
+                                          underscores_to_camel_case(self.name, force_lower=True)]
+
+    def add_to_graph(self, graph, instance):
+        """Adds triples for the field to the given graph.
+
+        :param rdflib.Graph graph: graph to add triples to; this is modifield
+          in place
+        :param django.db.models.Model instance: model instance this field
+          belongs to
+        """
+        value = getattr(instance, self.name)
+        assert isinstance(value, (int, float, str, bool, datetime.datetime))
+        graph.add((instance.uri(), self.uri(), rdflib.term.Literal(value)))
+
+
+class CharField(GraphField, models.CharField):
+    pass
+
+class DateTimeField(GraphField, models.DateTimeField):
+    pass
+
+class EmailField(GraphField, models.EmailField):
+    pass
+
+class BooleanField(GraphField, models.BooleanField):
+    pass
+
+class JSONField(GraphField, models.JSONField):
+    pass
+
+class TextField(GraphField, models.TextField):
+    pass
+
+
+class DecimalQuantityField(GraphField, models.DecimalField):
     description = _("Fixed-point number in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -31,7 +102,7 @@ class DecimalQuantityField(models.DecimalField):
         return result
 
 
-class FloatQuantityField(models.FloatField):
+class FloatQuantityField(GraphField, models.FloatField):
     description = _("Floating-Point number in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -44,7 +115,7 @@ class FloatQuantityField(models.FloatField):
         return result
 
 
-class IntegerQuantityField(models.IntegerField):
+class IntegerQuantityField(GraphField, models.IntegerField):
     description = _("Integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -57,7 +128,7 @@ class IntegerQuantityField(models.IntegerField):
         return result
 
 
-class PositiveIntegerQuantityField(models.PositiveIntegerField):
+class PositiveIntegerQuantityField(GraphField, models.PositiveIntegerField):
     description = _("Positive integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -70,7 +141,7 @@ class PositiveIntegerQuantityField(models.PositiveIntegerField):
         return result
 
 
-class SmallIntegerQuantityField(models.SmallIntegerField):
+class SmallIntegerQuantityField(GraphField, models.SmallIntegerField):
     description = _("Small integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
@@ -83,7 +154,7 @@ class SmallIntegerQuantityField(models.SmallIntegerField):
         return result
 
 
-class PositiveSmallIntegerQuantityField(models.PositiveSmallIntegerField):
+class PositiveSmallIntegerQuantityField(GraphField, models.PositiveSmallIntegerField):
     description = _("Positive small integer in the unit of %(unit)s")
 
     def __init__(self, *args, **kwargs):
