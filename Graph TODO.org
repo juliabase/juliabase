@@ -1,12 +1,12 @@
 * Knowledge-graph-reated todos
 
-** TODO namespaces of process and sample fields must be as generic as possible
+** TODO Find a way to get the sample ID in the process URI
 
-Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber namespace, which is perfectly potty.
+This is necessary to clone the process for each sample it has worked on.
 
-** TODO adapt export of sample graph to new internal API
+** TODO Create a clean connection between deposition and layer
 
-** TODO adapt export of sample graph to new SciMesh specification
+And, for that matter, for sunsimulator measurement and submeasurement.
 
 ** TODO introduce a dedicated process class for external processes
 
@@ -14,4 +14,10 @@ Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber n
 
 ** TODO add views for ExternalData
 
-** TODO explain how to deal with processes with many samples
+** DONE namespaces of process and sample fields must be as generic as possible
+
+Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber namespace, which is perfectly potty.
+
+** DONE adapt export of sample graph to new internal API
+
+** DONE adapt export of sample graph to new SciMesh specification
