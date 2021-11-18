@@ -76,3 +76,15 @@ class CharField(GraphField, models.CharField):
 
 class DateTimeField(GraphField, models.DateTimeField):
     pass
+
+class EmailField(GraphField, models.EmailField):
+    pass
+
+class BooleanField(GraphField, models.BooleanField):
+    pass
+
+class JSONField(GraphField, models.JSONField):
+    pass
+
+class TextField(GraphField, models.TextField):
+    pass
