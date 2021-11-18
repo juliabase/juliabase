@@ -40,6 +40,7 @@ import django.urls
 from django.conf import settings
 from django.db import models
 from django.core.cache import cache
+from jb_common import model_fields
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
     JSONEncoder
 from jb_common.models import Topic, PolymorphicModel, Department
@@ -228,7 +229,7 @@ class Process(PolymorphicModel, GraphEntity):
         YEAR = 5, _("accurate to the year")
         NOT_EVEN_YEAR = 6, _("not even accurate to the year")
 
-    timestamp = models.DateTimeField(_("timestamp"))
+    timestamp = model_fields.DateTimeField(_("timestamp"))
     timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=TimestampInaccuracy.choices,
                                                             default=TimestampInaccuracy.TOTAL)
     operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("operator"),

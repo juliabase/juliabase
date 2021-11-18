@@ -24,8 +24,9 @@ well as models for layers.
 
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db import models
-from jb_common import search
+from jb_common import search, model_fields
 from samples.models import PhysicalProcess, fields_to_data_items, remove_data_item
+from samples.models.common import GraphEntity
 from samples.data_tree import DataNode, DataItem
 
 
@@ -53,7 +54,7 @@ class Deposition(PhysicalProcess):
     words, ``instance.layers.all()`` must work if ``instance`` is an instance
     of your deposition class.
     """
-    number = models.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
+    number = model_fields.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
     split_done = models.BooleanField(_("split after deposition done"), default=False)
 
     class Meta(PhysicalProcess.Meta):
@@ -123,6 +124,11 @@ class Deposition(PhysicalProcess):
             data["layer {}".format(layer.number)] = layer_data
         return data
 
+    def add_to_graph(self, graph):
+        super().add_to_graph(graph)
+        for layer in self._get_layers():
+            layer.add_to_graph(graph)
+
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
         data_node = super().get_data_for_table_export()
@@ -149,7 +155,7 @@ class Deposition(PhysicalProcess):
         return model_field
 
 
-class Layer(models.Model):
+class Layer(GraphEntity, models.Model):
     """This is an abstract base model for deposition layers.  Now, this is the
     first *real* abstract model here.  It is abstract because it can never
     occur in a model relationship.  It just ensures that every layer has a

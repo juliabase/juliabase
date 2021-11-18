@@ -67,7 +67,7 @@ class Substrate(PhysicalProcess):
     Note that it doesn't define permissions because everyone can create
     substrates.
     """
-    material = models.CharField(_("substrate material"), max_length=30, choices=substrate_materials)
+    material = model_fields.CharField(_("substrate material"), max_length=30, choices=substrate_materials)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("substrate")

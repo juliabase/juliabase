@@ -45,7 +45,7 @@ class ClusterToolHotWireAndPECVDGases(models.Model):
 class ClusterToolDeposition(samples.models.Deposition):
     """cluster tool depositions..
     """
-    carrier = models.CharField(_("carrier"), max_length=10, blank=True)
+    carrier = model_fields.CharField(_("carrier"), max_length=10, blank=True)
 
     class Meta(samples.models.PhysicalProcess.Meta):
         verbose_name = _("cluster tool deposition")
