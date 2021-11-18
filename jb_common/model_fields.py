@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
+import datetime, decimal
 import rdflib
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -66,7 +66,7 @@ class GraphField:
           belongs to
         """
         value = getattr(instance, self.name)
-        assert isinstance(value, (int, float, str, bool, datetime.datetime))
+        assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal))
         graph.add((instance.uri(), self.uri(), rdflib.term.Literal(value)))
 
 
