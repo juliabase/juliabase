@@ -42,6 +42,7 @@ from django.db import models
 from django.core.cache import cache
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
     JSONEncoder
+from jb_common.utils import graph_fields
 from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
@@ -152,6 +153,16 @@ class GraphEntity:
         else:
             domain_namespace = rdflib.Namespace(f"http://{Site.objects.get_current()}")
             return getattr(domain_namespace, absolute_url)
+
+    def add_to_graph(self, graph):
+        """Adds triples for the instance to the given graph.
+
+        :param rdflib.Graph graph: graph to add triples to; this is modifield
+          in place
+        """
+        for field in self._meta.get_fields():
+            if hasattr(field, "add_to_graph"):
+                field.add_to_graph(graph, self)
 
 
 class ExternalOperator(models.Model):
@@ -1110,15 +1121,7 @@ class Sample(models.Model, GraphEntity):
             process_entity = process.uri()
             graph.add((process_entity, ontology_symbols.RDF.type, process.class_uri()))
             graph.add((process_entity, ontology_symbols.RDF.type, process.class_uri()))
-            for field_name, field_value in process.get_data().items():
-                if field_name in {"samples", "id", "content_type"}:
-                    continue
-                if isinstance(field_value, collections.abc.Mapping):
-                    del field_value["id"]
-                    field_value = json.dumps(field_value, cls=JSONEncoder)
-                graph.add((process_entity,
-                           process.class_uri() + "#" + urllib.parse.quote_plus(field_name),
-                           rdflib.term.Literal(field_value)))
+            process.add_to_graph(graph)
             graph.add((process_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/parent"), latest_process_entity
                        or ontology_symbols.RDF.nil))
             latest_process_entity = process_entity
