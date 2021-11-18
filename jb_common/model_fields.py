@@ -66,7 +66,7 @@ class GraphField:
           belongs to
         """
         value = getattr(instance, self.name)
-        assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal))
+        assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal)), type(value)
         graph.add((instance.uri(), self.uri(), rdflib.term.Literal(value)))
 
 
