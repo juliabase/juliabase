@@ -42,7 +42,6 @@ from django.db import models
 from django.core.cache import cache
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
     JSONEncoder
-from jb_common.utils import graph_fields
 from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
