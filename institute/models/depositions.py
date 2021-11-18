@@ -52,10 +52,6 @@ class ClusterToolDeposition(samples.models.Deposition):
         verbose_name_plural = _("cluster tool depositions")
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "ClusterToolDeposition")
 
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
-
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
@@ -154,10 +150,6 @@ class FiveChamberDeposition(samples.models.Deposition):
         verbose_name = _("5-chamber deposition")
         verbose_name_plural = _("5-chamber depositions")
         permissions = generate_permissions({"add", "change", "view_every", "edit_permissions"}, "FiveChamberDeposition")
-
-    @classmethod
-    def uri_namespace(cls):
-        return rdflib.Namespace("https://inm.example.com/1.0/")
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
