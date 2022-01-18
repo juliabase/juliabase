@@ -465,6 +465,8 @@ class Process(PolymorphicModel, GraphEntity):
         return data
 
     def add_to_graph(self, graph):
+        graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
+        graph.add((self.uri(), ontology_symbols.RDFS.label, rdflib.term.Literal(self)))
         process_entity = self.uri()
         graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
         graph.add((process_entity, ontology_symbols.JB_process.comments, rdflib.term.Literal(self.comments)))
