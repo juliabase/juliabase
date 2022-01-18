@@ -1112,7 +1112,7 @@ class Sample(models.Model, GraphEntity):
         graph.add((sample_entity, ontology_symbols.RDF.type, self.class_uri()))
         graph.add((sample_entity,
                    ontology_symbols.JB_sample.currentlyResponsiblePerson,
-                   rdflib.term.Literal(self.currently_responsible_person)))
+                   self.currently_responsible_person.samples_user_details.uri()))
         graph.add((sample_entity, ontology_symbols.JB_sample.currentLocation, rdflib.term.Literal(self.current_location)))
         graph.add((sample_entity, ontology_symbols.JB_sample.topic, rdflib.term.Literal(self.topic)))
         graph.add((sample_entity, ontology_symbols.JB_sample.name, rdflib.term.Literal(self.name)))
@@ -1650,7 +1650,7 @@ class Initials(models.Model):
         return self.initials
 
 
-class UserDetails(models.Model):
+class UserDetails(models.Model, GraphEntity):
     """Model for further details about a user, beyond
     django.contrib.auth.models.User.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
@@ -1735,6 +1735,8 @@ class UserDetails(models.Model):
         self.display_settings_timestamp = django.utils.timezone.now()
         self.save()
 
+    def uri(self):
+        return self.uri_namespace()[self.user.__class__.__name__ + "/" + str(self.pk)]
 
 class StatusMessage(models.Model):
     """This class is for the current status of the processes.  The class
