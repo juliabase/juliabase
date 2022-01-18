@@ -464,6 +464,16 @@ class Process(PolymorphicModel, GraphEntity):
             data["sample_positions"] = data["sample_positions"]
         return data
 
+    def add_to_graph(self, graph):
+        process_entity = self.uri()
+        graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+        graph.add((process_entity, ontology_symbols.JB_process.comments, rdflib.term.Literal(self.comments)))
+        graph.add((process_entity, ontology_symbols.JB_process.finished, rdflib.term.Literal(self.finished)))
+        graph.add((process_entity, ontology_symbols.JB_process.last_modified, rdflib.term.Literal(self.last_modified)))
+        graph.add((process_entity, ontology_symbols.JB_process.timestamp, rdflib.term.Literal(self.timestamp)))
+        graph.add((process_entity, ontology_symbols.JB_process.timestamp_inaccuracy,
+                   rdflib.term.Literal(self.timestamp_inaccuracy)))
+
     def get_data_for_table_export(self):
         """Extract the data of this process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the table
