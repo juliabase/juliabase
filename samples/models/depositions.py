@@ -155,7 +155,7 @@ class Deposition(PhysicalProcess):
         return model_field
 
 
-class Layer(GraphEntity, models.Model):
+class Layer(models.Model, GraphEntity):
     """This is an abstract base model for deposition layers.  Now, this is the
     first *real* abstract model here.  It is abstract because it can never
     occur in a model relationship.  It just ensures that every layer has a
