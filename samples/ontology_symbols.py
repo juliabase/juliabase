@@ -26,6 +26,12 @@ JB = Namespace("http://juliabase.org/jb#")
 JB_sample = Namespace("http://juliabase.org/jb/Sample#")
 schema_org = Namespace("https://schema.org/")
 
+def bind_namespaces(graph):
+    graph.namespace_manager.bind("jb", JB)
+    graph.namespace_manager.bind("jb-s", JB_sample)
+    graph.namespace_manager.bind("s.o", schema_org)
+    graph.namespace_manager.bind("sm", scimesh)
+
 planned_process = OBI.OBI_0000011
 has_specified_input = OBI.OBI_0000293
 has_specified_output = OBI.OBI_0000299

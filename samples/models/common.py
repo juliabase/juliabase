@@ -1108,6 +1108,7 @@ class Sample(models.Model, GraphEntity):
 
     def get_graph(self):
         graph = rdflib.Graph()
+        ontology_symbols.bind_namespaces(graph)
         sample_entity = self.uri()
         graph.add((sample_entity, ontology_symbols.RDF.type, self.class_uri()))
         graph.add((sample_entity,
