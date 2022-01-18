@@ -416,9 +416,9 @@ class SamplesAndProcesses:
                     for title, timestamp in external_data.query("""
                         SELECT ?title ?timestamp
                         {
-                         ?a <http://purl.obolibrary.org/obo/BFO_0000055> ?title .
-                         ?a <https://inm.example.com/1.0/FiveChamberDeposition#timestamp> ?timestamp .
-                         ?a a <http://purl.obolibrary.org/obo/OBI_0000011>
+                         ?a a <http://scimesh.org/SciMesh/Process> .
+                         ?a rdfs:label ?title .
+                         ?a <http://juliabase.org/jb/Process#timestamp> ?timestamp
                         }
                     """):
                         print(timestamp, timestamp.toPython())
