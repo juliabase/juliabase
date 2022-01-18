@@ -88,6 +88,15 @@ class JSONField(GraphField, models.JSONField):
 class TextField(GraphField, models.TextField):
     pass
 
+class URLField(GraphField, models.URLField):
+    pass
+
+class PositiveIntegerField(GraphField, models.PositiveIntegerField):
+    pass
+
+class PositiveSmallIntegerField(GraphField, models.PositiveSmallIntegerField):
+    pass
+
 
 class DecimalQuantityField(GraphField, models.DecimalField):
     description = _("Fixed-point number in the unit of %(unit)s")
