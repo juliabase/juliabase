@@ -1111,9 +1111,9 @@ class Sample(models.Model, GraphEntity):
         sample_entity = self.uri()
         graph.add((sample_entity, ontology_symbols.RDF.type, self.class_uri()))
         graph.add((sample_entity,
-                   ontology_symbols.JB_sample.currently_responsible_person,
+                   ontology_symbols.JB_sample.currentlyResponsiblePerson,
                    rdflib.term.Literal(self.currently_responsible_person)))
-        graph.add((sample_entity, ontology_symbols.JB_sample.current_location, rdflib.term.Literal(self.current_location)))
+        graph.add((sample_entity, ontology_symbols.JB_sample.currentLocation, rdflib.term.Literal(self.current_location)))
         graph.add((sample_entity, ontology_symbols.JB_sample.topic, rdflib.term.Literal(self.topic)))
         graph.add((sample_entity, ontology_symbols.JB_sample.name, rdflib.term.Literal(self.name)))
         latest_process_entity = None
