@@ -25,6 +25,7 @@ well as models for layers.
 from django.utils.translation import ugettext_lazy as _, ugettext
 from django.db import models
 from jb_common import search, model_fields
+from samples import ontology_symbols
 from samples.models import PhysicalProcess, fields_to_data_items, remove_data_item
 from samples.models.common import GraphEntity
 from samples.data_tree import DataNode, DataItem
@@ -202,6 +203,10 @@ class Layer(models.Model, GraphEntity):
         :rtype: `dict`
         """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
+
+    def add_to_graph(self, graph):
+        super().add_to_graph(graph)
+        graph.add((self.uri(), ontology_symbols.JB.isSubprocess, self.deposition.uri()))
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
