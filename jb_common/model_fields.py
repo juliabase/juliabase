@@ -19,6 +19,7 @@ import rdflib
 from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
 from jb_common.utils.base import underscores_to_camel_case
+from samples import ontology_symbols
 
 
 class GraphField:
@@ -98,82 +99,122 @@ class PositiveSmallIntegerField(GraphField, models.PositiveSmallIntegerField):
     pass
 
 
-class DecimalQuantityField(GraphField, models.DecimalField):
+UN_CEFACT_common_code = {
+    "kg/m²": "28",
+    "dB": "2N",
+    "µm": "4H",
+    "mA": "4K",
+    "N/m": "4P",
+    "cd/m²": "A24",
+    "GHz": "A86",
+    "g/mol": "A94",
+    "kA": "B22",
+    "kg • m2": "B32",
+    "kJ/(kg.K)": "B43",
+    "kΩ": "B49",
+    "lm/W": "B61",
+    "bar": "BAR",
+    "mm/s": "C16",
+    "mPa.s": "C24",
+    "ms": "C26",
+    "nm": "C45",
+    "1": "C62",
+    "Pa.s": "C65",
+    "1/K": "C91",
+    "min-1": "C94",
+    "cd": "CDL",
+    "°C": "CEL",
+    "℃": "CEL",
+    "cm³": "CMQ",
+    "cm": "CMT",
+    "T": "D33",
+    "W/K": "D52",
+    "kg/mol": "D74",
+    "d": "DAY",
+    "°": "DD",
+    "N/cm²": "E01",
+    "l/h": "E32",
+    "F": "FAR",
+    "g/m²": "GM",
+    "g": "GRM",
+    "Hz": "HTZ",
+    "h": "HUR",
+    "K": "KEL",
+    "kg": "KGM",
+    "kg/s": "KGS",
+    "kHz": "KHZ",
+    "kg/m": "KL",
+    "kg/m³": "KMQ",
+    "kV": "KVT",
+    "kW": "KWT",
+    "l/min": "L2",
+    "l": "LTR",
+    "lm": "LUM",
+    "lx": "LUX",
+    "mbar": "MBR",
+    "MHz": "MHZ",
+    "min": "MIN",
+    "mm²": "MMK",
+    "mm³": "MMQ",
+    "mm": "MMT",
+    "MPa": "MPA",
+    "m3/h": "MQH",
+    "m³/s": "MQS",
+    "m²": "MTK",
+    "m³": "MTQ",
+    "m": "MTR",
+    "m/s": "MTS",
+    "N": "NEW",
+    "N • m": "NU",
+    "N.m": "NU",
+    "Ω": "OHM",
+    "%": "P1",
+    "Pa": "PAL",
+    "s": "SEC",
+    "V": "VLT",
+    "W": "WTT",
+}
+
+
+class _QuantityGraphField(GraphField):
+
+    def __init__(self, *args, **kwargs):
+        self.unit = kwargs.pop("unit", None)
+        super().__init__(*args, **kwargs)
+
+    def formfield(self, **kwargs):
+        result = super().formfield(**kwargs)
+        result.unit = self.unit
+        return result
+
+    def add_to_graph(self, graph, instance):
+        value = getattr(instance, self.name)
+        quantitative_value = rdflib.BNode()
+        graph.add((instance.uri(), self.uri(), quantitative_value))
+        graph.add((quantitative_value, ontology_symbols.RDF.type, ontology_symbols.schema_org.QuantitativeValue))
+        assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal)), type(value)
+        graph.add((quantitative_value, ontology_symbols.schema_org.value, rdflib.term.Literal(value)))
+        graph.add((quantitative_value, ontology_symbols.schema_org.unitText, rdflib.term.Literal(self.unit)))
+        unit_code = UN_CEFACT_common_code.get(self.unit)
+        if unit_code:
+            graph.add((quantitative_value, ontology_symbols.schema_org.unitCode, rdflib.term.Literal(unit_code)))
+
+class DecimalQuantityField(_QuantityGraphField, models.DecimalField):
     description = _("Fixed-point number in the unit of %(unit)s")
 
-    def __init__(self, *args, **kwargs):
-        self.unit = kwargs.pop("unit", None)
-        super().__init__(*args, **kwargs)
-
-    def formfield(self, **kwargs):
-        result = super().formfield(**kwargs)
-        result.unit = self.unit
-        return result
-
-
-class FloatQuantityField(GraphField, models.FloatField):
+class FloatQuantityField(_QuantityGraphField, models.FloatField):
     description = _("Floating-Point number in the unit of %(unit)s")
 
-    def __init__(self, *args, **kwargs):
-        self.unit = kwargs.pop("unit", None)
-        super().__init__(*args, **kwargs)
-
-    def formfield(self, **kwargs):
-        result = super().formfield(**kwargs)
-        result.unit = self.unit
-        return result
-
-
-class IntegerQuantityField(GraphField, models.IntegerField):
+class IntegerQuantityField(_QuantityGraphField, models.IntegerField):
     description = _("Integer in the unit of %(unit)s")
 
-    def __init__(self, *args, **kwargs):
-        self.unit = kwargs.pop("unit", None)
-        super().__init__(*args, **kwargs)
-
-    def formfield(self, **kwargs):
-        result = super().formfield(**kwargs)
-        result.unit = self.unit
-        return result
-
-
-class PositiveIntegerQuantityField(GraphField, models.PositiveIntegerField):
+class PositiveIntegerQuantityField(_QuantityGraphField, models.PositiveIntegerField):
     description = _("Positive integer in the unit of %(unit)s")
 
-    def __init__(self, *args, **kwargs):
-        self.unit = kwargs.pop("unit", None)
-        super().__init__(*args, **kwargs)
-
-    def formfield(self, **kwargs):
-        result = super().formfield(**kwargs)
-        result.unit = self.unit
-        return result
-
-
-class SmallIntegerQuantityField(GraphField, models.SmallIntegerField):
+class SmallIntegerQuantityField(_QuantityGraphField, models.SmallIntegerField):
     description = _("Small integer in the unit of %(unit)s")
 
-    def __init__(self, *args, **kwargs):
-        self.unit = kwargs.pop("unit", None)
-        super().__init__(*args, **kwargs)
-
-    def formfield(self, **kwargs):
-        result = super().formfield(**kwargs)
-        result.unit = self.unit
-        return result
-
-
-class PositiveSmallIntegerQuantityField(GraphField, models.PositiveSmallIntegerField):
+class PositiveSmallIntegerQuantityField(_QuantityGraphField, models.PositiveSmallIntegerField):
     description = _("Positive small integer in the unit of %(unit)s")
-
-    def __init__(self, *args, **kwargs):
-        self.unit = kwargs.pop("unit", None)
-        super().__init__(*args, **kwargs)
-
-    def formfield(self, **kwargs):
-        result = super().formfield(**kwargs)
-        result.unit = self.unit
-        return result
-
 
 _ = ugettext
