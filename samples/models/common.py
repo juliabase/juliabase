@@ -160,6 +160,7 @@ class GraphEntity:
         :param rdflib.Graph graph: graph to add triples to; this is modifield
           in place
         """
+        graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
         for field in self._meta.get_fields():
             if hasattr(field, "add_to_graph"):
                 field.add_to_graph(graph, self)
@@ -1119,8 +1120,6 @@ class Sample(models.Model, GraphEntity):
         for process in self.processes.order_by("timestamp"):
             process = process.actual_instance
             process_entity = process.uri()
-            graph.add((process_entity, ontology_symbols.RDF.type, process.class_uri()))
-            graph.add((process_entity, ontology_symbols.RDF.type, process.class_uri()))
             process.add_to_graph(graph)
             graph.add((process_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/parent"), latest_process_entity
                        or ontology_symbols.RDF.nil))
