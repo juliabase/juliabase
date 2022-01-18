@@ -111,9 +111,9 @@ class ClusterToolHotWireLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases)
         TANTALUM = "tantalum", _("tantalum")
         TUNGSTEN = "tungsten", _("tungsten")
 
-    time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
-    comments = models.TextField(_("comments"), blank=True)
-    wire_material = models.CharField(_("wire material"), max_length=20, choices=ClusterToolWireMaterial.choices)
+    time = model_fields.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
+    comments = model_fields.TextField(_("comments"), blank=True)
+    wire_material = model_fields.CharField(_("wire material"), max_length=20, choices=ClusterToolWireMaterial.choices)
     base_pressure = model_fields.FloatQuantityField(_("base pressure"), unit="mbar", null=True, blank=True)
 
     class Meta(samples.models.Layer.Meta):
@@ -130,10 +130,10 @@ class ClusterToolPECVDLayer(ClusterToolLayer, ClusterToolHotWireAndPECVDGases):
         TWO = "#2", "#2"
         THREE = "#3", "#3"
 
-    chamber = models.CharField(_("chamber"), max_length=5, choices=ClusterToolPECVDChamber.choices)
-    time = models.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
-    comments = models.TextField(_("comments"), blank=True)
-    plasma_start_with_shutter = models.BooleanField(_("plasma start with shutter"), default=False)
+    chamber = model_fields.CharField(_("chamber"), max_length=5, choices=ClusterToolPECVDChamber.choices)
+    time = model_fields.CharField(_("deposition time"), max_length=9, help_text=_("format HH:MM:SS"), blank=True)
+    comments = model_fields.TextField(_("comments"), blank=True)
+    plasma_start_with_shutter = model_fields.BooleanField(_("plasma start with shutter"), default=False)
     deposition_power = model_fields.DecimalQuantityField(_("deposition power"), max_digits=6, decimal_places=2,
                                                          null=True, blank=True, unit="W")
 
@@ -181,8 +181,8 @@ class FiveChamberLayer(samples.models.Layer):
         N = "n", "n"
 
     deposition = models.ForeignKey(FiveChamberDeposition, models.CASCADE, related_name="layers", verbose_name=_("deposition"))
-    layer_type = models.CharField(_("layer type"), max_length=2, choices=LayerType.choices, blank=True)
-    chamber = models.CharField(_("chamber"), max_length=2, choices=Chamber.choices)
+    layer_type = model_fields.CharField(_("layer type"), max_length=2, choices=LayerType.choices, blank=True)
+    chamber = model_fields.CharField(_("chamber"), max_length=2, choices=Chamber.choices)
     sih4 = model_fields.DecimalQuantityField("SiH₄", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
     h2 = model_fields.DecimalQuantityField("H₂", max_digits=7, decimal_places=3, unit="sccm", null=True, blank=True)
     temperature_1 = model_fields.DecimalQuantityField(_("temperature 1"), max_digits=7, decimal_places=3, unit="℃",

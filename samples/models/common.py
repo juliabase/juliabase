@@ -230,15 +230,15 @@ class Process(PolymorphicModel, GraphEntity):
         NOT_EVEN_YEAR = 6, _("not even accurate to the year")
 
     timestamp = model_fields.DateTimeField(_("timestamp"))
-    timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=TimestampInaccuracy.choices,
-                                                            default=TimestampInaccuracy.TOTAL)
+    timestamp_inaccuracy = model_fields.PositiveSmallIntegerField(
+        _("timestamp inaccuracy"), choices=TimestampInaccuracy.choices, default=TimestampInaccuracy.TOTAL)
     operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("operator"),
                                  related_name="processes")
     external_operator = models.ForeignKey(ExternalOperator, models.CASCADE, verbose_name=_("external operator"),
                                           null=True, blank=True, related_name="processes")
-    comments = models.TextField(_("comments"), blank=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
-    finished = models.BooleanField(_("finished"), default=True)
+    comments = model_fields.TextField(_("comments"), blank=True)
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
+    finished = model_fields.BooleanField(_("finished"), default=True)
     """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
     ``True``.  However, depositions that are a work-in-progress, possibly by
@@ -806,7 +806,7 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
-class ExternalData(Process):
+class ExternalData(Process, GraphEntity):
     """A pseudo-process which triggers data import from an external source.
     When displaying the sample data sheet and hitting such a process, the `url`
     is polled for sample data that is used to enrich the local data.
@@ -818,7 +818,7 @@ class ExternalData(Process):
     against an external lab notebook but we have not yet agreed on a method.
     """
 
-    url = models.URLField("URL")
+    url = model_fields.URLField("URL")
     login = models.CharField(_("login name"), max_length=2048)
 
     class Meta(PolymorphicModel.Meta):
@@ -829,22 +829,22 @@ class ExternalData(Process):
 class Sample(models.Model, GraphEntity):
     """The model for samples.
     """
-    name = models.CharField(_("name"), max_length=30, unique=True, db_index=True)
+    name = model_fields.CharField(_("name"), max_length=30, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_("watchers"))
         # Translators: location of a sample
-    current_location = models.CharField(_("current location"), max_length=50)
+    current_location = model_fields.CharField(_("current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="samples",
                                                      verbose_name=_("currently responsible person"))
-    purpose = models.CharField(_("purpose"), max_length=80, blank=True)
+    purpose = model_fields.CharField(_("purpose"), max_length=80, blank=True)
         # Translators: keywords for samples
-    tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
+    tags = model_fields.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", models.CASCADE, null=True, blank=True, related_name="pieces",
                                      # Translators: ID of mother sample
                                      verbose_name=_("split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
     topic = models.ForeignKey(Topic, models.CASCADE, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _("sample")
@@ -1156,7 +1156,7 @@ class Sample(models.Model, GraphEntity):
             return super().delete(*args, **kwargs)
 
 
-class SampleAlias(models.Model):
+class SampleAlias(models.Model, GraphEntity):
     """Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
     aliases needn't be unique.  Two old names may be the same.
@@ -1166,7 +1166,7 @@ class SampleAlias(models.Model):
     name.  Only if you look for the name by the search function, you also find
     aliases of the same name.
     """
-    name = models.CharField(_("name"), max_length=255)
+    name = model_fields.CharField(_("name"), max_length=255)
     sample = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("sample"), related_name="aliases")
 
     class Meta:
@@ -1268,7 +1268,7 @@ class Clearance(models.Model, GraphEntity):
                              related_name="clearances")
     sample = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         unique_together = ("user", "sample")
@@ -1287,7 +1287,7 @@ class SampleClaim(models.Model, GraphEntity):
                                  related_name="claims_as_reviewer")
     samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_("samples"))
         # Translators: "closed" claim to samples
-    closed = models.BooleanField(_("closed"), default=False)
+    closed = model_fields.BooleanField(_("closed"), default=False)
 
     class Meta:
         verbose_name = _("sample claim")
@@ -1315,7 +1315,7 @@ class SampleDeath(Process):
         DESTROYED = "destroyed", _("completely destroyed")
 
         # Translators: Of a sample
-    reason = models.CharField(_("cause of death"), max_length=50, choices=Reason.choices)
+    reason = model_fields.CharField(_("cause of death"), max_length=50, choices=Reason.choices)
 
     class Meta(PolymorphicModel.Meta):
             # Translators: Of a sample
@@ -1340,10 +1340,10 @@ class Result(Process):
         JPEG = "jpeg", "JPEG"
 
         # Translators: Of a result
-    title = models.CharField(_("title"), max_length=50)
-    image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
+    title = model_fields.CharField(_("title"), max_length=50)
+    image_type = model_fields.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
         # Translators: Physical quantities are meant
-    quantities_and_values = models.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
+    quantities_and_values = model_fields.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
     a tuple with two items.  The first is a list of unicodes with all
     quantities (the table headings).  The second is a list of lists with
@@ -1508,24 +1508,24 @@ class Result(Process):
         return super().delete(*args, **kwargs)
 
 
-class SampleSeries(models.Model):
+class SampleSeries(models.Model, GraphEntity):
     """A sample series groups together zero or more `Sample`.  It must belong
     to a topic, and it may contain processes, however, only *result processes*.
     The ``name`` and the ``timestamp`` of a sample series can never change
     after it has been created.
     """
-    name = models.CharField(_("name"), max_length=50, primary_key=True,
+    name = model_fields.CharField(_("name"), max_length=50, primary_key=True,
                             # Translators: The “Y” stands for “year”
                             help_text=_("must be of the form “originator-YY-name”"))
-    timestamp = models.DateTimeField(_("timestamp"))
+    timestamp = model_fields.DateTimeField(_("timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE,
                                                      related_name="sample_series",
                                                      verbose_name=_("currently responsible person"))
-    description = models.TextField(_("description"))
+    description = model_fields.TextField(_("description"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_("samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_("results"))
     topic = models.ForeignKey(Topic, models.CASCADE, related_name="sample_series", verbose_name=_("topic"))
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _("sample series")
@@ -1834,7 +1834,7 @@ class Task(models.Model, GraphEntity):
         return search.SearchTreeNode(cls, related_models, search_fields)
 
 
-class ProcessWithSamplePositions(models.Model):
+class ProcessWithSamplePositions(models.Model, GraphEntity):
     """An abstract mixin class for saving the positions of the samples in an
     apparatus.
 
@@ -1846,7 +1846,7 @@ class ProcessWithSamplePositions(models.Model):
     applicable.  (For example, this can be given in the query string.)
     """
 
-    sample_positions = models.JSONField(_("sample positions"), default=empty_dict)
+    sample_positions = model_fields.JSONField(_("sample positions"), default=empty_dict)
     """In JSON format, mapping sample IDs to positions.  Positions can be numbers
     or strings.  Note that due to JSON constraints, the sample IDs are
     strings.

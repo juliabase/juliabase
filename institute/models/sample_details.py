@@ -35,7 +35,7 @@ from samples.data_tree import DataNode, DataItem
 import samples.models
 
 
-class SampleDetails(models.Model):
+class SampleDetails(models.Model, samples.models.GraphEntity):
     """Model for sample details.  It extends the ``Sample`` model as
     ``UserDetails`` extends ``User``, i.e. through a one-to-one relationship.
     Apart form this, it must contain a `get_context_for_user` method.  The
@@ -256,7 +256,7 @@ class SampleDetails(models.Model):
         return search.SearchTreeNode(cls, related_models, search_fields=search.convert_fields_to_search_fields(cls))
 
 
-class InformalLayer(models.Model):
+class InformalLayer(models.Model, samples.models.GraphEntity):
     """Model for one layer in the informal layer stack diagram.
     """
 

@@ -55,7 +55,7 @@ class Deposition(PhysicalProcess):
     of your deposition class.
     """
     number = model_fields.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
-    split_done = models.BooleanField(_("split after deposition done"), default=False)
+    split_done = model_fields.BooleanField(_("split after deposition done"), default=False)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("deposition")
@@ -175,7 +175,7 @@ class Layer(GraphEntity, models.Model):
         class Meta(Layer.Meta):
             unique_together = ("deposition", "number")
     """
-    number = models.PositiveIntegerField(_("layer number"))
+    number = model_fields.PositiveIntegerField(_("layer number"))
 
     class Meta:
         abstract = True
