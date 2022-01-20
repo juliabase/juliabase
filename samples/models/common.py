@@ -472,7 +472,7 @@ class Process(PolymorphicModel, GraphEntity):
         graph.add((process_entity, ontology_symbols.JB_process.comments, rdflib.term.Literal(self.comments)))
         graph.add((process_entity, ontology_symbols.JB_process.finished, rdflib.term.Literal(self.finished)))
         graph.add((process_entity, ontology_symbols.JB_process.last_modified, rdflib.term.Literal(self.last_modified)))
-        graph.add((process_entity, ontology_symbols.JB_process.timestamp, rdflib.term.Literal(self.timestamp)))
+        graph.add((process_entity, ontology_symbols.scimesh.timestamp, rdflib.term.Literal(self.timestamp)))
         graph.add((process_entity, ontology_symbols.JB_process.timestamp_inaccuracy,
                    rdflib.term.Literal(self.timestamp_inaccuracy)))
 
@@ -1128,7 +1128,7 @@ class Sample(models.Model, GraphEntity):
                    self.currently_responsible_person.samples_user_details.uri()))
         graph.add((sample_entity, ontology_symbols.JB_sample.currentLocation, rdflib.term.Literal(self.current_location)))
         graph.add((sample_entity, ontology_symbols.JB_sample.topic, rdflib.term.Literal(self.topic)))
-        graph.add((sample_entity, ontology_symbols.JB_sample.name, rdflib.term.Literal(self.name)))
+        graph.add((sample_entity, ontology_symbols.RDFS.label, rdflib.term.Literal(self.name)))
         latest_process_entity = None
         for process in self.processes.order_by("timestamp"):
             process = process.actual_instance
