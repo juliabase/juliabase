@@ -206,7 +206,7 @@ class Layer(models.Model, GraphEntity):
 
     def add_to_graph(self, graph):
         super().add_to_graph(graph)
-        graph.add((self.uri(), ontology_symbols.JB.isSubprocess, self.deposition.uri()))
+        graph.add((self.uri(), ontology_symbols.JB.subprocessOf, self.deposition.uri()))
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
