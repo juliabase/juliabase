@@ -418,7 +418,7 @@ class SamplesAndProcesses:
                         {
                          ?a a <http://scimesh.org/SciMesh/Process> .
                          ?a rdfs:label ?title .
-                         ?a <http://juliabase.org/jb/Process#timestamp> ?timestamp
+                         ?a <http://scimesh.org/SciMesh/timestamp> ?timestamp
                         }
                     """):
                         print(timestamp, timestamp.toPython())
