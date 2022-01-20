@@ -418,7 +418,7 @@ class SamplesAndProcesses:
                         {
                          ?a a <http://scimesh.org/SciMesh/Process> .
                          ?a rdfs:label ?title .
-                         ?a <http://scimesh.org/SciMesh/timestamp> ?timestamp
+                         ?a <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
                         }
                     """):
                         print(timestamp, timestamp.toPython())

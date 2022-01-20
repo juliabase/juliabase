@@ -472,7 +472,9 @@ class Process(PolymorphicModel, GraphEntity):
         graph.add((process_entity, ontology_symbols.JB_process.comments, rdflib.term.Literal(self.comments)))
         graph.add((process_entity, ontology_symbols.JB_process.finished, rdflib.term.Literal(self.finished)))
         graph.add((process_entity, ontology_symbols.JB_process.last_modified, rdflib.term.Literal(self.last_modified)))
-        graph.add((process_entity, ontology_symbols.scimesh.timestamp, rdflib.term.Literal(self.timestamp)))
+        instant = rdflib.BNode()
+        graph.add((process_entity, ontology_symbols.scimesh.timestamp, instant))
+        graph.add((instant, ontology_symbols.time.inXSDDateTimeStamp, rdflib.term.Literal(self.timestamp)))
         graph.add((process_entity, ontology_symbols.scimesh.operator, self.operator.samples_user_details.uri()))
         graph.add((process_entity, ontology_symbols.JB_process.timestamp_inaccuracy,
                    rdflib.term.Literal(self.timestamp_inaccuracy)))
