@@ -28,6 +28,7 @@ import django.utils.http
 import markdown as markup
 from django.utils.translation import ugettext as _, pgettext
 from django.utils.text import capfirst
+import django.urls
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.
 import jb_common.utils.base as utils
