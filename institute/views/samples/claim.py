@@ -29,7 +29,7 @@ import django.forms as forms
 from django.forms.utils import ValidationError
 from django.contrib.auth.decorators import login_required
 import django.urls
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 import django.utils.timezone
 from django.conf import settings
 from jb_common.utils.base import help_link, send_email, get_really_full_name, format_enumeration
@@ -69,7 +69,7 @@ class SamplesForm(forms.Form):
                 else:
                     invalid_names.append(name)
         if invalid_names:
-            error_message = ungettext(
+            error_message = ngettext(
                 "The name %(invalid_names)s is not valid.", "The names %(invalid_names)s are not valid.",
                 len(invalid_names))
             raise ValidationError(error_message, params={"invalid_names": format_enumeration(invalid_names)}, code="invalid")
@@ -80,7 +80,7 @@ class SamplesForm(forms.Form):
             # This opens a small security hole because people can find out that
             # confidential samples are existing.  However, such samples mostly
             # have non-oldstyle names anyway.
-            error_message = ungettext(
+            error_message = ngettext(
                 "The name %(existing_names)s is already existing.", "The names %(existing_names)s are already existing.",
                 len(existing_names))
             raise ValidationError(error_message, params={"existing_names": format_enumeration(existing_names)},
@@ -147,7 +147,7 @@ def add_oldstyle(request, username):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
+    _ = gettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _("You are not allowed to add a claim in another user's name."))
@@ -175,7 +175,7 @@ to withdraw the request.
 JuliaBase.
 """), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
                  "url": request.build_absolute_uri(django.urls.reverse("samples:show_claim", kwargs={"claim_id": claim.pk}))})
-            _ = ugettext
+            _ = gettext
             samples = []
             nobody = django.contrib.auth.models.User.objects.get(username="nobody")
             legacy = Topic.objects.get(name="Legacy")
@@ -200,4 +200,4 @@ JuliaBase.
                                                                "substrate": substrate_form, "reviewer": reviewer_form})
 
 
-_ = ugettext
+_ = gettext

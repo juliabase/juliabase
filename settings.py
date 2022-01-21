@@ -24,7 +24,7 @@
 import os, copy
 from tzlocal import get_localzone_name
 import django, django.utils.log
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from jb_common.settings_defaults import *
 from samples.settings_defaults import *
 

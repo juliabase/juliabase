@@ -32,7 +32,7 @@ from django.shortcuts import render
 import django.urls
 from django.template import loader, RequestContext
 import django.forms as forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
 from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, \
     capitalize_first_letter
@@ -220,4 +220,4 @@ def export(request, process_name, year_and_month):
                                                          "backlink": request.GET.get("next", "")})
 
 
-_ = ugettext
+_ = gettext

@@ -26,7 +26,7 @@ import django.utils.timezone
 from django.conf import settings
 from django.forms.utils import ValidationError
 from django.http import QueryDict
-from django.utils.translation import ugettext_lazy as _, ungettext_lazy, ugettext
+from django.utils.translation import gettext_lazy as _, ngettext_lazy, gettext
 from django.forms import ModelForm
 import django.forms as forms
 import django.contrib.auth.models
@@ -254,7 +254,7 @@ class ProcessForm(ModelForm):
             if dead_samples_list:
                 samples_list = format_enumeration(dead_samples_list)
                 self.add_error("timestamp", ValidationError(
-                    ungettext_lazy("The sample {samples} is already dead at this time.",
+                    ngettext_lazy("The sample {samples} is already dead at this time.",
                                    "The samples {samples} are already dead at this time.",
                                    len(dead_samples_list)), params={"samples": samples_list}, code="invalid"))
                 referentially_valid = False
@@ -916,4 +916,4 @@ class DepositionSamplesForm(GenericMultipleSamplesSelectForm):
         self.fields["sample_list"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
 
-_ = ugettext
+_ = gettext

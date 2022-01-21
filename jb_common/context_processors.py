@@ -21,7 +21,7 @@ further data to the dictionary passed to the templates.
 """
 
 from django.conf import settings
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 
 
 def default(request):
@@ -56,7 +56,7 @@ def default(request):
     if user.is_authenticated:
         result["salutation"] = user.first_name or user.username
     if request.method == "GET":
-        result["translation_flags"] = tuple((code, ugettext(language)) for code, language in settings.LANGUAGES)
+        result["translation_flags"] = tuple((code, gettext(language)) for code, language in settings.LANGUAGES)
     else:
         result["translation_flags"] = ()
     result["default_home_url"] = settings.LOGIN_REDIRECT_URL

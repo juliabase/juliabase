@@ -17,7 +17,7 @@
 import re, importlib
 from django.apps import AppConfig
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
+from django.utils.translation import gettext_lazy as _, gettext, pgettext
 from django.urls import reverse
 from jb_common.nav_menu import MenuItem
 
@@ -106,4 +106,4 @@ class SamplesConfig(AppConfig):
                 manage_menu.add(_("administration"), reverse("admin:index"))
 
 
-_ = ugettext
+_ = gettext

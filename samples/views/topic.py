@@ -24,7 +24,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import Http404
 import urllib.parse
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import django.urls
 import django.forms as forms
 from django.forms.utils import ValidationError
@@ -260,4 +260,4 @@ def edit(request, id):
                                                        "edit_topic": edit_topic_form})
 
 
-_ = ugettext
+_ = gettext

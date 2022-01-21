@@ -17,7 +17,7 @@
 """The view for merging samples together.
 """
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import capfirst
 from django import forms
 from django.conf import settings
@@ -211,4 +211,4 @@ def merge(request):
                                                           "merge_forms": merge_samples_forms})
 
 
-_ = ugettext
+_ = gettext

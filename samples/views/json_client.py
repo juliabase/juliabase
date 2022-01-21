@@ -26,7 +26,7 @@ from django.db.utils import IntegrityError
 from django.db.models import Q
 from django.conf import settings
 from django.http import Http404
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache

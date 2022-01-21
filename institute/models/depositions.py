@@ -23,7 +23,7 @@ themselves as well as models for layers.
 """
 
 from urllib.parse import quote_plus
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import django.urls
 from django.db import models
 from jb_common import models as jb_common_models, model_fields
@@ -211,4 +211,4 @@ class FiveChamberLayer(samples.models.Layer):
         return data_node
 
 
-_ = ugettext
+_ = gettext

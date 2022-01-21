@@ -26,7 +26,7 @@ from django.db.models import Max
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 import django.utils.timezone
 from django.views.generic import TemplateView
 from django.views.generic.detail import SingleObjectMixin
@@ -1167,4 +1167,4 @@ class DepositionMultipleTypeView(MultipleStepTypesMixin, DepositionWithoutLayers
     error_message_no_steps = _("No layers given.")
 
 
-_ = ugettext
+_ = gettext

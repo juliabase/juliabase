@@ -21,7 +21,7 @@ from django.contrib.auth.models import User
 from django.forms.utils import ValidationError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
@@ -408,4 +408,4 @@ def remove(request, task_id):
     return utils.successful_response(request, _("The task was successfully removed."), "samples:show_task_lists")
 
 
-_ = ugettext
+_ = gettext

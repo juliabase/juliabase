@@ -25,7 +25,7 @@ import django.urls
 from jb_common.models import UserDetails, ErrorPage
 from jb_common.utils.base import is_json_requested, JSONRequestException
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 import django.http
 
 

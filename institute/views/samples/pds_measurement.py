@@ -27,7 +27,7 @@ import datetime, os.path
 from django.conf import settings
 import django.contrib.auth.models
 from django import forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import django.utils.timezone
 from jb_common.utils.base import check_filepath
 import samples.utils.views as utils
@@ -135,4 +135,4 @@ class EditView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
         super().build_forms()
 
 
-_ = ugettext
+_ = gettext

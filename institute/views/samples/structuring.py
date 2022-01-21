@@ -18,7 +18,7 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import samples.utils.views as utils
 import institute.models as institute_models
 
@@ -33,4 +33,4 @@ class EditView(utils.RemoveFromMySamplesMixin, utils.ProcessView):
     form_class = StructuringForm
 
 
-_ = ugettext
+_ = gettext

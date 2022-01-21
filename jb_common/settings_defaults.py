@@ -19,7 +19,7 @@
 """
 
 import sys, os
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.crypto import get_random_string
 
 
@@ -81,4 +81,4 @@ def get_secret_key_from_file(filepath):
     return secret_key
 
 
-_ = ugettext
+_ = gettext

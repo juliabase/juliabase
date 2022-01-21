@@ -24,7 +24,7 @@ processes.
 """
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.forms.utils import ValidationError
 import jb_common.utils.base
 import samples.utils.views as utils
@@ -113,4 +113,4 @@ class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionMultipleTypeView)
         return institute.utils.base.get_next_deposition_number("C")
 
 
-_ = ugettext
+_ = gettext

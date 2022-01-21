@@ -22,7 +22,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django import forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import capfirst
 import django.contrib.auth.models
 from jb_common.utils.views import MultipleUsersField
@@ -196,4 +196,4 @@ def list_(request):
                   {"title": _("All you external contacts"), "external_operators": external_operators})
 
 
-_ = ugettext
+_ = gettext

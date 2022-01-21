@@ -30,7 +30,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 import django.utils.timezone
 import django.urls
 import samples.models, django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.conf import settings
 import jb_common.utils.base
 import jb_common.templatetags.juliabase
@@ -770,4 +770,4 @@ def camel_case_to_human_text(value):
     return jb_common.utils.base.camel_case_to_human_text(value)
 
 
-_ = ugettext
+_ = gettext

@@ -16,7 +16,7 @@
 
 
 from django.template import loader, RequestContext
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 import django.http
 from django.shortcuts import render
 from jb_common.utils.base import HttpResponseUnauthorized

@@ -25,7 +25,7 @@ from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.utils.html import conditional_escape, escape
 import markdown as markup
-from django.utils.translation import ugettext as _, pgettext
+from django.utils.translation import gettext as _, pgettext
 from django.utils.text import capfirst
 # This *must* be absolute because otherwise, a Django module of the same name
 # is imported.

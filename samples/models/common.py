@@ -27,7 +27,7 @@ the ``from`` keyword.
 import hashlib, os.path, collections, datetime, html
 from urllib.parse import quote
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
+from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language
 import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
 from django.template import Context, TemplateDoesNotExist
@@ -236,7 +236,7 @@ class Process(PolymorphicModel):
             # Translators: Label for a process instance, e.g. a measurement,
             # e.g. “thickness measurement of 01B-410”.  Singular/plural refers
             # to {samples}.
-            return ungettext("{process_class_name} of {samples}", "{process_class_name} of {samples}", len(samples)). \
+            return ngettext("{process_class_name} of {samples}", "{process_class_name} of {samples}", len(samples)). \
                 format(process_class_name=self._meta.verbose_name, samples=format_enumeration(samples))
         else:
             # Translators: Label for a process instance, e.g. “thickness
@@ -1794,4 +1794,4 @@ class ProcessWithSamplePositions(models.Model):
         return "process:{0}-{1}".format(self.id, hash_.hexdigest())
 
 
-_ = ugettext
+_ = gettext

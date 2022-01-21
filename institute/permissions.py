@@ -22,7 +22,7 @@
 :py:mod:`samples.permissions`.  See there for further information.
 """
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from samples.permissions import PermissionError
 
 

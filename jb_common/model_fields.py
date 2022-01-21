@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 
 class DecimalQuantityField(models.DecimalField):
@@ -96,4 +96,4 @@ class PositiveSmallIntegerQuantityField(models.PositiveSmallIntegerField):
         return result
 
 
-_ = ugettext
+_ = gettext

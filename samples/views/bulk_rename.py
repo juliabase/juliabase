@@ -27,7 +27,7 @@ from django.http import Http404
 import urllib.parse
 from django import forms
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 from django.forms.utils import ValidationError
 from django.contrib import messages
 from jb_common.utils.base import format_enumeration
@@ -82,7 +82,7 @@ class NewNameForm(forms.Form):
         new_name = self.prefix_ + self.cleaned_data["name"]
         name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
         if name_format not in self.possible_new_name_formats:
-            error_message = ungettext("New name must be a valid “%(sample_formats)s” name.",
+            error_message = ngettext("New name must be a valid “%(sample_formats)s” name.",
                                       "New name must be a valid name of one of these types: %(sample_formats)s.",
                                       len(self.possible_new_name_formats))
             raise ValidationError(error_message,
@@ -247,4 +247,4 @@ def bulk_rename(request):
                    "samples": list(zip(samples, new_name_forms))})
 
 
-_ = ugettext
+_ = gettext

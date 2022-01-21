@@ -35,7 +35,7 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
 from django.forms.utils import ValidationError
@@ -709,7 +709,7 @@ def show(request, sample_name):
             if is_json_requested(request):
                 return respond_in_json(True)
             if added:
-                success_message = ungettext("Sample {samples} was added to My Samples.",
+                success_message = ngettext("Sample {samples} was added to My Samples.",
                                             "Samples {samples} were added to My Samples.",
                                             len(added)).format(samples=format_enumeration(added))
             else:
@@ -717,7 +717,7 @@ def show(request, sample_name):
             if removed:
                 if added:
                     success_message += "  "
-                success_message += ungettext("Sample {samples} was removed from My Samples.",
+                success_message += ngettext("Sample {samples} was removed from My Samples.",
                                              "Samples {samples} were removed from My Samples.",
                                              len(removed)).format(samples=format_enumeration(removed))
             elif not added:
@@ -1150,7 +1150,7 @@ class SampleRenameForm(forms.Form):
                 if old_name_format else set()
             name_format = sample_names.sample_name_format(new_name)
             if name_format not in possible_new_name_formats:
-                error_message = ungettext("New name must be a valid “%(sample_formats)s” name.",
+                error_message = ngettext("New name must be a valid “%(sample_formats)s” name.",
                                           "New name must be a valid name of one of these types: %(sample_formats)s.",
                                           len(possible_new_name_formats))
                 self.add_error("new_name", ValidationError(
@@ -1202,4 +1202,4 @@ def rename_sample(request):
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
 
 
-_ = ugettext
+_ = gettext

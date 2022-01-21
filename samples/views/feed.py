@@ -24,7 +24,7 @@ import django.contrib.auth.models
 from django.template import loader
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 import django.urls
@@ -204,4 +204,4 @@ def show(request, username, user_hash):
                         content_type="application/xml; charset=utf-8")
 
 
-_ = ugettext
+_ = gettext

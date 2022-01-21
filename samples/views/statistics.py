@@ -23,7 +23,7 @@ this in the institution's app.
 import sys, math
 import matplotlib
 from django.views.decorators.cache import cache_page, cache_control
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.shortcuts import render
 from django.db import connection
 from django.conf import settings
