@@ -21,6 +21,7 @@
 
 import hashlib, os.path, time, urllib, json
 from io import BytesIO
+from urllib.parse import quote_plus
 import PIL
 import PIL.ImageOps
 from django.conf import settings
@@ -34,7 +35,6 @@ from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.utils.http import urlquote_plus
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
 from django.views.decorators.http import condition
 from django.utils.text import capfirst
@@ -789,7 +789,7 @@ def add_process(request, sample_name):
     sample = utils.lookup_sample(sample_name, request.user)
     sample_processes, general_processes = get_allowed_processes(request.user, sample)
     for process in general_processes:
-        process["url"] += "?sample={0}&next={1}".format(urlquote_plus(sample_name), sample.get_absolute_url())
+        process["url"] += "?sample={0}&next={1}".format(quote_plus(sample_name), sample.get_absolute_url())
     return render(request, "samples/add_process.html",
                   {"title": _("Add process to sample “{sample}”").format(sample=sample),
                    "processes": sample_processes + general_processes})
@@ -1095,7 +1095,7 @@ def data_matrix_code(request):
         mkdirs(filepath)
         image = PIL.Image.open(BytesIO(urllib.urlopen(
                     "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"
-                    "MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=urlquote_plus(data, safe="/"))).read()))
+                    "MODE=3&D={data}&PFMT=6&PT=F&X=0.13&O=0&LM=0".format(data=quote_plus(data, safe="/"))).read()))
         image = image.crop((38, 3, 118, 83))
         image = PIL.ImageOps.expand(image, border=16, fill=256).convert("1")
         image.save(filepath)

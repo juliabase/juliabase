@@ -24,7 +24,7 @@ import datetime, string, itertools
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.http import Http404
-import django.utils.http
+import urllib.parse
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
@@ -206,7 +206,7 @@ def bulk_rename(request):
     available_prefixes = find_prefixes(request.user)
     if not available_prefixes and any("{user_initials}" in format_ for format_ in settings.NAME_PREFIX_TEMPLATES) \
        and not models.Initials.objects.filter(user=request.user).exists():
-        query_string = "initials_mandatory=True&next=" + django.utils.http.urlquote_plus(
+        query_string = "initials_mandatory=True&next=" + urllib.parse.quote_plus(
             request.path + "?" + request.META["QUERY_STRING"], safe="/")
         messages.info(request, _("You may change the sample names, but you must choose initials first."))
         return utils.successful_response(request, view="samples:edit_preferences",

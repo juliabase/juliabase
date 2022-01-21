@@ -27,7 +27,6 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.contrib.staticfiles.storage import staticfiles_storage
-import django.utils.http
 import django.utils.timezone
 import django.urls
 import samples.models, django.contrib.auth.models
