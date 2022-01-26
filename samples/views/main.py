@@ -27,7 +27,7 @@ import django.urls
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
     int_or_zero
 from jb_common.models import Topic
@@ -332,4 +332,4 @@ def export_process(request, process_id):
                                                          "rows": list(zip(table, switch_row_forms)) if table else None,
                                                          "old_data": old_data_form,
                                                          "backlink": request.GET.get("next", "")})
-_ = ugettext
+_ = gettext

@@ -24,7 +24,7 @@
 import os, copy
 from tzlocal import get_localzone_name
 import django, django.utils.log
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from jb_common.settings_defaults import *
 from samples.settings_defaults import *
 
@@ -159,12 +159,9 @@ LANGUAGES = [("en", _("English")), ("de", _("German"))]
 
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
-        "TIMEOUT": 3600 * 24 * 28,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
+        "TIMEOUT": 3600 * 24 * 28
     }
 }
 if DEBUG:

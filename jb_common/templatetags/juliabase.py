@@ -18,15 +18,14 @@
 """Collection of tags and filters that I found useful for JuliaBase.
 """
 
-import re, json
+import re, json, urllib.parse
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.utils.safestring import mark_safe
 from django.utils.html import format_html
 from django.utils.html import conditional_escape, escape
-import django.utils.http
 import markdown as markup
-from django.utils.translation import ugettext as _, pgettext
+from django.utils.translation import gettext as _, pgettext
 from django.utils.text import capfirst
 import django.urls
 # This *must* be absolute because otherwise, a Django module of the same name
@@ -175,7 +174,7 @@ def urlquote(value):
     Also note that this filter is “not safe” because for example ampersands
     need to be further escaped.
     """
-    return django.utils.http.urlquote(value, safe="")
+    return urllib.parse.quote(value, safe="")
 
 
 @register.filter
@@ -187,7 +186,7 @@ def urlquote_plus(value):
         <a href="{{ process.edit_url }}?next={{ sample.get_absolute_url|urlquote_plus }}"
                >{% translate 'edit' %}</a>
     """
-    return django.utils.http.urlquote_plus(value, safe="/")
+    return urllib.parse.quote_plus(value, safe="/")
 
 
 @register.simple_tag

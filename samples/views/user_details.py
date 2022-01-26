@@ -26,7 +26,7 @@ import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
 from django import forms
 import django.urls
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import capfirst
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -163,4 +163,4 @@ def topics_and_permissions(request, login_name):
                    "permissions_url": django.urls.reverse("samples:list_permissions")})
 
 
-_ = ugettext
+_ = gettext

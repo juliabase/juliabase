@@ -27,7 +27,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 import django.utils.text
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 import jb_common.utils.base
 from samples import permissions
 import samples.utils.views as utils

@@ -26,14 +26,14 @@ information.
 """
 
 import datetime, re
+from urllib.parse import quote_plus
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 import django.urls
 from django.template import loader, RequestContext
 import django.forms as forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
-from django.utils.http import urlquote_plus
 from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, \
     capitalize_first_letter
 from samples import permissions
@@ -170,7 +170,7 @@ def show(request, process_name, year_and_month):
     try:
         export_url = django.urls.reverse(
             "{}:export_lab_notebook_{}".format(namespace, process_name),
-            kwargs={"year_and_month": year_and_month}) + "?next=" + urlquote_plus(request.path)
+            kwargs={"year_and_month": year_and_month}) + "?next=" + quote_plus(request.path)
     except django.urls.NoReverseMatch:
         export_url = None
     return render(request, "samples/lab_notebook.html",
@@ -220,4 +220,4 @@ def export(request, process_name, year_and_month):
                                                          "backlink": request.GET.get("next", "")})
 
 
-_ = ugettext
+_ = gettext

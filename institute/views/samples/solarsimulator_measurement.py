@@ -19,7 +19,7 @@
 
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import samples.utils.views as utils
 from institute.models import SolarsimulatorMeasurement, SolarsimulatorCellMeasurement
 
@@ -47,4 +47,4 @@ class EditView(utils.SubprocessesMixin, utils.ProcessView):
     process_field, subprocess_field = "measurement", "cells"
 
 
-_ = ugettext
+_ = gettext

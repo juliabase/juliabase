@@ -23,7 +23,7 @@ particular, it contains the informal layer stacks.
 """
 
 import os.path
-from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
+from django.utils.translation import gettext_lazy as _, gettext, pgettext_lazy
 from django.db import models
 import django.urls
 from django import forms
@@ -405,4 +405,4 @@ arbitrarily, though, to inserting a new layer in the middle is a bit tricky.
 """
 
 
-_ = ugettext
+_ = gettext

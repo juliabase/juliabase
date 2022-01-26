@@ -32,7 +32,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 import django.contrib.auth.models
 from django.http import Http404
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from jb_common.utils.base import respond_in_json, JSONRequestException, get_really_full_name, successful_response, \
     int_or_zero, static_response, get_cached_bytes_stream
 import samples.utils.views as utils
@@ -460,4 +460,4 @@ def replay():
         MatchResult(match).add_kicker_numbers()
 
 
-_ = ugettext
+_ = gettext

@@ -430,9 +430,9 @@ JuliaBase is available in English and German so far, a sensible value may be::
     LANGUAGES = [("de", _("German")), ("en", _("English"))]
 
 Note that the ``_(...)`` makes the language names themselves translatable.  To
-get this working, you must import ``ugettext_lazy`` into :file:`settings.py`::
+get this working, you must import ``gettext_lazy`` into :file:`settings.py`::
 
-    from django.utils.translation import ugettext_lazy as _
+    from django.utils.translation import gettext_lazy as _
 
 
 .. index:: CACHES (setting)
@@ -445,12 +445,9 @@ configure an efficient caching backend like Redis::
 
     CACHES = {
         "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": "redis://127.0.0.1:6379/1",
-            "TIMEOUT": 3600 * 24 * 28,
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-                }
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379",
+            "TIMEOUT": 3600 * 24 * 28
             }
         }
 

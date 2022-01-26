@@ -23,7 +23,7 @@
 
 from django.db.models import Max
 from django.forms.utils import ValidationError
-from django.utils.translation import ugettext_lazy as _, ugettext, ugettext
+from django.utils.translation import gettext_lazy as _, gettext, gettext
 from institute import models as institute_models
 import samples.utils.views as utils
 
@@ -74,4 +74,4 @@ class EditView(utils.ProcessMultipleSamplesView):
         return referentially_valid
 
 
-_ = ugettext
+_ = gettext

@@ -23,7 +23,7 @@ from django.http import Http404
 from django.forms.utils import ValidationError
 from django import forms
 import django.utils.timezone
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
 from jb_common.utils.base import unquote_view_parameters
 from samples import models, permissions
@@ -100,4 +100,4 @@ def new(request, sample_name):
                                                               "sample_death": sample_death_form})
 
 
-_ = ugettext
+_ = gettext

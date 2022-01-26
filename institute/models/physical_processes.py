@@ -25,7 +25,7 @@ processes, clean room work etc. will go here, too.
 
 import os.path
 import numpy
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import format_lazy
 from django.db import models
 import django.urls
@@ -332,4 +332,4 @@ class LayerThicknessMeasurement(PhysicalProcess):
         editable_status = False
 
 
-_ = ugettext
+_ = gettext

@@ -17,7 +17,7 @@
 
 from django.db import models
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 
 class Match(models.Model):
@@ -103,4 +103,4 @@ class UserDetails(models.Model):
         return str(self.user)
 
 
-_ = ugettext
+_ = gettext

@@ -25,7 +25,7 @@ from django.conf import settings
 from django.forms.utils import ValidationError
 from django.shortcuts import render, get_object_or_404
 import django.utils.timezone
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import capfirst
 import django.forms as forms
 from jb_common.utils.base import check_markdown
@@ -196,4 +196,4 @@ def withdraw(request, id_):
     return utils.successful_response(request, _("The status message was successfully withdrawn."), "samples:show_status")
 
 
-_ = ugettext
+_ = gettext

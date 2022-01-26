@@ -28,7 +28,7 @@ entries are self-contained.
 import hashlib
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 import django.contrib.auth.models
 import django.urls
 from samples.models import Sample, Process, Result, SampleSplit, SampleSeries, StatusMessage, Task
@@ -134,7 +134,7 @@ class FeedNewSamples(FeedEntry):
 
     def get_metadata(self):
         result = {}
-        result["title"] = ungettext("New sample in “{topic}”", "New samples in “{topic}”", self.samples.count()).format(
+        result["title"] = ngettext("New sample in “{topic}”", "New samples in “{topic}”", self.samples.count()).format(
             topic=self.topic)
         result["category term"] = "new samples"
         result["category label"] = "new samples"
@@ -159,7 +159,7 @@ class FeedMovedSamples(FeedEntry):
 
     def get_metadata(self):
         result = {}
-        result["title"] = ungettext("New sample moved to “{topic}”", "New samples moved to “{topic}”",
+        result["title"] = ngettext("New sample moved to “{topic}”", "New samples moved to “{topic}”",
                                     self.samples.count()).format(topic=self.topic)
         result["category term"] = "moved samples"
         result["category label"] = "moved samples"
@@ -546,4 +546,4 @@ class FeedRemovedTask(FeedEntry):
         return metadata
 
 
-_ = ugettext
+_ = gettext

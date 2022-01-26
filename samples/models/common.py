@@ -25,9 +25,9 @@ the ``from`` keyword.
 """
 
 import hashlib, os.path, collections, datetime, html
+from urllib.parse import quote
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext, pgettext_lazy, get_language
-from django.utils.http import urlquote
+from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language
 import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
 from django.template import Context, TemplateDoesNotExist
@@ -236,7 +236,7 @@ class Process(PolymorphicModel):
             # Translators: Label for a process instance, e.g. a measurement,
             # e.g. “thickness measurement of 01B-410”.  Singular/plural refers
             # to {samples}.
-            return ungettext("{process_class_name} of {samples}", "{process_class_name} of {samples}", len(samples)). \
+            return ngettext("{process_class_name} of {samples}", "{process_class_name} of {samples}", len(samples)). \
                 format(process_class_name=self._meta.verbose_name, samples=format_enumeration(samples))
         else:
             # Translators: Label for a process instance, e.g. “thickness
@@ -664,7 +664,7 @@ class PhysicalProcess(Process):
         except AttributeError:
             field_name, parameter_name = "id", class_name + "_id"
         # Quote it in order to allow slashs in values.
-        field_value = urlquote(str(getattr(self, field_name)), safe="")
+        field_value = quote(str(getattr(self, field_name)), safe="")
         try:
             return django.urls.reverse(prefix + class_name, kwargs={parameter_name: field_value})
         except django.urls.NoReverseMatch:
@@ -888,7 +888,7 @@ class Sample(models.Model):
         if self.name.startswith("*"):
             return django.urls.reverse("samples:show_sample_by_id", kwargs={"sample_id": str(self.pk), "path_suffix": ""})
         else:
-            return django.urls.reverse("samples:show_sample_by_name", args=(urlquote(self.name, safe=""),))
+            return django.urls.reverse("samples:show_sample_by_name", args=(quote(self.name, safe=""),))
 
     def duplicate(self):
         """This is used to create a new `Sample` instance with the same data as
@@ -1450,7 +1450,7 @@ class SampleSeries(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return django.urls.reverse("samples:show_sample_series", args=(urlquote(self.name, safe=""),))
+        return django.urls.reverse("samples:show_sample_series", args=(quote(self.name, safe=""),))
 
     def get_data(self):
         """Extract the data of this sample series as a dictionary, ready to be used for
@@ -1794,4 +1794,4 @@ class ProcessWithSamplePositions(models.Model):
         return "process:{0}-{1}".format(self.id, hash_.hexdigest())
 
 
-_ = ugettext
+_ = gettext

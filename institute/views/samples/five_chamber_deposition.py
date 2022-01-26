@@ -19,7 +19,7 @@
 
 
 from django import forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.forms.utils import ValidationError
 import samples.utils.views as utils
 import institute.utils.views as form_utils
@@ -66,4 +66,4 @@ class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):
         return institute.utils.base.get_next_deposition_number("S")
 
 
-_ = ugettext
+_ = gettext

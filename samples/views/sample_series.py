@@ -30,7 +30,7 @@ from django.forms.utils import ValidationError
 from django.http import HttpResponse
 import django.utils.timezone
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 from django.utils.text import capfirst
 from django.views.decorators.http import condition
 import django.contrib.auth.models
@@ -369,7 +369,7 @@ def new(request):
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
                 sample_series_form.add_error("short_name", ValidationError(
-                    ungettext("The name is %(number)s letter too long.", "The name is %(number)s letters too long.",
+                    ngettext("The name is %(number)s letter too long.", "The name is %(number)s letters too long.",
                               overfull_letters), params={"number": overfull_letters}, code="invalid"))
             else:
                 sample_series = sample_series_form.save(commit=False)
@@ -426,4 +426,4 @@ def export(request, name):
                                                          "backlink": request.GET.get("next", "")})
 
 
-_ = ugettext
+_ = gettext

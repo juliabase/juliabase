@@ -24,7 +24,7 @@ will always store the union of all these processes.
 """
 
 import re
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
@@ -192,4 +192,4 @@ def edit(request, login_name):
     return render(request, "samples/edit_my_layers.html", {"title": _("My Layers"), "my_layers": my_layer_forms})
 
 
-_ = ugettext
+_ = gettext

@@ -24,7 +24,7 @@ import datetime
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 from django.utils.text import capfirst
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
@@ -97,7 +97,7 @@ class OriginalDataForm(Form):
                 old_sample_name_format = sample_names.sample_name_format(sample.name)
                 possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_sample_name_format].get("possible_renames", set())
                 if possible_new_name_formats:
-                    error_message += ungettext("  Alternatively, it must be a valid “%(sample_formats)s” name.",
+                    error_message += ngettext("  Alternatively, it must be a valid “%(sample_formats)s” name.",
                                                "  Alternatively, it must be a valid name of one of these types: "
                                                "%(sample_formats)s.", len(possible_new_name_formats))
                     params.update({"sample_formats": format_enumeration(
@@ -513,4 +513,4 @@ def split_and_rename_after_deposition(request, deposition_number):
                    "new_sample_data": global_new_data_form})
 
 
-_ = ugettext
+_ = gettext

@@ -24,7 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 import django.utils.timezone
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import jb_common.search
 
 
@@ -269,4 +269,4 @@ class ErrorPage(models.Model):
         verbose_name_plural = _("error pages")
 
 
-_ = ugettext
+_ = gettext

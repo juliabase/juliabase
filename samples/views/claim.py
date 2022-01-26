@@ -28,7 +28,7 @@ from django.forms.utils import ValidationError
 from django.contrib.auth.decorators import login_required
 import django.urls
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.conf import settings
 from jb_common.utils.base import help_link, send_email, get_really_full_name
 import samples.utils.views as utils
@@ -86,7 +86,7 @@ def add(request, username):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
+    _ = gettext
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _("You are not allowed to add a claim in another user's name."))
@@ -113,7 +113,7 @@ to withdraw the request.
 JuliaBase.
 """), reviewer, {"reviewer": get_really_full_name(reviewer), "requester": get_really_full_name(user),
                  "url": request.build_absolute_uri(django.urls.reverse("samples:show_claim", kwargs={"claim_id": claim.pk}))})
-            _ = ugettext
+            _ = gettext
             claim.samples.set(samples_form.cleaned_data["samples"])
             return utils.successful_response(request,
                                              _("Sample claim {id_} was successfully submitted.").format(id_=claim.pk),
@@ -202,7 +202,7 @@ def show(request, claim_id):
 
     :rtype: HttpResponse
     """
-    _ = ugettext
+    _ = gettext
     claim = get_object_or_404(models.SampleClaim, pk=utils.convert_id_to_int(claim_id))
     is_reviewer = request.user == claim.reviewer or request.user.is_superuser
     is_requester = request.user == claim.requester
@@ -234,7 +234,7 @@ responsible person” of the following samples:
 
 JuliaBase.
 """), claim.requester, {"requester": get_really_full_name(claim.requester), "samples": sample_enumeration})
-                _ = ugettext
+                _ = gettext
                 response = \
                     utils.successful_response(request,
                                               _("Sample claim {id_} was successfully approved.").format(id_=claim.pk))
@@ -254,4 +254,4 @@ JuliaBase.
                                                        "withdraw": withdraw_form, "approve": approve_form})
 
 
-_ = ugettext
+_ = gettext

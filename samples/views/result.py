@@ -31,7 +31,7 @@ from django.db.models import Q
 import django.utils.timezone
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext, pgettext_lazy
+from django.utils.translation import gettext_lazy as _, gettext, pgettext_lazy
 from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import django.forms as forms
@@ -658,4 +658,4 @@ def export(request, process_id):
                                                          "backlink": request.GET.get("next", "")})
 
 
-_ = ugettext
+_ = gettext

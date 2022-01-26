@@ -25,7 +25,7 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django import forms
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import capfirst
 import django.core
 from django.conf import settings
@@ -339,4 +339,4 @@ def edit(request, username):
                    "permissions_list": permissions_list})
 
 
-_ = ugettext
+_ = gettext
