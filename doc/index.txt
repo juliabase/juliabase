@@ -84,7 +84,7 @@ For better evaluation, here is a short list of the technical aspects of
 JuliaBase:
 
 - JuliaBase is built on top of the `Django web framework`_.
-- JuliaBase is written 100% in the Python programming language (version 3.2 onward).
+- JuliaBase is written 100% in the Python programming language.
 - Although other setups are possible, the easiest server installation bases on
   Linux, PostgreSQL, and Apache.
 - Hardware requirements are very low; a 100 people institute could be served by
