@@ -28,7 +28,7 @@ from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 from django.forms.utils import ValidationError
 from django.http import HttpResponse
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 from django.utils.text import capfirst
 import django.utils.timezone
 from django.contrib.auth.decorators import login_required
@@ -316,4 +316,4 @@ def printer_label(request, sample_id):
     return response
 
 
-_ = ugettext
+_ = gettext

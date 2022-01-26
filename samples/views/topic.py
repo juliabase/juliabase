@@ -22,9 +22,9 @@ actually only a stepping stone to the membership edit view.
 
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404
-import django.utils.http
+import urllib.parse
 from django.contrib.auth.decorators import login_required
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import django.urls
 import django.forms as forms
 from django.forms.utils import ValidationError
@@ -131,7 +131,7 @@ def add(request):
             else:
                 new_topic.save()
                 next_view = "samples:edit_topic"
-                next_view_kwargs = {"id": django.utils.http.urlquote(str(new_topic.id), safe="")}
+                next_view_kwargs = {"id": urllib.parse.quote(str(new_topic.id), safe="")}
             new_topic.manager.user_permissions.add(permissions.get_topic_manager_permission())
             request.user.topics.add(new_topic)
             request.user.samples_user_details.auto_addition_topics.add(new_topic)
@@ -260,4 +260,4 @@ def edit(request, id):
                                                        "edit_topic": edit_topic_form})
 
 
-_ = ugettext
+_ = gettext

@@ -17,7 +17,7 @@
 import datetime, decimal
 import rdflib
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from jb_common.utils.base import underscores_to_camel_case
 from samples import ontology_symbols
 
@@ -217,4 +217,4 @@ class SmallIntegerQuantityField(_QuantityGraphField, models.SmallIntegerField):
 class PositiveSmallIntegerQuantityField(_QuantityGraphField, models.PositiveSmallIntegerField):
     description = _("Positive small integer in the unit of %(unit)s")
 
-_ = ugettext
+_ = gettext

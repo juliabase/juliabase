@@ -44,13 +44,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {{ sample_series.description|markdown_samples }}
 
 {% if sample_series.samples.count %}
+
+<form method="post">{% csrf_token %}
   <p>{% translate 'This sample series contains the following samples:' %}</p>
   <ul class="sample-list">
-    {% for sample in sample_series.samples.all %}
+    {% for sample, add_to_my_samples in samples %}
       <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a>
-        {% if sample.purpose %}({{ sample.purpose }}){% endif %}</li>
+        {% if sample.purpose %}({{ sample.purpose }}){% endif %}
+        {% if add_to_my_samples %}
+          {{ add_to_my_samples.add_to_my_samples }}
+        {% endif %}
+      </li>
     {% endfor %}
   </ul>
+   <p class="submit-button" style="float: left;"><input type="submit" name="add" value="{% translate 'Add chosen samples' %}"/>
+</form>
+
+<form method="post">{% csrf_token %}
+   <p class="submit-button" style="float: left;"><input type="submit" name="remove" value="{% translate 'Remove all samples' %}"/>
+</form>
+<br>
+<br>
+<p>{% translate "To/From 'My Samples'" %}</p>
+<br>
+<br>
 {% else %}
   <p>{% translate "This sample series doesn't contain samples yet." %}</p>
 {% endif %}

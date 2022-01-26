@@ -19,7 +19,7 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 import django.contrib.auth.models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
 from jb_common import models
 import jb_common.utils.base as utils
@@ -135,4 +135,4 @@ def show_error_page(request, hash_value):
     return HttpResponse(html)
 
 
-_ = ugettext
+_ = gettext

@@ -21,13 +21,13 @@ from django.contrib.auth.models import User
 from django.forms.utils import ValidationError
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_http_methods
 import django.utils.timezone
 from django.utils.text import capfirst
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.apps import apps
 import jb_common.utils.base as common_utils
 from jb_common.utils.base import help_link
@@ -338,7 +338,7 @@ def create_task_lists(user):
     seen_process_names = set()
     ambiguous_process_names = set()
     for process_content_type in user.samples_user_details.visible_task_lists.all():
-        process_name = capfirst(force_text(process_content_type.model_class()._meta.verbose_name))
+        process_name = capfirst(force_str(process_content_type.model_class()._meta.verbose_name))
         active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
             exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
         task_lists.append((process_name, process_content_type, [TaskForTemplate(task, user) for task in active_tasks]))
@@ -408,4 +408,4 @@ def remove(request, task_id):
     return utils.successful_response(request, _("The task was successfully removed."), "samples:show_task_lists")
 
 
-_ = ugettext
+_ = gettext

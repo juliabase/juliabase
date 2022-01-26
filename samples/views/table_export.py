@@ -107,7 +107,7 @@ strightforward).
 """
 
 from django.forms.utils import ValidationError
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 import django.forms as forms
 
 
@@ -508,4 +508,4 @@ class SwitchRowForm(forms.Form):
         super().__init__(*args, **kwargs)
 
 
-_ = ugettext
+_ = gettext

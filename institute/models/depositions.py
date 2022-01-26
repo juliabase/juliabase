@@ -23,9 +23,9 @@ themselves as well as models for layers.
 """
 
 import rdflib
-from django.utils.translation import ugettext_lazy as _, ugettext
+from urllib.parse import quote_plus
+from django.utils.translation import gettext_lazy as _, gettext
 import django.urls
-from django.utils.http import urlquote_plus
 from django.db import models
 from jb_common import models as jb_common_models, model_fields
 from jb_common.utils.base import generate_permissions
@@ -56,7 +56,7 @@ class ClusterToolDeposition(samples.models.Deposition):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.urls.reverse("institute:add_cluster_tool_deposition"), urlquote_plus(self.number))
+                django.urls.reverse("institute:add_cluster_tool_deposition"), quote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super().get_context_for_user(user, context)
@@ -155,7 +155,7 @@ class FiveChamberDeposition(samples.models.Deposition):
         context = old_context.copy()
         if permissions.has_permission_to_add_physical_process(user, self.__class__):
             context["duplicate_url"] = "{0}?copy_from={1}".format(
-                django.urls.reverse("institute:add_five_chamber_deposition"), urlquote_plus(self.number))
+                django.urls.reverse("institute:add_five_chamber_deposition"), quote_plus(self.number))
         else:
             context["duplicate_url"] = None
         return super().get_context_for_user(user, context)
@@ -212,4 +212,4 @@ class FiveChamberLayer(samples.models.Layer):
         return data_node
 
 
-_ = ugettext
+_ = gettext

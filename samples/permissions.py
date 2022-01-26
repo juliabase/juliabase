@@ -39,7 +39,7 @@ import hashlib, re
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 import django.urls
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.models import User, Permission
 from django.conf import settings
 import jb_common.utils.base as utils
@@ -967,4 +967,4 @@ for func in all_assertion_functions:
     globals()[new_name] = generate_permission_function(func)
 
 
-_ = ugettext
+_ = gettext

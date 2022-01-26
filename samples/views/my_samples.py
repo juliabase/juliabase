@@ -26,7 +26,7 @@ from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django import forms
 from django.forms.utils import ValidationError
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import capfirst
 from jb_common.utils.base import get_really_full_name, format_enumeration, check_markdown, is_json_requested, respond_in_json
 from jb_common.utils.views import UserField, MultipleUsersField, TopicField
@@ -278,4 +278,4 @@ def edit(request, username):
                    "my_samples": my_samples_form, "action": action_form})
 
 
-_ = ugettext
+_ = gettext

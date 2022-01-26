@@ -24,7 +24,7 @@ the templates.
 """
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 
 special_salutations = {"j.silverton": _("Mrs {user.last_name}"), "s.renard": _("Mr. {user.last_name}")}
@@ -50,4 +50,4 @@ def default(request):
         return {}
 
 
-_ = ugettext
+_ = gettext

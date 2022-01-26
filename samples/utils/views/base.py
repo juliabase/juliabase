@@ -25,7 +25,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q
 from django.http import Http404, HttpResponse
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.contenttypes.models import ContentType
 import django.utils.text
 from jb_common import mimeparse
@@ -616,4 +616,4 @@ def average(numeric_values):
         return sum(map(float, numeric_values)) / len(numeric_values)
 
 
-_ = ugettext
+_ = gettext

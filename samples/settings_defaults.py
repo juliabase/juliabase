@@ -18,7 +18,7 @@
 """Default values of settings of the app "samples".
 """
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 ADD_SAMPLES_VIEW = ""
 CACHE_ROOT = "/tmp/juliabase_cache"
@@ -50,4 +50,4 @@ GRAPH_NAMESPACE_PREFIX = None
 # CACHES
 
 
-_ = ugettext
+_ = gettext

@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-18 13:50+0200\n"
+"POT-Creation-Date: 2021-11-18 11:42+0100\n"
 "PO-Revision-Date: 2018-05-17 23:23+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -379,7 +379,7 @@ msgstr "aktueller Probenort"
 #: juliabase/samples/models/common.py:763
 #: juliabase/samples/models/common.py:1422
 #: juliabase/samples/templates/samples/show_claim.html:49
-#: juliabase/samples/templates/samples/show_sample_series.html:59
+#: juliabase/samples/templates/samples/show_sample_series.html:76
 #: juliabase/samples/views/sample.py:65
 #: juliabase/samples/views/sample_series.py:48
 msgid "currently responsible person"
@@ -412,7 +412,7 @@ msgstr "Split-Ursprung"
 #: juliabase/samples/models/feeds.py:433
 #: juliabase/samples/templates/samples/list_topics.html:31
 #: juliabase/samples/templates/samples/show_claim.html:51
-#: juliabase/samples/templates/samples/show_sample_series.html:58
+#: juliabase/samples/templates/samples/show_sample_series.html:75
 #: juliabase/samples/views/sample.py:66
 #: juliabase/samples/views/sample_series.py:49
 msgid "topic"
@@ -424,7 +424,7 @@ msgstr "Thema"
 #: juliabase/samples/templates/samples/show_claim.html:47
 #: juliabase/samples/utils/views/forms.py:831
 #: juliabase/samples/views/main.py:324
-#: juliabase/samples/views/sample_series.py:402
+#: juliabase/samples/views/sample_series.py:416
 msgid "sample"
 msgstr "Probe"
 
@@ -2402,7 +2402,7 @@ msgstr "Meine Proben"
 #: juliabase/samples/templates/samples/show_sample.html:70
 #: juliabase/samples/templates/samples/show_sample.html:184
 #: juliabase/samples/templates/samples/show_sample_series.html:29
-#: juliabase/samples/templates/samples/show_sample_series.html:70
+#: juliabase/samples/templates/samples/show_sample_series.html:87
 msgid "edit"
 msgstr "ändern"
 
@@ -2468,7 +2468,9 @@ msgstr "roter Pfeil"
 msgid ""
 "This is a tool, with which you can add and remove all the samples of a "
 "sample series to and from your \"My Samples\"."
-msgstr "Mit diesem Tool ist es möglich, alle Proben einer Probenserie zu \"Meine Proben\" hinzuzufügen bzw. daraus zu entfernen."
+msgstr ""
+"Mit diesem Tool ist es möglich, alle Proben einer Probenserie zu \"Meine "
+"Proben\" hinzuzufügen bzw. daraus zu entfernen."
 
 #: juliabase/samples/templates/samples/my_sample_series.html:29
 msgid "There are 3 cases:"
@@ -2478,19 +2480,26 @@ msgstr "Es gibt 3 Fälle:"
 msgid ""
 "There is only a red remove button: All the samples of this series are "
 "already in your \"My Samples\" and you can only remove them."
-msgstr "Ein einzelner roter Button: All die Proben dieser Probenserie sind bereits in \"Meine Proben\" und du kannst sie nur daraus entfernen."
+msgstr ""
+"Ein einzelner roter Button: All die Proben dieser Probenserie sind bereits "
+"in \"Meine Proben\" und du kannst sie nur daraus entfernen."
 
 #: juliabase/samples/templates/samples/my_sample_series.html:33
 msgid ""
 "There is only a green add button: Not a single sample of this series is in "
 "your \"My Samples\" and you can only add all of them."
-msgstr "Ein einzelner grüner Button: Keine Probe dieser Probenserie ist in \"Meine Proben\" und du kannst sie nur alle hinzufügen."
+msgstr ""
+"Ein einzelner grüner Button: Keine Probe dieser Probenserie ist in \"Meine "
+"Proben\" und du kannst sie nur alle hinzufügen."
 
 #: juliabase/samples/templates/samples/my_sample_series.html:34
 msgid ""
 "Both buttons are showing: Some but not all samples of this series are in "
 "your \"My Samples\" and you can either remove them or add the missing ones."
-msgstr "Beide Buttons werden angezeigt: Einige der Proben dieser Probenserie sind bereits in \"Meine Proben\" und du kannst die restlichen hinzufügen oder alle entfernen."
+msgstr ""
+"Beide Buttons werden angezeigt: Einige der Proben dieser Probenserie sind "
+"bereits in \"Meine Proben\" und du kannst die restlichen hinzufügen oder "
+"alle entfernen."
 
 #: juliabase/samples/templates/samples/permission_error.html:25
 #, python-format
@@ -2719,11 +2728,23 @@ msgstr "Substrat-Position"
 msgid "add result"
 msgstr "Ergebnis hinzufügen"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:47
+#: juliabase/samples/templates/samples/show_sample_series.html:49
 msgid "This sample series contains the following samples:"
 msgstr "Diese Probenserie umfasst die folgenden Proben:"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:55
+#: juliabase/samples/templates/samples/show_sample_series.html:60
+msgid "Add chosen samples"
+msgstr "Ausgewählte Proben hinzufügen"
+
+#: juliabase/samples/templates/samples/show_sample_series.html:64
+msgid "Remove all samples"
+msgstr "Alle Proben entfernen"
+
+#: juliabase/samples/templates/samples/show_sample_series.html:68
+msgid "To/From 'My Samples'"
+msgstr "zu/aus 'Meine Proben'"
+
+#: juliabase/samples/templates/samples/show_sample_series.html:72
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
@@ -3469,7 +3490,7 @@ msgstr "Monat"
 #: juliabase/samples/views/lab_notebook.py:215
 #: juliabase/samples/views/main.py:329 juliabase/samples/views/result.py:653
 #: juliabase/samples/views/sample.py:1038
-#: juliabase/samples/views/sample_series.py:407
+#: juliabase/samples/views/sample_series.py:421
 #, python-brace-format
 msgid "Table export for “{name}”"
 msgstr "Tabellen-Export für „{name}“"
@@ -3733,7 +3754,7 @@ msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
 #: juliabase/samples/views/sample.py:105
-#: juliabase/samples/views/sample_series.py:276
+#: juliabase/samples/views/sample_series.py:290
 msgid ""
 "Changing the topic or the responsible person must be marked as important."
 msgstr ""
@@ -3885,42 +3906,42 @@ msgstr "Töten der Probe „{sample}“"
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: juliabase/samples/views/sample_series.py:216
+#: juliabase/samples/views/sample_series.py:211
 msgid "Edit my sample series"
 msgstr "Verwalten meiner Probenserien"
 
-#: juliabase/samples/views/sample_series.py:244
+#: juliabase/samples/views/sample_series.py:257
 #, python-brace-format
 msgid "Sample series “{name}”"
 msgstr "Probenserie „{name}“"
 
-#: juliabase/samples/views/sample_series.py:317
+#: juliabase/samples/views/sample_series.py:331
 #, python-brace-format
 msgid "Sample series {name} was successfully updated in the database."
 msgstr "Die Probenserie {name} wurde erfolgreich in der Datenbank geändert."
 
-#: juliabase/samples/views/sample_series.py:327
+#: juliabase/samples/views/sample_series.py:341
 #, python-brace-format
 msgid "Edit sample series “{name}”"
 msgstr "Ändern der Probenserie „{name}“"
 
-#: juliabase/samples/views/sample_series.py:353
+#: juliabase/samples/views/sample_series.py:367
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: juliabase/samples/views/sample_series.py:358
+#: juliabase/samples/views/sample_series.py:372
 #, python-format
 msgid "The name is %(number)s letter too long."
 msgid_plural "The name is %(number)s letters too long."
 msgstr[0] "Der Name ist %(number)s Buchstaben zu lang."
 msgstr[1] "Der Name ist %(number)s Buchstaben zu lang."
 
-#: juliabase/samples/views/sample_series.py:368
+#: juliabase/samples/views/sample_series.py:382
 #, python-brace-format
 msgid "Sample series {name} was successfully added to the database."
 msgstr "Die Probenserie {name} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: juliabase/samples/views/sample_series.py:372
+#: juliabase/samples/views/sample_series.py:386
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 

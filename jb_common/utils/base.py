@@ -28,12 +28,12 @@ from django.core.cache import cache
 from django.core.serializers.json import DjangoJSONEncoder
 from django.apps.registry import apps
 from django.conf import settings
-from django.utils.encoding import iri_to_uri, force_text
+from django.utils.encoding import iri_to_uri, force_str
 from django.forms.utils import ErrorList, ValidationError
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _, ugettext_lazy, ugettext
+from django.utils.translation import gettext_lazy as _, gettext_lazy, gettext
 from django.utils.functional import keep_lazy_text
 import django.utils.timezone
 from jb_common import mimeparse
@@ -349,7 +349,7 @@ def send_email(subject, content, recipients, format_dict=None):
 
         _ = lambda x: x
         send_mail(_("Error notification"), _("An error has occured."), user)
-        _ = ugettext
+        _ = gettext
 
     If you need to use string formatting à la
 
@@ -383,7 +383,7 @@ def send_email(subject, content, recipients, format_dict=None):
         if not recipient.email:
             continue
         translation.activate(recipient.jb_user_details.language)
-        subject, content = ugettext(subject), ugettext(content)
+        subject, content = gettext(subject), gettext(content)
         if format_dict is not None:
             subject = subject.format(**format_dict)
             content = content.format(**format_dict)
@@ -1040,7 +1040,7 @@ _permissions = {"add": ("add_{class_name}", _("Can add {class_name}")),
                 "change": ("change_{class_name}", _("Can edit every {class_name}")),
                 "view_every": ("view_every_{class_name}", _("Can view every {class_name}")),
                 "edit_permissions": ("edit_permissions_for_{class_name}", _("Can edit permissions for {class_name}"))}
-_ = ugettext_lazy
+_ = gettext_lazy
 
 def generate_permissions(permissions, class_name):
     """Auto-generates model permissions.  It may be used in physical process
@@ -1118,4 +1118,4 @@ def pretty_print_query_dict(query_dict):
     return "".join(result)
 
 
-_ = ugettext
+_ = gettext

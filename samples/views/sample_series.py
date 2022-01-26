@@ -30,12 +30,12 @@ from django.forms.utils import ValidationError
 from django.http import HttpResponse
 import django.utils.timezone
 from django.shortcuts import render, get_object_or_404
-from django.utils.translation import ugettext_lazy as _, ugettext, ungettext
+from django.utils.translation import gettext_lazy as _, gettext, ngettext
 from django.utils.text import capfirst
 from django.views.decorators.http import condition
 import django.contrib.auth.models
 import jb_common.utils.base
-from jb_common.utils.base import unquote_view_parameters
+from jb_common.utils.base import unquote_view_parameters, int_or_zero
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions
 import samples.utils.views as utils
@@ -211,6 +211,10 @@ def my_sample_series(request):
     return render(request, "samples/my_sample_series.html", {"title": _("Edit my sample series"),
                                                            "lines": lines})
 
+class AddToMySamplesForm(forms.Form):
+    add_to_my_samples = forms.BooleanField(required=False)
+
+
 @login_required
 @unquote_view_parameters
 @condition(sample_series_etag, sample_series_timestamp)
@@ -235,11 +239,26 @@ def show(request, name):
     result_processes = [utils.digest_process(result, request.user) for result in sample_series.results.all()]
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)
     can_add_result = permissions.has_permission_to_add_result_process(request.user, sample_series)
+
+    samples = sample_series.samples.all()
+
+    my_samples = request.user.my_samples.all()
+    if request.method == "POST":
+        if request.POST.get("remove"):
+            request.user.my_samples.remove(*samples)
+        elif request.POST.get("add"):
+            base_query = utils.restricted_samples_query(request.user)
+            sample_ids = {int_or_zero(key.partition("-")[0]) for key, value in request.POST.items() if value == "on"}
+            samples_to_add = base_query.in_bulk(sample_ids).values()
+            request.user.my_samples.add(*samples_to_add)
+    add_to_my_samples_forms = [AddToMySamplesForm(prefix=str(sample.pk)) if sample not in my_samples else None
+                               for sample in samples]
     return render(request, "samples/show_sample_series.html",
                   {"title": _("Sample series “{name}”").format(name=sample_series.name),
                    "can_edit": can_edit, "can_add_result": can_add_result,
                    "sample_series": sample_series,
-                   "result_processes": result_processes})
+                   "result_processes": result_processes,
+                   "samples": list(zip(samples, add_to_my_samples_forms))})
 
 
 def is_referentially_valid(sample_series, sample_series_form, edit_description_form):
@@ -350,7 +369,7 @@ def new(request):
             elif len(full_name) > models.SampleSeries._meta.get_field("name").max_length:
                 overfull_letters = len(full_name) - models.SampleSeries._meta.get_field("name").max_length
                 sample_series_form.add_error("short_name", ValidationError(
-                    ungettext("The name is %(number)s letter too long.", "The name is %(number)s letters too long.",
+                    ngettext("The name is %(number)s letter too long.", "The name is %(number)s letters too long.",
                               overfull_letters), params={"number": overfull_letters}, code="invalid"))
             else:
                 sample_series = sample_series_form.save(commit=False)
@@ -407,4 +426,4 @@ def export(request, name):
                                                          "backlink": request.GET.get("next", "")})
 
 
-_ = ugettext
+_ = gettext

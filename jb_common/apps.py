@@ -18,7 +18,7 @@
 import collections, urllib
 from django.conf import settings
 from django.apps import AppConfig
-from django.utils.translation import ugettext_lazy as _, ugettext, pgettext
+from django.utils.translation import gettext_lazy as _, gettext, pgettext
 from django.urls import reverse
 import jb_common.utils.blobs
 from jb_common.nav_menu import MenuItem
@@ -73,4 +73,4 @@ class JBCommonConfig(AppConfig):
                             icon_description=_("switch to {language}").format(language=name))
 
 
-_ = ugettext
+_ = gettext

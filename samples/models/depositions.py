@@ -22,7 +22,7 @@ well as models for layers.
   string.
 """
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 from django.db import models
 from jb_common import search, model_fields
 from samples import ontology_symbols
@@ -228,4 +228,4 @@ class Layer(models.Model, GraphEntity):
         return search.SearchTreeNode(cls, {}, search_fields)
 
 
-_ = ugettext
+_ = gettext
