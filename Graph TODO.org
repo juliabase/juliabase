@@ -4,15 +4,21 @@
 
 This is necessary to clone the process for each sample it has worked on.
 
-** TODO Create a clean connection between deposition and layer
+** DONE Create a clean connection between deposition and layer
 
 And, for that matter, for sunsimulator measurement and submeasurement.
 
 ** TODO introduce a dedicated process class for external processes
 
+Do we really need that?  Instead, caching fetching of external graphs may be sufficient.
+
 ** TODO enrich the external process with as much original data as possible
 
-** TODO add views for ExternalData
+** TODO Replace ExternalData with URI list
+
+I don’t need the ExternalData process anymore.  Instead, a list of URIs is maintained in a new JSON field in Sample itself.
+
+This URI list must be minimised to minimise redundancy.  And, it must be returned in the “sm:state” properties of the sample, see https://scimesh.org/about/Implementation.html#requirements-for-elns.
 
 ** DONE namespaces of process and sample fields must be as generic as possible
 
@@ -21,3 +27,11 @@ Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber n
 ** DONE adapt export of sample graph to new internal API
 
 ** DONE adapt export of sample graph to new SciMesh specification
+
+** TODO Implement POST request against sample URIs
+
+See https://scimesh.org/about/Implementation.html#requirements-for-elns.
+
+** TODO Implement GET requests against process URIs
+
+See https://scimesh.org/about/Implementation.html#requirements-for-elns.
