@@ -26,6 +26,11 @@ update() {
     unset runserver_pid
     wait $runserver_pid
     wait $runserver_pid
+    if [ -e /tmp/sample.rdf ]
+    then
+        diff -u /tmp/sample.rdf /tmp/sample.rdf.temp > /tmp/sample.rdf.diff.temp || true
+        mv /tmp/sample.rdf.diff.temp /tmp/sample.rdf.diff
+    fi
     mv /tmp/sample.rdf.temp /tmp/sample.rdf
     play --no-show-progress --null --channels 1 synth 0.2 sine 1000
 }
