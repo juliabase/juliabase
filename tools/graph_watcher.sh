@@ -32,7 +32,7 @@ update() {
         mv /tmp/sample.rdf.diff.temp /tmp/sample.rdf.diff
     fi
     mv /tmp/sample.rdf.temp /tmp/sample.rdf
-    play --no-show-progress --null --channels 1 synth 0.2 sine 1000
+    play --no-show-progress --null --channels 1 synth 0.2 sine 1000 gain -15
 }
 
 export DJANGO_SETTINGS_MODULE=settings_test \
