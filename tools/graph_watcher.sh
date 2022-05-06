@@ -5,16 +5,27 @@ SCRIPT=$(realpath -e "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 cd "$SCRIPTPATH"/..
 
+trap 'handle_term' TERM INT
+
+handle_term()
+{
+    if [ "$runserver_pid" ]
+    then
+        kill $runserver_pid
+    fi
+}
+
 update() {
     ./manage.py runserver &
-    pid=$!
+    runserver_pid=$!
     while ! wget -O /tmp/sample.rdf.temp --header "Accept: text/turtle" localhost:8000/samples/14S-005
     do
         sleep 1
     done
-    kill $pid
-    wait $pid
-    wait $pid
+    kill $runserver_pid
+    unset runserver_pid
+    wait $runserver_pid
+    wait $runserver_pid
     mv /tmp/sample.rdf.temp /tmp/sample.rdf
 }
 
