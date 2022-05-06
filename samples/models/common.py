@@ -1137,10 +1137,10 @@ class Sample(models.Model, GraphEntity):
             process = process.actual_instance
             process_entity = process.uri()
             process.add_to_graph(graph)
-            graph.add((process_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/parent"), latest_process_entity
+            graph.add((process_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/cause"), latest_process_entity
                        or ontology_symbols.RDF.nil))
             latest_process_entity = process_entity
-        graph.add((sample_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/finalState"), latest_process_entity))
+        graph.add((sample_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/state"), latest_process_entity))
         return graph
 
     def delete(self, *args, **kwargs):
