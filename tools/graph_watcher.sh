@@ -27,6 +27,7 @@ update() {
     wait $runserver_pid
     wait $runserver_pid
     mv /tmp/sample.rdf.temp /tmp/sample.rdf
+    play --no-show-progress --null --channels 1 synth 0.2 sine 1000
 }
 
 export DJANGO_SETTINGS_MODULE=settings_test \
