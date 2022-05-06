@@ -8,13 +8,14 @@ cd "$SCRIPTPATH"/..
 update() {
     ./manage.py runserver &
     pid=$!
-    while ! wget -O /tmp/sample.rdf --header "Accept: text/turtle" localhost:8000/samples/14S-005
+    while ! wget -O /tmp/sample.rdf.temp --header "Accept: text/turtle" localhost:8000/samples/14S-005
     do
         sleep 1
     done
     kill $pid
     wait $pid
     wait $pid
+    mv /tmp/sample.rdf.temp /tmp/sample.rdf
 }
 
 export DJANGO_SETTINGS_MODULE=settings_test \
