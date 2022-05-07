@@ -116,9 +116,9 @@ def remove_data_item(instance, data_node, field_name):
 
 
 class GraphEntity:
-    """Mix-in class for classes which may form entities in a knowledge graph,
-    or its instances may do so.  If the latter is possible, the derived class
-    must override the `uri` method.
+    """Mix-in class for model classes which may form entities in a knowledge
+    graph, or its instances may do so.  If the latter is possible, the derived
+    class must override the `uri` method.
     """
 
     @classmethod
