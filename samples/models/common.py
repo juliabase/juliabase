@@ -154,7 +154,7 @@ class GraphEntity:
             domain_namespace = rdflib.Namespace(f"http://{Site.objects.get_current()}")
             return domain_namespace[absolute_url]
 
-    def add_to_graph(self, graph):
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
         """Adds triples for the instance to the given graph.
 
         :param rdflib.Graph graph: graph to add triples to; this is modifield
@@ -162,7 +162,7 @@ class GraphEntity:
         """
         graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
         for field in self._meta.get_fields():
-            if hasattr(field, "add_to_graph"):
+            if field.name not in excluded_fields and hasattr(field, "add_to_graph"):
                 field.add_to_graph(graph, self)
 
 
@@ -464,7 +464,8 @@ class Process(PolymorphicModel, GraphEntity):
             data["sample_positions"] = data["sample_positions"]
         return data
 
-    def add_to_graph(self, graph):
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        super().add_to_graph(graph, {"comments", "finished", "last_modified", "timestamp", "operator", "timestamp_inaccuracy"})
         graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
         graph.add((self.uri(), ontology_symbols.RDFS.label, rdflib.term.Literal(self)))
         process_entity = self.uri()

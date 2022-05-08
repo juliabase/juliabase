@@ -125,8 +125,8 @@ class Deposition(PhysicalProcess):
             data["layer {}".format(layer.number)] = layer_data
         return data
 
-    def add_to_graph(self, graph):
-        super().add_to_graph(graph)
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        super().add_to_graph(graph, excluded_fields)
         for layer in self._get_layers():
             layer.add_to_graph(graph)
 
@@ -204,8 +204,8 @@ class Layer(models.Model, GraphEntity):
         """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
 
-    def add_to_graph(self, graph):
-        super().add_to_graph(graph)
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        super().add_to_graph(graph, excluded_fields)
         graph.add((self.uri(), ontology_symbols.JB.subprocessOf, self.deposition.uri()))
 
     def get_data_for_table_export(self):
