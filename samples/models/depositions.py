@@ -24,6 +24,7 @@ well as models for layers.
 
 from django.utils.translation import gettext_lazy as _, gettext
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 from jb_common import search, model_fields
 from samples import ontology_symbols
 from samples.models import PhysicalProcess, fields_to_data_items, remove_data_item
@@ -125,10 +126,42 @@ class Deposition(PhysicalProcess):
             data["layer {}".format(layer.number)] = layer_data
         return data
 
+    def add_merge_process_to_graph(self, graph, sample):
+        effect_node, cause_node = super().add_merge_process_to_graph(graph, sample)
+        try:
+            last_layer = self.layers.last()
+        except ObjectDoesNotExist:
+            return effect_node, cause_node
+        else:
+            try:
+                last_layer = last_layer.actual_instance
+            except AttributeError:
+                pass
+            process_uri = self.uri()
+            if cause_node == process_uri:
+                merge_node = process_uri + f"#sample-{sample.id}"
+                graph.add((merge_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+                graph.add((merge_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.State))
+                graph.add((merge_node, ontology_symbols.scimesh.cause, process_uri))
+                cause_node = merge_node
+            else:
+                merge_node = cause_node
+            graph.add((merge_node, ontology_symbols.scimesh.cause, last_layer.uri()))
+        return effect_node, cause_node
+
     def add_to_graph(self, graph, excluded_fields=frozenset()):
         super().add_to_graph(graph, excluded_fields)
+        process_uri = self.uri()
+        first_layer = latest_layer = None
         for layer in self._get_layers():
+            layer_uri = layer.uri()
+            if first_layer is None:
+                first_layer = layer_uri
             layer.add_to_graph(graph)
+            graph.add((layer_uri, ontology_symbols.scimesh.concurrent, process_uri))
+            if latest_layer is not None:
+                graph.add((layer_uri, ontology_symbols.scimesh.cause, latest_layer))
+            latest_layer = layer_uri
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
@@ -203,10 +236,6 @@ class Layer(models.Model, GraphEntity):
         :rtype: `dict`
         """
         return {field.name: getattr(self, field.name) for field in self._meta.fields}
-
-    def add_to_graph(self, graph, excluded_fields=frozenset()):
-        super().add_to_graph(graph, excluded_fields)
-        graph.add((self.uri(), ontology_symbols.JB.subprocessOf, self.deposition.uri()))
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.

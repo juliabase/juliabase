@@ -155,10 +155,16 @@ class GraphEntity:
             return domain_namespace[absolute_url]
 
     def add_to_graph(self, graph, excluded_fields=frozenset()):
-        """Adds triples for the instance to the given graph.
+        """Returns the graphs representing this model instance.
 
-        :param rdflib.Graph graph: graph to add triples to; this is modifield
-          in place
+        :param set[str] excluded_fields: Names of fields that should not be
+          added to the graph.  Typically, the more specialised caller has
+          already dealt with them.
+
+        :return:
+          graph representing this model instance
+
+        :rtype: rdflib.Graph
         """
         graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
         for field in self._meta.get_fields():
@@ -479,6 +485,29 @@ class Process(PolymorphicModel, GraphEntity):
         graph.add((process_entity, ontology_symbols.scimesh.operator, self.operator.samples_user_details.uri()))
         graph.add((process_entity, ontology_symbols.JB_process.timestamp_inaccuracy,
                    rdflib.term.Literal(self.timestamp_inaccuracy)))
+
+    def add_merge_process_to_graph(self, graph, sample):
+        process_uri = self.uri()
+        if self.samples.count() > 1:
+            merge_process = process_uri + f"#sample-{sample.id}"
+            graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+            graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.State))
+            graph.add((merge_process, ontology_symbols.scimesh.cause, process_uri))
+            return merge_process, merge_process
+        else:
+            return process_uri, process_uri
+
+    def add_to_graph_with_hookups(self, graph):
+        self.add_to_graph(graph)
+        process_uri = self.uri()
+        graph.add((process_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+        effect_nodes = {}
+        cause_nodes = {}
+        for sample in self.samples.all():
+            sample_process, merge_process = self.add_merge_process_to_graph(graph, sample)
+            effect_nodes[sample] = sample_process
+            cause_nodes[sample] = merge_process
+        return effect_nodes, cause_nodes
 
     def get_data_for_table_export(self):
         """Extract the data of this process as a tree of nodes (or a single
@@ -1122,27 +1151,21 @@ class Sample(models.Model, GraphEntity):
         else:
             return search.SearchTreeNode(cls, related_models, search_fields)
 
-    def get_graph(self):
-        graph = rdflib.Graph()
-        ontology_symbols.bind_namespaces(graph)
+    def add_to_graph(self, graph):
+        super().add_to_graph(graph, {"currently_responsible_person", "name"})
         sample_entity = self.uri()
-        graph.add((sample_entity, ontology_symbols.RDF.type, self.class_uri()))
         graph.add((sample_entity,
                    ontology_symbols.JB_sample.currentlyResponsiblePerson,
                    self.currently_responsible_person.samples_user_details.uri()))
-        graph.add((sample_entity, ontology_symbols.JB_sample.currentLocation, rdflib.term.Literal(self.current_location)))
         graph.add((sample_entity, ontology_symbols.JB_sample.topic, rdflib.term.Literal(self.topic)))
         graph.add((sample_entity, ontology_symbols.RDFS.label, rdflib.term.Literal(self.name)))
-        latest_process_entity = None
+        latest_cause_node = None
         for process in self.processes.order_by("timestamp"):
             process = process.actual_instance
-            process_entity = process.uri()
-            process.add_to_graph(graph)
-            graph.add((process_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/cause"), latest_process_entity
-                       or ontology_symbols.RDF.nil))
-            latest_process_entity = process_entity
-        graph.add((sample_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/state"), latest_process_entity))
-        return graph
+            effect_nodes, cause_nodes = process.add_to_graph_with_hookups(graph)
+            graph.add((effect_nodes[self], ontology_symbols.scimesh.cause, latest_cause_node or ontology_symbols.RDF.nil))
+            latest_cause_node = cause_nodes[self]
+        graph.add((sample_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/state"), latest_cause_node))
 
     def delete(self, *args, **kwargs):
         """Deletes the sample and all of its processes that contain only this sample –
@@ -1872,6 +1895,17 @@ class ProcessWithSamplePositions(models.Model, GraphEntity):
 
     class Meta:
         abstract = True
+
+    # def add_merge_process_to_graph(self, graph, sample):
+    #     sample_process = process_uri + f"#single-{sample.id}"
+    #     merge_process = process_uri + f"#sample-{sample.id}"
+    #     graph.add((sample_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+    #     graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+    #     graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.State))
+    #     graph.add((sample_process, ontology_symbols.scimesh.concurrent, process_uri))
+    #     graph.add((merge_process, ontology_symbols.scimesh.cause, process_uri))
+    #     graph.add((merge_process, ontology_symbols.scimesh.cause, sample_process))
+    #     return sample_process, merge_process
 
     def get_sample_position_context(self, user, old_context):
         context = old_context.copy()
