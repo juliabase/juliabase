@@ -152,15 +152,14 @@ class Deposition(PhysicalProcess):
     def add_to_graph(self, graph, excluded_fields=frozenset()):
         super().add_to_graph(graph, excluded_fields)
         process_uri = self.uri()
-        first_layer = latest_layer = None
+        latest_layer = None
         for layer in self._get_layers():
             layer_uri = layer.uri()
-            if first_layer is None:
-                first_layer = layer_uri
-                graph.add((layer_uri, ontology_symbols.scimesh.cause, ontology_symbols.RDF.nil))
             layer.add_to_graph(graph)
             graph.add((layer_uri, ontology_symbols.scimesh.concurrent, process_uri))
-            if latest_layer is not None:
+            if latest_layer is None:
+                graph.add((layer_uri, ontology_symbols.scimesh.cause, ontology_symbols.RDF.nil))
+            else:
                 graph.add((layer_uri, ontology_symbols.scimesh.cause, latest_layer))
             latest_layer = layer_uri
 
