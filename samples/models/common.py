@@ -160,11 +160,6 @@ class GraphEntity:
         :param set[str] excluded_fields: Names of fields that should not be
           added to the graph.  Typically, the more specialised caller has
           already dealt with them.
-
-        :return:
-          graph representing this model instance
-
-        :rtype: rdflib.Graph
         """
         graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
         for field in self._meta.get_fields():
