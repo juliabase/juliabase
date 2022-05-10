@@ -127,6 +127,23 @@ class Deposition(PhysicalProcess):
         return data
 
     def add_merge_process_to_graph(self, graph, sample):
+        """Additionally to the parent method, we create a “cause” relation from
+        the merge process to the latest layer.  Moreover, we make sure that
+        there is *always* a merge node, even if there is only one sample in
+        this process, because be need it due to the concurrency between layers
+        and the common process.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+        :param Sample sample: Names of fields that should not be added to the
+          graph.  Typically, the more specialised caller has already dealt with
+          them.
+
+        :return:
+          graph containing also the data of this process instance
+
+        :rtype: rdflib.Graph
+        """
         effect_node, cause_node = super().add_merge_process_to_graph(graph, sample)
         try:
             last_layer = self.layers.last()
@@ -150,6 +167,15 @@ class Deposition(PhysicalProcess):
         return effect_node, cause_node
 
     def add_to_graph(self, graph, excluded_fields=frozenset()):
+        """Additionally to what is done in the parent method, we add the layers
+        to the graph.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+        :param set[str] excluded_fields: Names of fields that should not be
+          added to the graph.  Typically, the more specialised caller has
+          already dealt with them.
+        """
         super().add_to_graph(graph, excluded_fields)
         process_uri = self.uri()
         latest_layer = None

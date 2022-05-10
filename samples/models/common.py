@@ -155,8 +155,13 @@ class GraphEntity:
             return domain_namespace[absolute_url]
 
     def add_to_graph(self, graph, excluded_fields=frozenset()):
-        """Returns the graphs representing this model instance.
+        """Adds the graphs representing this model instance to the given graph.
+        This encompasses the connection of the instance URI with the model
+        class URI using an rdf:type relation, and the connection of all field
+        values with the instance URI.  Note that only direct fields are
+        included, no foreign key related data.
 
+        :param rdflib.Graph graph: graph to which the mode data should be added
         :param set[str] excluded_fields: Names of fields that should not be
           added to the graph.  Typically, the more specialised caller has
           already dealt with them.
@@ -466,6 +471,18 @@ class Process(PolymorphicModel, GraphEntity):
         return data
 
     def add_to_graph(self, graph, excluded_fields=frozenset()):
+        """Add all direct fields of this process to the given graph.  See the
+        parent method for further information.  Note that this method does not
+        include related data (e.g. subprocesses).  This must be dealt with in
+        derived methods.  For adding related sample data, see the sibling
+        method `add_to_graph_with_hookups`.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+        :param set[str] excluded_fields: Names of fields that should not be
+          added to the graph.  Typically, the more specialised caller has
+          already dealt with them.
+        """
         super().add_to_graph(graph, {"comments", "finished", "last_modified", "timestamp", "operator", "timestamp_inaccuracy"})
         graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
         graph.add((self.uri(), ontology_symbols.RDFS.label, rdflib.term.Literal(self)))
@@ -482,6 +499,30 @@ class Process(PolymorphicModel, GraphEntity):
                    rdflib.term.Literal(self.timestamp_inaccuracy)))
 
     def add_merge_process_to_graph(self, graph, sample):
+        """Add a merge (state) process to the given graph if necessary.  If the
+        sample count of the process exceeds 1, each sample needs its own
+        so-called merge process in order to be able to connect to its previous
+        history without being intertwined with all other samples.  This merge
+        process is added here.  It returns the effect and cause process URIs,
+        so that they can be used to connect to the previous and next process in
+        the sample’s history.
+
+        The effect and cause nodes are actually the same here.  However, a
+        derived class may need a more complex topology (e.g. a sample position
+        process).  Ideally, a derived class only has to override this method
+        and can leave `add_to_graph_with_hookups` as is.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+        :param Sample sample: Names of fields that should not be added to the
+          graph.  Typically, the more specialised caller has already dealt with
+          them.
+
+        :return:
+          graph containing also the data of this process instance
+
+        :rtype: rdflib.Graph
+        """
         process_uri = self.uri()
         if self.samples.count() > 1:
             merge_process = process_uri + f"#sample-{sample.id}"
@@ -493,6 +534,25 @@ class Process(PolymorphicModel, GraphEntity):
             return process_uri, process_uri
 
     def add_to_graph_with_hookups(self, graph):
+        """This does the same as `add_to_graph`, but additionally connect the
+        process cleanly with its samples.  Moreover, if there is more than one
+        sample, a state process for each sample is created.
+
+        Moreover, the hook-up URIs are returned that are needed to connect the
+        process to its neighbours.  “Effect nodes” connect the process to its
+        predecessor, and “cause nodes” to its successor.  The caller must take
+        care of adding the necessary relations to the graph.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+
+        :return:
+          mapping of samples to their effect nodes, mapping of samples to their
+          cause nodes
+
+        :rtype: dict[Sample, rdflib.term.URIRef], dict[Sample,
+          rdflib.term.URIRef]
+        """
         self.add_to_graph(graph)
         process_uri = self.uri()
         graph.add((process_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
