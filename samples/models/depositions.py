@@ -182,10 +182,8 @@ class Deposition(PhysicalProcess):
         for layer in self._get_layers():
             layer_uri = layer.uri()
             layer.add_to_graph(graph)
-            graph.add((layer_uri, ontology_symbols.scimesh.concurrent, process_uri))
-            if latest_layer is None:
-                graph.add((layer_uri, ontology_symbols.scimesh.cause, ontology_symbols.RDF.nil))
-            else:
+            graph.add((layer_uri, ontology_symbols.scimesh.cause, process_uri))
+            if latest_layer is not None:
                 graph.add((layer_uri, ontology_symbols.scimesh.cause, latest_layer))
             latest_layer = layer_uri
 

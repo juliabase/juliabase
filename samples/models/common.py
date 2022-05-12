@@ -499,7 +499,7 @@ class Process(PolymorphicModel, GraphEntity):
                    rdflib.term.Literal(self.timestamp_inaccuracy)))
 
     def add_merge_process_to_graph(self, graph, sample):
-        """Add a merge (state) process to the given graph if necessary.  If the
+        """Add a sample (state) process to the given graph if necessary.  If the
         sample count of the process exceeds 1, each sample needs its own
         so-called merge process in order to be able to connect to its previous
         history without being intertwined with all other samples.  This merge
@@ -525,11 +525,11 @@ class Process(PolymorphicModel, GraphEntity):
         """
         process_uri = self.uri()
         if self.samples.count() > 1:
-            merge_process = process_uri + f"#sample-{sample.id}"
-            graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
-            graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.State))
-            graph.add((merge_process, ontology_symbols.scimesh.cause, process_uri))
-            return merge_process, merge_process
+            graph.add((process_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
+            sample_process = process_uri + f"#sample-{sample.id}"
+            graph.add((sample_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+            graph.add((sample_process, ontology_symbols.scimesh.cause, process_uri))
+            return sample_process, sample_process
         else:
             return process_uri, process_uri
 
