@@ -555,7 +555,6 @@ class Process(PolymorphicModel, GraphEntity):
         """
         self.add_to_graph(graph)
         process_uri = self.uri()
-        graph.add((process_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
         effect_nodes = {}
         cause_nodes = {}
         for sample in self.samples.all():
