@@ -228,12 +228,3 @@ class LoggingMiddleware:
     def __call__(self, request):
         self.logger.info(f"{request.user} {request.method} {request.path}")
         return self.get_response(request)
-
-
-from django.contrib.auth.models import User
-class DefaultUserMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
-    def __call__(self, request):
-        request.user = User.objects.get(username="r.calvert")
-        return self.get_response(request)
