@@ -582,8 +582,10 @@ def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
     cached.
 
     :param path: the path to the destination file; may also be a symbolic name
-    :param generator: callable which returns the file content as a binary
-      stream; it is only called of the cache lookup yields a miss
+    :param generator: Callable which returns the file content as a binary
+      stream.  It is only called of the cache lookup yields a miss.  The
+      current position in the steam must be 0, i.e. at the very beginning.
+      (The position after this function is undefined.)
     :param source_files: the paths of the source files; if relative, they are
         assumed to be in the blob storage.
     :param timestamps: timestamps of non-file source objects

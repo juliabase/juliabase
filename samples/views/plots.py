@@ -59,6 +59,7 @@ def generate_plot(process, plot_id, thumbnail, datafile_name):
     except ValueError as e:
         raise Http404("Plot could not be generated: " + e.args[0])
     else:
+        output.seek(0)
         return output
 
 
