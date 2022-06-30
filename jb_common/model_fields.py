@@ -74,6 +74,9 @@ class GraphField:
 class CharField(GraphField, models.CharField):
     pass
 
+class DateField(GraphField, models.DateField):
+    pass
+
 class DateTimeField(GraphField, models.DateTimeField):
     pass
 
@@ -92,10 +95,22 @@ class TextField(GraphField, models.TextField):
 class URLField(GraphField, models.URLField):
     pass
 
+class FloatField(GraphField, models.FloatField):
+    pass
+
+class IntegerField(GraphField, models.IntegerField):
+    pass
+
+class DecimalField(GraphField, models.DecimalField):
+    pass
+
 class PositiveIntegerField(GraphField, models.PositiveIntegerField):
     pass
 
 class PositiveSmallIntegerField(GraphField, models.PositiveSmallIntegerField):
+    pass
+
+class SmallIntegerField(GraphField, models.SmallIntegerField):
     pass
 
 
