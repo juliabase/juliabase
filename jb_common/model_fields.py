@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime, decimal
+import datetime, decimal, json
 import rdflib
 from django.db import models
 from django.utils.translation import gettext_lazy as _, gettext
@@ -58,6 +58,9 @@ class GraphField:
         return self.model.uri_namespace()[self.model.__name__ + "/" +
                                           underscores_to_camel_case(self.name, force_lower=True)]
 
+    def get_field_value_from_instance(self, instance):
+        return getattr(instance, self.name)
+
     def add_to_graph(self, graph, instance):
         """Adds triples for the field to the given graph.
 
@@ -66,7 +69,7 @@ class GraphField:
         :param django.db.models.Model instance: model instance this field
           belongs to
         """
-        value = getattr(instance, self.name)
+        value = self.get_field_value_from_instance(instance)
         if value is not None:
             assert isinstance(value, (int, float, str, bool, datetime.datetime, datetime.date, decimal.Decimal)), \
                 (type(value), self.name)
@@ -89,7 +92,12 @@ class BooleanField(GraphField, models.BooleanField):
     pass
 
 class JSONField(GraphField, models.JSONField):
-    pass
+    def get_field_value_from_instance(self, instance):
+        value = super().get_field_value_from_instance(instance)
+        if value is not None:
+            return json.dumps(value)
+        else:
+            return None
 
 class TextField(GraphField, models.TextField):
     pass
