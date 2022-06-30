@@ -68,7 +68,7 @@ class GraphField:
         """
         value = getattr(instance, self.name)
         if value is not None:
-            assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal)), \
+            assert isinstance(value, (int, float, str, bool, datetime.datetime, datetime.date, decimal.Decimal)), \
                 (type(value), self.name)
             graph.add((instance.uri(), self.uri(), rdflib.term.Literal(value)))
 
