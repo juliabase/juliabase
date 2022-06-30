@@ -147,6 +147,13 @@ class Deposition(PhysicalProcess):
         effect_node, cause_node = super().add_merge_process_to_graph(graph, sample)
         try:
             last_layer = self.layers.last()
+        except AttributeError as error:
+            # FixMe: Remove the following line from Python 3.10 onwards.
+            return effect_node, cause_node
+            if error.name == "layers":
+                return effect_node, cause_node
+            else:
+                raise
         except ObjectDoesNotExist:
             return effect_node, cause_node
         else:
