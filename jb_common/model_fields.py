@@ -67,8 +67,9 @@ class GraphField:
           belongs to
         """
         value = getattr(instance, self.name)
-        assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal, type(None))), type(value)
-        graph.add((instance.uri(), self.uri(), rdflib.term.Literal(value)))
+        if value is not None:
+            assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal)), type(value)
+            graph.add((instance.uri(), self.uri(), rdflib.term.Literal(value)))
 
 
 class CharField(GraphField, models.CharField):
