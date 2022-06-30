@@ -226,7 +226,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
 
 
 class SolarsimulatorCellMeasurement(models.Model, GraphEntity):
-    measurement = models.ForeignKey(SolarsimulatorMeasurement, models.CASCADE, related_name="cells",
+    measurement = models.ForeignKey(SolarsimulatorMeasurement, on_delete=models.CASCADE, related_name="cells",
                                     verbose_name=_("solarsimulator measurement"))
     position = model_fields.CharField(_("cell position"), max_length=5)
     data_file = model_fields.CharField(_("data file"), max_length=200, db_index=True,

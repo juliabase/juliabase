@@ -43,7 +43,7 @@ class FeedEntry(PolymorphicModel):
     :py:meth:`samples.models.PolymorphicModel.actual_instance` which is
     inherited by this class.
     """
-    originator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("originator"))
+    originator = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("originator"))
     users = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("users"), related_name="feed_entries",
                                    blank=True)
     timestamp = models.DateTimeField(_("timestamp"), auto_now_add=True)
@@ -122,7 +122,7 @@ class FeedNewSamples(FeedEntry):
     database.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
-    topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("topic"), related_name="new_samples_news")
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, verbose_name=_("topic"), related_name="new_samples_news")
     purpose = models.CharField(_("purpose"), max_length=80, blank=True)
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("auto adders"), blank=True)
 
@@ -148,8 +148,8 @@ class FeedMovedSamples(FeedEntry):
     """Model for feed entries about samples moved to a new topic.
     """
     samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
-    topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("topic"), related_name="moved_samples_news")
-    old_topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("old topic"), null=True, blank=True)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, verbose_name=_("topic"), related_name="moved_samples_news")
+    old_topic = models.ForeignKey(Topic, on_delete=models.CASCADE, verbose_name=_("old topic"), null=True, blank=True)
     auto_adders = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("auto adders"), blank=True)
     description = models.TextField(_("description"))
 
@@ -172,7 +172,7 @@ class FeedMovedSamples(FeedEntry):
 class FeedNewPhysicalProcess(FeedEntry):
     """Model for feed entries about new physical processes.
     """
-    process = models.OneToOneField(Process, models.CASCADE, verbose_name=_("process"))
+    process = models.OneToOneField(Process, on_delete=models.CASCADE, verbose_name=_("process"))
 
     class Meta(PolymorphicModel.Meta):
         verbose_name = _("new physical process feed entry")
@@ -194,7 +194,7 @@ class FeedNewPhysicalProcess(FeedEntry):
 class FeedEditedPhysicalProcess(FeedEntry):
     """Model for feed entries about edited physical processes.
     """
-    process = models.ForeignKey(Process, models.CASCADE, verbose_name=_("process"))
+    process = models.ForeignKey(Process, on_delete=models.CASCADE, verbose_name=_("process"))
     description = models.TextField(_("description"))
 
     class Meta(PolymorphicModel.Meta):
@@ -237,7 +237,7 @@ class FeedResult(FeedEntry):
     sample series or both.  This is distinguished in the HTML template.
     """
         # Translators: experimental result
-    result = models.ForeignKey(Result, models.CASCADE, verbose_name=_("result"))
+    result = models.ForeignKey(Result, on_delete=models.CASCADE, verbose_name=_("result"))
     description = models.TextField(_("description"), blank=True)
     is_new = models.BooleanField(_("result is new"), default=False)
 
@@ -332,7 +332,7 @@ class FeedDeletedSample(FeedEntry):
 class FeedSampleSplit(FeedEntry):
     """Model for feed entries for sample splits.
     """
-    sample_split = models.ForeignKey(SampleSplit, models.CASCADE, verbose_name=_("sample split"))
+    sample_split = models.ForeignKey(SampleSplit, on_delete=models.CASCADE, verbose_name=_("sample split"))
     sample_completely_split = models.BooleanField(_("sample was completely split"), default=False)
 
     class Meta(PolymorphicModel.Meta):
@@ -354,7 +354,7 @@ class FeedEditedSampleSeries(FeedEntry):
     currently responsible persons.  The respective view generates two entries
     for that, however, see :py:func:`samples.views.sample_series.edit`.
     """
-    sample_series = models.ForeignKey(SampleSeries, models.CASCADE, verbose_name=_("sample series"))
+    sample_series = models.ForeignKey(SampleSeries, on_delete=models.CASCADE, verbose_name=_("sample series"))
     description = models.TextField(_("description"))
     responsible_person_changed = models.BooleanField(_("has responsible person changed"), default=False)
 
@@ -374,8 +374,8 @@ class FeedEditedSampleSeries(FeedEntry):
 class FeedNewSampleSeries(FeedEntry):
     """Model for feed entries for new sample series.
     """
-    sample_series = models.ForeignKey(SampleSeries, models.CASCADE, verbose_name=_("sample series"))
-    topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("topic"))
+    sample_series = models.ForeignKey(SampleSeries, on_delete=models.CASCADE, verbose_name=_("sample series"))
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, verbose_name=_("topic"))
     subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("subscribers"), blank=True)
 
     class Meta(PolymorphicModel.Meta):
@@ -398,9 +398,9 @@ class FeedNewSampleSeries(FeedEntry):
 class FeedMovedSampleSeries(FeedEntry):
     """Model for feed entries for sample series moved to a new topic.
     """
-    sample_series = models.ForeignKey(SampleSeries, models.CASCADE, verbose_name=_("sample series"))
-    topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("topic"))
-    old_topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("old topic"), null=True, blank=True,
+    sample_series = models.ForeignKey(SampleSeries, on_delete=models.CASCADE, verbose_name=_("sample series"))
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, verbose_name=_("topic"))
+    old_topic = models.ForeignKey(Topic, on_delete=models.CASCADE, verbose_name=_("old topic"), null=True, blank=True,
                                   related_name="news_ex_sample_series")
     description = models.TextField(_("description"))
     subscribers = models.ManyToManyField(django.contrib.auth.models.User, verbose_name=_("subscribers"), blank=True)
@@ -430,7 +430,7 @@ class FeedChangedTopic(FeedEntry):
         ADDED = "added", _("added")
         REMOVED = "removed", _("removed")
 
-    topic = models.ForeignKey(Topic, models.CASCADE, verbose_name=_("topic"))
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, verbose_name=_("topic"))
         # Translators: Action is either addition or removal
     action = models.CharField(_("action"), max_length=7, choices=Action.choices)
 
@@ -452,8 +452,8 @@ class FeedChangedTopic(FeedEntry):
 class FeedStatusMessage(FeedEntry):
     """Model for feed entries for new status messages from physical processes.
     """
-    process_class = models.ForeignKey(ContentType, models.CASCADE, verbose_name=_("process class"))
-    status = models.ForeignKey(StatusMessage, models.CASCADE, verbose_name=_("status message"), related_name="feed_entries")
+    process_class = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name=_("process class"))
+    status = models.ForeignKey(StatusMessage, on_delete=models.CASCADE, verbose_name=_("status message"), related_name="feed_entries")
 
     class Meta(PolymorphicModel.Meta):
         verbose_name = _("status message feed entry")
@@ -472,8 +472,8 @@ class FeedWithdrawnStatusMessage(FeedEntry):
     """Model for feed entries for withdrawn status messages from physical
     processes.
     """
-    process_class = models.ForeignKey(ContentType, models.CASCADE, verbose_name=_("process class"))
-    status = models.ForeignKey(StatusMessage, models.CASCADE, verbose_name=_("status message"),
+    process_class = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name=_("process class"))
+    status = models.ForeignKey(StatusMessage, on_delete=models.CASCADE, verbose_name=_("status message"),
                                related_name="feed_entries_for_withdrawal")
 
     class Meta(PolymorphicModel.Meta):
@@ -492,7 +492,7 @@ class FeedWithdrawnStatusMessage(FeedEntry):
 class FeedNewTask(FeedEntry):
     """Model for feed entries for new tasks for physical processes.
     """
-    task = models.ForeignKey(Task, models.CASCADE, verbose_name=_("task"), related_name="feed_entries_for_new_tasks")
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, verbose_name=_("task"), related_name="feed_entries_for_new_tasks")
 
     class Meta(PolymorphicModel.Meta):
         verbose_name = _("new task feed entry")
@@ -510,7 +510,7 @@ class FeedNewTask(FeedEntry):
 class FeedEditedTask(FeedEntry):
     """Model for feed entries for new tasks for physical processes.
     """
-    task = models.ForeignKey(Task, models.CASCADE, verbose_name=_("task"), related_name="feed_entries_for_edited_tasks")
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, verbose_name=_("task"), related_name="feed_entries_for_edited_tasks")
     description = models.TextField(_("description"))
 
     class Meta(PolymorphicModel.Meta):
@@ -530,7 +530,7 @@ class FeedRemovedTask(FeedEntry):
     """Model for feed entries for removing tasks.
     """
     old_id = models.PositiveIntegerField(_("number"), unique=True)
-    process_class = models.ForeignKey(ContentType, models.CASCADE, verbose_name=_("process class"))
+    process_class = models.ForeignKey(ContentType, on_delete=models.CASCADE, verbose_name=_("process class"))
     samples = models.ManyToManyField(Sample, verbose_name=_("samples"))
 
     class Meta(PolymorphicModel.Meta):

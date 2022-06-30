@@ -331,6 +331,7 @@ def generate_plot(image_format):
     output = BytesIO()
     canvas.print_figure(output, format=image_format)
     figure.clf()
+    output.seek(0)
     return output
 
 

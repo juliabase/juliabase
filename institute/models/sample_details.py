@@ -43,7 +43,7 @@ class SampleDetails(models.Model, samples.models.GraphEntity):
     so that the user doesn't get an outdated sample data sheet when this model
     or depending models are updated.
     """
-    sample = models.OneToOneField(samples.models.Sample, models.CASCADE, verbose_name=_("sample"),
+    sample = models.OneToOneField(samples.models.Sample, on_delete=models.CASCADE, verbose_name=_("sample"),
                                   related_name="sample_details", primary_key=True)
 
     class Meta:
@@ -292,7 +292,7 @@ class InformalLayer(models.Model, samples.models.GraphEntity):
         N = "n", "n"
 
     index = models.PositiveIntegerField(_("index"))
-    sample_details = models.ForeignKey(SampleDetails, models.CASCADE, verbose_name=_("sample details"),
+    sample_details = models.ForeignKey(SampleDetails, on_delete=models.CASCADE, verbose_name=_("sample details"),
                                        related_name="informal_layers")
     doping = models.CharField(_("doping"), max_length=10, null=True, blank=True, choices=Doping.choices)
     classification = models.CharField(_("classification"), max_length=30, null=True, blank=True,
@@ -304,7 +304,7 @@ class InformalLayer(models.Model, samples.models.GraphEntity):
     structured = models.BooleanField(_("structured"), default=False)
     textured = models.BooleanField(_("textured"), default=False)
     always_collapsed = models.BooleanField(_("always collapsed"), default=False)
-    process = models.ForeignKey(samples.models.Process, models.CASCADE, verbose_name=_("process"),
+    process = models.ForeignKey(samples.models.Process, on_delete=models.CASCADE, verbose_name=_("process"),
                                 related_name="informal_layers", null=True, blank=True)
     additional_process_data = models.TextField(_("additional process data"), blank=True)
     verified = models.BooleanField(_("verified"), default=False)

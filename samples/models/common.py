@@ -239,9 +239,9 @@ class Process(PolymorphicModel, GraphEntity):
     timestamp = model_fields.DateTimeField(_("timestamp"))
     timestamp_inaccuracy = model_fields.PositiveSmallIntegerField(
         _("timestamp inaccuracy"), choices=TimestampInaccuracy.choices, default=TimestampInaccuracy.TOTAL)
-    operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("operator"),
+    operator = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("operator"),
                                  related_name="processes")
-    external_operator = models.ForeignKey(ExternalOperator, models.CASCADE, verbose_name=_("external operator"),
+    external_operator = models.ForeignKey(ExternalOperator, on_delete=models.CASCADE, verbose_name=_("external operator"),
                                           null=True, blank=True, related_name="processes")
     comments = model_fields.TextField(_("comments"), blank=True)
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
@@ -934,16 +934,16 @@ class Sample(models.Model, GraphEntity):
                                       verbose_name=_("watchers"))
         # Translators: location of a sample
     current_location = model_fields.CharField(_("current location"), max_length=50)
-    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="samples",
+    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, related_name="samples",
                                                      verbose_name=_("currently responsible person"))
     purpose = model_fields.CharField(_("purpose"), max_length=80, blank=True)
         # Translators: keywords for samples
     tags = model_fields.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
-    split_origin = models.ForeignKey("SampleSplit", models.CASCADE, null=True, blank=True, related_name="pieces",
+    split_origin = models.ForeignKey("SampleSplit", on_delete=models.CASCADE, null=True, blank=True, related_name="pieces",
                                      # Translators: ID of mother sample
                                      verbose_name=_("split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
-    topic = models.ForeignKey(Topic, models.CASCADE, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
@@ -1260,7 +1260,7 @@ class SampleAlias(models.Model, GraphEntity):
     aliases of the same name.
     """
     name = model_fields.CharField(_("name"), max_length=255)
-    sample = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("sample"), related_name="aliases")
+    sample = models.ForeignKey(Sample, on_delete=models.CASCADE, verbose_name=_("sample"), related_name="aliases")
 
     class Meta:
         unique_together = (("name", "sample"),)
@@ -1284,7 +1284,7 @@ class SampleSplit(Process):
     relationship in both directions.
     """
         # Translators: parent of a sample
-    parent = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("parent"))
+    parent = models.ForeignKey(Sample, on_delete=models.CASCADE, verbose_name=_("parent"))
     """This field exists just for a fast lookup.  Its existence is actually a
     violation of the non-redundancy rule in database models because one could
     find the parent via the samples attribute every process has, too.
@@ -1357,9 +1357,9 @@ class Clearance(models.Model, GraphEntity):
     Note that the processes needn't be processes connected with the sample.
     They may also belong to one of its ancestors.
     """
-    user = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("user"),
+    user = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("user"),
                              related_name="clearances")
-    sample = models.ForeignKey(Sample, models.CASCADE, verbose_name=_("sample"), related_name="clearances")
+    sample = models.ForeignKey(Sample, on_delete=models.CASCADE, verbose_name=_("sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
@@ -1374,9 +1374,9 @@ class Clearance(models.Model, GraphEntity):
 
 class SampleClaim(models.Model, GraphEntity):
         # Translators: someone who assert a claim to samples
-    requester = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("requester"),
+    requester = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("requester"),
                                   related_name="claims")
-    reviewer = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("reviewer"),
+    reviewer = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("reviewer"),
                                  related_name="claims_as_reviewer")
     samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_("samples"))
         # Translators: "closed" claim to samples
@@ -1611,13 +1611,13 @@ class SampleSeries(models.Model, GraphEntity):
                             # Translators: The “Y” stands for “year”
                             help_text=_("must be of the form “originator-YY-name”"))
     timestamp = model_fields.DateTimeField(_("timestamp"))
-    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE,
+    currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE,
                                                      related_name="sample_series",
                                                      verbose_name=_("currently responsible person"))
     description = model_fields.TextField(_("description"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_("samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_("results"))
-    topic = models.ForeignKey(Topic, models.CASCADE, related_name="sample_series", verbose_name=_("topic"))
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="sample_series", verbose_name=_("topic"))
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
@@ -1731,9 +1731,9 @@ class Initials(models.Model):
     after thorough examination”.
     """
     initials = models.CharField(_("initials"), max_length=4, primary_key=True)
-    user = models.OneToOneField(django.contrib.auth.models.User, models.CASCADE, verbose_name=_("user"),
+    user = models.OneToOneField(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("user"),
                                 related_name="initials", null=True, blank=True)
-    external_operator = models.OneToOneField(ExternalOperator, models.CASCADE, verbose_name=_("external operator"),
+    external_operator = models.OneToOneField(ExternalOperator, on_delete=models.CASCADE, verbose_name=_("external operator"),
                                              related_name="initials", null=True, blank=True)
 
     class Meta:
@@ -1749,7 +1749,7 @@ class UserDetails(models.Model, GraphEntity):
     django.contrib.auth.models.User.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
     """
-    user = models.OneToOneField(django.contrib.auth.models.User, models.CASCADE, primary_key=True, verbose_name=_("user"),
+    user = models.OneToOneField(django.contrib.auth.models.User, on_delete=models.CASCADE, primary_key=True, verbose_name=_("user"),
                                 related_name="samples_user_details")
     auto_addition_topics = models.ManyToManyField(
         Topic, blank=True, related_name="auto_adders", verbose_name=_("auto-addition topics"),
@@ -1853,7 +1853,7 @@ class StatusMessage(models.Model):
                                                         default=Process.TimestampInaccuracy.TOTAL)
     end_inaccuracy = models.PositiveSmallIntegerField(_("end inaccuracy"), choices=Process.TimestampInaccuracy.choices,
                                                         default=Process.TimestampInaccuracy.TOTAL)
-    operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="status_messages",
+    operator = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, related_name="status_messages",
                                  verbose_name=_("reporter"))
     message = models.TextField(_("message"), blank=True)
     status_level = models.CharField(_("level"), choices=StatusLevel.choices, default=StatusLevel.UNDEFINED, max_length=10)
@@ -1884,14 +1884,14 @@ class Task(models.Model, GraphEntity):
         LOW = "3 low", _("low")
 
     status = models.CharField(_("status"), max_length=15, choices=Status.choices, default=Status.NEW)
-    customer = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="tasks",
+    customer = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, related_name="tasks",
                                  verbose_name=_("customer"))
     creating_timestamp = models.DateTimeField(_("created at"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now_add=True)
     last_modified = models.DateTimeField(_("last modified"), help_text=_("YYYY-MM-DD HH:MM:SS"), auto_now=True)
-    operator = models.ForeignKey(django.contrib.auth.models.User, models.CASCADE, related_name="operated_tasks",
+    operator = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, related_name="operated_tasks",
                                  verbose_name=_("operator"), null=True, blank=True)
-    process_class = models.ForeignKey(ContentType, models.CASCADE, related_name="tasks", verbose_name=_("process class"))
-    finished_process = models.ForeignKey(Process, models.CASCADE, related_name="task", null=True, blank=True,
+    process_class = models.ForeignKey(ContentType, on_delete=models.CASCADE, related_name="tasks", verbose_name=_("process class"))
+    finished_process = models.ForeignKey(Process, on_delete=models.CASCADE, related_name="task", null=True, blank=True,
                                          verbose_name=_("finished process"))
     samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_("samples"))
     comments = models.TextField(_("comments"), blank=True)
