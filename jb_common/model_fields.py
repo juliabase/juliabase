@@ -231,8 +231,7 @@ class _QuantityGraphField(GraphField):
         quantitative_value = rdflib.BNode()
         graph.add((instance.uri(), self.uri(), quantitative_value))
         graph.add((quantitative_value, ontology_symbols.RDF.type, ontology_symbols.schema_org.QuantitativeValue))
-        assert isinstance(value, (int, float, str, bool, datetime.datetime, decimal.Decimal)), type(value)
-        graph.add((quantitative_value, ontology_symbols.schema_org.value, rdflib.term.Literal(value)))
+        self.add_object_safely(graph, quantitative_value, ontology_symbols.schema_org.value, value)
         graph.add((quantitative_value, ontology_symbols.schema_org.unitText, rdflib.term.Literal(self.unit)))
         unit_code = UN_CEFACT_common_code.get(self.unit)
         if unit_code:
