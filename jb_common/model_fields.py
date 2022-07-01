@@ -61,6 +61,24 @@ class GraphField:
     def get_field_value_from_instance(self, instance):
         return getattr(instance, self.name)
 
+    @staticmethod
+    def add_object_safely(graph, subject, predicate, object_):
+        """Add a triple to the graph with an object of unknown type.  This
+        method assures that the type of `object_` can be converted to an RDF
+        literal safely.  If `object_` is ``None``, nothing is added to the
+        graph.
+
+        :param rdflib.Graph graph: graph to add triples to; this is modifield
+          in place
+        :param rdflib.term.URIRef subject: subject of the triple
+        :param rdflib.term.URIRef predicate: predicate of the triple
+        :param object object_: object of the triple
+        """
+        if object_ is not None:
+            assert isinstance(object_, (int, float, str, bool, datetime.datetime, datetime.date, decimal.Decimal)), \
+                type(object_)
+            graph.add((subject, predicate, rdflib.term.Literal(object_)))
+
     def add_to_graph(self, graph, instance):
         """Adds triples for the field to the given graph.
 
@@ -69,11 +87,7 @@ class GraphField:
         :param django.db.models.Model instance: model instance this field
           belongs to
         """
-        value = self.get_field_value_from_instance(instance)
-        if value is not None:
-            assert isinstance(value, (int, float, str, bool, datetime.datetime, datetime.date, decimal.Decimal)), \
-                (type(value), self.name)
-            graph.add((instance.uri(), self.uri(), rdflib.term.Literal(value)))
+        self.add_object_safely(graph, instance.uri(), self.uri(), self.get_field_value_from_instance(instance))
 
 
 class CharField(GraphField, models.CharField):
