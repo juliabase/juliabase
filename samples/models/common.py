@@ -1207,6 +1207,7 @@ class Sample(models.Model, GraphEntity):
 
     def add_to_graph(self, graph):
         super().add_to_graph(graph, {"currently_responsible_person", "name"})
+        graph.add((self.uri(), ontology_symbols.RDF.type, ontology_symbols.scimesh.Sample))
         sample_entity = self.uri()
         graph.add((sample_entity,
                    ontology_symbols.JB_sample.currentlyResponsiblePerson,
