@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table style="margin-left: auto; margin-right: auto; margin-bottom: 3ex" class="padding10" border="1">
     <thead>
     <tr>
+      <th></th>
       <th>{{ samples.0.0.sample.label }}</th>
       <th>{{ samples.0.0.new_name.label }}</th>
       <th>{{ samples.0.0.number_of_pieces.label }}</th>
@@ -36,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% for sample, new_names in samples %}
       {% error_list sample _("Error in sample name") "<tr>" 4 %}
       <tr>
+        <td style="text-align: center">{{ forloop.counter }}.</td>
         <td style="vertical-align: top">
           {{ sample.sample }}
         </td>
