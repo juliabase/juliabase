@@ -407,29 +407,27 @@ class SamplesAndProcesses:
                 distinct()
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
-            for process in processes:
-                if process.content_type.model_class() is models.ExternalData:
-                    external_data = rdflib.Graph()
-                    url_request = urllib.request.urlopen(urllib.request.Request(process.actual_instance.url,
-                                                                                headers={"Accept": "text/turtle"}))
-                    external_data.parse(data=url_request.read().decode(), format="n3")
-                    for title, timestamp in external_data.query("""
-                        SELECT ?title ?timestamp
-                        {
-                         ?a a <http://scimesh.org/SciMesh/Process> .
-                         ?a rdfs:label ?title .
-                         ?a <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
-                        }
-                    """):
-                        print(timestamp, timestamp.toPython())
-                        process_context = models.Result(title=str(title).rpartition("/")[2], operator=process.operator,
-                                                        timestamp=timestamp.toPython()). \
-                                                        get_context_for_user(user, local_context)
-                        self.process_contexts.append(process_context)
-                else:
-                    process_context = utils.digest_process(process, user, local_context)
+            for external_graph_url in sample.external_graph_urls:
+                url_request = urllib.request.urlopen(
+                    urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
+                external_data = rdflib.Graph()
+                external_data.parse(data=url_request.read().decode(), format="n3")
+                for title, timestamp in external_data.query("""
+                    SELECT ?title ?timestamp
+                    {
+                     ?a a <http://scimesh.org/SciMesh/Process> .
+                     ?a rdfs:label ?title .
+                     ?a <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
+                    }
+                """):
+                    process_context = models.Result(title=str(title).rpartition("/")[2], operator=process.operator,
+                                                    timestamp=timestamp.toPython()). \
+                                                    get_context_for_user(user, local_context)
                     self.process_contexts.append(process_context)
-                    self.process_ids.add(process.id)
+            for process in processes:
+                process_context = utils.digest_process(process, user, local_context)
+                self.process_contexts.append(process_context)
+                self.process_ids.add(process.id)
         collect_process_contexts()
         self.process_lists = []
 

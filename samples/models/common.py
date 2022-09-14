@@ -906,26 +906,6 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
-class ExternalData(Process, GraphEntity):
-    """A pseudo-process which triggers data import from an external source.
-    When displaying the sample data sheet and hitting such a process, the `url`
-    is polled for sample data that is used to enrich the local data.
-    Typically, the URL will point to the very same sample, but in another
-    electronic lab notebook, probably even in another institute.  This implies
-    that `url` is a deep, direct link.
-
-    `login` is not used currently.  It supposed to be used for authentication
-    against an external lab notebook but we have not yet agreed on a method.
-    """
-
-    url = model_fields.URLField("URL")
-    login = models.CharField(_("login name"), max_length=2048)
-
-    class Meta(PolymorphicModel.Meta):
-        verbose_name = _("external data")
-        verbose_name_plural = _("external data")
-
-
 class Sample(models.Model, GraphEntity):
     """The model for samples.
     """
@@ -944,6 +924,13 @@ class Sample(models.Model, GraphEntity):
                                      verbose_name=_("split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
+    external_graph_urls = model_fields.JSONField(_("external graph URLs"), blank=True, default=empty_list)
+    """This is a list of strings that represent URLs.  At these URLs, the
+    JuliaBase instance can fetch RDF graphs that also contain data of this
+    sample.  The requests have to be done with a client certificate that the
+    receiver accepts.  Furthermore, the requested MIME type must be Turtle.
+    Other RDF serialisations may be added in the future.
+    """
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
