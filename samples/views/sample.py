@@ -408,10 +408,21 @@ class SamplesAndProcesses:
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
             for external_graph_url in sample.external_graph_urls:
-                url_request = urllib.request.urlopen(
-                    urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
-                external_data = rdflib.Graph()
-                external_data.parse(data=url_request.read().decode(), format="n3")
+                if True:
+                    root_url, separator, relative_url = external_graph_url.partition("/samples/")
+                    assert separator
+                    root_url += "/"
+                    relative_url = "samples/" + relative_url
+                    from remote_client.jb_remote import settings, login
+                    import os
+                    settings.TESTSERVER_ROOT_URL = root_url
+                    login(os.environ("username"), os.environ("password"), testserver=True)
+                    external_data = connection.open_graph(relative_url)
+                else:
+                    url_request = urllib.request.urlopen(
+                        urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
+                    external_data = rdflib.Graph()
+                    external_data.parse(data=url_request.read().decode(), format="n3")
                 for title, timestamp in external_data.query("""
                     SELECT ?title ?timestamp
                     {
