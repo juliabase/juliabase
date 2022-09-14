@@ -1,6 +1,6 @@
 * Knowledge-graph-reated todos
 
-** TODO Find a way to get the sample ID in the process URI
+** DONE Find a way to get the sample ID in the process URI
 
 This is necessary to clone the process for each sample it has worked on.
 
