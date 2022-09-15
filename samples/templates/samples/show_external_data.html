@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% load samples_extras %}
 
-<p style="color: white; background-color: red"><strong>***TBD***</strong></p>
+<table style="margin-right: 2em; margin-bottom: 2ex; border-collapse: collapse" class="padding8">
+  {% nested_dict_to_table process.keys_and_values %}
+</table>
 
 {{ process.comments|markdown_samples }}
 

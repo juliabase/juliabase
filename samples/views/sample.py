@@ -28,6 +28,7 @@ import rdflib
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
@@ -43,7 +44,8 @@ from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_rdf_requested, \
-    is_json_requested, respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
+    is_json_requested, respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link, \
+    camel_case_to_human_text
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree, ontology_symbols
 import samples.utils.views as utils
@@ -407,35 +409,62 @@ class SamplesAndProcesses:
                 distinct()
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
+            all_processes = []
             for external_graph_url in sample.external_graph_urls:
                 if True:
                     root_url, separator, relative_url = external_graph_url.partition("/samples/")
                     assert separator
                     root_url += "/"
                     relative_url = "samples/" + relative_url
-                    from remote_client.jb_remote import settings, login
+                    import remote_client.jb_remote
                     import os
-                    settings.TESTSERVER_ROOT_URL = root_url
-                    login(os.environ("username"), os.environ("password"), testserver=True)
-                    external_data = connection.open_graph(relative_url)
+                    remote_client.jb_remote.settings.TESTSERVER_ROOT_URL = root_url
+                    remote_client.jb_remote.login(os.environ["CRAWLERS_LOGIN"], os.environ["CRAWLERS_PASSWORD"], testserver=True)
+                    external_data = remote_client.jb_remote.connection.open_graph(relative_url)
                 else:
                     url_request = urllib.request.urlopen(
                         urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
                     external_data = rdflib.Graph()
                     external_data.parse(data=url_request.read().decode(), format="n3")
-                for title, timestamp in external_data.query("""
-                    SELECT ?title ?timestamp
+                for title, timestamp, uri in external_data.query("""
+                    SELECT ?title ?timestamp ?uri
                     {
-                     ?a a <http://scimesh.org/SciMesh/Process> .
-                     ?a rdfs:label ?title .
-                     ?a <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
+                     ?uri a <http://scimesh.org/SciMesh/Process> .
+                     ?uri rdfs:label ?title .
+                     ?uri <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
                     }
                 """):
-                    process_context = models.Result(title=str(title).rpartition("/")[2], operator=process.operator,
-                                                    timestamp=timestamp.toPython()). \
-                                                    get_context_for_user(user, local_context)
-                    self.process_contexts.append(process_context)
-            for process in processes:
+                    process = models.ExternalData(pk=0, title=str(title).rpartition("/")[2], uri=uri,
+                                                  operator=django.contrib.auth.models.User.objects.get(username="nobody"),
+                                                  timestamp=timestamp.toPython())
+                    already_seen_uris = set()
+                    def collect_properties(subject):
+                        if subject in already_seen_uris:
+                            return {"ERROR", "loop in graph"}
+                        already_seen_uris.add(subject)
+                        result = {}
+                        for key, value in external_data.query(f"""
+                        SELECT ?key ?value
+                        {{
+                         <{subject}> ?key ?value .
+                        }}
+                        """):
+                            key = str(key)
+                            if key not in {"http://scimesh.org/SciMesh/cause", "http://scimesh.org/SciMesh/timestamp",
+                                           "http://www.w3.org/2000/01/rdf-schema#label"}:
+                                key = key.rpartition("/")[2].rpartition("#")[2]
+                                key = camel_case_to_human_text(key).replace("_", " ")
+                                if isinstance(value, rdflib.term.URIRef):
+                                    subproperties = collect_properties(value)
+                                else:
+                                    subproperties = {}
+                                result[key] = subproperties or value
+                        return result
+                    process.keys_and_values = collect_properties(uri)
+                    all_processes.append(process)
+            all_processes.extend(processes)
+            all_processes.sort(key=lambda process: process.timestamp)
+            for process in all_processes:
                 process_context = utils.digest_process(process, user, local_context)
                 self.process_contexts.append(process_context)
                 self.process_ids.add(process.id)

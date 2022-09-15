@@ -20,6 +20,7 @@
 
 import re, sys, decimal, math
 import markdown
+import rdflib.term
 from django.template.defaultfilters import stringfilter
 from django import template
 from django.template.loader import render_to_string
@@ -740,6 +741,30 @@ def expand_topic(topic, user):
             """
     result += """</div>
           """
+    return mark_safe(result)
+
+
+@register.simple_tag
+def nested_dict_to_table(dictionary):
+    def process_dict(dictionary):
+        result = ""
+        for key, value in dictionary.items():
+            result += "<tr>"
+            result += '<th style="text-align: right">' + conditional_escape(key) + ":</th>"
+            result += "<td>"
+            if isinstance(value, dict):
+                result += "<table>"
+                result += process_dict(value)
+                result += "</table>"
+            else:
+                if isinstance(value, rdflib.term.URIRef):
+                    result += f"""<a href="{value}">{value}</a>"""
+                else:
+                    result += conditional_escape(value)
+            result += "</td>"
+            result += "<tr>"
+        return result
+    result = process_dict(dictionary)
     return mark_safe(result)
 
 
