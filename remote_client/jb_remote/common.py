@@ -316,7 +316,7 @@ class JuliaBaseConnection:
         else:
             content_type, body = encode_multipart_formdata(data)
             headers = {"Content-Type": content_type, "Referer": url}
-            headers |= self.common_headers
+            headers.update(self.common_headers)
             request = urllib.request.Request(url, body, headers)
         request.add_header("Accept",
                            "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7"
