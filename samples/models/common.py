@@ -663,7 +663,10 @@ class Process(PolymorphicModel, GraphEntity):
         if "process" not in context:
             context["process"] = self
         if "name" not in context:
-            name = str(self._meta.verbose_name) if not isinstance(self, Result) else self.title
+            try:
+                name = self.title
+            except AttributeError:
+                name = str(self._meta.verbose_name)
             context["name"] = name[:1].upper() + name[1:]
         if hasattr(self, "get_sample_position_context"):
             context = self.get_sample_position_context(user, context)
