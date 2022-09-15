@@ -14,7 +14,7 @@ Do we really need that?  Instead, caching fetching of external graphs may be suf
 
 ** TODO enrich the external process with as much original data as possible
 
-** TODO Replace ExternalData with URI list
+** DONE Replace ExternalData with URI list
 
 I don’t need the ExternalData process anymore.  Instead, a list of URIs is maintained in a new JSON field in Sample itself.
 
