@@ -1998,17 +1998,6 @@ class ProcessWithSamplePositions(models.Model, GraphEntity):
     class Meta:
         abstract = True
 
-    # def add_merge_process_to_graph(self, graph, sample):
-    #     sample_process = process_uri + f"#single-{sample.id}"
-    #     merge_process = process_uri + f"#sample-{sample.id}"
-    #     graph.add((sample_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
-    #     graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
-    #     graph.add((merge_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.State))
-    #     graph.add((sample_process, ontology_symbols.scimesh.concurrent, process_uri))
-    #     graph.add((merge_process, ontology_symbols.scimesh.cause, process_uri))
-    #     graph.add((merge_process, ontology_symbols.scimesh.cause, sample_process))
-    #     return sample_process, merge_process
-
     def get_sample_position_context(self, user, old_context):
         context = old_context.copy()
         if "sample_position" not in context:
