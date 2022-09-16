@@ -165,7 +165,7 @@ class Deposition(PhysicalProcess):
             if cause_node == process_uri:
                 merge_node = process_uri + f"#sample-{sample.id}"
                 graph.add((merge_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
-                graph.add((merge_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.State))
+                graph.add((merge_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
                 graph.add((merge_node, ontology_symbols.scimesh.cause, process_uri))
                 cause_node = merge_node
             else:
