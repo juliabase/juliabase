@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, argparse, json
+import sys, argparse, json, datetime
 from pathlib import Path
 from rdflib import Graph, URIRef, BNode, Literal
 sys.path.append(str(Path(__file__).parent.parent/"remote_client"))
@@ -10,6 +10,23 @@ from jb_remote_inm import *
 vocabulary_url = "https://w3id.org/ro/crate/1.1/context/"
 vocabulary = json.load(urllib.request.urlopen(vocabulary_url[:-1]))["@context"]
 reverse_vocabulary = {value: key for key, value in vocabulary.items()}
+
+
+def add_metadata_file_descriptor(graph):
+    subject = URIRef("ro-crate-metadata.json")
+    graph.add((subject, URIRef("@type"), Literal("http://schema.org/CreativeWork")))
+    graph.add((subject, URIRef("http://purl.org/dc/terms/conformsTo"), URIRef("https://w3id.org/ro/crate/1.1")))
+    graph.add((subject, URIRef("http://schema.org/about"), URIRef("./")))
+
+
+def add_root_data_entity(graph):
+    subject = URIRef("./")
+    graph.add((subject, URIRef("@type"), Literal("Dataset")))
+    graph.add((subject, URIRef("http://schema.org/name"), Literal(args.sample)))
+    graph.add((subject, URIRef("http://schema.org/description"), Literal(f"All data for the sample {args.sample}")))
+    graph.add((subject, URIRef("http://schema.org/datePublished"),
+               Literal(datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="milliseconds"))))
+    graph.add((subject, URIRef("http://schema.org/license"), Literal("Confidential.  Only for your eyes.")))
 
 
 def normalize_graph_for_ro_crate(local_prefix, graph):
@@ -56,6 +73,8 @@ login(args.username, args.password)
 graph = connection.open_graph("samples/" + args.sample)
 match args.output_format:
     case "json-ld":
+        add_metadata_file_descriptor(graph)
+        add_root_data_entity(graph)
         graph, namespaces = normalize_graph_for_ro_crate("http://inm.example.com/", graph)
         result = graph.serialize(format="json-ld", context={"@vocab": vocabulary_url,
                                                             "sm": "http://scimesh.org/SciMesh/",
