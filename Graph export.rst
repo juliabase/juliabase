@@ -27,11 +27,10 @@ Run the local web server::
 
 Now, open another shell and run::
 
-  wget -O sample.rdf --header "Accept: text/turtle" \
-      localhost:8000/samples/14S-005
+  tools/get_graph.py r.calvert 14S-005 > sample.rdf
 
 This will write a turtle representation of the sample “14S-005” to the file
-``sample.rdf``.
+``sample.rdf``.  Call ``get_graph.py --help`` for more options.
 
 
 How to enrich a local JuliaBase instance with external data

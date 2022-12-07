@@ -18,7 +18,7 @@ handle_term()
 update() {
     ./manage.py runserver &
     runserver_pid=$!
-    while ! wget -O /tmp/sample.rdf.temp --header "Accept: text/turtle" localhost:8000/samples/14S-005
+    while ! ./get_graph.py r.calvert 14S-005 > /tmp/sample.rdf.temp 2> /dev/null
     do
         sleep 1
     done
