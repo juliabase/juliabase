@@ -57,6 +57,7 @@ def normalize_graph_for_ro_crate(local_prefix, graph):
         result.add(tuple(new_triple))
     return result, {f"ns{i}": namespace for i, namespace in enumerate(namespaces)}
 
+
 parser = argparse.ArgumentParser(description="Get serialised RDF graphs of a sample in a demo JuliaBase.")
 parser.add_argument("username", help="login name of the user in JuliaBase")
 parser.add_argument("sample", help="name of the sample to get the graph of")
