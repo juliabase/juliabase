@@ -519,9 +519,11 @@ class Process(PolymorphicModel, GraphEntity):
           them.
 
         :return:
-          graph containing also the data of this process instance
+          The effect node, and the cause node.  The caller should connect the
+          effect node with the process’es predecessore, and the successor with
+          the cause node.
 
-        :rtype: rdflib.Graph
+        :rtype: rdflib.term.URIRef, rdflib.term.URIRef
         """
         process_uri = self.uri()
         if self.samples.count() > 1:
