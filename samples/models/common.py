@@ -520,7 +520,7 @@ class Process(PolymorphicModel, GraphEntity):
 
         :return:
           The effect node, and the cause node.  The caller should connect the
-          effect node with the process’es predecessore, and the successor with
+          effect node with the process’es predecessor, and the successor with
           the cause node.
 
         :rtype: rdflib.term.URIRef, rdflib.term.URIRef
