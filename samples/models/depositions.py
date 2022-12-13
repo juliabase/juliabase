@@ -126,53 +126,6 @@ class Deposition(PhysicalProcess):
             data["layer {}".format(layer.number)] = layer_data
         return data
 
-    def add_merge_process_to_graph(self, graph, sample):
-        """Additionally to the parent method, we create a “cause” relation from
-        the merge process to the latest layer.  Moreover, we make sure that
-        there is *always* a merge node, even if there is only one sample in
-        this process, because be need it due to the concurrency between layers
-        and the common process.
-
-        :param rdflib.Graph graph: graph to which the process data should be
-          added
-        :param Sample sample: Names of fields that should not be added to the
-          graph.  Typically, the more specialised caller has already dealt with
-          them.
-
-        :return:
-          graph containing also the data of this process instance
-
-        :rtype: rdflib.Graph
-        """
-        effect_node, cause_node = super().add_merge_process_to_graph(graph, sample)
-        try:
-            last_layer = self.layers.last()
-        except AttributeError as error:
-            # FixMe: Remove the following line from Python 3.10 onwards.
-            return effect_node, cause_node
-            if error.name == "layers":
-                return effect_node, cause_node
-            else:
-                raise
-        except ObjectDoesNotExist:
-            return effect_node, cause_node
-        else:
-            try:
-                last_layer = last_layer.actual_instance
-            except AttributeError:
-                pass
-            process_uri = self.uri()
-            if cause_node == process_uri:
-                merge_node = process_uri + f"#sample-{sample.id}"
-                graph.add((merge_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
-                graph.add((merge_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
-                graph.add((merge_node, ontology_symbols.scimesh.cause, process_uri))
-                cause_node = merge_node
-            else:
-                merge_node = cause_node
-            graph.add((merge_node, ontology_symbols.scimesh.cause, last_layer.uri()))
-        return effect_node, cause_node
-
     def add_to_graph(self, graph, excluded_fields=frozenset()):
         """Additionally to what is done in the parent method, we add the layers
         to the graph.
@@ -182,17 +135,28 @@ class Deposition(PhysicalProcess):
         :param set[str] excluded_fields: Names of fields that should not be
           added to the graph.  Typically, the more specialised caller has
           already dealt with them.
+
+        :returns:
+           The URIs of all leaf nodes in chronological ordering, i.e. all nodes
+           which do not have further subprocesses.  In the simplest case, this
+           is only the process itself.
+
+        :rtype: list[rdflib.term.URIRef]
         """
         super().add_to_graph(graph, excluded_fields)
         process_uri = self.uri()
-        latest_layer = None
+        graph.add((process_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
+        leaf_nodes = []
         for layer in self._get_layers():
             layer_uri = layer.uri()
             layer.add_to_graph(graph)
             graph.add((layer_uri, ontology_symbols.scimesh.cause, process_uri))
-            if latest_layer is not None:
-                graph.add((layer_uri, ontology_symbols.scimesh.cause, latest_layer))
-            latest_layer = layer_uri
+            try:
+                graph.add((layer_uri, ontology_symbols.scimesh.cause, leaf_nodes[-1]))
+            except IndexError:
+                pass
+            leaf_nodes.append(layer_uri)
+        return leaf_nodes
 
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
@@ -286,6 +250,10 @@ class Layer(models.Model, GraphEntity):
         """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)
+
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        super().add_to_graph(graph, excluded_fields)
+        graph.add((self.uri(), ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
 
 
 _ = gettext

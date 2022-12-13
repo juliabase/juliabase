@@ -495,7 +495,8 @@ class Process(PolymorphicModel, GraphEntity):
 
         :rtype: list[rdflib.term.URIRef]
         """
-        super().add_to_graph(graph, {"comments", "finished", "last_modified", "timestamp", "operator", "timestamp_inaccuracy"})
+        super().add_to_graph(graph, {"comments", "finished", "last_modified", "timestamp", "operator",
+                                     "timestamp_inaccuracy", "sample_positions"})
         graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
         graph.add((self.uri(), ontology_symbols.RDFS.label, rdflib.term.Literal(self)))
         process_entity = self.uri()
@@ -509,43 +510,77 @@ class Process(PolymorphicModel, GraphEntity):
         graph.add((process_entity, ontology_symbols.scimesh.operator, self.operator.samples_user_details.uri()))
         graph.add((process_entity, ontology_symbols.JB_process.timestamp_inaccuracy,
                    rdflib.term.Literal(self.timestamp_inaccuracy)))
+        return [process_entity]
 
-    def add_merge_process_to_graph(self, graph, sample):
-        """Add a sample (state) process to the given graph if necessary.  If the
-        sample count of the process exceeds 1, each sample needs its own
-        so-called merge process in order to be able to connect to its previous
-        history without being intertwined with all other samples.  This merge
-        process is added here.  It returns the effect and cause process URIs,
-        so that they can be used to connect to the previous and next process in
-        the sample’s history.
+    @property
+    def is_multisample_process(self):
+        """Returns whether the current process is a multi-sample process.
+        Currently, this is defined by the existence of a field
+        “``sample_positions``”.  Note that being connected with only one sample
+        is not sufficient for not being a multi-sample process.  The real
+        question is whether there *could* be more than one sample.
 
-        The effect and cause nodes are actually the same here.  However, a
-        derived class may need a more complex topology (e.g. a sample position
-        process).  Ideally, a derived class only has to override this method
-        and can leave `add_to_graph_with_hookups` as is.
+        :returns:
+          whether the current process is a multi-sample process
+
+        :rtype: bool
+        """
+        return hasattr(self, "sample_positions")
+
+    def create_sample_specific_processes(self, graph, parent_uri):
+        """Create graph nodes with so-called sample-specific processes (see
+        SciMesh documentation).  This method must be called only for
+        multi-sample processes.
+
+        It is called in a situation where the process nodes are already added
+        to the graph, and the leaf nodes (i.e. the subprocesses without further
+        subprocesses) are properly connected with their parents and the only
+        ones that are *not* concurrents.  This is valid for single-sample
+        processes but that’s not the case here.  (Even if the process has only
+        one sample, it *could* be more, and this makes it a multi-sample
+        process.  Currently, it is distinguished whether it has a
+        “sample_positions” field or not.)
+
+        This method creates the sample-specific processes for one of the
+        subprocesses with the given `parent_uri`.  This subprocess is tagged as
+        a concurrent.  If a sample position is found for a sample, it is
+        connected with the respective sample-specific process.
+
+        If there is more than one leaf node, the caller must then connect the
+        sample-specific process from different calls to this method with
+        “cause” relations.
+
+        And, a function up in the call stack must connect the outmost
+        sample-specific processes (i.e. the first and the last,
+        chronologically) with the neighbouring processes of the respective
+        sample.
 
         :param rdflib.Graph graph: graph to which the process data should be
-          added
-        :param Sample sample: Names of fields that should not be added to the
-          graph.  Typically, the more specialised caller has already dealt with
-          them.
+           added
+        :param rdflib.term.URIRef parent_uri: the URI of the (sub-)process that
+           should become the cause of the sample-specific processes
 
-        :return:
-          The effect node, and the cause node.  The caller should connect the
-          effect node with the process’es predecessor, and the successor with
-          the cause node.
+        :returns:
+           dict mapping a sample to the URI of its sample-specific process
 
-        :rtype: rdflib.term.URIRef, rdflib.term.URIRef
+        :rtype: dict[Sample, rdflib.term.URIRef]
         """
-        process_uri = self.uri()
-        if self.samples.count() > 1:
-            graph.add((process_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
-            sample_process = process_uri + f"#sample-{sample.id}"
-            graph.add((sample_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
-            graph.add((sample_process, ontology_symbols.scimesh.cause, process_uri))
-            return sample_process, sample_process
-        else:
-            return process_uri, process_uri
+        processes = {}
+        sample_positions = self.sample_positions
+        for sample in self.samples.all():
+            graph.add((parent_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
+            sample_specific_process = parent_uri + f"#sample-{sample.id}"
+            graph.add((sample_specific_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+            graph.add((sample_specific_process, ontology_symbols.scimesh.cause, parent_uri))
+            try:
+                sample_position = sample_positions[str(sample.pk)]
+            except KeyError:
+                pass
+            else:
+                graph.add((sample_specific_process, ontology_symbols.JB_process.samplePosition,
+                           rdflib.term.Literal(sample_position)))
+            processes[sample] = sample_specific_process
+        return processes
 
     def add_to_graph_with_hookups(self, graph):
         """This does the same as `add_to_graph`, but additionally connect the
@@ -567,14 +602,31 @@ class Process(PolymorphicModel, GraphEntity):
         :rtype: dict[Sample, rdflib.term.URIRef], dict[Sample,
           rdflib.term.URIRef]
         """
-        self.add_to_graph(graph)
-        process_uri = self.uri()
+        leaf_nodes = self.add_to_graph(graph)
         effect_nodes = {}
         cause_nodes = {}
-        for sample in self.samples.all():
-            sample_process, merge_process = self.add_merge_process_to_graph(graph, sample)
-            effect_nodes[sample] = sample_process
-            cause_nodes[sample] = merge_process
+        if self.is_multisample_process:
+            latest_sample_specific_processes = {}
+            for i, leaf_node in enumerate(leaf_nodes):
+                graph.add((leaf_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
+                for sample, sample_specific_process in self.create_sample_specific_processes(graph, leaf_node).items():
+                    try:
+                        graph.add((sample_specific_process, ontology_symbols.scimesh.cause,
+                                   latest_sample_specific_processes[sample]))
+                    except KeyError:
+                        pass
+                    latest_sample_specific_processes[sample] = sample_specific_process
+                    if i == 0:
+                        effect_nodes[sample] = sample_specific_process
+                    elif i == len(leaf_nodes) - 1:
+                        cause_nodes[sample] = sample_specific_process
+        else:
+            # This may throw ``Sample.DoesNotExist`` or
+            # ``Sample.MultipleObjectsReturned``, both of which must never
+            # happen here.
+            sample = self.samples.get()
+            effect_nodes[sample] = leaf_nodes[0]
+            cause_nodes[sample] = leaf_nodes[-1]
         return effect_nodes, cause_nodes
 
     def get_data_for_table_export(self):
