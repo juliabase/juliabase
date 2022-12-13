@@ -145,6 +145,11 @@ class GraphEntity:
         forever, which may not be the case for internal numbering in a
         PostgreSQL database.  In case of doubt, override this method and choose
         a better field.
+
+        :returns:
+           the URI of this instance
+
+        :rtype: rdflib.term.URIRef
         """
         try:
             absolute_url = self.get_absolute_url()
@@ -482,6 +487,13 @@ class Process(PolymorphicModel, GraphEntity):
         :param set[str] excluded_fields: Names of fields that should not be
           added to the graph.  Typically, the more specialised caller has
           already dealt with them.
+
+        :returns:
+           The URIs of all leaf nodes in chronological ordering, i.e. all nodes
+           which do not have further subprocesses.  In the simplest case, this
+           is only the process itself.
+
+        :rtype: list[rdflib.term.URIRef]
         """
         super().add_to_graph(graph, {"comments", "finished", "last_modified", "timestamp", "operator", "timestamp_inaccuracy"})
         graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
