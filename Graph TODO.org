@@ -35,3 +35,17 @@ See https://scimesh.org/about/Implementation.html#requirements-for-elns.
 ** TODO Implement GET requests against process URIs
 
 See https://scimesh.org/about/Implementation.html#requirements-for-elns.
+
+** TODO Implement ~add_to_graph~ for all processes
+
+The parent class’es method may already work in some cases but at least for Cluster Tool and Solarsimulator I suspect that I have to write a custom routine.
+
+This may lead to further abstraction in the parent classes.
+
+** TODO Move RO-Crate support from the stand-alone script into the web server
+
+For ZIP’ing things, https://stackoverflow.com/a/44946732/188108 might come in handy.
+
+** TODO Add bulk data to RO-Crate, at least in a simple case
+
+Possibly I have to do that in Chantal rather than in JuliaBase.
