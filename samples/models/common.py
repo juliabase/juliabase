@@ -1276,8 +1276,7 @@ class Sample(models.Model, GraphEntity):
             effect_nodes, cause_nodes = process.add_to_graph_with_hookups(graph)
             graph.add((effect_nodes[self], ontology_symbols.scimesh.cause, latest_cause_node or ontology_symbols.RDF.nil))
             latest_cause_node = cause_nodes[self]
-        graph.add((sample_entity, rdflib.term.URIRef("http://scimesh.org/SciMesh/state"),
-                   latest_cause_node or ontology_symbols.RDF.nil))
+        graph.add((sample_entity, ontology_symbols.scimesh.state, latest_cause_node or ontology_symbols.RDF.nil))
 
     def delete(self, *args, **kwargs):
         """Deletes the sample and all of its processes that contain only this sample –
