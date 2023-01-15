@@ -35,7 +35,7 @@
             mapping topic names to topic IDs.
 """
 
-import mimetypes, json, logging, os, datetime, time, random, re, decimal, urllib, _thread, io
+import mimetypes, json, logging, os, datetime, time, random, re, decimal, urllib, _thread, io, shutil
 from http import cookiejar
 from . import settings
 
@@ -309,7 +309,6 @@ class JuliaBaseConnection:
         self.common_headers = {"User-agent": "JuliaBase-Remote/1.0", "X-requested-with": "XMLHttpRequest"}
 
     def _do_http_request(self, url, data=None, response_type="json"):
-        assert response_type in {"json", "turtle"}
         logging.debug("{0} {1!r}".format(url, data))
         if data is None:
             request = urllib.request.Request(url)
@@ -318,9 +317,15 @@ class JuliaBaseConnection:
             headers = {"Content-Type": content_type, "Referer": url}
             headers.update(self.common_headers)
             request = urllib.request.Request(url, body, headers)
-        request.add_header("Accept",
-                           "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7"
-                           if response_type == "json" else "text/turtle")
+        if response_type == "json":
+            accept = "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7"
+        elif response_type == "turtle":
+            accept = "text/turtle"
+        elif response_type == "ro-crate":
+            accept = "application/rocrate+zip"
+        else:
+            assert False, response_type
+        request.add_header("Accept", accept)
         max_cycles = 10
         while max_cycles > 0:
             max_cycles -= 1
@@ -423,6 +428,29 @@ class JuliaBaseConnection:
         import rdflib
         graph = rdflib.Graph()
         return graph.parse(response)
+
+    def write_ro_crate(self, relative_url, file):
+        """Do an HTTP GET request with the JuliaBase server, expecting an
+        RO-Crate (actually SM4RO-C) response.
+
+        :param str relative_url: the non-domain part of the URL, for example
+            ``"/samples/10-TB-1"``.  “Relative” may be misguiding here: only
+            the domain is omitted.
+        :param stream file: The file-like object the RO-Crate should be written
+            to.  It can be a binary file, e.g. `open("mycrate.eln", "wb")`.
+
+        :raises JuliaBaseError: if JuliaBase couldn't fulfill the request
+            because it contained errors.  For example, you requested a sample
+            that doesn't exist, or the transmitted measurement data was
+            incomplete.
+        :raises urllib.error.URLError: if a lower-level error occured, e.g. the
+            HTTP connection couldn't be established.
+        """
+        if self.root_url is None:
+            raise Exception("No root URL defined.  Maybe not logged-in?")
+        response = self._do_http_request(self.root_url + relative_url, response_type="ro-crate")
+        assert response.info()["Content-Type"].startswith("application/rocrate+zip"), response.info()["Content-Type"]
+        shutil.copyfileobj(response, file)
 
     def set_csrf_header(self):
         csrf_cookies = {cookie for cookie in self.cookie_jar if cookie.name == "csrftoken"}

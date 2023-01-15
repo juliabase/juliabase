@@ -419,6 +419,27 @@ def is_rdf_requested(request):
     return requested_mime_type in {"application/rdf+xml", "text/turtle"}
 
 
+def is_ro_crate_requested(request):
+    """Tests whether the current request should be answered in RO-Crate format
+    instead of HTML.
+
+    FixMe: The MIME type “application/rocrate+zip” is made up by us.  There
+    does not seem to exist an official mime type yet.
+
+    :param request: the current HTTP Request object
+
+    :type request: HttpRequest
+
+    :return:
+      whether the request should be answered in RO-Crate
+
+    :rtype: bool
+    """
+    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/rocrate+zip"},
+                                               request.META.get("HTTP_ACCEPT", "text/html"))
+    return requested_mime_type == "application/rocrate+zip"
+
+
 def is_json_requested(request):
     """Tests whether the current request should be answered in JSON format
     instead of HTML.  Typically this means that the request was made by the
