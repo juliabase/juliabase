@@ -25,7 +25,7 @@ TI = Namespace("https://www.w3.org/TR/owl-time/#")
 JB = Namespace("http://juliabase.org/jb#")
 JB_process = Namespace("http://juliabase.org/jb/Process#")
 JB_sample = Namespace("http://juliabase.org/jb/Sample#")
-schema_org = Namespace("https://schema.org/")
+schema_org = Namespace("http://schema.org/")
 scimesh = Namespace("http://scimesh.org/SciMesh/")
 time = Namespace("http://www.w3.org/2006/time#")
 
