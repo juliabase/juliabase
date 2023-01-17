@@ -32,7 +32,7 @@ from django.db import models
 import django.urls
 from django.conf import settings
 from samples import permissions
-from samples.models import Process, Sample, PhysicalProcess, GraphEntity
+from samples.models import Process, Sample, PhysicalProcess, GraphEntity, RawFile
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
 from jb_common.utils.base import generate_permissions
@@ -119,6 +119,10 @@ class PDSMeasurement(PhysicalProcess):
         plot_locations = self.calculate_plot_locations()
         context["thumbnail"], context["figure"] = plot_locations["thumbnail_url"], plot_locations["plot_url"]
         return super().get_context_for_user(user, context)
+
+    def get_raw_files(self):
+        safe_name = str(self).replace("/", "--")
+        return {RawFile(safe_name + "/" + self.raw_datafile, self.get_datafile_name(""))}
 
 
 class SolarsimulatorMeasurement(PhysicalProcess):
