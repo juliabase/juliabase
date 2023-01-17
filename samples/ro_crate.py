@@ -24,10 +24,11 @@ to it.
 .. _ELN Consotium: https://github.com/TheELNConsortium/TheELNFileFormat/blob/master/SPECIFICATION.md
 """
 
-import tempfile, zipfile, urllib.request, datetime, json
+import tempfile, subprocess, urllib.request, datetime, json
+from pathlib import Path
 from rdflib import Graph, URIRef, Literal
 from rdflib.namespace import RDF
-from django.http import FileResponse
+from django.http import StreamingHttpResponse
 from django.conf import settings
 from samples import ontology_symbols
 
@@ -142,6 +143,34 @@ def normalize_graph_for_ro_crate(local_prefix, graph):
     return result, {f"ns{i}": namespace for i, namespace in enumerate(namespaces)}
 
 
+class ZipStream:
+    """Iterator class that zips a temporary directory and iterates over the
+    zipped byte stream.  After the iterating is done, the temporary directory
+    is deleted.
+    """
+
+    def __init__(self, tempdir):
+        """Class constructor.
+
+        :param tempfile.TemporaryDirectory tempdir: directory with the files
+           that are supposed to be zipped
+        """
+        self.tempdir = tempdir
+        self.process = subprocess.Popen(["zip", "-r", "-", "."], cwd=tempdir.name,
+                                        stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        data = self.process.stdout.read(1024*1024)
+        if not data:
+            self.tempdir.cleanup()
+            assert self.process.wait() == 0
+            raise StopIteration
+        return data
+
+
 def respond_as_ro_crate(graph):
     """Returns an HTTP response object serving the RO-Crate of the given sample
     `graph`.  Note that for efficiency reasons, this graph is changed in place,
@@ -160,20 +189,23 @@ def respond_as_ro_crate(graph):
     __, slash, sample_name_raw = sample_node.rpartition("/")
     assert slash and sample_name_raw, sample_node
     sample_name = urllib.parse.unquote(sample_name_raw)
-    ro_crate_file = tempfile.TemporaryFile()
+
     add_metadata_file_descriptor(graph)
     add_root_data_entity(graph, sample_node, sample_name)
     graph, namespaces = normalize_graph_for_ro_crate(settings.GRAPH_NAMESPACE_PREFIX, graph)
-    with zipfile.ZipFile(ro_crate_file, "w", zipfile.ZIP_LZMA) as roc_zip:
-        metadata = graph.serialize(format="json-ld", context={"@vocab": vocabulary_url,
-                                                              "sm": "http://scimesh.org/SciMesh/",
-                                                              "time": "http://www.w3.org/2006/time#",
-                                                              "jb-s": "http://juliabase.org/jb/Sample#",
-                                                              "jb-p": "http://juliabase.org/jb/Process#",
-                                                              "xmls": "http://www.w3.org/2001/XMLSchema#"} | namespaces,
-                                   auto_compact=True)
-        roc_zip.writestr("ro-crate-metadata.json", metadata)
-    ro_crate_file.flush()
-    ro_crate_file.seek(0)
-    return FileResponse(ro_crate_file, as_attachment=True, filename=f"{sample_name}.eln",
-                        content_type="application/rocrate+zip")
+
+    tempdir = tempfile.TemporaryDirectory()
+    tempdir_path = Path(tempdir.name)
+
+    metadata = graph.serialize(format="json-ld", context={"@vocab": vocabulary_url,
+                                                          "sm": "http://scimesh.org/SciMesh/",
+                                                          "time": "http://www.w3.org/2006/time#",
+                                                          "jb-s": "http://juliabase.org/jb/Sample#",
+                                                          "jb-p": "http://juliabase.org/jb/Process#",
+                                                          "xmls": "http://www.w3.org/2001/XMLSchema#"} | namespaces,
+                               auto_compact=True)
+    open(tempdir_path/"ro-crate-metadata.json", "w").write(metadata)
+
+    zip_stream = ZipStream(tempdir)
+    return StreamingHttpResponse(zip_stream, "application/rocrate+zip",
+                                 headers={"Content-Disposition": f'attachment; filename="{sample_name}.eln"'})
