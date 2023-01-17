@@ -144,7 +144,8 @@ def normalize_graph_for_ro_crate(local_prefix, graph):
 
 def respond_as_ro_crate(graph):
     """Returns an HTTP response object serving the RO-Crate of the given sample
-    `graph`.
+    `graph`.  Note that for efficiency reasons, this graph is changed in place,
+    so the caller should not use the graph any more.
 
     :param rdflib.Graph graph: graph of the sample
 
