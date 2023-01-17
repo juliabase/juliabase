@@ -24,7 +24,7 @@ import, it is sometimes (e.g. for ``samples.permissions``) necessary to avoid
 the ``from`` keyword.
 """
 
-import hashlib, os.path, collections, datetime, html, urllib.parse, collections.abc, json
+import hashlib, os, os.path, collections, datetime, html, urllib.parse, collections.abc, json
 from urllib.parse import quote
 import rdflib
 from samples import ontology_symbols
@@ -210,6 +210,70 @@ class ExternalOperator(models.Model):
 
     def get_absolute_url(self):
         return django.urls.reverse("samples:show_external_operator", args=(self.pk,))
+
+
+class RawFile:
+    """Represents one raw (blob) data file of a process.  Instances of this
+    class create a virtual file system.  It is hashable so that it can be used
+    in a set.  Both raw files are considered equal if their destination paths
+    are equal.
+
+    :ivar destination_path: Relative path of the file in the virtual file
+       system structure of the respective process.  It must not end in a slash.
+       It must be unique and expressive, e.g. it should start with the process
+       name and ID.  Do not hesitate to use special characters, spaces, and
+       upper-/lowercase.
+
+    :ivar origin_path: Absolute path in the local file system of the original
+       raw data file.  Either this or `content` must be given.
+
+    :ivar content: Content of the file.  Either this or `origin_path` must be
+       given.
+
+    :ivar relation: URI used for the “verb” in the RDF triple that connects the
+       process with this raw file.  If not given, a default is used.
+
+    :type destination_path: str
+    :type origin_path: Path or NoneType
+    :type content: bytes or NoneType
+    :type relation: rdflib.term.URIRef or NoneType
+    """
+
+    def __init__(self, destination_path, origin_path, payload=None, relation=None):
+        """Class constructor.
+
+        :param str destination_path: the value of the instance variable
+           ``destination_path``.
+        :param Path origin_path: the value of the instance variable
+           ``origin_path``.
+        :param Path content: the value of the instance variable ``content``.
+        :param rdflib.term.URIRef relation: the value of the instance variable
+           ``relation``.
+        """
+        assert bool(origin_path) ^ bool(payload)
+        self.destination_path, self.origin_path, self.payload, self.relation = \
+            destination_path, origin_path, payload, relation
+
+    def prepare_destination(self, root):
+        """Creates the raw file at the destination.  The destination directory
+        structure is then zipped and shipped to the HTTP client.
+
+        :param Path root: absolute path to the root where the directory
+           structure of the raw files is supposed to be created.
+        """
+        if self.origin_path:
+            absolute_destination_path = root/self.destination_path
+            os.makedirs(absolute_destination_path.parent, exist_ok=True)
+            os.symlink(self.origin_path, root/self.destination_path)
+        else:
+            with open(self.destination_path, "wb") as outfile:
+                outfile.write(self.content)
+
+    def __hash__(self):
+        return hash(self.destination_path)
+
+    def __eq__(self, other):
+        return self.destination_path == other.destination_path
 
 
 class Process(PolymorphicModel, GraphEntity):
@@ -845,6 +909,17 @@ class Process(PolymorphicModel, GraphEntity):
             # https://code.djangoproject.com/ticket/17688 is fixed.
             self.samples.clear()
             return super().delete(*args, **kwargs)
+
+    def get_raw_files(self):
+        """Returns the blob (raw) data of this process.  See the class
+        :py:class:`RawFile` for further information.
+
+        :returns:
+          set of the raw files of this process
+
+        :rtype: set[`RawFile`]
+        """
+        return set()
 
 
 class PhysicalProcess(Process):

@@ -171,12 +171,13 @@ class ZipStream:
         return data
 
 
-def respond_as_ro_crate(graph):
+def respond_as_ro_crate(graph, raw_files):
     """Returns an HTTP response object serving the RO-Crate of the given sample
     `graph`.  Note that for efficiency reasons, this graph is changed in place,
     so the caller should not use the graph any more.
 
     :param rdflib.Graph graph: graph of the sample
+    :param set[RawFile] raw_files: all raw files of the sample’s processes
 
     :return:
       the HTTP response object
@@ -205,6 +206,9 @@ def respond_as_ro_crate(graph):
                                                           "xmls": "http://www.w3.org/2001/XMLSchema#"} | namespaces,
                                auto_compact=True)
     open(tempdir_path/"ro-crate-metadata.json", "w").write(metadata)
+
+    for raw_file in raw_files:
+        raw_file.prepare_destination(tempdir_path)
 
     zip_stream = ZipStream(tempdir)
     return StreamingHttpResponse(zip_stream, "application/rocrate+zip",

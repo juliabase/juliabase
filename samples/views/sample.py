@@ -661,6 +661,33 @@ class SamplesAndProcesses:
         return all_process_ids
 
 
+def collect_raw_files(sample):
+    """Returns the raw files of the given sample by building the union of the
+    raw files of all of its processes.
+
+    :param models.Sample sample: the sample the raw files of which should be
+       returned
+
+    :returns:
+       all raw files of the given sample
+
+    :rtype: set[RawFile]
+    """
+    result = set()
+    number = 0
+    for process in sample.processes.all():
+        process = process.actual_instance
+        process_raw_files = process.get_raw_files()
+        number += len(process_raw_files)
+        result |= process_raw_files
+        if sample.split_origin:
+            parent_raw_files = collect_raw_files(process.split_origin.parent)
+            number += len(parent_raw_files)
+            result |= parent_raw_files
+    assert len(result) == number
+    return result
+
+
 def embed_timestamp(request, sample_name):
     """Put a timestamp field in the request object that is used by both
     `sample_timestamp` and `sample_etag`.  It's really a pity that you can't
@@ -798,7 +825,7 @@ def show(request, sample_name):
             graph = rdflib.Graph()
             ontology_symbols.bind_namespaces(graph)
             sample.add_to_graph(graph)
-            return respond_as_ro_crate(graph)
+            return respond_as_ro_crate(graph, collect_raw_files(sample))
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     return render(request, "samples/show_sample.html",
