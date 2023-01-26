@@ -44,9 +44,9 @@ from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Paragraph
 
 
-dimensions = {"stack_width": 3 * cm, "label_width": 3 * cm, "margin": 0.2 * cm, "red_line_width": 0.15 * cm,
-              "red_line_skip": 0.1 * cm, "label_skip": 0.2 * cm, "scale_skip": 0.2 * cm, "legend_skip": 0.2 * cm,
-              "scale_label_skip": 0.2 * cm}
+dimensions = {"stack_width": 3.15 * cm, "label_width": 3.15 * cm, "margin": 0.21 * cm, "red_line_width": 0.1575 * cm,
+              "red_line_skip": 0.105 * cm, "label_skip": 0.21 * cm, "scale_skip": 0.21 * cm, "legend_skip": 0.21 * cm,
+              "scale_label_skip": 0.21 * cm}
 """Dictionary with all skips and lengths that can be changed even at runtime.
 
     - ``stack_width``: the width of the stack diagram without any labels
@@ -60,16 +60,16 @@ dimensions = {"stack_width": 3 * cm, "label_width": 3 * cm, "margin": 0.2 * cm, 
     - ``legend_skip``: the vertical distance between the legend and the stack above
     - ``scale_label_skip``: the distance between the scale bar and the scale label
 """
-parameters = {"roughness": 3, "grid_points": 24}
+parameters = {"roughness": 3.15, "grid_points": 24}
 """Dictionary with further parameters that can be changed even at runtime.
 
     - ``roughness``: the roughness of the textured lines in bp
     - ``grid_points``: number of grid points used for the textured line
 """
 
-single_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu")
+single_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu", fontSize=10.5)
 legend_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu",
-                                    leftIndent=14.5, firstLineIndent=-14.5, spaceAfter=10)
+                                    leftIndent=15.3, firstLineIndent=-15.3, spaceAfter=10.5, fontSize=10.5)
 
 
 lineskip = single_label_style.leading
@@ -498,7 +498,7 @@ class Scale:
         while self.magnitude < 9:
             for self.factor in [1, 2, 5]:
                 self.scale_height = self.scale * 10**self.magnitude * self.factor
-                if self.scale_height > 0.7 * cm:
+                if self.scale_height > 0.735 * cm:
                     break
             else:
                 self.magnitude += 1
