@@ -37,13 +37,13 @@ def generate_plot(process, plot_id, thumbnail, datafile_name):
     try:
         output = BytesIO()
         if thumbnail:
-            figure = Figure(frameon=False, figsize=(4, 3))
+            figure = Figure(frameon=False, figsize=(4.2, 3.15))
             canvas = FigureCanvasAgg(figure)
             axes = figure.add_subplot(111)
             axes.set_position((0.17, 0.16, 0.78, 0.78))
             axes.grid(True)
             process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=True)
-            canvas.print_figure(output, dpi=settings.THUMBNAIL_WIDTH / 4, format="png")
+            canvas.print_figure(output, format="svg")
         else:
             figure = Figure()
             canvas = FigureCanvasAgg(figure)
@@ -99,4 +99,4 @@ def show_plot(request, process_id, plot_id, thumbnail):
     stream = get_cached_bytes_stream(plot_filepath, partial(generate_plot, process, plot_id, thumbnail, datafile_name),
                                      datafile_names, timestamps)
     return static_response(stream, None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf",
-                           mimetypes.guess_type(plot_filepath))
+                           mimetypes.guess_type(plot_filepath)[0])

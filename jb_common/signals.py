@@ -85,5 +85,4 @@ def expire_error_pages(sender, **kwargs):
     """
     now = django.utils.timezone.now()
     six_weeks_ago = now - datetime.timedelta(weeks=6)
-    for error_page in models.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago):
-        error_page.delete()
+    models.ErrorPage.objects.filter(timestamp__lt=six_weeks_ago).delete()

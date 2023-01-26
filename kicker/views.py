@@ -343,7 +343,7 @@ def plot(request, image_format):
     except models.KickerNumber.DoesNotExist:
         timestamps = []
     stream = get_cached_bytes_stream(plot_filepath, partial(generate_plot, image_format), timestamps=timestamps)
-    return static_response(stream, "kicker.pdf" if image_format == "pdf" else None, mimetypes.guess_type(plot_filepath))
+    return static_response(stream, "kicker.pdf" if image_format == "pdf" else None, mimetypes.guess_type(plot_filepath)[0])
     
 
 @login_required

@@ -41,9 +41,7 @@ def generate_stack(thumbnail, locations, sample, sample_details):
         pdf_filename, [informal_stacks.Layer(layer) for layer in sample_details.informal_layers.all()],
         str(sample), _("Layer stack of {0}").format(sample))
     if thumbnail:
-        stream = io.BytesIO(subprocess.check_output(
-            ["gs", "-q", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha", "-r100", "-dEPSCrop",
-             "-sOutputFile=-", pdf_filename]))
+        stream = io.BytesIO(subprocess.run(["pdf2svg", pdf_filename, "/dev/stdout"], check=True, capture_output=True).stdout)
         os.remove(pdf_filename)
     else:
         stream = jb_common.utils.base.open_and_unlink(pdf_filename)
@@ -80,4 +78,4 @@ def show_stack(request, sample_id, thumbnail):
         filepath, partial(generate_stack, thumbnail, locations, sample, sample_details), timestamps=[sample.last_modified])
     return jb_common.utils.base.static_response(
         stream, None if thumbnail else "{0}_stack.pdf".format(django.utils.text.slugify(str(sample))),
-        "image/png" if thumbnail else "application/pdf")
+        "image/svg+xml" if thumbnail else "application/pdf")
