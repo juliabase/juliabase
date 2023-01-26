@@ -37,7 +37,7 @@ def generate_plot(process, plot_id, thumbnail, datafile_name):
     try:
         output = BytesIO()
         if thumbnail:
-            figure = Figure(frameon=False, figsize=(4, 3))
+            figure = Figure(frameon=False, figsize=(4.2, 3.15))
             canvas = FigureCanvasAgg(figure)
             axes = figure.add_subplot(111)
             axes.set_position((0.17, 0.16, 0.78, 0.78))
