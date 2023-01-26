@@ -257,7 +257,8 @@ class CellsLayout(Layout):
         :rtype: dict mapping str to dict mapping str to str
         """
         map_shapes = {}
-        resolution = settings.THUMBNAIL_WIDTH / self.width
+        # Convert bp in CSS pixels
+        resolution = 96 / 72
         for key, coords in self.shapes.items():
             map_shapes[key] = {"type": "rect",
                                "coords": ",".join(str(int(round(x * resolution))) for x in
