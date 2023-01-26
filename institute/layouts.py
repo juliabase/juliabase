@@ -182,8 +182,8 @@ class Layout:
     :type process: `samples.models.Process`
     :type structuring: `institute.models.Structuring`
     """
-    width = 80 * mm
-    height = 80 * mm
+    width = 100 * mm
+    height = 100 * mm
 
     def __init__(self, sample, process, structuring):
         self.sample = sample
@@ -221,7 +221,7 @@ class Layout:
 class CellsLayout(Layout):
     """Abstract class for cell layouts.  These layouts are primarily used in
     solarsimulator measurements.  All cells are rectangles.  Try to make the
-    height and width of the mask close to 80 because font sizes and line
+    height and width of the mask close to 100 because font sizes and line
     thicknesses are optimised for this size.
 
     :ivar shapes: all cells on the layout; this is a dictionary mapping the
@@ -336,7 +336,7 @@ class CellsLayout(Layout):
             else:
                 global_label = None
             if global_label:
-                fontsize = 8
+                fontsize = 10
                 canvas.setFontSize(fontsize)
                 descent = reportlab.pdfbase.pdfmetrics.getDescent(default_fontname, fontsize)
                 canvas.setFillColorRGB(0, 0, 0)
@@ -351,6 +351,7 @@ class CellsLayout(Layout):
                 color = (0.85, 0.85, 0.85)
                 label = None
             canvas.setFillColorRGB(*color)
+            canvas.setLineWidth(1.2)
             canvas.rect(origin[0], origin[1], dimensions[0], dimensions[1], fill=1)
             if label:
                 if 0.3 * color[0] + 0.59 * color[1] + 0.11 * color[2] < 0.3:
@@ -358,7 +359,7 @@ class CellsLayout(Layout):
                 else:
                     text_graylevel = 0
                 _draw_constrained_text(canvas, label, (origin[0] + dimensions[0] / 2), (origin[1] + dimensions[1] / 2),
-                                       9, dimensions[0], text_graylevel, background_color=color)
+                                       11, dimensions[0], text_graylevel, background_color=color)
         return canvas
 
 
@@ -405,7 +406,7 @@ class INMStandard(CellsLayout):
     for index, coords in shapes.items():
         shapes[index] = ((coords[0][0] - 15, coords[0][1] - 15), coords[1])
 
-    _scaling = 80 * mm / max(height, width)
+    _scaling = 100 * mm / max(height, width)
     for index, coords in shapes.items():
         shapes[index] = ((_scaling * coords[0][0] * mm, _scaling * coords[0][1] * mm),
                          (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
@@ -437,7 +438,7 @@ class ACME1(CellsLayout):
               "5C": ((20.02, 3.12), (2.6, 2.6)),
               "5D": ((27.82, 3.12), (2.6, 2.6))}
 
-    _scaling = 80 * mm / max(height, width)
+    _scaling = 100 * mm / max(height, width)
     for cell_index, coords in shapes.items():
         shapes[cell_index] = ((_scaling * coords[0][0] * mm, _scaling * coords[0][1] * mm),
                               (_scaling * coords[1][0] * mm, _scaling * coords[1][1] * mm))
