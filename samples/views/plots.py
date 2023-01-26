@@ -99,4 +99,4 @@ def show_plot(request, process_id, plot_id, thumbnail):
     stream = get_cached_bytes_stream(plot_filepath, partial(generate_plot, process, plot_id, thumbnail, datafile_name),
                                      datafile_names, timestamps)
     return static_response(stream, None if thumbnail else process.get_plotfile_basename(plot_id) + ".pdf",
-                           mimetypes.guess_type(plot_filepath))
+                           mimetypes.guess_type(plot_filepath)[0])
