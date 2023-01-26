@@ -43,7 +43,7 @@ def generate_plot(process, plot_id, thumbnail, datafile_name):
             axes.set_position((0.17, 0.16, 0.78, 0.78))
             axes.grid(True)
             process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=True)
-            canvas.print_figure(output, dpi=settings.THUMBNAIL_WIDTH / 4, format="png")
+            canvas.print_figure(output, format="svg")
         else:
             figure = Figure()
             canvas = FigureCanvasAgg(figure)
