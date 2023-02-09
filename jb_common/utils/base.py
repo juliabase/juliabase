@@ -423,9 +423,6 @@ def is_ro_crate_requested(request):
     """Tests whether the current request should be answered in RO-Crate format
     instead of HTML.
 
-    FixMe: The MIME type “application/rocrate+zip” is made up by us.  There
-    does not seem to exist an official mime type yet.
-
     :param request: the current HTTP Request object
 
     :type request: HttpRequest
@@ -435,9 +432,9 @@ def is_ro_crate_requested(request):
 
     :rtype: bool
     """
-    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/rocrate+zip"},
+    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/vnd.eln+zip"},
                                                request.META.get("HTTP_ACCEPT", "text/html"))
-    return requested_mime_type == "application/rocrate+zip"
+    return requested_mime_type == "application/vnd.eln+zip"
 
 
 def is_json_requested(request):

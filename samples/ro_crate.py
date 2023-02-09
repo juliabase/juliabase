@@ -211,5 +211,5 @@ def respond_as_ro_crate(graph, raw_files):
         raw_file.prepare_destination(tempdir_path)
 
     zip_stream = ZipStream(tempdir)
-    return StreamingHttpResponse(zip_stream, "application/rocrate+zip",
+    return StreamingHttpResponse(zip_stream, "application/vnd.eln+zip",
                                  headers={"Content-Disposition": f'attachment; filename="{sample_name}.eln"'})

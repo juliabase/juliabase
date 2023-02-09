@@ -322,7 +322,7 @@ class JuliaBaseConnection:
         elif response_type == "turtle":
             accept = "text/turtle"
         elif response_type == "ro-crate":
-            accept = "application/rocrate+zip"
+            accept = "application/vnd.eln+zip"
         else:
             assert False, response_type
         request.add_header("Accept", accept)
@@ -449,7 +449,7 @@ class JuliaBaseConnection:
         if self.root_url is None:
             raise Exception("No root URL defined.  Maybe not logged-in?")
         response = self._do_http_request(self.root_url + relative_url, response_type="ro-crate")
-        assert response.info()["Content-Type"].startswith("application/rocrate+zip"), response.info()["Content-Type"]
+        assert response.info()["Content-Type"].startswith("application/vnd.eln+zip"), response.info()["Content-Type"]
         shutil.copyfileobj(response, file)
 
     def set_csrf_header(self):
