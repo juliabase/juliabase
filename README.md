@@ -36,3 +36,12 @@ For the details of licensing, see
 So, have fun using JuliaBase behind closed doors, but if you improve it, please
 send patches to the JuliaBase maintainers.  This way, every JuliaBase
 installation benefits from all improvements made.  Thank you!
+
+
+Acknowledgements
+----------------
+
+The authors would like to thank the Federal Government and the Heads of
+Government of the Länder, as well as the Joint Science Conference (GWK), for
+their funding and support within the framework of the NFDI4Ing
+consortium. Funded by the German Research Foundation (DFG) – 442146713.
