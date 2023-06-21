@@ -1700,6 +1700,17 @@ class Task(models.Model):
     samples = models.ManyToManyField(Sample, related_name="task", verbose_name=_("samples"))
     comments = models.TextField(_("comments"), blank=True)
     priority = models.CharField(_("priority"), max_length=15, choices=Priority.choices, default=Priority.NORMAL)
+    chilled = models.BooleanField(_("chilled"), default=False)
+    deep_frozen = models.BooleanField(_("deep-frozen"), default=False)
+    air_sensitive = models.BooleanField(_("air sensitive"), default=False)
+    light_sensitive = models.BooleanField(_("light sensitive"), default=False)
+    moisture_sensitive = models.BooleanField(_("moisture sensitive"), default=False)
+    explosive = models.BooleanField(_("explosive"), default=False)
+    toxic = models.BooleanField(_("toxic"), default=False)
+    inflammable = models.BooleanField(_("inflammable"), default=False)
+    radioactive = models.BooleanField(_("radioactive"), default=False)
+    biohazard1 = models.BooleanField(_("biohazard BSL-1"), default=False)
+    innocuous = models.BooleanField(_("innocuous"), default=True)
 
     class Meta:
         verbose_name = _("task")

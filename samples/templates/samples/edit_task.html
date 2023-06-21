@@ -30,26 +30,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <table class="padding5" style="float: left">
     <tr>
       <td class="field-label">{{ task.status.label_tag }}</td>
-      <td class="field-input">{{ task.status }}</td>
+      <td colspan="2" class="field-input">{{ task.status }}</td>
     </tr>
     <tr>
       <td class="field-label">{{ task.process_class.label_tag }}</td>
-      <td class="field-input">{{ task.process_class }}</td>
+      <td colspan="2" class="field-input">{{ task.process_class }}</td>
     </tr>
     <tr>
       <td class="field-label">{{ task.priority.label_tag }}</td>
-      <td class="field-input">{{ task.priority }}</td>
+      <td colspan="2" class="field-input">{{ task.priority }}</td>
     </tr>
     <tr>
       <td class="field-label">{{ task.finished_process.label_tag }}</td>
-      <td class="field-input">{{ task.finished_process }}</td>
+      <td colspan="2" class="field-input">{{ task.finished_process }}</td>
     </tr>
     <tr>
       <td class="field-label">{{ task.operator.label_tag }}</td>
-      <td class="field-input">{{ task.operator }}</td>
+      <td colspan="2" class="field-input">{{ task.operator }}</td>
     <tr>
       <td class="field-label">{{ task.comments.label_tag }}<br/>{% markdown_hint %}</td>
-      <td class="field-input">{{ task.comments }}</td>
+      <td colspan="2" class="field-input">{{ task.comments }}</td>
+    </tr>
+    <tr>
+      <td class="field-label">{{ task.chilled.label_tag }}</td>
+      <td class="field-input">{{ task.chilled }}</td>
+      <td class="field-label">{{ task.deep_frozen.label_tag }}</td>
+      <td class="field-input">{{ task.deep_frozen }}</td>
+    </tr>
+    <tr>
+      <td class="field-label">{{ task.air_sensitive.label_tag }}</td>
+      <td class="field-input">{{ task.air_sensitive }}</td>
+      <td class="field-label">{{ task.light_sensitive.label_tag }}</td>
+      <td class="field-input">{{ task.light_sensitive }}</td>
+      <td class="field-label">{{ task.moisture_sensitive.label_tag }}</td>
+      <td class="field-input">{{ task.moisture_sensitive }}</td>
+    </tr>
+    <tr>
+      <td class="field-label">{{ task.explosive.label_tag }}</td>
+      <td class="field-input">{{ task.explosive }}</td>
+      <td class="field-label">{{ task.toxic.label_tag }}</td>
+      <td class="field-input">{{ task.toxic }}</td>
+      <td class="field-label">{{ task.inflammable.label_tag }}</td>
+      <td class="field-input">{{ task.inflammable }}</td>
+    </tr>
+    <tr>
+      <td class="field-label">{{ task.radioactive.label_tag }}</td>
+      <td class="field-input">{{ task.radioactive }}</td>
+      <td class="field-label">{{ task.biohazard1.label_tag }}</td>
+      <td class="field-input">{{ task.biohazard1 }}</td>
+      <td class="field-label">{{ task.innocuous.label_tag }}</td>
+      <td class="field-input">{{ task.innocuous }}</td>
     </tr>
   </table>
 
