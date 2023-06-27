@@ -1243,7 +1243,9 @@ class Result(Process):
 
         # Translators: Of a result
     title = models.CharField(_("title"), max_length=50)
+    # FixMe: This must go, once ``attachments`` is deployed.
     image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
+    attachmensts = models.JSONField(_("attachments"), blank=True, default=empty_list)
         # Translators: Physical quantities are meant
     quantities_and_values = models.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
@@ -1287,18 +1289,17 @@ class Result(Process):
         return django.urls.reverse("samples:show_result", args=(self.pk,))
 
     def get_image_locations(self):
-        """Get the location of the image in the local filesystem as well
-        as on the webpage.
+        """Get the location of the images in the local filesystem as well as on
+        the webpage.
 
         Every image exist twice.  First, it is in the blob store.  If you use
         the ``Filesystem`` blob store with ``settings.MEDIA_ROOT`` as its
         parameter, it is in ``settings.MEDIA_ROOT/results``.  (Typically,
         ``MEDIA_ROOT`` is ``/var/www/juliabase/uploads/`` and should be
         backuped.)  This is the original file, uploaded by the user.  Its
-        filename is ``"0"`` plus the respective file extension (jpeg, png, or
-        pdf).  The sub-directory is the primary key of the result.  (This
-        allows for more than one image per result in upcoming JuliaBase
-        versions.)
+        filename is the index, e.g.``"0"``, plus the respective file extension
+        (jpeg, png, or pdf).  The sub-directory is the primary key of the
+        result.
 
         Thus, keep in mind that ``"image_file"`` does not refer to an actual
         file path but the path (the primary key if you wish) in the blob
