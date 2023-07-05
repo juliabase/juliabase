@@ -363,6 +363,10 @@ def new(request):
             timestamp = django.utils.timezone.now()
             full_name = "{0}-{1}-{2}".format(
                 request.user.username, timestamp.strftime("%y"), sample_series_form.cleaned_data["short_name"])
+            
+            # Full name now with content of span object so users can change the full name
+            full_name = request.POST.get("name_prefix_data").strip() + sample_series_form.cleaned_data["short_name"]
+
             if models.SampleSeries.objects.filter(name=full_name).exists():
                 sample_series_form.add_error("short_name", ValidationError(_("This sample series name is already given."),
                                                                            code="duplicate"))
