@@ -1246,6 +1246,13 @@ class Result(Process):
     # FixMe: This must go, once ``attachments`` is deployed.
     image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
     attachmensts = models.JSONField(_("attachments"), blank=True, default=empty_list)
+    """This is a data structure, serialised in JSON.  If you de-serialise it,
+    it is a list of dictionaries.  Each dictionary contains metadata for the
+    attachment with the respective index.  Currently, the only possible keys
+    are “type” and “description”.  “type” is the file type, with possible
+    values being in `ImageType`.  “description” is a text containing a
+    user-supplied description of the respective attachment.
+    """
         # Translators: Physical quantities are meant
     quantities_and_values = models.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
