@@ -7,7 +7,7 @@ import samples.models.common
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('samples', '0009_auto_20200901_1457'),
+        ('samples', '0010_task_air_sensitive_task_biohazard1_task_chilled_and_more'),
     ]
 
     operations = [
