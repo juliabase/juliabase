@@ -92,7 +92,7 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR, django.__path__[0] + "/forms/templates"],
+        "DIRS": [BASE_DIR/"templates_root", django.__path__[0] + "/forms/templates"],
         "OPTIONS": {
             "context_processors": ["django.contrib.auth.context_processors.auth",
                                    "django.template.context_processors.debug",
