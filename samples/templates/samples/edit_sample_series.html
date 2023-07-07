@@ -31,7 +31,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% if is_new %}
       <tr>
         <td class="field-label">{{ sample_series.short_name.label_tag }}</td>
-        <td class="field-input">{{ name_prefix }}-{{ sample_series.short_name }}</td>
+
+        {% comment %}
+          The input for the ss name now has javascript & input for the prefix so that the user can edit the full name
+        {% endcomment %}
+        <td class="field-input"><span id="name_prefix" name="name_prefix" contenteditable="">{{ name_prefix }}-</span><input type="hidden" name="name_prefix_data" id="name_prefix_data">
+          {{ sample_series.short_name }}</td>
+        <script>
+          var prefixSpan = document.getElementById("name_prefix");
+          var prefixInput = document.getElementById("name_prefix_data");
+
+          prefixSpan.addEventListener("input", function() {
+            prefixInput.value = prefixSpan.innerHTML;
+          });
+        </script>
+        
       </tr>
     {% endif %}
     <tr {% if is_new %}style="display: none"{% endif %}>
