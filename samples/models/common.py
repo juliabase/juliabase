@@ -976,7 +976,7 @@ class Sample(models.Model):
                 data.update(sample_details_data)
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
-            data.update(ancestor_data)
+            data["anchestor_data"] = ancestor_data
         data.update(("process #{}".format(process.id), process.actual_instance.get_data())
                     for process in self.processes.all())
         return data
