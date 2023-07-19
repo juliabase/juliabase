@@ -165,6 +165,7 @@ def show(request, process_name, year_and_month):
         year_month_form = YearMonthForm(initial={"year": year, "month": month})
     template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
     template_context = RequestContext(request, process_class.get_lab_notebook_context(year, month))
+    template_context["request"] = request
     html_body = template.render(template_context.flatten())
     previous_url, next_url = get_previous_next_urls(process_name, namespace, year, month)
     try:
