@@ -968,18 +968,21 @@ class Sample(models.Model):
 
         :rtype: `dict`
         """
-        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data = {}
         if not only_processes:
+            data.update({field.name: getattr(self, field.name) for field in self._meta.fields})
             sample_details = self.get_sample_details()
             if sample_details:
                 sample_details_data = sample_details.get_data()
                 data.update(sample_details_data)
+
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
-            #Only add new fields from ancestor_data to data. Don't overwrite existing ones (E.g.: name, id)
-            data = {**ancestor_data,**data}
+            data.update(ancestor_data)  
+                     
         data.update(("process #{}".format(process.id), process.actual_instance.get_data())
                     for process in self.processes.all())
+  
         return data
 
     def get_data_for_table_export(self):
