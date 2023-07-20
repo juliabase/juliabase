@@ -975,14 +975,11 @@ class Sample(models.Model):
             if sample_details:
                 sample_details_data = sample_details.get_data()
                 data.update(sample_details_data)
-
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
-            data.update(ancestor_data)  
-                     
+            data.update(ancestor_data)
         data.update(("process #{}".format(process.id), process.actual_instance.get_data())
                     for process in self.processes.all())
-  
         return data
 
     def get_data_for_table_export(self):
