@@ -976,6 +976,7 @@ class Sample(models.Model):
                 data.update(sample_details_data)
         if self.split_origin:
             ancestor_data = self.split_origin.parent.get_data(only_processes=True)
+            #Only add new fields from ancestor_data to data. Don't overwrite existing ones (E.g.: name, id)
             data = {**ancestor_data,**data}
         data.update(("process #{}".format(process.id), process.actual_instance.get_data())
                     for process in self.processes.all())
