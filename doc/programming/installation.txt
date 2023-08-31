@@ -43,7 +43,7 @@ worth, the authors run Ubuntu Server.
 .. _Django's own installation guide:
    https://docs.djangoproject.com/en/1.7/topics/install/
 
-JuliaBase requires Python_3.4 or higher.
+JuliaBase requires Python_3.4 or higher, and Dart 3.
 
 Mostly, no sophisticated finetuning of the components is necessary because
 JuliaBase deployments will serve only a few (< 1000) people.  In particular,
@@ -76,6 +76,22 @@ operating system by default anyway, you must install:
 - tzlocal
 - Python modules for YAML and markdown
 - Python module “deprecation”
+
+
+.. _Dart:
+
+.. index:: Dart
+
+Dart
+====
+
+In order to have the main JavaScript code available on the web pages, you need
+to compile it from the Dart sources::
+
+  make --directory dart && make --directory dart install
+
+If you execute these ``make`` calls with the environment variable
+``DEBUG=true``, a source map file is installed, too.
 
 
 .. _PostgreSQL:
