@@ -1,6 +1,6 @@
 part of juliabase;
 
-void resultAddAttachment(Event event) {
+void resultAddAttachment() {
   final attachments = querySelector("#attachments")!;
   var index = 0;
   for (var c in attachments.children) {

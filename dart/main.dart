@@ -9,8 +9,9 @@ void main() {
   // fixed.
   window.onLoad.listen((_) {
     if (window.location.pathname == "/results/add/") {
+      resultAddAttachment();
       querySelector("#add-attachment")!
-          .addEventListener("pointerdown", resultAddAttachment);
+          .addEventListener("pointerdown", (_) => resultAddAttachment());
     }
   });
 }
