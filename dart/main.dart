@@ -1,4 +1,4 @@
-library okuda_ui;
+library juliabase;
 
 import "dart:html";
 
