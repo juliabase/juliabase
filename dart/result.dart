@@ -42,6 +42,29 @@ void resultAddAttachment() {
   td.append(content);
   tr.append(td);
 
+  td = document.createElement("td");
+  td.setAttribute("class", "field-label");
+  td.setAttribute("style", "padding: 2ex");
+
+  content = document.createElement("label");
+  content.setAttribute("for", "${index}_id_description");
+  content.text = "Description:";
+
+  td.append(content);
+  tr.append(td);
+
+  td = document.createElement("td");
+  td.setAttribute("class", "field-input");
+  td.setAttribute("style", "padding: 2ex");
+
+  content = document.createElement("input");
+  content.setAttribute("type", "text");
+  content.setAttribute("name", "${index}_description");
+  content.setAttribute("id", "${index}_id_description");
+
+  td.append(content);
+  tr.append(td);
+
   tbody.append(tr);
 
   attachments.append(tbody);
