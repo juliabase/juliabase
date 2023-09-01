@@ -3,6 +3,7 @@
 doc/.build
 mysite/
 /TAGS
-/jb_common/static/juliabase/js/main.js
-/jb_common/static/juliabase/js/main.js.map
+/jb_common/static/juliabase/js/main.js*
+/jb_common/static/juliabase/js/*.dart
 /dart/.dart_tool/package_config.json
+/dart/main.js*
