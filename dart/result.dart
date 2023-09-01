@@ -10,27 +10,39 @@ void resultAddAttachment() {
     }
   }
   index++;
-  final newAttach = document.createElement("tbody");
-  newAttach.setAttribute("id", "${index}_attachment");
-  newAttach.setAttribute("style", "border: 2px solid");
-  final row = document.createElement("tr");
-  newAttach.append(row);
-  final firstCol = document.createElement("td");
-  firstCol.setAttribute("class", "field-label");
-  firstCol.setAttribute("style", "padding: 2ex");
-  final secondCol = document.createElement("td");
-  secondCol.setAttribute("class", "field-input");
-  secondCol.setAttribute("style", "padding: 2ex");
-  row.append(firstCol);
-  row.append(secondCol);
-  final label = document.createElement("label");
-  label.setAttribute("for", "${index}_id_image_file");
-  label.text = "Image file:";
-  firstCol.append(label);
-  final input = document.createElement("input");
-  input.setAttribute("type", "file");
-  input.setAttribute("name", "${index}_image_file");
-  input.setAttribute("id", "${index}_id_image_file");
-  secondCol.append(input);
-  attachments.append(newAttach);
+
+  final tbody = document.createElement("tbody");
+  tbody.setAttribute("id", "${index}_attachment");
+  tbody.setAttribute("style", "border: 2px solid");
+
+  final tr = document.createElement("tr");
+
+  Element td, content;
+
+  td = document.createElement("td");
+  td.setAttribute("class", "field-label");
+  td.setAttribute("style", "padding: 2ex");
+
+  content = document.createElement("label");
+  content.setAttribute("for", "${index}_id_image_file");
+  content.text = "Image file:";
+
+  td.append(content);
+  tr.append(td);
+
+  td = document.createElement("td");
+  td.setAttribute("class", "field-input");
+  td.setAttribute("style", "padding: 2ex");
+
+  content = document.createElement("input");
+  content.setAttribute("type", "file");
+  content.setAttribute("name", "${index}_image_file");
+  content.setAttribute("id", "${index}_id_image_file");
+
+  td.append(content);
+  tr.append(td);
+
+  tbody.append(tr);
+
+  attachments.append(tbody);
 }
