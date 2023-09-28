@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='result',
-            name='attachmensts',
+            name='attachments',
             field=models.JSONField(blank=True, default=samples.models.common.empty_list, verbose_name='attachments'),
         ),
     ]

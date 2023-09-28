@@ -1245,7 +1245,7 @@ class Result(Process):
     title = models.CharField(_("title"), max_length=50)
     # FixMe: This must go, once ``attachments`` is deployed.
     image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
-    attachmensts = models.JSONField(_("attachments"), blank=True, default=empty_list)
+    attachments = models.JSONField(_("attachments"), blank=True, default=empty_list)
     """This is a data structure, serialised in JSON.  If you de-serialise it,
     it is a list of dictionaries.  Each dictionary contains metadata for the
     attachment with the respective index.  Currently, the only possible keys
