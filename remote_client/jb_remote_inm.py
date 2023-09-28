@@ -38,7 +38,7 @@ import re, logging, datetime, os, urllib
 from jb_remote import *
 
 
-settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = os.environ.get("JULIABASE_SERVER_URL", "http://localhost/")
+settings.ROOT_URL = settings.TESTSERVER_ROOT_URL = os.environ.get("JULIABASE_SERVER_URL", "http://localhost:8000/")
 
 
 class ClusterToolDeposition:
