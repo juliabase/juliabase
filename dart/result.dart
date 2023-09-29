@@ -59,6 +59,7 @@ void resultAddAttachment() {
 
   content = document.createElement("input");
   content.setAttribute("type", "text");
+  content.setAttribute("required", "required");
   content.setAttribute("name", "${index}-description");
   content.setAttribute("id", "${index}-id_description");
 
