@@ -2,7 +2,7 @@ part of juliabase;
 
 void resultAddAttachment() {
   final attachments = querySelector("#attachments")!;
-  var index = 0;
+  var index = -1;
   for (var c in attachments.children) {
     final i = int.parse(c.getAttribute("id")!.split("-")[0]);
     if (i > index) {
