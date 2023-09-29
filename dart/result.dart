@@ -4,7 +4,7 @@ void resultAddAttachment() {
   final attachments = querySelector("#attachments")!;
   var index = 0;
   for (var c in attachments.children) {
-    final i = int.parse(c.getAttribute("id")!.split("_")[0]);
+    final i = int.parse(c.getAttribute("id")!.split("-")[0]);
     if (i > index) {
       index = i;
     }
@@ -12,7 +12,7 @@ void resultAddAttachment() {
   index++;
 
   final tbody = document.createElement("tbody");
-  tbody.setAttribute("id", "${index}_attachment");
+  tbody.setAttribute("id", "${index}-attachment");
   tbody.setAttribute("style", "border: 2px solid");
 
   final tr = document.createElement("tr");
@@ -24,7 +24,7 @@ void resultAddAttachment() {
   td.setAttribute("style", "padding: 2ex");
 
   content = document.createElement("label");
-  content.setAttribute("for", "${index}_id_image_file");
+  content.setAttribute("for", "${index}-id_image_file");
   content.text = "Image file:";
 
   td.append(content);
@@ -36,8 +36,8 @@ void resultAddAttachment() {
 
   content = document.createElement("input");
   content.setAttribute("type", "file");
-  content.setAttribute("name", "${index}_image_file");
-  content.setAttribute("id", "${index}_id_image_file");
+  content.setAttribute("name", "${index}-image_file");
+  content.setAttribute("id", "${index}-id_image_file");
 
   td.append(content);
   tr.append(td);
@@ -47,7 +47,7 @@ void resultAddAttachment() {
   td.setAttribute("style", "padding: 2ex");
 
   content = document.createElement("label");
-  content.setAttribute("for", "${index}_id_description");
+  content.setAttribute("for", "${index}-id_description");
   content.text = "Description:";
 
   td.append(content);
@@ -59,8 +59,8 @@ void resultAddAttachment() {
 
   content = document.createElement("input");
   content.setAttribute("type", "text");
-  content.setAttribute("name", "${index}_description");
-  content.setAttribute("id", "${index}_id_description");
+  content.setAttribute("name", "${index}-description");
+  content.setAttribute("id", "${index}-id_description");
 
   td.append(content);
   tr.append(td);
