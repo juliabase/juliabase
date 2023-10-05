@@ -968,8 +968,9 @@ class Sample(models.Model):
 
         :rtype: `dict`
         """
-        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data = {}
         if not only_processes:
+            data.update({field.name: getattr(self, field.name) for field in self._meta.fields})
             sample_details = self.get_sample_details()
             if sample_details:
                 sample_details_data = sample_details.get_data()
