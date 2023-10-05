@@ -111,8 +111,8 @@ urlpatterns = [
     re_path(r"^results/add/$", result.edit, {"process_id": None}, "add_result"),
     re_path(r"^results/(?P<process_id>\d+)/edit/$", result.edit, name="edit_result"),
     re_path(r"^results/(?P<process_id>\d+)/export/$", result.export, name="export_result"),
-    re_path(r"^results/images/(?P<process_id>\d+)$", result.show_image, name="show_result_image"),
-    re_path(r"^results/thumbnails/(?P<process_id>\d+)$", result.show_thumbnail, name="show_result_thumbnail"),
+    re_path(r"^results/images/(?P<process_id>\d+)/(?P<index>\d+)$", result.show_image, name="show_result_image"),
+    re_path(r"^results/thumbnails/(?P<process_id>\d+)/(?P<index>\d+)$", result.show_thumbnail, name="show_result_thumbnail"),
     re_path(r"^results/(?P<process_id>\d+)$", result.show, name="show_result"),
 
     re_path(r"^plots/thumbnails/(?P<process_id>\d+)/(?P<plot_id>.+)", plots.show_plot, {"thumbnail": True},

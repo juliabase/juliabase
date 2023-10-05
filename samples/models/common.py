@@ -1296,7 +1296,7 @@ class Result(Process):
     def get_absolute_url(self):
         return django.urls.reverse("samples:show_result", args=(self.pk,))
 
-    def get_image_locations(self):
+    def get_image_locations(self, index):
         """Get the location of the images in the local filesystem as well as on
         the webpage.
 
@@ -1315,6 +1315,9 @@ class Result(Process):
 
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
         on the original file type, and stored in the cache.
+
+        :param int index: The index of the image, starting with 0.  It is the
+          index in the ``attachments`` field (which is a list).
 
         :return:
           a dictionary containing the following keys:
@@ -1335,11 +1338,14 @@ class Result(Process):
         assert self.image_type != "none"
         original_extension = "." + self.image_type
         thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
-        sluggified_filename = django.utils.text.slugify(self.title) + original_extension
-        return {"image_file": os.path.join("results", str(self.pk), "0" + original_extension),
-                "image_url": django.urls.reverse("samples:show_result_image", kwargs={"process_id": str(self.pk)}),
-                "thumbnail_file": os.path.join("results_thumbnails", str(self.pk), "0" + thumbnail_extension),
-                "thumbnail_url": django.urls.reverse("samples:show_result_thumbnail", kwargs={"process_id": str(self.pk)}),
+        sluggified_filename = django.utils.text.slugify(self.title) + "-" + \
+            django.utils.text.slugify(self.attachments[index]["description"]) + original_extension
+        return {"image_file": os.path.join("results", str(self.pk), str(index) + original_extension),
+                "image_url": django.urls.reverse("samples:show_result_image",
+                                                 kwargs={"process_id": str(self.pk), "index": index}),
+                "thumbnail_file": os.path.join("results_thumbnails", str(self.pk), str(index) + thumbnail_extension),
+                "thumbnail_url": django.urls.reverse("samples:show_result_thumbnail",
+                                                     kwargs={"process_id": str(self.pk), "index": index}),
                 "sluggified_filename": sluggified_filename}
 
     def get_context_for_user(self, user, old_context):
@@ -1350,7 +1356,7 @@ class Result(Process):
             context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
         if "thumbnail_url" not in context or "image_url" not in context:
             if self.image_type != "none":
-                image_locations = self.get_image_locations()
+                image_locations = self.get_image_locations(0)
                 context.update({"thumbnail_url": image_locations["thumbnail_url"],
                                 "image_url": image_locations["image_url"]})
             else:

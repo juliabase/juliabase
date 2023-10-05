@@ -42,13 +42,14 @@ from samples import models, permissions
 import samples.utils.views as utils
 
 
-def save_image_file(image_data, result, related_data_form):
+def save_image_file(image_data, index, result, related_data_form):
     """Saves an uploaded image file stream to its final destination in the blob
     store.  If the given result has already an image connected with it, it is
     removed first.
 
     :param image_data: the file-like object which contains the uploaded data
         stream
+    :param int index: the index of the image (index of the attachement)
     :param result: The result object for which the image was uploaded.  It is
         not necessary that all its fields are already there.  But it must have
         been written already to the database because the only necessary field
@@ -62,6 +63,7 @@ def save_image_file(image_data, result, related_data_form):
     :type result: `models.Result`
     :type related_data_form: `RelatedDataForm`
     """
+    image_path = result.get_image_locations(index)["image_file"]
     for i, chunk in enumerate(image_data.chunks()):
         if i == 0:
             if chunk.startswith(b"\211PNG\r\n\032\n"):
@@ -75,9 +77,8 @@ def save_image_file(image_data, result, related_data_form):
                     _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."), code="invalid"))
                 return
             if result.image_type != "none" and new_image_type != result.image_type:
-                jb_common.utils.blobs.storage.unlink(result.get_image_locations()["image_file"])
+                jb_common.utils.blobs.storage.unlink(image_path)
             result.image_type = new_image_type
-            image_path = result.get_image_locations()["image_file"]
             destination = jb_common.utils.blobs.storage.open(image_path, "w")
         destination.write(chunk)
     destination.close()
@@ -567,13 +568,14 @@ def show(request, process_id):
 
 
 @login_required
-def show_image(request, process_id):
+def show_image(request, process_id, index):
     """Shows a particular result image.  Although its response is an image
     rather than an HTML file, it is served by Django in order to enforce user
     permissions.
 
     :param request: the current HTTP Request object
     :param process_id: the database ID of the result to show
+    :param str index: attachment index of the image
 
     :type request: HttpRequest
     :type process_id: str
@@ -585,7 +587,7 @@ def show_image(request, process_id):
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
-    image_locations = result.get_image_locations()
+    image_locations = result.get_image_locations(int(index))
     return static_response(jb_common.utils.blobs.storage.open(image_locations["image_file"]),
                            image_locations["sluggified_filename"])
 
@@ -599,13 +601,14 @@ def generate_thumbnail(result, image_filename):
 
 
 @login_required
-def show_thumbnail(request, process_id):
+def show_thumbnail(request, process_id, index):
     """Shows the thumnail of a particular result image.  Although its response
     is an image rather than an HTML file, it is served by Django in order to
     enforce user permissions.
 
     :param request: the current HTTP Request object
     :param process_id: the database ID of the result to show
+    :param str index: attachment index of the image
 
     :type request: HttpRequest
     :type process_id: str
@@ -617,7 +620,7 @@ def show_thumbnail(request, process_id):
     """
     result = get_object_or_404(models.Result, pk=utils.convert_id_to_int(process_id))
     permissions.assert_can_view_result_process(request.user, result)
-    image_locations = result.get_image_locations()
+    image_locations = result.get_image_locations(int(index))
     image_filename = image_locations["image_file"]
     thumbnail_file = image_locations["thumbnail_file"]
     stream = get_cached_bytes_stream(thumbnail_file, partial(generate_thumbnail, result, image_filename),
