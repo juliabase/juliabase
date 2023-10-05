@@ -255,13 +255,6 @@ class FeedResult(FeedEntry):
         metadata["link"] = self.result.get_absolute_url()
         return metadata
 
-    def get_additional_template_context(self, user):
-        if self.result.image_type != "none":
-            image_locations = self.result.get_image_locations()
-            return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
-        else:
-            return {"thumbnail_url": None, "image_url": None}
-
 
 class FeedCopiedMySamples(FeedEntry):
     """Model for feed entries about samples copied from one user to the “My
