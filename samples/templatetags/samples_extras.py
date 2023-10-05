@@ -770,4 +770,20 @@ def camel_case_to_human_text(value):
     return jb_common.utils.base.camel_case_to_human_text(value)
 
 
+@register.filter
+def result_image_url(result, index):
+    """Yields the URL of the attachment with the given index of the filtered
+    result process.
+    """
+    return result.get_image_locations(index)["image_url"]
+
+
+@register.filter
+def result_thumbnail_url(result, index):
+    """Yields the URL of the thumbnail of the attachment with the given index
+    of the filtered result process.
+    """
+    return result.get_image_locations(index)["thumbnail_url"]
+
+
 _ = gettext
