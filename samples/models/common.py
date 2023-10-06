@@ -1320,6 +1320,8 @@ class Result(Process):
           ``"thumbnail_file"``       full path to the thumbnail file
           ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
                                      without domain)
+          ``"sluggified_filename"``  filename that can be used if the image is
+                                     downloaded
           =========================  =========================================
 
         :rtype: dict mapping str to str
