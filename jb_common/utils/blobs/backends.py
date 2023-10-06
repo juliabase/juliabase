@@ -300,8 +300,8 @@ class PostgreSQL(BlobStorage):
         return large_object
 
     def export(self, path):
+        result = os.path.join(settings.CACHE_ROOT, str(uuid.uuid4()))
+        mkdirs(result)
         with self.existing_large_object(path) as (large_object, cursor):
-            result = os.path.join(settings.CACHE_ROOT, str(uuid.uuid4()))
-            mkdirs(result)
             large_object.export(result)
-            return result
+        return result
