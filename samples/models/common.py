@@ -352,7 +352,7 @@ class Process(PolymorphicModel):
           for this process.  If there are no raw datafile but you want to draw
           a plot nevertheless (e.g. from process data), return an empty list.
 
-        :rtype: list of str, str, or NoneType
+        :rtype: list of Path, Path, or NoneType
         """
         raise NotImplementedError
 

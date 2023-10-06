@@ -25,6 +25,7 @@
 
 import os, uuid, datetime, io
 from contextlib import contextmanager
+from pathlib import Path
 import psycopg2
 from django.conf import settings
 from jb_common.utils.base import mkdirs, getmtime_utc
@@ -114,7 +115,7 @@ class BlobStorage:
         :return:
           path to the file which can be removed
 
-        :rtype: str
+        :rtype: Path
         """
         raise NotImplementedError
 
@@ -143,18 +144,18 @@ class Filesystem(BlobStorage):
         :param root: root directory of the file system storage of BLOB files;
           it defaults to ``MEDIA_ROOT``
 
-        :type root: str
+        :type root: Path
         """
-        self.root = root or settings.MEDIA_ROOT
+        self.root = root or Path(settings.MEDIA_ROOT)
 
     def getmtime(self, path):
-        return getmtime_utc(os.path.join(self.root, path))
+        return getmtime_utc(self.root/path)
 
     def unlink(self, path):
-        os.unlink(os.path.join(self.root, path))
+        os.unlink(self.root/path)
 
     def open(self, path, mode="r"):
-        filepath = os.path.join(self.root, path)
+        filepath = self.root/path
         if mode == "w":
             mkdirs(filepath)
         return Filesystem.File(filepath, mode + "b")
@@ -169,18 +170,18 @@ class Filesystem(BlobStorage):
         A failure means the the original file and the link are not on the same
         filesystem, which must be the case at least for (3).
         """
-        path = os.path.join(self.root, path)
+        path = self.root/path
         filename = str(uuid.uuid4())
-        result = os.path.join("/tmp", filename)
+        result = Path("/tmp")/filename
         try:
             os.link(path, result)
         except OSError:
-            result = os.path.join(settings.CACHE_ROOT, filename)
+            result = Path(settings.CACHE_ROOT)/filename
             mkdirs(result)
             try:
                 os.link(path, result)
             except OSError:
-                result = os.path.join(self.root, filename)
+                result = self.root/filename
                 os.link(path, result)
         return result
 
@@ -300,8 +301,8 @@ class PostgreSQL(BlobStorage):
         return large_object
 
     def export(self, path):
-        result = os.path.join(settings.CACHE_ROOT, str(uuid.uuid4()))
+        result = Path(settings.CACHE_ROOT)/str(uuid.uuid4())
         mkdirs(result)
         with self.existing_large_object(path) as (large_object, cursor):
-            large_object.export(result)
+            large_object.export(str(result))
         return result

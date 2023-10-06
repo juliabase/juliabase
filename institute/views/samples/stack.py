@@ -23,6 +23,7 @@
 
 import subprocess, uuid, os, io
 from functools import partial
+from pathlib import Path
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -36,7 +37,7 @@ from institute import models, informal_stacks
 
 def generate_stack(thumbnail, locations, sample, sample_details):
     # FixMe: This should be implemented without writing to the disk.
-    pdf_filename = "/tmp/stack_{}.pdf".format(uuid.uuid4())
+    pdf_filename = Path("/tmp")/"stack_{}.pdf".format(uuid.uuid4())
     informal_stacks.generate_diagram(
         pdf_filename, [informal_stacks.Layer(layer) for layer in sample_details.informal_layers.all()],
         str(sample), _("Layer stack of {0}").format(sample))

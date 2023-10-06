@@ -36,6 +36,7 @@ unit of measurement in ReportLab.
 """
 
 import random, math, decimal
+from pathlib import Path
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.styles import ParagraphStyle
@@ -773,7 +774,7 @@ def generate_diagram(filepath, layers, title, subject):
     :param title: the title of the PDF file
     :param subject: the subject of the PDF file
 
-    :type filepath: str
+    :type filepath: Path
     :type layers: list of `Layer`
     :type title: str
     :type subject: str
@@ -797,7 +798,7 @@ def generate_diagram(filepath, layers, title, subject):
         height += 2 * red_line_space
         total_margin += red_line_space
 
-    c = canvas.Canvas(filepath, pagesize=(width, height), pageCompression=True)
+    c = canvas.Canvas(str(filepath), pagesize=(width, height), pageCompression=True)
     c.setAuthor("JuliaBase samples database")
     c.setTitle(title)
     c.setSubject(subject)
@@ -854,4 +855,4 @@ if __name__ == "__main__":
               Layer("Silber", decimal.Decimal("700"), "grey", thickness_reliable=True, verified=True, structured=True,
                     collapsed=True),
               ]
-    generate_diagram("test.pdf", layers, "10-TB-testsample", "Layer stack of 10-TB-testsample")
+    generate_diagram(Path("test.pdf"), layers, "10-TB-testsample", "Layer stack of 10-TB-testsample")
