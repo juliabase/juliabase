@@ -323,7 +323,7 @@ class Process(PolymorphicModel):
 
         :type axes: matplotlib.axes.Axes
         :type plot_id: str
-        :type filename: str or list of str
+        :type filename: Path or list of Path
         :type for_thumbnail: bool
 
         :raises samples.utils.plots.PlotError: if anything went wrong during
