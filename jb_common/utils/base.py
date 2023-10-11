@@ -526,10 +526,10 @@ def get_file_timestamps(paths):
     """
     if paths:
         if isinstance(paths[0], Path):
-            assert all(isinstance(paths, Path))
+            assert all(isinstance(path, Path) for path in paths)
             return [getmtime_utc(filepath) for filepath in paths]
         else:
-            assert all(isinstance(paths, str))
+            assert all(isinstance(path, str) for path in paths)
             return [blobs.storage.getmtime(filepath) for filepath in paths]
     return []
 

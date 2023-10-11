@@ -87,8 +87,7 @@ def save_image_file(image_data, index, result, related_data_form):
 
 
 class ResultForm(utils.ProcessForm):
-    """Model form for a result process.  Note that I exclude fields because
-    they are dealt with explicitly.
+    """Model form for a result process.
     """
     class Meta:
         model = models.Result
