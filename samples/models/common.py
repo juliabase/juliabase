@@ -1740,6 +1740,19 @@ class Task(models.Model):
         related_models[Sample] = "samples"
         return search.SearchTreeNode(cls, related_models, search_fields)
 
+    def get_data(self):
+        """Extract the data of this talk as a dictionary, ready to be used for
+        JSON responses.
+
+        :return:
+          the content of all fields of this task
+
+        :rtype: `dict`
+        """
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data["samples"] = list(self.samples.values_list("id", flat=True))
+        return data
+
 
 class ProcessWithSamplePositions(models.Model):
     """An abstract mixin class for saving the positions of the samples in an
