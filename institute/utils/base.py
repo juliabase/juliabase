@@ -84,7 +84,7 @@ def read_solarsimulator_plot_file(filename, position):
     :param filename: full path to the solarsimulator measurement data file
     :param position: the position of the cell the currents of which should be read.
 
-    :type filename: str
+    :type filename: pathlib.Path
     :type position: str
 
     :return:

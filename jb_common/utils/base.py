@@ -21,6 +21,7 @@ from contextlib import contextmanager
 from functools import wraps
 from smtplib import SMTPException
 from functools import update_wrapper
+from pathlib import Path
 import django.http
 import django.contrib.auth.models
 import django.urls
@@ -498,9 +499,7 @@ def getmtime_utc(path):
     """Returns the modification time of ``path`` as a timezone-aware object.  The
     timezone is UTC.
 
-    :param path: path to the file
-
-    :type path: str
+    :param Path path: path to the file
 
     :return:
       The modification time of ``path`` as a timezone-aware datetime object in
@@ -508,7 +507,31 @@ def getmtime_utc(path):
 
     :rtype: datetime.datetime
     """
-    return datetime.datetime.fromtimestamp(os.path.getmtime(path), django.utils.timezone.utc)
+    return datetime.datetime.fromtimestamp(path.stat().st_mtime, django.utils.timezone.utc)
+
+
+def get_file_timestamps(paths):
+    """Returns the timestamps of the given files.  This is a helper routine for
+    some functions below.
+
+    :param paths: the paths of the source files; if strings and not ``Path``
+        objects, they are assumed to be in the blob storage.
+
+    :type paths: list of str or list of Path
+
+    :return:
+       timestamps of last modificstion of the given files
+
+    :rtype: list of ``datetime.datetime``
+    """
+    if paths:
+        if isinstance(paths[0], Path):
+            assert all(isinstance(paths, Path))
+            return [getmtime_utc(filepath) for filepath in paths]
+        else:
+            assert all(isinstance(paths, str))
+            return [blobs.storage.getmtime(filepath) for filepath in paths]
+    return []
 
 
 def is_update_necessary(destination, source_files=[], timestamps=[], additional_inaccuracy=0):
@@ -518,8 +541,8 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
     ``False``.
 
     :param destination: the absolute path to the destination file
-    :param source_files: the paths of the source files; if relative, they are
-        assumed to be in the blob storage.
+    :param source_files: the paths of the source files; if strings and not
+        ``Path`` objects, they are assumed to be in the blob storage.
     :param timestamps: timestamps of non-file source objects
     :param additional_inaccuracy: When comparing file timestamps across
         computers, there may be trouble due to inaccurate clocks or filesystems
@@ -528,8 +551,8 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
         this.  Note that usually, JuliaBase *copies* *existing* timestamps, so
         inaccurate clocks should not be a problem.
 
-    :type destination: str
-    :type source_files: list of str
+    :type destination: Path
+    :type source_files: list of str or list of Path
     :type timestamps: list of datetime.datetime
     :type additional_inaccuracy: int or float
 
@@ -540,17 +563,12 @@ def is_update_necessary(destination, source_files=[], timestamps=[], additional_
 
     :raises OSError: if one of the source paths is not found
     """
-    all_timestamps = copy.copy(timestamps)
-    if all(os.path.isabs(path) for path in source_files):
-        getmtime = getmtime_utc
-    else:
-        getmtime = blobs.storage.getmtime
-    all_timestamps.extend(getmtime(filename) for filename in source_files)
+    all_timestamps = copy.copy(timestamps) + get_file_timestamps(source_files)
     if not all_timestamps:
         return False
     # The ``+1`` is for avoiding false positives due to floating point
     # inaccuracies.
-    return not os.path.exists(destination) or \
+    return not destination.exists() or \
         getmtime_utc(destination) + datetime.timedelta(seconds=additional_inaccuracy + 1) < max(all_timestamps)
 
 
@@ -586,13 +604,13 @@ def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
       stream.  It is only called of the cache lookup yields a miss.  The
       current position in the steam must be 0, i.e. at the very beginning.
       (The position after this function is undefined.)
-    :param source_files: the paths of the source files; if relative, they are
-        assumed to be in the blob storage.
+    :param source_files: the paths of the source files; if strings and not
+        ``Path`` objects, they are assumed to be in the blob storage.
     :param timestamps: timestamps of non-file source objects
 
     :type path: str
     :type generator: callable with no arguments returning binary stream
-    :type source_files: list of str
+    :type source_files: list of str or list of Path
     :type timestamps: list of datetime.datetime
 
     :return:
@@ -602,12 +620,7 @@ def get_cached_bytes_stream(path, generator, source_files=[], timestamps=[]):
 
     :raises OSError: if one of the source paths is not found
     """
-    all_timestamps = copy.copy(timestamps)
-    if all(os.path.isabs(path_) for path_ in source_files):
-        getmtime = getmtime_utc
-    else:
-        getmtime = blobs.storage.getmtime
-    all_timestamps.extend(getmtime(filename) for filename in source_files)
+    all_timestamps = copy.copy(timestamps) + get_file_timestamps(source_files)
     hash_ = hashlib.sha1()
     hash_.update(";".join(str(timestamp) for timestamp in sorted(all_timestamps)).encode())
     key = "file:{timestamp_hash}:{path}".format(timestamp_hash=hash_.hexdigest()[:10], path=path)
@@ -648,16 +661,15 @@ def static_response(stream, served_filename=None, content_type=None):
 
 
 def mkdirs(path):
-    """Creates a directory and all of its parents if necessary.  If the given
-    path doesn't end with a slash, it's interpreted as a filename and removed.
-    If the directory already exists, nothing is done.  (In particular, no
-    exception is raised.)
+    """Creates a directory and all of its parents if necessary.  The given path
+    is interpreted as a filename, i.e. its parent directory is created.  If the
+    directory already exists, nothing is done.  (In particular, no exception is
+    raised.)
 
-    :param path: absolute path which should be created
-
-    :type path: str
+    :param Path path: absolute path to a file the directory of which should be
+      created
     """
-    os.makedirs(os.path.dirname(path), exist_ok=True)
+    os.makedirs(path.parent, exist_ok=True)
 
 
 @contextmanager

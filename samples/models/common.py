@@ -323,7 +323,7 @@ class Process(PolymorphicModel):
 
         :type axes: matplotlib.axes.Axes
         :type plot_id: str
-        :type filename: str or list of str
+        :type filename: Path or list of Path
         :type for_thumbnail: bool
 
         :raises samples.utils.plots.PlotError: if anything went wrong during
@@ -352,7 +352,7 @@ class Process(PolymorphicModel):
           for this process.  If there are no raw datafile but you want to draw
           a plot nevertheless (e.g. from process data), return an empty list.
 
-        :rtype: list of str, str, or NoneType
+        :rtype: list of Path, Path, or NoneType
         """
         raise NotImplementedError
 
@@ -1329,6 +1329,8 @@ class Result(Process):
           ``"thumbnail_file"``       full path to the thumbnail file
           ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
                                      without domain)
+          ``"sluggified_filename"``  filename that can be used if the image is
+                                     downloaded
           =========================  =========================================
 
         :rtype: dict mapping str to str
