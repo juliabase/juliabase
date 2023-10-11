@@ -323,7 +323,7 @@ def create_task_lists(user):
       the tasks as list of (content type, verbose name, list of task info
       objects)
 
-    :rtype: list of (``ContentType``, str, `TaskForTemplate`)
+    :rtype: list of (str, ``ContentType``, list of `TaskForTemplate`)
     """
     def get_department_name_of_type(content_type):
         # FixMe: It is possible that some processes are in more than one
