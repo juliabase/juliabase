@@ -22,7 +22,7 @@
 # behavior of this function, keep in mind that you have to check the signal for
 # modification purposes.
 
-import os, datetime, subprocess
+import os, datetime, subprocess, itertools
 from io import BytesIO
 from functools import partial
 from django.conf import settings
@@ -47,14 +47,14 @@ def save_image_file(image_data, index, result, related_data_form):
     store.  If the given result has already an image connected with it, it is
     removed first.
 
+    The “type” field in the “attachments” of ``result`` is set according to the
+    uploaded image type, and the result process is saved.
+
     :param image_data: the file-like object which contains the uploaded data
         stream
     :param int index: the index of the image (index of the attachement)
     :param result: The result object for which the image was uploaded.  It is
-        not necessary that all its fields are already there.  But it must have
-        been written already to the database because the only necessary field
-        is the primary key, which I need for the hash digest for generating the
-        file names.
+        necessary that it contains the correct primary key.
     :param related_data_form: A bound form with the image filename that was
         uploaded.  This is only needed for dumping error messages into it if
         something went wrong.
@@ -64,6 +64,7 @@ def save_image_file(image_data, index, result, related_data_form):
     :type related_data_form: `RelatedDataForm`
     """
     image_path = result.get_image_locations(index)["image_file"]
+    attachment = result.attachment[index]
     for i, chunk in enumerate(image_data.chunks()):
         if i == 0:
             if chunk.startswith(b"\211PNG\r\n\032\n"):
@@ -76,9 +77,9 @@ def save_image_file(image_data, index, result, related_data_form):
                 related_data_form.add_error("image_file", ValidationError(
                     _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."), code="invalid"))
                 return
-            if result.image_type != "none" and new_image_type != result.image_type:
+            if attachment["type"] != "none" and new_image_type != attachment["type"]:
                 jb_common.utils.blobs.storage.unlink(image_path)
-            result.image_type = new_image_type
+            attachment["type"] = new_image_type
             destination = jb_common.utils.blobs.storage.open(image_path, "w")
         destination.write(chunk)
     destination.close()
@@ -86,12 +87,12 @@ def save_image_file(image_data, index, result, related_data_form):
 
 
 class ResultForm(utils.ProcessForm):
-    """Model form for a result process.  Note that I exclude many fields
-    because they are not used in results or explicitly set.
+    """Model form for a result process.  Note that I exclude fields because
+    they are dealt with explicitly.
     """
     class Meta:
         model = models.Result
-        exclude = ("image_type", "quantities_and_values")
+        exclude = ("attachments", "quantities_and_values")
 
     def __init__(self, user, *args, **kwargs):
         super().__init__(user, *args, **kwargs)
@@ -230,6 +231,13 @@ class ValueForm(forms.Form):
         self.fields["value"].widget.attrs.update({"size": 10})
 
 
+class AttachmentForm(forms.Form):
+    """Form for one attachment.
+    """
+    image_file = forms.FileField(label=capfirst(_("image file")), required=False)
+    description = forms.CharField(label=capfirst(_("description")))
+
+
 class FormSet:
     """Class for holding all forms of the result views, and for all methods
     working on these forms.  The main advantage of putting all this into a big
@@ -297,8 +305,10 @@ class FormSet:
         self.edit_description_form = utils.EditDescriptionForm() if self.result else None
         if self.result:
             quantities, values = self.result.quantities_and_values
+            attachments = self.result.attachments
         else:
             quantities, values = [], []
+            attachments = []
         self.dimensions_form = DimensionsForm(initial={"number_of_quantities": len(quantities),
                                                        "number_of_values": len(values)})
         self.quantity_forms = [QuantityForm(initial={"quantity": quantity}, prefix=str(i))
@@ -307,6 +317,8 @@ class FormSet:
         for j, value_list in enumerate(values):
             self.value_form_lists.append([ValueForm(initial={"value": value}, prefix="{0}_{1}".format(i, j))
                                           for i, value in enumerate(value_list)])
+        self.attachment_forms = [AttachmentForm(initial={"description": attachment["description"]}, prefix=str(i))
+                                 for i, attachtment in enumerate(attachments)]
 
     def from_post_data(self, post_data, post_files):
         """Generate all forms from the database.  This is called when the HTTP
@@ -349,6 +361,13 @@ class FormSet:
                 else:
                     values.append(ValueForm(prefix="{0}_{1}".format(i, j)))
             self.value_form_lists.append(values)
+        self.attachment_forms = []
+        for i in itertools.count():
+            attachment_form = AttachmentForm(post_data, prefix=str(i))
+            if not attachment_form.is_valid():
+                print(attachment_form.errors)
+                break
+            self.attachment_forms.append(attachment_form)
         self.edit_description_form = utils.EditDescriptionForm(post_data) if self.result else None
 
     def _is_all_valid(self):
@@ -473,8 +492,8 @@ class FormSet:
             result.save()
             if not self.result:
                 self.result_form.save_m2m()
-            if self.related_data_form.cleaned_data["image_file"]:
-                save_image_file(post_files["image_file"], result, self.related_data_form)
+            for i, attachment_form in enumerate(self.attachment_forms):
+                save_image_file(post_files[f"{i}-image_file"], i, result, self.related_data_form)
             if self.related_data_form.is_valid():
                 result.samples.set(self.related_data_form.cleaned_data["samples"])
                 result.sample_series.set(self.related_data_form.cleaned_data["sample_series"])
@@ -592,9 +611,10 @@ def show_image(request, process_id, index):
                            image_locations["sluggified_filename"])
 
 
-def generate_thumbnail(result, image_filename):
+def generate_thumbnail(image_filename):
     image_file = jb_common.utils.blobs.storage.export(image_filename)
-    content = subprocess.check_output(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
+    image_type = image_filename.rpartition(".")[2]
+    content = subprocess.check_output(["convert", image_file + ("[0]" if image_type == "pdf" else ""),
                                        "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), "png:-"])
     os.unlink(image_file)
     return BytesIO(content)
