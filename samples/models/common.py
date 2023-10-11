@@ -1237,7 +1237,6 @@ class Result(Process):
     """
 
     class ImageType(models.TextChoices):
-        NONE = "none", _("none")
         PDF = "pdf", "PDF"
         PNG = "png", "PNG"
         JPEG = "jpeg", "JPEG"
