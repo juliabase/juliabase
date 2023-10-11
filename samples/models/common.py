@@ -1335,11 +1335,11 @@ class Result(Process):
 
         :rtype: dict mapping str to str
         """
-        assert self.image_type != "none"
-        original_extension = "." + self.image_type
-        thumbnail_extension = ".jpeg" if self.image_type == "jpeg" else ".png"
+        attachment = self.attachments[index]
+        original_extension = "." + attachment["type"]
+        thumbnail_extension = ".jpeg" if attachment["type"] == "jpeg" else ".png"
         sluggified_filename = django.utils.text.slugify(self.title) + "-" + \
-            django.utils.text.slugify(self.attachments[index]["description"]) + original_extension
+            django.utils.text.slugify(attachment["description"]) + original_extension
         return {"image_file": os.path.join("results", str(self.pk), str(index) + original_extension),
                 "image_url": django.urls.reverse("samples:show_result_image",
                                                  kwargs={"process_id": str(self.pk), "index": index}),
@@ -1354,13 +1354,6 @@ class Result(Process):
             if "quantities" not in context or "value_lists" not in context:
                 context["quantities"], context["value_lists"] = self.quantities_and_values
             context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
-        if "thumbnail_url" not in context or "image_url" not in context:
-            if self.image_type != "none":
-                image_locations = self.get_image_locations(0)
-                context.update({"thumbnail_url": image_locations["thumbnail_url"],
-                                "image_url": image_locations["image_url"]})
-            else:
-                context["thumbnail_url"] = context["image_url"] = None
         if samples.permissions.has_permission_to_edit_result_process(user, self):
             context["edit_url"] = django.urls.reverse("samples:edit_result", kwargs={"process_id": self.pk})
         else:
