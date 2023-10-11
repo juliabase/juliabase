@@ -1308,6 +1308,11 @@ class Result(Process):
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
         on the original file type, and stored in the cache.
 
+        Note that all returned dictionary values are strings.  In particular,
+        ``image_file`` and ``thumbnail_file`` are not of the type
+        `pathlib.Path`.  This is because they are not used as paths in the file
+        system directly (but in the blobs backend and the cache, respectively).
+
         :return:
           a dictionary containing the following keys:
 
