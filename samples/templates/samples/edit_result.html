@@ -55,10 +55,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tr>
       {% input_field result.comments %}
     </tr>
-    <tr>
-      <td class="field-label">{{ related_data.image_file.label_tag }}</td>
-      <td class="field-input" colspan="3">{{ related_data.image_file }}</td>
-    </tr>
     {% error_list dimensions _("Error in dimensions") "<tr>" 2 %}
     <tr>
       <td class="field-label"><label for="{{ dimensions.number_of_quantities.id_for_label }}"
