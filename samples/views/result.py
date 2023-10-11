@@ -236,6 +236,12 @@ class AttachmentForm(forms.Form):
     image_file = forms.FileField(label=capfirst(_("image file")), required=False)
     description = forms.CharField(label=capfirst(_("description")))
 
+    def clean(self):
+        cleaned_data = super().clean()
+        if cleaned_data["image_file"] is None:
+            self.add_error("image_file", ValidationError(_("There must be a file selected"), code="required"))
+        return cleaned_data
+
 
 class FormSet:
     """Class for holding all forms of the result views, and for all methods
@@ -362,11 +368,10 @@ class FormSet:
             self.value_form_lists.append(values)
         self.attachment_forms = []
         for i in itertools.count():
-            attachment_form = AttachmentForm(post_data, prefix=str(i))
-            if not attachment_form.is_valid():
-                print(attachment_form.errors)
+            if f"{i}-image_file" in post_data:
+                self.attachment_forms.append(AttachmentForm(post_data, prefix=str(i)))
+            else:
                 break
-            self.attachment_forms.append(attachment_form)
         self.edit_description_form = utils.EditDescriptionForm(post_data) if self.result else None
 
     def _is_all_valid(self):
@@ -384,6 +389,7 @@ class FormSet:
         all_valid = self.dimensions_form.is_valid() and all_valid
         all_valid = self.previous_dimensions_form.is_valid() and all_valid
         all_valid = all([form.is_valid() for form in self.quantity_forms]) and all_valid
+        all_valid = all([form.is_valid() for form in self.attachment_forms]) and all_valid
         all_valid = all([all([form.is_valid() for form in form_list]) for form_list in self.value_form_lists]) and all_valid
         if self.edit_description_form:
             all_valid = self.edit_description_form.is_valid() and all_valid
@@ -519,7 +525,7 @@ class FormSet:
         return {"result": self.result_form, "related_data": self.related_data_form,
                 "edit_description": self.edit_description_form, "dimensions": self.dimensions_form,
                 "previous_dimensions": self.previous_dimensions_form, "quantities": self.quantity_forms,
-                "value_lists": self.value_form_lists}
+                "value_lists": self.value_form_lists, "attachments": self.attachment_forms}
 
 
 @help_link("demo.html#result-process")

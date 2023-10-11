@@ -93,6 +93,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
   <table id="attachments" style="border-collapse: collapse">
+    {% for attachment in attachments %}
+      {% error_list attachment _("Error in attachment") "<tr>" 4 %}
+      <tr>
+        {% input_field attachment.image_file %}
+        {% input_field attachment.description %}
+      </tr>
+    {% endfor %}
   </table>
 
   <div id="add-attachment" style="font-size: x-large">+</div>
