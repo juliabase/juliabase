@@ -24,7 +24,7 @@ void resultAddAttachment() {
   td.setAttribute("style", "padding: 2ex");
 
   content = document.createElement("label");
-  content.setAttribute("for", "${index}-id_image_file");
+  content.setAttribute("for", "id_${index}-image_file");
   content.text = "Image file:";
 
   td.append(content);
@@ -37,7 +37,7 @@ void resultAddAttachment() {
   content = document.createElement("input");
   content.setAttribute("type", "file");
   content.setAttribute("name", "${index}-image_file");
-  content.setAttribute("id", "${index}-id_image_file");
+  content.setAttribute("id", "id_${index}-image_file");
 
   td.append(content);
   tr.append(td);
@@ -47,7 +47,7 @@ void resultAddAttachment() {
   td.setAttribute("style", "padding: 2ex");
 
   content = document.createElement("label");
-  content.setAttribute("for", "${index}-id_description");
+  content.setAttribute("for", "id_${index}-description");
   content.text = "Description:";
 
   td.append(content);
@@ -61,7 +61,7 @@ void resultAddAttachment() {
   content.setAttribute("type", "text");
   content.setAttribute("required", "required");
   content.setAttribute("name", "${index}-description");
-  content.setAttribute("id", "${index}-id_description");
+  content.setAttribute("id", "id_${index}-description");
 
   td.append(content);
   tr.append(td);
