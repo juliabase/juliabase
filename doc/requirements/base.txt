@@ -22,7 +22,6 @@ Pillow
 reportlab
 python-dateutil
 ldap3
-mysqlclient
 psycopg2
 PyYAML>=3
 nose
