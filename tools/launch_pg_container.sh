@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SCRIPT=`realpath -e "$0"`
+SCRIPT=`realpath "$0"`
 SCRIPTPATH=`dirname "$SCRIPT"`
 cd $SCRIPTPATH/..
 
