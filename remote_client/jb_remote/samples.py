@@ -18,7 +18,7 @@
 from .common import connection, primary_keys, comma_separated_ids, double_urlquote, format_timestamp, parse_timestamp, logging
 
 
-__all__ = ["TemporaryMySamples", "Sample", "Result", "User"]
+__all__ = ["TemporaryMySamples", "Sample", "Result", "User", "Task", "TaskList"]
 
 
 primary_keys.components.add("external_operators=*")
@@ -258,3 +258,62 @@ class User:
         except AttributeError:
             self._fetch_topics_and_permissions()
         return self._permissions
+
+
+class Task:
+    """Class representing a task.  Note that in its current form, it cannot
+    talk to the database.  Instead, it is instantiated with data coming from a
+    request fetching data of the whole list of tasks.
+    """
+
+    def __init__(self, data=None):
+        """Class constructor.
+
+        :param data: initial data for the task as coming from the answer when
+          fetching a task list
+
+        :type data: dict mapping str to object
+        """
+        if data:
+            self.id = data["id"]
+            self.status = data["status"].partition(" ")[2]
+            self.customer = data["customer"]
+            self.creating_timestamp = parse_timestamp(data["creating_timestamp"])
+            self.last_modified = parse_timestamp(data["last_modified"])
+            self.operator = data["operator"]
+            self.process_class = data["process_class"]
+            self.finished_process = data["finished_process"]
+            self.comments = data["comments"]
+            self.priority = int(data["priority"].partition(" ")[0])
+            for key in ("chilled", "deep_frozen", "air_sensitive", "light_sensitive", "moisture_sensitive", "explosive",
+                        "toxic", "inflammable", "radioactive", "biohazard1", "innocuous"):
+                setattr(self, key, data[key])
+            self.sample_ids = data["samples"]
+        else:
+            self.id = None
+            self.status = self.customer = self.creating_timestamp = self.last_modified = self.operator = \
+                self.process_class = self.finished_process = self.comments = self.priority = None
+            for key in ("chilled", "deep_frozen", "air_sensitive", "light_sensitive", "moisture_sensitive", "explosive",
+                        "toxic", "inflammable", "radioactive", "biohazard1", "innocuous"):
+                setattr(self, key, data[key])
+            self.sample_ids = []
+        self.edit_description = None
+        self.edit_important = True
+
+    def __repr__(self):
+        return f"Task({self.id!r}, {self.process_class!r}, {self.customer!r})"
+
+
+class TaskList:
+    """Class representing a task list.  In contrast to most other objects, your
+    fetch it for the currently logged-on user.
+
+    :ivar Task tasks: list of the tasks
+    """
+
+    def __init__(self):
+        """Class constructor.  It fetches the task list of the currently
+        logged-in user.
+        """
+        data = connection.open("tasks/")
+        self.tasks = [Task(task_data) for task_data in data]
