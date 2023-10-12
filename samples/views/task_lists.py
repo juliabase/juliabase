@@ -382,8 +382,10 @@ def show(request):
         choose_task_lists_form = ChooseTaskListsForm(request.user)
     task_lists = create_task_lists(request.user)
     if common_utils.is_json_requested(request):
-        return common_utils.respond_in_json({str(task_list[1]): {task.task.pk: task.task.get_data() for task in task_list[2]}
-                                             for task_list in task_lists})
+        tasks = []
+        for task_list in task_lists:
+            tasks.extend([task.task.get_data() for task in task_list[2]])
+        return common_utils.respond_in_json(tasks)
     return render(request, "samples/task_lists.html", {"title": capfirst(_("task lists")),
                                                        "choose_task_lists": choose_task_lists_form,
                                                        "task_lists": task_lists})
