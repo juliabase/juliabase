@@ -107,7 +107,6 @@ class RelatedDataForm(forms.Form):
     samples = utils.MultipleSamplesField(label=capfirst(_("samples")), required=False)
     sample_series = forms.ModelMultipleChoiceField(label=capfirst(pgettext_lazy("plural", "sample series")), queryset=None,
                                                    required=False)
-    image_file = forms.FileField(label=capfirst(_("image file")), required=False)
 
     def __init__(self, user, query_string_dict, old_result, data=None, files=None, **kwargs):
         """I have to initialise a couple of things here in
