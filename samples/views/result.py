@@ -654,8 +654,7 @@ def show_thumbnail(request, process_id, index):
     image_locations = result.get_image_locations(int(index))
     image_filename = image_locations["image_file"]
     thumbnail_file = image_locations["thumbnail_file"]
-    stream = get_cached_bytes_stream(thumbnail_file, partial(generate_thumbnail, result, image_filename),
-                                     [image_filename])
+    stream = get_cached_bytes_stream(thumbnail_file, partial(generate_thumbnail, image_filename), [image_filename])
     return static_response(stream, content_type="image/png")
 
 
