@@ -42,7 +42,7 @@ from samples import models, permissions
 import samples.utils.views as utils
 
 
-def save_image_file(image_data, index, result, related_data_form):
+def save_image_file(image_data, index, result, attachment_form):
     """Saves an uploaded image file stream to its final destination in the blob
     store.  If the given result has already an image connected with it, it is
     removed first.
@@ -55,16 +55,14 @@ def save_image_file(image_data, index, result, related_data_form):
     :param int index: the index of the image (index of the attachement)
     :param result: The result object for which the image was uploaded.  It is
         necessary that it contains the correct primary key.
-    :param related_data_form: A bound form with the image filename that was
-        uploaded.  This is only needed for dumping error messages into it if
-        something went wrong.
+    :param attachment_form: A bound form with the attachment data that was
+        uploaded.  It is used to append attachment data to the result object.
+        It may be enriched with error messages if something went wrong.
 
     :type image_data: ``django.core.files.uploadedfile.UploadedFile``
     :type result: `models.Result`
-    :type related_data_form: `RelatedDataForm`
+    :type attachment_form: `AttachmentForm`
     """
-    image_path = result.get_image_locations(index)["image_file"]
-    attachment = result.attachment[index]
     for i, chunk in enumerate(image_data.chunks()):
         if i == 0:
             if chunk.startswith(b"\211PNG\r\n\032\n"):
@@ -74,12 +72,21 @@ def save_image_file(image_data, index, result, related_data_form):
             elif chunk.startswith(b"%PDF"):
                 new_image_type = "pdf"
             else:
-                related_data_form.add_error("image_file", ValidationError(
+                attachment_form.add_error("image_file", ValidationError(
                     _("Invalid file format.  Only PDF, PNG, and JPEG are allowed."), code="invalid"))
                 return
-            if attachment["type"] != "none" and new_image_type != attachment["type"]:
-                jb_common.utils.blobs.storage.unlink(image_path)
-            attachment["type"] = new_image_type
+            try:
+                attachment = result.attachments[index]
+            except IndexError:
+                attachment = {"type": new_image_type}
+                assert len(result.attachments) == index
+                result.attachments.append(attachment)
+            else:
+                if attachment["type"] != "none" and new_image_type != attachment["type"]:
+                    jb_common.utils.blobs.storage.unlink(result.get_image_locations(index)["image_file"])
+                    attachment["type"] = new_image_type
+            attachment.update({"description": attachment_form.cleaned_data["description"]})
+            image_path = result.get_image_locations(index)["image_file"]
             destination = jb_common.utils.blobs.storage.open(image_path, "w")
         destination.write(chunk)
     destination.close()
@@ -367,8 +374,8 @@ class FormSet:
             self.value_form_lists.append(values)
         self.attachment_forms = []
         for i in itertools.count():
-            if f"{i}-image_file" in post_data:
-                self.attachment_forms.append(AttachmentForm(post_data, prefix=str(i)))
+            if f"{i}-description" in post_data:
+                self.attachment_forms.append(AttachmentForm(post_data, post_files, prefix=str(i)))
             else:
                 break
         self.edit_description_form = utils.EditDescriptionForm(post_data) if self.result else None
@@ -497,7 +504,7 @@ class FormSet:
             if not self.result:
                 self.result_form.save_m2m()
             for i, attachment_form in enumerate(self.attachment_forms):
-                save_image_file(post_files[f"{i}-image_file"], i, result, self.related_data_form)
+                save_image_file(post_files[f"{i}-image_file"], i, result, attachment_form)
             if self.related_data_form.is_valid():
                 result.samples.set(self.related_data_form.cleaned_data["samples"])
                 result.sample_series.set(self.related_data_form.cleaned_data["sample_series"])
