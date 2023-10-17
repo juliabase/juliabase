@@ -32,7 +32,7 @@ from django.apps import apps
 import jb_common.utils.base as common_utils
 from jb_common.utils.base import help_link
 from jb_common.models import Department
-from samples.models import Process, Task
+from samples.models import Process, Task, Result
 from samples import permissions
 import samples.utils.views as utils
 
@@ -115,7 +115,7 @@ class TaskForm(forms.ModelForm):
             self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
                                                    for user in common_utils.sorted_users_by_first_name(eligible_operators))
         self.fields["process_class"].choices = utils.choices_of_content_types(
-            permissions.get_all_addable_physical_process_models())
+            [Result] + list(permissions.get_all_addable_physical_process_models()))
         self.fields["finished_process"].choices = [("", "---------")]
         if self.task:
             old_finished_process_id = self.task.finished_process.id if self.task.finished_process else None
@@ -187,7 +187,7 @@ class ChooseTaskListsForm(forms.Form):
 
     def __init__(self, user, data=None, **kwargs):
         super().__init__(data, **kwargs)
-        choices = []
+        choices = utils.choices_of_content_types([Result])
         for department in user.samples_user_details.show_users_from_departments.iterator():
             process_from_department = {process for process in permissions.get_all_addable_physical_process_models().keys()
                                        if process._meta.app_label == department.app_label}
