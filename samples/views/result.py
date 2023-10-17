@@ -322,7 +322,7 @@ class FormSet:
             self.value_form_lists.append([ValueForm(initial={"value": value}, prefix="{0}_{1}".format(i, j))
                                           for i, value in enumerate(value_list)])
         self.attachment_forms = [AttachmentForm(initial={"description": attachment["description"]}, prefix=str(i))
-                                 for i, attachtment in enumerate(attachments)]
+                                 for i, attachment in enumerate(attachments)]
 
     def from_post_data(self, post_data, post_files):
         """Generate all forms from the database.  This is called when the HTTP
