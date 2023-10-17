@@ -591,7 +591,7 @@ def show_image(request, process_id):
 
 def generate_thumbnail(result, image_filename):
     image_file = jb_common.utils.blobs.storage.export(image_filename)
-    content = subprocess.check_output(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
+    content = subprocess.check_output(["convert", str(image_file) + ("[0]" if result.image_type == "pdf" else ""),
                                        "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), "png:-"])
     os.unlink(image_file)
     return BytesIO(content)
