@@ -276,7 +276,7 @@ class Task:
         """
         if data:
             self.id = data["id"]
-            self.status = data["status"].partition(" ")[2]
+            self.status = data["status"]
             self.customer = data["customer"]
             self.creating_timestamp = parse_timestamp(data["creating_timestamp"])
             self.last_modified = parse_timestamp(data["last_modified"])
@@ -284,7 +284,7 @@ class Task:
             self.process_class = data["process_class"]
             self.finished_process = data["finished_process"]
             self.comments = data["comments"]
-            self.priority = int(data["priority"].partition(" ")[0])
+            self.priority = data["priority"]
             for key in ("chilled", "deep_frozen", "air_sensitive", "light_sensitive", "moisture_sensitive", "explosive",
                         "toxic", "inflammable", "radioactive", "biohazard1", "innocuous"):
                 setattr(self, key, data[key])
@@ -299,6 +299,35 @@ class Task:
             self.sample_ids = []
         self.edit_description = None
         self.edit_important = True
+
+    def submit(self):
+        """Submit the task to the database.
+
+        :return:
+          the task ID if succeeded.
+
+        :rtype: int
+        """
+        data = {"status": self.status,
+                "customer": primary_keys["users"][self.customer],
+                "creating_timestamp": format_timestamp(self.creating_timestamp),
+                "operator": self.operator and primary_keys["users"][self.operator],
+                "process_class": self.process_class,
+                "finished_process": self.finished_process,
+                "comments": self.comments,
+                "priority": self.priority}
+        for key in ("chilled", "deep_frozen", "air_sensitive", "light_sensitive", "moisture_sensitive", "explosive",
+                    "toxic", "inflammable", "radioactive", "biohazard1", "innocuous"):
+            data[key] = getattr(self, key)
+        data["sample_list"] = self.sample_ids
+        with TemporaryMySamples(self.sample_ids):
+            if self.id:
+                connection.open("tasks/{0}/edit/".format(self.id), data)
+                logging.info("Edited task {0}.".format(self.id))
+            else:
+                self.id = connection.open("tasks/add/", data)
+                logging.info("Added task {0}.".format(self.id))
+        return self.id
 
     def __repr__(self):
         return f"Task({self.id!r}, {self.process_class!r}, {self.customer!r})"
