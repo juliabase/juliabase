@@ -81,7 +81,8 @@ class TaskForm(forms.ModelForm):
         if self.task:
             process_class = self.task.process_class.model_class()
             eligible_operators = set(permissions.get_all_adders(process_class))
-            if permissions.has_permission_to_add_physical_process(self.user, process_class):
+            if permissions.has_permission_to_add_physical_process(self.user, process_class) or \
+               self.task.process_class.model_class() == Result:
                 eligible_operators.add(self.user)
             if self.task.operator:
                 eligible_operators.add(self.task.operator)
@@ -216,7 +217,8 @@ class TaskForTemplate:
                                                                                     self.task.process_class.model_class()))
                         else _("confidential sample") for sample in self.task.samples.all()]
         self.user_can_edit = user == self.task.customer or \
-            permissions.has_permission_to_add_physical_process(user, task.process_class.model_class())
+            permissions.has_permission_to_add_physical_process(user, task.process_class.model_class()) or \
+            self.task.process_class.model_class() == Result
         self.user_can_see_everything = self.user_can_edit or \
             all([permissions.has_permission_to_fully_view_sample(user, sample) for sample in self.task.samples.all()])
         self.user_can_delete = user == self.task.customer
@@ -268,8 +270,9 @@ def edit(request, task_id):
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id else None
     user = request.user
-    if task and user != task.customer:
-        permissions.assert_can_add_physical_process(request.user, task.process_class.model_class())
+    process_class = task.process_class.model_class()
+    if task and user != task.customer and process_class != Result:
+        permissions.assert_can_add_physical_process(request.user, process_class)
     preset_sample = utils.extract_preset_sample(request) if not task_id else None
     if request.method == "POST":
         task_form = TaskForm(user, request.POST, instance=task)
