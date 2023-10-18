@@ -37,7 +37,7 @@ import jb_common.utils.base as jb_common_utils
 
 
 class PermissionsModels:
-    """Class for holding the permissions status of a addable model class.
+    """Class for holding the permissions status of an addable model class.
 
     :ivar name: the verbose plural name of the model class
 

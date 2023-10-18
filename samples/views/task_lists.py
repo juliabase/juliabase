@@ -79,7 +79,10 @@ class TaskForm(forms.ModelForm):
         self.user = user
         self.fixed_fields = set()
         if self.task:
-            eligible_operators = set(permissions.get_all_adders(self.task.process_class.model_class()))
+            process_class = self.task.process_class.model_class()
+            eligible_operators = set(permissions.get_all_adders(process_class))
+            if permissions.has_permission_to_add_physical_process(self.user, process_class):
+                eligible_operators.add(self.user)
             if self.task.operator:
                 eligible_operators.add(self.task.operator)
             self.fixed_fields.add("process_class")
