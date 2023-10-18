@@ -270,9 +270,10 @@ def edit(request, task_id):
     """
     task = get_object_or_404(Task, id=utils.convert_id_to_int(task_id)) if task_id else None
     user = request.user
-    process_class = task.process_class.model_class()
-    if task and user != task.customer and process_class != Result:
-        permissions.assert_can_add_physical_process(request.user, process_class)
+    if task and user != task.customer:
+        process_class = task.process_class.model_class()
+        if process_class != Result:
+            permissions.assert_can_add_physical_process(request.user, process_class)
     preset_sample = utils.extract_preset_sample(request) if not task_id else None
     if request.method == "POST":
         task_form = TaskForm(user, request.POST, instance=task)
