@@ -12,14 +12,14 @@ void resultAddAttachment() {
   index++;
 
   final tbody = document.createElement("tbody");
-  tbody.setAttribute("id", "${index}-attachment");
+  tbody.id = "${index}-attachment";
 
   final tr = document.createElement("tr");
 
   Element td, content;
 
   td = document.createElement("td");
-  td.setAttribute("class", "field-label");
+  td.className = "field-label";
   td.setAttribute("style", "padding: 2ex; " +
     "border-left: 2px solid; border-top: 2px solid; border-bottom: 2px solid");
 
@@ -31,19 +31,19 @@ void resultAddAttachment() {
   tr.append(td);
 
   td = document.createElement("td");
-  td.setAttribute("class", "field-input");
+  td.className = "field-input";
   td.setAttribute("style", "padding: 2ex; border-top: 2px solid; border-bottom: 2px solid");
 
   content = document.createElement("input");
   content.setAttribute("type", "file");
   content.setAttribute("name", "${index}-image_file");
-  content.setAttribute("id", "id_${index}-image_file");
+  content.id = "id_${index}-image_file";
 
   td.append(content);
   tr.append(td);
 
   td = document.createElement("td");
-  td.setAttribute("class", "field-label");
+  td.className = "field-label";
   td.setAttribute("style", "padding: 2ex; border-top: 2px solid; border-bottom: 2px solid");
 
   content = document.createElement("label");
@@ -54,14 +54,14 @@ void resultAddAttachment() {
   tr.append(td);
 
   td = document.createElement("td");
-  td.setAttribute("class", "field-input");
-  td.setAttribute("style", "padding: 2ex");
+  td.className = "field-input";
+  td.setAttribute("style", "padding: 2ex; border-top: 2px solid; border-bottom: 2px solid; border-right: 2px solid");
 
   content = document.createElement("input");
   content.setAttribute("type", "text");
   content.setAttribute("required", "required");
   content.setAttribute("name", "${index}-description");
-  content.setAttribute("id", "id_${index}-description");
+  content.id = "id_${index}-description";
 
   td.append(content);
   tr.append(td);
