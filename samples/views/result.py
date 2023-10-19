@@ -22,7 +22,7 @@
 # behavior of this function, keep in mind that you have to check the signal for
 # modification purposes.
 
-import os, datetime, subprocess, itertools
+import os, datetime, subprocess, itertools, re
 from io import BytesIO
 from functools import partial
 from django.conf import settings
@@ -293,6 +293,8 @@ class FormSet:
         or NoneType
     """
 
+    description_key_pattern = re.compile(r"(?P<index>\d+)-description$")
+
     def __init__(self, request, process_id):
         """Class constructor.
 
@@ -372,12 +374,14 @@ class FormSet:
                 else:
                     values.append(ValueForm(prefix="{0}_{1}".format(i, j)))
             self.value_form_lists.append(values)
+        attachment_indices = []
+        for key in post_data:
+            if match := FormSet.description_key_pattern.match(key):
+                attachment_indices.append(match.group("index"))
+        attachment_indices.sort()
         self.attachment_forms = []
-        for i in itertools.count():
-            if f"{i}-description" in post_data:
-                self.attachment_forms.append(AttachmentForm(post_data, post_files, prefix=str(i)))
-            else:
-                break
+        for i in attachment_indices:
+            self.attachment_forms.append(AttachmentForm(post_data, post_files, prefix=str(i)))
         self.edit_description_form = utils.EditDescriptionForm(post_data) if self.result else None
 
     def _is_all_valid(self):
