@@ -13,7 +13,6 @@ void resultAddAttachment() {
 
   final tbody = document.createElement("tbody");
   tbody.setAttribute("id", "${index}-attachment");
-  tbody.setAttribute("style", "border: 2px solid");
 
   final tr = document.createElement("tr");
 
@@ -21,7 +20,8 @@ void resultAddAttachment() {
 
   td = document.createElement("td");
   td.setAttribute("class", "field-label");
-  td.setAttribute("style", "padding: 2ex");
+  td.setAttribute("style", "padding: 2ex; " +
+    "border-left: 2px solid; border-top: 2px solid; border-bottom: 2px solid");
 
   content = document.createElement("label");
   content.setAttribute("for", "id_${index}-image_file");
@@ -32,7 +32,7 @@ void resultAddAttachment() {
 
   td = document.createElement("td");
   td.setAttribute("class", "field-input");
-  td.setAttribute("style", "padding: 2ex");
+  td.setAttribute("style", "padding: 2ex; border-top: 2px solid; border-bottom: 2px solid");
 
   content = document.createElement("input");
   content.setAttribute("type", "file");
@@ -44,7 +44,7 @@ void resultAddAttachment() {
 
   td = document.createElement("td");
   td.setAttribute("class", "field-label");
-  td.setAttribute("style", "padding: 2ex");
+  td.setAttribute("style", "padding: 2ex; border-top: 2px solid; border-bottom: 2px solid");
 
   content = document.createElement("label");
   content.setAttribute("for", "id_${index}-description");
@@ -66,7 +66,21 @@ void resultAddAttachment() {
   td.append(content);
   tr.append(td);
 
+  td = document.createElement("td");
+
+  content = document.createElement("span");
+  content.setAttribute("style", "font-size: large; margin-left: 1em");
+  content.text = "🗑";
+  content.addEventListener("pointerdown", (_) => resultDeleteAttachment(index));
+
+  td.append(content);
+  tr.append(td);
+
   tbody.append(tr);
 
   attachments.append(tbody);
+}
+
+void resultDeleteAttachment(int index) {
+  print(index);
 }
