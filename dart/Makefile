@@ -14,7 +14,7 @@ install: main.js
 	cp main.js ../jb_common/static/juliabase/js
 	if [ "$$DEBUG" = "true" ];                                                                            \
 	then                                                                                                  \
-	    cp main.js.map ../jb_common/static/juliabase/js;                                                  \
+	    cp main.js.map *.dart ../jb_common/static/juliabase/js;                                           \
 	fi
 
 clean:
