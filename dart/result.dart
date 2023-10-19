@@ -82,5 +82,5 @@ void resultAddAttachment() {
 }
 
 void resultDeleteAttachment(int index) {
-  print(index);
+  querySelector("#id_${index}-attachment")!.remove();
 }
