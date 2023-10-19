@@ -1,6 +1,27 @@
 part of juliabase;
 
-void resultAddAttachment() {
+final descriptionNameRegexp = RegExp(r"^\d+-description$");
+
+void resultInitializeAttachments() {
+  final attachments = querySelector("#attachments")!;
+  final foundAttachments = <Map>[];
+  for (final tbody in attachments.children) {
+    final fields = {};
+    for (final input in tbody.querySelectorAll("input")) {
+      if (descriptionNameRegexp.hasMatch(input.getAttribute("name") ?? "")) {
+        fields["description"] = input.getAttribute("value");
+      }
+    }
+    foundAttachments.add(fields);
+    tbody.remove();
+  }
+  for (final attachment in foundAttachments) {
+    resultAppendAttachment(description: attachment["description"]);
+  }
+}
+
+
+void resultAppendAttachment({String description = ""}) {
   final attachments = querySelector("#attachments")!;
   var index = -1;
   for (var c in attachments.children) {
@@ -61,6 +82,7 @@ void resultAddAttachment() {
   content.setAttribute("type", "text");
   content.setAttribute("required", "required");
   content.setAttribute("name", "${index}-description");
+  content.setAttribute("value", description);
   content.id = "id_${index}-description";
 
   td.append(content);
