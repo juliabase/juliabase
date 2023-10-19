@@ -4,7 +4,7 @@ void resultAddAttachment() {
   final attachments = querySelector("#attachments")!;
   var index = -1;
   for (var c in attachments.children) {
-    final i = int.parse(c.getAttribute("id")!.split("-")[0]);
+    final i = int.parse(c.getAttribute("id")!.substring(3).split("-")[0]);
     if (i > index) {
       index = i;
     }
@@ -12,7 +12,7 @@ void resultAddAttachment() {
   index++;
 
   final tbody = document.createElement("tbody");
-  tbody.id = "${index}-attachment";
+  tbody.id = "id_${index}-attachment";
 
   final tr = document.createElement("tr");
 
