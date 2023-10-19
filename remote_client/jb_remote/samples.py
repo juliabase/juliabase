@@ -15,6 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import tempfile
 from .common import connection, primary_keys, comma_separated_ids, double_urlquote, format_timestamp, parse_timestamp, logging
 
 
@@ -125,7 +126,12 @@ class Sample:
 
 
 class Result:
-    """Class representing result processes.
+    """Class representing result processes.  Note that the attachment
+    dictionaries have a special key “content” which contains a file-like object
+    from which one can read the content of the attachment.  When submitting a
+    result, this key also must contain an open file from which the payload of
+    the attachment can be read.  It may be ``None`` if you don’t want to change
+    already uploaded content.
     """
 
     def __init__(self, id_=None, with_image=True):
@@ -148,20 +154,23 @@ class Result:
             self.timestamp_inaccuracy = data["timestamp_inaccuracy"]
             self.comments = data["comments"]
             self.title = data["title"]
-            self.image_type = data["image_type"]
-            if self.image_type != "none" and with_image:
-                self.image_data = connection.open("results/images/{0}".format(id_), response_is_json=False)
+            self.attachments = data["attachments"]
+            for i, attachment in enumerate(self.attachments):
+                content = TemporaryFile()
+                content.write(connection.open("results/images/{0}/{1}".format(id_, i), response_is_json=False))
+                content.seek(0)
+                self.attachments["content"] = content
             self.external_operator = data["external_operator"]
             self.quantities, self.values = data["quantities_and_values"]
         else:
             self.id = None
             self.sample_ids = []
             self.sample_series = []
-            self.external_operator = self.operator = self.timestamp = self.comments = self.title = self.image_type = None
+            self.external_operator = self.operator = self.timestamp = self.comments = self.title = None
             self.timestamp_inaccuracy = 0
             self.quantities = []
             self.values = []
-        self.image_filename = None
+            self.attachments = []
         self.finished = True
         self.edit_description = None
         self.edit_important = True
@@ -200,8 +209,9 @@ class Result:
         for i, column in enumerate(self.values):
             for j, value in enumerate(column):
                 data["{0}_{1}-value".format(j, i)] = value
-        if self.image_filename:
-            data["image_file"] = open(self.image_filename, "rb")
+        for i, attachment in enumerate(self.attachments):
+            data[f"{i}-image_file"] = attachment["content"]
+            data[f"{i}-description"] = attachment["description"]
         with TemporaryMySamples(self.sample_ids):
             if self.id:
                 connection.open("results/{0}/edit/".format(self.id), data)
