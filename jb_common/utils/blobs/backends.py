@@ -97,6 +97,18 @@ class BlobStorage:
         """
         raise NotImplementedError
 
+    def move(self, path, new_path):
+        """Renames the file at ``path`` to ``new_path``.  Note that
+        ``new_path`` must not yet exist.
+
+        :param path: full path to a file
+        :param new_path: new location of the file as a full path
+
+        :type path: str
+        :type new_path: str
+        """
+        raise NotImplementedError
+
     def export(self, path):
         """Returns a removable path to the file.  This is used when serving files.  The
         Web server gets the result of this method in the ``X-Sendfile`` header,
@@ -159,6 +171,11 @@ class Filesystem(BlobStorage):
         if mode == "w":
             mkdirs(filepath)
         return Filesystem.File(filepath, mode + "b")
+
+    def move(self, path, new_path):
+        new_filepath = self.root/new_path
+        mkdirs(new_filepath)
+        os.rename(self.root/path, new_filepath)
 
     def export(self, path):
         """Create a hard link to the file.  Three directories are tried, in this order:
@@ -299,6 +316,10 @@ class PostgreSQL(BlobStorage):
             large_object.truncate()
         large_object.init_additional_attributes(path, connection, cursor)
         return large_object
+
+    def move(self, path, new_path):
+        with self.existing_large_object(path) as (large_object, cursor):
+            cursor.execute("UPDATE blobs SET path=%s WHERE large_object_id=%s;", (new_path, large_object.oid))
 
     def export(self, path):
         result = Path(settings.CACHE_ROOT)/str(uuid.uuid4())
