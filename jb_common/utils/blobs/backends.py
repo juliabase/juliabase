@@ -110,11 +110,8 @@ class BlobStorage:
         raise NotImplementedError
 
     def export(self, path):
-        """Returns a removable path to the file.  This is used when serving files.  The
-        Web server gets the result of this method in the ``X-Sendfile`` header,
-        serves the file content at this path directly to the client, and (if
-        Apache's ``X-SENDFILE-TEMPORARY`` is used) unlinks the path afterwards.
-        For obvious reasons, this unlinking must not remove the original file.
+        """Returns a removable path to the file.  This is used when serving
+        files.
 
         Note that the resulting path should be unlinked afterwards (e.g. by the
         Web server, or in ``/tmp`` after a reboot), else, a temporary file is
