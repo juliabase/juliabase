@@ -34,3 +34,5 @@ if os.path.exists(os.path.join(dejavu_root, "DejaVuSans.ttf")):
     pdfmetrics.registerFontFamily(default_fontname, normal="DejaVu", bold="DejaVuBd", italic="DejaVuOb",
                                   boldItalic="DejaVuBdOb")
     reportlab.rl_config.canvas_basefontname = default_fontname
+else:
+    default_fontname = "Helvetica"

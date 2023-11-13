@@ -79,7 +79,10 @@ class TaskForm(forms.ModelForm):
         self.user = user
         self.fixed_fields = set()
         if self.task:
-            eligible_operators = set(permissions.get_all_adders(self.task.process_class.model_class()))
+            process_class = self.task.process_class.model_class()
+            eligible_operators = set(permissions.get_all_adders(process_class))
+            if permissions.has_permission_to_add_physical_process(self.user, process_class):
+                eligible_operators.add(self.user)
             if self.task.operator:
                 eligible_operators.add(self.task.operator)
             self.fixed_fields.add("process_class")
@@ -323,7 +326,7 @@ def create_task_lists(user):
       the tasks as list of (content type, verbose name, list of task info
       objects)
 
-    :rtype: list of (``ContentType``, str, `TaskForTemplate`)
+    :rtype: list of (str, ``ContentType``, list of `TaskForTemplate`)
     """
     def get_department_name_of_type(content_type):
         # FixMe: It is possible that some processes are in more than one
@@ -381,6 +384,9 @@ def show(request):
     else:
         choose_task_lists_form = ChooseTaskListsForm(request.user)
     task_lists = create_task_lists(request.user)
+    if common_utils.is_json_requested(request):
+        return common_utils.respond_in_json({str(task_list[1]): {task.task.pk: task.task.get_data() for task in task_list[2]}
+                                             for task_list in task_lists})
     return render(request, "samples/task_lists.html", {"title": capfirst(_("task lists")),
                                                        "choose_task_lists": choose_task_lists_form,
                                                        "task_lists": task_lists})

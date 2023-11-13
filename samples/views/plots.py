@@ -94,7 +94,7 @@ def show_plot(request, process_id, plot_id, thumbnail):
     timestamps = [] if thumbnail else [sample.last_modified for sample in process.samples.all()]
     timestamps.append(process.last_modified)
     datafile_names = datafile_name if isinstance(datafile_name, list) else [datafile_name]
-    if not all(os.path.exists(filename) for filename in datafile_names):
+    if not all(filename.exists() for filename in datafile_names):
         raise Http404("One of the raw datafiles was not found.")
     stream = get_cached_bytes_stream(plot_filepath, partial(generate_plot, process, plot_id, thumbnail, datafile_name),
                                      datafile_names, timestamps)

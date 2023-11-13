@@ -323,7 +323,7 @@ class Process(PolymorphicModel):
 
         :type axes: matplotlib.axes.Axes
         :type plot_id: str
-        :type filename: str or list of str
+        :type filename: Path or list of Path
         :type for_thumbnail: bool
 
         :raises samples.utils.plots.PlotError: if anything went wrong during
@@ -352,7 +352,7 @@ class Process(PolymorphicModel):
           for this process.  If there are no raw datafile but you want to draw
           a plot nevertheless (e.g. from process data), return an empty list.
 
-        :rtype: list of str, str, or NoneType
+        :rtype: list of Path, Path, or NoneType
         """
         raise NotImplementedError
 
@@ -1308,6 +1308,11 @@ class Result(Process):
         Secondly, there are the thumbnails as either a JPEG or a PNG, depending
         on the original file type, and stored in the cache.
 
+        Note that all returned dictionary values are strings.  In particular,
+        ``image_file`` and ``thumbnail_file`` are not of the type
+        `pathlib.Path`.  This is because they are not used as paths in the file
+        system directly (but in the blobs backend and the cache, respectively).
+
         :return:
           a dictionary containing the following keys:
 
@@ -1320,6 +1325,8 @@ class Result(Process):
           ``"thumbnail_file"``       full path to the thumbnail file
           ``"thumbnail_url"``        full relative URL to the thumbnail (i.e.,
                                      without domain)
+          ``"sluggified_filename"``  filename that can be used if the image is
+                                     downloaded
           =========================  =========================================
 
         :rtype: dict mapping str to str
@@ -1732,6 +1739,19 @@ class Task(models.Model):
         related_models = {model: "finished_process" for model in get_all_searchable_physical_processes()}
         related_models[Sample] = "samples"
         return search.SearchTreeNode(cls, related_models, search_fields)
+
+    def get_data(self):
+        """Extract the data of this talk as a dictionary, ready to be used for
+        JSON responses.
+
+        :return:
+          the content of all fields of this task
+
+        :rtype: `dict`
+        """
+        data = {field.name: getattr(self, field.name) for field in self._meta.fields}
+        data["samples"] = list(self.samples.values_list("id", flat=True))
+        return data
 
 
 class ProcessWithSamplePositions(models.Model):

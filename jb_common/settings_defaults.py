@@ -25,8 +25,6 @@ from django.utils.crypto import get_random_string
 
 DEBUG_EMAIL_REDIRECT_USERNAME = ""
 JAVASCRIPT_I18N_APPS = ["django.contrib.auth", "samples", "jb_common"]
-USE_X_SENDFILE = False
-TEMP_STATIC_DIRS = []
 BLOB_STORAGE_BACKEND = ("jb_common.utils.blobs.backends.Filesystem", ())
 HELP_LINK_PREFIX = "http://www.juliabase.org/"
 JB_LOGGING_PATH = "/tmp/jb_common.log"

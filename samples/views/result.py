@@ -85,8 +85,7 @@ def save_image_file(image_data, result, related_data_form):
 
 
 class ResultForm(utils.ProcessForm):
-    """Model form for a result process.  Note that I exclude many fields
-    because they are not used in results or explicitly set.
+    """Model form for a result process.
     """
     class Meta:
         model = models.Result
@@ -592,7 +591,7 @@ def show_image(request, process_id):
 
 def generate_thumbnail(result, image_filename):
     image_file = jb_common.utils.blobs.storage.export(image_filename)
-    content = subprocess.check_output(["convert", image_file + ("[0]" if result.image_type == "pdf" else ""),
+    content = subprocess.check_output(["convert", str(image_file) + ("[0]" if result.image_type == "pdf" else ""),
                                        "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), "png:-"])
     os.unlink(image_file)
     return BytesIO(content)

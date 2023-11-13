@@ -159,8 +159,9 @@ class JSONClientMiddleware:
         with form errors is returned.
         """
         response = self.get_response(request)
-        if is_json_requested(request) and response.headers["content-type"][1].startswith("text/html") and \
-                response.status_code == 200:
+        if is_json_requested(request) and \
+           response.headers["content-type"][1].startswith(("text/html", "application/xhtml+xml")) and \
+           response.status_code == 200:
             user = request.user
             if not user.is_authenticated:
                 # Login view was returned

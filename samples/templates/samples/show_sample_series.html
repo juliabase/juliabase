@@ -108,14 +108,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <form method="post">{% csrf_token %}
    <p class="submit-button" style="float: left;"><input type="submit" name="remove" value="{% translate 'Remove all samples' %}"/>
 </form>
-
-
-
-<br>
-<br>
+<br/>
+<br/>
 <p>{% translate "To/From 'My Samples'" %}</p>
-<br>
-<br>
+<br/>
+<br/>
 {% else %}
   <p>{% translate "This sample series doesn't contain samples yet." %}</p>
 {% endif %}

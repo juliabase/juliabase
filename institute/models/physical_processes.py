@@ -24,6 +24,7 @@ processes, clean room work etc. will go here, too.
 """
 
 import os.path
+from pathlib import Path
 import numpy
 from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import format_lazy
@@ -108,7 +109,7 @@ class PDSMeasurement(PhysicalProcess):
         axes.set_ylabel(_("α in cm⁻¹"))
 
     def get_datafile_name(self, plot_id):
-        return os.path.join(settings.PDS_ROOT_DIR, self.raw_datafile)
+        return Path(settings.PDS_ROOT_DIR)/self.raw_datafile
 
     def get_plotfile_basename(self, plot_id):
         return "pds_{0}".format(self.samples.get()).replace("*", "")
@@ -195,7 +196,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
             related_cell = self.cells.get(position=plot_id)
         except SolarsimulatorCellMeasurement.DoesNotExist:
             return None
-        return os.path.join(settings.SOLARSIMULATOR_1_ROOT_DIR, related_cell.data_file)
+        return Path(settings.SOLARSIMULATOR_1_ROOT_DIR)/related_cell.data_file
 
     def get_plotfile_basename(self, plot_id):
         try:
