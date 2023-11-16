@@ -276,10 +276,15 @@ class RawFile:
             with open(absolute_destination_path, "wb") as outfile:
                 outfile.write(self.content)
 
-    def __add_metadata_to_graph(self, graph):
+    def _add_metadata_to_graph(self, graph):
         uri = rdflib.term.URIRef(str(self.destination_path))
         for key, value in self.metadata.items():
             graph.add((uri, rdflib.term.URIRef(key), rdflib.Literal(value)))
+
+    def add_to_graph(self, graph):
+        uri = rdflib.term.URIRef(str(self.destination_path))
+        graph.add((uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.MediaObject))
+        self._add_metadata_to_graph(graph)
 
     def __hash__(self):
         return hash(self.destination_path)
@@ -310,7 +315,7 @@ class RawDirectory(RawFile):
     def add_to_graph(self, graph):
         uri = rdflib.term.URIRef(str(self.destination_path))
         graph.add((uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.Dataset))
-        self.__add_metadata_to_graph(graph)
+        self._add_metadata_to_graph(graph)
 
 
 class Process(PolymorphicModel, GraphEntity):

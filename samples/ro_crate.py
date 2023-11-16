@@ -202,12 +202,16 @@ def respond_as_ro_crate(graph, raw_files):
     assert slash and sample_name_raw, sample_node
     sample_name = urllib.parse.unquote(sample_name_raw)
 
+    tempdir = tempfile.TemporaryDirectory()
+    tempdir_path = Path(tempdir.name)
+
+    for raw_file in raw_files:
+        raw_file.prepare_destination(tempdir_path)
+        raw_file.add_to_graph(graph)
+
     add_metadata_file_descriptor(graph)
     add_root_data_entity(graph, sample_node, sample_name)
     graph, namespaces = normalize_graph_for_ro_crate(settings.GRAPH_NAMESPACE_PREFIX, graph)
-
-    tempdir = tempfile.TemporaryDirectory()
-    tempdir_path = Path(tempdir.name)
 
     metadata = graph.serialize(format="json-ld", context={"@vocab": vocabulary_url,
                                                           "sm": "http://scimesh.org/SciMesh/",
@@ -218,9 +222,6 @@ def respond_as_ro_crate(graph, raw_files):
                                auto_compact=True)
     with open(tempdir_path/"ro-crate-metadata.json", "w") as outfile:
         outfile.write(metadata)
-
-    for raw_file in raw_files:
-        raw_file.prepare_destination(tempdir_path)
 
     zip_stream = ZipStream(tempdir)
     return StreamingHttpResponse(zip_stream, "application/vnd.eln+zip",
