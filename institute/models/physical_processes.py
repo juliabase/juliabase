@@ -328,7 +328,8 @@ class LayerThicknessMeasurement(PhysicalProcess):
         OTHER = "other", _("other")
 
     thickness = model_fields.FloatQuantityField(_("layer thickness"), unit="nm")
-    method = model_fields.CharField(_("measurement method"), max_length=30, choices=Method.choices, default=Method.PROFILERS_EDGE)
+    method = model_fields.CharField(_("measurement method"), max_length=30, choices=Method.choices,
+                                    default=Method.PROFILERS_EDGE)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("layer thickness measurement")
