@@ -11,9 +11,11 @@ from jb_remote_inm import *
 parser = argparse.ArgumentParser(description="Get serialised RDF graphs of a sample in a demo JuliaBase.")
 parser.add_argument("username", help="login name of the user in JuliaBase")
 parser.add_argument("sample", help="name of the sample to get the graph of")
-parser.add_argument("--password", default="12345", help="password of the user in JuliaBase")
-parser.add_argument("--base-url", default="http://localhost:8000/", help="Base URL of the JuliaBase demo instance")
-parser.add_argument("--output-format", choices=("turtle", "ro-crate", "xml"), default="turtle", help="serialisation format")
+parser.add_argument("--password", default="12345", help="password of the user in JuliaBase.  Defaut: 12345")
+parser.add_argument("--base-url", default="http://localhost:8000/", help="Base URL of the JuliaBase demo instance.  "
+                    "Default: http://localhost:8000/")
+parser.add_argument("--output-format", choices=("turtle", "ro-crate", "xml"), default="turtle", help="serialisation format; "
+                    "default: turtle")
 args = parser.parse_args()
 
 
