@@ -264,7 +264,7 @@ class RawFile:
         absolute_destination_path = root/self.destination_path
         if self.origin_path:
             os.makedirs(absolute_destination_path.parent, exist_ok=True)
-            os.symlink(self.origin_path, root/self.destination_path)
+            os.symlink(self.origin_path, absolute_destination_path)
         else:
             with open(absolute_destination_path, "wb") as outfile:
                 outfile.write(self.content)
