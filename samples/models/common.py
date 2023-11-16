@@ -219,10 +219,9 @@ class RawFile:
     are equal.
 
     :ivar destination_path: Relative path of the file in the virtual file
-       system structure of the respective process.  It must not end in a slash.
-       It must be unique and expressive, e.g. it should start with the process
-       name and ID.  Do not hesitate to use special characters, spaces, and
-       upper-/lowercase.
+       system structure of the respective process.  It must be unique and
+       expressive, e.g. it should start with the process name and ID.  Do not
+       hesitate to use special characters, spaces, and upper-/lowercase.
 
     :ivar origin_path: Absolute path in the local file system of the original
        raw data file.  Either this or `content` must be given.
@@ -233,7 +232,7 @@ class RawFile:
     :ivar relation: URI used for the “verb” in the RDF triple that connects the
        process with this raw file.  If not given, a default is used.
 
-    :type destination_path: str
+    :type destination_path: Path
     :type origin_path: Path or NoneType
     :type content: bytes or NoneType
     :type relation: rdflib.term.URIRef or NoneType
