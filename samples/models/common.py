@@ -239,7 +239,7 @@ class RawFile:
     :type relation: rdflib.term.URIRef or NoneType
     """
 
-    def __init__(self, destination_path, origin_path, payload=None, relation=None):
+    def __init__(self, destination_path, origin_path, content=None, relation=None):
         """Class constructor.
 
         :param str destination_path: the value of the instance variable
@@ -250,9 +250,9 @@ class RawFile:
         :param rdflib.term.URIRef relation: the value of the instance variable
            ``relation``.
         """
-        assert bool(origin_path) ^ bool(payload)
-        self.destination_path, self.origin_path, self.payload, self.relation = \
-            destination_path, origin_path, payload, relation
+        assert bool(origin_path) ^ bool(content)
+        self.destination_path, self.origin_path, self.content, self.relation = \
+            destination_path, origin_path, content, relation
 
     def prepare_destination(self, root):
         """Creates the raw file at the destination.  The destination directory
