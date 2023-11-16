@@ -292,7 +292,7 @@ def can_edit_any_external_contacts(user):
 def get_all_adders(process_class):
     """Returns all operators for a given process class.  “Operators” means
     people who are allowed to add new processes of this class.  Note that if
-    there is not “add_...” permission for the process class, i.e. everyone can
+    there is no “add_...” permission for the process class, i.e. everyone can
     add such processes, this routine returns none.  This may sound strange but
     it is very helpful in most cases.
 

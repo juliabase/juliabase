@@ -95,14 +95,11 @@ class FeedEntry(PolymorphicModel):
         raise NotImplementedError
 
     def get_additional_template_context(self, user):
-        """Return a dictionary with additional context that should be available in the
-        template.  It is similar to
-        :py:meth:`institute.models.FiveChamberDeposition.get_additional_template_context`.
-        However, in contrast to this other method, the feed version is
-        implemented in the abstract base class, so it is defined in all feed
-        models.  The rationale for this is that it is used in almost every feed
-        model anyway.  If not overridden, this method returns an empty
-        dictionary.
+        """Return a dictionary with additional context that should be available
+        in the template.  It is implemented in the abstract base class, so it
+        is defined in all feed models.  The rationale for this is that it is
+        used in almost every feed model anyway.  If not overridden, this method
+        returns an empty dictionary.
 
         :param user: the user fetching the feed
 
@@ -257,13 +254,6 @@ class FeedResult(FeedEntry):
             metadata["category label"] = "edited result"
         metadata["link"] = self.result.get_absolute_url()
         return metadata
-
-    def get_additional_template_context(self, user):
-        if self.result.image_type != "none":
-            image_locations = self.result.get_image_locations()
-            return {"thumbnail_url": image_locations["thumbnail_url"], "image_url": image_locations["image_url"]}
-        else:
-            return {"thumbnail_url": None, "image_url": None}
 
 
 class FeedCopiedMySamples(FeedEntry):

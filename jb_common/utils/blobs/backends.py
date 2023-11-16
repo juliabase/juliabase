@@ -25,6 +25,7 @@
 
 import os, uuid, datetime, io
 from contextlib import contextmanager
+from pathlib import Path
 import psycopg2
 from django.conf import settings
 from jb_common.utils.base import mkdirs, getmtime_utc
@@ -96,12 +97,21 @@ class BlobStorage:
         """
         raise NotImplementedError
 
+    def move(self, path, new_path):
+        """Renames the file at ``path`` to ``new_path``.  Note that
+        ``new_path`` must not yet exist.
+
+        :param path: full path to a file
+        :param new_path: new location of the file as a full path
+
+        :type path: str
+        :type new_path: str
+        """
+        raise NotImplementedError
+
     def export(self, path):
-        """Returns a removable path to the file.  This is used when serving files.  The
-        Web server gets the result of this method in the ``X-Sendfile`` header,
-        serves the file content at this path directly to the client, and (if
-        Apache's ``X-SENDFILE-TEMPORARY`` is used) unlinks the path afterwards.
-        For obvious reasons, this unlinking must not remove the original file.
+        """Returns a removable path to the file.  This is used when serving
+        files.
 
         Note that the resulting path should be unlinked afterwards (e.g. by the
         Web server, or in ``/tmp`` after a reboot), else, a temporary file is
@@ -114,7 +124,7 @@ class BlobStorage:
         :return:
           path to the file which can be removed
 
-        :rtype: str
+        :rtype: Path
         """
         raise NotImplementedError
 
@@ -143,21 +153,26 @@ class Filesystem(BlobStorage):
         :param root: root directory of the file system storage of BLOB files;
           it defaults to ``MEDIA_ROOT``
 
-        :type root: str
+        :type root: Path
         """
-        self.root = root or settings.MEDIA_ROOT
+        self.root = root or Path(settings.MEDIA_ROOT)
 
     def getmtime(self, path):
-        return getmtime_utc(os.path.join(self.root, path))
+        return getmtime_utc(self.root/path)
 
     def unlink(self, path):
-        os.unlink(os.path.join(self.root, path))
+        os.unlink(self.root/path)
 
     def open(self, path, mode="r"):
-        filepath = os.path.join(self.root, path)
+        filepath = self.root/path
         if mode == "w":
             mkdirs(filepath)
         return Filesystem.File(filepath, mode + "b")
+
+    def move(self, path, new_path):
+        new_filepath = self.root/new_path
+        mkdirs(new_filepath)
+        os.rename(self.root/path, new_filepath)
 
     def export(self, path):
         """Create a hard link to the file.  Three directories are tried, in this order:
@@ -169,18 +184,18 @@ class Filesystem(BlobStorage):
         A failure means the the original file and the link are not on the same
         filesystem, which must be the case at least for (3).
         """
-        path = os.path.join(self.root, path)
+        path = self.root/path
         filename = str(uuid.uuid4())
-        result = os.path.join("/tmp", filename)
+        result = Path("/tmp")/filename
         try:
             os.link(path, result)
         except OSError:
-            result = os.path.join(settings.CACHE_ROOT, filename)
+            result = Path(settings.CACHE_ROOT)/filename
             mkdirs(result)
             try:
                 os.link(path, result)
             except OSError:
-                result = os.path.join(self.root, filename)
+                result = self.root/filename
                 os.link(path, result)
         return result
 
@@ -299,9 +314,13 @@ class PostgreSQL(BlobStorage):
         large_object.init_additional_attributes(path, connection, cursor)
         return large_object
 
-    def export(self, path):
+    def move(self, path, new_path):
         with self.existing_large_object(path) as (large_object, cursor):
-            result = os.path.join(settings.CACHE_ROOT, str(uuid.uuid4()))
-            mkdirs(result)
-            large_object.export(result)
-            return result
+            cursor.execute("UPDATE blobs SET path=%s WHERE large_object_id=%s;", (new_path, large_object.oid))
+
+    def export(self, path):
+        result = Path(settings.CACHE_ROOT)/str(uuid.uuid4())
+        mkdirs(result)
+        with self.existing_large_object(path) as (large_object, cursor):
+            large_object.export(str(result))
+        return result

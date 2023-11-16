@@ -39,12 +39,12 @@ class SamplesConfig(AppConfig):
             external_contact=settings.INITIALS_FORMATS["external_contact"]["pattern"])
         settings.SAMPLE_NAME_FORMATS["provisional"]["pattern"] = r"\*(?P<id>\d{{5}})$"
         for properties in settings.SAMPLE_NAME_FORMATS.values():
-            properties["pattern"] = properties["pattern"].format(
+            pattern_cooked = properties["pattern"].format(
                 year=r"(?P<year>\d{4})", short_year=r"(?P<short_year>\d{2})",
                 user_initials=initials_groups["user"],
                 external_contact_initials=initials_groups["external_contact"],
                 combined_initials=initials_groups["combined"])
-            properties["regex"] = re.compile(properties["pattern"] + r"\Z")
+            properties["regex"] = re.compile(pattern_cooked + r"\Z")
         settings.SAMPLE_NAME_FORMATS["provisional"].setdefault("verbose_name", _("provisional"))
         for name_format, properties in settings.SAMPLE_NAME_FORMATS.items():
             properties.setdefault("verbose_name", name_format)

@@ -22,6 +22,7 @@
 import hashlib, os.path, time, urllib, json
 from io import BytesIO
 from urllib.parse import quote_plus
+from pathlib import Path
 import PIL
 import PIL.ImageOps
 import rdflib
@@ -1177,9 +1178,9 @@ def data_matrix_code(request):
     hash_ = hashlib.sha1()
     hash_.update(data.encode())
     filename = hash_.hexdigest() + ".png"
-    filepath = os.path.join(settings.STATIC_ROOT, "data_matrix", filename)
+    filepath = Path(settings.STATIC_ROOT)/"data_matrix"/filename
     url = staticfiles_storage.url("data_matrix/" + filename)
-    if not os.path.exists(filepath):
+    if not filepath.exists():
         mkdirs(filepath)
         image = PIL.Image.open(BytesIO(urllib.urlopen(
                     "http://www.bcgen.com/demo/IDAutomationStreamingDataMatrix.aspx?"

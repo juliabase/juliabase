@@ -22,6 +22,7 @@
 """
 
 import os, copy
+from pathlib import Path
 from tzlocal import get_localzone_name
 import django, django.utils.log
 from django.utils.translation import gettext_lazy as _
@@ -29,7 +30,7 @@ from jb_common.settings_defaults import *
 from samples.settings_defaults import *
 
 
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+BASE_DIR = Path(os.path.abspath(os.path.dirname(__file__)))
 if not os.path.exists(os.path.join(BASE_DIR, "jb_common")) and os.path.exists(os.path.join(BASE_DIR, "..", "juliabase")):
     BASE_DIR = os.path.join(os.path.dirname(BASE_DIR), "juliabase")
 
@@ -91,7 +92,7 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR, django.__path__[0] + "/forms/templates"],
+        "DIRS": [BASE_DIR/"templates_root", django.__path__[0] + "/forms/templates"],
         "OPTIONS": {
             "context_processors": ["django.contrib.auth.context_processors.auth",
                                    "django.template.context_processors.debug",
