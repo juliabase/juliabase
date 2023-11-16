@@ -261,6 +261,10 @@ class RawFile:
         self.destination_path, self.origin_path, self.metadata, self.content, self.relation = \
             destination_path, origin_path, metadata, content, relation
 
+    @property
+    def uri(self):
+        return rdflib.term.URIRef(str(self.destination_path))
+
     def prepare_destination(self, root):
         """Creates the raw file at the destination.  The destination directory
         structure is then zipped and shipped to the HTTP client.
@@ -277,13 +281,11 @@ class RawFile:
                 outfile.write(self.content)
 
     def _add_metadata_to_graph(self, graph):
-        uri = rdflib.term.URIRef(str(self.destination_path))
         for key, value in self.metadata.items():
-            graph.add((uri, rdflib.term.URIRef(key), rdflib.Literal(value)))
+            graph.add((self.uri, rdflib.term.URIRef(key), rdflib.Literal(value)))
 
     def add_to_graph(self, graph):
-        uri = rdflib.term.URIRef(str(self.destination_path))
-        graph.add((uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.MediaObject))
+        graph.add((self.uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.MediaObject))
         self._add_metadata_to_graph(graph)
 
     def __hash__(self):
@@ -313,8 +315,7 @@ class RawDirectory(RawFile):
         pass
 
     def add_to_graph(self, graph):
-        uri = rdflib.term.URIRef(str(self.destination_path))
-        graph.add((uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.Dataset))
+        graph.add((self.uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.Dataset))
         self._add_metadata_to_graph(graph)
 
 
