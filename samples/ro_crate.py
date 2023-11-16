@@ -35,7 +35,18 @@ from samples import ontology_symbols
 
 vocabulary_url = "https://w3id.org/ro/crate/1.1/context/"
 vocabulary = json.load(urllib.request.urlopen(vocabulary_url[:-1]))["@context"]
-reverse_vocabulary = {value: key for key, value in vocabulary.items()}
+reverse_vocabulary = {}
+for key, value in vocabulary.items():
+    match value:
+        case "http://schema.org/MediaObject":
+            key = "File"
+        case "http://schema.org/contentUrl":
+            key = "path"
+        case "http://schema.org/Periodical":
+            key = "Journal"
+        case _:
+            assert value not in reverse_vocabulary, value
+    reverse_vocabulary[value] = key
 
 
 def add_metadata_file_descriptor(graph):
