@@ -288,6 +288,31 @@ class RawFile:
         return self.destination_path == other.destination_path
 
 
+class RawDirectory(RawFile):
+
+    def __init__(self, destination_path, metadata=frozendict(), relation=None):
+        """Class constructor.
+
+        :param str destination_path: the value of the instance variable
+           ``destination_path``.
+        :param metadata: the value of the instance variable ``metadata``.
+        :param rdflib.term.URIRef relation: the value of the instance variable
+           ``relation``.
+
+        :type metadata: dict mapping str to object
+        """
+        self.destination_path, self.origin_path, self.metadata, self.content, self.relation = \
+            destination_path, None, metadata, None, relation
+
+    def prepare_destination(self, root):
+        pass
+
+    def add_to_graph(self, graph):
+        uri = rdflib.term.URIRef(str(self.destination_path))
+        graph.add((uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.Dataset))
+        self.__add_metadata_to_graph(graph)
+
+
 class Process(PolymorphicModel, GraphEntity):
     """This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database

@@ -33,7 +33,7 @@ from django.db import models
 import django.urls
 from django.conf import settings
 from samples import permissions
-from samples.models import Process, Sample, PhysicalProcess, GraphEntity, RawFile
+from samples.models import Process, Sample, PhysicalProcess, GraphEntity, RawFile, RawDirectory
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
 from jb_common.utils.base import generate_permissions
