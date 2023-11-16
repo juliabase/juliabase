@@ -246,7 +246,7 @@ class RawFile:
            ``destination_path``.
         :param Path origin_path: the value of the instance variable
            ``origin_path``.
-        :param Path content: the value of the instance variable ``content``.
+        :param bytes content: the value of the instance variable ``content``.
         :param rdflib.term.URIRef relation: the value of the instance variable
            ``relation``.
         """
