@@ -261,12 +261,12 @@ class RawFile:
         :param Path root: absolute path to the root where the directory
            structure of the raw files is supposed to be created.
         """
+        absolute_destination_path = root/self.destination_path
         if self.origin_path:
-            absolute_destination_path = root/self.destination_path
             os.makedirs(absolute_destination_path.parent, exist_ok=True)
             os.symlink(self.origin_path, root/self.destination_path)
         else:
-            with open(self.destination_path, "wb") as outfile:
+            with open(absolute_destination_path, "wb") as outfile:
                 outfile.write(self.content)
 
     def __hash__(self):
