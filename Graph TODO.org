@@ -42,7 +42,7 @@ The parent class’es method may already work in some cases but at least for Clu
 
 This may lead to further abstraction in the parent classes.
 
-** TODO Move RO-Crate support from the stand-alone script into the web server
+** DONE Move RO-Crate support from the stand-alone script into the web server
 
 For ZIP’ing things, https://stackoverflow.com/a/44946732/188108 might come in handy.
 
