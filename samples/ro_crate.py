@@ -205,7 +205,8 @@ def respond_as_ro_crate(graph, raw_files):
                                                           "jb-p": "http://juliabase.org/jb/Process#",
                                                           "xmls": "http://www.w3.org/2001/XMLSchema#"} | namespaces,
                                auto_compact=True)
-    open(tempdir_path/"ro-crate-metadata.json", "w").write(metadata)
+    with open(tempdir_path/"ro-crate-metadata.json", "w") as outfile:
+        outfile.write(metadata)
 
     for raw_file in raw_files:
         raw_file.prepare_destination(tempdir_path)
