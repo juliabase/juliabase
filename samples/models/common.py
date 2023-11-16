@@ -27,6 +27,7 @@ the ``from`` keyword.
 import hashlib, os, os.path, collections, datetime, html, urllib.parse, collections.abc, json
 from urllib.parse import quote
 import rdflib
+from frozendict import frozendict
 from samples import ontology_symbols
 import django.contrib.auth.models
 from django.contrib.sites.models import Site
@@ -229,29 +230,36 @@ class RawFile:
     :ivar content: Content of the file.  Either this or `origin_path` must be
        given.
 
+    :ivar metadata: Additional metadata mapping URIs to values,
+       e.g. http://schema.org/contentSize to 32715.
+
     :ivar relation: URI used for the “verb” in the RDF triple that connects the
        process with this raw file.  If not given, a default is used.
 
     :type destination_path: Path
     :type origin_path: Path or NoneType
     :type content: bytes or NoneType
+    :type metadata: dict mapping str to object
     :type relation: rdflib.term.URIRef or NoneType
     """
 
-    def __init__(self, destination_path, origin_path, content=None, relation=None):
+    def __init__(self, destination_path, origin_path, metadata=frozendict(), content=None, relation=None):
         """Class constructor.
 
         :param str destination_path: the value of the instance variable
            ``destination_path``.
         :param Path origin_path: the value of the instance variable
            ``origin_path``.
+        :param metadata: the value of the instance variable ``metadata``.
         :param bytes content: the value of the instance variable ``content``.
         :param rdflib.term.URIRef relation: the value of the instance variable
            ``relation``.
+
+        :type metadata: dict mapping str to object
         """
         assert bool(origin_path) ^ bool(content)
-        self.destination_path, self.origin_path, self.content, self.relation = \
-            destination_path, origin_path, content, relation
+        self.destination_path, self.origin_path, self.metadata, self.content, self.relation = \
+            destination_path, origin_path, metadata, content, relation
 
     def prepare_destination(self, root):
         """Creates the raw file at the destination.  The destination directory
@@ -267,6 +275,11 @@ class RawFile:
         else:
             with open(absolute_destination_path, "wb") as outfile:
                 outfile.write(self.content)
+
+    def __add_metadata_to_graph(self, graph):
+        uri = rdflib.term.URIRef(str(self.destination_path))
+        for key, value in self.metadata.items():
+            graph.add((uri, rdflib.term.URIRef(key), rdflib.Literal(value)))
 
     def __hash__(self):
         return hash(self.destination_path)
