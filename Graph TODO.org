@@ -46,6 +46,6 @@ This may lead to further abstraction in the parent classes.
 
 For ZIP’ing things, https://stackoverflow.com/a/44946732/188108 might come in handy.
 
-** TODO Add bulk data to RO-Crate, at least in a simple case
+** DONE Add bulk data to RO-Crate, at least in a simple case
 
 Possibly I have to do that in Chantal rather than in JuliaBase.
