@@ -82,6 +82,7 @@ def add_license(graph, data_entity, uri, name, description):
     graph.add((uri, URIRef("http://schema.org/name"), Literal(name)))
     graph.add((uri, URIRef("http://schema.org/description"), Literal(description)))
 
+
 def add_root_data_entity(graph, sample_node, sample_name):
     """Add the root data entity ``"./"`` to `graph`.  “Root data entity” is a
     term from RO-Crate.
