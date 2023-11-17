@@ -206,7 +206,9 @@ def respond_as_ro_crate(graph, raw_files):
     tempdir = tempfile.TemporaryDirectory()
     tempdir_path = Path(tempdir.name)
 
+    root_dataset = URIRef("./")
     for root in raw_files:
+        graph.add((root_dataset, ontology_symbols.schema_org.hasPart, root.uri))
         root.prepare_destination(tempdir_path)
         root.add_to_graph(graph)
 
