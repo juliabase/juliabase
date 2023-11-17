@@ -58,10 +58,10 @@ def add_metadata_file_descriptor(graph):
     :param rdflib.Graph graph: graph to which the process data should be added
     """
     subject = URIRef("ro-crate-metadata.json")
-    graph.add((subject, RDF.type, URIRef("http://schema.org/CreativeWork")))
-    graph.add((subject, URIRef("http://schema.org/dateCreated"), Literal(datetime.datetime.now(datetime.timezone.utc))))
+    graph.add((subject, RDF.type, ontology_symbols.schema_org.CreativeWork))
+    graph.add((subject, ontology_symbols.schema_org.dateCreated, Literal(datetime.datetime.now(datetime.timezone.utc))))
     graph.add((subject, URIRef("http://purl.org/dc/terms/conformsTo"), URIRef("https://w3id.org/ro/crate/1.1")))
-    graph.add((subject, URIRef("http://schema.org/about"), URIRef("./")))
+    graph.add((subject, ontology_symbols.schema_org.about, URIRef("./")))
 
 
 def add_license(graph, data_entity, uri, name, description):

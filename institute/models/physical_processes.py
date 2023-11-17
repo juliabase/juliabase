@@ -32,7 +32,7 @@ from django.utils.text import format_lazy
 from django.db import models
 import django.urls
 from django.conf import settings
-from samples import permissions
+from samples import permissions, ontology_symbols
 from samples.models import Process, Sample, PhysicalProcess, GraphEntity, RawFile, RawDirectory
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
@@ -122,11 +122,11 @@ class PDSMeasurement(PhysicalProcess):
         return super().get_context_for_user(user, context)
 
     def get_raw_files(self):
+        so = ontology_symbols.schema_org
         safe_name = str(self).replace("/", "--")
-        root = RawDirectory(Path(safe_name), {"http://schema.org/description": "PDS measurement raw data"})
+        root = RawDirectory(Path(safe_name), {so.description: "PDS measurement raw data"})
         root.entries.add(RawFile(root.destination_path/self.raw_datafile, self.get_datafile_name(""),
-                                 {"http://schema.org/description": "Single PDS measurement raw data file",
-                                  "http://schema.org/encodingFormat": "text/plain"}))
+                                 {so.description: "Single PDS measurement raw data file", so.encodingFormat: "text/plain"}))
         return root
 
 
