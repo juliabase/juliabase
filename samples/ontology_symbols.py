@@ -28,6 +28,7 @@ JB_sample = Namespace("http://juliabase.org/jb/Sample#")
 schema_org = Namespace("http://schema.org/")
 scimesh = Namespace("http://scimesh.org/SciMesh/")
 time = Namespace("http://www.w3.org/2006/time#")
+DC = Namespace("http://purl.org/dc/terms/")
 
 def bind_namespaces(graph):
     graph.namespace_manager.bind("jb", JB)

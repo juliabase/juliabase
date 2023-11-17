@@ -60,7 +60,7 @@ def add_metadata_file_descriptor(graph):
     subject = URIRef("ro-crate-metadata.json")
     graph.add((subject, RDF.type, ontology_symbols.schema_org.CreativeWork))
     graph.add((subject, ontology_symbols.schema_org.dateCreated, Literal(datetime.datetime.now(datetime.timezone.utc))))
-    graph.add((subject, URIRef("http://purl.org/dc/terms/conformsTo"), URIRef("https://w3id.org/ro/crate/1.1")))
+    graph.add((subject, ontology_symbols.DC.conformsTo, URIRef("https://w3id.org/ro/crate/1.1")))
     graph.add((subject, ontology_symbols.schema_org.about, URIRef("./")))
 
 
