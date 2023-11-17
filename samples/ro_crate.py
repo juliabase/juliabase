@@ -188,7 +188,8 @@ def respond_as_ro_crate(graph, raw_files):
     so the caller should not use the graph any more.
 
     :param rdflib.Graph graph: graph of the sample
-    :param set[RawFile] raw_files: all raw files of the sample’s processes
+    :param set[RawDirectories] raw_files: all raw files of the sample’s
+      processes
 
     :return:
       the HTTP response object
@@ -205,9 +206,9 @@ def respond_as_ro_crate(graph, raw_files):
     tempdir = tempfile.TemporaryDirectory()
     tempdir_path = Path(tempdir.name)
 
-    for raw_file in raw_files:
-        raw_file.prepare_destination(tempdir_path)
-        raw_file.add_to_graph(graph)
+    for root in raw_files:
+        root.prepare_destination(tempdir_path)
+        root.add_to_graph(graph)
 
     add_metadata_file_descriptor(graph)
     add_root_data_entity(graph, sample_node, sample_name)

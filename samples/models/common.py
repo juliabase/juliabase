@@ -296,6 +296,12 @@ class RawFile:
 
 
 class RawDirectory(RawFile):
+    """Represents one data directory of raw (blob) files a process.  Instances
+    of this class create a virtual file system.
+
+    :ivar set[RawFile] entries: entries (files and subdirectories) of this
+      directory
+    """
 
     def __init__(self, destination_path, metadata=frozendict(), relation=None):
         """Class constructor.
@@ -310,13 +316,18 @@ class RawDirectory(RawFile):
         """
         self.destination_path, self.origin_path, self.metadata, self.content, self.relation = \
             destination_path, None, metadata, None, relation
+        self.entries = set()
 
     def prepare_destination(self, root):
-        pass
+        for entry in self.entries:
+            entry.prepare_destination(root)
 
     def add_to_graph(self, graph):
         graph.add((self.uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.Dataset))
         self._add_metadata_to_graph(graph)
+        for entry in self.entries:
+            graph.add((self.uri, ontology_symbols.schema_org.hasPart, entry.uri))
+            entry.add_to_graph(graph)
 
 
 class Process(PolymorphicModel, GraphEntity):
@@ -958,11 +969,12 @@ class Process(PolymorphicModel, GraphEntity):
         :py:class:`RawFile` for further information.
 
         :returns:
-          set of the raw files of this process
+          root directory of the raw files of this process; ``None`` if this
+          process does not expose any raw files
 
-        :rtype: set[`RawFile`]
+        :rtype: `RawDirectory` or NoneType
         """
-        return set()
+        return None
 
 
 class PhysicalProcess(Process):

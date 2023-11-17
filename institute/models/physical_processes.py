@@ -123,10 +123,11 @@ class PDSMeasurement(PhysicalProcess):
 
     def get_raw_files(self):
         safe_name = str(self).replace("/", "--")
-        directory = RawDirectory(Path(safe_name), {"http://schema.org/description": "PDS measurement raw data"})
-        return {directory, RawFile(directory.destination_path/self.raw_datafile, self.get_datafile_name(""),
-                                   {"http://schema.org/description": "Single PDS measurement raw data file",
-                                    "http://schema.org/encodingFormat": "text/plain"})}
+        root = RawDirectory(Path(safe_name), {"http://schema.org/description": "PDS measurement raw data"})
+        root.entries.add(RawFile(root.destination_path/self.raw_datafile, self.get_datafile_name(""),
+                                 {"http://schema.org/description": "Single PDS measurement raw data file",
+                                  "http://schema.org/encodingFormat": "text/plain"}))
+        return root
 
 
 class SolarsimulatorMeasurement(PhysicalProcess):

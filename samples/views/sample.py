@@ -652,29 +652,26 @@ class SamplesAndProcesses:
 
 
 def collect_raw_files(sample):
-    """Returns the raw files of the given sample by building the union of the
-    raw files of all of its processes.
+    """Returns the raw files of the given sample by collecting the raw file
+    directories of all of its processes.
 
     :param models.Sample sample: the sample the raw files of which should be
        returned
 
     :returns:
-       all raw files of the given sample
+       all raw files of the given sample, as a set of their root directories
 
-    :rtype: set[RawFile]
+    :rtype: set[RawDictionaries]
     """
     result = set()
-    number = 0
     for process in sample.processes.all():
         process = process.actual_instance
         process_raw_files = process.get_raw_files()
-        number += len(process_raw_files)
-        result |= process_raw_files
+        if process_raw_files:
+            result.add(process_raw_files)
         if sample.split_origin:
             parent_raw_files = collect_raw_files(process.split_origin.parent)
-            number += len(parent_raw_files)
             result |= parent_raw_files
-    assert len(result) == number
     return result
 
 
