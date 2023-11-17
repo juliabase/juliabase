@@ -189,7 +189,7 @@ def respond_as_ro_crate(graph, raw_files):
 
     :param rdflib.Graph graph: graph of the sample
     :param set[RawDirectories] raw_files: all raw files of the sample’s
-      processes
+      processes as a set of root directories
 
     :return:
       the HTTP response object

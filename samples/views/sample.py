@@ -652,8 +652,8 @@ class SamplesAndProcesses:
 
 
 def collect_raw_files(sample):
-    """Returns the raw files of the given sample by collecting the raw file
-    directories of all of its processes.
+    """Returns the raw files of the given sample by collecting the root raw
+    file directories of all of its processes.
 
     :param models.Sample sample: the sample the raw files of which should be
        returned
@@ -663,16 +663,16 @@ def collect_raw_files(sample):
 
     :rtype: set[RawDictionaries]
     """
-    result = set()
+    roots = set()
     for process in sample.processes.all():
         process = process.actual_instance
-        process_raw_files = process.get_raw_files()
-        if process_raw_files:
-            result.add(process_raw_files)
+        root = process.get_raw_files()
+        if root:
+            roots.add(root)
         if sample.split_origin:
-            parent_raw_files = collect_raw_files(process.split_origin.parent)
-            result |= parent_raw_files
-    return result
+            parent_roots = collect_raw_files(process.split_origin.parent)
+            roots |= parent_roots
+    return roots
 
 
 def embed_timestamp(request, sample_name):
