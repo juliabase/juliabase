@@ -322,7 +322,7 @@ class JuliaBaseConnection:
         max_cycles = 10
         while max_cycles > 0:
             max_cycles -= 1
-            logging.debug(f"Request against {request.url}")
+            logging.debug(f"Request against {request.get_full_url()}")
             try:
                 return self.opener.open(request)
             except urllib.error.HTTPError as error:
