@@ -67,7 +67,8 @@ class FiveChamberDepositionTest(TestCase):
              "combined_operator": "7", "sample_list": ["1", "3"],
              "0-number": "1", "1-chamber": "i2", "0-sih4": "3.000",
              "1-number": "2", "0-chamber": "i1", "1-sih4": "2.000"}, follow=True)
-        self.assertRedirects(response, "/", 303)
+        self.assertRedirects(response,
+                             "/depositions/split_and_rename_samples/25S-001?new-name-1=25S-001-1&new-name-3=25S-001-2", 303)
         response = self.client.get("/5-chamber_depositions/" + self.deposition_number, HTTP_ACCEPT="application/json")
         self.assertEqual(response["content-type"], "application/json")
         self.assertEqual(response.status_code, 200)
