@@ -338,7 +338,7 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
 @contextlib.contextmanager
 def changed_files(root, diff_file, pattern=""):
     """Returns the files changed since the last run of this function.  The files
-    are given as an iterator over `Path` obejcts.  Changed files are files
+    are given as an iterator over `Path` objects.  Changed files are files
     which have been added, modified or removed.  If a file was moved, the new
     path is returned as “created”, and the old one as “removed”.  The returned
     files are sorted by timestamp; first the removed, then from oldest to
