@@ -39,7 +39,7 @@ class ExportTest(TestCase):
         self.assertJsonDictEqual(response,
             {"samples": [7], "timestamp_inaccuracy": 3, "timestamp": "2014-10-01T10:29:00Z", "material": "corning", "id": 13,
              "external_operator": None, "finished": True, "comments": "", "operator": "e.monroe",
-             "content_type": "institute | substrate"})
+             "content_type": "Institute | substrate"})
 
     def test_pds_measurement_export(self):
         response = self.client.get("/pds_measurements/1", HTTP_ACCEPT="application/json")
@@ -48,7 +48,7 @@ class ExportTest(TestCase):
             {"samples": [7], "apparatus": "pds1", "timestamp_inaccuracy": 0, "timestamp": "2014-10-07T10:01:00Z",
              "external_operator": None, "id": 25,
              "operator": "n.burkhardt", "finished": True, "comments": "",
-             "number": 1, "content_type": "institute | PDS measurement", "raw_datafile": "measurement-1.dat"})
+             "number": 1, "content_type": "Institute | PDS measurement", "raw_datafile": "measurement-1.dat"})
 
     def test_sample_export(self):
         response = self.client.get("/samples/by_id/7", HTTP_ACCEPT="application/json")
@@ -57,25 +57,25 @@ class ExportTest(TestCase):
             {"split_origin": None, "name": "14-JS-1", "tags": "", "currently_responsible_person": "j.silverton",
              "topic": "Juliette's PhD thesis", "purpose": "",
              "current_location": "Juliette's office", "id": 7,
-             "process #13": {"content_type": "institute | substrate", "timestamp": "2014-10-01T10:29:00Z",
+             "process #13": {"content_type": "Institute | substrate", "timestamp": "2014-10-01T10:29:00Z",
                              "material": "corning", "timestamp_inaccuracy": 3, "comments": "", "finished": True,
                              "samples": [7], "external_operator": None,
                              "operator": "e.monroe", "id": 13},
-             "process #14": {"external_operator": None, "content_type": "institute | cluster tool deposition",
+             "process #14": {"external_operator": None, "content_type": "Institute | cluster tool deposition",
                              "layer 1": {"base_pressure": 0.0, "h2": 1.0, "number": 1, "comments": "p-type layer",
-                                         "content_type": "institute | cluster tool hot-wire layer", "time": "10:00",
+                                         "content_type": "Institute | cluster tool hot-wire layer", "time": "10:00",
                                          "sih4": 2.0, "wire_material": "rhenium", "id": 1},
                              "layer 2": {"plasma_start_with_shutter": False, "h2": 0.0, "number": 2, "comments":
                                          "i-type layer", "chamber": "#3", "deposition_power": None,
-                                         "content_type": "institute | cluster tool PECVD layer", "time": "55:00",
+                                         "content_type": "Institute | cluster tool PECVD layer", "time": "55:00",
                                          "sih4": 3.0, "id": 2},
                              "layer 3": {"base_pressure": 4.0, "h2": 4.0, "number": 3, "comments": "n-type layer",
-                                         "content_type": "institute | cluster tool hot-wire layer", "time": "10:00",
+                                         "content_type": "Institute | cluster tool hot-wire layer", "time": "10:00",
                                          "sih4": 7.0, "wire_material": "rhenium", "id": 3},
                              "timestamp_inaccuracy": 0, "comments": "", "number": "14C-001", "finished": True, "carrier": "",
                              "samples": [7], "timestamp": "2014-10-01T10:30:00Z", "operator": "e.monroe", "split_done": False,
                              "id": 14},
-             "process #25": {"external_operator": None, "content_type": "institute | PDS measurement", "apparatus": "pds1",
+             "process #25": {"external_operator": None, "content_type": "Institute | PDS measurement", "apparatus": "pds1",
                              "timestamp": "2014-10-07T10:01:00Z", "timestamp_inaccuracy": 0, "comments": "", "number": 1,
                              "finished": True, "raw_datafile": "measurement-1.dat", "samples": [7],
                              "operator": "n.burkhardt", "id": 25}})
@@ -102,4 +102,4 @@ class AdminExportTest(TestCase):
         self.assertJsonDictEqual(response,
                          {"operator": "r.calvert", "timestamp": "2014-10-01T10:29:00Z", "material": "corning",
                           "timestamp_inaccuracy": 3, "comments": "", "finished": True, "samples": [1],
-                          "external_operator": None, "content_type": "institute | substrate", "id": 1})
+                          "external_operator": None, "content_type": "Institute | substrate", "id": 1})

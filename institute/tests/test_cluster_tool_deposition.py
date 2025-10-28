@@ -53,16 +53,16 @@ class ClusterToolDepositionTest(TestCase):
         self.maxDiff = None
         self.assertJsonDictEqual(response,
             {"id": 31, "number": self.deposition_number,
-             "content_type": "institute | cluster tool deposition",
+             "content_type": "Institute | cluster tool deposition",
              "timestamp": self.timestamp_with_t, "timestamp_inaccuracy": 0,
              "operator": "e.monroe",
              "external_operator": None, "finished": True, "comments": "", "split_done": False, "carrier": "",
              "samples": [13, 14],
              "layer 1": {"h2": None, "id": 19, "number": 1, "sih4": None, "base_pressure": None,
                          "wire_material": "rhenium", "time": "", "comments": "",
-                         "content_type": "institute | cluster tool hot-wire layer"},
+                         "content_type": "Institute | cluster tool hot-wire layer"},
              "layer 2": {"chamber": "#1", "h2": None, "id": 20, "number": 2, "sih4": None, "comments": "",
-                         "content_type": "institute | cluster tool PECVD layer", "plasma_start_with_shutter": False,
+                         "content_type": "Institute | cluster tool PECVD layer", "plasma_start_with_shutter": False,
                          "time": "", "deposition_power": None}})
         response = self.client.get("/my_samples/e.monroe", HTTP_ACCEPT="application/json")
         my_samples = response.json()

@@ -73,7 +73,7 @@ class FiveChamberDepositionTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJsonDictEqual(response,
             {"id": 31, "number": self.deposition_number,
-             "content_type": "institute | 5-chamber deposition",
+             "content_type": "Institute | 5-chamber deposition",
              "timestamp": self.timestamp_with_t, "timestamp_inaccuracy": 0,
              "operator": "r.calvert",
              "external_operator": None, "finished": True, "comments": "", "split_done": False,
