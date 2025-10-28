@@ -22,6 +22,10 @@
 
 import sys, os
 from django.core.management import execute_from_command_line
+from django import __version__
+
+
+print("Django version", __version__)
 
 
 root = os.path.dirname(os.path.abspath(__file__))
