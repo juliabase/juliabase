@@ -507,7 +507,7 @@ def getmtime_utc(path):
 
     :rtype: datetime.datetime
     """
-    return datetime.datetime.fromtimestamp(path.stat().st_mtime, django.utils.timezone.utc)
+    return datetime.datetime.fromtimestamp(path.stat().st_mtime, datetime.timezone.utc)
 
 
 def get_file_timestamps(paths):

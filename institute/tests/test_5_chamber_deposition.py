@@ -54,12 +54,12 @@ class FiveChamberDepositionTest(TestCase):
     def test_missing_fields_and_no_layers(self):
         response = self.client.post("/5-chamber_depositions/add/", {"number": ""})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, "process", "timestamp", "This field is required.")
-        self.assertFormError(response, "process", "timestamp_inaccuracy", "This field is required.")
-        self.assertFormError(response, "process", "combined_operator", "This field is required.")
-        self.assertFormError(response, "process", "number", "This field is required.")
-        self.assertFormError(response, "samples", "sample_list", "This field is required.")
-        self.assertFormError(response, "process", None, "No layers given.")
+        self.assertFormError(response.context["process"], "timestamp", "This field is required.")
+        self.assertFormError(response.context["process"], "timestamp_inaccuracy", "This field is required.")
+        self.assertFormError(response.context["process"], "combined_operator", "This field is required.")
+        self.assertFormError(response.context["process"], "number", "This field is required.")
+        self.assertFormError(response.context["samples"], "sample_list", "This field is required.")
+        self.assertFormError(response.context["process"], None, "No layers given.")
 
     def test_correct_data(self):
         response = self.client.post("/5-chamber_depositions/add/",
@@ -74,7 +74,7 @@ class FiveChamberDepositionTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertJsonDictEqual(response,
             {"id": 31, "number": self.deposition_number,
-             "content_type": "institute | 5-chamber deposition",
+             "content_type": "Institute | 5-chamber deposition",
              "timestamp": self.timestamp_with_t, "timestamp_inaccuracy": 0,
              "operator": "r.calvert",
              "external_operator": None, "finished": True, "comments": "", "split_done": False,
@@ -121,7 +121,7 @@ class FiveChamberDepositionTest(TestCase):
             {"combined_operator": "7", "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
              "sample_list": ["1", "3"], "number": self.deposition_number, "number_of_steps_to_add": "11"})
         self.assertEqual(response.status_code, 200)
-        self.assertFormError(response, "add_steps", "number_of_steps_to_add",
+        self.assertFormError(response.context["add_steps"], "number_of_steps_to_add",
                              "Ensure this value is less than or equal to 10.")
         self.assertEqual(len(response.context["steps_and_change_steps"]), 0)
 

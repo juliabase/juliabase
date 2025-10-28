@@ -64,7 +64,6 @@ EMAIL_USE_LOCALTIME = True
 LANGUAGE_CODE = "en-us"
 
 USE_I18N = True
-USE_L10N = False
 DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
 
