@@ -33,7 +33,7 @@ from xml.etree import ElementTree
 from xml.etree.ElementTree import SubElement
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.utils.timezone import make_aware, utc
+from django.utils.timezone import make_aware
 from django.conf import settings
 from django.core.cache import cache
 from django.utils import timezone
@@ -196,7 +196,7 @@ def parse_timestamp(request, query_string_key):
             timestamp = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
         except ValueError:
             raise PmhError("badArgument", "The timestamp has an invalid format.")
-        timestamp = make_aware(timestamp, utc)
+        timestamp = make_aware(timestamp, datetime.timezone.utc)
     return timestamp
 
 
