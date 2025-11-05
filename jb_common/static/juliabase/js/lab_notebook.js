@@ -44,7 +44,6 @@ $(document).ready( function () {
                             #p-hot-wire,                 \
                             #wetbench,                    \
                             #screenprinter-paste,          \
-                            #manual-cleaning,               \
                             #screenprinter-screen)').DataTable({
             order: [[0, 'desc']],
             scrollX: true,
@@ -100,7 +99,7 @@ $(document).ready( function () {
         $('#screenprinter').DataTable( {
             language: langDict,
             order: [[0, 'desc']],
-            scrollX: true,
+            // scrollX: true,
             fixedColumns: true,
             fixedHeader: true, // Enable FixedHeader extension
             columnDefs: [ {
@@ -146,13 +145,13 @@ $(document).ready( function () {
 
         // Custom initialization for "manual-cleaning" where the entries are sorted in descending
         // order as asked by Dorothea
-        $('#manual-cleaning').DataTable({
-            order: [[ 0, "desc" ]],
-            scrollX: true,
-            language: langDict,
-            fixedColumns: true,
-            fixedHeader: true // Enable FixedHeader extension
-            }); // Initialize the DataTables for the rest of the tables with the class "lab-notebook"
+        // $('#manual-cleaning').DataTable({
+        //     order: [[ 0, "desc" ]],
+        //     scrollX: true,
+        //     language: langDict,
+        //     fixedColumns: true,
+        //     fixedHeader: true // Enable FixedHeader extension
+        //     }); // Initialize the DataTables for the rest of the tables with the class "lab-notebook"
                   
         
     }, 1000);
