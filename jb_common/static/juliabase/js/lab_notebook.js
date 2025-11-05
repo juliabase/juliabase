@@ -46,6 +46,7 @@ $(document).ready( function () {
                             #screenprinter-paste,          \
                             #manual-cleaning,               \
                             #screenprinter-screen)').DataTable({
+            order: [[0, 'desc']],
             scrollX: true,
             language: langDict,
         fixedColumns: true,
@@ -67,11 +68,12 @@ $(document).ready( function () {
                     $(row).addClass('table-danger');
                   }
               },
-                  scrollX: true,
-                  language: langDict,
-                  fixedColumns: true,
-                  fixedHeader: true // Enable FixedHeader extension
-                  }); // Initialize the DataTables for the rest of the tables with the class "lab-notebook"
+                order: [[0, 'desc']],
+                scrollX: true,
+                language: langDict,
+                fixedColumns: true,
+                fixedHeader: true // Enable FixedHeader extension
+                }); // Initialize the DataTables for the rest of the tables with the class "lab-notebook"
                   
   
         $('#screenprinter-screen').DataTable({
@@ -87,15 +89,17 @@ $(document).ready( function () {
                     $(row).addClass('table-danger');
                   }
               },
-                  scrollX: true,
-                  language: langDict,
-                  fixedColumns: true,
-                  fixedHeader: true // Enable FixedHeader extension
-                  }); // Initialize the DataTables for the rest of the tables with the class "lab-notebook"
+                order: [[0, 'desc']],
+                scrollX: true,
+                language: langDict,
+                fixedColumns: true,
+                fixedHeader: true // Enable FixedHeader extension
+                }); // Initialize the DataTables for the rest of the tables with the class "lab-notebook"
       
 
         $('#screenprinter').DataTable( {
             language: langDict,
+            order: [[0, 'desc']],
             scrollX: true,
             fixedColumns: true,
             fixedHeader: true, // Enable FixedHeader extension
