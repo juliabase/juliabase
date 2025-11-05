@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% block css_inclusions %}
     <link rel="stylesheet" type="text/css" media="screen" href="{% static "juliabase/css/main.css" %}"/>
     <link rel="stylesheet" type="text/css" media="print" href="{% static "juliabase/css/print.css" %}"/>
-  {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/labcss.css' %}">
+    {% endblock %}
   {% block refresh_tag %}{% endblock %}
   {% block favicon %}
     <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
@@ -35,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}"></script>
   <script type="text/javascript" src="{% static "juliabase/js/juliabase.js" %}"></script>
+  <script type="text/javascript" src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
   <script type="text/javascript">
   // <![CDATA[
     $(function() { $("input:text:visible:first").focus() })
