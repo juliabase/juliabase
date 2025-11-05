@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-27 13:13+0100\n"
+"POT-Creation-Date: 2024-03-27 16:07+0100\n"
 "PO-Revision-Date: 2016-10-27 18:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -272,7 +272,7 @@ msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
 #: juliabase/jb_common/templates/500.html:38
-#: juliabase/jb_common/templates/jb_base.html:94
+#: juliabase/jb_common/templates/jb_base.html:100
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -295,32 +295,32 @@ msgstr ""
 "den Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, "
 "sobald der Fehler behoben ist.\n"
 
-#: juliabase/jb_common/templates/jb_base.html:64
+#: juliabase/jb_common/templates/jb_base.html:70
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: juliabase/jb_common/templates/jb_base.html:71
+#: juliabase/jb_common/templates/jb_base.html:77
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: juliabase/jb_common/templates/jb_base.html:73
+#: juliabase/jb_common/templates/jb_base.html:79
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: juliabase/jb_common/templates/jb_base.html:78
+#: juliabase/jb_common/templates/jb_base.html:84
 msgid "Report feature wish or bug"
 msgstr "Bug oder Featurewunsch melden"
 
-#: juliabase/jb_common/templates/jb_base.html:84
+#: juliabase/jb_common/templates/jb_base.html:90
 msgid "Help"
 msgstr "Hilfe"
 
-#: juliabase/jb_common/templates/jb_base.html:90
+#: juliabase/jb_common/templates/jb_base.html:96
 msgid "Log out"
 msgstr "Abmelden"
 
-#: juliabase/jb_common/templates/jb_base.html:110
+#: juliabase/jb_common/templates/jb_base.html:116
 msgid "JuliaBase logo"
 msgstr "JuliaBase-Logo"
 

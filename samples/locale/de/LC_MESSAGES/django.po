@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-27 13:13+0100\n"
+"POT-Creation-Date: 2024-03-27 16:07+0100\n"
 "PO-Revision-Date: 2018-05-17 23:23+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -2328,15 +2328,15 @@ msgstr ""
 msgid "export as table"
 msgstr "als Tabelle exportieren"
 
-#: juliabase/samples/templates/samples/lab_notebook.html:69
+#: juliabase/samples/templates/samples/lab_notebook.html:97
 msgid "Error in date"
 msgstr "Fehler im Datum"
 
-#: juliabase/samples/templates/samples/lab_notebook.html:87
+#: juliabase/samples/templates/samples/lab_notebook.html:115
 msgid "previous month"
 msgstr "vorheriger Monat"
 
-#: juliabase/samples/templates/samples/lab_notebook.html:90
+#: juliabase/samples/templates/samples/lab_notebook.html:118
 msgid "next month"
 msgstr "nächster Monat"
 
