@@ -1,7 +1,5 @@
 $(document).ready( function () {
 
-    console.log("tt");
-
     //Dictionary full of all the strings from datatables that need to be translated
     var langDict = {
         processing:     gettext("Processing..."),
@@ -46,6 +44,8 @@ $(document).ready( function () {
                             #wetbench,                    \
                             #screenprinter-paste,          \
                             #screenprinter-screen)').DataTable({
+            order: [],
+            pageLength: 50,
             scrollX: true,
             language: langDict,
         fixedColumns: true,
@@ -67,6 +67,8 @@ $(document).ready( function () {
                     $(row).addClass('table-danger');
                   }
               },
+                  order: [],
+                  pageLength: 50,
                   scrollX: true,
                   language: langDict,
                   fixedColumns: true,
@@ -87,6 +89,8 @@ $(document).ready( function () {
                     $(row).addClass('table-danger');
                   }
               },
+                  order: [],
+                  pageLength: 50,
                   scrollX: true,
                   language: langDict,
                   fixedColumns: true,
@@ -96,6 +100,9 @@ $(document).ready( function () {
 
         $('#screenprinter').DataTable( {
             language: langDict,
+            order: [],
+            pageLength: 50,
+            scrollX: true,
             fixedColumns: true,
             fixedHeader: true, // Enable FixedHeader extension
             columnDefs: [ {

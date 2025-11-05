@@ -79,6 +79,23 @@ we can give it to a JS file that does not know what Django templates are. -->
     {{ html_body }}
   </div>
   <script src="{% url 'iek5:javascript-catalog' %}"></script>
+  <script type="module">
+    // console.log("{{ cols|escapejs }}")
+    $(document).ready( function () {
+      // console.log('Current URL:', window.location.href);
+
+      // FIXME: this should be in lab_notebook.js, but for some reasons it
+      // does not work there.
+      // Check if the URL contains a specific substring
+      // We use this to get rid of the date form for screenprinter paste and screen
+      if (window.location.href.indexOf('screenprinter_paste') > -1 || window.location.href.indexOf('screenprinter_screen') > -1) {
+          // Hide the form with id="date-form"
+          // console.log('Substring found! Hiding date form.');
+          $('#date-form').hide();
+    }
+
+  } );
+  </script>
   <script src="{% static 'juliabase/js/lab_notebook.js' %}?v={% now 'U' %}"></script>
   <!-- Include marked library from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
