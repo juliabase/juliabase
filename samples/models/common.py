@@ -42,7 +42,7 @@ from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
-from datetime import datetime, timedelta
+from datetime import datetime as dt, timedelta
 
 
 def empty_list():
@@ -443,7 +443,7 @@ class Process(PolymorphicModel):
         This function is called by the class and is used to fetch all the elements between
         a begin_date and an end_date.
         """
-        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        end_date = dt.strptime(end_date, '%Y-%m-%d')
 
         # Add one day to end_date
         end_date += timedelta(days=1)
