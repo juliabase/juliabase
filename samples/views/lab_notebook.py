@@ -26,7 +26,7 @@ information.
 """
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser
 from urllib.parse import quote_plus
 from django.http import Http404, HttpResponse
@@ -183,6 +183,93 @@ class DateForm(forms.Form):
 #                                    kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
 #     return previous_url, next_url
 
+def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
+    """Determine the full relative URLs (i.e., only the domain is missing) of
+    the previous and next month in the lab notebook, taking the current lab
+    notebook view as the starting point.
+
+    We pick the previous month before the begin date, and the next month after
+    the end date.
+
+    :param process_name: the class name of the model of the physical process in
+        camel case, e.g. ``"large_area_deposition"``
+    :param namespace: namespace the lab notebook URL resides in
+    :param begin_date: begin date of the current view
+    :param month: month of the current view
+
+    :type process_name: str
+    :type namespace: str
+    :type year: int
+    :type month: int
+
+    :return:
+      the full relative URL to the previous month, the full relative URL to the
+      next month
+
+    :rtype: str, str
+    """
+    begin_date = datetime.strptime(begin_date, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
+
+    # Get the first day of the begin_date input month
+    first_day_of_month_begin_date = begin_date.replace(day=1).strftime("%Y-%m-%d")
+
+    # Get the last day of the begin_date input month
+    last_day_of_month_begin_date = (begin_date.replace(day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    last_day_of_month_begin_date_str = last_day_of_month_begin_date.strftime("%Y-%m-%d")
+
+    # Get the first day of the end_date input month
+    first_day_of_month_end_date = end_date.replace(day=1).strftime("%Y-%m-%d")
+
+    # Get the last day of the end_date input month
+    last_day_of_month_end_date = (end_date.replace(day=1) + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+    last_day_of_month_end_date_str = last_day_of_month_end_date.strftime("%Y-%m-%d")
+
+    # Get the first day of the previous month based on the begin_date
+    first_day_of_previous_month = (begin_date.replace(day=1) - timedelta(days=1)).replace(day=1)
+    first_day_of_previous_month_str = first_day_of_previous_month.strftime("%Y-%m-%d")
+
+    # Get the last day of the previous month based on the begin_date
+    last_day_of_previous_month = (begin_date.replace(day=1) - timedelta(days=1))
+    last_day_of_previous_month_str = last_day_of_previous_month.strftime("%Y-%m-%d")
+
+    # Get the first day of the next month based on the end_date
+    first_day_of_next_month = (end_date.replace(day=1) + timedelta(days=32)).replace(day=1)
+    first_day_of_next_month_str = first_day_of_next_month.strftime("%Y-%m-%d")
+
+    # Get the last day of the next month based on the end_date
+    last_day_of_next_month = (end_date.replace(day=1) + timedelta(days=64)).replace(day=1) - timedelta(days=1)
+    last_day_of_next_month_str = last_day_of_next_month.strftime("%Y-%m-%d")
+
+    # Checking if the previous month and next month are between 1990 and 2039. 
+    # I know, hard coding dates == not the best practice, but it works.
+    if last_day_of_previous_month.year >= 1990:
+        previous_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+                                            kwargs={"begin_date": "{0}".format(first_day_of_previous_month_str),
+                                                    "end_date": "{0}".format(last_day_of_previous_month_str)})
+    # If the previous month is before 1990, then simply return the current month.
+    else:
+        previous_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+                                            kwargs={"begin_date": "{0}".format(first_day_of_month_begin_date),
+                                                    "end_date": "{0}".format(last_day_of_month_begin_date_str)})
+
+    if last_day_of_next_month.year <= 2039:
+        next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+                                    kwargs={"begin_date": "{0}".format(first_day_of_next_month_str),
+                                            "end_date": "{0}".format(last_day_of_next_month_str)})
+    # If the next month is after 2039, then simply return the current month.
+    else:
+        next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+                                            kwargs={"begin_date": "{0}".format(first_day_of_month_end_date),
+                                                    "end_date": "{0}".format(last_day_of_month_end_date_str)})
+
+        
+
+    
+
+    return previous_url, next_url
+
 
 # @help_link("demo.html#lab-notebooks")
 # @login_required
@@ -317,6 +404,8 @@ def show(request, process_name, begin_date=False, end_date=False):
     # Render the template
     template_context["request"] = request
     html_body = template.render(template_context.flatten())
+    # Get the previous months
+    previous_url, next_url = get_previous_next_month_urls(process_name, namespace, begin_date, end_date)
     try:
         # I commented the next line since the form is never valid because it might be filled
         # but it might not be bound :/
@@ -332,7 +421,7 @@ def show(request, process_name, begin_date=False, end_date=False):
                   {"title": capitalize_first_letter(_("lab notebook for {process_name}")
                                                     .format(process_name=process_class._meta.verbose_name_plural)),
                         "date_form": date_form,
-                   "html_body": html_body,
+                   "html_body": html_body,"previous_url": previous_url, "next_url": next_url,
                    "export_url": export_url})
 
 

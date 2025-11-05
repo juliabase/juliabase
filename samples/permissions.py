@@ -227,14 +227,32 @@ def get_lab_notebooks(user):
     lab_notebooks = []
     for process_class, process in get_all_addable_physical_process_models().items():
         try:
-            url = django.urls.reverse(
-                process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label)
+            # Temporary fix. Since for some reason Raman notebooks weren't programmed like other
+            # notebooks, it has been pretty difficult to make it possible to pick a date range
+            # instead of a fixed year and month. That is why this if statement is used to 
+            # specifically pick raman notebooks and use the normal year/month date system
+            # rather than the date range system.
+            
+            if "raman" in process["type"].lower():
+                
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
+            
+            # If the notebook is not raman, then use the date range system.
+            else:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label)
         except django.urls.NoReverseMatch:
             pass
         else:
+            if url.endswith("//"):
+                url = url[:-1]
+            # raise ValueError("process:", url)
             if has_permission_to_view_lab_notebook(user, process_class):
                 lab_notebooks.append({"label": process["label_plural"], "url": url})
+
     lab_notebooks.sort(key=lambda process: process["label"].lower())
     return lab_notebooks
 
