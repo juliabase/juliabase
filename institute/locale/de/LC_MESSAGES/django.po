@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-17 23:20+0200\n"
+"POT-Creation-Date: 2024-03-26 10:09+0100\n"
 "PO-Revision-Date: 2018-05-17 23:22+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -35,27 +35,6 @@ msgstr ""
 #: institute/apps.py:31
 msgid "Institute"
 msgstr "Institut"
-
-#: institute/apps.py:45
-msgctxt "top-level menu item"
-msgid "explore"
-msgstr "erkunden"
-
-#: institute/apps.py:46
-msgid "samples by name"
-msgstr "Proben nach Name"
-
-#: institute/apps.py:46
-msgid "depositions by number"
-msgstr "Depositionen nach Nummer"
-
-#: institute/apps.py:48
-msgid "manage"
-msgstr "verwalten"
-
-#: institute/apps.py:49
-msgid "edit “My Layers”"
-msgstr "“Meine Schichten” ändern"
 
 #: institute/context_processors.py:33
 #, python-brace-format
@@ -649,8 +628,8 @@ msgid ""
 "page where one could enter a new bug.  This way, users can report issues to "
 "the\n"
 "<em>local</em> web developer, who then may forward some of them\n"
-"to <a href=\"https://github.com/juliabase/juliabase/issues/new"
-"\">JuliaBase's\n"
+"to <a href=\"https://github.com/juliabase/juliabase/issues/"
+"new\">JuliaBase's\n"
 "central issue tracker</a>.  However, this demo site deliberately doesn't "
 "have a\n"
 "bug tracker installed so that this message can be delivered.  You may\n"
@@ -662,9 +641,9 @@ msgstr ""
 "Normalerweise führt ein Klick auf das grüne Käfer-Icon auf eine Seite, auf "
 "der man einen neuen Bug eintragen kann.  Auf diese Weise wird ein solcher an "
 "den <em>lokalen</em> Web-Entwickler gemeldet, welcher seinerseits einige "
-"davon an <a href=\"https://github.com/juliabase/juliabase/issues/new"
-"\">JuliaBases zentralen Bugtracker</a> weiterleiten könnte.  Diese Demo-Site "
-"hat allerdings keinen Bug-Tracker installiert, damit eben diese Meldung "
+"davon an <a href=\"https://github.com/juliabase/juliabase/issues/"
+"new\">JuliaBases zentralen Bugtracker</a> weiterleiten könnte.  Diese Demo-"
+"Site hat allerdings keinen Bug-Tracker installiert, damit eben diese Meldung "
 "angezeigt werden kann.  Man könnte <a href=\"http://trac.edgewall.org/"
 "\">Trac</a> oder <a href=\"http://www.redmine.org/\">Redmine</a> zum "
 "Bugtracking benutzen, oder auf eine <a href=\"https://github.com\">GitHub</"
@@ -1133,10 +1112,6 @@ msgstr "Informellen Stapel von „{sample}“ kopieren"
 msgid "Layer stack of {0}"
 msgstr "Schichtstapel von {0}"
 
-#: institute/views/samples/statistics.py:26
-msgid "JuliaBase server statistics"
-msgstr "JuliaBase-Server-Statistiken"
-
 #: institute/views/samples/substrate.py:68
 #, python-brace-format
 msgid ""
@@ -1150,6 +1125,25 @@ msgstr ""
 #, python-brace-format
 msgid "Sample {0} has already a substrate."
 msgstr "Die Probe {0} hat bereits ein Substrat."
+
+#~ msgctxt "top-level menu item"
+#~ msgid "explore"
+#~ msgstr "erkunden"
+
+#~ msgid "samples by name"
+#~ msgstr "Proben nach Name"
+
+#~ msgid "depositions by number"
+#~ msgstr "Depositionen nach Nummer"
+
+#~ msgid "manage"
+#~ msgstr "verwalten"
+
+#~ msgid "edit “My Layers”"
+#~ msgstr "“Meine Schichten” ändern"
+
+#~ msgid "JuliaBase server statistics"
+#~ msgstr "JuliaBase-Server-Statistiken"
 
 #~ msgid "Substrate"
 #~ msgstr "Substrat"

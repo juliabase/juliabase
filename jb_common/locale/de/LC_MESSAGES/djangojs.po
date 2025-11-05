@@ -1,0 +1,73 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-26 10:15+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:95
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:116
+msgid "Processing..."
+msgstr "Verarbeitung läuft..."
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:96
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:117
+msgid "Search&nbsp;:"
+msgstr "Suchen&nbsp;:"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:97
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:118
+msgid "Show _MENU_ entries"
+msgstr "Zeige _MENU_ Einträge"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:98
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:119
+msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
+msgstr "Anzeige von _START_ bis _END_ von insgesamt _TOTAL_ Einträgen"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:99
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:120
+msgid "Showing 0 to 0 of total 0 entries"
+msgstr "Anzeige von 0 bis 0 von insgesamt 0 Einträgen"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:100
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:121
+msgid "(filtered from total _MAX_ entries)"
+msgstr "(gefiltert von _MAX_ Einträgen insgesamt)"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:102
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:123
+msgid "Loading records..."
+msgstr "Datensätze werden geladen..."
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:103
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:124
+msgid "No entries found"
+msgstr "Keine Einträge gefunden"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:104
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:125
+msgid "No data available"
+msgstr "Keine Daten verfügbar"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:106
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:127
+msgid ": activate to sort column ascending"
+msgstr ": aktivieren, um die Spalte aufsteigend zu sortieren"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:107
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:128
+msgid ": activate to sort column descending"
+msgstr ": aktivieren, um die Spalte absteigend zu sortieren"
