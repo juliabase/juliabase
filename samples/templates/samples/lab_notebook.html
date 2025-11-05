@@ -28,7 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
 
 {% block cos %}
-<link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/lab_notebook.css' %}">
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.4/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.js"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/labcss.css' %}">
 {% endblock %}
 
 
@@ -44,18 +48,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </div>
 </form>
 
-{% translate 'Click on any column to sort in ascending or descending order.' %}
 <div class="lock-header">
   {{ html_body }}
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script type="text/javascript" src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
+<script type="module">
+  $(document).ready( function () {
+      $('.lab-notebook').DataTable();
+  } );
+</script>
+
 <!-- Include marked library from CDN -->
 <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
 
 <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
-
+<div id="rooting" />
+<script src="{% static 'index-bundle.js' %}"></script>
 {% endblock %}

@@ -21,7 +21,7 @@ better place to be (yet).
 
 from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
-from django.http import HttpResponsePermanentRedirect, Http404
+from django.http import HttpResponsePermanentRedirect, Http404, JsonResponse
 from django.views.decorators.http import require_http_methods
 import django.urls
 import django.forms as forms
@@ -33,6 +33,7 @@ from jb_common.utils.base import help_link, is_json_requested, respond_in_json, 
 from jb_common.models import Topic
 import samples.utils.views as utils
 from samples.models import ExternalOperator, Process
+from django.core.cache import cache
 
 
 class MySeries:
@@ -333,3 +334,10 @@ def export_process(request, process_id):
                                                          "old_data": old_data_form,
                                                          "backlink": request.GET.get("next", "")})
 _ = gettext
+
+
+@login_required
+@require_http_methods(["GET"])
+def clear_cache(request):
+    cache.clear()
+    return JsonResponse({'message': 'Cache cleared successfully'})
