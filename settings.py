@@ -155,8 +155,7 @@ INSTALLED_APPS = [
     "oai_pmh",
     "institute",
     "samples",
-    "jb_common",
-    'compressor'
+    "jb_common"
 ]
 
 SITE_ID = 1
