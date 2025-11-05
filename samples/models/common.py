@@ -442,10 +442,10 @@ class Process(PolymorphicModel):
         This function is called by the class and is used to fetch all the elements between
         a begin_date and an end_date.
         """
-        end_date = dt.strptime(end_date, '%Y-%m-%d')
+        end_date = dt.strptime(end_date, "%Y-%m-%d")
         end_date += timedelta(days=1)
         end_date = end_date.strftime("%Y-%m-%d")
-        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related()
+        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('-timestamp')
         return {"processes": processes}
 
     def get_cache_key(self, user_settings_hash, local_context):
