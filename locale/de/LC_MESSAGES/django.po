@@ -44,3 +44,9 @@ msgstr "Altschema"
 #: settings.py:182
 msgid "new-style"
 msgstr "Neuschema"
+
+msgid "Begin Date"
+msgstr "Anfangsdatum"
+
+msgid "End Date"
+msgstr "Enddatum"
