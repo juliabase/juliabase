@@ -65,7 +65,7 @@ LANGUAGE_CODE = "en-us"
 
 USE_I18N = True
 DATETIME_FORMAT = "D, j. N Y, H:i:s"
-DATE_FORMAT = "D, j. N Y"
+DATE_FORMAT = 'd-m-Y'
 
 
 LOGGING = copy.deepcopy(django.utils.log.DEFAULT_LOGGING)

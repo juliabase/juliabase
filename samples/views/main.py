@@ -34,6 +34,7 @@ from jb_common.models import Topic
 import samples.utils.views as utils
 from samples.models import ExternalOperator, Process
 from django.core.cache import cache
+from datetime import date, datetime, timedelta
 
 
 class MySeries:
@@ -105,6 +106,12 @@ def main_menu(request):
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user)
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = permissions.get_lab_notebooks(request.user)
+    # Get the current date for the screenprinter paste
+    current_date = date.today()
+    begin_date = current_date.replace(day=1)
+    next_month = current_date.replace(day=28) + timedelta(days=4)  # to get the last day of the month reliably
+    end_date = next_month - timedelta(days=next_month.day)
+
     return render(request, "samples/main_menu.html",
                   {"title": _("Main menu"),
                    "my_topics": my_topics,
@@ -117,7 +124,9 @@ def main_menu(request):
                    "has_external_contacts": permissions.can_edit_any_external_contacts(request.user),
                    "can_rename_samples": request.user.has_perm("samples.rename_samples"),
                    "physical_processes": allowed_physical_processes,
-                   "lab_notebooks": lab_notebooks})
+                   "lab_notebooks": lab_notebooks,
+                   'begin_date': begin_date,
+                   'end_date': end_date})
 
 
 class SearchDepositionsForm(forms.Form):
