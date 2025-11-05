@@ -7,7 +7,7 @@ $(document).ready( function () {
                           "#dip-bench",        
                           "#hercules",          
                           "#jana",               
-                          "#jopes",               
+                                        
                           "#joseph",               
                           "#lada",                  
                           "#large-sputter",          
