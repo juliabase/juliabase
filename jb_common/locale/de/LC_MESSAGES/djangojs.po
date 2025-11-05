@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-26 10:15+0100\n"
+"POT-Creation-Date: 2024-04-24 10:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,57 +17,58 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:95
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:116
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:20
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:41
 msgid "Processing..."
 msgstr "Verarbeitung läuft..."
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:96
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:117
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:21
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:42
 msgid "Search&nbsp;:"
 msgstr "Suchen&nbsp;:"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:97
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:118
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:22
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:43
 msgid "Show _MENU_ entries"
 msgstr "Zeige _MENU_ Einträge"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:98
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:119
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:23
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:44
 msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
 msgstr "Anzeige von _START_ bis _END_ von insgesamt _TOTAL_ Einträgen"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:99
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:120
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:24
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:45
 msgid "Showing 0 to 0 of total 0 entries"
 msgstr "Anzeige von 0 bis 0 von insgesamt 0 Einträgen"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:100
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:121
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:25
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:46
 msgid "(filtered from total _MAX_ entries)"
 msgstr "(gefiltert von _MAX_ Einträgen insgesamt)"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:102
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:123
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:27
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:48
 msgid "Loading records..."
 msgstr "Datensätze werden geladen..."
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:103
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:124
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:28
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:49
 msgid "No entries found"
 msgstr "Keine Einträge gefunden"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:104
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:125
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:29
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:50
 msgid "No data available"
 msgstr "Keine Daten verfügbar"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:106
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:127
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:31
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:52
 msgid ": activate to sort column ascending"
 msgstr ": aktivieren, um die Spalte aufsteigend zu sortieren"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:107
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:128
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:32
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:53
 msgid ": activate to sort column descending"
 msgstr ": aktivieren, um die Spalte absteigend zu sortieren"
