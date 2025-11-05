@@ -450,8 +450,20 @@ class Process(PolymorphicModel):
 
         # Convert modified datetime object back to string without seconds, hours, and minutes
         end_date = end_date.strftime('%Y-%m-%d')
-        # Filter processes by timestamp range
-        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related()
+
+        # Fetch the first two records to check the order
+        # first_two_records = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('timestamp')[:2]
+
+        # # Check if the list is already sorted in descending order
+        # is_descending = len(first_two_records) < 2 or first_two_records[0].timestamp >= first_two_records[1].timestamp
+
+        # raise ValueError(first_two_records[0].timestamp, "-----", first_two_records[1].timestamp )
+
+        # if not is_descending:
+        #     processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('-timestamp').order_by('-timestamp')
+        # else:
+            # Filter processes by timestamp range
+        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('-timestamp')
         return {"processes": processes}
 
 
