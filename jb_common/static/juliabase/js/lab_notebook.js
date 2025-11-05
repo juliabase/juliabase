@@ -45,6 +45,7 @@ $(document).ready( function () {
                             #screenprinter-paste,          \
                             #manual-cleaning,               \
                             #screenprinter-screen)').DataTable({
+            order: [[0, 'desc']],
             scrollX: true,
             language: langDict,
         fixedColumns: true,
@@ -66,6 +67,7 @@ $(document).ready( function () {
                     $(row).addClass('table-danger');
                   }
               },
+                  order: [[0, 'desc']],
                   scrollX: true,
                   language: langDict,
                   fixedColumns: true,
@@ -86,6 +88,7 @@ $(document).ready( function () {
                     $(row).addClass('table-danger');
                   }
               },
+                  order: [[0, 'desc']],
                   scrollX: true,
                   language: langDict,
                   fixedColumns: true,
@@ -95,6 +98,7 @@ $(document).ready( function () {
 
         $('#screenprinter').DataTable( {
             language: langDict,
+            order: [[0, 'desc']],
             scrollX: true,
             fixedColumns: true,
             fixedHeader: true, // Enable FixedHeader extension
