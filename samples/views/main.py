@@ -345,6 +345,7 @@ def export_process(request, process_id):
 _ = gettext
 
 
+# FIXME: This is pretty useless. Might delete later :)
 @login_required
 @require_http_methods(["GET"])
 def clear_cache(request):
