@@ -398,9 +398,14 @@ def show(request, process_name, begin_date=False, end_date=False):
     
     # Fetch the template to be used
     template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
-    # Fetch all the rows from the table of the chosen process 
-    # whose begin and end dates are between the specified range 
-    template_context = RequestContext(request, process_class.get_lab_notebook_context_range(begin_date, end_date))
+    if "screenprinter_paste" in process_name or "screenprinter_screen" in process_name:
+        # If the notebook does not support range search, fetch everything
+        template_context = RequestContext(request, process_class.get_lab_notebook_context_all())
+    else:
+        # Fetch all the rows from the table of the chosen process 
+        # whose begin and end dates are between the specified range 
+        template_context = RequestContext(request, process_class.get_lab_notebook_context_range(begin_date, end_date))
+    
     # Render the template
     template_context["request"] = request
     html_body = template.render(template_context.flatten())

@@ -61,7 +61,7 @@
   
   {% block frame_content %}
   
-  <form method="post">{% csrf_token %}
+  <form method="post" id="date-form">{% csrf_token %}
     {% error_list date_form _("Error in date") %}
     <div style="text-align: center">
       {{ date_form.begin_date.label }}/{{ date_form.end_date.label }}<br/>
