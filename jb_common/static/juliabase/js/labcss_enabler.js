@@ -21,7 +21,7 @@ $(document).ready( function () {
         // Check if the table with the current ID exists
         if ($(tableId).length > 0) {
             // Import the CSS file if the table exists
-            $('head').append(`<link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/labcss.css' %}">`);
+            $('head').append(`<link rel="stylesheet" type="text/css" href="../css/labcss.css">`);
         }
     });
   } );
