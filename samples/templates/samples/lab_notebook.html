@@ -22,11 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load juliabase %}
 {% load samples_extras %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/lab_notebook.css' %}">
 
 {% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon" 
      href="{{ export_url }}"><img src="{% static "juliabase/icons/table.png" %}" alt="export icon"
         title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
+
+{% block cos %}
+<link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/lab_notebook.css' %}">
+{% endblock %}
+
 
 {% block frame_content %}
 <form method="post">{% csrf_token %}
@@ -44,7 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <div class="lock-header">
   {{ html_body }}
 </div>
-{% endblock %}
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script type="text/javascript" src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
@@ -54,3 +57,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
 
 <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
+
+{% endblock %}
