@@ -463,7 +463,10 @@ class Process(PolymorphicModel):
         #     processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('-timestamp').order_by('-timestamp')
         # else:
             # Filter processes by timestamp range
-        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('-timestamp')
+        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related()#.order_by('-timestamp')
+        # raise ValueError(processes[0].timestamp)
+        # processes.sort(key=lambda loana: loana.timestamp, reverse=False)
+        # raise ValueError(processes[0].timestamp)
         return {"processes": processes}
 
 
