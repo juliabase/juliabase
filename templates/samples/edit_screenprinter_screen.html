@@ -1,0 +1,57 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% extends "samples/base.html" %}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load juliabase %}
+{% load samples_extras %}
+
+{% block frame_content %}
+<form method="post">{% csrf_token %}
+  {% error_list process _("Error in process") %}
+  {% error_list samples _("Error in sample list") %}
+  <table class="padding5">
+    <tbody>
+      <tr> {% input_field process.index %} </tr>
+      <tr> {% input_field process.inventory_number %} </tr>
+      <tr> {% input_field process.wafer_size %} </tr>
+      <tr> {% input_field process.supplier %} </tr>
+      <tr> {% input_field process.number_busbars %} </tr>
+      <tr> {% input_field process.width_busbars %} </tr>
+      <tr> {% input_field process.numbers_finger %} </tr>
+      <tr> {% input_field process.width_fingers %} </tr>
+      <tr> {% input_field process.pitch %} </tr>
+      <tr> {% input_field process.emulsion_mesh %} </tr>
+      <tr> {% input_field process.wires_per_inch %} </tr>
+      <tr> {% input_field process.knotless %} </tr>
+      <tr> {% input_field process.rotated %} </tr>
+      <tr> {% input_field process.used_for_paste %} </tr>
+      <tr> {% input_field process.screen_arrived_on %} </tr>
+      <tr> {% input_field process.screen_broken_on %} </tr>
+      <tr> {% input_field process.corresponding_corel_draw %} </tr>
+      <tr> {% input_field process.comment %} </tr>
+    </tbody>
+  </table>
+
+
+  {% include "samples/edit_description.html" %}
+
+ 
+
+  <p class="submit-button"><input type="submit"/></p>
+</form>
+
+
+{% endblock %}
+

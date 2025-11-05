@@ -1,0 +1,39 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+
+<table class="padding5">
+  <tbody>
+    <tr> {% value_field process.index %} </tr>
+    <tr> {% value_field process.inventory_number %} </tr>
+    <tr> {% value_field process.wafer_size %} </tr>
+    <tr> {% value_field process.supplier %} </tr>
+    <tr> {% value_field process.number_busbars %} </tr>
+    <tr> {% value_field process.width_busbars %} </tr>
+    <tr> {% value_field process.numbers_finger %} </tr>
+    <tr> {% value_field process.width_fingers %} </tr>
+    <tr> {% value_field process.pitch %} </tr>
+    <tr> {% value_field process.emulsion_mesh %} </tr>
+    <tr> {% value_field process.wires_per_inch %} </tr>
+    <tr> {% value_field process.knotless %} </tr>
+    <tr> {% value_field process.rotated %} </tr>
+    <tr> {% value_field process.used_for_paste %} </tr>
+    <tr> {% value_field process.screen_arrived_on %} </tr>
+    <tr> {% value_field process.screen_broken_on %} </tr>
+    <tr> {% value_field process.corresponding_corel_draw %} </tr>
+    <tr> {% value_field process.comment %} </tr>
+  </tbody>
+</table>

@@ -1,0 +1,97 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of Chantal, the samples database.
+
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
+
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
+{% endcomment %}
+
+{% load i18n %}
+{% load samples_extras %}
+
+{% if processes %}
+<table class="lab-notebook" style="min-width: 100%">
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+    <colgroup style="background-color: #888888"></colgroup>
+    <colgroup style="background-color: #c2c2c2"></colgroup>
+
+    <thead>
+      <tr>
+        <th class="top">{% translate 'Index' %}</th>   
+        <th class="top">{% translate 'Inventory number' %}</th>
+        <th class="top">{% translate 'Wafer Size' %}</th>
+        <th class="top">{% translate 'Front side or rear side' %}</th>
+        <th class="top">{% translate 'Number of busbars' %}</th>
+        <th class="top">{% translate 'Width of busbars in mm' %}</th>
+        <th class="top">{% translate 'Numbers of fingers' %}</th>
+        <th class="top">{% translate 'Width of fingers in µm' %}</th>
+        <th class="top">{% translate 'Pitch between fingers in mm' %}</th>
+        <th class="top">{% translate 'Emulsion over mesh (EOM) in µm' %}</th>
+        <th class="top">{% translate 'Mesh (number of wires per inch/diameter of wire in µm, mesh angle)' %}</th>
+        <th class="top">{% translate 'Knotless' %}</th>
+        <th class="top">{% translate 'Screen can be rotated 180° for double print' %}</th>
+        <th class="top">{% translate 'Used for which paste' %}</th>
+        <th class="top">{% translate 'Screen arrived on' %}</th>
+        <th class="top">{% translate 'Screen broken on' %}</th>
+        <th class="top">{% translate 'Corresponding CorelDraw file' %}</th>
+        <th class="top">{% translate 'Comment' %}</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for process in processes reversed %}
+      <tr
+      {% if process.screen_broken_on is not Null %} 
+      style="background-color: crimson"     
+      {% endif %} 
+      > 
+          <td class="top" style="border-bottom: 1px solid">{{ process.index }}</td>
+         
+          <td class="top" style="border-bottom: 1px solid"><a href="{% url 'iek5:edit_screenprinter_screen' screenprinter_screen_id=process.pk %}">{{ process.inventory_number }}</a></td>
+
+          <td class="top" style="border-bottom: 1px solid">{{ process.wafer_size }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.supplier }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.number_busbars }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.width_busbars }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.numbers_finger }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.width_fingers }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.pitch }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.emulsion_mesh }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.wires_per_inch }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.knotless }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.rotated }}</td>
+
+
+          <td class="top" style="border-bottom: 1px solid">{{ process.used_for_paste }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.screen_arrived_on }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.screen_broken_on }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.corresponding_corel_draw }}</td>
+          <td class="top" style="border-bottom: 1px solid">{{ process.comment }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>{% translate 'No data found for this time range.' %}</p>
+{% endif %}

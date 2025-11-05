@@ -168,21 +168,26 @@ class ProcessForm(ModelForm):
         self.user = user
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
-        if not self.process or self.unfinished:
-            kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
-        if not self.process:
-            kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
-            kwargs["initial"].setdefault("combined_operator", user.pk)
+        if not hasattr(self, 'no_operator'):
+            if not self.process or self.unfinished:
+                kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
+            if not self.process:
+                kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
+                kwargs["initial"].setdefault("combined_operator", user.pk)
         super().__init__(*args, **kwargs)
-        if self.process and self.process.finished:
-            self.fields["finished"].disabled = True
-        self.fields["combined_operator"].set_choices(user, self.process)
-        if not user.is_superuser:
-            self.fields["external_operator"].choices = []
-            self.fields["operator"].choices = []
-            self.fields["operator"].required = False
-        else:
-            self.fields["combined_operator"].required = False
+        if not hasattr(self, 'no_operator'):
+            if self.process and self.process.finished:
+                self.fields["finished"].disabled = True
+            self.fields["combined_operator"].set_choices(user, self.process)
+            if not user.is_superuser:
+                self.fields["external_operator"].choices = []
+                self.fields["operator"].choices = []
+                self.fields["operator"].required = False
+            else:
+                self.fields["combined_operator"].required = False
+        if hasattr(self, 'no_operator'):
+            t = self.fields
+            self.fields.pop("combined_operator")
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
