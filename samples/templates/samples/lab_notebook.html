@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 {% load static %}
 
-{% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon" 
+{% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon"
      href="{{ export_url }}"><img src="{% static "juliabase/icons/table.png" %}" alt="export icon"
         title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
 
@@ -37,13 +37,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 {% block frame_content %}
-<form method="post">{% csrf_token %}
-  {% error_list date_form _("Error in date") %}
-  <div style="text-align: center">
-    {{ date_form.begin_date.label }}/{{ date_form.end_date.label }}<br/>
-    {{ date_form.begin_date }}/{{ date_form.end_date }}<br/>
-    <div class="screen-only" style="margin-top: 1ex">
-      <input type="submit"/><br/>
+  <form method="post" id="date-form">{% csrf_token %}
+    {% error_list date_form _("Error in date") %}
+    <div style="text-align: center">
+      {{ date_form.begin_date.label }}/{{ date_form.end_date.label }}<br/>
+      {{ date_form.begin_date }}/{{ date_form.end_date }}<br/>
+      <div class="screen-only" style="margin-top: 1ex">
+        <input type="submit"/><br/>
+      </div>
     </div>
   </div>
 </form>
