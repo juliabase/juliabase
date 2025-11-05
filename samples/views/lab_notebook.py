@@ -90,12 +90,12 @@ class DateForm(forms.Form):
     currently selected, and also change it.
     """
     begin_date = forms.DateField(
-        label='Begin Date',
+        label=_('Begin Date'),
         widget=forms.SelectDateWidget(years=range(1990, 2040))
     )
 
     end_date = forms.DateField(
-        label='End Date',
+        label=_('End Date'),
         widget=forms.SelectDateWidget(years=range(1990, 2040))
     )
 
@@ -113,75 +113,75 @@ class DateForm(forms.Form):
 
 
 
-date_pattern = re.compile(r"(?P<from_year>\d{4})/(?P<from_month>\d{1,2})/(?P<from_day>\d{1,2})/(?P<to_year>\d{4})/(?P<to_month>\d{1,2})/(?P<to_day>\d{1,2})$")
-def parse_dates(dates):
-    """Parse the URL suffix in the lab notebook URL which is supposed to
-    contain year and month.
+# date_pattern = re.compile(r"(?P<from_year>\d{4})/(?P<from_month>\d{1,2})/(?P<from_day>\d{1,2})/(?P<to_year>\d{4})/(?P<to_month>\d{1,2})/(?P<to_day>\d{1,2})$")
+# def parse_dates(dates):
+#     """Parse the URL suffix in the lab notebook URL which is supposed to
+#     contain year and month.
 
-    :param year_and_month: the year-and-month part of the URL given in the
-        request, i.e. of the form ``"YYYY/MM"`` (the month may be single-digit)
+#     :param year_and_month: the year-and-month part of the URL given in the
+#         request, i.e. of the form ``"YYYY/MM"`` (the month may be single-digit)
 
-    :type year_and_month: str
+#     :type year_and_month: str
 
-    :return:
-      year found in the URL, month found in the URL
+#     :return:
+#       year found in the URL, month found in the URL
 
-    :rtype: int, int
+#     :rtype: int, int
 
-    :raises Http404: if the year-and-month string has an invalid format or was
-        empty, or month and year refer to an invalid date, or the year precedes
-        1990.
-    """
-    match = date_pattern.match(dates)
-    if not match:
-        raise Http404("Invalid dates")
-    from_year, from_month, from_day = int(match.group("from_year")), int(match.group("from_month")), int(match.group("from_day"))
-    to_year, to_month, to_day = int(match.group("to_year")), int(match.group("to_month")), int(match.group("to_day"))
+#     :raises Http404: if the year-and-month string has an invalid format or was
+#         empty, or month and year refer to an invalid date, or the year precedes
+#         1990.
+#     """
+#     match = date_pattern.match(dates)
+#     if not match:
+#         raise Http404("Invalid dates")
+#     from_year, from_month, from_day = int(match.group("from_year")), int(match.group("from_month")), int(match.group("from_day"))
+#     to_year, to_month, to_day = int(match.group("to_year")), int(match.group("to_month")), int(match.group("to_day"))
     
-    # if not 1990 <= from_year or not 1 <= from_month <= 12:
-    #     raise Http404("Invalid year and/or month")
-    return from_year, from_month, from_day, to_year, to_month, to_day
+#     # if not 1990 <= from_year or not 1 <= from_month <= 12:
+#     #     raise Http404("Invalid year and/or month")
+#     return from_year, from_month, from_day, to_year, to_month, to_day
 
 
-def get_previous_next_urls(process_name, namespace, year, month):
-    """Determine the full relative URLs (i.e., only the domain is missing) of
-    the previous and next month in the lab notebook, taking the current lab
-    notebook view as the starting point.
+# def get_previous_next_urls(process_name, namespace, year, month):
+#     """Determine the full relative URLs (i.e., only the domain is missing) of
+#     the previous and next month in the lab notebook, taking the current lab
+#     notebook view as the starting point.
 
-    :param process_name: the class name of the model of the physical process in
-        camel case, e.g. ``"large_area_deposition"``
-    :param namespace: namespace the lab notebook URL resides in
-    :param year: year of the current view
-    :param month: month of the current view
+#     :param process_name: the class name of the model of the physical process in
+#         camel case, e.g. ``"large_area_deposition"``
+#     :param namespace: namespace the lab notebook URL resides in
+#     :param year: year of the current view
+#     :param month: month of the current view
 
-    :type process_name: str
-    :type namespace: str
-    :type year: int
-    :type month: int
+#     :type process_name: str
+#     :type namespace: str
+#     :type year: int
+#     :type month: int
 
-    :return:
-      the full relative URL to the previous month, the full relative URL to the
-      next month
+#     :return:
+#       the full relative URL to the previous month, the full relative URL to the
+#       next month
 
-    :rtype: str, str
-    """
-    previous_year = next_year = year
-    previous_month = next_month = month
-    previous_url = next_url = None
-    previous_month -= 1
-    if previous_month == 0:
-        previous_month = 12
-        previous_year -= 1
-    if previous_year >= 1990:
-        previous_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
-                                           kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
-    next_month += 1
-    if next_month == 13:
-        next_month = 1
-        next_year += 1
-    next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
-                                   kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
-    return previous_url, next_url
+#     :rtype: str, str
+#     """
+#     previous_year = next_year = year
+#     previous_month = next_month = month
+#     previous_url = next_url = None
+#     previous_month -= 1
+#     if previous_month == 0:
+#         previous_month = 12
+#         previous_year -= 1
+#     if previous_year >= 1990:
+#         previous_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+#                                            kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
+#     next_month += 1
+#     if next_month == 13:
+#         next_month = 1
+#         next_year += 1
+#     next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
+#                                    kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
+#     return previous_url, next_url
 
 
 # @help_link("demo.html#lab-notebooks")
@@ -249,31 +249,34 @@ def format_date(year, month, day):
 
 @login_required
 def show(request, process_name, begin_date=False, end_date=False):
-    """View for showing one month of the lab notebook for a particular
+    """View for showing a lab notebook in a specified range for a particular
     physical process.  In ``urls.py``, you must give the entry for this view
     the name ``"lab_notebook_<camel_case_process_name>"``.
 
     :param request: the current HTTP Request object
     :param process_name: the class name of the model of the physical process,
         e.g. ``"LargeAreaDeposition"``
-    :param year_and_month: the year and month to be displayed in the format
-        ``YYYY/MM`` (the month may be single-digit)
+    :param begin_date: the beginning date to be displayed in the format
+        ``YYYY/MM/DD`` 
 
     :type request: HttpRequest
     :type process_name: str
-    :type year_and_month: str
+    :type begin_date: str
+    :type end_date: str
+    
 
     :return:
       the HTTP response object
 
     :rtype: HttpResponse
     """
+    # Here we get the current process, namespace and set the permissions
     process_class = get_all_models()[process_name]
     process_name = camel_case_to_underscores(process_name)
     namespace = process_class._meta.app_label
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     
-
+    # If not date is given, pick today's date
     if not begin_date and not end_date:
         try:
             timestamp = process_class.objects.latest().timestamp
@@ -282,14 +285,16 @@ def show(request, process_name, begin_date=False, end_date=False):
         
         # Pick the last day of the chosen month, then create 
         # formatted begin and end variables that contain
-        # the whole date in 8 characters: yyyymmdd
+        # the whole date in 8 characters: yyyy-mm-dd
         x, last_day = calendar.monthrange(timestamp.year, timestamp.month)
         begin = format_date(timestamp.year, timestamp.month, 1)
         end = format_date(timestamp.year, timestamp.month, last_day)
         
         return HttpResponseSeeOther("{0}/{1}".format(begin, end))
     
+    # Check if the form was submitted by the user
     if request.method == "POST":
+        # If yes, send a response with the chosen dates
         date_form = DateForm(request.POST)
         if date_form.is_valid():
             begin_date = date_form.cleaned_data['begin_date']
@@ -299,17 +304,22 @@ def show(request, process_name, begin_date=False, end_date=False):
                 kwargs={"begin_date": "{begin_date}".format(**date_form.cleaned_data),
                         "end_date": "{end_date}".format(**date_form.cleaned_data)}))
     else:
+        # If not, pick the current begin and end dates and create a form
         initial_data = {'begin_date': begin_date,
                         'end_date': end_date}
         date_form = DateForm(initial=initial_data)
     
+    # Fetch the template to be used
     template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
+    # Fetch all the rows from the table of the chosen process 
+    # whose begin and end dates are between the specified range 
     template_context = RequestContext(request, process_class.get_lab_notebook_context_range(begin_date, end_date))
+    # Render the template
     template_context["request"] = request
     html_body = template.render(template_context.flatten())
     try:
         # I commented the next line since the form is never valid because it might be filled
-        # but it is not bound :/
+        # but it might not be bound :/
         # if date_form.is_valid():
         export_url = django.urls.reverse(
             "{}:export_lab_notebook_{}".format(namespace, process_name),
@@ -317,6 +327,7 @@ def show(request, process_name, begin_date=False, end_date=False):
                     'end_date': end_date}) + "?next=" + quote_plus(request.path)
     except django.urls.NoReverseMatch:
         export_url = None
+    # Render the final page using html_body from before
     return render(request, "samples/lab_notebook.html",
                   {"title": capitalize_first_letter(_("lab notebook for {process_name}")
                                                     .format(process_name=process_class._meta.verbose_name_plural)),

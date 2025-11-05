@@ -141,10 +141,10 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
     {% if user.is_superuser %}
       <li style='list-style-image: url("{% static "juliabase/icons/user_suit.png" %}")'><a href="admin/">{% translate 'administration'|capfirst %}</a></li>
     {% endif %}
-    {% if can_rename_samples %}
+    <!-- {% if can_rename_samples %}
       <li style='list-style-image: url("{% static "juliabase/icons/tag_red.png" %}")'>
         <a href="{% url 'samples:rename_sample' %}">{% translate 'rename sample'|capfirst %}</a></li>
-    {% endif %}
+    {% endif %} -->
     <li style='list-style-image: url("{% static "juliabase/icons/user_edit.png" %}")'>
       <a href="{% url 'samples:edit_preferences' login_name=user.username %}"
          >{% translate 'edit preferences'|capfirst %}</a></li>
@@ -188,8 +188,8 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
       <!-- FixMe: These menu items must not be links from here but from another menu page. -->
       <li style='list-style-image: url("{% static "juliabase/icons/server_lightning.png" %}")'>
         <a href="{% url 'samples:about' %}">{% translate 'about JuliaBase'|capfirst %}</a></li>
-      <li style='list-style-image: url("{% static "juliabase/icons/server_chart.png" %}")'>
-        <a href="{% url 'samples:statistics' %}">{% translate 'server statistics'|capfirst %}</a></li>
+      <!-- <li style='list-style-image: url("{% static "juliabase/icons/server_chart.png" %}")'>
+        <a href="{% url 'samples:statistics' %}">{% translate 'server statistics'|capfirst %}</a></li> -->
     {% endblock %}
   </ul>
 {% endblock %}
