@@ -243,6 +243,9 @@ def add_user_details(sender, instance, created=True, **kwargs):
         # Here we select from the database the IEK-5 department
         # We do so in order to set it as the default department of 
         # any user that just signed up to Chantal
+        # FIXME: This throws an exception if the object is empty. This usually
+        # never happens since the database is always full, but just keep this in
+        # mind ;)
         dep = jb_common_app.Department.objects.filter(app_label='iek5')[0]
         instance.jb_user_details.department = dep
 

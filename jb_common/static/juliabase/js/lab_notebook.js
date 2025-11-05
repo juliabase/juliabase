@@ -18,6 +18,7 @@ $(document).ready( function () {
         }
     };
 
+    
     // We use a timer here to allow everything to load before calling datatables.
     // This might not be necessary if 
     setTimeout(function() {

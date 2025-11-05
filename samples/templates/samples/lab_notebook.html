@@ -60,7 +60,7 @@
   <script type="text/javascript">
     var staticUrl = "{% static 'juliabase/css/labcss.css' %}";
   </script>
-  <!-- <script type="module" src="{% static 'juliabase/js/labcss_enabler.js' %}"></script> -->
+  <script type="module" src="{% static 'juliabase/js/labcss_enabler.js' %}"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/v/bs5-5.3.0/datatables.min.js"></script>
   
@@ -105,12 +105,6 @@
   <div class="lock-header">
     {{ html_body }}
   </div>
-<style>
-    .red {
-        background-color: red !important;
-      }
-
-  </style>
   <script src="{% url 'iek5:javascript-catalog' %}"></script>
   <script type="module">
     // console.log("{{ cols|escapejs }}")
@@ -196,7 +190,7 @@
                 
   } );
   </script>
-  <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
+  <script src="{% static 'juliabase/js/lab_notebook.js' %}?v={% now 'U' %}"></script>
   <!-- Include marked library from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
   
