@@ -482,6 +482,19 @@ def get_all_models(app_label=None):
     return all_models.copy()
 
 
+def get_model_field_names(model):
+    """
+    Get the names of all fields of a model.
+    
+    Args:
+        model: The Django model class.
+        
+    Returns:
+        List of field names.
+    """
+    return [field.name for field in model._meta.get_fields()]
+
+
 abstract_models = set()
 def register_abstract_model(abstract_model):
     """Register an abstract model class.  This way, it is returned by

@@ -42,6 +42,7 @@ from jb_common.models import Topic, PolymorphicModel, Department
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
+from datetime import datetime, timedelta
 
 
 def empty_list():
@@ -442,6 +443,13 @@ class Process(PolymorphicModel):
         This function is called by the class and is used to fetch all the elements between
         a begin_date and an end_date.
         """
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+        # Add one day to end_date
+        end_date += timedelta(days=1)
+
+        # Convert modified datetime object back to string without seconds, hours, and minutes
+        end_date = end_date.strftime('%Y-%m-%d')
         # Filter processes by timestamp range
         processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related()
         return {"processes": processes}

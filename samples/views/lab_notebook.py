@@ -36,8 +36,9 @@ from django.template import loader, RequestContext
 import django.forms as forms
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
+from django.core.serializers import serialize
 from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, \
-    capitalize_first_letter
+    capitalize_first_letter, get_model_field_names
 from samples import permissions
 import samples.utils.views as utils
 import calendar
@@ -398,9 +399,15 @@ def show(request, process_name, begin_date=False, end_date=False):
     
     # Fetch the template to be used
     template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
+    # serialized_data = 0
+    # raise ValueError("proc", dir(process_class))
+    cols = get_model_field_names(process_class)
+    
     if "screenprinter_paste" in process_name or "screenprinter_screen" in process_name:
         # If the notebook does not support range search, fetch everything
+        # serialized_data = serialize('json', process_class.get_lab_notebook_context_all())
         template_context = RequestContext(request, process_class.get_lab_notebook_context_all())
+
     else:
         # Fetch all the rows from the table of the chosen process 
         # whose begin and end dates are between the specified range 
@@ -427,7 +434,7 @@ def show(request, process_name, begin_date=False, end_date=False):
                                                     .format(process_name=process_class._meta.verbose_name_plural)),
                         "date_form": date_form,
                    "html_body": html_body,"previous_url": previous_url, "next_url": next_url,
-                   "export_url": export_url})
+                   "export_url": export_url, "cols": cols})
 
 
 
