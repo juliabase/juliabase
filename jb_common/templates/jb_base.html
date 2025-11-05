@@ -29,6 +29,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <link rel="stylesheet" type="text/css" media="screen" href="{% static "juliabase/css/main.css" %}"/>
     <link rel="stylesheet" type="text/css" media="print" href="{% static "juliabase/css/print.css" %}"/>
     <!-- <link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/labcss.css' %}"> -->
+    <style>
+      th {
+      text-transform: none; /* Ensure text is not transformed */
+        }
+  
+    </style>
     {% endblock %}
   {% block refresh_tag %}{% endblock %}
   {% block favicon %}
