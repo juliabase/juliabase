@@ -1,3 +1,17 @@
+<!-- <link type="text/css" rel="stylesheet" href="../../../jb_common/static/juliabase/css/lab_notebook.css"> -->
+<style>
+.lock-header { 
+  overflow-y: auto; 
+  max-height: 500px;
+}  
+.lock-header thead { 
+  position: sticky; 
+  top: 0; 
+  background: white;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
+ 
+</style>
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "samples/base.html" %}
 {% comment %}
@@ -23,25 +37,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 {% load static %}
 
-{% block css %}
+<!-- {% static '../../../jb_common/static/juliabase/css/lab_notebook.css' %} -->
+<!-- {% block css %}
 <style type="text/css">
   tr.topline { border-top: 1px solid black }
 </style>
-{% endblock %}
+{% endblock %} -->
 
 {% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon" 
      href="{{ export_url }}"><img src="{% static "juliabase/icons/table.png" %}" alt="export icon"
         title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
 
+
+
+
 {% block frame_content %}
 <form method="post">{% csrf_token %}
-  {% error_list year_month _("Error in date") %}
+  {% error_list date_form _("Error in date") %}
   <div style="text-align: center">
-    {{ year_month.year.label }}/{{ year_month.month.label }}<br/>
-    {{ year_month.year }}/{{ year_month.month }}<br/>
+    {{ date_form.begin_date.label }}/{{ date_form.end_date.label }}<br/>
+    {{ date_form.begin_date }}/{{ date_form.end_date }}<br/>
     <div class="screen-only" style="margin-top: 1ex">
       <input type="submit"/><br/>
-      {% block notebook_nav_icons %}
+      <!-- {% block notebook_nav_icons %}
         <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %}>
           <img src="{% static "juliabase/icons/book_previous.png" %}" alt="previous month icon"
                title="{% translate 'previous month' %}" width="16" height="16"/></a>
@@ -50,10 +68,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <img src="{% static "juliabase/icons/book_next.png" %}" alt="next month icon" title="{% translate 'next month' %}"
                width="16" height="16"/>
         </a>
-      {% endblock %}
+      {% endblock %} -->
     </div>
   </div>
 </form>
 
-{{ html_body }}
+<div class="lock-header">
+  {{ html_body }}
+</div>
 {% endblock %}

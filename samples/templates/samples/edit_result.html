@@ -1,3 +1,8 @@
+<style>
+  .wider-input {
+      width: 100px; /* Adjust the width as needed */
+  }
+</style>
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "samples/base.html" %}
 {% comment %}
@@ -63,7 +68,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <tr>
       <td class="field-label"><label for="{{ dimensions.number_of_quantities.id_for_label }}"
                  >{% translate 'Number of quantities × values' %}:</label></td>
-      <td class="field-input" colspan="3">{{ dimensions.number_of_quantities }} × {{ dimensions.number_of_values }}</td>
+      <td class="field-input" colspan="3">
+        {{ dimensions.number_of_quantities  }} × {{ dimensions.number_of_values }}</td>
     </tr>
   </table>
 

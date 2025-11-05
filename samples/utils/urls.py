@@ -105,12 +105,23 @@ class PatternGenerator:
             except AttributeError:
                 normalized_id_field = class_name_with_underscores + "_id"
         if "lab_notebook" in views:
-            self.url_patterns.extend([re_path(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
-                                              lab_notebook.export, {"process_name": class_name},
-                                              "export_lab_notebook_" + class_name_with_underscores),
-                                      re_path(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
-                                              lab_notebook.show, {"process_name": class_name},
-                                              "lab_notebook_" + class_name_with_underscores)])
+            # self.url_patterns.extend([re_path(r"^{}/lab_notebook/(?P<dates>.*)/export/".format(url_name),
+            #                                   lab_notebook.export, {"process_name": class_name},
+            #                                   "export_lab_notebook_" + class_name_with_underscores),
+            #                           re_path(r"^{}/lab_notebook/(?P<dates>.*)".format(url_name),
+            #                                   lab_notebook.show, {"process_name": class_name},
+            #                                   "lab_notebook_" + class_name_with_underscores)])
+            self.url_patterns.extend([
+                                    re_path(r"^{}/lab_notebook/(?P<begin_date>.*)/(?P<end_date>.*)/export/".format(url_name),
+                                            lab_notebook.export_range, {"process_name": class_name},
+                                            "export_lab_notebook_" + class_name_with_underscores),
+                                    re_path(r"^{}/lab_notebook/(?P<begin_date>.*)/(?P<end_date>.*)$".format(url_name),
+                                            lab_notebook.show, {"process_name": class_name},
+                                            "lab_notebook_" + class_name_with_underscores),
+                                    re_path(r"^{}/lab_notebook/(?P<begin_date>.*)$".format(url_name),
+                                            lab_notebook.show, {"process_name": class_name},
+                                            "lab_notebook_" + class_name_with_underscores)
+                                            ])
         if "add" in views or "edit" in views or "custom_view" in views:
             module = importlib.import_module(self.views_prefix + class_name_with_underscores)
             if "add" in views or "edit" in views:

@@ -435,6 +435,19 @@ class Process(PolymorphicModel):
         processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
         return {"processes": processes}
 
+
+    @classmethod
+    def get_lab_notebook_context_range(cls, begin_date, end_date):
+        """
+        This function is called by the class and is used to fetch all the elements between
+        a begin_date and an end_date.
+        """
+        # processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related()
+        processes = cls.objects.filter(timestamp__year=2024, timestamp__month=1).select_related()
+        return {"processes": processes}
+
+    
+
     def get_cache_key(self, user_settings_hash, local_context):
         """Calculate a cache key for this context instance of the process.
         Note that there may be many cache items to one process, e. g. one for
@@ -716,6 +729,17 @@ class PhysicalProcess(Process):
         in particular in classes with sub-objects.
         """
         measurements = cls.get_lab_notebook_context(year, month)["processes"]
+        data = DataNode(_("lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
+        data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
+        return data
+
+    @classmethod
+    def get_lab_notebook_data_range(cls, begin_date, end_date):
+        """Returns the data tree for all processes in the date range.  This
+        is a default implementation which may be overridden in derived classes,
+        in particular in classes with sub-objects.
+        """
+        measurements = cls.get_lab_notebook_context_range(begin_date, end_date)["processes"]
         data = DataNode(_("lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
         data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
         return data

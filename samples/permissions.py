@@ -229,7 +229,7 @@ def get_lab_notebooks(user):
         try:
             url = django.urls.reverse(
                 process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
+                kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label)
         except django.urls.NoReverseMatch:
             pass
         else:
