@@ -54,7 +54,7 @@ configuration file, though.
 
 """
 
-from django.urls import re_path
+from django.urls import re_path, path
 from samples.views import statistics, main, feed, my_samples, split_after_deposition, sample, split_and_rename, \
     sample_death, bulk_rename, sample_series, result, plots, external_operator, user_details, permissions, topic, \
     claim, json_client, status, merge_samples, log_viewer, task_lists
@@ -63,6 +63,7 @@ from samples.views import statistics, main, feed, my_samples, split_after_deposi
 app_name = "samples"
 
 urlpatterns = [
+        re_path(r'^clear-cache$', main.clear_cache, name='clear_cache'),
     re_path(r"^about$", statistics.about, name="about"),
     re_path(r"^statistics$", statistics.statistics, name="statistics"),
     re_path(r"^$", main.main_menu, name="main_menu"),

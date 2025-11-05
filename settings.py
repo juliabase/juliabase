@@ -81,6 +81,9 @@ MEDIA_ROOT = "/var/www/juliabase/uploads"
 # "http://example.com/static/"
 STATIC_URL = "/static/"
 
+STATICFILES_DIRS = [
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static'),
+]
 # Add paths to all your "static" subfolders
 # STATICFILES_DIRS = [
 #     # os.path.join(BASE_DIR, 'static'),  # This is the default "static" folder
