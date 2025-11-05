@@ -82,12 +82,12 @@ MEDIA_ROOT = "/var/www/juliabase/uploads"
 STATIC_URL = "/static/"
 
 # Add paths to all your "static" subfolders
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # This is the default "static" folder
-    os.path.join(BASE_DIR, 'jb_common/static'),  # Path to "static" folder in app1
-    os.path.join(BASE_DIR, 'samples/static'),  # Path to "static" folder in app2
-    # Add more paths if you have additional "static" folders
-]
+# STATICFILES_DIRS = [
+#     # os.path.join(BASE_DIR, 'static'),  # This is the default "static" folder
+#     os.path.join(BASE_DIR, 'jb_common/static'),  # Path to "static" folder in app1
+#     os.path.join(BASE_DIR, 'samples/static'),  # Path to "static" folder in app2
+#     # Add more paths if you have additional "static" folders
+# ]
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 

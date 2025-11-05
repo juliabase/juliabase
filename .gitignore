@@ -3,3 +3,4 @@
 doc/.build
 mysite/
 /TAGS
+*.rej
