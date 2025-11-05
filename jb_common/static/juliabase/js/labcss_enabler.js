@@ -21,6 +21,9 @@ $(document).ready( function () {
         // Check if the table with the current ID exists
         if ($(tableId).length > 0) {
             // Import the CSS file if the table exists
+            // Since JS is not processed server-side, then the static URL must be
+            // declared in the HTML file, that is why we cannot explicitly write it
+            // here instead of 'staticUrl'.
             $('head').append(`<link rel="stylesheet" type="text/css" href="${staticUrl}">`);
         }
     });
