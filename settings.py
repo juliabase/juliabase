@@ -139,8 +139,6 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
 
-    "compression_middleware.middleware.CompressionMiddleware",
-
     # 'django.middleware.gzip.GZipMiddleware', #This one
     # "debug_toolbar.middleware.DebugToolbarMiddleware",
 
