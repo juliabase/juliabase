@@ -37,6 +37,7 @@ import samples.utils.views as utils
 from samples.models import ExternalOperator, Process
 from django.core.cache import cache
 from datetime import date, datetime, timedelta
+from iek5.models.physical_processes import Experiment
 
 
 class MySeries:
@@ -115,7 +116,10 @@ def main_menu(request):
     next_month = current_date.replace(day=28) + timedelta(days=4)  # to get the last day of the month reliably
     end_date = next_month - timedelta(days=next_month.day)
     can_view_wafers = request.user.has_perm("iek5.view_every_wafer")
-    # raise ValueError(can_view_wafers)
+    all_experiments = Experiment.objects.filter(operator=request.user)
+
+    # raise ValueError(request.user)
+    # raise ValueError(    (all_experiments[0    ].operator    ))
 
     return render(request, "samples/main_menu.html",
                   {"title": _("Main menu"),
@@ -132,7 +136,8 @@ def main_menu(request):
                    "lab_notebooks": lab_notebooks,
                    'begin_date': begin_date,
                    'end_date': end_date,
-                   'can_view_wafers': can_view_wafers
+                   'can_view_wafers': can_view_wafers,
+                   "experiments": all_experiments,
                    })
 
 
@@ -246,7 +251,27 @@ def show_process(request, process_id, process_name="Process"):
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())
-    template_context = {"title": str(process), "samples": process.samples.all(), "process": process}
+
+    # FIXME: This is not a good way to deal with changing the title of a process. 
+    # Imagine having to do this for every physical process **insert skull emoji**
+    if process_name == "Experiment":
+        process_title = "Experiment of " + process.prefix + process.number
+    else:
+        process_title = str(process)
+
+    all_sample_topics = []
+    for proc in process.samples.all():
+        if str(proc.topic) not in all_sample_topics:
+            all_sample_topics.append(str(proc.topic))
+    
+    # raise ValueError(   (process.samples.all()[0].topic))
+
+
+    template_context = {"title": process_title,
+                        "samples": process.samples.all(),
+                        "process": process,
+                        "all_sample_topics": sorted(all_sample_topics, key=str.casefold),
+                        }
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)
 
