@@ -519,6 +519,38 @@ class FixedOperatorField(forms.ChoiceField):
         value = super().clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))
 
+# class FixedTopicField(forms.ChoiceField):
+#     """Form field class for the *fixed* selection of a single topic.  This is
+#     intended for edit-process views when the topic must be the currently
+#     logged-in user, or the previous topic.  In other words, it must be
+#     impossible to change it.  Then, you can use this form field for the
+#     topic, and hide the field from display by ``style="display: none"`` in
+#     the HTML template.
+
+#     Important: This field must *always* be made required!
+#     """
+
+#     def set_topic(self, topic):
+#         """Set the user list shown in the widget.  You *must* call this method
+#         in the constructor of the form in which you use this field, otherwise
+#         the selection box will remain emtpy.  The selection list will consist
+#         only of the given topic, with no other choice (not even the empty
+#         field).
+
+#         :param topic: topic to be included into the list.  Typically, it
+#             is the current user.
+#         :param is_superuser: whether the currently logged-in user is an
+#             administrator
+
+#         :type topic: jb_common.models.Topic
+#         :type is_superuser: bool
+#         """
+#         self.choices = ((topic.pk, topic.name),)
+
+#     def clean(self, value):
+#         value = super().clean(value)
+#         return jb_common.models.Topic.objects.get(pk=int(value))
+
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")
 """Standard regular expression pattern for time durations in JuliaBase:
