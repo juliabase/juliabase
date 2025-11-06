@@ -164,10 +164,14 @@ $(document).ready( function () {
         
     }, 1000);
     
-    if(no_bs5 == false){
+    try{
+        if(no_bs5 == false){
+            
+        }
+    } catch(error){
         // Use jQuery to select the specific div and find its child table element
         var $table = $('.lock-header').find('table');
-
+    
         // Add new classes to the table element
         $table.addClass('lab-notebook table table table-hover table-bordered table-striped-columns');
 
@@ -178,11 +182,14 @@ $(document).ready( function () {
                 $table.addClass(className);
             }
         });
+
+        // Find the thead element within the table and add new classes to it
+        $table.find('thead').addClass('align-middle');
     }
     
+    
 
-    // Find the thead element within the table and add new classes to it
-    $table.find('thead').addClass('align-middle');
+    
 
     // Check if the URL contains a specific substring
     // We use this to get rid of the date form for screenprinter paste and screen
