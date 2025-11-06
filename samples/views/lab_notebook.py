@@ -432,9 +432,13 @@ def show(request, process_name, begin_date=False, end_date=False):
     return render(request, "samples/lab_notebook.html",
                   {"title": capitalize_first_letter(_("lab notebook for {process_name}")
                                                     .format(process_name=process_class._meta.verbose_name_plural)),
-                        "date_form": date_form,
-                   "html_body": html_body,"previous_url": previous_url, "next_url": next_url,
-                   "export_url": export_url, "cols": cols})
+                    "date_form": date_form,
+                    "html_body": html_body,
+                    "previous_url": previous_url, 
+                    "next_url": next_url,
+                    "export_url": export_url, 
+                    "cols": cols,
+                })
 
 
 

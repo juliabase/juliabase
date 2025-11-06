@@ -33,12 +33,15 @@ from jb_common.utils.base import help_link, is_json_requested, respond_in_json, 
 from django.contrib.staticfiles.storage import staticfiles_storage
 
 from jb_common.models import Topic
+# from samples.models.common import SampleSeries
 import samples.utils.views as utils
-from samples.models import ExternalOperator, Process
+from samples.models import ExternalOperator, Process, SampleSeries
 from django.core.cache import cache
 from datetime import date, datetime, timedelta
 from iek5.models.physical_processes import Experiment
 
+from django.contrib.postgres.aggregates import ArrayAgg
+from django.db.models import Q
 
 class MySeries:
     """Helper class to pass sample series data to the main menu template.  It
@@ -251,26 +254,53 @@ def show_process(request, process_id, process_name="Process"):
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())
-
+    
     # FIXME: This is not a good way to deal with changing the title of a process. 
     # Imagine having to do this for every physical process **insert skull emoji**
     if process_name == "Experiment":
         process_title = "Experiment of " + process.prefix + process.number
+        add_to_my_experiments_url =  django.urls.reverse("iek5:add_to_my_experiments", kwargs={"experiment_id": process_id})
     else:
         process_title = str(process)
+        add_to_my_experiments_url = None
 
-    all_sample_topics = []
-    for proc in process.samples.all():
-        if str(proc.topic) not in all_sample_topics:
-            all_sample_topics.append(str(proc.topic))
-    
-    # raise ValueError(   (process.samples.all()[0].topic))
+    # all_sample_topics = []
+    all_samples = process.samples.all()
+    # for proc in all_samples:
+    #     if str(proc.topic) not in all_sample_topics:
+    #         all_sample_topics.append(str(proc.topic))
+
+    # sample_series_with_matching_samples = (
+    #     SampleSeries.objects
+    #     .filter(samples__in=all_samples)
+    #     .annotate(matching_samples=ArrayAgg('samples__id', filter=Q(samples__id__in=all_samples)))
+    #     .distinct()
+    # )
+
+    # Step 1: Filter SampleSeries with at least one sample from sample_list
+    sample_series_with_matching_samples = (
+        SampleSeries.objects
+        .filter(samples__in=all_samples)
+        .distinct()
+    )
+
+    # Step 2: For each SampleSeries, get the matching Sample objects
+    for series in sample_series_with_matching_samples:
+        matching_samples = series.samples.filter(id__in=all_samples)
+        series.matching_samples = list(matching_samples)  # Attach matching Sample objects to each series
 
 
+    # for series in sample_series_with_matching_samples:
+    #     raise ValueError(f"Sample Series: {series.name},  Matching Samples in SampleSeries: {series.matching_samples}")
+
+    # raise ValueError( sample_series_with_matching_samples  )
     template_context = {"title": process_title,
-                        "samples": process.samples.all(),
+                        "samples": all_samples,
                         "process": process,
-                        "all_sample_topics": sorted(all_sample_topics, key=str.casefold),
+                        "sample_series_with_matching_samples": sample_series_with_matching_samples,
+                        # "all_sample_topics": sorted(all_sample_topics, key=str.casefold),
+                        "add_to_my_experiments_url": add_to_my_experiments_url,
+                        "process_id": process_id,
                         }
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)

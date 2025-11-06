@@ -46,9 +46,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                      href="{{ resplit_url }}?next={{ url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% translate 'resplit' %}"
                      width="16" height="16"/></a>
-            {% endif %}{% endblock process_icons %}
+            {% endif %}
+            {% if add_to_my_experiments_url %}<a class="edit-icon"
+                     href="{{ add_to_my_experiments_url }}?next=experiments/{{ process_id }}"
+               ><img src="{% static "juliabase/icons/add.png" %}" alt="add icon" title="{% translate 'Add to my experiments' %}"
+                     width="16" height="16"/></a>
+            {% endif %}
+            {% endblock process_icons %}
             {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% translate "(not finished)" %}</span>{% endif %}
+
           </h1></div>
         {% endspaceless %}
   <div class="process">
@@ -64,20 +71,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             <form method="post" action="{% url 'iek5:add_to_my_samples' %}?next={{ request.get_full_path }}">
               {% csrf_token %}
               <ul>
-                {% for topic in all_sample_topics %}
-                    <h5>{{ topic }}</h5>
+
+                <!-- Select All / Deselect All checkbox -->
+                <div>
+                  <input type="checkbox" id="select_all" onclick="toggleSelectAll()">
+                  <label for="select_all">Select All / Deselect All</label>
+                </div>
+
+                {% for series in sample_series_with_matching_samples %}
+                    <h5>{{ series.name }}</h5>
 
 
-                  {% for sample in samples %}
-                    {% if sample.topic|stringformat:"s" == topic %}
-                      <!-- <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li> -->
-
+                  {% for sample in series.matching_samples %}
+                    
                       <div>
-                        <input type="checkbox" id="{{ sample.id }}" name="selected_samples" value="{{ sample.id }}">
+                        <input type="checkbox" id="sample_{{ sample.id }}" name="selected_samples" value="{{ sample.id }}" class="sample-checkbox">
                         <label for="sample_{{ sample.id }}"><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></label>
                       </div>
-                    {% endif %}
+                    
                   {% endfor %}
+                  <br>
 
                 {% endfor %}
 
@@ -96,7 +109,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% if not sample_series|length_is:"1" %}
             <ul>
               {% for single_sample_series in sample_series %}
-                <li><a href="{{ single_sample_series.get_absolute_url }}">ki{{ single_sample_series.name }}</a></li>
+                <li><a href="{{ single_sample_series.get_absolute_url }}">{{ single_sample_series.name }}</a></li>
               {% endfor %}
             </ul>
           {% endif %}
@@ -116,4 +129,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% endif %}
     </div>
   </div>
+{% endblock %}
+
+{% block local_scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{%  static 'samples/js/select_all.js' %}"></script>
 {% endblock %}

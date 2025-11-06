@@ -145,6 +145,13 @@ class PatternGenerator:
             self.url_patterns.append(re_path(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
                                              samples.views.main.show_process, {"process_name": class_name},
                                              name="show_" + class_name_with_underscores))
+            # FIXME: This is horrible. I added this just because Django loves adding a stupid
+            # trailing slash at the end of some URLs which causes problems >:(
+            # self.url_patterns.append(re_path(r"^{}/(?P<process_id>[^/]+)/?".format(url_name, normalized_id_field),
+            #                                  samples.views.main.show_process, {"process_name": class_name},
+            #                                  name="show_" + class_name_with_underscores))
+
+                                             
 
     def deposition(self, class_name, url_name=None, views={"add", "edit", "lab_notebook"}):
         """Add URLs for the views of the deposition process `class_name`.  This is a

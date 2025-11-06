@@ -45,6 +45,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Add MathJax configuration to enable both inline and display math
+    window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']], // Enable $ ... $ for inline math
+          displayMath: [['$$', '$$'], ['\\[', '\\]']] // $$ ... $$ for display math
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+
     // Now we import MathJax and let it do its magic :)
     var polyfillScript = document.createElement('script');
     polyfillScript.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
