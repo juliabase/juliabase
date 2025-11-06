@@ -73,7 +73,7 @@ LOGGING["handlers"]["mail_admins"]["class"] = "log.AdminEmailHandler"
 
 
 STATIC_ROOT = "/var/www/juliabase/static/"
-MEDIA_ROOT = "/var/www/juliabase/uploads"
+MEDIA_ROOT = "/var/www/juliabase/uploads/"
 
 MEDIA_URL = "/media/"
 
