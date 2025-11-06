@@ -1,5 +1,4 @@
 $(document).ready( function () {
-    console.log("zldxplord");
     //Dictionary full of all the strings from datatables that need to be translated
     var langDict = {
         processing:     gettext("Processing..."),

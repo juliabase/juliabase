@@ -131,8 +131,10 @@
     }
   } );
   </script>
-  
-  <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
+  {% compress js %}
+    <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
+  {% endcompress %}
+
   <!-- Include marked library from CDN -->
   <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
   {% endcompress %}
