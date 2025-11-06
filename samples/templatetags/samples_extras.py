@@ -721,7 +721,9 @@ def task_color(task):
 def get_hash_value(instance):
     return instance.get_hash_value()
 
-
+# FIXME: Instead of letting this show all the samples at once, make it show them collapsed,
+# then allow the user to click to see only what is necessary. This can improve loading
+# speed.
 @register.simple_tag
 def expand_topic(topic, user):
     topic_id = topic.topic.id
