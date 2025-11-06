@@ -332,6 +332,7 @@ def build_structured_sample_list(user, samples=None):
     structured_topics = {}
     topicless_samples = []
     for sample in sorted(set(samples), key=lambda sample: (sample.tags, sample.name)):
+        # OPTIMIZE: calling all the series everytime is not a good idea
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:
