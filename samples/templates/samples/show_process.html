@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktranslate %}
           {% if not samples|length_is:"1" %}
-            <form method="post" action="">
+            <form method="post" action="{% url 'iek5:add_to_my_samples' %}?next={{ request.get_full_path }}">
               {% csrf_token %}
               <ul>
                 {% for topic in all_sample_topics %}
@@ -73,7 +73,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                       <!-- <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li> -->
 
                       <div>
-                        <input type="checkbox" id="{{ sample.id }}" name="{{ sample.id }}">
+                        <input type="checkbox" id="{{ sample.id }}" name="selected_samples" value="{{ sample.id }}">
                         <label for="sample_{{ sample.id }}"><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></label>
                       </div>
                     {% endif %}
