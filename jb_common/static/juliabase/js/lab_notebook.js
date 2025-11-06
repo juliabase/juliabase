@@ -1,4 +1,5 @@
 $(document).ready( function () {
+    console.log("ziddöd");
     //Dictionary full of all the strings from datatables that need to be translated
     var langDict = {
         processing:     gettext("Processing..."),
