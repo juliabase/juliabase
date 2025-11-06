@@ -168,26 +168,21 @@ class ProcessForm(ModelForm):
         self.user = user
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
-        if not hasattr(self, 'no_operator'):
-            if not self.process or self.unfinished:
-                kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
-            if not self.process:
-                kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
-                kwargs["initial"].setdefault("combined_operator", user.pk)
+        if not self.process or self.unfinished:
+            kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
+        if not self.process:
+            kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
+            kwargs["initial"].setdefault("combined_operator", user.pk)
         super().__init__(*args, **kwargs)
-        if not hasattr(self, 'no_operator'):
-            if self.process and self.process.finished:
-                self.fields["finished"].disabled = True
-            self.fields["combined_operator"].set_choices(user, self.process)
-            if not user.is_superuser:
-                self.fields["external_operator"].choices = []
-                self.fields["operator"].choices = []
-                self.fields["operator"].required = False
-            else:
-                self.fields["combined_operator"].required = False
-        if hasattr(self, 'no_operator'):
-            t = self.fields
-            self.fields.pop("combined_operator")
+        if self.process and self.process.finished:
+            self.fields["finished"].disabled = True
+        self.fields["combined_operator"].set_choices(user, self.process)
+        if not user.is_superuser:
+            self.fields["external_operator"].choices = []
+            self.fields["operator"].choices = []
+            self.fields["operator"].required = False
+        else:
+            self.fields["combined_operator"].required = False
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
@@ -233,6 +228,113 @@ class ProcessForm(ModelForm):
             # previous operator because this way, we can log who changed it.
             final_operator = self.user
         cleaned_data["operator"], cleaned_data["external_operator"] = final_operator, final_external_operator
+        return cleaned_data
+
+    def is_referentially_valid(self, samples_form):
+        """Test whether the forms are consistent with each other and with the database.
+        In its current form, it only checks whether the sample is still “alive”
+        at the time of the measurement.
+
+        :param samples_form: a bound samples selection form
+
+        :type samples_form: `SampleSelectForm` or `MultipleSamplesSelectForm`
+
+        :return:
+          whether the forms are consistent with each other and the database
+
+        :rtype: bool
+        """
+        referentially_valid = True
+        if self.is_valid() and samples_form.is_valid():
+            if isinstance(samples_form, SampleSelectForm):
+                samples = [samples_form.cleaned_data["sample"]]
+            else:
+                samples = samples_form.cleaned_data["sample_list"]
+            dead_samples_list = dead_samples(samples, self.cleaned_data["timestamp"])
+            if dead_samples_list:
+                samples_list = format_enumeration(dead_samples_list)
+                self.add_error("timestamp", ValidationError(
+                    ngettext_lazy("The sample {samples} is already dead at this time.",
+                                   "The samples {samples} are already dead at this time.",
+                                   len(dead_samples_list)), params={"samples": samples_list}, code="invalid"))
+                referentially_valid = False
+        return referentially_valid
+
+
+class ScreenPasteForm(ModelForm):
+    """Abstract model form class for Screens/Pastes.  It ensures that timestamps are not
+    in the future, and that comments contain only allowed Markdown syntax.
+    """
+
+    def __init__(self, user, *args, **kwargs):
+        """
+        :param user: the currently logged-in user
+
+        :type user: django.contrib.auth.models.User
+        """
+        self.user = user
+        self.process = kwargs.get("instance")
+        self.unfinished = self.process and not self.process.finished
+        if not self.process or self.unfinished:
+            kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
+        # if not self.process:
+        #     kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
+        #     kwargs["initial"].setdefault("combined_operator", user.pk)
+        super().__init__(*args, **kwargs)
+        if self.process and self.process.finished:
+            self.fields["finished"].disabled = True
+        # self.fields["combined_operator"].set_choices(user, self.process)
+        # if not user.is_superuser:
+        #     self.fields["external_operator"].choices = []
+        #     self.fields["operator"].choices = []
+        #     self.fields["operator"].required = False
+        # else:
+        #     self.fields["combined_operator"].required = False
+
+    def clean_comments(self):
+        """Forbid image and headings syntax in Markdown markup.
+        """
+        comments = self.cleaned_data["comments"]
+        check_markdown(comments)
+        return comments
+
+    def clean_timestamp(self):
+        """Forbid timestamps that are in the future.
+        """
+        timestamp = clean_timestamp_field(self.cleaned_data["timestamp"])
+        return timestamp
+
+    def clean_finished(self):
+        """Return ``True`` always.  If you want to implement the
+        “unfinished-process” functionality in your process class, you must
+        override this method.
+        """
+        return True
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # final_operator = cleaned_data.get("operator")
+        # final_external_operator = cleaned_data.get("external_operator")
+        # if cleaned_data.get("combined_operator"):
+        #     operator, external_operator = cleaned_data["combined_operator"]
+        #     if operator:
+        #         if final_operator and final_operator != operator:
+        #             self.add_error("combined_operator", ValidationError("Your operator and combined operator didn't match.",
+        #                                                                 code="invalid"))
+        #         else:
+        #             final_operator = operator
+        #     if external_operator:
+        #         if final_external_operator and final_external_operator != external_operator:
+        #             self.add_error("combined_external_operator",
+        #                            ValidationError("Your external operator and combined external operator didn't match.",
+        #                                            code="invalid"))
+        #         else:
+        #             final_external_operator = external_operator
+        # if not final_operator:
+        #     # Can only happen for non-staff.  I deliberately overwrite a
+        #     # previous operator because this way, we can log who changed it.
+        #     final_operator = self.user
+        # cleaned_data["operator"], cleaned_data["external_operator"] = final_operator, final_external_operator
         return cleaned_data
 
     def is_referentially_valid(self, samples_form):
