@@ -157,7 +157,7 @@ INSTALLED_APPS = [
     "institute",
     "samples",
     "jb_common",
-    "compress"
+    "compressor"
 ]
 
 SITE_ID = 1
