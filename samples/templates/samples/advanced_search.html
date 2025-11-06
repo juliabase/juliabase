@@ -20,20 +20,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% load i18n %}
 {% load samples_extras %}
+{% load compress %}
 
 {% block local_scripts %}
-<script type="text/javascript">
-// <![CDATA[
-$(function() {
-    $('form[method="get"]').submit(function(event) {
-        var $target = $(event.target);
-        $target.find("input:not(.submit-always),select:not(.submit-always),textarea:not(.submit-always)").each(function() {
-            if ($(this).val() == "") $(this).attr("disabled", "disabled")
+  {% compress js %}
+    <script type="text/javascript">
+    // <![CDATA[
+    $(function() {
+        $('form[method="get"]').submit(function(event) {
+            var $target = $(event.target);
+            $target.find("input:not(.submit-always),select:not(.submit-always),textarea:not(.submit-always)").each(function() {
+                if ($(this).val() == "") $(this).attr("disabled", "disabled")
+            })
         })
-    })
- });
-// ]]>
-</script>
+    });
+    // ]]>
+    </script>
+  {% endcompress %}
 {% endblock %}
 
 {% block frame_content %}

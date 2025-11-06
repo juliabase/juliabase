@@ -32,7 +32,7 @@ from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.views.i18n import JavaScriptCatalog
 from django.contrib.auth import views as auth_views
-from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page
+from jb_common.views import show_user, markdown_sandbox, switch_language, show_error_page, CustomLoginView
 
 
 jb_common_patterns = ([
@@ -52,7 +52,8 @@ login_related_patterns = [
             name="password_change"),
     re_path(r"^change_password/done/$", auth_views.PasswordChangeDoneView.as_view(
         template_name="jb_common/password_changed.html"), name="password_change_done"),
-    re_path(r"^login$", auth_views.LoginView.as_view(template_name="jb_common/login.html"), name="login"),
+    # re_path(r"^login$", auth_views.LoginView.as_view(template_name="jb_common/login.html"), name="login"),
+    re_path(r"^login$", CustomLoginView.as_view(), name="login"),
     re_path(r"^logout$", auth_views.LogoutView.as_view(template_name="jb_common/logout.html"), name="logout"),
 ]
 

@@ -19,11 +19,14 @@ from django.http import HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 import django.forms as forms
 import django.contrib.auth.models
+from django.contrib.auth import views as auth_views
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from jb_common import models
 import jb_common.utils.base as utils
 from jb_common.utils.base import help_link, get_really_full_name
+from django.middleware.csrf import get_token
 
 
 @login_required
@@ -133,6 +136,38 @@ def show_error_page(request, hash_value):
     """
     html = get_object_or_404(models.ErrorPage, hash_value=hash_value).html
     return HttpResponse(html)
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
+class CustomLoginView(auth_views.LoginView):
+    template_name = 'jb_common/login.html'
+
+    def form_invalid(self, form):
+        if is_ajax(request=self.request):
+            return JsonResponse({'errors': form.errors}, status=400)
+        else:
+            return super().form_invalid(form)
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['login_redirect_url'] = settings.LOGIN_REDIRECT_URL
+        context['csrf_token'] = get_token(self.request)
+        return context
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 _ = gettext
