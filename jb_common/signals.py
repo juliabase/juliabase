@@ -30,7 +30,7 @@
 
 
 :ivar storage_changed: This is sent if the files on harddisk were changed.  In
-  a former version of the deployment at IEK-5/FZJ, this signal is used for
+  a former version of the deployment at IMD-3/FZJ, this signal is used for
   triggering sychronisation of both nodes.
 """
 

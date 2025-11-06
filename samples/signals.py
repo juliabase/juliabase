@@ -249,7 +249,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
         dep = jb_common_app.Department.objects.filter(app_label='iek5')[0]
         instance.jb_user_details.department = dep
 
-        # Afterwards we create the user with the default IEK-5 Department
+        # Afterwards we create the user with the default IMD-3 Department
         user_details = samples_app.UserDetails.objects.create(
             user=instance, identifying_data_hash=get_identifying_data_hash(instance))
         try:
