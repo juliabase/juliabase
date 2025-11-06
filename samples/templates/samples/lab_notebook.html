@@ -62,7 +62,6 @@
     var staticUrl = "{% static 'juliabase/css/labcss.css' %}";
   </script>
   <script type="module" src="{% static 'juliabase/js/labcss_enabler.js' %}"></script> -->
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.datatables.net/v/bs5-5.3.0/datatables.min.js"></script>
   
@@ -104,13 +103,14 @@
   </form>
   
 
-  <div class="lock-header table-responsive">
+  <div class="lock-header table-responsive-md">
     {{ html_body }}
   </div>
   <script src="{% url 'iek5:javascript-catalog' %}"></script>
   <script type="module">
     // console.log("{{ cols|escapejs }}")
     $(document).ready( function () {
+      // $('#double-scroll').doubleScroll();
       // console.log('Current URL:', window.location.href);
 
       // FIXME: this should be in lab_notebook.js, but for some reasons it
@@ -162,7 +162,7 @@
     //         // order: [[0, 'desc']],
     //         order: [],
     //         pageLength: 50,
-    //         scrollX: true,
+    //         // scrollX: true,
     //         language: langDict,
     //     fixedColumns: true,
     //     fixedHeader: true // Enable FixedHeader extension
