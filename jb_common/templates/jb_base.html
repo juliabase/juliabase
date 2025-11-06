@@ -42,13 +42,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <link rel="shortcut icon" href="{% static 'juliabase/juliabase.ico' %}" type="image/x-icon"/>
   {% endblock %}
   <!-- <script type="text/javascript" src="{% static 'juliabase/js/jquery-1.11.1.min.js' %}"></script> -->
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}"></script>
+  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script type="text/javascript" src="https://www.google.com/jsapi" defer></script>
+  <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}" defer></script>
   <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}"></script>
-  <script type="text/javascript">
+  <script type="text/javascript" defer>
+  // // <![CDATA[
+  //   $(function() { $("input:text:visible:first").focus() })
+  // // ]]>
+
   // <![CDATA[
-    $(function() { $("input:text:visible:first").focus() })
-  // ]]>
+  document.addEventListener("DOMContentLoaded", function() {
+        $(function() {
+          $("input:text:visible:first").focus();
+        });
+      });
+      // ]]>
   </script>
   {% block local_scripts %}{% endblock %}
   {% block extrascripts %}{% endblock %}

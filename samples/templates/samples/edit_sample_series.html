@@ -31,34 +31,37 @@ along with this program. If not, see
 
   <table class="padding5" style="float: left; margin-bottom: 3ex; width: 45%">
     {% if is_new %}
-      <tr>
-        <td class="field-label">{{ sample_series.short_name.label_tag }}</td>
+    <tr>
+      <td class="field-label">{{ sample_series.short_name.label_tag }}</td>
 
-        {% comment %}
-          The input for the ss name now has javascript & input for the prefix so that the user can edit the full name
-        {% endcomment %}
-        <td class="field-input"><span id="name_prefix" name="name_prefix" contenteditable="">{{ name_prefix }}-</span><input type="hidden" name="name_prefix_data" id="name_prefix_data">
-          {{ sample_series.short_name }}</td>
-        <script>
-          var prefixSpan = document.getElementById("name_prefix");
-          var prefixInput = document.getElementById("name_prefix_data");
+      {% comment %}
+      The input for the ss name now has javascript & input for the prefix so that the user can edit the full name
+      {% endcomment %}
+      <td class="field-input"><span id="name_prefix" name="name_prefix" contenteditable="">{{ name_prefix }}-</span><input type="hidden" name="name_prefix_data" id="name_prefix_data">
+        {{ sample_series.short_name }}</td>
+      {% compress js %}
+      <script>
+        var prefixSpan = document.getElementById("name_prefix");
+        var prefixInput = document.getElementById("name_prefix_data");
 
-          prefixSpan.addEventListener("input", function() {
-            prefixInput.value = prefixSpan.innerHTML;
-          });
+        prefixSpan.addEventListener("input", function () {
           prefixInput.value = prefixSpan.innerHTML;
-        </script>
-        
-      </tr>
+        });
+        prefixInput.value = prefixSpan.innerHTML;
+      </script>
+      {% endcompress %}
+
+
+    </tr>
     {% endif %}
-    <tr {% if is_new %}style="display: none"{% endif %}>
+    <tr {% if is_new %}style="display: none" {% endif %}>
       {% input_field sample_series.currently_responsible_person %}
     </tr>
     <tr>
       {% input_field sample_series.topic %}
     </tr>
     <tr>
-      <td class="field-label">{{ sample_series.description.label_tag }}<br/>{% markdown_hint %}</td>
+      <td class="field-label">{{ sample_series.description.label_tag }}<br />{% markdown_hint %}</td>
       <td class="field-input">{{ sample_series.description }}</td>
     </tr>
   </table>
