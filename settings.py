@@ -141,7 +141,6 @@ MIDDLEWARE = [
 
     # 'django.middleware.gzip.GZipMiddleware', #This one
     # "debug_toolbar.middleware.DebugToolbarMiddleware",
-
     "jb_common.middleware.LoggingMiddleware",
     "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",
