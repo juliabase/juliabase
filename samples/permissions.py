@@ -593,6 +593,40 @@ def assert_can_delete_physical_process(user, process):
     return process.delete(dry_run=True, user=user)
 
 
+def assert_can_delete_wafer(user, wafer):
+    """Tests whether the user can delete a wafer.  For this, the
+    following conditions must be met:
+
+    - ``wafer.is_deletable(user)`` must yield ``True``.
+    - You can edit the wafer.
+    - The wafer is not older than one hour.
+
+    :param user: the user whose permission should be checked
+    :param wafer: The wafer to delete.  This must be the actual instance.
+
+    :type user: django.contrib.auth.models.User
+    :type wafer: `samples.models.wafer`
+
+    :return:
+      the objects that are deleted
+
+    :rtype: set of ``Model``
+
+    :raises PermissionError: if the user is not allowed to delete the wafer.
+    """
+    if user.is_superuser:
+        return True
+    
+    content_type = ContentType.objects.get_for_model(wafer)
+    permission = f"{content_type.app_label}.delete_{content_type.model}"
+
+    if user.has_perm(permission):
+        return True
+    else:
+        return False
+    # return wafer.delete(user=user)
+
+
 def assert_can_add_edit_physical_process(user, process, process_class=None):
     """Tests whether the user can create or edit a physical process
     (i.e. deposition, measurement, etching process, clean room work etc).  This

@@ -228,6 +228,23 @@ class FeedDeletedProcess(FeedEntry):
         return metadata
 
 
+# class FeedDeletedWafer(FeedEntry):
+#     """Model for feed entries for a deleted wafer, including result wafers.
+#     """
+#     wafer_name = models.TextField(_("wafer name"))
+
+#     class Meta(PolymorphicModel.Meta):
+#         verbose_name = _("deleted wafer feed entry")
+#         verbose_name_plural = _("deleted wafer feed entries")
+
+#     def get_metadata(self):
+#         metadata = {}
+#         metadata["title"] = _("Wafer {name} was deleted").format(name=self.wafer_name)
+#         metadata["category term"] = "deleted wafer"
+#         metadata["category label"] = "deleted wafer"
+#         return metadata
+
+
 class FeedResult(FeedEntry):
     """Model for feed entries about new or edited result processes.  Note that
     this model doesn't care whether the result is connected with samples or
