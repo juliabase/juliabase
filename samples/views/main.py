@@ -30,6 +30,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _, gettext
 from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
     int_or_zero
+from django.contrib.staticfiles.storage import staticfiles_storage
+
 from jb_common.models import Topic
 import samples.utils.views as utils
 from samples.models import ExternalOperator, Process

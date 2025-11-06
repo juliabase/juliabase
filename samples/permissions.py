@@ -204,6 +204,7 @@ def get_allowed_physical_processes(user):
     allowed_physical_processes = []
     for physical_process_class, add_data in get_all_addable_physical_process_models().items():
         if has_permission_to_add_physical_process(user, physical_process_class):
+            raise ValueError("huz")
             allowed_physical_processes.append(add_data.copy())
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())
     return allowed_physical_processes
@@ -525,6 +526,8 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
+    raise ValueError("gottem")
+
     codename = "add_{0}".format(process_class.__name__.lower())
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
