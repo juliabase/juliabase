@@ -47,7 +47,8 @@ $(document).ready( function () {
                             #screenprinter-screen)').DataTable({
             order: [],
             // pageLength: 50,
-            // scrollX: true,
+            scrollX: true,
+            scrollY: '50vh',
             language: langDict,
         fixedColumns: true,
         fixedHeader: true // Enable FixedHeader extension
@@ -71,6 +72,7 @@ $(document).ready( function () {
                 order: [],
                 // pageLength: 50,
                 scrollX: true,
+                scrollY: '50vh',
                 language: langDict,
                 fixedColumns: true,
                 fixedHeader: true // Enable FixedHeader extension
@@ -92,6 +94,7 @@ $(document).ready( function () {
               },
                 order: [],
                 // pageLength: 50,
+                scrollY: '50vh',
                 scrollX: true,
                 language: langDict,
                 fixedColumns: true,
@@ -104,6 +107,7 @@ $(document).ready( function () {
             order: [],
             // pageLength: 50,
             scrollX: true,
+            scrollY: '50vh',
             fixedColumns: true,
             fixedHeader: true, // Enable FixedHeader extension
             columnDefs: [ {
@@ -160,20 +164,22 @@ $(document).ready( function () {
         
     }, 1000);
     
+    if(no_bs5 == false){
+        // Use jQuery to select the specific div and find its child table element
+        var $table = $('.lock-header').find('table');
 
-    // Use jQuery to select the specific div and find its child table element
-    var $table = $('.lock-header').find('table');
+        // Add new classes to the table element
+        $table.addClass('lab-notebook table table table-hover table-bordered table-striped-columns');
 
-    // Add new classes to the table element
-    $table.addClass('lab-notebook table table table-hover table-bordered table-striped-columns');
-
-    // Preserve existing classes by ensuring they are not already present
-    var existingClasses = $table.attr('class').split(' ');
-    existingClasses.forEach(function(className) {
-        if (!$table.hasClass(className)) {
-            $table.addClass(className);
-        }
-    });
+        // Preserve existing classes by ensuring they are not already present
+        var existingClasses = $table.attr('class').split(' ');
+        existingClasses.forEach(function(className) {
+            if (!$table.hasClass(className)) {
+                $table.addClass(className);
+            }
+        });
+    }
+    
 
     // Find the thead element within the table and add new classes to it
     $table.find('thead').addClass('align-middle');
