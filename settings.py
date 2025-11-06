@@ -139,6 +139,10 @@ MIDDLEWARE = [
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
+
+    'django.middleware.gzip.GZipMiddleware', #This one
+    'htmlmin.middleware.HtmlMinifyMiddleware', #This one
+    'htmlmin.middleware.MarkRequestMiddleware', #This one
 ]
 
 APPEND_SLASH = False
@@ -159,6 +163,32 @@ INSTALLED_APPS = [
     "jb_common",
     "compressor"
 ]
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+]
+
+COMPRESS_ENABLED = True
+COMPRESS_URL = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_STORAGE = 'compressor.storage.CompressorFileStorage'
+# COMPRESS_OFFLINE = True
+
+COMPRESS_CSS_HASHING_METHOD = 'content'
+COMPRESS_FILTERS = {
+    'css':[
+        'compressor.filters.css_default.CssAbsoluteFilter',
+        'compressor.filters.cssmin.rCSSMinFilter',
+    ],
+    'js':[
+        'compressor.filters.jsmin.JSMinFilter',
+    ]
+}
+HTML_MINIFY = True
+KEEP_COMMENTS_ON_MINIFYING = True
 
 SITE_ID = 1
 

@@ -21,29 +21,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load i18n %}
 {% load juliabase %}
 {% load static %}
+{% load compress %}
+
 
 {% block extrahead %}
   {% block css_inclusions %}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.datatables.net/v/bs5-5.3.0/datatables.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" media="screen" href="{% static "juliabase/css/main.css" %}"/>
-    <link rel="stylesheet" type="text/css" media="print" href="{% static "juliabase/css/print.css" %}"/>
-    <!-- <link rel="stylesheet" type="text/css" href="{% static 'juliabase/css/labcss.css' %}"> -->
+    <!-- <link href="https://cdn.datatables.net/v/bs5-5.3.0/datatables.min.css" rel="stylesheet"> -->
+    <!-- FIXME: compress this CSS if you manage to make "compress" work -->
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'juliabase/css/main.css' %}"/>
+    <link rel="stylesheet" type="text/css" media="print" href="{% static 'juliabase/css/print.css' %}"/>
     <style>
       th {
       text-transform: none; /* Ensure text is not transformed */
         }
-  
     </style>
+    
     {% endblock %}
   {% block refresh_tag %}{% endblock %}
   {% block favicon %}
-    <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
+    <link rel="shortcut icon" href="{% static 'juliabase/juliabase.ico' %}" type="image/x-icon"/>
   {% endblock %}
-  <script type="text/javascript" src="{% static "juliabase/js/jquery-1.11.1.min.js" %}"></script>
+  <script type="text/javascript" src="{% static 'juliabase/js/jquery-1.11.1.min.js' %}"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}"></script>
-  <script type="text/javascript" src="{% static "juliabase/js/juliabase.js" %}"></script>
+  <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}"></script>
   <script type="text/javascript">
   // <![CDATA[
     $(function() { $("input:text:visible:first").focus() })
