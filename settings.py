@@ -103,6 +103,7 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        # "APP_DIRS": True,
         "DIRS": [BASE_DIR/"templates_root", django.__path__[0] + "/forms/templates"],
         "OPTIONS": {
             "context_processors": ["django.contrib.auth.context_processors.auth",
@@ -219,10 +220,17 @@ DEBUG_TOOLBAR_PANELS = [
 INTERNAL_IPS = [
     # ...
     'chantal.fz-juelich.de:8008',
-    '10.32.0.3',
-    '10.32.0.1',
+    '10.32.0.4',
+    '10.32.0.5',
+    '127.0.0.1',
+    '172.17.0.1',
     # ...
 ]
+
+def show_toolbar(request):
+    return True
+SHOW_TOOLBAR_CALLBACK = show_toolbar
+
 
 SITE_ID = 1
 
