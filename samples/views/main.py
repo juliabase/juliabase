@@ -110,11 +110,6 @@ def main_menu(request):
     # OPTIMIZE: This calls way too many queries, and I couldn't identify where the SQL calls are
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = permissions.get_lab_notebooks(request.user)
-    # Get the current date for the screenprinter paste
-    current_date = date.today()
-    begin_date = current_date.replace(day=1)
-    next_month = current_date.replace(day=28) + timedelta(days=4)  # to get the last day of the month reliably
-    end_date = next_month - timedelta(days=next_month.day)
     can_view_wafers = request.user.has_perm("iek5.view_every_wafer")
     all_experiments = Experiment.objects.filter(operator=request.user)
 
@@ -134,8 +129,6 @@ def main_menu(request):
                    "can_rename_samples": request.user.has_perm("samples.rename_samples"),
                    "physical_processes": allowed_physical_processes,
                    "lab_notebooks": lab_notebooks,
-                   'begin_date': begin_date,
-                   'end_date': end_date,
                    'can_view_wafers': can_view_wafers,
                    "experiments": all_experiments,
                    })
