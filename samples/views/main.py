@@ -112,6 +112,8 @@ def main_menu(request):
     begin_date = current_date.replace(day=1)
     next_month = current_date.replace(day=28) + timedelta(days=4)  # to get the last day of the month reliably
     end_date = next_month - timedelta(days=next_month.day)
+    can_view_wafers = request.user.has_perm("iek5.view_every_wafer")
+    # raise ValueError(can_view_wafers)
 
     return render(request, "samples/main_menu.html",
                   {"title": _("Main menu"),
@@ -127,7 +129,9 @@ def main_menu(request):
                    "physical_processes": allowed_physical_processes,
                    "lab_notebooks": lab_notebooks,
                    'begin_date': begin_date,
-                   'end_date': end_date})
+                   'end_date': end_date,
+                   'can_view_wafers': can_view_wafers
+                   })
 
 
 class SearchDepositionsForm(forms.Form):
