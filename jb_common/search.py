@@ -678,7 +678,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
     it *any* of the derivatives returns a match, it is included into the search
     results (which may be filtered further, of course).
 
-    For example, we have three Raman apparatuses in our institute IEK-5/FZJ.
+    For example, we have three Raman apparatuses in our institute IMD-3/FZJ.
     All three share exactly the same model fields.  Therefore, there is an
     abstract model class that all three concrete models are derived from.
     However, if you look for a certain Raman measurement, you don't know a

@@ -240,7 +240,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
                                            ContentType.objects.get(app_label="samples", model="sampleseries"),
                                            ContentType.objects.get(app_label="jb_common", model="topic")])
     if created:
-        # Here we select from the database the IEK-5 department
+        # Here we select from the database the IMD-3 department
         # We do so in order to set it as the default department of 
         # any user that just signed up to Chantal
         # FIXME: This throws an exception if the object is empty. This usually
@@ -249,7 +249,7 @@ def add_user_details(sender, instance, created=True, **kwargs):
         dep = jb_common_app.Department.objects.filter(app_label='iek5')[0]
         instance.jb_user_details.department = dep
 
-        # Afterwards we create the user with the default IEK-5 Department
+        # Afterwards we create the user with the default IMD-3 Department
         user_details = samples_app.UserDetails.objects.create(
             user=instance, identifying_data_hash=get_identifying_data_hash(instance))
         try:
