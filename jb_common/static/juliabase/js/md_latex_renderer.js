@@ -37,6 +37,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    // Now, apply Markdown conversion to <p> elements with the same data attributes
+    targetDataAttributes.forEach(dataAttr => {
+        const paragraphs = document.querySelectorAll(`p[data-column="${dataAttr}"]`);
+        paragraphs.forEach(p => {
+            convertToMarkdown(p);
+        });
+    });
 
     // Now we import MathJax and let it do its magic :)
     var polyfillScript = document.createElement('script');
