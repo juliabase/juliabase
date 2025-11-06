@@ -211,6 +211,8 @@ DEBUG_TOOLBAR_PANELS = [
 INTERNAL_IPS = [
     # ...
     'chantal.fz-juelich.de:8008',
+    '10.32.0.3',
+    '10.32.0.1',
     # ...
 ]
 
