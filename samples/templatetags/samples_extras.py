@@ -589,9 +589,22 @@ def display_search_tree(tree):
     and displays the seach fields.
     """
     result = """<table style="border: 2px solid black; padding-left: 3em">"""
+
+    # We use this function to sort all the elements of choice fields in alphabetical order
+    def sort_choices_alphabetically(field):
+        # Checks if this is a choice field or not
+        if hasattr(field, 'choices'):
+            sorted_choices = sorted(field.choices, key=lambda choice: choice[1])
+            field.choices = sorted_choices
+
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _("General error"), "outest_tag": "<tr>"}
         result += render_to_string("error_list.html", error_context)
+
+        # Sort every choice field in alphabetical order
+        for field in search_field.form:
+            sort_choices_alphabetically(field.field)
+
         if isinstance(search_field, jb_common.search.RangeSearchField):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
             field_max = [field for field in search_field.form if field.name.endswith("_max")][0]
@@ -602,6 +615,7 @@ def display_search_tree(tree):
                 """<td class="field-input">{field_min} – {field_max}{unit}{help_text}</td></tr>""".format(
                 label=field_min.label, id_for_label=field_min.id_for_label, field_min=field_min, field_max=field_max,
                 unit=unit, help_text=help_text)
+
         elif isinstance(search_field, jb_common.search.TextNullSearchField):
             field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
@@ -627,6 +641,7 @@ def display_search_tree(tree):
                 result += """</td></tr><tr><td colspan="2">"""
         result += "</td></tr>"
     result += "</table>"
+
     return mark_safe(result)
 
 
