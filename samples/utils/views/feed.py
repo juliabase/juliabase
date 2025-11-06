@@ -247,6 +247,21 @@ class Reporter:
         self.__connect_with_users(entry, process.__class__)
 
 
+    # def report_deleted_wafer(self, wafer):
+    #     """Generate a feed entry about a deletion of a wafer.
+
+    #     :param wafer: the wafer that was deleted
+
+    #     :type wafer: `iek5.models.Wafer`
+    #     """
+    #     entry = models.FeedDeletedWafer.objects.create(originator=self.originator, wafer_name=str(wafer))
+    #     self.__add_watchers(wafer)
+    #     # if isinstance(wafer, models.Result):
+    #     #     for sample_series in process.sample_series.all():
+    #     #         self.__add_watchers(sample_series)
+    #     self.__connect_with_users(entry, wafer.__class__)
+
+
     def report_result_process(self, result, edit_description=None):
         """Generate a feed entry for a result process which was recently
         edited or created.
