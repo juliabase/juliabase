@@ -67,8 +67,7 @@
     var staticUrl = "{% static 'juliabase/css/labcss.css' %}";
   </script> -->
   <!-- FIXME: I put these two imports here, but the order of import does matter for the md_latex_renderer.js file -->
-  <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
+  
   {% endblock %}
   
   
@@ -133,11 +132,14 @@
   </script>
 
 {% endcompress %}
-
+  <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
   {% compress js %}
     <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
   
 
+
+    
   <!-- Include marked library from CDN -->
   <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
   {% endcompress %}
