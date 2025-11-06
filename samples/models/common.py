@@ -856,7 +856,8 @@ class Sample(models.Model):
         with_relations = kwargs.pop("with_relations", True)
         from_split = kwargs.pop("from_split", None)
         super().save(*args, **kwargs)
-        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=django.utils.timezone.now())
+        UserDetails.objects.select_for_update().filter(user__in=self.watchers.all()).update(
+            my_samples_list_timestamp=django.utils.timezone.now())
         if with_relations:
             for series in self.series.all():
                 series.save()
