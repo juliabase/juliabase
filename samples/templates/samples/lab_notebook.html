@@ -101,8 +101,10 @@ we can give it to a JS file that does not know what Django templates are. -->
     }
   } );
   </script>
+  {% compress js %}
+    <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
+  {% endcompress %}
 
-  <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
   <!-- Include marked library from CDN -->
   <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
   {% endcompress %}

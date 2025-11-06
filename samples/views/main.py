@@ -103,6 +103,7 @@ def main_menu(request):
 
     :rtype: HttpResponse
     """
+    raise ValueError("ed")
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user)
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = permissions.get_lab_notebooks(request.user)
