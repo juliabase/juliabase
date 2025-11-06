@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-24 10:50+0200\n"
+"POT-Creation-Date: 2024-07-31 13:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,57 +18,74 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:20
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:41
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:5
 msgid "Processing..."
 msgstr "Verarbeitung läuft..."
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:21
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:42
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:6
 msgid "Search&nbsp;:"
 msgstr "Suchen&nbsp;:"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:22
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:43
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:7
 msgid "Show _MENU_ entries"
 msgstr "Zeige _MENU_ Einträge"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:23
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:44
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:8
 msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
 msgstr "Anzeige von _START_ bis _END_ von insgesamt _TOTAL_ Einträgen"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:24
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:45
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:9
 msgid "Showing 0 to 0 of total 0 entries"
 msgstr "Anzeige von 0 bis 0 von insgesamt 0 Einträgen"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:25
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:46
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:10
 msgid "(filtered from total _MAX_ entries)"
 msgstr "(gefiltert von _MAX_ Einträgen insgesamt)"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:27
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:48
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:12
 msgid "Loading records..."
 msgstr "Datensätze werden geladen..."
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:28
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:49
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:13
 msgid "No entries found"
 msgstr "Keine Einträge gefunden"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:29
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:50
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:14
 msgid "No data available"
 msgstr "Keine Daten verfügbar"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:31
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:52
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:16
 msgid ": activate to sort column ascending"
 msgstr ": aktivieren, um die Spalte aufsteigend zu sortieren"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:32
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:53
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:17
 msgid ": activate to sort column descending"
 msgstr ": aktivieren, um die Spalte absteigend zu sortieren"
+
+#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
+msgid "Comments"
+msgstr "Kommentare"
+
+#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
+msgid "Aim"
+msgstr ""
+
+#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
+msgid "Execution"
+msgstr ""
+
+#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
+msgid "Analysis steps"
+msgstr ""
+
+#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
+msgid "Software and version"
+msgstr ""
+
+#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
+msgid "Result"
+msgstr ""
+
+#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
+msgid "Consequence"
+msgstr ""

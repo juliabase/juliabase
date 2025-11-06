@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-24 10:50+0200\n"
+"POT-Creation-Date: 2024-07-31 13:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,46 +17,47 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-#: iek5/static/js/wafer.js:5
+
+#: iek5/static/js/project.js:8 iek5/static/js/wafer.js:5
 msgid "Processing..."
 msgstr ""
 
-#: iek5/static/js/wafer.js:6
+#: iek5/static/js/project.js:9 iek5/static/js/wafer.js:6
 msgid "Search&nbsp;:"
 msgstr ""
 
-#: iek5/static/js/wafer.js:7
+#: iek5/static/js/project.js:10 iek5/static/js/wafer.js:7
 msgid "Show _MENU_ entries"
 msgstr ""
 
-#: iek5/static/js/wafer.js:8
+#: iek5/static/js/project.js:11 iek5/static/js/wafer.js:8
 msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
 msgstr ""
 
-#: iek5/static/js/wafer.js:9
+#: iek5/static/js/project.js:12 iek5/static/js/wafer.js:9
 msgid "Showing 0 to 0 of total 0 entries"
 msgstr ""
 
-#: iek5/static/js/wafer.js:10
+#: iek5/static/js/project.js:13 iek5/static/js/wafer.js:10
 msgid "(filtered from total _MAX_ entries)"
 msgstr ""
 
-#: iek5/static/js/wafer.js:12
+#: iek5/static/js/project.js:15 iek5/static/js/wafer.js:12
 msgid "Loading records..."
 msgstr ""
 
-#: iek5/static/js/wafer.js:13
+#: iek5/static/js/project.js:16 iek5/static/js/wafer.js:13
 msgid "No entries found"
 msgstr ""
 
-#: iek5/static/js/wafer.js:14
+#: iek5/static/js/project.js:17 iek5/static/js/wafer.js:14
 msgid "No data available"
 msgstr ""
 
-#: iek5/static/js/wafer.js:16
+#: iek5/static/js/project.js:19 iek5/static/js/wafer.js:16
 msgid ": activate to sort column ascending"
 msgstr ""
 
-#: iek5/static/js/wafer.js:17
+#: iek5/static/js/project.js:20 iek5/static/js/wafer.js:17
 msgid ": activate to sort column descending"
 msgstr ""
