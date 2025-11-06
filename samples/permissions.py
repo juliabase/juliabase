@@ -627,7 +627,72 @@ def assert_can_delete_wafer(user, wafer):
         return True
     else:
         return False
-    # return wafer.delete(user=user)
+
+
+def assert_can_delete_screenprinterpaste(user, screenprinterpaste):
+    """Tests whether the user can delete a screenprinterpaste.  For this, the
+    following conditions must be met:
+
+    - ``screenprinterpaste.is_deletable(user)`` must yield ``True``.
+    - You can edit the screenprinterpaste.
+    - The screenprinterpaste is not older than one hour.
+
+    :param user: the user whose permission should be checked
+    :param screenprinterpaste: The screenprinterpaste to delete.  This must be the actual instance.
+
+    :type user: django.contrib.auth.models.User
+    :type screenprinterpaste: `samples.models.screenprinterpaste`
+
+    :return:
+      the objects that are deleted
+
+    :rtype: set of ``Model``
+
+    :raises PermissionError: if the user is not allowed to delete the screenprinterpaste.
+    """
+    if user.is_superuser:
+        return True
+    
+    content_type = ContentType.objects.get_for_model(screenprinterpaste)
+    permission = f"{content_type.app_label}.delete_{content_type.model}"
+
+    if user.has_perm(permission):
+        return True
+    else:
+        return False
+
+
+def assert_can_delete_screenprinterscreen(user, screenprinterscreen):
+    """Tests whether the user can delete a screenprinterscreen.  For this, the
+    following conditions must be met:
+
+    - ``screenprinterscreen.is_deletable(user)`` must yield ``True``.
+    - You can edit the screenprinterscreen.
+    - The screenprinterscreen is not older than one hour.
+
+    :param user: the user whose permission should be checked
+    :param screenprinterscreen: The screenprinterscreen to delete.  This must be the actual instance.
+
+    :type user: django.contrib.auth.models.User
+    :type screenprinterscreen: `samples.models.screenprinterscreen`
+
+    :return:
+      the objects that are deleted
+
+    :rtype: set of ``Model``
+
+    :raises PermissionError: if the user is not allowed to delete the screenprinterscreen.
+    """
+    if user.is_superuser:
+        return True
+    
+    content_type = ContentType.objects.get_for_model(screenprinterscreen)
+    permission = f"{content_type.app_label}.delete_{content_type.model}"
+
+    if user.has_perm(permission):
+        return True
+    else:
+        return False
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
