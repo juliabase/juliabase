@@ -793,6 +793,11 @@ def strip_substrings(value, pattern):
         value = value.replace(substring, "")
     return value
 
+@register.filter
+def join_with_commas(value):
+    if isinstance(value, list):
+        return ', '.join(str(v) for v in value)
+    return value
 
 @register.filter
 def camel_case_to_human_text(value):

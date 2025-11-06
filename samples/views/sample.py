@@ -49,7 +49,8 @@ from samples import models, permissions, data_tree
 import samples.utils.views as utils
 from samples.utils import sample_names
 import datetime
-
+from iek5.models.physical_processes import Experiment
+from samples.models import Sample
 
 class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
@@ -731,9 +732,20 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     
+    sample_id = samples_and_processes.sample_context["sample"].id
+    # chosen_sample = Sample.objects.get(id=samples_and_processes.sample_context["sample"].id)
+    # all_experiments = chosen_sample.experiments.all()
+    experiments = list(Experiment.objects.filter(samples__id=sample_id))
+    # experiment_ids = [experiment.get_experiment_id() for experiment in experiments]
+    # experiment_absolute_urls = [experiment.get_experiment_id() for experiment in experiments]
+
+
+    # raise ValueError(experiments[0].get_experiment_id())
+
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
-                   "samples_and_processes": samples_and_processes})
+                   "samples_and_processes": samples_and_processes,
+                   "experiments": experiments})
 
 
 @login_required
