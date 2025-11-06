@@ -506,7 +506,18 @@ def export_range(request, process_name, begin_date, end_date):
     # begin_date = datetime.strptime(begin_date, '%Y-%m-%d')
     # end_date = datetime.strptime(end_date, '%Y-%m-%d')
     
-    data = process_class.get_lab_notebook_data_range(begin_date, end_date)
+    # FIXME: This is a quite terrible way to deal with another problem that is
+    # ScreenprinterPaste/Screen using physical processes lab notebooks although they are not
+    # physical processes. 
+    # This causes an error to be thrown when using the date range function. 
+    # A possible fix would be simply creating separate pages for displaying 
+    # ScreenprinterPaste/Screen to be 
+    # normal models instead of physical processes.
+    try:
+        data = process_class.get_lab_notebook_data_range(begin_date, end_date)
+    except:
+        data = process_class.get_lab_notebook_data(begin_date, end_date)
+
     # raise ValueError("data:", data)
     result = utils.table_export(request, data, _("process"))
     if isinstance(result, tuple):
