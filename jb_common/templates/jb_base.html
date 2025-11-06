@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% block favicon %}
     <link rel="shortcut icon" href="{% static 'juliabase/juliabase.ico' %}" type="image/x-icon"/>
   {% endblock %}
-  <script type="text/javascript" src="{% static 'juliabase/js/jquery-1.11.1.min.js' %}"></script>
+  <!-- <script type="text/javascript" src="{% static 'juliabase/js/jquery-1.11.1.min.js' %}"></script> -->
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}"></script>
   <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}"></script>
@@ -124,6 +124,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {% block float_image %}{% endblock %}
         {% block content_title %}<div class="page-header"><h1>{{ title }}</h1></div>{% endblock %}
         {% block frame_content %}{% endblock %}
+        {% block render_blockers %}{% endblock %}
         <div style="clear: both"></div>
       </div>
     </div>
