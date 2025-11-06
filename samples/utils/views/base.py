@@ -34,6 +34,8 @@ from samples.utils import sample_names
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
 import jb_common.utils.base
+from samples.models import Sample
+# from jb_common.models import Topic
 
 
 __all__ = ("AmbiguityException", "lookup_sample", "convert_id_to_int",
@@ -331,9 +333,19 @@ def build_structured_sample_list(user, samples=None):
     structured_series = {}
     structured_topics = {}
     topicless_samples = []
-    for sample in sorted(set(samples), key=lambda sample: (sample.tags, sample.name)):
-        # OPTIMIZE: calling all the series everytime is not a good idea
+    # Assume `samples` is a QuerySet or similar iterable
+    samples = sorted(set(samples), key=lambda sample: (sample.tags, sample.name))
+
+    # Prefetch 'series' for all samples
+    # samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).prefetch_related('series')
+
+    samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).select_related('topic').prefetch_related('series__topic')
+
+    for sample in samples:
+        # Now, `sample.series.all()` will not hit the database again for each sample
         containing_series = sample.series.all()
+        # raise ValueError("bww")
+
         if containing_series:
             for series in containing_series:
                 if series.name not in structured_series:

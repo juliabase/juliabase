@@ -204,7 +204,6 @@ def get_allowed_physical_processes(user):
     allowed_physical_processes = []
     for physical_process_class, add_data in get_all_addable_physical_process_models().items():
         if has_permission_to_add_physical_process(user, physical_process_class):
-            raise ValueError("huz")
             allowed_physical_processes.append(add_data.copy())
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())
     return allowed_physical_processes
@@ -251,6 +250,7 @@ def get_lab_notebooks(user):
                 url = url[:-1]
             # OPTIMIZE: This cryptic if-statement makes 5 SQL calls for each lab notebook
             # since it is written in a way I could not understand, I can't do much to optimize it
+            # FIXME: assert_can_view_lab_notebook is called in a loop. That's bad...
             if has_permission_to_view_lab_notebook(user, process_class):
                 lab_notebooks.append({"label": process["label_plural"], "url": url})
             
@@ -526,8 +526,11 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
-    raise ValueError("gottem")
-
+    # FIXME: The problem with this function (and probably every other 'assert') function is that it
+    # is called in a loop, and since it contains a database query, then that same query will be repeated each time
+    # in the loop. A solution would be to re-write this function to take a list of elements and loop through them
+    # and only do one database call using 'prefetch_selected', but the problem is, so many other things will have
+    # to be re-written 
     codename = "add_{0}".format(process_class.__name__.lower())
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
@@ -769,6 +772,7 @@ def assert_can_view_physical_process(user, process):
     :raises PermissionError: if the user is not allowed to view the
         process.
     """
+    raise ValueError("ddd")
     process_class = process.content_type.model_class()
     codename = "view_every_{0}".format(process_class.__name__.lower())
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
