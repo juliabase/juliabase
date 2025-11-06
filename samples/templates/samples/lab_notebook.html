@@ -75,13 +75,14 @@ we can give it to a JS file that does not know what Django templates are. -->
   </form>
 
 
-  <div class="lock-header table-responsive">
+  <div class="lock-header table-responsive-md">
     {{ html_body }}
   </div>
   <script src="{% url 'iek5:javascript-catalog' %}"></script>
   <script type="module">
     // console.log("{{ cols|escapejs }}")
     $(document).ready( function () {
+      // $('#double-scroll').doubleScroll();
       // console.log('Current URL:', window.location.href);
 
       // FIXME: this should be in lab_notebook.js, but for some reasons it

@@ -45,8 +45,8 @@ $(document).ready( function () {
                             #screenprinter-paste,          \
                             #screenprinter-screen)').DataTable({
             order: [],
-            pageLength: 50,
-            scrollX: true,
+            // pageLength: 50,
+            // scrollX: true,
             language: langDict,
         fixedColumns: true,
         fixedHeader: true // Enable FixedHeader extension
@@ -68,7 +68,6 @@ $(document).ready( function () {
                   }
               },
                   order: [],
-                  pageLength: 50,
                   scrollX: true,
                   language: langDict,
                   fixedColumns: true,
@@ -90,7 +89,6 @@ $(document).ready( function () {
                   }
               },
                   order: [],
-                  pageLength: 50,
                   scrollX: true,
                   language: langDict,
                   fixedColumns: true,
@@ -101,7 +99,6 @@ $(document).ready( function () {
         $('#screenprinter').DataTable( {
             language: langDict,
             order: [],
-            pageLength: 50,
             scrollX: true,
             fixedColumns: true,
             fixedHeader: true, // Enable FixedHeader extension
