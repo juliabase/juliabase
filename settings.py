@@ -131,14 +131,22 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    
+    
+
     "jb_common.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+    # 'django.middleware.gzip.GZipMiddleware', #This one
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",
+
     "jb_common.middleware.LoggingMiddleware",
     "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
+
     'django.middleware.gzip.GZipMiddleware', #This one
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 
