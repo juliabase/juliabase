@@ -139,8 +139,9 @@ MIDDLEWARE = [
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.gzip.GZipMiddleware', #This one
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+
     'htmlmin.middleware.HtmlMinifyMiddleware', #This one
     'htmlmin.middleware.MarkRequestMiddleware', #This one
 ]
