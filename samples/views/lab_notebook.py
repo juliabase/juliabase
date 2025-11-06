@@ -403,7 +403,7 @@ def show(request, process_name, begin_date=False, end_date=False):
     # raise ValueError("proc", dir(process_class))
     cols = get_model_field_names(process_class)
     
-    if "screenprinter_paste" in process_name or "screenprinter_screen" in process_name:
+    if "screenprinter_paste" in process_name or "screenprinter_screen" in process_name or "project" in process_name:
         # If the notebook does not support range search, fetch everything
         # serialized_data = serialize('json', process_class.get_lab_notebook_context_all())
         template_context = RequestContext(request, process_class.get_lab_notebook_context_all())

@@ -91,13 +91,16 @@ class PatternGenerator:
         :type views: set of str
         """
         class_name_with_underscores = camel_case_to_underscores(class_name)
+        
         if not url_name:
+            
             if class_name_with_underscores.endswith(("s", "x", "z")):
                 url_name = class_name_with_underscores + "es"
             else:
                 url_name = class_name_with_underscores + "s"
         assert not views - {"add", "edit", "custom_show", "lab_notebook"}
         normalized_id_field = identifying_field
+        
         if not normalized_id_field:
             model = apps.get_model(self.app_label, class_name)
             try:
@@ -105,6 +108,8 @@ class PatternGenerator:
             except AttributeError:
                 normalized_id_field = class_name_with_underscores + "_id"
         if "lab_notebook" in views:
+            # if(class_name_with_underscores == "project"):
+            #     raise ValueError(normalized_id_field)
             # self.url_patterns.extend([re_path(r"^{}/lab_notebook/(?P<dates>.*)/export/".format(url_name),
             #                                   lab_notebook.export, {"process_name": class_name},
             #                                   "export_lab_notebook_" + class_name_with_underscores),
