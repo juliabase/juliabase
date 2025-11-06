@@ -232,9 +232,7 @@ def get_lab_notebooks(user):
             # instead of a fixed year and month. That is why this if statement is used to 
             # specifically pick raman notebooks and use the normal year/month date system
             # rather than the date range system.
-            
             if "raman" in process["type"].lower():
-                
                 url = django.urls.reverse(
                     process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                     kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
@@ -244,14 +242,17 @@ def get_lab_notebooks(user):
                 url = django.urls.reverse(
                     process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                     kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label)
+
         except django.urls.NoReverseMatch:
             pass
         else:
             if url.endswith("//"):
                 url = url[:-1]
-            # raise ValueError("process:", url)
+            # OPTIMIZE: This cryptic if-statement makes 5 SQL calls for each lab notebook
+            # since it is written in a way I could not understand, I can't do much to optimize it
             if has_permission_to_view_lab_notebook(user, process_class):
                 lab_notebooks.append({"label": process["label_plural"], "url": url})
+            
 
     lab_notebooks.sort(key=lambda process: process["label"].lower())
     return lab_notebooks
