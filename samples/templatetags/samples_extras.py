@@ -581,6 +581,24 @@ def value_split_field(parser, token):
                 fields.append(token)
     return ValueSplitFieldNode(fields, unit)
 
+def sort_choices(field):
+    if hasattr(field, 'choices'):
+        # Skip the placeholder choice and check the type of the subsequent choices
+        try:
+            first_valid_choice = next(
+                choice[1] for choice in field.choices 
+                if choice[1] and choice[1] != "---------"
+            )
+            # Try to convert the first valid choice to a float
+            float(first_valid_choice)
+            # If successful, don't do anything since the data should already be sorted numerically
+        except (ValueError, StopIteration, TypeError):
+            # If conversion fails, sort alphabetically
+            sorted_choices = sorted(
+                field.choices, 
+                key=lambda choice: str(choice[1]).lower()
+            )
+            field.choices = sorted_choices
 
 @register.simple_tag
 def display_search_tree(tree):
@@ -589,21 +607,13 @@ def display_search_tree(tree):
     and displays the seach fields.
     """
     result = """<table style="border: 2px solid black; padding-left: 3em">"""
-
-    # We use this function to sort all the elements of choice fields in alphabetical order
-    def sort_choices_alphabetically(field):
-        # Checks if this is a choice field or not
-        if hasattr(field, 'choices'):
-            sorted_choices = sorted(field.choices, key=lambda choice: choice[1])
-            field.choices = sorted_choices
-
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _("General error"), "outest_tag": "<tr>"}
         result += render_to_string("error_list.html", error_context)
 
         # Sort every choice field in alphabetical order
         for field in search_field.form:
-            sort_choices_alphabetically(field.field)
+            sort_choices(field.field)
 
         if isinstance(search_field, jb_common.search.RangeSearchField):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
