@@ -113,8 +113,8 @@
 
 
   <script src="{% url 'iek5:javascript-catalog' %}"></script>
+  {% compress js inline %}
 
-  {% compress js %}
   <script >
     $(document).ready( function () {
       // FIXME: this should be in lab_notebook.js, but for some reasons it
@@ -131,9 +131,12 @@
     }
   } );
   </script>
+
+{% endcompress %}
+
   {% compress js %}
     <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
-  {% endcompress %}
+  
 
   <!-- Include marked library from CDN -->
   <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
