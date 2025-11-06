@@ -108,8 +108,6 @@ class PatternGenerator:
             except AttributeError:
                 normalized_id_field = class_name_with_underscores + "_id"
         if "lab_notebook" in views:
-            # if(class_name_with_underscores == "project"):
-            #     raise ValueError(normalized_id_field)
             # self.url_patterns.extend([re_path(r"^{}/lab_notebook/(?P<dates>.*)/export/".format(url_name),
             #                                   lab_notebook.export, {"process_name": class_name},
             #                                   "export_lab_notebook_" + class_name_with_underscores),
