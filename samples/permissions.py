@@ -349,12 +349,16 @@ def get_lab_notebooks_once(user):
         codename__in=codenames,
         content_type__in=content_types.values()
     ).select_related("content_type")
+
+    all_user_permissions = user.get_all_permissions()
     
-    # Create a lookup dictionary for permissions
+    # Create a lookup dictionary containing only the intersection
     permission_lookup = {
-        (perm.content_type, perm.codename): True for perm in permissions
+        (perm.content_type, perm.codename): True
+        for perm in permissions
+        if f"{perm.content_type.app_label}.{perm.codename}" in all_user_permissions
     }
-    
+
     for process_class, process in all_process_models:
         try:
             # Generate the URL based on the process type
