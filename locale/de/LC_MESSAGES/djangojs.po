@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-31 13:20+0200\n"
+"POT-Creation-Date: 2025-02-20 15:41+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,44 +20,44 @@ msgstr ""
 
 #: iek5/static/js/project.js:8 iek5/static/js/wafer.js:5
 msgid "Processing..."
-msgstr ""
+msgstr "Verarbeitung läuft..."
 
 #: iek5/static/js/project.js:9 iek5/static/js/wafer.js:6
 msgid "Search&nbsp;:"
-msgstr ""
+msgstr "Suchen&nbsp;:"
 
 #: iek5/static/js/project.js:10 iek5/static/js/wafer.js:7
 msgid "Show _MENU_ entries"
-msgstr ""
+msgstr "Zeige _MENU_ Einträge"
 
 #: iek5/static/js/project.js:11 iek5/static/js/wafer.js:8
 msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
-msgstr ""
+msgstr "Anzeige von _START_ bis _END_ von insgesamt _TOTAL_ Einträgen"
 
 #: iek5/static/js/project.js:12 iek5/static/js/wafer.js:9
 msgid "Showing 0 to 0 of total 0 entries"
-msgstr ""
+msgstr "Anzeige von 0 bis 0 von insgesamt 0 Einträgen"
 
 #: iek5/static/js/project.js:13 iek5/static/js/wafer.js:10
 msgid "(filtered from total _MAX_ entries)"
-msgstr ""
+msgstr "(gefiltert von _MAX_ Einträgen insgesamt)"
 
 #: iek5/static/js/project.js:15 iek5/static/js/wafer.js:12
 msgid "Loading records..."
-msgstr ""
+msgstr "Datensätze werden geladen..."
 
 #: iek5/static/js/project.js:16 iek5/static/js/wafer.js:13
 msgid "No entries found"
-msgstr ""
+msgstr "Keine Einträge gefunden"
 
 #: iek5/static/js/project.js:17 iek5/static/js/wafer.js:14
 msgid "No data available"
-msgstr ""
+msgstr "Keine Daten verfügbar"
 
 #: iek5/static/js/project.js:19 iek5/static/js/wafer.js:16
 msgid ": activate to sort column ascending"
-msgstr ""
+msgstr ": aktivieren, um die Spalte aufsteigend zu sortieren"
 
 #: iek5/static/js/project.js:20 iek5/static/js/wafer.js:17
 msgid ": activate to sort column descending"
-msgstr ""
+msgstr ": aktivieren, um die Spalte absteigend zu sortieren"

@@ -2421,11 +2421,11 @@ msgstr "ändern"
 
 #: juliabase/samples/templates/samples/main_menu.html:81
 msgid "My Experiments"
-msgstr ""
+msgstr "Meine Experimente"
 
 #: juliabase/samples/templates/samples/main_menu.html:92
 msgid "Added Experiments"
-msgstr ""
+msgstr "Hinzugefügte Experimente."
 
 #: juliabase/samples/templates/samples/main_menu.html:106
 msgid "add things"
@@ -3539,11 +3539,11 @@ msgstr "Monat"
 
 #: juliabase/samples/views/lab_notebook.py:94
 msgid "Begin Date"
-msgstr ""
+msgstr "Anfangsdatum"
 
 #: juliabase/samples/views/lab_notebook.py:99
 msgid "End Date"
-msgstr ""
+msgstr "Enddatum"
 
 #: juliabase/samples/views/lab_notebook.py:479
 #: juliabase/samples/views/lab_notebook.py:533

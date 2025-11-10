@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-31 13:24+0200\n"
+"POT-Creation-Date: 2025-02-20 15:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -62,30 +62,5 @@ msgstr ": aktivieren, um die Spalte aufsteigend zu sortieren"
 msgid ": activate to sort column descending"
 msgstr ": aktivieren, um die Spalte absteigend zu sortieren"
 
-#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
-msgid "Comments"
-msgstr "Kommentare"
-
-#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
-msgid "Aim"
-msgstr ""
-
-#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
-msgid "Execution"
-msgstr ""
-
-#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
-msgid "Analysis steps"
-msgstr ""
-
-#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
-msgid "Software and version"
-msgstr ""
-
-#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
-msgid "Result"
-msgstr ""
-
-#: juliabase/jb_common/static/juliabase/js/md_latex_renderer.js:28
-msgid "Consequence"
-msgstr ""
+#~ msgid "Comments"
+#~ msgstr "Kommentare"
