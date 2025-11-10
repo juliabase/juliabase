@@ -740,7 +740,6 @@ def show(request, sample_name):
     # experiment_absolute_urls = [experiment.get_experiment_id() for experiment in experiments]
 
 
-    # raise ValueError(experiments[0].get_experiment_id())
 
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
