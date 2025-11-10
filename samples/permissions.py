@@ -102,13 +102,20 @@ def get_user_permissions(user):
     """
     has = []
     has_not = []
-    for permission in Permission.objects.all():
-        if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
-            full_permission_name = permission.content_type.app_label + "." + permission.codename
-            if user.has_perm(full_permission_name):
-                has.append(translate_permission(full_permission_name))
-            else:
-                has_not.append(translate_permission(full_permission_name))
+    permissions = Permission.objects.select_related('content_type')
+    for permission in permissions:
+        try:
+            if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
+                full_permission_name = permission.content_type.app_label + "." + permission.codename
+                if user.has_perm(full_permission_name):
+                    has.append(translate_permission(full_permission_name))
+                else:
+                    has_not.append(translate_permission(full_permission_name))
+        except TypeError:
+            # FIXME: I temporarily added this to get rid of the "doener" permissions that did not get deleted
+            # after deleting the doener order model.
+            if "doener" in str(permission):
+                permission.delete()
     return has, has_not
 
 
