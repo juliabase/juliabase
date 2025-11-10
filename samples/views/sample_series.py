@@ -191,15 +191,17 @@ def my_sample_series(request):
             ss_name = request.POST.get("ss")
             ss = models.SampleSeries.objects.get(name = ss_name)
             request.user.my_samples.add(*ss.samples.all())
-    my_ss = request.user.sample_series.all()
+    my_ss = list(request.user.sample_series.all().prefetch_related("samples"))
+    my_samples = list(request.user.my_samples.all())
     addbools = []
     removebools = []
     for ss in my_ss:
         completeness = 0
-        for sample in ss.samples.all():
-            if sample in request.user.my_samples.all():
+        all_samples = list(ss.samples.all())
+        for sample in all_samples:
+            if sample in my_samples:
                 completeness += 1
-        if completeness == len(ss.samples.all()):
+        if completeness == len(all_samples):
             addbools.append(False)
             removebools.append(True)
         elif completeness > 0:
