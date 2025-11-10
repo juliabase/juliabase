@@ -92,7 +92,7 @@
     {{ html_body }}
   </div>
   <script src="{% url 'iek5:javascript-catalog' %}"></script>
-  <script >
+  <!-- <script >
     $(document).ready( function () {
       // $('#double-scroll').doubleScroll();
       // console.log('Current URL:', window.location.href);
@@ -358,8 +358,8 @@ if (window.location.href.indexOf('screenprinter_paste') > -1 || window.location.
     $('#date-form').hide();
 }
 } );
-  </script>
-  <!-- <script src="{% static 'juliabase/js/lab_notebook.js' %}?v={% now 'U' %}"></script> -->
+  </script> -->
+  <script src="{% static 'juliabase/js/lab_notebook.js' %}?v={% now 'U' %}"></script>
   <!-- Include marked library from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
   

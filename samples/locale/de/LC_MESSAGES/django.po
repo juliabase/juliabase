@@ -2632,7 +2632,7 @@ msgstr "weiterspalten"
 
 #: juliabase/samples/templates/samples/show_process.html:52
 msgid "Add to my experiments"
-msgstr ""
+msgstr "Zu meinen Experimenten hinzufügen"
 
 #: juliabase/samples/templates/samples/show_process.html:57
 #: juliabase/samples/templates/samples/show_sample.html:227
@@ -2667,10 +2667,8 @@ msgid "Others"
 msgstr "Beobachter"
 
 #: juliabase/samples/templates/samples/show_process.html:109
-#, fuzzy
-#| msgid "Add chosen samples"
 msgid "Add to my samples"
-msgstr "Ausgewählte Proben hinzufügen"
+msgstr "Zu meinen Proben hinzufügen"
 
 #: juliabase/samples/templates/samples/show_process.html:114
 #, python-format
@@ -2694,16 +2692,14 @@ msgstr[1] ""
 "%(link)s%(name)s -->"
 
 #: juliabase/samples/templates/samples/show_process.html:132
-#, fuzzy
-#| msgid "created at"
 msgid "Created by: "
-msgstr "eingestellt"
+msgstr "Erstellt von: "
 
 #: juliabase/samples/templates/samples/show_process.html:135
 #, fuzzy
 #| msgid "last modified"
 msgid "Last Modified by: "
-msgstr "zuletzt geändert"
+msgstr "Zuletzt geändert von: "
 
 #: juliabase/samples/templates/samples/show_sample.html:73
 msgid "Sample “"
