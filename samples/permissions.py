@@ -1228,6 +1228,43 @@ def assert_can_edit_topic(user, topic=None):
                 raise PermissionError(user, description)
 
 
+def can_edit_all_topics(user, topics):
+    """Tests whether the user can change topic memberships of other users,
+    set the topic's restriction status, and add new topics.  This typically
+    is a priviledge of heads of institute groups.
+
+    :param user: the user whose permission should be checked
+    :param topics: the topics whose members are about to be edited; 
+
+    :type user: django.contrib.auth.models.User
+    :type topics: QuerySet of `jb_common.models.Topic`
+
+    :return: Dictionary of permissions
+    """
+    all_topics_perm = {}
+    for topic in topics:
+        if not topic:
+            if not user.has_perm("jb_common.add_topic"):
+                all_topics_perm[topic] = False
+                continue
+        else:
+            if topic.is_member:
+                if not user.has_perm("jb_common.change_topic") and \
+                        topic.manager != user:
+                    all_topics_perm[topic] = False
+                    continue
+            else:
+                if not user.has_perm("jb_common.change_topic"):
+                    all_topics_perm[topic] = False
+                    continue
+                elif topic.confidential and not user.is_superuser:
+                    all_topics_perm[topic] = False
+                    continue
+        all_topics_perm[topic] = True
+
+    return all_topics_perm
+        
+
 # I am adding this because checking for each topic individually wastes time when it comes to loading the main menu
 def can_edit_at_least_one_topic(user):
     """Tests whether the user can change topic memberships of other users,

@@ -34,6 +34,7 @@ from jb_common.utils.base import int_or_zero, HttpResponseSeeOther
 from jb_common.utils.views import UserField, MultipleUsersField
 from samples import permissions
 import samples.utils.views as utils
+from django.db.models import Q, Count, Case, When, BooleanField, Prefetch
 
 
 class NewTopicForm(forms.Form):
@@ -159,13 +160,35 @@ def list_(request):
     :rtype: HttpResponse
     """
     user = request.user
+    # Prefetch the members to avoid querying for each topic
+    # I have to prefetch "manager__jb_user_details__department" because
+    # get_really_full_name keeps causing Database calls to fetch the department
+    topics_query = (
+        Topic.objects.filter(parent_topic=None)
+            .select_related('manager', 'manager__jb_user_details__department')
+            .annotate(
+            is_member=Case(
+                When(members=user, then=True),
+                default=False,
+                output_field=BooleanField(),
+            ),
+            is_manager=Case(
+                When(manager=user, then=True),
+                default=False,
+                output_field=BooleanField(),
+            ),
+            member_count=Count('members'),
+            ).order_by('name')
+        
+    )
+    topic_perms = permissions.can_edit_all_topics(user=user, topics=topics_query)
+
     topics = []
-    for topic in Topic.objects.filter(parent_topic=None).iterator():
-        if topic.confidential and user not in topic.members.all() and not user.is_superuser:
+    topics_query = list(topics_query)
+    for topic in topics_query:
+        if topic.confidential and not topic.is_member and not user.is_superuser:
             continue
-        editable = False
-        if permissions.has_permission_to_edit_topic(user, topic):
-            editable = True
+        editable = topic_perms[topic]
         topics.append((topic, editable))
     if not topics:
         raise Http404("Can't find any topics.")
