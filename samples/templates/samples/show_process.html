@@ -105,7 +105,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% endif %}
 
     <p class="operator_and_timestamp">
-      {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
+      {% translate "Created by: " %}{{ process.operator|get_really_full_name }}, {{ process|timestamp }}<br>
+      {% translate "Last Modified by: " %}{{ process.last_modified_by_person }}, {{ process.last_modified|date:"Y-m-d H:i:s" }}
+        
     </p>
 
     <div style="clear:right">
