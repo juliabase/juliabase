@@ -62,6 +62,7 @@ class SampleSeriesForm(forms.ModelForm):
         sample_series = kwargs.get("instance")
         samples = user.my_samples.all()
         important_samples = sample_series.samples.all() if sample_series else set()
+        # OPTIMIZE: This executes too many database queries
         self.fields["samples"].set_samples(user, samples, important_samples)
         self.fields["samples"].widget.attrs.update({"size": "15", "style": "vertical-align: top"})
         self.fields["short_name"].widget.attrs.update({"size": "50"})

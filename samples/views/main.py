@@ -123,7 +123,7 @@ def main_menu(request):
                    "add_samples_url": django.urls.reverse(settings.ADD_SAMPLES_VIEW),
                    "user_hash": permissions.get_user_hash(request.user),
                    "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
-                   "can_edit_topics": permissions.can_edit_any_topics(request.user),
+                   "can_edit_topics": permissions.can_edit_at_least_one_topic(request.user),
                    "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
                    "has_external_contacts": permissions.can_edit_any_external_contacts(request.user),
                    "can_rename_samples": request.user.has_perm("samples.rename_samples"),

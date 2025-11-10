@@ -165,14 +165,6 @@ class TopicField(forms.ChoiceField):
         :type user: django.contrib.auth.models.User
         :type additional_topic: `jb_common.models.Topic`
         """
-        # def topics_and_sub_topics(parent_topics):
-        #     for topic in parent_topics:
-        #         name = 2 * " " + str(topic) if topic.has_parent() else str(topic)
-        #         self.choices.append((topic.pk, name))
-        #         child_topics = topic.child_topics.all()
-        #         if child_topics:
-        #             topics_and_sub_topics(sorted(child_topics, key=lambda topic: topic.name.lower()))
-
         def topics_and_sub_topics(parent_topics, child_topic_dict):
             for topic in parent_topics:
                 name = 2 * " " + str(topic) if topic.parent_topic_id else str(topic)
@@ -183,26 +175,23 @@ class TopicField(forms.ChoiceField):
 
         self.choices = [("", 9 * "-")]
         if not user.is_superuser:
-            all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
-            # raise ValueError("hj")
+            # all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
+            all_topics = Topic.objects.filter(
+                members__is_active=True,
+                department=user.jb_user_details.department
+            ).distinct().prefetch_related("parent_topic")  # If "parent_topic" is used in `has_parent()`, prefetch it
 
-            user_topics = user.topics.all()
+            user_topics = set(user.topics.all())
+
             top_level_topics = \
                 {topic for topic in all_topics if (not topic.confidential or topic in user_topics) and not topic.has_parent()}
             if additional_topic:
                 top_level_topics.add(additional_topic.get_top_level_topic())
         else:
-            # raise ValueError("hujj")
             # OPTIMIZE: This generates 115 queries
-            # top_level_topics = {topic for topic in Topic.objects.iterator() if not topic.has_parent()}
-            # top_level_topics = set(Topic.objects.filter(parent_topic__isnull=True))
-            topics = Topic.objects.prefetch_related('child_topics').filter(parent_topic__isnull=True)
+            top_level_topics = Topic.objects.prefetch_related('child_topics').filter(parent_topic__isnull=True)
 
-
-        topics = sorted(topics, key=lambda topic: topic.name.lower())
-
-        # Fetch all topics with their child topics in a single query
-        # topics = Topic.objects.prefetch_related('child_topics').filter(parent_topic__isnull=True)#.all()
+        topics = sorted(top_level_topics, key=lambda topic: topic.name.lower())
 
         # Create a dictionary to store child topics by their parent topic ID
         child_topic_dict = defaultdict(list)
@@ -214,9 +203,6 @@ class TopicField(forms.ChoiceField):
         parent_topics = [topic for topic in topics if topic.parent_topic_id is None]
         # OPTIMIZE: This generates 218 queries
         topics_and_sub_topics(parent_topics, child_topic_dict)
-
-        # raise ValueError("olhdhk")
-
 
     def clean(self, value):
         value = super().clean(value)

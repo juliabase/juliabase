@@ -1188,6 +1188,44 @@ def assert_can_edit_topic(user, topic=None):
                 raise PermissionError(user, description)
 
 
+# I am adding this because checking for each topic individually wastes time when it comes to loading the main menu
+def can_edit_at_least_one_topic(user):
+    """Tests whether the user can change topic memberships of other users,
+    set the topic's restriction status, and add new topics.  This typically
+    is a priviledge of heads of institute groups.
+
+    :param user: the user whose permission should be checked
+
+    :type user: django.contrib.auth.models.User
+
+    :return True if the user can modify at least one topic. Otherwise, False
+    """
+    # Fetch only topics the user might have permission for
+    topics = jb_common.models.Topic.objects.prefetch_related("members").filter(
+        Q(manager=user) |  # User is the manager
+        Q(confidential=True, manager=user) |  # Confidential and user is manager
+        Q(confidential=True, manager=None, members=user) |  # Confidential and user is a member
+        Q(members=user) |  # User is a member
+        Q(confidential=False)  # Non-confidential topics
+    ).distinct()
+
+    # Convert to a set for fast lookups
+    user_memberships = {topic.id for topic in topics if user in topic.members.all()}
+
+    # Check conditions efficiently
+    for topic in topics:
+        if topic.id in user_memberships:  # User is a member
+            if user.has_perm("jb_common.change_topic") and topic.manager == user:
+                return True
+        else:  # User is NOT a member
+            if user.has_perm("jb_common.change_topic"):
+                return True
+            elif topic.confidential and user.is_superuser:
+                return True
+
+    return False  # Default case
+
+
 def assert_can_edit_users_topics(user):
     """Tests whether the user can change topic memberships of other users,
     set the topic's restriction status, and add new sub topics where the
