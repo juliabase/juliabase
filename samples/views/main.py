@@ -109,7 +109,7 @@ def main_menu(request):
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user)
     # OPTIMIZE: This calls way too many queries, and I couldn't identify where the SQL calls are
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
-    lab_notebooks = permissions.get_lab_notebooks(request.user)
+    lab_notebooks = permissions.get_lab_notebooks_once(request.user)
     can_view_wafers = request.user.has_perm("iek5.view_every_wafer")
     all_experiments = Experiment.objects.filter(operator=request.user)
 

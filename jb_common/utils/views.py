@@ -184,7 +184,7 @@ class TopicField(forms.ChoiceField):
         self.choices = [("", 9 * "-")]
         if not user.is_superuser:
             all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
-            raise ValueError("hj")
+            # raise ValueError("hj")
 
             user_topics = user.topics.all()
             top_level_topics = \

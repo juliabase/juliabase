@@ -202,9 +202,13 @@ def get_allowed_physical_processes(user):
     :rtype: list of dict mapping str to str
     """
     allowed_physical_processes = []
-    for physical_process_class, add_data in get_all_addable_physical_process_models().items():
-        if has_permission_to_add_physical_process(user, physical_process_class):
-            allowed_physical_processes.append(add_data.copy())
+    all_addable_physical_process_models = get_all_addable_physical_process_models().items()
+    process_and_permission = can_add_physical_processes(user, all_addable_physical_process_models)
+
+    for process_class, (add, add_data) in process_and_permission.items():
+        if add:
+            allowed_physical_processes.append(add_data)
+
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())
     return allowed_physical_processes
 
@@ -255,6 +259,95 @@ def get_lab_notebooks(user):
                 lab_notebooks.append({"label": process["label_plural"], "url": url})
             
 
+    lab_notebooks.sort(key=lambda process: process["label"].lower())
+    return lab_notebooks
+
+def get_lab_notebooks_once(user):
+    """Get a list of all lab notebooks the user can see.
+
+    :param user: the user whose allowed lab notebooks should be collected
+    :type user: django.contrib.auth.models.User
+
+    :return:
+      List of all lab notebooks the user is allowed to see. Every lab book is
+      represented by a dictionary with two keys: ``"url"`` (the lab book URL)
+      and ``"label"`` (the name of the process, starting lowercase).
+
+    :rtype: list of dict mapping str to str
+    """
+    lab_notebooks = []
+    all_process_models = get_all_addable_physical_process_models().items()
+    
+    # Precompute content types for all process classes
+    process_classes = [cls for cls, _ in all_process_models]
+
+    # Get all models related to process_classes
+    app_label_and_model_names = [
+        (cls._meta.app_label, cls._meta.model_name) for cls in process_classes
+    ]
+
+    # Fetch all ContentType objects in a single query
+    content_type_map = {
+        (ct.app_label, ct.model): ct
+        for ct in ContentType.objects.filter(
+            app_label__in={label for label, model in app_label_and_model_names},
+            model__in={model for label, model in app_label_and_model_names},
+        )
+    }
+
+    # Map each class to its corresponding ContentType
+    content_types = {
+        cls: content_type_map[(cls._meta.app_label, cls._meta.model_name)]
+        for cls in process_classes
+    }
+
+    # Precompute all permissions related to these content types in a single query
+    codenames = [
+        "view_every_{0}".format(cls.__name__.lower()) for cls in process_classes
+    ]
+    permissions = Permission.objects.filter(
+        codename__in=codenames,
+        content_type__in=content_types.values()
+    ).select_related("content_type")
+    
+    # Create a lookup dictionary for permissions
+    permission_lookup = {
+        (perm.content_type, perm.codename): True for perm in permissions
+    }
+    
+    for process_class, process in all_process_models:
+        try:
+            # Generate the URL based on the process type
+            if "raman" in process["type"].lower():
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label
+                )
+            else:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label
+                )
+        except django.urls.NoReverseMatch:
+            # Skip if the URL cannot be resolved
+            continue
+
+        if url.endswith("//"):
+            url = url[:-1]
+        
+        # Check if the user has the required permission
+        codename = "view_every_{0}".format(process_class.__name__.lower())
+        content_type = content_types[process_class]
+        has_view_all_permission = permission_lookup.get((content_type, codename), False)
+
+        # Superusers have all permissions
+        if not has_view_all_permission:
+            has_view_all_permission = user.is_superuser
+
+        if has_view_all_permission:
+            lab_notebooks.append({"label": process["label_plural"], "url": url})
+
+    # Sort the results alphabetically
     lab_notebooks.sort(key=lambda process: process["label"].lower())
     return lab_notebooks
 
@@ -541,6 +634,83 @@ def assert_can_add_physical_process(user, process_class):
             raise PermissionError(user, description)
 
 
+def can_add_physical_processes(user, process_classes):
+    """
+    Tests whether the user can create new physical processes (e.g., deposition,
+    measurement, etching process, clean room work, etc.) for a list of process classes.
+
+    :param user: the user whose permissions should be checked
+    :param process_classes: a list of process class types the user is requesting permission for
+
+    :type user: django.contrib.auth.models.User
+    :type process_classes: list of ``class`` (each derived from `samples.models.Process`)
+
+    :raises PermissionError: if the user is not allowed to add any of the specified processes.
+    """
+    if not process_classes:
+        return  # No processes to check, exit early
+
+    # Sort process_classes by the "label" key in the dictionaries inside add_datas
+    sorted_process_classes = sorted(process_classes, key=lambda x: x[1]["label"].lower())
+
+    # Unpack into physical_processes and add_datas after sorting
+    physical_processes, add_datas = zip(*sorted_process_classes)
+
+    # Build a query to fetch permissions for all process classes in a single query
+    # content_types = [ContentType.objects.get_for_model(cls) for cls in physical_processes]
+
+    # Extract app labels and model names
+    content_type_filters = [
+        {"app_label": cls._meta.app_label, "model": cls._meta.model_name}
+        for cls in physical_processes
+    ]
+
+    # Use a single query to fetch all matching ContentType objects
+    content_types_2 = ContentType.objects.filter(
+        **{"{}__in".format(key): [f[key] for f in content_type_filters] for key in ["app_label", "model"]}
+    ).distinct()
+
+    # Convert the QuerySet to a list if needed
+    content_types_2 = list(content_types_2)
+    sorted_content_types_2 = sorted(content_types_2, key=lambda x: x.name.lower())
+
+    # Get the IDs of the content types
+    content_type_ids = [ct.id for ct in sorted_content_types_2]
+
+    codenames = ["add_{0}".format(cls.__name__.lower()) for cls in physical_processes]
+
+    # Use `Q` objects to build a single query for permissions
+    permission_query = Q()
+    for content_type_id, codename in zip(content_type_ids, codenames):
+        permission_query |= Q(codename=codename, content_type=content_type_id)
+
+    # Fetch all matching permissions
+    permissions = Permission.objects.filter(permission_query).select_related('content_type')
+
+    # Create a set of permission strings (e.g., "app_label.add_processname")
+    permission_strings = {
+        "{app_label}.{codename}".format(app_label=perm.content_type.app_label, codename=perm.codename)
+        for perm in permissions
+    }
+
+    class_and_permission = {}
+
+    # Check each process class against the user's permissions
+    for process_class, add_data in sorted_process_classes:
+        codename = "add_{0}".format(process_class.__name__.lower())
+        permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
+
+        if permission not in permission_strings or not user.has_perm(permission):
+            if any(keyword in permission for keyword in ["layerthickness", "mariaprotocol", "mariastep", "structuring"]):
+                class_and_permission[process_class] = (True, add_data)
+                continue
+            class_and_permission[process_class] = (False, add_data)
+        else:
+            class_and_permission[process_class] = (True, add_data)
+
+    return class_and_permission
+
+
 def assert_can_edit_physical_process(user, process):
     """Tests whether the user can edit a physical process (i.e. deposition,
     measurement, etching process, clean room work etc).  For this, he must be
@@ -772,7 +942,6 @@ def assert_can_view_physical_process(user, process):
     :raises PermissionError: if the user is not allowed to view the
         process.
     """
-    raise ValueError("ddd")
     process_class = process.content_type.model_class()
     codename = "view_every_{0}".format(process_class.__name__.lower())
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)

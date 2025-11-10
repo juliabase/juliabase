@@ -451,23 +451,46 @@ class Process(PolymorphicModel):
         # Convert modified datetime object back to string without seconds, hours, and minutes
         end_date = end_date.strftime('%Y-%m-%d')
 
-        # Fetch the first two records to check the order
-        # first_two_records = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('timestamp')[:2]
+        
+        # Get all ForeignKey and OneToOneField fields for the model
+        related_fields = [
+            field.name for field in cls._meta.get_fields()
+            if isinstance(field, (models.ForeignKey, models.OneToOneField))
+        ]
 
-        # # Check if the list is already sorted in descending order
-        # is_descending = len(first_two_records) < 2 or first_two_records[0].timestamp >= first_two_records[1].timestamp
+        # Get ManyToManyField relationships
+        many_to_many_fields = [
+            field.name for field in cls._meta.get_fields()
+            if isinstance(field, models.ManyToManyField)
+        ]
 
-        # raise ValueError(first_two_records[0].timestamp, "-----", first_two_records[1].timestamp )
-
-        # if not is_descending:
-        #     processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('-timestamp').order_by('-timestamp')
+        # raise ValueError("9999")
+        # if related_fields:
+        #     # raise ValueError("gato")
+        #     queryset = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related(*related_fields)
         # else:
-            # Filter processes by timestamp range
-        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related()#.order_by('-timestamp')
-        # raise ValueError(processes[0].timestamp)
-        # processes.sort(key=lambda loana: loana.timestamp, reverse=False)
-        # raise ValueError(processes[0].timestamp)
-        return {"processes": processes}
+        #     raise ValueError("hey")
+        #     # Dynamically apply select_related()
+        # queryset = cls.objects.filter(timestamp__range=(begin_date, end_date)) \
+        #             .select_related("deposition_ptr", "deposition_ptr__process_ptr", *related_fields) \
+        #             .prefetch_related(*many_to_many_fields)
+        # raise ValueError(cls)
+        # OPTIMIZE: This makes 20 similar DB queries for MariaDeposition
+        queryset = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related(*related_fields).prefetch_related(*many_to_many_fields)
+        # raise ValueError("kol2pppä")
+
+        # if related_fields:
+        #     queryset = queryset.select_related(*related_fields)  # Apply optimization dynamically
+
+        # if "mariadeposition" in str(cls).lower():
+        #     # Precompute zipped lists for each deposition
+        #     for deposition in queryset:
+        #         protocols = list(deposition.protocols.all())  # Force DB evaluation
+        #         samples = list(deposition.samples.all())  # Force DB evaluation
+        #         deposition.zipped_protocols_samples = list(zip(protocols, samples))
+        # raise ValueError("mariadeposition" in str(cls).lower())
+
+        return {"processes": list(queryset)}
 
 
     
