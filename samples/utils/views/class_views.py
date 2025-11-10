@@ -277,27 +277,14 @@ class ProcessWithoutSamplesView(TemplateView):
 
         :rtype: ``django.http.HttpResponse``
         """
-        # raise ValueError("req:", dir  ( request.POST  ) )
-        # raise ValueError("req:",   ( request.POST  ) )
-
-
-
-        # raise ValueError("jdjd:", django.contrib.auth.models.User.objects.get (username=request.user.username) )
-
-
         all_valid = self.is_all_valid()
         referentially_valid = self.is_referentially_valid()
         if all_valid and referentially_valid:
             self.process = self.save_to_database()
             # FIXME: This is bad. It does work, but it is bad. Bad scalability :/
             if "herculeses" in request.get_full_path() and "edit" in request.get_full_path():
-                # current_herc_obj = ipv_models.Hercules.objects.get(number=request.POST["number"])
-
                 self.process.last_modified_by_person = django.contrib.auth.models.User.objects.get (username=request.user.username)
                 self.process.last_modified = datetime.now()
-
-                # raise ValueError(f"Last Modified By: {self.process.last_modified_by_person}, Last Modified: {self.process.last_modified}")
-
                 self.process.save()
             return self.create_successful_response(request)
         else:
