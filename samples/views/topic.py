@@ -178,13 +178,14 @@ def list_(request):
                 output_field=BooleanField(),
             ),
             member_count=Count('members'),
-            ).order_by('name')
+            ).order_by('name')#.distinct()
         
     )
     topic_perms = permissions.can_edit_all_topics(user=user, topics=topics_query)
 
     topics = []
-    topics_query = list(topics_query)
+    topics_query = sorted(list(set(topics_query)), key=lambda x: str(x.name).lower())
+    # raise ValueError(topics_query)
     for topic in topics_query:
         if topic.confidential and not topic.is_member and not user.is_superuser:
             continue
