@@ -102,7 +102,8 @@ def get_user_permissions(user):
     """
     has = []
     has_not = []
-    for permission in Permission.objects.all():
+    permissions = Permission.objects.select_related('content_type')
+    for permission in permissions:
         if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
             full_permission_name = permission.content_type.app_label + "." + permission.codename
             if user.has_perm(full_permission_name):
