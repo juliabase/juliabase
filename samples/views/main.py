@@ -279,19 +279,30 @@ def show_process(request, process_id, process_name="Process"):
     #     .distinct()
     # )
 
+    # I make a copy here, because I want to change it without  
+    # affecting all_samples which is used in the loop below
+    samples_without_series = list(all_samples)
+    
     # Step 1: Filter SampleSeries with at least one sample from sample_list
     sample_series_with_matching_samples = (
         SampleSeries.objects
         .filter(samples__in=all_samples)
         .distinct()
     )
-
     # Step 2: For each SampleSeries, get the matching Sample objects
     for series in sample_series_with_matching_samples:
         matching_samples = series.samples.filter(id__in=all_samples)
+        # all_samples_copy = [sample for sample in all_samples_copy if sample not in all_samples_copy]
+        for sample in matching_samples:
+            if sample in samples_without_series:
+                samples_without_series.remove(sample)
         series.matching_samples = list(matching_samples)  # Attach matching Sample objects to each series
 
 
+    # result = [item for item in list1 if item not in list2]
+    # raise ValueError(sample_series_with_matching_samples[0].matching_samples, samples_without_series)
+
+    
     # for series in sample_series_with_matching_samples:
     #     raise ValueError(f"Sample Series: {series.name},  Matching Samples in SampleSeries: {series.matching_samples}")
 
@@ -300,7 +311,7 @@ def show_process(request, process_id, process_name="Process"):
                         "samples": all_samples,
                         "process": process,
                         "sample_series_with_matching_samples": sample_series_with_matching_samples,
-                        # "all_sample_topics": sorted(all_sample_topics, key=str.casefold),
+                        "samples_without_series": samples_without_series,
                         "add_to_my_experiments_url": add_to_my_experiments_url,
                         "process_id": process_id,
                         }

@@ -94,6 +94,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
                 {% endfor %}
 
+                <h5>{% translate 'Others' %}</h5>
+
+                {% for sample in samples_without_series %}
+                    
+                      <div>
+                        <input type="checkbox" id="sample_{{ sample.id }}" name="selected_samples" value="{{ sample.id }}" class="sample-checkbox">
+                        <label for="sample_{{ sample.id }}"><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></label>
+                      </div>
+                    
+                  {% endfor %}
+
               </ul>
               <button type="submit"> {% translate 'Add to my samples' %} </button>
             </form>
