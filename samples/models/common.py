@@ -43,6 +43,7 @@ import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from datetime import datetime as dt, timedelta
+import itertools
 
 
 def empty_list():
@@ -450,7 +451,6 @@ class Process(PolymorphicModel):
 
         # Convert modified datetime object back to string without seconds, hours, and minutes
         end_date = end_date.strftime('%Y-%m-%d')
-
         
         # Get all ForeignKey and OneToOneField fields for the model
         related_fields = [
@@ -458,37 +458,49 @@ class Process(PolymorphicModel):
             if isinstance(field, (models.ForeignKey, models.OneToOneField))
         ]
 
-        # Get ManyToManyField relationships
+        # Include reverse foreign key and reverse one-to-one fields
+        reverse_related_fields = [
+            field.get_accessor_name() for field in cls._meta.get_fields()
+            if field.is_relation and field.one_to_many
+        ]
+
+        # Get ManyToManyField relationships (both direct and reverse)
         many_to_many_fields = [
             field.name for field in cls._meta.get_fields()
             if isinstance(field, models.ManyToManyField)
+        ] + [
+            field.get_accessor_name() for field in cls._meta.get_fields()
+            if field.is_relation and field.many_to_many
         ]
 
-        # raise ValueError("9999")
-        # if related_fields:
-        #     # raise ValueError("gato")
-        #     queryset = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related(*related_fields)
-        # else:
-        #     raise ValueError("hey")
-        #     # Dynamically apply select_related()
-        # queryset = cls.objects.filter(timestamp__range=(begin_date, end_date)) \
-        #             .select_related("deposition_ptr", "deposition_ptr__process_ptr", *related_fields) \
-        #             .prefetch_related(*many_to_many_fields)
-        # raise ValueError(cls)
-        # OPTIMIZE: This makes 20 similar DB queries for MariaDeposition
-        queryset = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related(*related_fields).prefetch_related(*many_to_many_fields)
-        # raise ValueError("kol2pppä")
+        fields_to_remove = ['informal_layers', 'task', 'feededitedphysicalprocess_set']
+        reverse_related_fields_clean = [field for field in reverse_related_fields if field not in fields_to_remove]
 
-        # if related_fields:
-        #     queryset = queryset.select_related(*related_fields)  # Apply optimization dynamically
+        queryset = cls.objects.filter(timestamp__range=(begin_date, end_date))\
+                                .select_related(*related_fields)\
+                                .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
 
-        # if "mariadeposition" in str(cls).lower():
-        #     # Precompute zipped lists for each deposition
-        #     for deposition in queryset:
-        #         protocols = list(deposition.protocols.all())  # Force DB evaluation
-        #         samples = list(deposition.samples.all())  # Force DB evaluation
-        #         deposition.zipped_protocols_samples = list(zip(protocols, samples))
-        # raise ValueError("mariadeposition" in str(cls).lower())
+        # OPTIMIZE: I managed to shrink the number of queries for MariaDeposition from 550+ to 47, but it 
+        # can still be more optimized. Look into get_newest_sample_series_for_multiple for better optimization
+        if "mariadeposition" in str(cls).lower():
+            # Lazy import to avoid circular imports
+            from iek5.templatetags import ipv_extras
+            # Precompute zipped lists for each deposition
+            for deposition in queryset:
+                protocols = list(deposition.protocols.all())  # Force DB evaluation
+                samples = list(deposition.samples.all())  # Force DB evaluation
+                zipped_data = list(itertools.zip_longest(protocols, samples, fillvalue=''))
+    
+                # Extract samples and fetch newest sample series for all of them
+                samples = [item[1] for item in zipped_data]
+                newest_sample_series = ipv_extras.get_newest_sample_series_for_multiple(samples)
+
+                result = [
+                    (protocol, sample, newest_sample_series.get(sample, "No series"))
+                    for protocol, sample in zipped_data
+                ]
+
+                deposition.zipped_result = result
 
         return {"processes": list(queryset)}
 
