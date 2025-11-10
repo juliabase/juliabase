@@ -46,9 +46,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                      href="{{ resplit_url }}?next={{ url|urlquote_plus }}"
                ><img src="{% static "juliabase/icons/arrow_branch.png" %}" alt="resplit icon" title="{% translate 'resplit' %}"
                      width="16" height="16"/></a>
-            {% endif %}{% endblock process_icons %}
+            {% endif %}
+            {% if add_to_my_experiments_url %}<a class="edit-icon"
+                     href="{{ add_to_my_experiments_url }}?next=/experiments/{{ process_id }}"
+               ><img src="{% static "juliabase/icons/add.png" %}" alt="add icon" title="{% translate 'Add to my experiments' %}"
+                     width="16" height="16"/></a>
+            {% endif %}
+            {% endblock process_icons %}
             {% if not process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
                                                         >{% translate "(not finished)" %}</span>{% endif %}
+
           </h1></div>
         {% endspaceless %}
   <div class="process">
@@ -105,7 +112,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% endif %}
 
     <p class="operator_and_timestamp">
-      {{ process.operator|get_really_full_name }}, {{ process|timestamp }}
+      {% translate "Created by: " %}{{ process.operator|get_really_full_name }}, {{ process|timestamp }}<br>
+      {% if process.last_modified_by_person %}
+
+        {% translate "Last Modified by: " %}{{ process.last_modified_by_person|get_really_full_name }}, {{ process.last_modified|date:"Y-m-d H:i:s" }}
+        
+      {% endif %}
+
     </p>
 
     <div style="clear:right">
@@ -116,4 +129,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% endif %}
     </div>
   </div>
+{% endblock %}
+
+{% block local_scripts %}
+{{ block.super }}
+<script type="text/javascript" src="{%  static 'samples/js/select_all.js' %}"></script>
 {% endblock %}

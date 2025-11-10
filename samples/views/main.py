@@ -21,7 +21,7 @@ better place to be (yet).
 
 from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
-from django.http import HttpResponsePermanentRedirect, Http404, JsonResponse
+from django.http import HttpResponsePermanentRedirect, Http404, JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 import django.urls
 import django.forms as forms

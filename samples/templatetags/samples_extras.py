@@ -815,5 +815,11 @@ def static_with_hash(file_path):
         return f"{url}?v={file_hash}"
     else:
         return static(file_path)
+        
+@register.filter
+def join_with_commas(value):
+    if isinstance(value, list):
+        return ', '.join(str(v) for v in value)
+    return value
 
 _ = gettext

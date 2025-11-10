@@ -1029,7 +1029,15 @@ def assert_can_view_result_process(user, result_process):
     :raises PermissionError: if the user is not allowed to view the result
         process.
     """
-    if result_process.operator != user and \
+    v1 = list(result_process.samples.all())
+    v2 = list(result_process.sample_series.all())
+    v3 = samples.models.Clearance.objects.filter(user=user, processes=result_process).exists()
+    
+    # I added this if statement because the other one underneath throws a PermissionError even when the result process
+    # has no samples or sample series which causes funny things.
+    if not v1 and not v2 and not v3:
+        pass
+    elif result_process.operator != user and \
             all(not has_permission_to_fully_view_sample(user, sample) for sample in result_process.samples.all()) and \
             all(not has_permission_to_view_sample_series(user, sample_series)
                 for sample_series in result_process.sample_series.all()) and \

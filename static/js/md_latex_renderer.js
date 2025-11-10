@@ -6,32 +6,64 @@
 // gets rendered. It also causes sometimes "race conditions" where
 // MathJax ends up being called before it is loaded.
 document.addEventListener('DOMContentLoaded', function () {
-// Find the index of the column with the desired header content
-const columnIndex = Array.from(document.querySelectorAll('th.top')).findIndex(th => th.textContent.trim() === 'Comments') + 1;
-// Find all elements in the "Comments" column
-const commentCells = document.querySelectorAll(`tr td:nth-child(${columnIndex})`);
+    // Define the data attributes of the columns you want to target
+    const targetDataAttributes = ['comments', 'consequence', 'aim', 'execution', 'analysis_steps', 'software_and_version', 'result']; // Add your data attributes here
 
-// Convert each comment to Markdown
-commentCells.forEach(cell => {
-    const originalText = cell.textContent;
-    // This beautiful if statement ignores any mathematical formula, because if we
-    // interpret it as MD, well, the square brackets will be removed from the formula :)
-    if (!originalText.startsWith('$') || !originalText.endsWith('$')) {
-        // Sanitize the MD just in case someone does something sus with it
-        const sanitizedText = DOMPurify.sanitize(originalText);
-        const markdownText = marked(sanitizedText); // Use a Markdown library
-        cell.innerHTML = markdownText;
+    // Find the indices of the columns with the desired data attributes
+    const columnIndices = targetDataAttributes.map(dataAttr => {
+        return Array.from(document.querySelectorAll('th.top')).findIndex(th => th.getAttribute('data-column') === dataAttr) + 1;
+    });
+
+    // Function to convert text to Markdown
+    function convertToMarkdown(cell) {
+        const originalText = cell.textContent;
+        // This beautiful if statement ignores any mathematical formula, because if we
+        // interpret it as MD, well, the square brackets will be removed from the formula :)
+        if (!originalText.startsWith('$') || !originalText.endsWith('$')) {
+            // Sanitize the MD just in case someone does something sus with it
+            const sanitizedText = DOMPurify.sanitize(originalText);
+            const markdownText = marked(sanitizedText); // Use a Markdown library
+            cell.innerHTML = markdownText;
+        }
     }
-});
 
-// Now we import MathJax and let it do its magic :)
-var polyfillScript = document.createElement('script');
-polyfillScript.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
-document.head.appendChild(polyfillScript);
+    // Apply the Markdown conversion to each specified column
+    columnIndices.forEach(columnIndex => {
+        if (columnIndex > 0) { // Ensure the column index is valid
+            const cells = document.querySelectorAll(`tr td:nth-child(${columnIndex})`);
+            cells.forEach(cell => {
+                convertToMarkdown(cell);
+            });
+        }
+    });
 
-var mathJaxScript = document.createElement('script');
-mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
-mathJaxScript.id = "MathJax-script";
-mathJaxScript.async = true;
-document.head.appendChild(mathJaxScript);
+    // Now, apply Markdown conversion to <p> elements with the same data attributes
+    targetDataAttributes.forEach(dataAttr => {
+        const paragraphs = document.querySelectorAll(`p[data-column="${dataAttr}"]`);
+        paragraphs.forEach(p => {
+            convertToMarkdown(p);
+        });
+    });
+
+    // Add MathJax configuration to enable both inline and display math
+    window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']], // Enable $ ... $ for inline math
+          displayMath: [['$$', '$$'], ['\\[', '\\]']] // $$ ... $$ for display math
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+
+    // Now we import MathJax and let it do its magic :)
+    var polyfillScript = document.createElement('script');
+    polyfillScript.src = "https://polyfill.io/v3/polyfill.min.js?features=es6";
+    document.head.appendChild(polyfillScript);
+
+    var mathJaxScript = document.createElement('script');
+    mathJaxScript.src = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js";
+    mathJaxScript.id = "MathJax-script";
+    mathJaxScript.async = true;
+    document.head.appendChild(mathJaxScript);
 });

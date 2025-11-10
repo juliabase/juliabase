@@ -38,14 +38,6 @@
   {% load static %}
   {% load compress %}
   
-  <!-- <link type="text/css" rel="stylesheet" href="{% static 'juliabase/css/lab_notebook.css' %}"/> -->
-  
-  <!-- 
-  <style type="text/css">
-    tr.topline { border-top: 1px solid black }
-  </style>
-  -->
-  
   {% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon" 
        href="{{ export_url }}"><img src="{% static "juliabase/icons/table.png" %}" alt="export icon"
           title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
