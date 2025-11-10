@@ -614,56 +614,156 @@ class GeneralSampleField:
     because of this; you may select both without a negative effect.
     """
 
+    # def set_samples(self, user, samples=None, important_samples=frozenset()):
+    #     """Set the sample list shown in the widget.  You *must* call this
+    #     method in the constructor of the form in which you use this field,
+    #     otherwise the selection box will remain emtpy.
+
+    #     :param user: the user for which this field is generated; he may not be
+    #         allowed to see all topic names, therefore it is necessary to know
+    #         who it is
+    #     :param samples: Samples to be included into the list.  Typically, these
+    #         are the current user's “My Samples”, plus the samples that were
+    #         already connected with the deposition or measurement when you edit
+    #         it.  It defaults to the user's “My Samples”.
+    #     :param important_samples: These samples are also included into the
+    #         list, but they are never hidden due to a folded topic or sample
+    #         series.  These samples typically are those already connected with a
+    #         process that is about to be edited.
+
+    #     :type user: django.contrib.auth.models.User
+    #     :type samples: iterable of `samples.models.Sample`
+    #     :type important_samples: iterable of `samples.models.Sample`
+    #     """
+    #     # def get_samples_from_topic(topic, folded_topics_and_sample_series):
+    #     #     if topic.topic.id not in folded_topics_and_sample_series:
+    #     #         seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
+    #     #         self.choices.append((topic.topic_name, seriesless_samples))
+    #     #         for series in topic.sample_series:
+    #     #             if not series.sample_series.get_hash_value() in folded_topics_and_sample_series:
+    #     #                 new_samples = [(sample.pk, 4 * " " + sample.name_with_tags(user)) for sample in series.samples]
+    #     #                 self.choices.append((4 * " " + series.name, new_samples))
+    #     #         for sub_topic in topic.sub_topics:
+    #     #             get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+    #     def get_samples_from_topic(topic, folded_topics_and_sample_series):
+    #         # Early exit if topic is already processed
+    #         if topic.topic.id in folded_topics_and_sample_series:
+    #             return
+
+    #         # Add samples without series
+    #         seriesless_samples = [
+    #             (sample.pk, sample.name_with_tags(user)) for sample in topic.samples
+    #         ]
+    #         self.choices.append((topic.topic_name, seriesless_samples))
+
+    #         # Add samples from series
+    #         for series in topic.sample_series:
+    #             series_hash = series.sample_series.get_hash_value()
+    #             if series_hash not in folded_topics_and_sample_series:
+    #                 new_samples = [
+    #                     (sample.pk, " " * 4 + sample.name_with_tags(user)) for sample in series.samples
+    #                 ]
+    #                 self.choices.append((" " * 4 + series.name, new_samples))
+
+    #         # Recursively process subtopics
+    #         for sub_topic in topic.sub_topics:
+    #             get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+
+
+    #     if important_samples:
+    #         important_samples = set(important_samples)
+    #         samples = set(samples or []) | important_samples
+    #     folded_topics_and_sample_series = set(user.samples_user_details.folded_topics) | \
+    #                                       set(user.samples_user_details.folded_series)
+    #     important_topics = set()
+    #     for series in models.SampleSeries.objects.filter(samples__in=important_samples).distinct():
+    #         folded_topics_and_sample_series.discard(series.get_hash_value())
+    #         important_topics.add(series.topic)
+    #     for topic in set(Topic.objects.filter(samples__in=important_samples).distinct()) | important_topics:
+    #         folded_topics_and_sample_series.discard(topic.pk)
+    #         while topic.parent_topic:
+    #             topic = topic.parent_topic
+    #             folded_topics_and_sample_series.discard(topic.pk)
+    #     topics, topicless_samples = utils.build_structured_sample_list(user, samples)
+    #     self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
+    #     for topic in topics:
+    #         get_samples_from_topic(topic, folded_topics_and_sample_series)
+    #     if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
+    #         self.choices.insert(0, ("", 9 * "-"))
     def set_samples(self, user, samples=None, important_samples=frozenset()):
-        """Set the sample list shown in the widget.  You *must* call this
-        method in the constructor of the form in which you use this field,
-        otherwise the selection box will remain emtpy.
+        """
+        Optimized method to set the sample list shown in the widget.
 
-        :param user: the user for which this field is generated; he may not be
-            allowed to see all topic names, therefore it is necessary to know
-            who it is
-        :param samples: Samples to be included into the list.  Typically, these
-            are the current user's “My Samples”, plus the samples that were
-            already connected with the deposition or measurement when you edit
-            it.  It defaults to the user's “My Samples”.
-        :param important_samples: These samples are also included into the
-            list, but they are never hidden due to a folded topic or sample
-            series.  These samples typically are those already connected with a
-            process that is about to be edited.
-
-        :type user: django.contrib.auth.models.User
-        :type samples: iterable of `samples.models.Sample`
-        :type important_samples: iterable of `samples.models.Sample`
+        :param user: The user for whom the field is generated.
+        :param samples: Samples to be included in the list.
+        :param important_samples: Samples to always include in the list, regardless of folding.
         """
         def get_samples_from_topic(topic, folded_topics_and_sample_series):
-            if topic.topic.id not in folded_topics_and_sample_series:
-                seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
-                self.choices.append((topic.topic_name, seriesless_samples))
-                for series in topic.sample_series:
-                    if not series.sample_series.get_hash_value() in folded_topics_and_sample_series:
-                        new_samples = [(sample.pk, 4 * " " + sample.name_with_tags(user)) for sample in series.samples]
-                        self.choices.append((4 * " " + series.name, new_samples))
-                for sub_topic in topic.sub_topics:
-                    get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+            if topic.topic.id in folded_topics_and_sample_series:
+                return
 
+            # Collect samples without series
+            seriesless_samples = [
+                (sample.pk, sample.name_with_tags(user)) for sample in topic.samples#.all()
+            ]
+            self.choices.append((topic.topic_name, seriesless_samples))
+
+            # Collect samples from series
+            for series in topic.sample_series:#.all():
+                series_hash = series.sample_series.get_hash_value()
+                if series_hash not in folded_topics_and_sample_series:
+                    new_samples = [
+                        (sample.pk, " " * 4 + sample.name_with_tags(user)) for sample in series.samples#.all()
+                    ]
+                    self.choices.append((" " * 4 + series.name, new_samples))
+
+            # Process subtopics recursively
+            for sub_topic in topic.sub_topics:#.all():
+                get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+
+        # Optimize the important_samples handling
         if important_samples:
             important_samples = set(important_samples)
             samples = set(samples or []) | important_samples
-        folded_topics_and_sample_series = set(user.samples_user_details.folded_topics) | \
-                                          set(user.samples_user_details.folded_series)
+
+        # Preload user's folded topics and series
+        user_details = user.samples_user_details
+        folded_topics_and_sample_series = set(user_details.folded_topics) | set(user_details.folded_series)
+
+        # Preload important topics and unfolded series
+        important_series = (
+            models.SampleSeries.objects.filter(samples__in=important_samples)
+            .distinct()
+            .select_related("topic")  # Fetch associated topics
+        )
+
         important_topics = set()
-        for series in models.SampleSeries.objects.filter(samples__in=important_samples).distinct():
+        for series in important_series:
             folded_topics_and_sample_series.discard(series.get_hash_value())
             important_topics.add(series.topic)
-        for topic in set(Topic.objects.filter(samples__in=important_samples).distinct()) | important_topics:
-            folded_topics_and_sample_series.discard(topic.pk)
+
+        # Preload parent topics for important topics
+        all_topics = Topic.objects.filter(
+            samples__in=important_samples
+        ).distinct().select_related("parent_topic")
+        for topic in set(all_topics) | important_topics:
             while topic.parent_topic:
-                topic = topic.parent_topic
                 folded_topics_and_sample_series.discard(topic.pk)
+                topic = topic.parent_topic
+            folded_topics_and_sample_series.discard(topic.pk)
+
+        # Build structured sample list
         topics, topicless_samples = utils.build_structured_sample_list(user, samples)
-        self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
+
+        # Collect topicless samples
+        self.choices = [
+            (sample.pk, sample.name_with_tags(user)) for sample in topicless_samples
+        ]
+
         for topic in topics:
             get_samples_from_topic(topic, folded_topics_and_sample_series)
+
+        # Add placeholder if no choices exist
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, ("", 9 * "-"))
 

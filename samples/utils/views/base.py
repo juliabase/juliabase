@@ -23,7 +23,7 @@ import copy, re, csv
 from io import StringIO
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.http import Http404, HttpResponse
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.contenttypes.models import ContentType
@@ -34,7 +34,7 @@ from samples.utils import sample_names
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
 import jb_common.utils.base
-from samples.models import Sample
+from samples.models import Sample, SampleSeries
 # from jb_common.models import Topic
 
 
@@ -338,14 +338,18 @@ def build_structured_sample_list(user, samples=None):
 
     # Prefetch 'series' for all samples
     # samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).prefetch_related('series')
-
-    samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).select_related('topic').prefetch_related('series__topic')
+    samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).\
+                                    select_related('topic').\
+                                    prefetch_related(
+                                                    
+                                                    Prefetch(
+                                                        "series",  # Related name for ManyToMany field in `SampleSerie`
+                                                        queryset=SampleSeries.objects.prefetch_related("samples", "topic"),
+                                                    ),)
 
     for sample in samples:
         # Now, `sample.series.all()` will not hit the database again for each sample
         containing_series = sample.series.all()
-        # raise ValueError("bww")
-
         if containing_series:
             for series in containing_series:
                 if series.name not in structured_series:
