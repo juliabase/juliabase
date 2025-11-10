@@ -84,6 +84,38 @@ def translate_permission(permission_codename):
             return _(name)
 
 
+def translate_all_permissions(permissions):
+    """
+    Translates all permission descriptions to the user's language and returns them in a dictionary.
+
+    :return:
+      A dictionary where the key is the permission's codename, and the value is the translated name.
+
+    :rtype: dict
+    """
+    permissions_dict = {}
+    
+    # Fetch all permissions in one query with related content types
+    # permissions = Permission.objects.select_related('content_type')
+    
+    for permission in permissions:
+        # Extract and process the name of the permission
+        match = _permission_name_regex.match(permission.name)
+        if match:
+            class_name_pattern = "{class_name}"
+            translated_name = _(
+                match.group("prefix") + class_name_pattern
+            ).format(class_name=_(match.group("class_name")))
+        else:
+            translated_name = _(permission.name)
+
+        # Add to the dictionary using the codename as the key
+        full_permission_name = permission.content_type.app_label + "." + permission.codename
+        permissions_dict[full_permission_name] = translated_name
+    
+    return permissions_dict
+
+
 def get_user_permissions(user):
     """Determines the permissions of a user.  It iterates through all
     permissions and looks whether the user has them or not, and returns its
@@ -102,13 +134,21 @@ def get_user_permissions(user):
     """
     has = []
     has_not = []
-    for permission in Permission.objects.all():
-        if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
-            full_permission_name = permission.content_type.app_label + "." + permission.codename
-            if user.has_perm(full_permission_name):
-                has.append(translate_permission(full_permission_name))
-            else:
-                has_not.append(translate_permission(full_permission_name))
+    permissions = Permission.objects.select_related('content_type')
+    perm_dict = translate_all_permissions(permissions=permissions)
+    for permission in permissions:
+        try:
+            if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
+                full_permission_name = permission.content_type.app_label + "." + permission.codename
+                if user.has_perm(full_permission_name):
+                    has.append(perm_dict[full_permission_name])
+                else:
+                    has_not.append(perm_dict[full_permission_name])
+        except TypeError:
+            # FIXME: I temporarily added this to get rid of the "doener" permissions that did not get deleted
+            # after deleting the doener order model.
+            if "doener" in str(permission):
+                permission.delete()
     return has, has_not
 
 
