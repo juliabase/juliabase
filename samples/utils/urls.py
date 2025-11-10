@@ -108,12 +108,6 @@ class PatternGenerator:
             except AttributeError:
                 normalized_id_field = class_name_with_underscores + "_id"
         if "lab_notebook" in views:
-            # self.url_patterns.extend([re_path(r"^{}/lab_notebook/(?P<dates>.*)/export/".format(url_name),
-            #                                   lab_notebook.export, {"process_name": class_name},
-            #                                   "export_lab_notebook_" + class_name_with_underscores),
-            #                           re_path(r"^{}/lab_notebook/(?P<dates>.*)".format(url_name),
-            #                                   lab_notebook.show, {"process_name": class_name},
-            #                                   "lab_notebook_" + class_name_with_underscores)])
             self.url_patterns.extend([
                                     re_path(r"^{}/lab_notebook/(?P<begin_date>.*)/(?P<end_date>.*)/export/".format(url_name),
                                             lab_notebook.export_range, {"process_name": class_name},
@@ -132,30 +126,12 @@ class PatternGenerator:
                     edit_view_callable = module.EditView.as_view()
                 except AttributeError:
                     edit_view_callable = module.edit
-                try:
-                    duplicate_view_callable = module.duplicate
-                except AttributeError:
-                    duplicate_view_callable = None
-
         if "add" in views:
-            # if "screenprinter" in class_name_with_underscores:
-            #     raise ValueError(r"^{}/add/$".format(url_name), edit_view_callable, {normalized_id_field: None}, "add_" + class_name_with_underscores)
             self.url_patterns.append(re_path(r"^{}/add/$".format(url_name), edit_view_callable,
                                              {normalized_id_field: None}, "add_" + class_name_with_underscores))
         if "edit" in views:
-            # if "screenprinter" in class_name_with_underscores:
-            #     raise ValueError(
-            #                         "Invalid URL pattern: ^{}/(?P<{}>.+)/edit/$ with view {} and name duplicate_{}".format(
-            #                             url_name, normalized_id_field, edit_view_callable, class_name_with_underscores
-            #                         )
-            #                     )
-            
             self.url_patterns.append(re_path(r"^{}/(?P<{}>.+)/edit/$".format(url_name, normalized_id_field),
                                              edit_view_callable, name="edit_" + class_name_with_underscores))
-            # 
-            if duplicate_view_callable:
-                self.url_patterns.append(re_path(r"^{}/(?P<{}>.+)/duplicate/$".format(url_name, normalized_id_field),
-                                                duplicate_view_callable, name="duplicate_" + class_name_with_underscores))
         if "custom_show" in views:
             self.url_patterns.append(re_path(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field), module.show,
                                              name="show_" + class_name_with_underscores))
