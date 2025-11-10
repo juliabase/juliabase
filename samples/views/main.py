@@ -120,6 +120,7 @@ def main_menu(request):
     end_date = next_month - timedelta(days=next_month.day)
     can_view_wafers = request.user.has_perm("iek5.view_every_wafer")
     all_experiments = Experiment.objects.filter(operator=request.user)
+    my_experiments = request.user.my_experiments.all()
 
     # raise ValueError(request.user)
     # raise ValueError(    (all_experiments[0    ].operator    ))
@@ -141,6 +142,7 @@ def main_menu(request):
                    'end_date': end_date,
                    'can_view_wafers': can_view_wafers,
                    "experiments": all_experiments,
+                   "my_experiments": my_experiments,
                    })
 
 

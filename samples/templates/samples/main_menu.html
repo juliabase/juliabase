@@ -109,6 +109,19 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
           </ul>
         </div>
         {% endif %}
+
+        {% if my_experiments %}
+        <div class="added_experiments">
+          <h2>{% translate 'Added Experiments' %}</h2>
+          <ul>
+            {% for experiment in my_experiments %}
+              <li><a href="{{ experiment.get_absolute_url }}">{{ experiment.prefix }}{{ experiment.number }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        
       </div>
     {% endif %}
   {% endcache %}
