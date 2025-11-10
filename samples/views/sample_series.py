@@ -381,6 +381,7 @@ def new(request):
                 sample_series.name = full_name
                 sample_series.timestamp = timestamp
                 sample_series.save()
+                # OPTIMIZE: This generates about 500 duplicate queries
                 sample_series_form.save_m2m()
                 utils.Reporter(request.user).report_new_sample_series(sample_series)
                 return utils.successful_response(
