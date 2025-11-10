@@ -324,7 +324,7 @@ class JuliaBaseConnection:
             max_cycles -= 1
             logging.debug(f"Request against {request.get_full_url()}")
             try:
-                return self.opener.open(request)
+                return self.opener.open(request, timeout=60)
             except urllib.error.HTTPError as error:
                 if error.code in [404, 422] and error.info()["Content-Type"].startswith("application/json"):
                     error_code, error_message = json.loads(error.read().decode())
