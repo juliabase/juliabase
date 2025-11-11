@@ -162,6 +162,8 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
+    # 'dal',
+    # 'dal_select2',
     "django.contrib.admin",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -172,6 +174,7 @@ INSTALLED_APPS = [
     "jb_common",
     "compressor",
     "debug_toolbar",
+    "django_select2",
 ]
 
 STATICFILES_FINDERS = [
