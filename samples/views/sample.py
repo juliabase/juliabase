@@ -51,6 +51,8 @@ from samples.utils import sample_names
 import datetime
 from iek5.models.physical_processes import Experiment
 from samples.models import Sample
+from django.contrib.contenttypes.models import ContentType
+import pprint
 
 class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
@@ -338,15 +340,23 @@ class SamplesAndProcesses:
         # ``samples.processes.count()`` instead.  However, this would slow down
         # JuliaBase.
         samples_and_processes = get_from_cache(cache_key, hits=10)
+        # samples_and_processes = None
+        # raise ValueError("samples_and_processes----")
         if samples_and_processes is None:
+            # raise ValueError("really?")
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
+            # raise ValueError("dude")
             keys_list_key = "sample-keys:{0}".format(sample.pk)
             with cache_key_locked("sample-lock:{0}".format(sample.pk)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
                 cache.set(cache_key, samples_and_processes)
+            # raise ValueError("sssssssssssamples_and_processes----")
+            
             samples_and_processes.remove_noncleared_process_contexts(user, clearance)
+
+            # raise ValueError("boo")
         else:
             samples_and_processes.personalize(user, clearance, post_data)
         return samples_and_processes
@@ -368,9 +378,11 @@ class SamplesAndProcesses:
         """
         # This will be filled with more, once child samples are displayed, too.
         self.sample_context = {"sample": sample}
+        # raise ValueError("ooood")
         self.update_sample_context_for_user(user, clearance, post_data)
         self.process_contexts = []
         self.process_ids = set()
+        self.processes = []
         def collect_process_contexts(local_context=None):
             """Constructs the list of process context dictionaries.  This
             internal helper function directly populates
@@ -395,23 +407,42 @@ class SamplesAndProcesses:
                 local_context = self.sample_context.copy()
                 local_context.update({"original_sample": sample, "latest_descendant": None, "cutoff_timestamp": None})
             split = local_context["sample"].split_origin
+            # raise ValueError(split)
             if split:
                 new_local_context = local_context.copy()
                 new_local_context["sample"] = split.parent
                 new_local_context["latest_descendant"] = local_context["sample"]
                 new_local_context["cutoff_timestamp"] = split.timestamp
                 collect_process_contexts(new_local_context)
+            
             ids_from_direct = models.Process.objects.filter(samples=sample).values_list("id", flat=True)
             ids_from_series = models.Process.objects.filter(result__sample_series__samples=sample).values_list("id", flat=True)
-            process_ids = set(ids_from_direct).union(ids_from_series)
-            processes = models.Process.objects.filter(id__in=process_ids)
+            # raise ValueError(ids_from_direct, "--", ids_from_series)
+            
+            # process_ids = set(ids_from_direct).union(ids_from_series)
+            process_ids = set(ids_from_direct) | set(ids_from_series)
+            # print(process_ids)
+
+            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type')
+            # del processes
+            # FIXME: You stopped aquí :D
+            # print("hoof")
+            # raise ValueError("locssayccxyext")
+            # raise ValueError(pprint.pformat((processes[0].actual_instance._meta.verbose_name)))
+            # raise ValueError(pprint.pformat(str(processes[0])))
+
+            # raise ValueError(processes)
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
+
             for process in processes:
                 process_context = utils.digest_process(process, user, local_context)
                 self.process_contexts.append(process_context)
                 self.process_ids.add(process.id)
+            self.processes = list(processes)
+        # raise ValueError("ojmn")
         collect_process_contexts()
+        # raise ValueError("lllll")
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
@@ -439,24 +470,38 @@ class SamplesAndProcesses:
         self.user_details = user.samples_user_details
         sample = self.sample_context["sample"]
         self.is_my_sample = self.user.my_samples.filter(id__exact=sample.id).exists()
+
         self.is_my_sample_form = IsMySampleForm(
             prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
             else IsMySampleForm(post_data, prefix=str(sample.pk))
+
+        
         self.sample_context.update({"is_my_sample_form": self.is_my_sample_form, "clearance": clearance})
+
         try:
             # FixMe: calling get_allowed_processes is too expensive
+            # raise ValueError("ok")
             get_allowed_processes(self.user, sample)
+
+            # raise ValueError("aft")
             self.sample_context["can_add_process"] = True
         except permissions.PermissionError:
             self.sample_context["can_add_process"] = False
+        # raise ValueError("stm153")
         self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
+        # raise ValueError("stayyyrwt22")
+
         self.sample_context["can_delete"] = permissions.has_permission_to_delete_sample(self.user, sample)
+        # raise ValueError("oof")
         if self.sample_context["can_edit"] and \
            sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
             self.sample_context["id_for_rename"] = None
         sample_details = sample.get_sample_details()
+        # raise ValueError(sample_details)
+        # raise ValueError(pprint.pformat(vars(sample_details)))
+        # raise ValueError("ok")
         if sample_details:
             self.sample_context.update(sample_details.get_context_for_user(user, self.sample_context))
         if permissions.has_permission_to_rename_sample(self.user, sample):
@@ -475,6 +520,7 @@ class SamplesAndProcesses:
         :type user: django.contrib.auth.models.User
         :type clearance: `samples.models.Clearance`
         """
+        processes_with_permissions = permissions.can_view_physical_processes(user, self.processes)
         if clearance:
             viewable_process_contexts = []
             for process_context in self.process_contexts:
@@ -509,6 +555,7 @@ class SamplesAndProcesses:
         for process_context in self.process_contexts:
             process_context.update(
                 process_context["process"].get_context_for_user(user, process_context))
+        # raise ValueError(self.process_lists)
         for process_list in self.process_lists:
             process_list.personalize(user, clearance, post_data)
 
@@ -538,7 +585,19 @@ class SamplesAndProcesses:
 
         :rtype: ``generator``
         """
-        if self.process_contexts:
+        if self.processes:
+            first_proc = {  "id": self.processes[0].id, 
+                            "title": self.processes[0].actual_instance._meta.verbose_name,
+                            "timestamp": self.processes[0].timestamp,
+                            "operator": self.processes[0].operator}
+            yield True, self.sample_context, first_proc
+            for process in self.processes[1:]:
+                proc = {  "id": process.id, 
+                                "title": process.actual_instance._meta.verbose_name,
+                                "timestamp": process.timestamp,
+                                "operator": process.operator}
+                yield False, self.sample_context, proc
+        elif self.process_contexts:
             yield True, self.sample_context, self.process_contexts[0]
             for process_context in self.process_contexts[1:]:
                 yield False, self.sample_context, process_context
@@ -706,6 +765,19 @@ def show(request, sample_name):
     """
     # raise ValueError("dko")
     start = time.time()
+    # user = (
+    #     request.user.__class__.objects
+    #     .select_related('jb_user_details__department')
+    #     .get(pk=request.user.pk)
+    # )
+    # user = (
+    #     User.objects
+    #     .select_related('jb_user_details__department')
+    #     .prefetch_related('groups__permissions', 'user_permissions')
+    #     .get(pk=request.user.pk)
+    # )
+
+
     if request.method == "POST":
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
         if samples_and_processes.is_valid():

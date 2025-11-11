@@ -46,7 +46,7 @@ from datetime import datetime as dt, timedelta
 import itertools
 from django.db.models import Prefetch
 from django.db.models.fields.related import ManyToManyRel
-
+from collections import defaultdict
 
 def empty_list():
     return []
@@ -817,10 +817,16 @@ class PhysicalProcess(Process):
         dry_run = kwargs.get("dry_run", False)
         if dry_run:
             user = kwargs["user"]
+            raw = kwargs.get("raw", False)
             if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
-                description = _("You are not allowed to delete the process “{process}” because it is older than "
-                                "one hour.").format(process=self)
-                raise samples.permissions.PermissionError(user, description)
+                # I added "raw" because without it a permission error is generated even though it is not used
+                # this can lead to additional database queries
+                if not raw:
+                    description = _("You are not allowed to delete the process “{process}” because it is older than "
+                                    "one hour.").format(process=self)
+                    raise samples.permissions.PermissionError(user, description)
+                else:
+                    raise samples.permissions.PermissionError(user, "")
             samples.permissions.assert_can_edit_physical_process(user, self)
             return {self}
         else:
@@ -1209,10 +1215,103 @@ class Sample(models.Model):
     #         self.save()
     #         return super().delete(*args, **kwargs)
 
+    # def delete(self, *args, **kwargs):
+    #     """
+    #     Deletes the sample and its related processes that involve only this sample.
+    #     If dry_run=True, it returns the affected objects without deleting.
+    #     """
+    #     dry_run = kwargs.pop("dry_run", False)
+    #     user = kwargs.pop("user", None)
+
+    #     if dry_run:
+    #         samples.permissions.assert_can_edit_sample(user, self)
+    #         affected_objects = {self}
+
+    #     # Prefetch samples for all related processes to avoid N+1 queries
+    #     processes = self.processes.prefetch_related("samples").all()
+
+    #     for process in processes:
+    #         if process.samples.count() == 1:  # Now uses prefetched data
+    #             actual = process.actual_instance
+    #             result = actual.delete(*args, dry_run=dry_run, user=user)
+    #             if dry_run:
+    #                 affected_objects |= result
+
+    #     if dry_run:
+    #         return affected_objects
+
+    #     # Clear m2m relations manually due to Django bug #17688
+    #     self.processes.clear()
+    #     self.watchers.clear()
+
+    #     self.save()
+    #     return super().delete(*args, **kwargs)
+
+    # def prefetch_actual_instances(self, processes):
+    #     grouped = defaultdict(list)
+    #     for process in processes:
+    #         grouped[process.content_type].append(process)
+
+    #     for content_type, items in grouped.items():
+    #         model_cls = content_type.model_class()
+    #         actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
+    #         for p in items:
+    #             p._cached_actual_instance = actuals.get(p.actual_object_id)
+
+    # def delete(self, *args, **kwargs):
+    #     """
+    #     Deletes the sample and its related processes that involve only this sample.
+    #     If dry_run=True, returns the affected objects without deleting.
+    #     """
+    #     dry_run = kwargs.pop("dry_run", False)
+    #     user = kwargs.pop("user", None)
+
+    #     if dry_run:
+    #         samples.permissions.assert_can_edit_sample(user, self)
+    #         affected_objects = {self}
+
+    #     # Get processes with only this sample
+    #     processes_to_delete = (
+    #         self.processes
+    #         .annotate(sample_count=models.Count("samples"))
+    #         .filter(sample_count=1)  # only processes tied exclusively to this sample
+    #         .select_related("content_type")  # if actual_instance uses polymorphic
+    #     )
+    #     self.prefetch_actual_instances(processes_to_delete)
+
+    #     if dry_run:
+    #         for process in processes:
+    #             actual = process.actual_instance
+    #             result = actual.delete(*args, dry_run=True, user=user)
+    #             affected_objects |= result
+    #         return affected_objects
+
+    #     # Delete processes in bulk if possible
+    #     for process in processes:
+    #         process.actual_instance.delete(*args, user=user)
+
+    #     # Clear m2m relations
+    #     self.processes.clear()
+    #     self.watchers.clear()
+
+    #     self.save()
+    #     return super().delete(*args, **kwargs)
+    def prefetch_actual_instances(self, processes):
+        grouped = defaultdict(list)
+        for process in processes:
+            grouped[process.content_type_id].append(process)
+
+        for content_type_id, items in grouped.items():
+            model_cls = items[0].content_type.model_class()
+            actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
+            for p in items:
+                p._cached_actual_instance = actuals.get(p.actual_object_id)
+
+
     def delete(self, *args, **kwargs):
         """
         Deletes the sample and its related processes that involve only this sample.
-        If dry_run=True, it returns the affected objects without deleting.
+        If dry_run=True, returns the affected objects without deleting.
         """
         dry_run = kwargs.pop("dry_run", False)
         user = kwargs.pop("user", None)
@@ -1221,20 +1320,31 @@ class Sample(models.Model):
             samples.permissions.assert_can_edit_sample(user, self)
             affected_objects = {self}
 
-        # Prefetch samples for all related processes to avoid N+1 queries
-        processes = self.processes.prefetch_related("samples").all()
+        # Get processes with only this sample
+        processes_to_delete = (
+            self.processes
+            .annotate(sample_count=models.Count("samples"))
+            .filter(sample_count=1)  # only processes tied exclusively to this sample
+            .select_related("content_type")
+        )
 
-        for process in processes:
-            if process.samples.count() == 1:  # Now uses prefetched data
-                actual = process.actual_instance
-                result = actual.delete(*args, dry_run=dry_run, user=user)
-                if dry_run:
-                    affected_objects |= result
+        processes_to_delete = list(processes_to_delete)
+        # Prefetch actual instances to avoid N+1 queries
+        self.prefetch_actual_instances(processes_to_delete)
 
         if dry_run:
+            for process in processes_to_delete:
+                actual = getattr(process, "_cached_actual_instance", process.actual_instance)
+                result = actual.delete(*args, dry_run=True, user=user, raw=True)
+                affected_objects |= result
+
             return affected_objects
 
-        # Clear m2m relations manually due to Django bug #17688
+        for process in processes_to_delete:
+            actual = getattr(process, "_cached_actual_instance", process.actual_instance)
+            actual.delete(*args, user=user)
+
+        # Clear m2m relations
         self.processes.clear()
         self.watchers.clear()
 

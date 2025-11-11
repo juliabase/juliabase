@@ -36,6 +36,7 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
 import jb_common.utils.base
 from samples.models import Sample, SampleSeries
 # from jb_common.models import Topic
+import pprint
 
 
 __all__ = ("AmbiguityException", "lookup_sample", "convert_id_to_int",

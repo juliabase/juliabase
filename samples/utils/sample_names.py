@@ -60,7 +60,7 @@ def get_sample(sample_name):
     :return: a single sample, or a list if multiple aliases match, or None
     """
     try:
-        sample = models.Sample.objects.prefetch_related("processes").get(name=sample_name)
+        sample = models.Sample.objects.select_related("currently_responsible_person__jb_user_details__department").prefetch_related("processes").get(name=sample_name)
     except models.Sample.DoesNotExist:
         aliases = list(models.SampleAlias.objects.filter(name=sample_name).select_related("sample"))
         if len(aliases) == 1:

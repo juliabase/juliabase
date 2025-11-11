@@ -192,6 +192,10 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
           </tr>
         </table>
       </form>
+      <p><small><em>{% translate 'Click on each header to expand the process. You can also click on <b>Expand All</b> to expand all the processes.' %}</em></small></p>
+      <button type="button" id="expand_all">{% translate 'Expand All' %}</button>
+
+    <script type="text/javascript" src="{% static 'samples/js/expand_sample_processes.js' %}?v={% now 'U' %}"></script>
     {% endif %}
 
     {% block process %}
