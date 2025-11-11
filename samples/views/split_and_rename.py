@@ -30,6 +30,7 @@ from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters, help_link
 from samples import models, permissions
+from iek5 import models as iek5_app
 import samples.utils.views as utils
 from samples.utils import sample_names
 from django.utils.timezone import now as timezone_now
@@ -73,9 +74,6 @@ class NewNameForm(forms.Form):
                         for name_format in self.possible_new_name_formats)})
                 raise ValidationError(error_message, params=params, code="invalid")
             utils.check_sample_name(match, self.user)
-        # if sample_names.does_sample_exist(new_name):
-        #     raise ValidationError(_("Name does already exist in database."), code="duplicate")
-        # return new_name
 
         if new_name in self.existing_sample_names:
             raise ValidationError(_("Name does already exist in database."), code="duplicate")
@@ -255,79 +253,18 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
     return referentially_valid
 
 
-# def save_to_database(new_name_forms, global_data_form, parent, sample_split, user):
-#     """Save all form data to the database.  If `sample_split` is not ``None``,
-#     modify it instead of appending a new one.  Warning: For this, the old split
-#     process must be the last process at all for the parental sample!  This must
-#     be checked before this routine is called.
-
-#     :param new_name_forms: all “new name forms”, but not the dummy one for new
-#         pieces (the one in darker grey).
-#     :param global_data_form: the global data form
-#     :param parent: the sample to be split
-#     :param sample_split: the already existing sample split process that is to be
-#         modified.  If this is ``None``, create a new one.
-#     :param user: the current user
-
-#     :type new_name_forms: list of `NewNameForm`
-#     :type global_data_form: `GlobalDataForm`
-#     :type parent: `samples.models.Sample`
-#     :type sample_split: `samples.models.SampleSplit`
-#     :type user: django.contrib.auth.models.User
-
-#     :return:
-#       the sample split instance, new pieces as a dictionary mapping the new
-#       names to the sample IDs
-
-#     :rtype: `samples.models.SampleSplit`, dict mapping str to int
-#     """
-#     now = django.utils.timezone.now()
-#     if not sample_split:
-#         sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
-#         sample_split.save()
-#         parent.processes.add(sample_split)
-#     else:
-#         sample_split.timestamp = now
-#         sample_split.operator = user
-#         sample_split.save()
-#     sample_series = global_data_form.cleaned_data["sample_series"]
-#     new_pieces = {}
-#     for new_name_form in new_name_forms:
-#         new_name = new_name_form.cleaned_data["new_name"]
-#         child = models.Sample(name=new_name,
-#                               current_location=parent.current_location,
-#                               currently_responsible_person=user,
-#                               purpose=new_name_form.cleaned_data["new_purpose"], tags=parent.tags,
-#                               split_origin=sample_split,
-#                               topic=parent.topic)
-#         child.save()
-#         new_pieces[new_name] = child.pk
-#         for watcher in parent.watchers.all():
-#             watcher.my_samples.add(child)
-#         if sample_series:
-#             sample_series.samples.add(child)
-#     if global_data_form.cleaned_data["sample_completely_split"]:
-#         parent.watchers.clear()
-#         death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split")
-#         death.save()
-#         parent.processes.add(death)
-#     return sample_split, new_pieces
-
 def save_to_database(new_name_forms, global_data_form, parent, sample_split, user):
     now = timezone_now()
     with transaction.atomic():  # wrap everything in a single transaction
         if not sample_split:
             sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
             sample_split.save()
-            # raise ValueError("kop")
             parent.processes.add(sample_split)
-            # raise ValueError("sop")
         else:
             sample_split.timestamp = now
             sample_split.operator = user
             sample_split.save()
 
-        # raise ValueError("nop")
         sample_series = global_data_form.cleaned_data["sample_series"]
         parent_watchers = list(parent.watchers.all())  # avoid repeated DB hits
         new_pieces = []
@@ -346,22 +283,23 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
             )
             created_samples.append(child)
 
-        # raise ValueError("oy")
-        # Bulk-create children
+        # Bulk-create the Sample objects
         models.Sample.objects.bulk_create(created_samples)
+
+        # Create SampleDetails for any that don't have it yet
+        sample_details = [
+            iek5_app.SampleDetails(sample=sample)
+            for sample in created_samples
+        ]
+        iek5_app.SampleDetails.objects.bulk_create(sample_details)
 
         # Prepare mapping name -> ID
         new_pieces = {child.name: child.pk for child in created_samples}
 
-
         # Reload created_samples with PKs
         created_samples = models.Sample.objects.filter(pk__in=new_pieces.values())
 
-        # FIXME: You stopped aquí :D
-        # raise ValueError("syyy")
         # Assign watchers in bulk
-        # for watcher in parent_watchers:
-        #     watcher.my_samples.add(*created_samples)
         Sample_watchers = models.Sample.watchers.through  # the M2M "through" table
 
         Sample_watchers.objects.bulk_create([
@@ -370,29 +308,19 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
             for sample in created_samples
         ], ignore_conflicts=True)
 
-        
-        
-
         # Add to series in bulk
         if sample_series:
             sample_series.samples.add(*created_samples)
 
-        # raise ValueError("llll")
         # Kill parent if necessary
         if global_data_form.cleaned_data["sample_completely_split"]:
-            # Sample_watchers = parent.watchers.through  # the M2M table
-            # Sample_watchers.objects.filter(sample_id=parent.id).delete()
             parent.watchers.clear()
 
             death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split")
             death.save()
 
-            # parent.processes.add(death)
             Sample_processes = parent.processes.through
             Sample_processes.objects.get_or_create(sample_id=parent.id, process_id=death.id)
-
-        
-        # raise ValueError("89ss6")
 
         return sample_split, new_pieces
 
