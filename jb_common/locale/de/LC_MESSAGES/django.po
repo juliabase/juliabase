@@ -354,7 +354,7 @@ msgstr ""
 "es noch einmal."
 
 #: juliabase/jb_common/templates/jb_common/login.html:38
-msgid "login"
+msgid "Login"
 msgstr "Anmelden"
 
 #: juliabase/jb_common/templates/jb_common/logout.html:25
@@ -477,13 +477,19 @@ msgstr "Darf jede(n/s) {class_name} sehen"
 msgid "Can edit permissions for {class_name}"
 msgstr "Darf die Berechtigungen für {class_name} ändern"
 
-#: juliabase/jb_common/views.py:59
+#: juliabase/jb_common/views.py:62
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: juliabase/jb_common/views.py:91
+#: juliabase/jb_common/views.py:94
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
+
+#~ msgid "Report feature wish or bug"
+#~ msgstr "Bug oder Featurewunsch melden"
+
+#~ msgid "Help"
+#~ msgstr "Hilfe"
 
 #~ msgid "statistics"
 #~ msgstr "Statistiken"
