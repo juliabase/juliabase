@@ -198,6 +198,10 @@ COMPRESS_FILTERS = {
     ]
 }
 HTML_MINIFY = True
+# EXCLUDE_FROM_MINIFYING = ('../iek5/templates/samples/show_experiment.html',)
+EXCLUDE_FROM_MINIFYING = (
+    r"^experiments/(?P<experiment_id>.+)",   # <-- adjust to your real URL(s)
+)
 KEEP_COMMENTS_ON_MINIFYING = True
 
 DEBUG_TOOLBAR_PANELS = [
