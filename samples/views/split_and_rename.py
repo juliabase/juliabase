@@ -108,7 +108,7 @@ class AutomaticSplitForm(forms.Form):
                                 help_text=_("the pieces are automatically added, and an index – starting at 1 – is appended"))
 
 
-def forms_from_post_data(post_data, parent, user, existing_names):
+def forms_from_post_data(post_data, parent, user, existing_names=None):
     """Interpret the POST data sent by the user through his browser and create
     forms from it.  This function also performs the so-called “structural
     changes”, namely adding and deleting pieces.

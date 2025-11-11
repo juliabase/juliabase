@@ -45,6 +45,7 @@ from samples.data_tree import DataNode, DataItem
 from datetime import datetime as dt, timedelta
 import itertools
 from django.db.models import Prefetch
+from django.db.models.fields.related import ManyToManyRel
 
 
 def empty_list():
@@ -471,11 +472,15 @@ class Process(PolymorphicModel):
 
         # Get ManyToManyField relationships (both direct and reverse)
         many_to_many_fields = [
-            field.name for field in cls._meta.get_fields()
+            # Forward ManyToMany fields
+            field.name
+            for field in cls._meta.get_fields()
             if isinstance(field, models.ManyToManyField)
         ] + [
-            field.get_accessor_name() for field in cls._meta.get_fields()
-            if field.is_relation and field.many_to_many
+            # Reverse ManyToMany relations
+            field.get_accessor_name()
+            for field in cls._meta.get_fields()
+            if isinstance(field, ManyToManyRel)
         ]
 
         fields_to_remove = ['informal_layers', 'task', 'feededitedphysicalprocess_set']
