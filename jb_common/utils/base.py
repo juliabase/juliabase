@@ -200,7 +200,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         default_root = os.path.normpath(default_root)
         allowed_roots = {os.path.normpath(path) for path in allowed_roots}
         allowed_roots.add(default_root)
-        assert all(os.path.isdir(path) for path in allowed_roots)
+        assert all(os.path.isdir(path) for path in allowed_roots), f"Invalid directories found: {[path for path in allowed_roots if not os.path.isdir(path)]}"
         absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
         if os.path.isdir(absolute_filepath):
             if not may_be_directory:
