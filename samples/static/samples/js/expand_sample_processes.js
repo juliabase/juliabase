@@ -33,7 +33,7 @@
         html.push(`<p class="operator_and_timestamp" style="margin-top: 3.6ex">${operator}, ${data["timestamp_display"]}</p>`);
 
         // Icons
-        ["edit","delete","duplicate","export","resplit","zoom"].forEach(key => {
+        ["edit","delete","duplicate","export","resplit","show_process"].forEach(key => {
           const url = data[`${key}_url`];
           if(url){
             html.push(`
