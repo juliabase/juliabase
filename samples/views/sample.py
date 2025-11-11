@@ -342,6 +342,8 @@ class SamplesAndProcesses:
         samples_and_processes = get_from_cache(cache_key, hits=10)
         if samples_and_processes is None:
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
+            # raise ValueError(len(samples_and_processes.processes))
+
             keys_list_key = "sample-keys:{0}".format(sample.pk)
             with cache_key_locked("sample-lock:{0}".format(sample.pk)):
                 keys = cache.get(keys_list_key, [])
@@ -405,39 +407,58 @@ class SamplesAndProcesses:
                 new_local_context["latest_descendant"] = local_context["sample"]
                 new_local_context["cutoff_timestamp"] = split.timestamp
                 collect_process_contexts(new_local_context)
-            
-            ids_from_direct = models.Process.objects.filter(samples=sample).values_list("id", flat=True)
-            ids_from_series = models.Process.objects.filter(result__sample_series__samples=sample).values_list("id", flat=True)
+            ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True)
+            ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True)
             
             process_ids = set(ids_from_direct) | set(ids_from_series)
+            
+            process_ids = ids_from_direct.union(ids_from_series)
 
-            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details')
+            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').distinct()
+
+            # processes = models.Process.objects. \
+            #     filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"])). \
+            #     distinct()
+
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
             
+            # raise ValueError(ids_from_direct, "-----", ids_from_series, "-----", process_ids, "-----ew", len(processes), "-----sy", len(processes2), set(processes2) - set(processes))
 
             nobody = django.contrib.auth.models.User.objects.get(username='nobody')
             # raise ValueError("nobody", nobody)
             self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
+
             viewable_processes = []
             for process in processes:
                 # process_context = utils.digest_process(process, user, local_context)
                 # self.process_contexts.append(process_context)
                 self.process_ids.add(process.id)
-
             for process in processes:
                 if process.operator == user or \
                         issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
                         self.processes_with_permissions[process]:
                     viewable_processes.append(process)
                 else:
-                    self.process_ids.remove(process.id)
+                    if process.actual_instance._meta.verbose_name == "sample split":
+                        viewable_processes.append(process)
+                    else:
+                        self.process_ids.remove(process.id)
                 # FIXME: This is experimental. I haven't found a case where this happens so far...
                 if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
                     process.operator = nobody
 
-            self.processes = list(viewable_processes)
+            # diff = list(set(processes) - set(viewable_processes))
+            # viewable_processes = list(viewable_processes)
+            # for process in diff:
+            #     if process.actual_instance._meta.verbose_name == "sample split":
+            #         viewable_processes.append(process)
+            #         self.process_ids.append(process.id)
+            self.processes += list(viewable_processes)
+
+            # raise ValueError(len(self.processes))
         collect_process_contexts()
+        # raise ValueError(len(self.processes))
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
@@ -774,6 +795,7 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     sample_id = samples_and_processes.sample_context["sample"].id
+    # raise ValueError(samples_and_processes.processes)
     experiments = list(Experiment.objects.filter(samples__id=sample_id))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
