@@ -415,6 +415,9 @@ class SamplesAndProcesses:
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
             
+
+            nobody = django.contrib.auth.models.User.objects.get(username='nobody')
+            # raise ValueError("nobody", nobody)
             self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
             viewable_processes = []
             for process in processes:
@@ -431,7 +434,7 @@ class SamplesAndProcesses:
                     self.process_ids.remove(process.id)
                 # FIXME: This is experimental. I haven't found a case where this happens so far...
                 if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
-                    process.operator = None
+                    process.operator = nobody
 
             self.processes = list(viewable_processes)
         collect_process_contexts()
