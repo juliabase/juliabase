@@ -388,6 +388,9 @@ class JuliaBaseConnection:
             raise Exception("No root URL defined.  Maybe not logged-in?")
         response = self._do_http_request(self.root_url + relative_url, self._clean_data(data))
         if response_is_json:
+            if not response.info()["Content-Type"].startswith("application/json"):
+                # print(response.read())
+                pass
             assert response.info()["Content-Type"].startswith("application/json")
             return json.loads(response.read().decode())
         else:
