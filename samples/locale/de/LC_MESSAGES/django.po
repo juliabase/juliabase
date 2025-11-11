@@ -4306,6 +4306,9 @@ msgstr ""
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
 
+#~ msgid "server statistics"
+#~ msgstr "Server-Statistik"
+
 #~ msgid "in JSON format"
 #~ msgstr "im JSON-Format"
 

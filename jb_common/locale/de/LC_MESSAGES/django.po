@@ -348,8 +348,8 @@ msgstr ""
 "Ihr Benutzername und Ihr Passwort passen nicht zusammen. Bitte versuchen Sie "
 "es noch einmal."
 
-#: jb_common/templates/jb_common/login.html:38
-msgid "login"
+#: juliabase/jb_common/templates/jb_common/login.html:38
+msgid "Login"
 msgstr "Anmelden"
 
 #: jb_common/templates/jb_common/logout.html:25
@@ -479,6 +479,12 @@ msgstr "Sandkasten"
 #: jb_common/views.py:94
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
+
+#~ msgid "Report feature wish or bug"
+#~ msgstr "Bug oder Featurewunsch melden"
+
+#~ msgid "Help"
+#~ msgstr "Hilfe"
 
 #~ msgid "statistics"
 #~ msgstr "Statistiken"
