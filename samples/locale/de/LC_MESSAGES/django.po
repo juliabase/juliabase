@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-26 10:58+0200\n"
+"POT-Creation-Date: 2025-10-13 14:09+0200\n"
 "PO-Revision-Date: 2018-05-17 23:23+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -38,7 +38,7 @@ msgid "provisional"
 msgstr "provisorisch"
 
 #: juliabase/samples/apps.py:60
-#: juliabase/samples/templates/samples/main_menu.html:177
+#: juliabase/samples/templates/samples/main_menu.html:180
 msgid "my topics and permissions"
 msgstr "meine Themen und Berechtigungen"
 
@@ -46,16 +46,16 @@ msgstr "meine Themen und Berechtigungen"
 msgid "add"
 msgstr "hinzufügen"
 
-#: juliabase/samples/apps.py:64 juliabase/samples/models/common.py:829
-#: juliabase/samples/models/common.py:1245
-#: juliabase/samples/models/common.py:1486
-#: juliabase/samples/models/common.py:1762
+#: juliabase/samples/apps.py:64 juliabase/samples/models/common.py:875
+#: juliabase/samples/models/common.py:1485
+#: juliabase/samples/models/common.py:1726
+#: juliabase/samples/models/common.py:2002
 #: juliabase/samples/models/feeds.py:121 juliabase/samples/models/feeds.py:147
 #: juliabase/samples/models/feeds.py:280 juliabase/samples/models/feeds.py:302
 #: juliabase/samples/models/feeds.py:541
 #: juliabase/samples/templates/samples/base.html:31
-#: juliabase/samples/templates/samples/main_menu.html:110
-#: juliabase/samples/utils/views/forms.py:1003
+#: juliabase/samples/templates/samples/main_menu.html:117
+#: juliabase/samples/utils/views/forms.py:1106
 #: juliabase/samples/views/result.py:105
 #: juliabase/samples/views/sample_series.py:50
 #: juliabase/samples/views/task_lists.py:43
@@ -63,18 +63,18 @@ msgstr "hinzufügen"
 msgid "samples"
 msgstr "Proben"
 
-#: juliabase/samples/apps.py:65 juliabase/samples/models/common.py:1492
+#: juliabase/samples/apps.py:65 juliabase/samples/models/common.py:1732
 #: juliabase/samples/models/feeds.py:364 juliabase/samples/models/feeds.py:384
 #: juliabase/samples/models/feeds.py:408
-#: juliabase/samples/templates/samples/main_menu.html:112
-#: juliabase/samples/views/split_and_rename.py:85
+#: juliabase/samples/templates/samples/main_menu.html:119
+#: juliabase/samples/views/split_and_rename.py:92
 msgid "sample series"
 msgstr "Probenserie"
 
 #. Translators: experimental result
-#: juliabase/samples/apps.py:66 juliabase/samples/models/common.py:1315
+#: juliabase/samples/apps.py:66 juliabase/samples/models/common.py:1555
 #: juliabase/samples/models/feeds.py:254
-#: juliabase/samples/templates/samples/main_menu.html:114
+#: juliabase/samples/templates/samples/main_menu.html:121
 msgid "result"
 msgstr "Ergebnis"
 
@@ -84,18 +84,18 @@ msgid "explore"
 msgstr "nachschlagen"
 
 #: juliabase/samples/apps.py:72
-#: juliabase/samples/templates/samples/main_menu.html:123
-#: juliabase/samples/views/sample.py:1019
+#: juliabase/samples/templates/samples/main_menu.html:130
+#: juliabase/samples/views/sample.py:1046
 msgid "advanced search"
 msgstr "erweiterte Suche"
 
 #: juliabase/samples/apps.py:73
-#: juliabase/samples/templates/samples/main_menu.html:124
+#: juliabase/samples/templates/samples/main_menu.html:131
 msgid "samples by name"
 msgstr "Proben nach ihren Namen"
 
 #: juliabase/samples/apps.py:77
-#: juliabase/samples/templates/samples/main_menu.html:129
+#: juliabase/samples/templates/samples/main_menu.html:136
 msgid "lab notebooks"
 msgstr "Laborbücher"
 
@@ -108,26 +108,25 @@ msgid "manage “My Samples”"
 msgstr "„Meine Proben“ verwalten"
 
 #: juliabase/samples/apps.py:84
-#: juliabase/samples/templates/samples/main_menu.html:170
 #: juliabase/samples/templates/samples/show_sample.html:100
-#: juliabase/samples/views/sample.py:1215
+#: juliabase/samples/views/sample.py:1242
 msgid "rename sample"
 msgstr "Probe umbenennen"
 
 #: juliabase/samples/apps.py:85
-#: juliabase/samples/templates/samples/main_menu.html:207
+#: juliabase/samples/templates/samples/main_menu.html:210
 #: juliabase/samples/views/merge_samples.py:210
 msgid "merge samples"
 msgstr "verschmelze Proben"
 
-#: juliabase/samples/apps.py:86 juliabase/samples/models/common.py:1251
-#: juliabase/samples/templates/samples/main_menu.html:209
+#: juliabase/samples/apps.py:86 juliabase/samples/models/common.py:1491
+#: juliabase/samples/templates/samples/main_menu.html:212
 msgid "sample claims"
 msgstr "Beanspruchungen von Proben"
 
 #: juliabase/samples/apps.py:89
-#: juliabase/samples/templates/samples/main_menu.html:142
-#: juliabase/samples/views/topic.py:143
+#: juliabase/samples/templates/samples/main_menu.html:149
+#: juliabase/samples/views/topic.py:144
 msgid "add new topic"
 msgstr "neues Thema hinzufügen"
 
@@ -136,47 +135,47 @@ msgid "change topic memberships"
 msgstr "Mitglieder von Themen ändern"
 
 #: juliabase/samples/apps.py:94
-#: juliabase/samples/templates/samples/main_menu.html:153
+#: juliabase/samples/templates/samples/main_menu.html:160
 #: juliabase/samples/views/external_operator.py:80
 msgid "add external operator"
 msgstr "neuen externen Operateur anlegen"
 
 #: juliabase/samples/apps.py:96
-#: juliabase/samples/templates/samples/main_menu.html:156
+#: juliabase/samples/templates/samples/main_menu.html:163
 msgid "edit external operator"
 msgstr "externen Operateur ändern"
 
 #: juliabase/samples/apps.py:98
-#: juliabase/samples/templates/samples/main_menu.html:183
+#: juliabase/samples/templates/samples/main_menu.html:186
 #: juliabase/samples/templates/samples/topics_and_permissions.html:60
 #: juliabase/samples/views/permissions.py:242
 msgid "permissions"
 msgstr "Berechtigungen"
 
 #: juliabase/samples/apps.py:99
-#: juliabase/samples/templates/samples/main_menu.html:185
+#: juliabase/samples/templates/samples/main_menu.html:188
 #: juliabase/samples/views/task_lists.py:390
 msgid "task lists"
 msgstr "Auftragslisten"
 
 #: juliabase/samples/apps.py:100
-#: juliabase/samples/templates/samples/main_menu.html:192
+#: juliabase/samples/templates/samples/main_menu.html:195
 msgid "newsfeed"
 msgstr "Neuigkeiten-Feed"
 
-#: juliabase/samples/apps.py:103 juliabase/samples/models/common.py:1730
-#: juliabase/samples/templates/samples/main_menu.html:205
+#: juliabase/samples/apps.py:103 juliabase/samples/models/common.py:1970
+#: juliabase/samples/templates/samples/main_menu.html:208
 #: juliabase/samples/views/status.py:167
 msgid "status messages"
 msgstr "Statusmeldungen"
 
 #: juliabase/samples/apps.py:104
-#: juliabase/samples/templates/samples/main_menu.html:211
+#: juliabase/samples/templates/samples/main_menu.html:214
 msgid "inspect crawler logs"
 msgstr "Crawler-Logs überprüfen"
 
 #: juliabase/samples/apps.py:106
-#: juliabase/samples/templates/samples/main_menu.html:166
+#: juliabase/samples/templates/samples/main_menu.html:173
 msgid "administration"
 msgstr "Administration"
 
@@ -188,153 +187,151 @@ msgstr "Zugriff verweigert"
 msgid "Ambiguous sample name"
 msgstr "Mehrdeutiger Probenname"
 
-#: juliabase/samples/models/common.py:121
-#: juliabase/samples/models/common.py:810
-#: juliabase/samples/models/common.py:1126
-#: juliabase/samples/models/common.py:1478
+#: juliabase/samples/models/common.py:124
+#: juliabase/samples/models/common.py:856
+#: juliabase/samples/models/common.py:1366
+#: juliabase/samples/models/common.py:1718
 #: juliabase/samples/views/sample_series.py:47
 msgid "name"
 msgstr "Name"
 
-#: juliabase/samples/models/common.py:122
+#: juliabase/samples/models/common.py:125
 msgid "institution"
 msgstr "Institution"
 
-#: juliabase/samples/models/common.py:123
+#: juliabase/samples/models/common.py:126
 msgid "email"
 msgstr "Email"
 
-#: juliabase/samples/models/common.py:124
+#: juliabase/samples/models/common.py:127
 msgid "alternative email"
 msgstr "alternative Email"
 
-#: juliabase/samples/models/common.py:125
+#: juliabase/samples/models/common.py:128
 msgid "phone"
 msgstr "Telefon"
 
-#: juliabase/samples/models/common.py:127
+#: juliabase/samples/models/common.py:130
 msgid "contact persons in the institute"
 msgstr "Kontaktpersonen im Institut"
 
 #. Translators: Topic which is not open to senior members
-#: juliabase/samples/models/common.py:129 juliabase/samples/views/topic.py:45
-#: juliabase/samples/views/topic.py:181
+#: juliabase/samples/models/common.py:132 juliabase/samples/views/topic.py:46
+#: juliabase/samples/views/topic.py:203
 msgid "confidential"
 msgstr "vertraulich"
 
-#: juliabase/samples/models/common.py:132
-#: juliabase/samples/models/common.py:185
-#: juliabase/samples/models/common.py:1604
+#: juliabase/samples/models/common.py:135
+#: juliabase/samples/models/common.py:188
+#: juliabase/samples/models/common.py:1844
 msgid "external operator"
 msgstr "externer Operateur"
 
-#: juliabase/samples/models/common.py:133
-#: juliabase/samples/templates/samples/main_menu.html:149
+#: juliabase/samples/models/common.py:136
+#: juliabase/samples/templates/samples/main_menu.html:156
 msgid "external operators"
 msgstr "externe Operateure"
 
-#: juliabase/samples/models/common.py:136
+#: juliabase/samples/models/common.py:139
 msgid "Can add an external operator"
 msgstr "Darf externen Operateur anlegen"
 
-#: juliabase/samples/models/common.py:137
+#: juliabase/samples/models/common.py:140
 msgid "Can view all external operators"
 msgstr "Darf alle externen Operateure sehen"
 
 #. Translators: It's about timestamps
-#: juliabase/samples/models/common.py:172
+#: juliabase/samples/models/common.py:175
 msgid "totally accurate"
 msgstr "vollständig genau"
 
-#: juliabase/samples/models/common.py:173
+#: juliabase/samples/models/common.py:176
 msgid "accurate to the minute"
 msgstr "auf die Minute genau"
 
-#: juliabase/samples/models/common.py:174
+#: juliabase/samples/models/common.py:177
 msgid "accurate to the hour"
 msgstr "auf die Stunde genau"
 
-#: juliabase/samples/models/common.py:175
+#: juliabase/samples/models/common.py:178
 msgid "accurate to the day"
 msgstr "auf den Tag genau"
 
-#: juliabase/samples/models/common.py:176
+#: juliabase/samples/models/common.py:179
 msgid "accurate to the month"
 msgstr "auf den Monat genau"
 
-#: juliabase/samples/models/common.py:177
+#: juliabase/samples/models/common.py:180
 msgid "accurate to the year"
 msgstr "auf das Jahr genau"
 
-#: juliabase/samples/models/common.py:178
+#: juliabase/samples/models/common.py:181
 msgid "not even accurate to the year"
 msgstr "nicht einmal auf das Jahr genau"
 
-#: juliabase/samples/models/common.py:180
-#: juliabase/samples/models/common.py:1481
-#: juliabase/samples/models/common.py:1715 juliabase/samples/models/feeds.py:49
+#: juliabase/samples/models/common.py:183
+#: juliabase/samples/models/common.py:1721
+#: juliabase/samples/models/common.py:1955 juliabase/samples/models/feeds.py:49
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: juliabase/samples/models/common.py:181
+#: juliabase/samples/models/common.py:184
 msgid "timestamp inaccuracy"
 msgstr "Zeitstempel-Unsicherheit"
 
-#: juliabase/samples/models/common.py:183
-#: juliabase/samples/models/common.py:1758
+#: juliabase/samples/models/common.py:186
+#: juliabase/samples/models/common.py:1998
 #: juliabase/samples/utils/views/forms.py:160
 #: juliabase/samples/views/status.py:41
 #: juliabase/samples/views/task_lists.py:69
 msgid "operator"
 msgstr "Operateur"
 
-#: juliabase/samples/models/common.py:187
-#: juliabase/samples/models/common.py:1763
+#: juliabase/samples/models/common.py:190
+#: juliabase/samples/models/common.py:2003
 #: juliabase/samples/models/feeds.py:281
 #: juliabase/samples/views/task_lists.py:301
 msgid "comments"
 msgstr "Kommentare"
 
-#: juliabase/samples/models/common.py:188
-#: juliabase/samples/models/common.py:825
-#: juliabase/samples/models/common.py:1228
-#: juliabase/samples/models/common.py:1489
-#: juliabase/samples/models/common.py:1756
+#: juliabase/samples/models/common.py:191
+#: juliabase/samples/models/common.py:871
+#: juliabase/samples/models/common.py:1468
+#: juliabase/samples/models/common.py:1729
+#: juliabase/samples/models/common.py:1996
 msgid "last modified"
 msgstr "zuletzt geändert"
 
-#: juliabase/samples/models/common.py:189
-#, fuzzy
-#| msgid "last modified"
+#: juliabase/samples/models/common.py:192
 msgid "last modifier"
-msgstr "zuletzt geändert"
+msgstr "letzter Änderer"
 
-#: juliabase/samples/models/common.py:191
-#: juliabase/samples/models/common.py:1741
+#: juliabase/samples/models/common.py:194
+#: juliabase/samples/models/common.py:1981
 msgid "finished"
 msgstr "abgeschlossen"
 
-#: juliabase/samples/models/common.py:204 juliabase/samples/models/feeds.py:172
+#: juliabase/samples/models/common.py:207 juliabase/samples/models/feeds.py:172
 #: juliabase/samples/models/feeds.py:194
 #: juliabase/samples/templates/samples/show_status.html:38
 #: juliabase/samples/templates/samples/show_status.html:94
-#: juliabase/samples/views/lab_notebook.py:474
-#: juliabase/samples/views/lab_notebook.py:528
-#: juliabase/samples/views/sample.py:1047
+#: juliabase/samples/views/lab_notebook.py:436
+#: juliabase/samples/views/lab_notebook.py:489
+#: juliabase/samples/views/sample.py:1074
 msgid "process"
 msgstr "Prozess"
 
-#: juliabase/samples/models/common.py:205
-#: juliabase/samples/models/common.py:823
-#: juliabase/samples/models/common.py:1227
-#: juliabase/samples/models/common.py:1714 juliabase/samples/views/status.py:48
+#: juliabase/samples/models/common.py:208
+#: juliabase/samples/models/common.py:869
+#: juliabase/samples/models/common.py:1467
+#: juliabase/samples/models/common.py:1954 juliabase/samples/views/status.py:48
 msgid "processes"
 msgstr "Prozesse"
 
 #. Translators: Label for a process instance, e.g. “thickness
 #. measurement 26”.
-#: juliabase/samples/models/common.py:238
-#: juliabase/samples/models/common.py:249
+#: juliabase/samples/models/common.py:241
+#: juliabase/samples/models/common.py:252
 #, python-brace-format
 msgid "{process_class_name} {identifier}"
 msgstr "{process_class_name} {identifier}"
@@ -342,14 +339,14 @@ msgstr "{process_class_name} {identifier}"
 #. Translators: Label for a process instance, e.g. a measurement,
 #. e.g. “thickness measurement of 01B-410”.  Singular/plural refers
 #. to {samples}.
-#: juliabase/samples/models/common.py:244
+#: juliabase/samples/models/common.py:247
 #, python-brace-format
 msgid "{process_class_name} of {samples}"
 msgid_plural "{process_class_name} of {samples}"
 msgstr[0] "{process_class_name} von {samples}"
 msgstr[1] "{process_class_name} von {samples}"
 
-#: juliabase/samples/models/common.py:656
+#: juliabase/samples/models/common.py:697
 #, python-brace-format
 msgid ""
 "You are not allowed to delete the process “{process}” because this kind of "
@@ -358,16 +355,16 @@ msgstr ""
 "Sie dürfen den Prozess „{process}“ nicht löschen, weil diese Art von "
 "Prozessen nicht gelöscht werden kann."
 
-#: juliabase/samples/models/common.py:761
-#: juliabase/samples/models/common.py:772
-#: juliabase/samples/views/lab_notebook.py:328
-#: juliabase/samples/views/lab_notebook.py:435
+#: juliabase/samples/models/common.py:801
+#: juliabase/samples/models/common.py:812
+#: juliabase/samples/views/lab_notebook.py:296
+#: juliabase/samples/views/lab_notebook.py:397
 #, python-brace-format
 msgid "lab notebook for {process_name}"
 msgstr "Laborbuch für {process_name}"
 
-#: juliabase/samples/models/common.py:781
-#: juliabase/samples/models/common.py:1202
+#: juliabase/samples/models/common.py:825
+#: juliabase/samples/models/common.py:1442
 #, python-brace-format
 msgid ""
 "You are not allowed to delete the process “{process}” because it is older "
@@ -376,181 +373,181 @@ msgstr ""
 "Sie dürfen den Prozess „{process}“ nicht löschen, weil er älter als eine "
 "Stunde ist."
 
-#: juliabase/samples/models/common.py:812
+#: juliabase/samples/models/common.py:858
 msgid "watchers"
 msgstr "Beobachter"
 
 #. Translators: location of a sample
-#: juliabase/samples/models/common.py:814
+#: juliabase/samples/models/common.py:860
 msgid "current location"
 msgstr "aktueller Probenort"
 
-#: juliabase/samples/models/common.py:816
-#: juliabase/samples/models/common.py:1484
+#: juliabase/samples/models/common.py:862
+#: juliabase/samples/models/common.py:1724
 #: juliabase/samples/templates/samples/show_claim.html:49
-#: juliabase/samples/templates/samples/show_sample_series.html:121
-#: juliabase/samples/views/sample.py:67
+#: juliabase/samples/templates/samples/show_sample_series.html:124
+#: juliabase/samples/views/sample.py:70
 #: juliabase/samples/views/sample_series.py:48
 msgid "currently responsible person"
 msgstr "aktuell Verantwortlicher"
 
-#: juliabase/samples/models/common.py:817 juliabase/samples/models/feeds.py:123
+#: juliabase/samples/models/common.py:863 juliabase/samples/models/feeds.py:123
 #: juliabase/samples/templates/samples/show_claim.html:50
 msgid "purpose"
 msgstr "Zweck"
 
 #. Translators: keywords for samples
-#: juliabase/samples/models/common.py:819
+#: juliabase/samples/models/common.py:865
 msgid "tags"
 msgstr "Tags"
 
-#: juliabase/samples/models/common.py:819
+#: juliabase/samples/models/common.py:865
 #: juliabase/samples/views/my_samples.py:53
 msgid "separated with commas, no whitespace"
 msgstr "mit Kommas getrennt, keine Leerzeichen"
 
 #. Translators: ID of mother sample
-#: juliabase/samples/models/common.py:822
+#: juliabase/samples/models/common.py:868
 msgid "split origin"
 msgstr "Split-Ursprung"
 
-#: juliabase/samples/models/common.py:824
-#: juliabase/samples/models/common.py:1488
+#: juliabase/samples/models/common.py:870
+#: juliabase/samples/models/common.py:1728
 #: juliabase/samples/models/feeds.py:122 juliabase/samples/models/feeds.py:148
 #: juliabase/samples/models/feeds.py:385 juliabase/samples/models/feeds.py:409
 #: juliabase/samples/models/feeds.py:440
 #: juliabase/samples/templates/samples/list_topics.html:31
 #: juliabase/samples/templates/samples/show_claim.html:51
-#: juliabase/samples/templates/samples/show_sample_series.html:120
-#: juliabase/samples/views/sample.py:68
+#: juliabase/samples/templates/samples/show_sample_series.html:123
+#: juliabase/samples/views/sample.py:71
 #: juliabase/samples/views/sample_series.py:49
 msgid "topic"
 msgstr "Thema"
 
-#: juliabase/samples/models/common.py:828
-#: juliabase/samples/models/common.py:1127
-#: juliabase/samples/models/common.py:1226
+#: juliabase/samples/models/common.py:874
+#: juliabase/samples/models/common.py:1367
+#: juliabase/samples/models/common.py:1466
 #: juliabase/samples/templates/samples/show_claim.html:47
-#: juliabase/samples/utils/views/forms.py:970
-#: juliabase/samples/views/main.py:406
-#: juliabase/samples/views/sample_series.py:420
+#: juliabase/samples/utils/views/forms.py:1073
+#: juliabase/samples/views/main.py:380
+#: juliabase/samples/views/sample_series.py:424
 msgid "sample"
 msgstr "Probe"
 
-#: juliabase/samples/models/common.py:832
+#: juliabase/samples/models/common.py:878
 msgid "Can view all samples from his/her department"
 msgstr "Darf alle Proben seiner/ihrer Abteilung sehen"
 
-#: juliabase/samples/models/common.py:833
+#: juliabase/samples/models/common.py:879
 msgid "Can adopt samples from his/her department"
 msgstr "Darf Proben seiner/ihrer Abteilung in Besitz nehmen"
 
-#: juliabase/samples/models/common.py:834
+#: juliabase/samples/models/common.py:880
 msgid "Can rename samples from his/her department"
 msgstr "Darf Proben seiner/ihrer Abteilung umbenennen"
 
-#: juliabase/samples/models/common.py:1131
+#: juliabase/samples/models/common.py:1371
 msgid "name alias"
 msgstr "Alternativname"
 
-#: juliabase/samples/models/common.py:1132
+#: juliabase/samples/models/common.py:1372
 msgid "name aliases"
 msgstr "Alternativnamen"
 
 #. Translators: parent of a sample
-#: juliabase/samples/models/common.py:1151
+#: juliabase/samples/models/common.py:1391
 msgid "parent"
 msgstr "Elter"
 
-#: juliabase/samples/models/common.py:1158
+#: juliabase/samples/models/common.py:1398
 #: juliabase/samples/models/feeds.py:342
 msgid "sample split"
 msgstr "Probenspaltung"
 
-#: juliabase/samples/models/common.py:1159
+#: juliabase/samples/models/common.py:1399
 msgid "sample splits"
 msgstr "Probenspaltungen"
 
-#: juliabase/samples/models/common.py:1162
+#: juliabase/samples/models/common.py:1402
 #, python-brace-format
 msgid "split of {parent_name}"
 msgstr "Spaltung von {parent_name}"
 
-#: juliabase/samples/models/common.py:1224
-#: juliabase/samples/models/common.py:1602
-#: juliabase/samples/models/common.py:1620
+#: juliabase/samples/models/common.py:1464
+#: juliabase/samples/models/common.py:1842
+#: juliabase/samples/models/common.py:1860
 msgid "user"
 msgstr "Benutzer"
 
-#: juliabase/samples/models/common.py:1232
+#: juliabase/samples/models/common.py:1472
 #: juliabase/samples/views/my_samples.py:55
 msgid "clearance"
 msgstr "Freigabe"
 
-#: juliabase/samples/models/common.py:1233
+#: juliabase/samples/models/common.py:1473
 msgid "clearances"
 msgstr "Freigaben"
 
-#: juliabase/samples/models/common.py:1236
+#: juliabase/samples/models/common.py:1476
 #, python-brace-format
 msgid "clearance of {sample} for {user}"
 msgstr "Freigabe von {sample} für {user}"
 
 #. Translators: someone who assert a claim to samples
-#: juliabase/samples/models/common.py:1241
+#: juliabase/samples/models/common.py:1481
 #: juliabase/samples/templates/samples/show_claim.html:31
 msgid "requester"
 msgstr "Antragssteller"
 
-#: juliabase/samples/models/common.py:1243
+#: juliabase/samples/models/common.py:1483
 #: juliabase/samples/templates/samples/show_claim.html:35
 msgid "reviewer"
 msgstr "Reviewer"
 
 #. Translators: "closed" claim to samples
-#: juliabase/samples/models/common.py:1247
+#: juliabase/samples/models/common.py:1487
 msgid "closed"
 msgstr "geschlossen"
 
-#: juliabase/samples/models/common.py:1250
+#: juliabase/samples/models/common.py:1490
 msgid "sample claim"
 msgstr "Beanspruchung von Proben"
 
-#: juliabase/samples/models/common.py:1254
+#: juliabase/samples/models/common.py:1494
 #, python-brace-format
 msgid "sample claim #{number}"
 msgstr "Probenanspruch Nr. {number}"
 
-#: juliabase/samples/models/common.py:1270
+#: juliabase/samples/models/common.py:1510
 msgid "completely split"
 msgstr "vollständig gespalten"
 
-#: juliabase/samples/models/common.py:1271
+#: juliabase/samples/models/common.py:1511
 msgid "lost and unfindable"
 msgstr "unauffindbar verlorengegangen"
 
-#: juliabase/samples/models/common.py:1272
+#: juliabase/samples/models/common.py:1512
 msgid "completely destroyed"
 msgstr "vollständig vernichtet"
 
 #. Translators: Of a sample
-#: juliabase/samples/models/common.py:1275
+#: juliabase/samples/models/common.py:1515
 msgid "cause of death"
 msgstr "Todesursache"
 
 #. Translators: Of a sample
-#: juliabase/samples/models/common.py:1279
-#: juliabase/samples/views/sample.py:264
+#: juliabase/samples/models/common.py:1519
+#: juliabase/samples/views/sample.py:267
 msgid "cease of existence"
 msgstr "Beendigung der Existenz"
 
 #. Translators: Of a sample
-#: juliabase/samples/models/common.py:1281
+#: juliabase/samples/models/common.py:1521
 msgid "ceases of existence"
 msgstr "Beendigungen der Existenz"
 
 #. Translators: No further step
-#: juliabase/samples/models/common.py:1294
+#: juliabase/samples/models/common.py:1534
 #: juliabase/samples/templates/samples/topics_and_permissions.html:100
 #: juliabase/samples/templates/samples/topics_and_permissions.html:113
 #: juliabase/samples/utils/views/class_views.py:981
@@ -558,55 +555,55 @@ msgid "none"
 msgstr "keine"
 
 #. Translators: Of a result
-#: juliabase/samples/models/common.py:1300
+#: juliabase/samples/models/common.py:1540
 msgid "title"
 msgstr "Überschrift"
 
-#: juliabase/samples/models/common.py:1301
+#: juliabase/samples/models/common.py:1541
 msgid "image file type"
 msgstr "Typ der Bilddatei"
 
 #. Translators: Physical quantities are meant
-#: juliabase/samples/models/common.py:1303
+#: juliabase/samples/models/common.py:1543
 msgid "quantities and values"
 msgstr "Messgrößen und Werte"
 
 #. Translators: experimental results
-#: juliabase/samples/models/common.py:1317
-#: juliabase/samples/models/common.py:1487
+#: juliabase/samples/models/common.py:1557
+#: juliabase/samples/models/common.py:1727
 msgid "results"
 msgstr "Ergebnisse"
 
 #. Translators: experimental result
-#: juliabase/samples/models/common.py:1332
-#: juliabase/samples/models/common.py:1336
+#: juliabase/samples/models/common.py:1572
+#: juliabase/samples/models/common.py:1576
 #, python-brace-format
 msgid "result for {sample}"
 msgstr "Ergebnis für {sample}"
 
 #. Translators: experimental result
-#: juliabase/samples/models/common.py:1339
+#: juliabase/samples/models/common.py:1579
 #, python-brace-format
 msgid "result #{number}"
 msgstr "Ergebnis Nr. {number}"
 
 #. Translators: In a table
-#: juliabase/samples/models/common.py:1457
-#: juliabase/samples/views/result.py:647
+#: juliabase/samples/models/common.py:1697
+#: juliabase/samples/views/result.py:648
 msgid "row"
 msgstr "Zeile"
 
-#: juliabase/samples/models/common.py:1457
+#: juliabase/samples/models/common.py:1697
 #, python-brace-format
 msgid "row #{number}"
 msgstr "Zeile Nr. {number}"
 
 #. Translators: The “Y” stands for “year”
-#: juliabase/samples/models/common.py:1480
+#: juliabase/samples/models/common.py:1720
 msgid "must be of the form “originator-YY-name”"
 msgstr "muss von der Form „Urheber-JJ-name“ sein"
 
-#: juliabase/samples/models/common.py:1485
+#: juliabase/samples/models/common.py:1725
 #: juliabase/samples/models/feeds.py:151 juliabase/samples/models/feeds.py:195
 #: juliabase/samples/models/feeds.py:255 juliabase/samples/models/feeds.py:303
 #: juliabase/samples/models/feeds.py:365 juliabase/samples/models/feeds.py:412
@@ -615,244 +612,244 @@ msgstr "muss von der Form „Urheber-JJ-name“ sein"
 msgid "description"
 msgstr "Beschreibung"
 
-#: juliabase/samples/models/common.py:1493
+#: juliabase/samples/models/common.py:1733
 #: juliabase/samples/views/result.py:106
 msgctxt "plural"
 msgid "sample series"
 msgstr "Probenserien"
 
-#: juliabase/samples/models/common.py:1601
-#: juliabase/samples/models/common.py:1608
-#: juliabase/samples/utils/views/forms.py:433
+#: juliabase/samples/models/common.py:1841
+#: juliabase/samples/models/common.py:1848
+#: juliabase/samples/utils/views/forms.py:436
 msgid "initials"
 msgstr "Kürzel"
 
-#: juliabase/samples/models/common.py:1609
+#: juliabase/samples/models/common.py:1849
 msgctxt "plural"
 msgid "initialses"
 msgstr "Kürzel"
 
-#: juliabase/samples/models/common.py:1623
+#: juliabase/samples/models/common.py:1863
 msgid "auto-addition topics"
 msgstr "Themen mit Auto-Hinzufügen"
 
-#: juliabase/samples/models/common.py:1624
+#: juliabase/samples/models/common.py:1864
 msgid "new samples in these topics are automatically added to “My Samples”"
 msgstr ""
 "neue Proben in diesen Themen werden automatisch zu „Meine Proben“ hinzugefügt"
 
-#: juliabase/samples/models/common.py:1625
+#: juliabase/samples/models/common.py:1865
 msgid "get only important news"
 msgstr "nur wichtige Neuigkeiten"
 
-#: juliabase/samples/models/common.py:1626
+#: juliabase/samples/models/common.py:1866
 msgid "My Steps"
 msgstr "Meine Schritte"
 
-#: juliabase/samples/models/common.py:1635
+#: juliabase/samples/models/common.py:1875
 msgid "display settings last modified"
 msgstr "Anzeigeoptionen zuletzt geändert"
 
-#: juliabase/samples/models/common.py:1640
+#: juliabase/samples/models/common.py:1880
 msgid "My Samples last modified"
 msgstr "Meine Proben zuletzt geändert"
 
-#: juliabase/samples/models/common.py:1644
+#: juliabase/samples/models/common.py:1884
 msgid "My Samples list last modified"
 msgstr "Meine-Proben-Liste zuletzt geändert"
 
-#: juliabase/samples/models/common.py:1652
+#: juliabase/samples/models/common.py:1892
 msgid "identifying data hash"
 msgstr "identifizierender Daten-Hash"
 
-#: juliabase/samples/models/common.py:1662
+#: juliabase/samples/models/common.py:1902
 #: juliabase/samples/views/user_details.py:44
 msgid "subscribed newsfeeds"
 msgstr "abonnierte Newsfeeds"
 
-#: juliabase/samples/models/common.py:1664
+#: juliabase/samples/models/common.py:1904
 msgid "process classes folded by default"
 msgstr "Prozessarten, die per Voreinstellung eingefaltet sind"
 
-#: juliabase/samples/models/common.py:1665
+#: juliabase/samples/models/common.py:1905
 #: juliabase/samples/views/user_details.py:45
 msgid "folded processes"
 msgstr "eingefaltete Prozesse"
 
-#: juliabase/samples/models/common.py:1671
+#: juliabase/samples/models/common.py:1911
 msgid "visible task lists"
 msgstr "sichtbare Auftragslisten"
 
-#: juliabase/samples/models/common.py:1672
+#: juliabase/samples/models/common.py:1912
 msgid "folded topics"
 msgstr "eingefaltete Themen"
 
 #. Translators: This is plural.
-#: juliabase/samples/models/common.py:1674
+#: juliabase/samples/models/common.py:1914
 msgid "folded sample series"
 msgstr "eingefaltete Probenserien"
 
-#: juliabase/samples/models/common.py:1676
+#: juliabase/samples/models/common.py:1916
 #: juliabase/samples/views/user_details.py:46
 msgid "show users from department"
 msgstr "zeige Benutzer der Abteilung"
 
-#: juliabase/samples/models/common.py:1680
-#: juliabase/samples/models/common.py:1681
+#: juliabase/samples/models/common.py:1920
+#: juliabase/samples/models/common.py:1921
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: juliabase/samples/models/common.py:1684
+#: juliabase/samples/models/common.py:1924
 msgid "Can edit permissions for all physical processes"
 msgstr "Darf die Berechtigungen für alle physikalischen Prozesse ändern"
 
-#: juliabase/samples/models/common.py:1709
+#: juliabase/samples/models/common.py:1949
 #: juliabase/samples/templates/samples/show_status.html:112
 msgid "undefined"
 msgstr "undefiniert"
 
-#: juliabase/samples/models/common.py:1710
+#: juliabase/samples/models/common.py:1950
 #: juliabase/samples/templates/samples/show_status.html:114
 msgid "red"
 msgstr "rot"
 
-#: juliabase/samples/models/common.py:1711
+#: juliabase/samples/models/common.py:1951
 #: juliabase/samples/templates/samples/show_status.html:116
 msgid "yellow"
 msgstr "gelb"
 
-#: juliabase/samples/models/common.py:1712
+#: juliabase/samples/models/common.py:1952
 #: juliabase/samples/templates/samples/show_status.html:118
 msgid "green"
 msgstr "grün"
 
-#: juliabase/samples/models/common.py:1716 juliabase/samples/views/status.py:44
+#: juliabase/samples/models/common.py:1956 juliabase/samples/views/status.py:44
 msgid "begin"
 msgstr "Anfang"
 
-#: juliabase/samples/models/common.py:1716
-#: juliabase/samples/models/common.py:1717
-#: juliabase/samples/models/common.py:1755
-#: juliabase/samples/models/common.py:1756 juliabase/samples/views/status.py:45
+#: juliabase/samples/models/common.py:1956
+#: juliabase/samples/models/common.py:1957
+#: juliabase/samples/models/common.py:1995
+#: juliabase/samples/models/common.py:1996 juliabase/samples/views/status.py:45
 #: juliabase/samples/views/status.py:47
 msgid "YYYY-MM-DD HH:MM:SS"
 msgstr "JJJJ-MM-TT HH:MM:SS"
 
-#: juliabase/samples/models/common.py:1717 juliabase/samples/views/status.py:46
+#: juliabase/samples/models/common.py:1957 juliabase/samples/views/status.py:46
 msgid "end"
 msgstr "Ende"
 
-#: juliabase/samples/models/common.py:1718
+#: juliabase/samples/models/common.py:1958
 msgid "begin inaccuracy"
 msgstr "Zeitstempel-Unsicherheit des Anfangs"
 
-#: juliabase/samples/models/common.py:1720
+#: juliabase/samples/models/common.py:1960
 msgid "end inaccuracy"
 msgstr "Zeitstempel-Unsicherheit des Endes"
 
-#: juliabase/samples/models/common.py:1723
+#: juliabase/samples/models/common.py:1963
 msgid "reporter"
 msgstr "Melder"
 
-#: juliabase/samples/models/common.py:1724
+#: juliabase/samples/models/common.py:1964
 msgid "message"
 msgstr "Meldung"
 
-#: juliabase/samples/models/common.py:1725
+#: juliabase/samples/models/common.py:1965
 msgid "level"
 msgstr "Level"
 
-#: juliabase/samples/models/common.py:1726
+#: juliabase/samples/models/common.py:1966
 msgid "withdrawn"
 msgstr "zurückgezogen"
 
-#: juliabase/samples/models/common.py:1729
+#: juliabase/samples/models/common.py:1969
 #: juliabase/samples/models/feeds.py:463 juliabase/samples/models/feeds.py:483
 msgid "status message"
 msgstr "Statusmeldung"
 
-#: juliabase/samples/models/common.py:1733
+#: juliabase/samples/models/common.py:1973
 #, python-brace-format
 msgid "status message #{number}"
 msgstr "Statusmeldung Nr. {number}"
 
-#: juliabase/samples/models/common.py:1742
+#: juliabase/samples/models/common.py:1982
 msgid "new"
 msgstr "neu"
 
-#: juliabase/samples/models/common.py:1743
+#: juliabase/samples/models/common.py:1983
 msgid "accepted"
 msgstr "akzeptiert"
 
-#: juliabase/samples/models/common.py:1744
+#: juliabase/samples/models/common.py:1984
 msgid "in progress"
 msgstr "in Bearbeitung"
 
-#: juliabase/samples/models/common.py:1747
+#: juliabase/samples/models/common.py:1987
 msgid "critical"
 msgstr "kritisch"
 
-#: juliabase/samples/models/common.py:1748
+#: juliabase/samples/models/common.py:1988
 msgid "high"
 msgstr "hoch"
 
-#: juliabase/samples/models/common.py:1749
+#: juliabase/samples/models/common.py:1989
 msgid "normal"
 msgstr "normal"
 
-#: juliabase/samples/models/common.py:1750
+#: juliabase/samples/models/common.py:1990
 msgid "low"
 msgstr "niedrig"
 
-#: juliabase/samples/models/common.py:1752
+#: juliabase/samples/models/common.py:1992
 msgid "status"
 msgstr "Status"
 
-#: juliabase/samples/models/common.py:1754
+#: juliabase/samples/models/common.py:1994
 msgid "customer"
 msgstr "Kunde"
 
-#: juliabase/samples/models/common.py:1755
+#: juliabase/samples/models/common.py:1995
 msgid "created at"
 msgstr "eingestellt"
 
-#: juliabase/samples/models/common.py:1759
+#: juliabase/samples/models/common.py:1999
 #: juliabase/samples/models/feeds.py:462 juliabase/samples/models/feeds.py:482
 #: juliabase/samples/models/feeds.py:540
 #: juliabase/samples/views/task_lists.py:70
 msgid "process class"
 msgstr "Prozessart"
 
-#: juliabase/samples/models/common.py:1761
+#: juliabase/samples/models/common.py:2001
 #: juliabase/samples/views/task_lists.py:71
 msgid "finished process"
 msgstr "abgeschlossener Prozess"
 
-#: juliabase/samples/models/common.py:1764
+#: juliabase/samples/models/common.py:2004
 msgid "priority"
 msgstr "Priorität"
 
-#: juliabase/samples/models/common.py:1767
+#: juliabase/samples/models/common.py:2007
 #: juliabase/samples/models/feeds.py:502 juliabase/samples/models/feeds.py:520
 msgid "task"
 msgstr "Auftrag"
 
-#: juliabase/samples/models/common.py:1768
+#: juliabase/samples/models/common.py:2008
 msgid "tasks"
 msgstr "Aufträge"
 
-#: juliabase/samples/models/common.py:1771
+#: juliabase/samples/models/common.py:2011
 #, python-brace-format
 msgid "task of {process_class} from {datetime}"
 msgstr "Auftrag für {process_class} von {datetime}"
 
-#: juliabase/samples/models/common.py:1823
+#: juliabase/samples/models/common.py:2063
 #: juliabase/samples/templates/samples/edit_sample_positions.html:23
 msgid "sample positions"
 msgstr "Probenpositionen"
 
-#: juliabase/samples/models/common.py:1842
-#: juliabase/samples/models/common.py:1852
+#: juliabase/samples/models/common.py:2082
+#: juliabase/samples/models/common.py:2092
 #: juliabase/samples/views/task_lists.py:217
 msgid "confidential sample"
 msgstr "vertrauliche Probe"
@@ -1079,7 +1076,7 @@ msgid "Sample {name} was deleted"
 msgstr "Probe {name} wurde gelöscht"
 
 #: juliabase/samples/models/feeds.py:343
-#: juliabase/samples/views/split_and_rename.py:83
+#: juliabase/samples/views/split_and_rename.py:90
 msgid "sample was completely split"
 msgstr "Probe wurde vollständig gespalten"
 
@@ -1247,11 +1244,11 @@ msgstr "Entfernter Auftrag {process_class}"
 msgid "[not available]"
 msgstr "[nicht vorhanden]"
 
-#: juliabase/samples/permissions.py:375
+#: juliabase/samples/permissions.py:507
 msgid "Permission denied: "
 msgstr "Zugriff verweigert: "
 
-#: juliabase/samples/permissions.py:413
+#: juliabase/samples/permissions.py:545
 msgid ""
 "You are not allowed to view the sample since the sample doesn't belong to "
 "your department."
@@ -1259,7 +1256,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da die Probe nicht zu Ihrer Abteilung "
 "gehört."
 
-#: juliabase/samples/permissions.py:418
+#: juliabase/samples/permissions.py:550
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
 "topic, nor belongs the sample to your department."
@@ -1267,7 +1264,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "die Probe zu Ihrer Abteilung gehört."
 
-#: juliabase/samples/permissions.py:422
+#: juliabase/samples/permissions.py:554
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
@@ -1276,7 +1273,7 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher ({name}) sind."
 
-#: juliabase/samples/permissions.py:427
+#: juliabase/samples/permissions.py:559
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample since you are not in the sample's "
@@ -1286,11 +1283,11 @@ msgstr ""
 "Sie dürfen die Probe nicht sehen, da Sie weder im Thema der Probe sind, noch "
 "ihr aktuell Verantwortlicher ({name}) sind, noch alle Proben sehen dürfen."
 
-#: juliabase/samples/permissions.py:451 juliabase/samples/views/sample.py:1141
+#: juliabase/samples/permissions.py:583 juliabase/samples/views/sample.py:1168
 msgid "You are not allowed to rename the sample."
 msgstr "Sie dürfen die Probe nicht umbenennen."
 
-#: juliabase/samples/permissions.py:538
+#: juliabase/samples/permissions.py:688
 #, python-brace-format
 msgid ""
 "You are not allowed to add {process_plural_name} because you don't have the "
@@ -1299,7 +1296,7 @@ msgstr ""
 "Sie dürfen keine {process_plural_name} hinzufügen, weil Sie nicht die "
 "Berechtigung „{permission}“ haben."
 
-#: juliabase/samples/permissions.py:572
+#: juliabase/samples/permissions.py:799
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the process “{process}” because you are not the "
@@ -1308,7 +1305,7 @@ msgstr ""
 "Sie dürfen den Prozess „{process}“ nicht ändern, weil Sie nicht der "
 "Operateur dieses Prozesses sind."
 
-#: juliabase/samples/permissions.py:750
+#: juliabase/samples/permissions.py:977
 #, python-brace-format
 msgid ""
 "You are not allowed to view lab notebooks for {process_plural_name} because "
@@ -1317,7 +1314,7 @@ msgstr ""
 "Sie dürfen keine Laborbücher für {process_plural_name} einsehen, weil Sie "
 "nicht die Berechtigung „{permission}“ haben."
 
-#: juliabase/samples/permissions.py:785
+#: juliabase/samples/permissions.py:1012
 #, python-brace-format
 msgid ""
 "You are not allowed to view the process “{process}” because neither you have "
@@ -1329,7 +1326,7 @@ msgstr ""
 "Berechtigung „{permission}“ haben, noch eine der beteiligten Proben sehen "
 "dürfen, noch der Operateur sind, noch eine Freigabe für diesen Prozess haben."
 
-#: juliabase/samples/permissions.py:805
+#: juliabase/samples/permissions.py:1087
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the result “{result}” because you didn't create "
@@ -1338,7 +1335,7 @@ msgstr ""
 "Sie dürfen das Resultat „{result}“ nicht ändern, weil Sie dieses Resultat "
 "nicht selbst angelegt haben."
 
-#: juliabase/samples/permissions.py:835
+#: juliabase/samples/permissions.py:1117
 #, python-brace-format
 msgid ""
 "You are not allowed to view the result “{result}” because neither did you "
@@ -1349,7 +1346,7 @@ msgstr ""
 "Urheber dieses Ergebnisses sind, noch eine der beteiligten Proben oder "
 "Probenserien sehen dürfen, noch eine Freigabe für dieses Ergebnis haben."
 
-#: juliabase/samples/permissions.py:858
+#: juliabase/samples/permissions.py:1140
 #, python-brace-format
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
@@ -1360,7 +1357,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probe sind, noch ein Mitglied ihres "
 "Themas."
 
-#: juliabase/samples/permissions.py:862
+#: juliabase/samples/permissions.py:1144
 #, python-brace-format
 msgid ""
 "You are not allowed to add the result to {sample_or_series} because neither "
@@ -1371,7 +1368,7 @@ msgstr ""
 "der aktuell Verantwortliche für diese Probenserie sind, noch ein Mitglied "
 "ihres Themas."
 
-#: juliabase/samples/permissions.py:883
+#: juliabase/samples/permissions.py:1165
 msgid ""
 "You are not allowed to edit the sample since the sample doesn't belong to "
 "your department."
@@ -1379,7 +1376,7 @@ msgstr ""
 "Sie dürfen die Probe nicht ändern, da die Probe nicht zu Ihrer Abteilung "
 "gehört."
 
-#: juliabase/samples/permissions.py:888
+#: juliabase/samples/permissions.py:1170
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the sample “{name}” (including splitting, "
@@ -1389,7 +1386,7 @@ msgstr ""
 "Sie dürfen die Probe „{name}“ nicht ändern (inklusive spalten, für tot "
 "erklären und löschen), weil Sie nicht ihr aktuell Verantwortlicher sind."
 
-#: juliabase/samples/permissions.py:907
+#: juliabase/samples/permissions.py:1189
 #, python-brace-format
 msgid ""
 "You are not allowed to edit the sample series “{name}” because you are not "
@@ -1398,7 +1395,7 @@ msgstr ""
 "Sie dürfen die Probenserie „{name}“ nicht ändern, weil Sie nicht ihr aktuell "
 "Verantwortlicher sind."
 
-#: juliabase/samples/permissions.py:926
+#: juliabase/samples/permissions.py:1208
 #, python-brace-format
 msgid ""
 "You are not allowed to view the sample series “{name}” because neither are "
@@ -1407,7 +1404,7 @@ msgstr ""
 "Sie dürfen die Probenserie {name} nicht sehen, weil Sie weder der aktuell "
 "Verantwortliche für diese Probeserie sind, noch ein Mitglied ihres Themas."
 
-#: juliabase/samples/permissions.py:943
+#: juliabase/samples/permissions.py:1225
 #, python-brace-format
 msgid ""
 "You are not allowed to add an external operator because you don't have the "
@@ -1416,7 +1413,7 @@ msgstr ""
 "Sie dürfen keinen neuen externen Operateur anlegen, weil Ihnen die "
 "Berechtgung „{name}“ fehlt."
 
-#: juliabase/samples/permissions.py:961
+#: juliabase/samples/permissions.py:1243
 msgid ""
 "You are not allowed to edit this external operator because you aren't their "
 "current contact person."
@@ -1424,7 +1421,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht ändern, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: juliabase/samples/permissions.py:980
+#: juliabase/samples/permissions.py:1262
 msgid ""
 "You are not allowed to view this external operator because you are not their "
 "current contact person."
@@ -1432,7 +1429,7 @@ msgstr ""
 "Sie dürfen diesen externen Operateur nicht einsehen, weil Sie nicht die "
 "aktuelle Kontaktperson für ihn sind."
 
-#: juliabase/samples/permissions.py:984
+#: juliabase/samples/permissions.py:1266
 msgid ""
 "You are not allowed to view this external operator because neither are you "
 "their current contact person, nor can you view all external operators."
@@ -1441,7 +1438,7 @@ msgstr ""
 "aktuelle Kontaktperson für ihn sind, noch alle externen Operateure sehen "
 "dürfen."
 
-#: juliabase/samples/permissions.py:1006
+#: juliabase/samples/permissions.py:1288
 #, python-brace-format
 msgid ""
 "You are not allowed to add topics because you don't have the permission "
@@ -1450,7 +1447,7 @@ msgstr ""
 "Sie dürfen Themen nicht neu anlegen, weil Ihnen die Berechtgung „{name}“ "
 "fehlt."
 
-#: juliabase/samples/permissions.py:1013
+#: juliabase/samples/permissions.py:1295
 #, python-brace-format
 msgid ""
 "You are not allowed to change this topic because you don't have the "
@@ -1459,7 +1456,7 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{1}“ fehlt."
 
-#: juliabase/samples/permissions.py:1019
+#: juliabase/samples/permissions.py:1301
 #, python-brace-format
 msgid ""
 "You are not allowed to change this topic because you don't have the "
@@ -1468,14 +1465,14 @@ msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Ihnen die Berechtgung „{name}“ "
 "fehlt."
 
-#: juliabase/samples/permissions.py:1024
+#: juliabase/samples/permissions.py:1306
 msgid ""
 "You are not allowed to change this topic because it is confidential and you "
 "are not in this topic."
 msgstr ""
 "Sie dürfen dieses Thema nicht ändern, weil Sie nicht in diesem Thema sind."
 
-#: juliabase/samples/permissions.py:1043
+#: juliabase/samples/permissions.py:1400
 #, python-brace-format
 msgid ""
 "You are not allowed to change your topics because you don't have the "
@@ -1484,7 +1481,7 @@ msgstr ""
 "Sie dürfen Ihre Themen nicht ändern, weil Ihnen die Berechtgung „{0}“ oder "
 "„{1}“ fehlt."
 
-#: juliabase/samples/permissions.py:1071
+#: juliabase/samples/permissions.py:1428
 msgid ""
 "You gave an invalid hash parameter in the query string.  Note that you can't "
 "access the news feed of another user."
@@ -1493,7 +1490,7 @@ msgstr ""
 "Sie, dass Sie nicht auf den Newsfeed eines anderen Benutzers zugreifen "
 "dürfen."
 
-#: juliabase/samples/permissions.py:1075
+#: juliabase/samples/permissions.py:1432
 msgid "You can't access the feed of an inactive user."
 msgstr "Sie können nicht auf den Feed eines inaktiven Benutzers zugreifen."
 
@@ -1575,7 +1572,7 @@ msgstr "PostgreSQL-Logo"
 #: juliabase/samples/templates/samples/split_and_rename.html:27
 #: juliabase/samples/templates/samples/split_and_rename.html:73
 #: juliabase/samples/templates/samples/task_lists.html:126
-#: juliabase/samples/templatetags/samples_extras.py:607
+#: juliabase/samples/templatetags/samples_extras.py:614
 msgid "General error"
 msgstr "Allgemeiner Fehler"
 
@@ -1584,7 +1581,7 @@ msgstr "Allgemeiner Fehler"
 msgid "new topic"
 msgstr "Thema hinzufügen"
 
-#: juliabase/samples/templates/samples/advanced_search.html:54
+#: juliabase/samples/templates/samples/advanced_search.html:57
 #: juliabase/samples/templates/samples/search_samples.html:33
 #, python-format
 msgid ""
@@ -1595,23 +1592,23 @@ msgstr ""
 "\n"
 "Zu viele passende Objekte gefunden.  Ich zeige nur %(max_results)s davon."
 
-#: juliabase/samples/templates/samples/advanced_search.html:62
+#: juliabase/samples/templates/samples/advanced_search.html:65
 #: juliabase/samples/templates/samples/search_samples.html:51
 msgid "Mark samples to add them to “My Samples”."
 msgstr "Markieren Sie Proben, um sie zu „Meine Proben“ hinzuzufügen."
 
-#: juliabase/samples/templates/samples/advanced_search.html:74
+#: juliabase/samples/templates/samples/advanced_search.html:77
 #: juliabase/samples/templates/samples/search_depositions.html:46
 #: juliabase/samples/templates/samples/search_samples.html:53
 msgid "Nothing found."
 msgstr "Nichts gefunden."
 
-#: juliabase/samples/templates/samples/advanced_search.html:77
+#: juliabase/samples/templates/samples/advanced_search.html:80
 #: juliabase/samples/templates/samples/search_samples.html:56
 msgid "add samples"
 msgstr "Proben hinzufügen"
 
-#: juliabase/samples/templates/samples/advanced_search.html:81
+#: juliabase/samples/templates/samples/advanced_search.html:84
 msgid "No search was performed yet."
 msgstr "Es ist noch keine Suche durchgeführt worden."
 
@@ -1654,7 +1651,7 @@ msgstr "Proben entfernen"
 
 #: juliabase/samples/templates/samples/data_matrix_code.html:27
 #: juliabase/samples/templates/samples/show_sample.html:108
-#: juliabase/samples/views/sample.py:1117
+#: juliabase/samples/views/sample.py:1144
 msgid "Data Matrix code"
 msgstr "Data-Matrix-Code"
 
@@ -1813,7 +1810,7 @@ msgstr "Fehler im Wert"
 msgid "Error in sample"
 msgstr "Fehler in den Proben"
 
-#: juliabase/samples/templates/samples/edit_sample_series.html:28
+#: juliabase/samples/templates/samples/edit_sample_series.html:30
 msgid "Error in sample series"
 msgstr "Fehler in Probenserie"
 
@@ -2326,27 +2323,27 @@ msgstr ""
 "%(originator)s hat die folgende <a href=\"%(link)s\">Statusmeldung</a> "
 "<em>zurückgezogen</em>:"
 
-#: juliabase/samples/templates/samples/lab_notebook.html:43
+#: juliabase/samples/templates/samples/lab_notebook.html:44
 #: juliabase/samples/templates/samples/show_process.html:43
 #: juliabase/samples/templates/samples/show_sample.html:96
-#: juliabase/samples/templates/samples/show_sample.html:216
-#: juliabase/samples/templates/samples/show_sample_series.html:39
+#: juliabase/samples/templates/samples/show_sample.html:220
+#: juliabase/samples/templates/samples/show_sample_series.html:40
 msgid "export as table"
 msgstr "als Tabelle exportieren"
 
-#: juliabase/samples/templates/samples/lab_notebook.html:60
+#: juliabase/samples/templates/samples/lab_notebook.html:70
 msgid "Error in date"
 msgstr "Fehler im Datum"
 
-#: juliabase/samples/templates/samples/lab_notebook.html:72
+#: juliabase/samples/templates/samples/lab_notebook.html:82
 msgid "Submit"
 msgstr ""
 
-#: juliabase/samples/templates/samples/lab_notebook.html:78
+#: juliabase/samples/templates/samples/lab_notebook.html:88
 msgid "previous month"
 msgstr "vorheriger Monat"
 
-#: juliabase/samples/templates/samples/lab_notebook.html:81
+#: juliabase/samples/templates/samples/lab_notebook.html:91
 msgid "next month"
 msgstr "nächster Monat"
 
@@ -2388,11 +2385,11 @@ msgid "Error in user list"
 msgstr "Fehler in Benutzerliste"
 
 #: juliabase/samples/templates/samples/list_topics.html:32
-#: juliabase/samples/views/topic.py:47 juliabase/samples/views/topic.py:182
+#: juliabase/samples/views/topic.py:48 juliabase/samples/views/topic.py:204
 msgid "topic manager"
 msgstr "Themenmanager"
 
-#: juliabase/samples/templates/samples/list_topics.html:48
+#: juliabase/samples/templates/samples/list_topics.html:51
 msgid "No topics available."
 msgstr "Keine Themen vorhanden."
 
@@ -2404,70 +2401,66 @@ msgstr "Keine Logdaten gefunden."
 msgid "Last run of crawler"
 msgstr "Letzter Lauf des Crawlers"
 
-#: juliabase/samples/templates/samples/main_menu.html:61
+#: juliabase/samples/templates/samples/main_menu.html:68
 #: juliabase/samples/views/my_samples.py:38
 msgid "My Samples"
 msgstr "Meine Proben"
 
-#: juliabase/samples/templates/samples/main_menu.html:63
+#: juliabase/samples/templates/samples/main_menu.html:70
 #: juliabase/samples/templates/samples/show_external_operator.html:35
 #: juliabase/samples/templates/samples/show_process.html:33
 #: juliabase/samples/templates/samples/show_sample.html:77
-#: juliabase/samples/templates/samples/show_sample.html:205
-#: juliabase/samples/templates/samples/show_sample_series.html:29
-#: juliabase/samples/templates/samples/show_sample_series.html:132
+#: juliabase/samples/templates/samples/show_sample.html:209
+#: juliabase/samples/templates/samples/show_sample_series.html:30
+#: juliabase/samples/templates/samples/show_sample_series.html:135
 msgid "edit"
 msgstr "ändern"
 
-#: juliabase/samples/templates/samples/main_menu.html:81
+#: juliabase/samples/templates/samples/main_menu.html:88
 msgid "My Experiments"
 msgstr "Meine Experimente"
 
-#: juliabase/samples/templates/samples/main_menu.html:92
+#: juliabase/samples/templates/samples/main_menu.html:99
 msgid "Added Experiments"
 msgstr "Hinzugefügte Experimente."
 
-#: juliabase/samples/templates/samples/main_menu.html:106
+#: juliabase/samples/templates/samples/main_menu.html:113
 msgid "add things"
 msgstr "Dinge hinzufügen"
 
-#: juliabase/samples/templates/samples/main_menu.html:121
+#: juliabase/samples/templates/samples/main_menu.html:128
 msgid "search for things"
 msgstr "nach Dingen suchen"
 
-#: juliabase/samples/templates/samples/main_menu.html:138
 #: juliabase/samples/templates/samples/main_menu.html:145
+#: juliabase/samples/templates/samples/main_menu.html:152
 msgid "topics"
 msgstr "Themen"
 
-#: juliabase/samples/templates/samples/main_menu.html:163
-#: juliabase/samples/views/main.py:373 juliabase/samples/views/sample.py:225
+#: juliabase/samples/templates/samples/main_menu.html:170
+#: juliabase/samples/views/main.py:347 juliabase/samples/views/sample.py:228
 msgid "miscellaneous"
 msgstr "Sonstiges"
 
-#: juliabase/samples/templates/samples/main_menu.html:174
+#: juliabase/samples/templates/samples/main_menu.html:177
 msgid "edit preferences"
 msgstr "Einstellungen ändern"
 
-#: juliabase/samples/templates/samples/main_menu.html:188
+#: juliabase/samples/templates/samples/main_menu.html:191
 msgid "change password"
 msgstr "ändere Passwort"
 
-#: juliabase/samples/templates/samples/main_menu.html:196
+#: juliabase/samples/templates/samples/main_menu.html:199
 msgid "clean up \"My Samples\""
 msgstr "Meine Proben aufräumen"
 
-#: juliabase/samples/templates/samples/main_menu.html:200
+#: juliabase/samples/templates/samples/main_menu.html:203
 msgid "edit my sample series"
 msgstr "Verwalten meiner Probenserien"
 
-#: juliabase/samples/templates/samples/main_menu.html:214
+#: juliabase/samples/templates/samples/main_menu.html:217
 msgid "about JuliaBase"
 msgstr "über JuliaBase"
-
-#: juliabase/samples/templates/samples/main_menu.html:216
-msgid "server statistics"
-msgstr "Server-Statistik"
 
 #: juliabase/samples/templates/samples/merge_samples.html:28
 msgid ""
@@ -2559,7 +2552,7 @@ msgstr ""
 "Dieses Ereignis wird niemandem gemeldet und in keine Logdatei geschrieben."
 
 #: juliabase/samples/templates/samples/qr_code.html:27
-#: juliabase/samples/views/sample.py:1077
+#: juliabase/samples/views/sample.py:1104
 msgid "QR code"
 msgstr "QR-Code"
 
@@ -2616,17 +2609,17 @@ msgstr ""
 
 #: juliabase/samples/templates/samples/show_process.html:36
 #: juliabase/samples/templates/samples/show_sample.html:88
-#: juliabase/samples/templates/samples/show_sample.html:209
+#: juliabase/samples/templates/samples/show_sample.html:213
 msgid "delete"
 msgstr "löschen"
 
 #: juliabase/samples/templates/samples/show_process.html:39
-#: juliabase/samples/templates/samples/show_sample.html:212
+#: juliabase/samples/templates/samples/show_sample.html:216
 msgid "duplicate"
 msgstr "duplizieren"
 
 #: juliabase/samples/templates/samples/show_process.html:47
-#: juliabase/samples/templates/samples/show_sample.html:220
+#: juliabase/samples/templates/samples/show_sample.html:224
 msgid "resplit"
 msgstr "weiterspalten"
 
@@ -2635,7 +2628,7 @@ msgid "Add to my experiments"
 msgstr "Zu meinen Experimenten hinzufügen"
 
 #: juliabase/samples/templates/samples/show_process.html:57
-#: juliabase/samples/templates/samples/show_sample.html:227
+#: juliabase/samples/templates/samples/show_sample.html:231
 msgid "(not finished)"
 msgstr "(nicht abgeschlossen)"
 
@@ -2661,10 +2654,8 @@ msgstr[1] ""
 "%(link)s%(name)s -->"
 
 #: juliabase/samples/templates/samples/show_process.html:97
-#, fuzzy
-#| msgid "watchers"
 msgid "Others"
-msgstr "Beobachter"
+msgstr "Andere"
 
 #: juliabase/samples/templates/samples/show_process.html:109
 msgid "Add to my samples"
@@ -2696,8 +2687,6 @@ msgid "Created by: "
 msgstr "Erstellt von: "
 
 #: juliabase/samples/templates/samples/show_process.html:135
-#, fuzzy
-#| msgid "last modified"
 msgid "Last Modified by: "
 msgstr "Zuletzt geändert von: "
 
@@ -2751,7 +2740,19 @@ msgstr[1] ""
 "Diese Probe gehört zu folgenden Probenserien: <!-- %(first_url)s  "
 "%(first_series)s -->"
 
-#: juliabase/samples/templates/samples/show_sample.html:224
+#: juliabase/samples/templates/samples/show_sample.html:195
+msgid ""
+"Click on each header to expand the process. You can also click on <b>Expand "
+"All</b> to expand all the processes."
+msgstr ""
+"Klicke auf jede Überschrift, um den Prozess zu erweitern. Du kannst auch auf <b>Alle erweitern</b>"
+"klicken, um alle Prozesse zu erweitern."
+
+#: juliabase/samples/templates/samples/show_sample.html:196
+msgid "Expand All"
+msgstr "Alle erweitern"
+
+#: juliabase/samples/templates/samples/show_sample.html:228
 msgid "show process"
 msgstr "Prozess anzeigen"
 
@@ -2769,31 +2770,31 @@ msgstr "Probenname"
 msgid "Substrate position"
 msgstr "Substrat-Position"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:34
+#: juliabase/samples/templates/samples/show_sample_series.html:35
 msgid "add result"
 msgstr "Ergebnis hinzufügen"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:43
+#: juliabase/samples/templates/samples/show_sample_series.html:44
 msgid "show runsheet"
 msgstr ""
 
-#: juliabase/samples/templates/samples/show_sample_series.html:54
+#: juliabase/samples/templates/samples/show_sample_series.html:55
 msgid "This sample series contains the following samples:"
 msgstr "Diese Probenserie umfasst die folgenden Proben:"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:105
+#: juliabase/samples/templates/samples/show_sample_series.html:108
 msgid "Add chosen samples"
 msgstr "Ausgewählte Proben hinzufügen"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:109
+#: juliabase/samples/templates/samples/show_sample_series.html:112
 msgid "Remove all samples"
 msgstr "Alle Proben entfernen"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:113
+#: juliabase/samples/templates/samples/show_sample_series.html:116
 msgid "To/From 'My Samples'"
 msgstr "zu/aus 'Meine Proben'"
 
-#: juliabase/samples/templates/samples/show_sample_series.html:117
+#: juliabase/samples/templates/samples/show_sample_series.html:120
 msgid "This sample series doesn't contain samples yet."
 msgstr "Diese Probenserie enthält noch keine Proben."
 
@@ -3124,27 +3125,27 @@ msgstr "besondere Berechtigungen, die Sie haben"
 msgid "special permissions that you don't have"
 msgstr "besondere Berechtigungen, die Sie nicht haben"
 
-#: juliabase/samples/templatetags/samples_extras.py:208
+#: juliabase/samples/templatetags/samples_extras.py:212
 #: juliabase/samples/views/external_operator.py:164
 #, python-brace-format
 msgid "Confidential operator #{number}"
 msgstr "Vertraulicher Operateur Nr. {number}"
 
 #. Translators: Only change the <sup>h</sup>!
-#: juliabase/samples/templatetags/samples_extras.py:216
+#: juliabase/samples/templatetags/samples_extras.py:220
 msgid "%Y-%m-%d %H<sup>h</sup>"
 msgstr "%Y-%m-%d %H<sup>h</sup>"
 
 #. Translators: Only change order and punctuation
-#: juliabase/samples/templatetags/samples_extras.py:219
+#: juliabase/samples/templatetags/samples_extras.py:223
 msgid "%b %Y"
 msgstr "%b %Y"
 
-#: juliabase/samples/templatetags/samples_extras.py:221
+#: juliabase/samples/templatetags/samples_extras.py:225
 msgid "date unknown"
 msgstr "Datum unbekannt"
 
-#: juliabase/samples/templatetags/samples_extras.py:749
+#: juliabase/samples/templatetags/samples_extras.py:758
 msgid ""
 "(This series contains further samples not part of your “My Samples” list.)"
 msgstr ""
@@ -3234,78 +3235,78 @@ msgstr "Schritt, der hinzugefügt werden soll"
 msgid "No layers given."
 msgstr "Keine Schichten angegeben."
 
-#: juliabase/samples/utils/views/forms.py:257
-#: juliabase/samples/utils/views/forms.py:364
+#: juliabase/samples/utils/views/forms.py:260
+#: juliabase/samples/utils/views/forms.py:367
 #, python-brace-format
 msgid "The sample {samples} is already dead at this time."
 msgid_plural "The samples {samples} are already dead at this time."
 msgstr[0] "Die Probe {samples} ist zu diesem Zeitpunkt schon tot."
 msgstr[1] "Die Proben {samples} sind zu diesem Zeitpunkt schon tot."
 
-#: juliabase/samples/utils/views/forms.py:383
+#: juliabase/samples/utils/views/forms.py:386
 msgid "The deposition number must not be changed."
 msgstr "Die Depositionsnummer darf nicht geändert werden"
 
-#: juliabase/samples/utils/views/forms.py:386
+#: juliabase/samples/utils/views/forms.py:389
 msgid "This deposition number exists already."
 msgstr "Diese Depositionsnummer existiert schon."
 
-#: juliabase/samples/utils/views/forms.py:460
+#: juliabase/samples/utils/views/forms.py:463
 msgid "These initials are already used."
 msgstr "Dieses Namenskürzel ist schon vergeben."
 
-#: juliabase/samples/utils/views/forms.py:484
+#: juliabase/samples/utils/views/forms.py:487
 msgid "Description of edit"
 msgstr "Beschreibung der Änderung"
 
-#: juliabase/samples/utils/views/forms.py:485
+#: juliabase/samples/utils/views/forms.py:488
 msgid "Important edit"
 msgstr "Wichtige Änderung"
 
-#: juliabase/samples/utils/views/forms.py:683
+#: juliabase/samples/utils/views/forms.py:786
 msgid "Time must be given in the form HH:MM:SS."
 msgstr "Zeiten müssen im Format HH:MM:SS angegeben werden."
 
-#: juliabase/samples/utils/views/forms.py:687
+#: juliabase/samples/utils/views/forms.py:790
 msgid "Minutes and seconds must be smaller than 60."
 msgstr "Minuten und Sekunden müssen kleiner als 60 sein."
 
-#: juliabase/samples/utils/views/forms.py:717
+#: juliabase/samples/utils/views/forms.py:820
 #: juliabase/samples/views/status.py:84
 msgid "The timestamp must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: juliabase/samples/utils/views/forms.py:720
+#: juliabase/samples/utils/views/forms.py:823
 msgid "The date must not be in the future."
 msgstr "Der Zeitstempel darf nicht in der Zukunft liegen."
 
-#: juliabase/samples/utils/views/forms.py:722
+#: juliabase/samples/utils/views/forms.py:825
 msgid "The year must not be earlier than 1900."
 msgstr "Das Jahr darf nicht vor 1900 sein."
 
-#: juliabase/samples/utils/views/forms.py:753
+#: juliabase/samples/utils/views/forms.py:856
 msgid "Must be a physical quantity with number and unit."
 msgstr "Muss eine physikalische Größe mit Maßzahl und Einheit sein."
 
-#: juliabase/samples/utils/views/forms.py:759
+#: juliabase/samples/utils/views/forms.py:862
 #, python-format
 msgid "The unit is invalid.  Valid units are: %(units)s"
 msgstr "Die Einheit ist ungültig.  Gültige Einheiten sind: %(units)s"
 
-#: juliabase/samples/utils/views/forms.py:945
-#: juliabase/samples/utils/views/forms.py:948
+#: juliabase/samples/utils/views/forms.py:1048
+#: juliabase/samples/utils/views/forms.py:1051
 msgid "The year must be the current year."
 msgstr "Das Jahr muss das aktuelle Jahr sein."
 
-#: juliabase/samples/utils/views/forms.py:955
+#: juliabase/samples/utils/views/forms.py:1058
 msgid "The initials do not match yours."
 msgstr "Das Kürzel ist nicht deines."
 
-#: juliabase/samples/utils/views/forms.py:959
+#: juliabase/samples/utils/views/forms.py:1062
 msgid "The initials do not match any of your external contacts."
 msgstr "Das Kürzel passt nicht zu irgendeinem deiner externen Kontakte."
 
-#: juliabase/samples/utils/views/forms.py:963
+#: juliabase/samples/utils/views/forms.py:1066
 msgid "The initials do not match yours, nor any of your external contacts."
 msgstr ""
 "Das Kürzel ist nicht deines, noch das von irgendeinem deiner externen "
@@ -3325,7 +3326,7 @@ msgid "Save old name as alias"
 msgstr "Alten Namen als Alias speichern"
 
 #: juliabase/samples/views/bulk_rename.py:85
-#: juliabase/samples/views/sample.py:1167
+#: juliabase/samples/views/sample.py:1194
 #, python-format
 msgid "New name must be a valid “%(sample_formats)s” name."
 msgid_plural ""
@@ -3336,7 +3337,7 @@ msgstr[1] ""
 "%(sample_formats)s"
 
 #: juliabase/samples/views/bulk_rename.py:94
-#: juliabase/samples/views/sample.py:1151
+#: juliabase/samples/views/sample.py:1178
 #: juliabase/samples/views/split_after_deposition.py:61
 #: juliabase/samples/views/split_after_deposition.py:357
 msgid "This sample name exists already."
@@ -3545,11 +3546,11 @@ msgstr "Anfangsdatum"
 msgid "End Date"
 msgstr "Enddatum"
 
-#: juliabase/samples/views/lab_notebook.py:479
-#: juliabase/samples/views/lab_notebook.py:533
-#: juliabase/samples/views/main.py:411 juliabase/samples/views/result.py:652
-#: juliabase/samples/views/sample.py:1052
-#: juliabase/samples/views/sample_series.py:425
+#: juliabase/samples/views/lab_notebook.py:441
+#: juliabase/samples/views/lab_notebook.py:494
+#: juliabase/samples/views/main.py:385 juliabase/samples/views/result.py:653
+#: juliabase/samples/views/sample.py:1079
+#: juliabase/samples/views/sample_series.py:429
 #, python-brace-format
 msgid "Table export for “{name}”"
 msgstr "Tabellen-Export für „{name}“"
@@ -3563,24 +3564,24 @@ msgstr "Log des Crawlers „{process_class_name}“"
 msgid "Crawler logs"
 msgstr "Crawler-Logs"
 
-#: juliabase/samples/views/main.py:126
+#: juliabase/samples/views/main.py:122
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: juliabase/samples/views/main.py:151
+#: juliabase/samples/views/main.py:146
 msgid "Deposition number pattern"
 msgstr "Muster für Depositionsnummer"
 
-#: juliabase/samples/views/main.py:186
+#: juliabase/samples/views/main.py:181
 msgid "Search for deposition"
 msgstr "Nach Deposition suchen"
 
-#: juliabase/samples/views/main.py:343
+#: juliabase/samples/views/main.py:317
 #, python-brace-format
 msgid "Process {process} was successfully deleted in the database."
 msgstr "Prozess {process} wurde erfolgreich in der Datenbank gelöscht."
 
-#: juliabase/samples/views/main.py:376
+#: juliabase/samples/views/main.py:350
 #, python-brace-format
 msgid "Delete process “{process}”"
 msgstr "Prozess “{process}” löschen"
@@ -3757,7 +3758,7 @@ msgstr "Ungültiges Dateiformat.  Nur PDF, PNG und JPEG sind erlaubt."
 msgid "image file"
 msgstr "Bilddatei"
 
-#: juliabase/samples/views/result.py:163
+#: juliabase/samples/views/result.py:164
 msgid ""
 "You don't have the permission to add the result to all selected samples/"
 "series."
@@ -3765,86 +3766,86 @@ msgstr ""
 "Sie haben nicht die erforderlichen Rechte, um alle ausgewählten Proben/"
 "Serien zu ändern."
 
-#: juliabase/samples/views/result.py:166
+#: juliabase/samples/views/result.py:167
 msgid "You must select at least one samples/series."
 msgstr "Sie müssen mindestens eine Probe/Serie markieren."
 
-#: juliabase/samples/views/result.py:182
+#: juliabase/samples/views/result.py:183
 msgid "Number of quantities"
 msgstr "Anzahl der Messgrößen"
 
-#: juliabase/samples/views/result.py:183
+#: juliabase/samples/views/result.py:184
 msgid "Number of values"
 msgstr "Anzahl der Werte"
 
-#: juliabase/samples/views/result.py:207
+#: juliabase/samples/views/result.py:208
 msgid "Quantity name"
 msgstr "Messgrößen-Name"
 
-#: juliabase/samples/views/result.py:224
+#: juliabase/samples/views/result.py:225
 msgid "Value"
 msgstr "Wert"
 
-#: juliabase/samples/views/result.py:391
+#: juliabase/samples/views/result.py:392
 msgid "Adding samples or sample series must be marked as important."
 msgstr ""
 "Hinzufügen von Proben oder Probenserien muss immer als „wichtig“ markiert "
 "werden."
 
-#: juliabase/samples/views/result.py:398
+#: juliabase/samples/views/result.py:399
 msgid "This quantity is already used in this table."
 msgstr "Diese Messgröße wurde in dieser Tabelle schon verwendet."
 
-#: juliabase/samples/views/result.py:535
+#: juliabase/samples/views/result.py:536
 msgid "Edit result"
 msgstr "Ergebnis ändern"
 
-#: juliabase/samples/views/result.py:535
+#: juliabase/samples/views/result.py:536
 msgid "New result"
 msgstr "Ergebnis hinzufügen"
 
-#: juliabase/samples/views/result.py:562
+#: juliabase/samples/views/result.py:563
 #, python-brace-format
 msgid "Result “{title}”"
 msgstr "Ergebnis „{title}“"
 
-#: juliabase/samples/views/sample.py:59
+#: juliabase/samples/views/sample.py:62
 msgid "is amongst My Samples"
 msgstr "gehört zu Meinen Proben"
 
-#: juliabase/samples/views/sample.py:107
-#: juliabase/samples/views/sample_series.py:290
+#: juliabase/samples/views/sample.py:110
+#: juliabase/samples/views/sample_series.py:293
 msgid ""
 "Changing the topic or the responsible person must be marked as important."
 msgstr ""
 "Änderungen des Themas oder des Verantwortlichen müssen immer als „wichtig“ "
 "markiert werden."
 
-#: juliabase/samples/views/sample.py:159 juliabase/samples/views/sample.py:1212
+#: juliabase/samples/views/sample.py:162 juliabase/samples/views/sample.py:1239
 #, python-brace-format
 msgid "Sample {sample} was successfully changed in the database."
 msgstr "Die Probe {sample} wurde erfolgreich in der Datenbank geändert."
 
-#: juliabase/samples/views/sample.py:165
+#: juliabase/samples/views/sample.py:168
 #, python-brace-format
 msgid "Edit sample “{sample}”"
 msgstr "Ändern der Probe „{sample}“"
 
-#: juliabase/samples/views/sample.py:195
+#: juliabase/samples/views/sample.py:198
 #, python-brace-format
 msgid "Sample {sample} was successfully deleted in the database."
 msgstr "Die Probe {sample} wurde erfolgreich in der Datenbank gelöscht."
 
-#: juliabase/samples/views/sample.py:228
+#: juliabase/samples/views/sample.py:231
 #, python-brace-format
 msgid "Delete sample “{sample}”"
 msgstr "Löschen der Probe „{sample}“"
 
-#: juliabase/samples/views/sample.py:260
+#: juliabase/samples/views/sample.py:263
 msgid "split"
 msgstr "Spaltung"
 
-#: juliabase/samples/views/sample.py:273
+#: juliabase/samples/views/sample.py:276
 #, python-brace-format
 msgid ""
 "You are not allowed to add any processes to the sample {sample} because "
@@ -3855,94 +3856,92 @@ msgstr ""
 "aktueller Verantwortlicher sind, noch in ihrem Thema sind, noch spezielle "
 "Berechtigungen für physikalische Prozesse haben."
 
-#: juliabase/samples/views/sample.py:714
+#: juliabase/samples/views/sample.py:748
 #, python-brace-format
 msgid "Sample {samples} was added to My Samples."
 msgid_plural "Samples {samples} were added to My Samples."
 msgstr[0] "Probe {samples} wurde zu Meinen Proben hinzugefügt."
 msgstr[1] "Die Proben {samples} wurden zu Meinen Proben hinzugefügt."
 
-#: juliabase/samples/views/sample.py:722
+#: juliabase/samples/views/sample.py:756
 #, python-brace-format
 msgid "Sample {samples} was removed from My Samples."
 msgid_plural "Samples {samples} were removed from My Samples."
 msgstr[0] "Probe {samples} wurde von Meinen Proben entfernt."
 msgstr[1] "Die Proben {samples} wurden von Meinen Proben entfernt."
 
-#: juliabase/samples/views/sample.py:726
+#: juliabase/samples/views/sample.py:760
 msgid "Nothing was changed."
 msgstr "Es wurde nichts geändert."
 
-#: juliabase/samples/views/sample.py:746
+#: juliabase/samples/views/sample.py:773
 #, python-brace-format
 msgid "Sample “{sample}”"
 msgstr "Probe „{sample}“"
 
-#: juliabase/samples/views/sample.py:808
+#: juliabase/samples/views/sample.py:835
 #, python-brace-format
 msgid "Add process to sample “{sample}”"
 msgstr "Prozess zu Probe „{sample}“ hinzufügen"
 
-#: juliabase/samples/views/sample.py:816
+#: juliabase/samples/views/sample.py:843
 msgid "Samples older than (months)"
 msgstr "Proben älter als (Monate)"
 
-#: juliabase/samples/views/sample.py:862
+#: juliabase/samples/views/sample.py:889
 msgid "Clean up 'My samples'"
 msgstr "'Meine Proben' aufräumen"
 
-#: juliabase/samples/views/sample.py:871
+#: juliabase/samples/views/sample.py:898
 msgid "Name pattern"
 msgstr "Namensmuster"
 
-#: juliabase/samples/views/sample.py:872
+#: juliabase/samples/views/sample.py:899
 msgid "Include alias names"
 msgstr "Alternativnamen einbeziehen"
 
-#: juliabase/samples/views/sample.py:921
+#: juliabase/samples/views/sample.py:948
 msgid "Search for sample"
 msgstr "Nach Proben suchen"
 
-#: juliabase/samples/views/sample.py:987
+#: juliabase/samples/views/sample.py:1014
 msgid "search results"
 msgstr "Such-Ergebnisse"
 
-#: juliabase/samples/views/sample.py:1005
+#: juliabase/samples/views/sample.py:1032
 msgid "You don't have the permission to see any content of the search results."
 msgstr ""
 "Sie haben nicht die erforderlichen Rechte, um irgendwelchen Inhalt der Such-"
 "Ergebnisse zu sehen."
 
-#: juliabase/samples/views/sample.py:1125
+#: juliabase/samples/views/sample.py:1152
 #: juliabase/samples/views/split_after_deposition.py:45
 msgid "old sample name"
 msgstr "alter Probenname"
 
-#: juliabase/samples/views/sample.py:1126
+#: juliabase/samples/views/sample.py:1153
 #: juliabase/samples/views/split_after_deposition.py:114
-#: juliabase/samples/views/split_and_rename.py:40
+#: juliabase/samples/views/split_and_rename.py:42
 msgid "new sample name"
 msgstr "neuer Probenname"
 
-#: juliabase/samples/views/sample.py:1127
+#: juliabase/samples/views/sample.py:1154
 msgid "keep old name as sample alias name"
 msgstr "alten Namen als Aliasnamen behalten"
 
-#: juliabase/samples/views/sample.py:1139
+#: juliabase/samples/views/sample.py:1166
 msgid "This sample does not exist."
 msgstr "Diese Probe existiert nicht."
 
-#: juliabase/samples/views/sample.py:1148
-#, fuzzy
-#| msgid "This sample name exists already."
+#: juliabase/samples/views/sample.py:1175
 msgid "This sample name is not valid."
-msgstr "Dieser Probenname ist schon vergeben."
+msgstr "Dieser Probenname ist ungültig."
 
-#: juliabase/samples/views/sample.py:1160
+#: juliabase/samples/views/sample.py:1187
 msgid "The new name must be different from the old name."
 msgstr "Der neue Probenname muss sich vom alten unterscheiden."
 
-#: juliabase/samples/views/sample.py:1209
+#: juliabase/samples/views/sample.py:1236
 #, python-brace-format
 msgid "Sample {old_name} was renamed to {new_name}"
 msgstr "Probe {old_name} wurde in {new_name} umbenannt."
@@ -3961,46 +3960,46 @@ msgstr "Probe „{sample}“ wurde getötet."
 msgid "Kill sample “{sample}”"
 msgstr "Töten der Probe „{sample}“"
 
-#: juliabase/samples/views/sample_series.py:81
+#: juliabase/samples/views/sample_series.py:82
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
 
-#: juliabase/samples/views/sample_series.py:211
+#: juliabase/samples/views/sample_series.py:214
 msgid "Edit my sample series"
 msgstr "Verwalten meiner Probenserien"
 
-#: juliabase/samples/views/sample_series.py:257
+#: juliabase/samples/views/sample_series.py:260
 #, python-brace-format
 msgid "Sample series “{name}”"
 msgstr "Probenserie „{name}“"
 
-#: juliabase/samples/views/sample_series.py:331
+#: juliabase/samples/views/sample_series.py:334
 #, python-brace-format
 msgid "Sample series {name} was successfully updated in the database."
 msgstr "Die Probenserie {name} wurde erfolgreich in der Datenbank geändert."
 
-#: juliabase/samples/views/sample_series.py:341
+#: juliabase/samples/views/sample_series.py:344
 #, python-brace-format
 msgid "Edit sample series “{name}”"
 msgstr "Ändern der Probenserie „{name}“"
 
-#: juliabase/samples/views/sample_series.py:371
+#: juliabase/samples/views/sample_series.py:374
 msgid "This sample series name is already given."
 msgstr "Dieser Probenserienname ist schon vergeben."
 
-#: juliabase/samples/views/sample_series.py:376
+#: juliabase/samples/views/sample_series.py:379
 #, python-format
 msgid "The name is %(number)s letter too long."
 msgid_plural "The name is %(number)s letters too long."
 msgstr[0] "Der Name ist %(number)s Buchstaben zu lang."
 msgstr[1] "Der Name ist %(number)s Buchstaben zu lang."
 
-#: juliabase/samples/views/sample_series.py:386
+#: juliabase/samples/views/sample_series.py:390
 #, python-brace-format
 msgid "Sample series {name} was successfully added to the database."
 msgstr "Die Probenserie {name} wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: juliabase/samples/views/sample_series.py:390
+#: juliabase/samples/views/sample_series.py:394
 msgid "Create new sample series"
 msgstr "Neue Probenserie anlegen"
 
@@ -4037,7 +4036,7 @@ msgid "The new name must begin with the old name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
 
 #: juliabase/samples/views/split_after_deposition.py:100
-#: juliabase/samples/views/split_and_rename.py:64
+#: juliabase/samples/views/split_and_rename.py:67
 #, python-format
 msgid "  Alternatively, it must be a valid “%(sample_formats)s” name."
 msgid_plural ""
@@ -4054,7 +4053,7 @@ msgstr ""
 "  Oder der neue Name muss mit der Depositionsnummer beginnen oder sie sein."
 
 #: juliabase/samples/views/split_after_deposition.py:127
-#: juliabase/samples/views/split_and_rename.py:58
+#: juliabase/samples/views/split_and_rename.py:61
 msgid "The sample name has an invalid format."
 msgstr "Dieser Probenname hat ein ungültiges Format."
 
@@ -4113,31 +4112,31 @@ msgstr "Die Proben wurden erfolgreich gespalten und/oder umbenannt."
 msgid "Bulk sample rename for {deposition}"
 msgstr "Probenumbenennung für {deposition}"
 
-#: juliabase/samples/views/split_and_rename.py:41
+#: juliabase/samples/views/split_and_rename.py:43
 msgid "New sample purpose"
 msgstr "Neuer Probenzweck"
 
-#: juliabase/samples/views/split_and_rename.py:42
+#: juliabase/samples/views/split_and_rename.py:44
 msgid "Delete"
 msgstr "Löschen"
 
-#: juliabase/samples/views/split_and_rename.py:61
+#: juliabase/samples/views/split_and_rename.py:64
 msgid "The new sample name must start with the parent sample's name."
 msgstr "Der neue Probenname muss mit dem Namen der Ursprungsprobe beginnen."
 
-#: juliabase/samples/views/split_and_rename.py:74
+#: juliabase/samples/views/split_and_rename.py:81
 msgid "Name does already exist in database."
 msgstr "Name existiert schon in der Datenbank."
 
-#: juliabase/samples/views/split_and_rename.py:82
+#: juliabase/samples/views/split_and_rename.py:89
 msgid "All pieces completely entered"
 msgstr "Alle Stücke vollständig eingegeben"
 
-#: juliabase/samples/views/split_and_rename.py:99
+#: juliabase/samples/views/split_and_rename.py:106
 msgid "Number of pieces"
 msgstr "Anzahl der Stücke"
 
-#: juliabase/samples/views/split_and_rename.py:101
+#: juliabase/samples/views/split_and_rename.py:108
 msgid ""
 "the pieces are automatically added, and an index – starting at 1 – is "
 "appended"
@@ -4145,26 +4144,26 @@ msgstr ""
 "Die Stücke werden automatisch angehängt, und ein Index – bei 1 beginnend – "
 "angehängt."
 
-#: juliabase/samples/views/split_and_rename.py:233
+#: juliabase/samples/views/split_and_rename.py:240
 msgid "You must split into at least one piece."
 msgstr "Sie müssen mindestens in ein Stück spalten."
 
-#: juliabase/samples/views/split_and_rename.py:238
+#: juliabase/samples/views/split_and_rename.py:245
 msgid "You must split into at least two pieces if the split is complete."
 msgstr ""
 "Sie müssen in mindestens zwei Stücke spalten, wenn die Spaltung vollständig "
 "ist."
 
-#: juliabase/samples/views/split_and_rename.py:245
+#: juliabase/samples/views/split_and_rename.py:252
 msgid "Name is already given."
 msgstr "Dieser Name ist schon vergeben."
 
-#: juliabase/samples/views/split_and_rename.py:353
+#: juliabase/samples/views/split_and_rename.py:458
 #, python-brace-format
 msgid "Sample “{sample}” was successfully split."
 msgstr "Die Probe „{sample}“ wurde erfolgreich gespalten."
 
-#: juliabase/samples/views/split_and_rename.py:362
+#: juliabase/samples/views/split_and_rename.py:467
 #, python-brace-format
 msgid "Split sample “{sample}”"
 msgstr "Spalten der Probe „{sample}“"
@@ -4258,53 +4257,53 @@ msgstr "Sie sind nicht der Auftraggeber dieses Auftrags."
 msgid "The task was successfully removed."
 msgstr "Der Auftrag wurde erfolgreich entfernt."
 
-#: juliabase/samples/views/topic.py:43
+#: juliabase/samples/views/topic.py:44
 msgid "Name of new topic"
 msgstr "Name des neuen Themas"
 
-#: juliabase/samples/views/topic.py:46
+#: juliabase/samples/views/topic.py:47
 msgid "Upper topic"
 msgstr "Überthema"
 
-#: juliabase/samples/views/topic.py:74
+#: juliabase/samples/views/topic.py:75
 #, python-format
 msgid "You are not allowed to edit the topic “%(parent_topic)s”."
 msgstr "Sie dürfen das Thema „%(parent_topic)s“ nicht ändern."
 
-#: juliabase/samples/views/topic.py:78
+#: juliabase/samples/views/topic.py:79
 msgid ""
 "You are only allowed to create sub topics. You have to select an upper topic."
 msgstr ""
 "Sie dürfen keine Unterthemen anlegen.  Sie müssen ein Überthema auswählen."
 
-#: juliabase/samples/views/topic.py:88
+#: juliabase/samples/views/topic.py:89
 msgid "This topic name is already used."
 msgstr "Dieser Themenname ist bereits vergeben."
 
-#: juliabase/samples/views/topic.py:91
+#: juliabase/samples/views/topic.py:92
 msgid "The topic manager must be the topic manager from the upper topic."
 msgstr "Der Themenmanager muß der Manager des Überthemas sein."
 
-#: juliabase/samples/views/topic.py:115
+#: juliabase/samples/views/topic.py:116
 msgid "You cannot add topics here because you are not in any department."
 msgstr ""
 "Sie können hier keine neuen Themen anlegen, weil Sie keiner Abteilung "
 "angehören."
 
-#: juliabase/samples/views/topic.py:139
+#: juliabase/samples/views/topic.py:140
 #, python-brace-format
 msgid "Topic {name} was successfully created."
 msgstr "Das Thema {name} wurde erfolgreich angelegt."
 
-#: juliabase/samples/views/topic.py:172
+#: juliabase/samples/views/topic.py:194
 msgid "List of all topics"
 msgstr "Liste aller Themen"
 
-#: juliabase/samples/views/topic.py:180
+#: juliabase/samples/views/topic.py:202
 msgid "Members"
 msgstr "Mitglieder"
 
-#: juliabase/samples/views/topic.py:199
+#: juliabase/samples/views/topic.py:221
 msgid ""
 "In confidential topics, at least one member must have permission to edit the "
 "topic."
@@ -4312,14 +4311,14 @@ msgstr ""
 "Wenigstens ein Mitglied in eines vertraulichen Themas muss die Berechtigung "
 "haben, das Thema zu ändern."
 
-#: juliabase/samples/views/topic.py:254
+#: juliabase/samples/views/topic.py:276
 #, python-brace-format
 msgid "Members of topic “{name}” were successfully updated."
 msgstr ""
 "Die Mitglieder des Themas „{name}“ wurden erfolgreich auf den neuesten Stand "
 "gebracht."
 
-#: juliabase/samples/views/topic.py:259
+#: juliabase/samples/views/topic.py:281
 #, python-brace-format
 msgid "Change topic memberships of “{0}”"
 msgstr "Mitglieder des Themas “{0}” ändern"
@@ -4348,6 +4347,9 @@ msgstr ""
 #, python-brace-format
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
+
+#~ msgid "server statistics"
+#~ msgstr "Server-Statistik"
 
 #~ msgid "in JSON format"
 #~ msgstr "im JSON-Format"

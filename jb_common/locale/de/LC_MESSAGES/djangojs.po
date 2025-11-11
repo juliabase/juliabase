@@ -18,47 +18,47 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:5
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:4
 msgid "Processing..."
 msgstr "Verarbeitung läuft..."
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:6
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:5
 msgid "Search&nbsp;:"
 msgstr "Suchen&nbsp;:"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:7
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:6
 msgid "Show _MENU_ entries"
 msgstr "Zeige _MENU_ Einträge"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:8
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:7
 msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
 msgstr "Anzeige von _START_ bis _END_ von insgesamt _TOTAL_ Einträgen"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:9
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:8
 msgid "Showing 0 to 0 of total 0 entries"
 msgstr "Anzeige von 0 bis 0 von insgesamt 0 Einträgen"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:10
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:9
 msgid "(filtered from total _MAX_ entries)"
 msgstr "(gefiltert von _MAX_ Einträgen insgesamt)"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:12
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:11
 msgid "Loading records..."
 msgstr "Datensätze werden geladen..."
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:13
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:12
 msgid "No entries found"
 msgstr "Keine Einträge gefunden"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:14
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:13
 msgid "No data available"
 msgstr "Keine Daten verfügbar"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:16
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:15
 msgid ": activate to sort column ascending"
 msgstr ": aktivieren, um die Spalte aufsteigend zu sortieren"
 
-#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:17
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:16
 msgid ": activate to sort column descending"
 msgstr ": aktivieren, um die Spalte absteigend zu sortieren"
 

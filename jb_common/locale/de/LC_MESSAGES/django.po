@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-29 10:51+0200\n"
+"POT-Creation-Date: 2025-10-13 14:09+0200\n"
 "PO-Revision-Date: 2016-10-27 18:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -295,26 +295,18 @@ msgstr ""
 "den Fehler zu beheben.  Typischerweise werden sie Sie benachrichtigen, "
 "sobald der Fehler behoben ist.\n"
 
-#: juliabase/jb_common/templates/jb_base.html:69
+#: juliabase/jb_common/templates/jb_base.html:81
 #, python-format
 msgid "switch to %(language)s"
 msgstr "wechsle zu %(language)s"
 
-#: juliabase/jb_common/templates/jb_base.html:76
+#: juliabase/jb_common/templates/jb_base.html:88
 msgid "Welcome,"
 msgstr "Willkommen,"
 
-#: juliabase/jb_common/templates/jb_base.html:78
+#: juliabase/jb_common/templates/jb_base.html:90
 msgid "Main menu"
 msgstr "Hauptmenü"
-
-#: juliabase/jb_common/templates/jb_base.html:83
-msgid "Report feature wish or bug"
-msgstr "Bug oder Featurewunsch melden"
-
-#: juliabase/jb_common/templates/jb_base.html:89
-msgid "Help"
-msgstr "Hilfe"
 
 #: juliabase/jb_common/templates/jb_base.html:95
 msgid "Log out"
@@ -354,7 +346,7 @@ msgstr ""
 "es noch einmal."
 
 #: juliabase/jb_common/templates/jb_common/login.html:38
-msgid "login"
+msgid "Login"
 msgstr "Anmelden"
 
 #: juliabase/jb_common/templates/jb_common/logout.html:25
@@ -477,13 +469,19 @@ msgstr "Darf jede(n/s) {class_name} sehen"
 msgid "Can edit permissions for {class_name}"
 msgstr "Darf die Berechtigungen für {class_name} ändern"
 
-#: juliabase/jb_common/views.py:59
+#: juliabase/jb_common/views.py:62
 msgid "Sandbox"
 msgstr "Sandkasten"
 
-#: juliabase/jb_common/views.py:91
+#: juliabase/jb_common/views.py:94
 msgid "Markdown sandbox"
 msgstr "Markdown-Sandkasten"
+
+#~ msgid "Report feature wish or bug"
+#~ msgstr "Bug oder Featurewunsch melden"
+
+#~ msgid "Help"
+#~ msgstr "Hilfe"
 
 #~ msgid "statistics"
 #~ msgstr "Statistiken"
