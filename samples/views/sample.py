@@ -341,7 +341,7 @@ class SamplesAndProcesses:
         # ``samples.processes.count()`` instead.  However, this would slow down
         # JuliaBase.
         samples_and_processes = get_from_cache(cache_key, hits=10)
-        if samples_and_processes is None:
+        if samples_and_processes is None or not hasattr(samples_and_processes, "processes"):
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
             keys_list_key = "sample-keys:{0}".format(sample.pk)
             with cache_key_locked("sample-lock:{0}".format(sample.pk)):
