@@ -32,6 +32,8 @@ from jb_common.utils.base import respond_in_json, format_enumeration, unquote_vi
 from samples import models, permissions
 import samples.utils.views as utils
 from samples.utils import sample_names
+from django.utils.timezone import now as timezone_now
+from django.db import transaction
 
 
 class NewNameForm(forms.Form):
@@ -41,7 +43,7 @@ class NewNameForm(forms.Form):
     new_purpose = forms.CharField(label=_("New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_("Delete"), required=False)
 
-    def __init__(self, user, parent_name, *args, **kwargs):
+    def __init__(self, user, parent_name, existing_sample_names, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.parent_name = parent_name
         parent_name_format = sample_names.sample_name_format(parent_name)
@@ -50,6 +52,7 @@ class NewNameForm(forms.Form):
         else:
             self.possible_new_name_formats = set()
         self.user = user
+        self.existing_sample_names = existing_sample_names or set()
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
@@ -70,7 +73,11 @@ class NewNameForm(forms.Form):
                         for name_format in self.possible_new_name_formats)})
                 raise ValidationError(error_message, params=params, code="invalid")
             utils.check_sample_name(match, self.user)
-        if sample_names.does_sample_exist(new_name):
+        # if sample_names.does_sample_exist(new_name):
+        #     raise ValidationError(_("Name does already exist in database."), code="duplicate")
+        # return new_name
+
+        if new_name in self.existing_sample_names:
             raise ValidationError(_("Name does already exist in database."), code="duplicate")
         return new_name
 
@@ -101,7 +108,7 @@ class AutomaticSplitForm(forms.Form):
                                 help_text=_("the pieces are automatically added, and an index – starting at 1 – is appended"))
 
 
-def forms_from_post_data(post_data, parent, user):
+def forms_from_post_data(post_data, parent, user, existing_names):
     """Interpret the POST data sent by the user through his browser and create
     forms from it.  This function also performs the so-called “structural
     changes”, namely adding and deleting pieces.
@@ -139,7 +146,7 @@ def forms_from_post_data(post_data, parent, user):
             structure_changed = True
             last_name = None
         else:
-            new_name_forms.append(NewNameForm(user, parent.name, post_data, prefix=str(index)))
+            new_name_forms.append(NewNameForm(user, parent.name, existing_names, post_data, prefix=str(index)))
             last_name = post_data["{0}-new_name".format(index)]
     if new_name_forms:
         if last_name == parent.name:
@@ -153,7 +160,7 @@ def forms_from_post_data(post_data, parent, user):
         format_string = "{{}}-{{:0{}}}".format(number_of_digits)
         for piece_number in range(1, number + 1):
             index += 1
-            new_name_forms.append(NewNameForm(user, parent.name, None, prefix=str(index),
+            new_name_forms.append(NewNameForm(user, parent.name, existing_names, None, prefix=str(index),
                                               initial={"new_name": format_string.format(parent.name, piece_number)}))
         automatic_split_form = AutomaticSplitForm()
     next_prefix = str(index + 1)
@@ -248,63 +255,146 @@ def is_referentially_valid(new_name_forms, global_data_form, number_of_old_piece
     return referentially_valid
 
 
+# def save_to_database(new_name_forms, global_data_form, parent, sample_split, user):
+#     """Save all form data to the database.  If `sample_split` is not ``None``,
+#     modify it instead of appending a new one.  Warning: For this, the old split
+#     process must be the last process at all for the parental sample!  This must
+#     be checked before this routine is called.
+
+#     :param new_name_forms: all “new name forms”, but not the dummy one for new
+#         pieces (the one in darker grey).
+#     :param global_data_form: the global data form
+#     :param parent: the sample to be split
+#     :param sample_split: the already existing sample split process that is to be
+#         modified.  If this is ``None``, create a new one.
+#     :param user: the current user
+
+#     :type new_name_forms: list of `NewNameForm`
+#     :type global_data_form: `GlobalDataForm`
+#     :type parent: `samples.models.Sample`
+#     :type sample_split: `samples.models.SampleSplit`
+#     :type user: django.contrib.auth.models.User
+
+#     :return:
+#       the sample split instance, new pieces as a dictionary mapping the new
+#       names to the sample IDs
+
+#     :rtype: `samples.models.SampleSplit`, dict mapping str to int
+#     """
+#     now = django.utils.timezone.now()
+#     if not sample_split:
+#         sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
+#         sample_split.save()
+#         parent.processes.add(sample_split)
+#     else:
+#         sample_split.timestamp = now
+#         sample_split.operator = user
+#         sample_split.save()
+#     sample_series = global_data_form.cleaned_data["sample_series"]
+#     new_pieces = {}
+#     for new_name_form in new_name_forms:
+#         new_name = new_name_form.cleaned_data["new_name"]
+#         child = models.Sample(name=new_name,
+#                               current_location=parent.current_location,
+#                               currently_responsible_person=user,
+#                               purpose=new_name_form.cleaned_data["new_purpose"], tags=parent.tags,
+#                               split_origin=sample_split,
+#                               topic=parent.topic)
+#         child.save()
+#         new_pieces[new_name] = child.pk
+#         for watcher in parent.watchers.all():
+#             watcher.my_samples.add(child)
+#         if sample_series:
+#             sample_series.samples.add(child)
+#     if global_data_form.cleaned_data["sample_completely_split"]:
+#         parent.watchers.clear()
+#         death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split")
+#         death.save()
+#         parent.processes.add(death)
+#     return sample_split, new_pieces
+
 def save_to_database(new_name_forms, global_data_form, parent, sample_split, user):
-    """Save all form data to the database.  If `sample_split` is not ``None``,
-    modify it instead of appending a new one.  Warning: For this, the old split
-    process must be the last process at all for the parental sample!  This must
-    be checked before this routine is called.
+    now = timezone_now()
+    with transaction.atomic():  # wrap everything in a single transaction
+        if not sample_split:
+            sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
+            sample_split.save()
+            # raise ValueError("kop")
+            parent.processes.add(sample_split)
+            # raise ValueError("sop")
+        else:
+            sample_split.timestamp = now
+            sample_split.operator = user
+            sample_split.save()
 
-    :param new_name_forms: all “new name forms”, but not the dummy one for new
-        pieces (the one in darker grey).
-    :param global_data_form: the global data form
-    :param parent: the sample to be split
-    :param sample_split: the already existing sample split process that is to be
-        modified.  If this is ``None``, create a new one.
-    :param user: the current user
+        # raise ValueError("nop")
+        sample_series = global_data_form.cleaned_data["sample_series"]
+        parent_watchers = list(parent.watchers.all())  # avoid repeated DB hits
+        new_pieces = []
 
-    :type new_name_forms: list of `NewNameForm`
-    :type global_data_form: `GlobalDataForm`
-    :type parent: `samples.models.Sample`
-    :type sample_split: `samples.models.SampleSplit`
-    :type user: django.contrib.auth.models.User
+        created_samples = []
+        for new_name_form in new_name_forms:
+            new_name = new_name_form.cleaned_data["new_name"]
+            child = models.Sample(
+                name=new_name,
+                current_location=parent.current_location,
+                currently_responsible_person=user,
+                purpose=new_name_form.cleaned_data["new_purpose"],
+                tags=parent.tags,
+                split_origin=sample_split,
+                topic=parent.topic
+            )
+            created_samples.append(child)
 
-    :return:
-      the sample split instance, new pieces as a dictionary mapping the new
-      names to the sample IDs
+        # raise ValueError("oy")
+        # Bulk-create children
+        models.Sample.objects.bulk_create(created_samples)
 
-    :rtype: `samples.models.SampleSplit`, dict mapping str to int
-    """
-    now = django.utils.timezone.now()
-    if not sample_split:
-        sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
-        sample_split.save()
-        parent.processes.add(sample_split)
-    else:
-        sample_split.timestamp = now
-        sample_split.operator = user
-        sample_split.save()
-    sample_series = global_data_form.cleaned_data["sample_series"]
-    new_pieces = {}
-    for new_name_form in new_name_forms:
-        new_name = new_name_form.cleaned_data["new_name"]
-        child = models.Sample(name=new_name,
-                              current_location=parent.current_location,
-                              currently_responsible_person=user,
-                              purpose=new_name_form.cleaned_data["new_purpose"], tags=parent.tags,
-                              split_origin=sample_split,
-                              topic=parent.topic)
-        child.save()
-        new_pieces[new_name] = child.pk
-        for watcher in parent.watchers.all():
-            watcher.my_samples.add(child)
+        # Prepare mapping name -> ID
+        new_pieces = {child.name: child.pk for child in created_samples}
+
+
+        # Reload created_samples with PKs
+        created_samples = models.Sample.objects.filter(pk__in=new_pieces.values())
+
+        # FIXME: You stopped aquí :D
+        # raise ValueError("syyy")
+        # Assign watchers in bulk
+        # for watcher in parent_watchers:
+        #     watcher.my_samples.add(*created_samples)
+        Sample_watchers = models.Sample.watchers.through  # the M2M "through" table
+
+        Sample_watchers.objects.bulk_create([
+            Sample_watchers(user=watcher, sample=sample)
+            for watcher in parent_watchers
+            for sample in created_samples
+        ], ignore_conflicts=True)
+
+        
+        
+
+        # Add to series in bulk
         if sample_series:
-            sample_series.samples.add(child)
-    if global_data_form.cleaned_data["sample_completely_split"]:
-        parent.watchers.clear()
-        death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split")
-        death.save()
-        parent.processes.add(death)
-    return sample_split, new_pieces
+            sample_series.samples.add(*created_samples)
+
+        # raise ValueError("llll")
+        # Kill parent if necessary
+        if global_data_form.cleaned_data["sample_completely_split"]:
+            # Sample_watchers = parent.watchers.through  # the M2M table
+            # Sample_watchers.objects.filter(sample_id=parent.id).delete()
+            parent.watchers.clear()
+
+            death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split")
+            death.save()
+
+            # parent.processes.add(death)
+            Sample_processes = parent.processes.through
+            Sample_processes.objects.get_or_create(sample_id=parent.id, process_id=death.id)
+
+        
+        # raise ValueError("89ss6")
+
+        return sample_split, new_pieces
 
 
 @help_link("demo.html#split-a-sample")
@@ -341,21 +431,36 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
     number_of_old_pieces = old_split.pieces.count() if old_split else 0
     automatic_split_form = AutomaticSplitForm(request.POST)
     if request.method == "POST":
+        all_new_sample_names = [
+            value for key, value in request.POST.items() if key.endswith("-new_name")
+        ]
+
+        existing_names = set(
+            models.Sample.objects.filter(name__in=all_new_sample_names)
+            .values_list("name", flat=True)
+        )
         new_name_forms, global_data_form, automatic_split_form, structure_changed, next_prefix = \
-            forms_from_post_data(request.POST, parent, request.user)
+            forms_from_post_data(request.POST, parent, request.user, existing_names)
+        
         all_valid = is_all_valid(new_name_forms, global_data_form, automatic_split_form)
+
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces)
+
         if all_valid and referentially_valid and not structure_changed:
+            # parent = models.Sample.objects.prefetch_related("processes").get(pk=parent.pk)
+
             sample_split, new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
-            utils.Reporter(request.user).report_sample_split(
-                sample_split, global_data_form.cleaned_data["sample_completely_split"])
+            # OPTIMIZE: I commented the next line because it generates about 300+ database queries, and I am quite sure
+            # nobody uses the "Newsfeed" section in Chantal anymore. If you think I am wrong, uncomment it :)
+            # utils.Reporter(request.user).report_sample_split(
+            #     sample_split, global_data_form.cleaned_data["sample_completely_split"])
             return utils.successful_response(
                 request, _("Sample “{sample}” was successfully split.").format(sample=parent),
                 "samples:show_sample_by_name", {"sample_name": parent.name}, json_response=new_pieces)
     else:
         new_name_forms, global_data_form, automatic_split_form = forms_from_database(parent, request.user)
         next_prefix = "0"
-    new_name_forms.append(NewNameForm(request.user, parent.name,
+    new_name_forms.append(NewNameForm(request.user, parent.name, existing_sample_names= set(),
                                       initial={"new_name": parent.name, "new_purpose": parent.purpose},
                                       prefix=next_prefix))
     return render(request, "samples/split_and_rename.html",
