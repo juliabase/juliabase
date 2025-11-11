@@ -39,7 +39,6 @@ along with this program. If not, see
       {% endcomment %}
       <td class="field-input"><span id="name_prefix" name="name_prefix" contenteditable="">{{ name_prefix }}-</span><input type="hidden" name="name_prefix_data" id="name_prefix_data">
         {{ sample_series.short_name }}</td>
-      {% compress js %}
       <script>
         var prefixSpan = document.getElementById("name_prefix");
         var prefixInput = document.getElementById("name_prefix_data");
@@ -49,7 +48,6 @@ along with this program. If not, see
         });
         prefixInput.value = prefixSpan.innerHTML;
       </script>
-      {% endcompress %}
 
 
     </tr>
