@@ -1420,15 +1420,21 @@ class SampleSplit(Process):
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if context["sample"] != context["original_sample"]:
-            context["parent"] = context["sample"]
-        else:
-            context["parent"] = None
-        if context["sample"].last_process_if_split() == self and \
+        try:
+            if context["sample"] != context["original_sample"]:
+                context["parent"] = context["sample"]
+            else:
+                context["parent"] = None
+            if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
-            context["resplit_url"] = django.urls.reverse("samples:resplit", kwargs={"old_split_id": self.id})
-        else:
+                context["resplit_url"] = django.urls.reverse("samples:resplit", kwargs={"old_split_id": self.id})
+            else:
+                context["resplit_url"] = None
+        except KeyError:
+            context["parent"] = None
             context["resplit_url"] = None
+
+
         return super().get_context_for_user(user, context)
 
     @classmethod
