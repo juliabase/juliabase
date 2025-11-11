@@ -48,7 +48,7 @@ from datetime import datetime
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SamplePositionsMixin",
            "SubprocessForm", "SubprocessesMixin",
            "MultipleStepsMixin", "SubprocessMultipleTypesForm", "MultipleStepTypesMixin",
-           "DepositionView", "DepositionMultipleTypeView")
+           "DepositionView", "DepositionMultipleTypeView", "ProcessWithoutSamplesView")
 
 
 @method_decorator(login_required, name="dispatch")
