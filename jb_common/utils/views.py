@@ -152,7 +152,7 @@ class TopicField(forms.ChoiceField):
     def set_topics(self, user, additional_topic=None):
         """Set the topic list shown in the widget.  You *must* call this
         method in the constructor of the form in which you use this field,
-        otherwise the selection box will remain emtpy.  The selection list will
+        otherwise the selection box will remain empty.  The selection list will
         consist of all currently active topics, plus the given additional
         topic if any.  The “currently active topics” are all topics with
         at least one active user amongst its members.
@@ -165,58 +165,51 @@ class TopicField(forms.ChoiceField):
         :type user: django.contrib.auth.models.User
         :type additional_topic: `jb_common.models.Topic`
         """
-        # def topics_and_sub_topics(parent_topics):
-        #     for topic in parent_topics:
-        #         name = 2 * " " + str(topic) if topic.has_parent() else str(topic)
-        #         self.choices.append((topic.pk, name))
-        #         child_topics = topic.child_topics.all()
-        #         if child_topics:
-        #             topics_and_sub_topics(sorted(child_topics, key=lambda topic: topic.name.lower()))
-
-        def topics_and_sub_topics(parent_topics, child_topic_dict):
+        def topics_and_sub_topics(parent_topics, child_topic_dict, depth=0):
             for topic in parent_topics:
-                name = 2 * " " + str(topic) if topic.parent_topic_id else str(topic)
+                name = (6 * depth * "\u00A0") + topic.name if topic.parent_topic else topic.name
                 self.choices.append((topic.pk, name))
-                child_topics = child_topic_dict.get(topic.pk, [])
+                child_topics = child_topic_dict.get(topic, [])
                 if child_topics:
-                    topics_and_sub_topics(sorted(child_topics, key=lambda t: t.name.lower()), child_topic_dict)
+                    topics_and_sub_topics(sorted(child_topics, key=lambda t: t.name.lower()), child_topic_dict, depth+1)
 
         self.choices = [("", 9 * "-")]
         if not user.is_superuser:
-            all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
-            raise ValueError("hj")
+            # all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
+            all_topics = Topic.objects.filter(
+                members__is_active=True,
+                department=user.jb_user_details.department
+            ).distinct().prefetch_related("parent_topic")  # If "parent_topic" is used in `has_parent()`, prefetch it
 
-            user_topics = user.topics.all()
+            user_topics = set(user.topics.all())
+
             top_level_topics = \
-                {topic for topic in all_topics if (not topic.confidential or topic in user_topics) and not topic.has_parent()}
+                {topic for topic in all_topics if (not topic.confidential or topic in user_topics) }
             if additional_topic:
                 top_level_topics.add(additional_topic.get_top_level_topic())
         else:
-            # raise ValueError("hujj")
             # OPTIMIZE: This generates 115 queries
-            # top_level_topics = {topic for topic in Topic.objects.iterator() if not topic.has_parent()}
-            # top_level_topics = set(Topic.objects.filter(parent_topic__isnull=True))
-            topics = Topic.objects.prefetch_related('child_topics').filter(parent_topic__isnull=True)
+            top_level_topics = Topic.objects.prefetch_related('child_topics', "parent_topic")#.filter(parent_topic__isnull=True)
 
-
-        topics = sorted(topics, key=lambda topic: topic.name.lower())
-
-        # Fetch all topics with their child topics in a single query
-        # topics = Topic.objects.prefetch_related('child_topics').filter(parent_topic__isnull=True)#.all()
+        topics = sorted(top_level_topics, key=lambda topic: topic.name.lower())
 
         # Create a dictionary to store child topics by their parent topic ID
         child_topic_dict = defaultdict(list)
         for topic in topics:
-            if topic.parent_topic_id is not None:
-                child_topic_dict[topic.parent_topic_id].append(topic)
+            if topic.parent_topic is not None:
+                child_topic_dict[topic.parent_topic].append(topic)
 
         # Get all parent topics (those without a parent)
-        parent_topics = [topic for topic in topics if topic.parent_topic_id is None]
+        parent_topics = [topic for topic in topics if topic.parent_topic is None]
+        parent_topics = sorted(parent_topics, key=lambda t: t.name.lower())
         # OPTIMIZE: This generates 218 queries
         topics_and_sub_topics(parent_topics, child_topic_dict)
+        # raise ValueError(self.choices)
+        # self.choices = sorted(self.choices, key=lambda t: t[1].lower())
+        # # self.choices.insert(0, ("", 9 * "-"))
+        # self.choices = [("", 9 * "-")] + self.choices
 
-        # raise ValueError("olhdhk")
-
+        # raise ValueError(len(self.choices), len(topics), len(top_level_topics), child_topic_dict)
 
     def clean(self, value):
         value = super().clean(value)
