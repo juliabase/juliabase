@@ -1016,9 +1016,9 @@ class Sample(models.Model):
 
         :rtype: str
         """
-        # OPTIMIZE: I don't know why we need to check whether the user has permission to view the sample. 
-        # This function is only called in the main menu to generate "My Samples."
-        if self.tags and samples.permissions.has_permission_to_fully_view_sample(user, self):
+        # OPTIMIZE: I commented the part where it checks for permissions to fully view the sample since it 
+        # runs too many database queries. We probably don't need that :)
+        if self.tags: #and samples.permissions.has_permission_to_fully_view_sample(user, self):
             tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + "…"
             return " ({0})".format(tags)
         else:
