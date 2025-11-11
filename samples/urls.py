@@ -160,6 +160,8 @@ urlpatterns = [
 
     re_path(r"^fold_process/(?P<sample_id>\d+)$", json_client.fold_process, name="fold_process"),
     re_path(r"^folded_processes/(?P<sample_id>\d+)$", json_client.get_folded_processes, name="get_folded_processes"),
+    
+    re_path(r"^folded_processes_from_sample/(?P<sample_id>\d+)$", sample.get_folded_processes, name="get_folded_processes_from_sample"),
 
     re_path(r"^merge_samples$", merge_samples.merge, name="merge_samples"),
 
@@ -174,7 +176,6 @@ urlpatterns = [
     re_path(r"^fold_main_menu_element/", json_client.fold_main_menu_element, name="fold_main_menu_element"),
     re_path(r"^folded_main_menu_elements/", json_client.get_folded_main_menu_elements, name="get_folded_main_menu_elements"),
 
-	# re_path(r"process/(?P<process_id>\d+)/(?P<sample_id>\d+)/details/", process_context.process_details, name="process_details"),
-        re_path(r'^process/(?P<process_id>\d+)/(?P<sample_id>\d+)/details/$', process_context.process_details, name='process_details')
+	re_path(r'^process/(?P<process_id>\d+)/(?P<sample_id>\d+)/details/$', process_context.process_details, name='process_details')
 
 ]

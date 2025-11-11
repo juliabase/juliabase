@@ -29,6 +29,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
 import django.forms as forms
@@ -416,49 +417,20 @@ class SamplesAndProcesses:
 
             processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').distinct()
 
-            # processes = models.Process.objects. \
-            #     filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"])). \
-            #     distinct()
-
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
             
-            # raise ValueError(ids_from_direct, "-----", ids_from_series, "-----", process_ids, "-----ew", len(processes), "-----sy", len(processes2), set(processes2) - set(processes))
-
             nobody = django.contrib.auth.models.User.objects.get(username='nobody')
-            # raise ValueError("nobody", nobody)
             self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
 
-            viewable_processes = []
             for process in processes:
-                # process_context = utils.digest_process(process, user, local_context)
-                # self.process_contexts.append(process_context)
                 self.process_ids.add(process.id)
-            for process in processes:
-                if process.operator == user or \
-                        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
-                        self.processes_with_permissions[process]:
-                    viewable_processes.append(process)
-                else:
-                    if process.actual_instance._meta.verbose_name == "sample split":
-                        viewable_processes.append(process)
-                    else:
-                        self.process_ids.remove(process.id)
-                # FIXME: This is experimental. I haven't found a case where this happens so far...
                 if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
                     process.operator = nobody
 
-            # diff = list(set(processes) - set(viewable_processes))
-            # viewable_processes = list(viewable_processes)
-            # for process in diff:
-            #     if process.actual_instance._meta.verbose_name == "sample split":
-            #         viewable_processes.append(process)
-            #         self.process_ids.append(process.id)
-            self.processes += list(viewable_processes)
+            self.processes += processes#list(viewable_processes)
 
-            # raise ValueError(len(self.processes))
         collect_process_contexts()
-        # raise ValueError(len(self.processes))
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
@@ -1271,4 +1243,18 @@ def rename_sample(request):
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
 
 
+@login_required
+@never_cache
+@require_http_methods(["GET"])
+def get_folded_processes(request, sample_id):
+    """
+    Function that gets the folded processes for the current user.
+    There is a similar function in json_client.py but I do not use it since 
+    I do not have the process ids in the request.
+    """
+    user_detail = models.UserDetails.objects.get(user=request.user)
+    cts = user_detail.default_folded_process_classes.all()
+    process_names = [str(process.name).lower() for process in cts]
+    return respond_in_json(process_names)
+    
 _ = gettext
