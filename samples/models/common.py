@@ -764,7 +764,6 @@ class PhysicalProcess(Process):
         else:
             context["delete_url"] = None
         context["export_url"] = django.urls.reverse("samples:export_process", kwargs={"process_id": self.pk})
-        # raise ValueError("hjdhdhd")
         return super().get_context_for_user(user, context)
 
     @classmethod

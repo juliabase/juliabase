@@ -258,18 +258,7 @@ def show_process(request, process_id, process_name="Process"):
         process_title = str(process)
         add_to_my_experiments_url = None
 
-    # all_sample_topics = []
     all_samples = process.samples.all()
-    # for proc in all_samples:
-    #     if str(proc.topic) not in all_sample_topics:
-    #         all_sample_topics.append(str(proc.topic))
-
-    # sample_series_with_matching_samples = (
-    #     SampleSeries.objects
-    #     .filter(samples__in=all_samples)
-    #     .annotate(matching_samples=ArrayAgg('samples__id', filter=Q(samples__id__in=all_samples)))
-    #     .distinct()
-    # )
 
     # I make a copy here, because I want to change it without  
     # affecting all_samples which is used in the loop below
@@ -284,21 +273,11 @@ def show_process(request, process_id, process_name="Process"):
     # Step 2: For each SampleSeries, get the matching Sample objects
     for series in sample_series_with_matching_samples:
         matching_samples = series.samples.filter(id__in=all_samples)
-        # all_samples_copy = [sample for sample in all_samples_copy if sample not in all_samples_copy]
         for sample in matching_samples:
             if sample in samples_without_series:
                 samples_without_series.remove(sample)
         series.matching_samples = list(matching_samples)  # Attach matching Sample objects to each series
 
-
-    # result = [item for item in list1 if item not in list2]
-    # raise ValueError(sample_series_with_matching_samples[0].matching_samples, samples_without_series)
-
-    
-    # for series in sample_series_with_matching_samples:
-    #     raise ValueError(f"Sample Series: {series.name},  Matching Samples in SampleSeries: {series.matching_samples}")
-
-    # raise ValueError( sample_series_with_matching_samples  )
     template_context = {"title": process_title,
                         "samples": all_samples,
                         "process": process,
