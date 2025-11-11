@@ -591,7 +591,7 @@ class EditDescriptionForm(forms.Form):
     """Form for letting the user enter a short description of the changes they
     made.
     """
-    description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea)
+    description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea, required=False)
     important = forms.BooleanField(label=_("Important edit"), required=False)
 
     def __init__(self, *args, **kwargs):

@@ -89,6 +89,8 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
                 unit = "/" + field.unit
             except AttributeError:
                 unit = ""
+            except TypeError:
+                unit = "/" + ""
             data_node.items.append(DataItem(html.unescape(field.verbose_name + unit), value, field.model.__name__.lower()))
 
 

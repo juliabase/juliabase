@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-common\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-20 14:15+0100\n"
+"POT-Creation-Date: 2025-04-29 10:51+0200\n"
 "PO-Revision-Date: 2016-10-27 18:37+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -105,7 +105,7 @@ msgstr "Kleine Ganzzahl in Einheiten von %(unit)s"
 msgid "Positive small integer in the unit of %(unit)s"
 msgstr "Positive kleine Ganzzahl in Einheiten von %(unit)s"
 
-#: juliabase/jb_common/models.py:36 juliabase/jb_common/models.py:123
+#: juliabase/jb_common/models.py:36 juliabase/jb_common/models.py:125
 msgid "name"
 msgstr "Name"
 
@@ -114,7 +114,7 @@ msgid "app label"
 msgstr "App-Label"
 
 #: juliabase/jb_common/models.py:41 juliabase/jb_common/models.py:62
-#: juliabase/jb_common/models.py:127
+#: juliabase/jb_common/models.py:129
 #: juliabase/jb_common/templates/jb_common/show_user.html:36
 msgid "department"
 msgstr "Abteilung"
@@ -123,7 +123,7 @@ msgstr "Abteilung"
 msgid "departments"
 msgstr "Abteilungen"
 
-#: juliabase/jb_common/models.py:60 juliabase/jb_common/models.py:261
+#: juliabase/jb_common/models.py:60 juliabase/jb_common/models.py:263
 msgid "user"
 msgstr "Benutzer"
 
@@ -143,64 +143,64 @@ msgstr "letzte Änderung des Layouts"
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: juliabase/jb_common/models.py:124
+#: juliabase/jb_common/models.py:126
 msgid "members"
 msgstr "Mitglieder"
 
-#: juliabase/jb_common/models.py:126
+#: juliabase/jb_common/models.py:128
 msgid "confidential"
 msgstr "vertraulich"
 
-#: juliabase/jb_common/models.py:128
+#: juliabase/jb_common/models.py:130
 msgid "parent topic"
 msgstr "Überthema"
 
-#: juliabase/jb_common/models.py:130
+#: juliabase/jb_common/models.py:132
 msgid "topic manager"
 msgstr "Themenmanager"
 
-#: juliabase/jb_common/models.py:135
+#: juliabase/jb_common/models.py:137
 msgid "topic"
 msgstr "Thema"
 
-#: juliabase/jb_common/models.py:136
+#: juliabase/jb_common/models.py:138
 msgid "topics"
 msgstr "Themen"
 
-#: juliabase/jb_common/models.py:140
+#: juliabase/jb_common/models.py:142
 msgid "Can add new topics"
 msgstr "Darf neue Themen hinzufügen"
 
-#: juliabase/jb_common/models.py:141
+#: juliabase/jb_common/models.py:143
 msgid "Can edit all topics"
 msgstr "Darf alle Themen ändern"
 
-#: juliabase/jb_common/models.py:142
+#: juliabase/jb_common/models.py:144
 msgid "Can edit topics that he/she is a manager of"
 msgstr "Darf Themen ändern, für die er/sie Manager ist"
 
-#: juliabase/jb_common/models.py:173
+#: juliabase/jb_common/models.py:175
 #, python-brace-format
 msgid "topic #{number} (confidential)"
 msgstr "Thema Nr. {number} (vertraulich)"
 
-#: juliabase/jb_common/models.py:260
+#: juliabase/jb_common/models.py:262
 msgid "hash value"
 msgstr "Hashwert"
 
-#: juliabase/jb_common/models.py:263
+#: juliabase/jb_common/models.py:265
 msgid "requested URL"
 msgstr "angeforderte URL"
 
-#: juliabase/jb_common/models.py:265
+#: juliabase/jb_common/models.py:267
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: juliabase/jb_common/models.py:268
+#: juliabase/jb_common/models.py:270
 msgid "error page"
 msgstr "Fehlerseite"
 
-#: juliabase/jb_common/models.py:269
+#: juliabase/jb_common/models.py:271
 msgid "error pages"
 msgstr "Fehlerseiten"
 
