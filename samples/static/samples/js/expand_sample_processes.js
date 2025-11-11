@@ -52,8 +52,32 @@
         // Operator + timestamp
         html.push(`<div style="clear:both"></div>`);
 
+        // Force a valid root for malformed table fragments
+        let safeHtml = data.html_body.trim();
+
+        // If it starts with a table row or cell, wrap it in a table
+        if (/^<(tr|td|tbody|thead|tfoot)[\s>]/i.test(safeHtml)) {
+          safeHtml = `<table><tbody>${safeHtml}</tbody></table>`;
+        }
+
+        const html_body = $('<div>').html(safeHtml);
+
+        // 1️⃣ Extract and execute <script> tags
+        html_body.find('script').each(function() {
+            // If it's an external script
+            if (this.src) {
+                const script = document.createElement('script');
+                script.src = this.src;
+                document.head.appendChild(script);
+            } 
+            // If it's inline JS
+            else {
+                $.globalEval(this.text || this.textContent || this.innerHTML || '');
+            }
+        });
+
         // Body
-        html.push(`<div class="new-content">${data.html_body}</div>`);
+        html.push(`<div class="new-content">${html_body.html()}</div>`);
         if(data.short_html_body){
           html.push(`<div class="new-short-content" style="display:none">${data.short_html_body}</div>`);
         }
