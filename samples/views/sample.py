@@ -401,9 +401,10 @@ class SamplesAndProcesses:
                 new_local_context["latest_descendant"] = local_context["sample"]
                 new_local_context["cutoff_timestamp"] = split.timestamp
                 collect_process_contexts(new_local_context)
-            processes = models.Process.objects. \
-                filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"])). \
-                distinct()
+            ids_from_direct = models.Process.objects.filter(samples=sample).values_list("id", flat=True)
+            ids_from_series = models.Process.objects.filter(result__sample_series__samples=sample).values_list("id", flat=True)
+            process_ids = set(ids_from_direct).union(ids_from_series)
+            processes = models.Process.objects.filter(id__in=process_ids)
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
             for process in processes:
