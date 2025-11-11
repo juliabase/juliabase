@@ -184,7 +184,7 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
 COMPRESS_URL = STATIC_URL
 COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_STORAGE = 'compressor.storage.CompressorFileStorage'
