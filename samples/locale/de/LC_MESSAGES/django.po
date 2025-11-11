@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-20 14:15+0100\n"
+"POT-Creation-Date: 2025-04-29 10:51+0200\n"
 "PO-Revision-Date: 2018-05-17 23:23+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -3525,7 +3525,7 @@ msgstr "Alle Ihre externen Kontakte"
 msgid "JuliaBase news for {user_name}"
 msgstr "JuliaBase-Neuigkeiten für {user_name}"
 
-#: juliabase/samples/views/json_client.py:216
+#: juliabase/samples/views/json_client.py:226
 msgid "Only the administrator can access this resource."
 msgstr "Nur die Administratoren dürfen auf diese Ressource zugreifen."
 
