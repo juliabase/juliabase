@@ -6,6 +6,13 @@
 // gets rendered. It also causes sometimes "race conditions" where
 // MathJax ends up being called before it is loaded.
 document.addEventListener('DOMContentLoaded', function () {
+
+    marked.setOptions({
+        tables: true,
+        gfm: true,
+        breaks: true
+    });
+
     // Define the data attributes of the columns you want to target
     const targetDataAttributes = ['comments', 'consequence', 'aim', 'execution', 'analysis_steps', 'software_and_version', 'result']; // Add your data attributes here
 
@@ -24,7 +31,13 @@ document.addEventListener('DOMContentLoaded', function () {
             const sanitizedText = DOMPurify.sanitize(originalText);
             const markdownText = marked(sanitizedText); // Use a Markdown library
             cell.innerHTML = markdownText;
-        }
+
+            // Force re-rendering of all tables inside the cell
+            const tables = cell.querySelectorAll('table'); // Select all tables, not just the first one
+            tables.forEach(table => {
+                table.classList.add('markdown-table'); // Add class to each table
+            });
+          }
     }
 
     // Apply the Markdown conversion to each specified column
@@ -55,6 +68,10 @@ document.addEventListener('DOMContentLoaded', function () {
           fontCache: 'global'
         }
       };
+
+    document.querySelectorAll('table.markdown-table').forEach(table => {
+        table.classList.add('table', 'table-bordered'); // Optional styling for better rendering
+    });
 
     // Now we import MathJax and let it do its magic :)
     var polyfillScript = document.createElement('script');
