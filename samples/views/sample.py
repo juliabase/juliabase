@@ -703,6 +703,7 @@ def show(request, sample_name):
 
     :rtype: HttpResponse
     """
+    # raise ValueError("dko")
     start = time.time()
     if request.method == "POST":
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)

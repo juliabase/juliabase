@@ -175,7 +175,10 @@ class ProcessForm(ModelForm):
             kwargs["initial"].setdefault("combined_operator", user.pk)
         super().__init__(*args, **kwargs)
         if self.process and self.process.finished:
-            self.fields["finished"].disabled = True
+            try:
+                self.fields["finished"].disabled = True
+            except KeyError:
+                pass
         self.fields["combined_operator"].set_choices(user, self.process)
         if not user.is_superuser:
             self.fields["external_operator"].choices = []
