@@ -358,15 +358,19 @@ def build_structured_sample_list(user, samples=None):
     samples = sorted(set(samples), key=lambda sample: (sample.tags, sample.name))
 
     # Prefetch 'series' for all samples
-    # samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).prefetch_related('series')
-    samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).\
-                                    select_related('topic').\
-                                    prefetch_related(
-                                                    
-                                                    Prefetch(
-                                                        "series",  # Related name for ManyToMany field in `SampleSerie`
-                                                        queryset=SampleSeries.objects.prefetch_related("samples", "topic"),
-                                                    ),)
+    samples = (
+        Sample.objects.filter(id__in=[sample.id for sample in samples])
+        .select_related("topic__parent_topic")  # also load topic and its parent_topic
+        .prefetch_related(
+            Prefetch(
+                "series",
+                queryset=SampleSeries.objects.prefetch_related(
+                    "samples",
+                    "topic__parent_topic",  # also load parent_topic for series.topic
+                ),
+            ),
+        )
+    )
 
     for sample in samples:
         # Now, `sample.series.all()` will not hit the database again for each sample
