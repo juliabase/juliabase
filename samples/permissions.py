@@ -1016,52 +1016,19 @@ def assert_can_view_physical_process(user, process):
         raise PermissionError(user, description, new_topic_would_help=True)
 
 
-# def can_view_physical_processes(user, processes):
-#     """Tests whether the user can view a physical process. This function is a modified version of
-#     assert_can_view_physical_process that supports multiple processes at once to avoid running too many
-#     database queries.
-
-#     :param user: the user whose permission should be checked
-#     :param processes: The processes to view. 
-
-#     :type user: django.contrib.auth.models.User
-#     :type processes: list
-
-#     return: Dictionary of the processes as keys, and a boolean of whether the user can access the process
-#     """
-#     permission_dict = {}
-#     for process in processes:
-#         can_view = False
-#         process_class = process.content_type.model_class()
-#         codename = "view_every_{0}".format(process_class.__name__.lower())
-#         permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
-#         if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
-#             has_view_all_permission = user.has_perm(permission_name_to_view_all)
-#             can_view = True
-#         else:
-#             has_view_all_permission = user.is_superuser
-#             can_view = True
-#         permission_dict[process] = can_view
-    
-#     return permission_dict
-        
 def can_view_physical_processes(user, processes):
     """
     Returns a dictionary mapping each process to whether the user can view it.
     Optimized to reduce database queries.
     """
     permission_dict = {}
-    # raise ValueError("stop")
-    # processes = processes.select_related('content_type')
     # Get unique process classes
     process_classes = {p.content_type.model_class() for p in processes}
-    # raise ValueError("ooowee")
     # Map process_class → content_type
     content_types = {
         cls: ContentType.objects.get_for_model(cls)
         for cls in process_classes
     }
-    # FIXME: You stopped aquí :D
     # Build all codenames we need
     needed_codenames = [
         f"view_every_{cls.__name__.lower()}"
@@ -1089,22 +1056,6 @@ def can_view_physical_processes(user, processes):
             "app_label": cls._meta.app_label,
         }
 
-    # raise ValueError("loook")
-    # Map (app_label, codename) → permission exists
-    # permission_lookup = {}
-    # for cls in process_classes:
-    #     codename = f"view_every_{cls.__name__.lower()}"
-    #     ct = content_types[cls]
-    #     exists = Permission.objects.filter(
-    #         codename=codename,
-    #         content_type=ct
-    #     ).exists()
-    #     permission_lookup[cls] = {
-    #         "codename": codename,
-    #         "exists": exists,
-    #         "app_label": cls._meta.app_label,
-    #     }
-    # raise ValueError("and then2")
     # Check permissions
     for process in processes:
         cls = process.content_type.model_class()
