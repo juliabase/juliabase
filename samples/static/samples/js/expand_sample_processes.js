@@ -52,8 +52,25 @@
         // Operator + timestamp
         html.push(`<div style="clear:both"></div>`);
 
+        // Convert your HTML string to a jQuery object so you can work with it
+        const html_body = $('<div>').html(data.html_body);
+
+        // 1️⃣ Extract and execute <script> tags
+        html_body.find('script').each(function() {
+            // If it's an external script
+            if (this.src) {
+                const script = document.createElement('script');
+                script.src = this.src;
+                document.head.appendChild(script);
+            } 
+            // If it's inline JS
+            else {
+                $.globalEval(this.text || this.textContent || this.innerHTML || '');
+            }
+        });
+
         // Body
-        html.push(`<div class="new-content">${data.html_body}</div>`);
+        html.push(`<div class="new-content">${html_body.html()}</div>`);
         if(data.short_html_body){
           html.push(`<div class="new-short-content" style="display:none">${data.short_html_body}</div>`);
         }
