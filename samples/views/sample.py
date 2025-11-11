@@ -29,6 +29,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
 import django.forms as forms
@@ -49,7 +50,10 @@ from samples import models, permissions, data_tree
 import samples.utils.views as utils
 from samples.utils import sample_names
 import datetime
-
+from iek5.models.physical_processes import Experiment
+from samples.models import Sample
+from django.contrib.contenttypes.models import ContentType
+import pprint
 
 class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
@@ -339,15 +343,17 @@ class SamplesAndProcesses:
         samples_and_processes = get_from_cache(cache_key, hits=10)
         if samples_and_processes is None:
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
+            # raise ValueError(len(samples_and_processes.processes))
+
             keys_list_key = "sample-keys:{0}".format(sample.pk)
             with cache_key_locked("sample-lock:{0}".format(sample.pk)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
                 cache.set(cache_key, samples_and_processes)
-            samples_and_processes.remove_noncleared_process_contexts(user, clearance)
-        else:
-            samples_and_processes.personalize(user, clearance, post_data)
+            # samples_and_processes.remove_noncleared_process_contexts(user, clearance)
+        # else:
+        #     samples_and_processes.personalize(user, clearance, post_data)
         return samples_and_processes
 
     def __init__(self, sample, clearance, user, post_data):
@@ -370,6 +376,8 @@ class SamplesAndProcesses:
         self.update_sample_context_for_user(user, clearance, post_data)
         self.process_contexts = []
         self.process_ids = set()
+        self.processes = []
+        self.processes_with_permissions = {}
         def collect_process_contexts(local_context=None):
             """Constructs the list of process context dictionaries.  This
             internal helper function directly populates
@@ -400,15 +408,28 @@ class SamplesAndProcesses:
                 new_local_context["latest_descendant"] = local_context["sample"]
                 new_local_context["cutoff_timestamp"] = split.timestamp
                 collect_process_contexts(new_local_context)
-            processes = models.Process.objects. \
-                filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"])). \
-                distinct()
+            ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True)
+            ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True)
+            
+            process_ids = set(ids_from_direct) | set(ids_from_series)
+            
+            process_ids = ids_from_direct.union(ids_from_series)
+
+            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').distinct()
+
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
+            
+            nobody = django.contrib.auth.models.User.objects.get(username='nobody')
+            self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
+
             for process in processes:
-                process_context = utils.digest_process(process, user, local_context)
-                self.process_contexts.append(process_context)
                 self.process_ids.add(process.id)
+                if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
+                    process.operator = nobody
+
+            self.processes += processes#list(viewable_processes)
+
         collect_process_contexts()
         self.process_lists = []
 
@@ -437,6 +458,7 @@ class SamplesAndProcesses:
         self.user_details = user.samples_user_details
         sample = self.sample_context["sample"]
         self.is_my_sample = self.user.my_samples.filter(id__exact=sample.id).exists()
+
         self.is_my_sample_form = IsMySampleForm(
             prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
             else IsMySampleForm(post_data, prefix=str(sample.pk))
@@ -479,7 +501,8 @@ class SamplesAndProcesses:
                 process = process_context["process"]
                 if process.operator == user or \
                         issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
-                        permissions.has_permission_to_view_physical_process(user, process):
+                        self.processes_with_permissions[process]:
+                        # permissions.has_permission_to_view_physical_process(user, process):
                     viewable_process_contexts.append(process_context)
                 else:
                     self.process_ids.remove(process.id)
@@ -504,11 +527,11 @@ class SamplesAndProcesses:
         """
         self.update_sample_context_for_user(user, clearance, post_data)
         self.remove_noncleared_process_contexts(user, clearance)
-        for process_context in self.process_contexts:
-            process_context.update(
-                process_context["process"].get_context_for_user(user, process_context))
-        for process_list in self.process_lists:
-            process_list.personalize(user, clearance, post_data)
+        # for process_context in self.process_contexts:
+        #     process_context.update(
+        #         process_context["process"].get_context_for_user(user, process_context))
+        # for process_list in self.process_lists:
+        #     process_list.personalize(user, clearance, post_data)
 
     def __iter__(self):
         """Returns an iterator over all samples and processes.  It is used in
@@ -536,7 +559,19 @@ class SamplesAndProcesses:
 
         :rtype: ``generator``
         """
-        if self.process_contexts:
+        if self.processes:
+            first_proc = {  "id": self.processes[0].id, 
+                            "title": self.processes[0].actual_instance._meta.verbose_name,
+                            "timestamp": self.processes[0].timestamp,
+                            "operator": self.processes[0].operator}
+            yield True, self.sample_context, first_proc
+            for process in self.processes[1:]:
+                proc = {  "id": process.id, 
+                                "title": process.actual_instance._meta.verbose_name,
+                                "timestamp": process.timestamp,
+                                "operator": process.operator}
+                yield False, self.sample_context, proc
+        elif self.process_contexts:
             yield True, self.sample_context, self.process_contexts[0]
             for process_context in self.process_contexts[1:]:
                 yield False, self.sample_context, process_context
@@ -728,11 +763,16 @@ def show(request, sample_name):
         if is_json_requested(request):
             sample = utils.lookup_sample(sample_name, request.user)
             return respond_in_json(sample.get_data())
+        
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
+    sample_id = samples_and_processes.sample_context["sample"].id
+    # raise ValueError(samples_and_processes.processes)
+    experiments = list(Experiment.objects.filter(samples__id=sample_id))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
-                   "samples_and_processes": samples_and_processes})
+                   "samples_and_processes": samples_and_processes,
+                   "experiments": experiments})
 
 
 @login_required
@@ -1203,4 +1243,18 @@ def rename_sample(request):
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
 
 
+@login_required
+@never_cache
+@require_http_methods(["GET"])
+def get_folded_processes(request, sample_id):
+    """
+    Function that gets the folded processes for the current user.
+    There is a similar function in json_client.py but I do not use it since 
+    I do not have the process ids in the request.
+    """
+    user_detail = models.UserDetails.objects.get(user=request.user)
+    cts = user_detail.default_folded_process_classes.all()
+    process_names = [str(process.name).lower() for process in cts]
+    return respond_in_json(process_names)
+    
 _ = gettext

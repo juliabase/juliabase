@@ -23,7 +23,7 @@ import copy, re, csv
 from io import StringIO
 from django.conf import settings
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.http import Http404, HttpResponse
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.contenttypes.models import ContentType
@@ -34,6 +34,9 @@ from samples.utils import sample_names
 from samples.views.table_export import build_column_group_list, ColumnGroupsForm, \
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
 import jb_common.utils.base
+from samples.models import Sample, SampleSeries
+# from jb_common.models import Topic
+import pprint
 
 
 __all__ = ("AmbiguityException", "lookup_sample", "convert_id_to_int",
@@ -55,7 +58,7 @@ class AmbiguityException(Exception):
 def lookup_sample(sample_name, user, with_clearance=False):
     """Looks up the ``sample_name`` in the database (also among the aliases),
     and returns that sample if it was found *and* the current user is allowed
-    to view it.  Shortened provisional names like “\\*2” are also found.  If
+    to view it.  Shortened provisional names like “\*2” are also found.  If
     nothing is found or the permissions are not sufficient, it raises an
     exception.
 
@@ -80,14 +83,34 @@ def lookup_sample(sample_name, user, with_clearance=False):
     :raises samples.permissions.PermissionError: if the user is not allowed to
       view the sample
     """
+    # name_format, match = sample_names.sample_name_format(sample_name, with_match_object=True)
+    # if name_format == "provisional":
+    #     sample_name = "*{0:05}".format(int(match.group("id")))
+    # sample = sample_names.get_sample(sample_name)
+    # if not sample:
+    #     raise Http404("Sample {name} could not be found (neither as an alias).".format(name=sample_name))
+    # if isinstance(sample, list):
+    #     raise AmbiguityException(sample_name, sample)
+    # if with_clearance:
+    #     clearance = permissions.get_sample_clearance(user, sample)
+    #     return sample, clearance
+    # else:
+    #     permissions.assert_can_fully_view_sample(user, sample)
+    #     return sample
+    # """
+    # Optimized to prefetch `processes` for M2M efficiency.
+    # """
     name_format, match = sample_names.sample_name_format(sample_name, with_match_object=True)
     if name_format == "provisional":
         sample_name = "*{0:05}".format(int(match.group("id")))
+        
     sample = sample_names.get_sample(sample_name)
+
     if not sample:
-        raise Http404("Sample {name} could not be found (neither as an alias).".format(name=sample_name))
+        raise Http404(f"Sample {sample_name} could not be found (neither as an alias).")
     if isinstance(sample, list):
         raise AmbiguityException(sample_name, sample)
+
     if with_clearance:
         clearance = permissions.get_sample_clearance(user, sample)
         return sample, clearance
@@ -331,8 +354,22 @@ def build_structured_sample_list(user, samples=None):
     structured_series = {}
     structured_topics = {}
     topicless_samples = []
-    for sample in sorted(set(samples), key=lambda sample: (sample.tags, sample.name)):
-        # OPTIMIZE: calling all the series everytime is not a good idea
+    # Assume `samples` is a QuerySet or similar iterable
+    samples = sorted(set(samples), key=lambda sample: (sample.tags, sample.name))
+
+    # Prefetch 'series' for all samples
+    # samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).prefetch_related('series')
+    samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).\
+                                    select_related('topic').\
+                                    prefetch_related(
+                                                    
+                                                    Prefetch(
+                                                        "series",  # Related name for ManyToMany field in `SampleSerie`
+                                                        queryset=SampleSeries.objects.prefetch_related("samples", "topic"),
+                                                    ),)
+
+    for sample in samples:
+        # Now, `sample.series.all()` will not hit the database again for each sample
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:

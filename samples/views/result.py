@@ -145,6 +145,7 @@ class RelatedDataForm(forms.Form):
             if "sample_series" in query_string_dict:
                 self.fields["sample_series"].initial = \
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
+        # OPTIMIZE: This makes 79 similar database queries
         self.fields["samples"].set_samples(user, samples, important_samples)
         self.fields["samples"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 

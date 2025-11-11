@@ -499,14 +499,27 @@ def get_sample_clearance(user, sample):
         assert_can_fully_view_sample(user, sample)
     except PermissionError as error:
         try:
-            tasks = samples.models.Task.objects.filter(samples=sample)
+            tasks = samples.models.Task.objects.filter(samples=sample).select_related("process_class", "customer")
         except samples.models.Task.DoesNotExist:
             pass
         else:
+            process_classes = {t.process_class.model_class() for t in tasks}
+            permission_cache = {
+                cls: has_permission_to_add_physical_process(user, cls)
+                for cls in process_classes
+            }
+
             for task in tasks:
                 process_class = task.process_class.model_class()
-                if has_permission_to_add_physical_process(user, process_class):
-                    enforce_clearance(task.customer, samples.models.clearance_sets.get(process_class, ()), user, sample)
+                if permission_cache[process_class]:
+                    enforce_clearance(
+                        task.customer,
+                        samples.models.clearance_sets.get(process_class, ()),
+                        user,
+                        sample,
+                    )
+                # if has_permission_to_add_physical_process(user, process_class):
+                #     enforce_clearance(task.customer, samples.models.clearance_sets.get(process_class, ()), user, sample)
         try:
             clearance = samples.models.Clearance.objects.get(user=user, sample=sample)
         except samples.models.Clearance.DoesNotExist:
@@ -721,6 +734,61 @@ def assert_can_view_physical_process(user, process):
             process=process, permission=translate_permission(permission_name_to_view_all))
         raise PermissionError(user, description, new_topic_would_help=True)
 
+
+def can_view_physical_processes(user, processes):
+    """
+    Returns a dictionary mapping each process to whether the user can view it.
+    Optimized to reduce database queries.
+    """
+    permission_dict = {}
+    # Get unique process classes
+    process_classes = {p.content_type.model_class() for p in processes}
+    # Map process_class → content_type
+    content_types = {
+        cls: ContentType.objects.get_for_model(cls)
+        for cls in process_classes
+    }
+    # Build all codenames we need
+    needed_codenames = [
+        f"view_every_{cls.__name__.lower()}"
+        for cls in process_classes
+    ]
+
+    # Bulk fetch matching permissions
+    # This is 1 query instead of N
+    permissions = Permission.objects.filter(
+        codename__in=needed_codenames,
+        content_type__in=[content_types[cls] for cls in process_classes],
+    ).values_list("codename", "content_type_id")
+
+    # Turn into a lookup set for O(1) checks
+    permission_set = {(codename, ct_id) for codename, ct_id in permissions}
+
+    # Build the lookup dict in Python
+    permission_lookup = {}
+    for cls in process_classes:
+        codename = f"view_every_{cls.__name__.lower()}"
+        ct = content_types[cls]
+        permission_lookup[cls] = {
+            "codename": codename,
+            "exists": (codename, ct.id) in permission_set,
+            "app_label": cls._meta.app_label,
+        }
+
+    # Check permissions
+    for process in processes:
+        cls = process.content_type.model_class()
+        perm_info = permission_lookup[cls]
+
+        if perm_info["exists"]:
+            perm_name = f"{perm_info['app_label']}.{perm_info['codename']}"
+            can_view = user.has_perm(perm_name)
+        else:
+            can_view = user.is_superuser
+
+        permission_dict[process] = can_view
+
+    return permission_dict
 
 def assert_can_edit_result_process(user, result_process):
     """Tests whether the user can edit a result process.

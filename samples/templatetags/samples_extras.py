@@ -225,7 +225,7 @@ timestamp_formats = ("%Y-%m-%d %H:%M:%S",
                      _("date unknown"))
 
 @register.filter
-def timestamp(value, minimal_inaccuracy=0):
+def timestamp(value, minimal_inaccuracy=0, keep_as_is=False):
     """Filter for formatting the timestamp of a process properly to reflect the
     inaccuracy connected with this timestamp.  It works not strictly only for
     models.  In fact, any object with a ``timestamp`` field can be passed in.
@@ -247,6 +247,9 @@ def timestamp(value, minimal_inaccuracy=0):
 
     :rtype: str
     """
+    if keep_as_is:
+        timestamp = value.astimezone(django.utils.timezone.get_current_timezone())
+        return mark_safe(timestamp.strftime(str(timestamp_formats[max(int(minimal_inaccuracy), 0)])))
     try:
         timestamp_ = value.timestamp
         inaccuracy = getattr(value, "timestamp_inaccuracy", 0)
