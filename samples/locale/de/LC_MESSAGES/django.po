@@ -2745,7 +2745,7 @@ msgid ""
 "Click on each header to expand the process. You can also click on <b>Expand "
 "All</b> to expand all the processes."
 msgstr ""
-"Klicke auf jede Überschrift, um den Prozess zu erweitern. Du kannst auch auf <b>Alle erweitern</b>"
+"Klicke auf jede Überschrift, um den Prozess zu erweitern. Du kannst auch auf <b>Alle erweitern</b> "
 "klicken, um alle Prozesse zu erweitern."
 
 #: juliabase/samples/templates/samples/show_sample.html:196
