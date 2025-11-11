@@ -35,7 +35,7 @@ import django.utils.text
 from django.template.loader import render_to_string
 import django.urls
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.core.cache import cache
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
 from jb_common.models import Topic, PolymorphicModel, Department
@@ -43,6 +43,9 @@ import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from datetime import datetime as dt, timedelta
+import itertools
+from django.db.models import Prefetch
+from django.db.models.fields.related import ManyToManyRel
 
 
 def empty_list():
@@ -87,6 +90,8 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
                 unit = "/" + field.unit
             except AttributeError:
                 unit = ""
+            except TypeError:
+                unit = "/" + ""
             data_node.items.append(DataItem(html.unescape(field.verbose_name + unit), value, field.model.__name__.lower()))
 
 
@@ -184,6 +189,8 @@ class Process(PolymorphicModel):
                                           null=True, blank=True, related_name="processes")
     comments = models.TextField(_("comments"), blank=True)
     last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("last modifier"),
+                                 related_name="last_modifier", null=True, blank=True)
     finished = models.BooleanField(_("finished"), default=True)
     """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
@@ -450,24 +457,62 @@ class Process(PolymorphicModel):
 
         # Convert modified datetime object back to string without seconds, hours, and minutes
         end_date = end_date.strftime('%Y-%m-%d')
+        
+        # Get all ForeignKey and OneToOneField fields for the model
+        related_fields = [
+            field.name for field in cls._meta.get_fields()
+            if isinstance(field, (models.ForeignKey, models.OneToOneField))
+        ]
 
-        # Fetch the first two records to check the order
-        # first_two_records = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('timestamp')[:2]
+        # Include reverse foreign key and reverse one-to-one fields
+        reverse_related_fields = [
+            field.get_accessor_name() for field in cls._meta.get_fields()
+            if field.is_relation and field.one_to_many
+        ]
 
-        # # Check if the list is already sorted in descending order
-        # is_descending = len(first_two_records) < 2 or first_two_records[0].timestamp >= first_two_records[1].timestamp
+        # Get ManyToManyField relationships (both direct and reverse)
+        many_to_many_fields = [
+            # Forward ManyToMany fields
+            field.name
+            for field in cls._meta.get_fields()
+            if isinstance(field, models.ManyToManyField)
+        ] + [
+            # Reverse ManyToMany relations
+            field.get_accessor_name()
+            for field in cls._meta.get_fields()
+            if isinstance(field, ManyToManyRel)
+        ]
 
-        # raise ValueError(first_two_records[0].timestamp, "-----", first_two_records[1].timestamp )
+        fields_to_remove = ['informal_layers', 'task', 'feededitedphysicalprocess_set']
+        reverse_related_fields_clean = [field for field in reverse_related_fields if field not in fields_to_remove]
 
-        # if not is_descending:
-        #     processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related().order_by('-timestamp').order_by('-timestamp')
-        # else:
-            # Filter processes by timestamp range
-        processes = cls.objects.filter(timestamp__range=(begin_date, end_date)).select_related()#.order_by('-timestamp')
-        # raise ValueError(processes[0].timestamp)
-        # processes.sort(key=lambda loana: loana.timestamp, reverse=False)
-        # raise ValueError(processes[0].timestamp)
-        return {"processes": processes}
+        queryset = cls.objects.filter(timestamp__range=(begin_date, end_date))\
+                                .select_related(*related_fields)\
+                                .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
+
+        # OPTIMIZE: I managed to shrink the number of queries for MariaDeposition from 550+ to 47, but it 
+        # can still be more optimized. Look into get_newest_sample_series_for_multiple for better optimization
+        if "mariadeposition" in str(cls).lower():
+            # Lazy import to avoid circular imports
+            from iek5.templatetags import ipv_extras
+            # Precompute zipped lists for each deposition
+            for deposition in queryset:
+                protocols = list(deposition.protocols.all())  # Force DB evaluation
+                samples = list(deposition.samples.all())  # Force DB evaluation
+                zipped_data = list(itertools.zip_longest(protocols, samples, fillvalue=''))
+    
+                # Extract samples and fetch newest sample series for all of them
+                samples = [item[1] for item in zipped_data]
+                newest_sample_series = ipv_extras.get_newest_sample_series_for_multiple(samples)
+
+                result = [
+                    (protocol, sample, newest_sample_series.get(sample, "No series"))
+                    for protocol, sample in zipped_data
+                ]
+
+                deposition.zipped_result = result
+
+        return {"processes": list(queryset)}
 
 
     
@@ -828,51 +873,107 @@ class Sample(models.Model):
                        ("adopt_samples", _("Can adopt samples from his/her department")),
                        ("rename_samples", _("Can rename samples from his/her department")))
 
+    # def save(self, *args, **kwargs):
+    #     """Saves the instance and clears stalled cache items.
+
+    #     It also touches all ancestors and children and the associated split
+    #     processes.
+
+    #     :param with_relations: If ``True`` (default), also touch the related
+    #         samples.  Should be set to ``False`` if called from another
+    #         ``save`` method in order to avoid endless recursion.
+    #     :param from_split: When walking through the decendents, this is set to
+    #         the originating split so that the child sample knows which of its
+    #         splits should be followed, too.  Thus, only the timestamp of
+    #         ``from_split`` is actually used.  It must be ``None`` (default)
+    #         when this method is called from outside this method, or while
+    #         walking through the ancestors.
+
+    #     :type with_relations: bool
+    #     :type from_split: `SampleSplit` or NoneType
+    #     """
+    #     keys_list_key = "sample-keys:{0}".format(self.pk)
+    #     with cache_key_locked("sample-lock:{0}".format(self.pk)):
+    #         keys = cache.get(keys_list_key)
+    #         if keys:
+    #             cache.delete_many(keys)
+    #         cache.delete(keys_list_key)
+    #     with_relations = kwargs.pop("with_relations", True)
+    #     from_split = kwargs.pop("from_split", None)
+    #     super().save(*args, **kwargs)
+    #     UserDetails.objects.select_for_update().filter(user__in=self.watchers.all()).update(
+    #         my_samples_list_timestamp=django.utils.timezone.now())
+    #     if with_relations:
+    #         for series in self.series.all():
+    #             series.save()
+    #     # Now we touch the decendents ...
+    #     if from_split:
+    #         splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
+    #     else:
+    #         splits = SampleSplit.objects.filter(parent=self)
+    #     for split in splits:
+    #         split.save(with_relations=False)
+    #         for child in split.pieces.all():
+    #             child.save(from_split=split, with_relations=False)
+    #     # ... and the ancestors
+    #     if not from_split and self.split_origin:
+    #         self.split_origin.save(with_relations=False)
+    #         self.split_origin.parent.save(with_relations=False)
+
     def save(self, *args, **kwargs):
-        """Saves the instance and clears stalled cache items.
-
-        It also touches all ancestors and children and the associated split
-        processes.
-
-        :param with_relations: If ``True`` (default), also touch the related
-            samples.  Should be set to ``False`` if called from another
-            ``save`` method in order to avoid endless recursion.
-        :param from_split: When walking through the decendents, this is set to
-            the originating split so that the child sample knows which of its
-            splits should be followed, too.  Thus, only the timestamp of
-            ``from_split`` is actually used.  It must be ``None`` (default)
-            when this method is called from outside this method, or while
-            walking through the ancestors.
-
-        :type with_relations: bool
-        :type from_split: `SampleSplit` or NoneType
         """
-        keys_list_key = "sample-keys:{0}".format(self.pk)
-        with cache_key_locked("sample-lock:{0}".format(self.pk)):
+        Optimized save method for Sample instances. Supports batch_mode to avoid
+        recursive saves and redundant database queries during bulk operations.
+
+        Arguments:
+            batch_mode (bool): If True, disables relation touching and recursive saves.
+            with_relations (bool): If True, touch related series (default: True).
+            from_split (SampleSplit or None): Internal use for controlling recursion.
+        """
+        batch_mode = kwargs.pop("batch_mode", False)
+        with_relations = kwargs.pop("with_relations", not batch_mode)
+        from_split = kwargs.pop("from_split", None)
+
+        # Clean cache
+        keys_list_key = f"sample-keys:{self.pk}"
+        with cache_key_locked(f"sample-lock:{self.pk}"):
             keys = cache.get(keys_list_key)
             if keys:
                 cache.delete_many(keys)
             cache.delete(keys_list_key)
-        with_relations = kwargs.pop("with_relations", True)
-        from_split = kwargs.pop("from_split", None)
+
+        # Save this instance
         super().save(*args, **kwargs)
-        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=django.utils.timezone.now())
-        if with_relations:
-            for series in self.series.all():
-                series.save()
-        # Now we touch the decendents ...
-        if from_split:
-            splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
-        else:
-            splits = SampleSplit.objects.filter(parent=self)
-        for split in splits:
-            split.save(with_relations=False)
-            for child in split.pieces.all():
-                child.save(from_split=split, with_relations=False)
-        # ... and the ancestors
-        if not from_split and self.split_origin:
-            self.split_origin.save(with_relations=False)
-            self.split_origin.parent.save(with_relations=False)
+
+        if not batch_mode:
+            # Update watchers' timestamps (can still be optimized if many watchers)
+            watcher_ids = list(self.watchers.values_list("pk", flat=True))
+            if watcher_ids:
+                UserDetails.objects.filter(user__in=watcher_ids).update(
+                    my_samples_list_timestamp=django.utils.timezone.now()
+                )
+
+            # Save related series if any
+            if with_relations:
+                for series in self.series.all():
+                    series.save()
+
+            # Touch descendants
+            if from_split:
+                splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
+            else:
+                splits = SampleSplit.objects.filter(parent=self)
+
+            for split in splits:
+                split.save(with_relations=False)
+                for child in split.pieces.all():
+                    child.save(from_split=split, with_relations=False, batch_mode=True)
+
+            # Touch ancestors
+            if not from_split and self.split_origin:
+                self.split_origin.save(with_relations=False)
+                self.split_origin.parent.save(with_relations=False, batch_mode=True)
+
 
     def __str__(self):
         """Here, I realise the peculiar naming scheme of provisional sample
@@ -909,6 +1010,8 @@ class Sample(models.Model):
 
         :rtype: str
         """
+        # OPTIMIZE: I don't know why we need to check whether the user has permission to view the sample. 
+        # This function is only called in the main menu to generate "My Samples."
         if self.tags and samples.permissions.has_permission_to_fully_view_sample(user, self):
             tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + "…"
             return " ({0})".format(tags)
@@ -1079,32 +1182,65 @@ class Sample(models.Model):
         else:
             return search.SearchTreeNode(cls, related_models, search_fields)
 
+    # def delete(self, *args, **kwargs):
+    #     """Deletes the sample and all of its processes that contain only this sample –
+    #     which includes splits, pieces, and the cascade after that.  See
+    #     :py:meth:`Process.delete` for further information.
+    #     """
+    #     dry_run = kwargs.get("dry_run", False)
+    #     if dry_run:
+    #         affected_objects = {self}
+    #         samples.permissions.assert_can_edit_sample(kwargs["user"], self)
+    #     for process in self.processes.all():
+    #         if process.samples.count() == 1:
+    #             process = process.actual_instance
+    #             result = process.delete(*args, **kwargs)
+    #             if dry_run:
+    #                 affected_objects |= result
+    #     if dry_run:
+    #         return affected_objects
+    #     else:
+    #         # FixMe: The following two lines are necessary only until
+    #         # https://code.djangoproject.com/ticket/17688 is fixed.
+    #         self.processes.clear()
+    #         self.watchers.clear()
+    #         kwargs.pop("dry_run", None)
+    #         kwargs.pop("user", None)
+    #         self.save()
+    #         return super().delete(*args, **kwargs)
+
     def delete(self, *args, **kwargs):
-        """Deletes the sample and all of its processes that contain only this sample –
-        which includes splits, pieces, and the cascade after that.  See
-        :py:meth:`Process.delete` for further information.
         """
-        dry_run = kwargs.get("dry_run", False)
+        Deletes the sample and its related processes that involve only this sample.
+        If dry_run=True, it returns the affected objects without deleting.
+        """
+        dry_run = kwargs.pop("dry_run", False)
+        user = kwargs.pop("user", None)
+
         if dry_run:
+            samples.permissions.assert_can_edit_sample(user, self)
             affected_objects = {self}
-            samples.permissions.assert_can_edit_sample(kwargs["user"], self)
-        for process in self.processes.all():
-            if process.samples.count() == 1:
-                process = process.actual_instance
-                result = process.delete(*args, **kwargs)
+
+        # Prefetch samples for all related processes to avoid N+1 queries
+        processes = self.processes.prefetch_related("samples").all()
+
+        for process in processes:
+            if process.samples.count() == 1:  # Now uses prefetched data
+                actual = process.actual_instance
+                result = actual.delete(*args, dry_run=dry_run, user=user)
                 if dry_run:
                     affected_objects |= result
+
         if dry_run:
             return affected_objects
-        else:
-            # FixMe: The following two lines are necessary only until
-            # https://code.djangoproject.com/ticket/17688 is fixed.
-            self.processes.clear()
-            self.watchers.clear()
-            kwargs.pop("dry_run", None)
-            kwargs.pop("user", None)
-            self.save()
-            return super().delete(*args, **kwargs)
+
+        # Clear m2m relations manually due to Django bug #17688
+        self.processes.clear()
+        self.watchers.clear()
+
+        self.save()
+        return super().delete(*args, **kwargs)
+
 
 
 class SampleAlias(models.Model):
