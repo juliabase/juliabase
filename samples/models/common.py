@@ -1303,9 +1303,10 @@ class Sample(models.Model):
 
         for content_type_id, items in grouped.items():
             model_cls = items[0].content_type.model_class()
-            actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
-            for p in items:
-                p._cached_actual_instance = actuals.get(p.actual_object_id)
+            if model_cls is not None:
+                actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
+                for p in items:
+                    p._cached_actual_instance = actuals.get(p.actual_object_id)
 
 
     def delete(self, *args, **kwargs):
@@ -1433,6 +1434,7 @@ class SampleSplit(Process):
         except KeyError:
             context["parent"] = None
             context["resplit_url"] = None
+        context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number":self.pk})
 
 
         return super().get_context_for_user(user, context)
