@@ -205,22 +205,12 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.profiling.ProfilingPanel',
 ]
 
-INTERNAL_IPS = [
-    # ...
-    'chantal.fz-juelich.de:8008',
-    '10.32.0.4',
-    '10.32.0.5',
-    '127.0.0.1',
-    '172.17.0.1',
-    # ...
-]
-
 def show_toolbar(request):
-    return True
+    return DEBUG
 SHOW_TOOLBAR_CALLBACK = show_toolbar
 
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda r: True,  # Set to 'False to disable Django Debug Toolbar
+    'SHOW_TOOLBAR_CALLBACK': lambda r: DEBUG,  # disables it
     # '...
 }
 
