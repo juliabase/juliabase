@@ -346,8 +346,8 @@ class JuliaBaseConnection:
         try:
             data.items()
         except AttributeError:
-            # raise ValueError(data, "....", type(data))
-            data = json.loads(data)#.dict()
+            decoded = data.decode("utf-8")
+            data = urllib.parse.parse_qs(decoded)
 
         for key, value in data.items():
             key = clean_header(key)
