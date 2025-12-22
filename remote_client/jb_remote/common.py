@@ -324,7 +324,7 @@ class JuliaBaseConnection:
             max_cycles -= 1
             logging.debug(f"Request against {request.get_full_url()}")
             try:
-                return self.opener.open(request)
+                return self.opener.open(request, timeout=60)
             except urllib.error.HTTPError as error:
                 if error.code in [404, 422] and error.info()["Content-Type"].startswith("application/json"):
                     error_code, error_message = json.loads(error.read().decode())
@@ -346,8 +346,8 @@ class JuliaBaseConnection:
         try:
             data.items()
         except AttributeError:
-            # raise ValueError(data, "....", type(data))
-            data = json.loads(data)#.dict()
+            decoded = data.decode("utf-8")
+            data = urllib.parse.parse_qs(decoded)
 
         for key, value in data.items():
             key = clean_header(key)
@@ -394,7 +394,21 @@ class JuliaBaseConnection:
             raise Exception("No root URL defined.  Maybe not logged-in?")
         response = self._do_http_request(self.root_url + relative_url, self._clean_data(data))
         if response_is_json:
-            assert response.info()["Content-Type"].startswith("application/json")
+            if not response.info()["Content-Type"].startswith("application/json"):
+                # print(response.read())
+                pass
+            # try:
+                assert response.info()["Content-Type"].startswith("application/json")
+            # except AssertionError:
+            #     # Read the actual body of the response
+            #     body = response.read().decode("utf-8", errors="replace")
+
+            #     raise ValueError(
+            #         "Server returned non-JSON response.\n"
+            #         f"Status: {response.status}\n"
+            #         f"Content-Type: {response.info().get('Content-Type')}\n"
+            #         f"Body:\n{body}"
+            #     )
             return json.loads(response.read().decode())
         else:
             return response.read()

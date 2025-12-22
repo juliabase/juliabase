@@ -64,6 +64,7 @@ EMAIL_USE_LOCALTIME = True
 LANGUAGE_CODE = "en-us"
 
 USE_I18N = True
+USE_L10N = False
 DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
 
@@ -76,7 +77,6 @@ STATIC_ROOT = "/var/www/juliabase/static/"
 MEDIA_ROOT = "/var/www/juliabase/uploads/"
 
 MEDIA_URL = "/media/"
-
 # Make sure to use a trailing slash if there is a path component (optional in
 # other cases).  Examples: "http://media.lawrence.com",
 # "http://example.com/static/"
@@ -157,6 +157,7 @@ INSTALLED_APPS = [
     "jb_common",
     "compressor",
     "debug_toolbar",
+    "django_select2",
 ]
 
 STATICFILES_FINDERS = [
@@ -166,7 +167,7 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 
-COMPRESS_ENABLED = True
+COMPRESS_ENABLED = False
 COMPRESS_URL = STATIC_URL
 COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_STORAGE = 'compressor.storage.CompressorFileStorage'
