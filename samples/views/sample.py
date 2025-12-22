@@ -340,7 +340,7 @@ class SamplesAndProcesses:
         # processes.  To get accurate results, use
         # ``samples.processes.count()`` instead.  However, this would slow down
         # JuliaBase.
-        samples_and_processes = None #get_from_cache(cache_key, hits=10)
+        samples_and_processes = None
         if samples_and_processes is None or not hasattr(samples_and_processes, "processes") or not samples_and_processes.is_my_sample_form.is_valid():
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
             keys_list_key = "sample-keys:{0}".format(sample.pk)
@@ -420,7 +420,7 @@ class SamplesAndProcesses:
                 if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
                     process.operator = nobody
 
-            self.processes += processes#list(viewable_processes)
+            self.processes += processes
 
         collect_process_contexts()
         self.process_lists = []
@@ -757,7 +757,6 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     sample_id = samples_and_processes.sample_context["sample"].id
-    # raise ValueError(samples_and_processes.processes)
     experiments = list(Experiment.objects.filter(samples__id=sample_id))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),

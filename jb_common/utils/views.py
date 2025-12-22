@@ -175,7 +175,6 @@ class TopicField(forms.ChoiceField):
 
         self.choices = [("", 9 * "-")]
         if not user.is_superuser:
-            # all_topics = Topic.objects.filter(members__is_active=True).filter(department=user.jb_user_details.department).distinct()
             all_topics = Topic.objects.filter(
                 members__is_active=True,
                 department=user.jb_user_details.department
@@ -204,12 +203,6 @@ class TopicField(forms.ChoiceField):
         parent_topics = sorted(parent_topics, key=lambda t: t.name.lower())
         # OPTIMIZE: This generates 218 queries
         topics_and_sub_topics(parent_topics, child_topic_dict)
-        # raise ValueError(self.choices)
-        # self.choices = sorted(self.choices, key=lambda t: t[1].lower())
-        # # self.choices.insert(0, ("", 9 * "-"))
-        # self.choices = [("", 9 * "-")] + self.choices
-
-        # raise ValueError(len(self.choices), len(topics), len(top_level_topics), child_topic_dict)
 
     def clean(self, value):
         value = super().clean(value)

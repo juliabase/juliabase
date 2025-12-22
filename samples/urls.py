@@ -63,7 +63,6 @@ from samples.views import statistics, main, feed, my_samples, split_after_deposi
 app_name = "samples"
 
 urlpatterns = [
-        re_path(r'^clear-cache$', main.clear_cache, name='clear_cache'),
     re_path(r"^about$", statistics.about, name="about"),
     re_path(r"^statistics$", statistics.statistics, name="statistics"),
     re_path(r"^$", main.main_menu, name="main_menu"),

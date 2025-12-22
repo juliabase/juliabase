@@ -35,7 +35,6 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
 import jb_common.utils.base
 from samples.models import Sample, SampleSeries
-# from jb_common.models import Topic
 import pprint
 
 
@@ -83,6 +82,7 @@ def lookup_sample(sample_name, user, with_clearance=False):
     :raises samples.permissions.PermissionError: if the user is not allowed to
       view the sample
     """
+    # Optimized to prefetch `processes` for M2M efficiency.
     name_format, match = sample_names.sample_name_format(sample_name, with_match_object=True)
     if name_format == "provisional":
         sample_name = "*{0:05}".format(int(match.group("id")))
