@@ -234,6 +234,10 @@ def show_toolbar(request):
     return True
 SHOW_TOOLBAR_CALLBACK = show_toolbar
 
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': lambda r: False,  # disables it
+    # '...
+}
 
 SITE_ID = 1
 
