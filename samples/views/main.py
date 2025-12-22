@@ -241,7 +241,8 @@ def show_process(request, process_id, process_name="Process"):
         process = get_object_or_404(process_class, **{identifying_field: process_id}).actual_instance
     except ValueError:
         raise Http404("Invalid value for {} passed: {}".format(identifying_field, repr(process_id)))
-    if not isinstance(process, models.PhysicalProcess):
+    # raise ValueError(process, "-----", type(process), "----", "id:", process.id, "-----, ", isinstance(process, models.Process))
+    if not isinstance(process, models.PhysicalProcess) and not isinstance(process, models.Process):
         raise Http404("No physical process with that ID was found.")
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):

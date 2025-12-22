@@ -1269,6 +1269,7 @@ class SampleSplit(Process):
         except KeyError:
             context["parent"] = None
             context["resplit_url"] = None
+        context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number":self.pk})
 
 
         return super().get_context_for_user(user, context)
