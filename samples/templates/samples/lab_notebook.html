@@ -112,38 +112,10 @@
 
 
   <script src="{% url 'iek5:javascript-catalog' %}"></script>
-  {% compress js inline %}
-
-  <script >
-    $(document).ready( function () {
-      // FIXME: this should be in lab_notebook.js, but for some reasons it
-      // does not work there.
-
-      // FIXME: create a separate file for screenprinter_paste and screen since it will be better than having to
-      // deal with hiding the date form.
-
-      // Check if the URL contains a specific substring
-      // We use this to get rid of the date form for screenprinter paste and screen
-      if (window.location.href.indexOf('screenprinter_paste') > -1 || window.location.href.indexOf('screenprinter_screen') > -1) {
-          // Hide the form with id="date-form"
-          $('#date-form').hide();
-    }
-  } );
-  </script>
-
-{% endcompress %}
   <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
   {% compress js %}
     <script src="{% static 'juliabase/js/lab_notebook.js' %}"></script>
-  
-
-
-    
-  <!-- Include marked library from CDN -->
-  <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
+    <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}"></script>
   {% endcompress %}
   {% endblock %}
-  
-  
-  

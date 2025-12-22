@@ -35,7 +35,6 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
 import jb_common.utils.base
 from samples.models import Sample, SampleSeries
-# from jb_common.models import Topic
 import pprint
 
 
@@ -83,20 +82,6 @@ def lookup_sample(sample_name, user, with_clearance=False):
     :raises samples.permissions.PermissionError: if the user is not allowed to
       view the sample
     """
-    # name_format, match = sample_names.sample_name_format(sample_name, with_match_object=True)
-    # if name_format == "provisional":
-    #     sample_name = "*{0:05}".format(int(match.group("id")))
-    # sample = sample_names.get_sample(sample_name)
-    # if not sample:
-    #     raise Http404("Sample {name} could not be found (neither as an alias).".format(name=sample_name))
-    # if isinstance(sample, list):
-    #     raise AmbiguityException(sample_name, sample)
-    # if with_clearance:
-    #     clearance = permissions.get_sample_clearance(user, sample)
-    #     return sample, clearance
-    # else:
-    #     permissions.assert_can_fully_view_sample(user, sample)
-    #     return sample
     # """
     # Optimized to prefetch `processes` for M2M efficiency.
     # """

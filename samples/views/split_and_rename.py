@@ -375,8 +375,6 @@ def split_and_rename(request, parent_name=None, old_split_id=None):
         referentially_valid = is_referentially_valid(new_name_forms, global_data_form, number_of_old_pieces)
 
         if all_valid and referentially_valid and not structure_changed:
-            # parent = models.Sample.objects.prefetch_related("processes").get(pk=parent.pk)
-
             sample_split, new_pieces = save_to_database(new_name_forms, global_data_form, parent, old_split, request.user)
             # OPTIMIZE: I commented the next line because it generates about 300+ database queries, and I am quite sure
             # nobody uses the "Newsfeed" section in Chantal anymore. If you think I am wrong, uncomment it :)

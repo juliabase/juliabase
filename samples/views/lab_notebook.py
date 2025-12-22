@@ -84,7 +84,6 @@ def parse_year_and_month(year_and_month):
         raise Http404("Invalid year and/or month")
     return year, month
 
-# ---------------------------------------------Ayob added this :)------------------
 
 class DateForm(forms.Form):
     """Form for the date fields in which the user can see which month is
@@ -212,7 +211,6 @@ def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
     begin_date = datetime.strptime(begin_date, "%Y-%m-%d")
     end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
-
     # Get the first day of the begin_date input month
     first_day_of_month_begin_date = begin_date.replace(day=1).strftime("%Y-%m-%d")
 
@@ -264,11 +262,6 @@ def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
         next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
                                             kwargs={"begin_date": "{0}".format(first_day_of_month_end_date),
                                                     "end_date": "{0}".format(last_day_of_month_end_date_str)})
-
-        
-
-    
-
     return previous_url, next_url
 
 

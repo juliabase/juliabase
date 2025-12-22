@@ -340,20 +340,15 @@ class SamplesAndProcesses:
         # processes.  To get accurate results, use
         # ``samples.processes.count()`` instead.  However, this would slow down
         # JuliaBase.
-        samples_and_processes = None #get_from_cache(cache_key, hits=10)
+        samples_and_processes = None 
         if samples_and_processes is None or not hasattr(samples_and_processes, "processes") or not samples_and_processes.is_my_sample_form.is_valid():
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
-            # raise ValueError(len(samples_and_processes.processes))
-
             keys_list_key = "sample-keys:{0}".format(sample.pk)
             with cache_key_locked("sample-lock:{0}".format(sample.pk)):
                 keys = cache.get(keys_list_key, [])
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
                 cache.set(cache_key, samples_and_processes)
-            # samples_and_processes.remove_noncleared_process_contexts(user, clearance)
-        # else:
-        #     samples_and_processes.personalize(user, clearance, post_data)
         return samples_and_processes
 
     def __init__(self, sample, clearance, user, post_data):
@@ -428,7 +423,7 @@ class SamplesAndProcesses:
                 if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
                     process.operator = nobody
 
-            self.processes += processes#list(viewable_processes)
+            self.processes += processes
 
         collect_process_contexts()
         self.process_lists = []
@@ -502,7 +497,6 @@ class SamplesAndProcesses:
                 if process.operator == user or \
                         issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
                         self.processes_with_permissions[process]:
-                        # permissions.has_permission_to_view_physical_process(user, process):
                     viewable_process_contexts.append(process_context)
                 else:
                     self.process_ids.remove(process.id)
@@ -527,11 +521,6 @@ class SamplesAndProcesses:
         """
         self.update_sample_context_for_user(user, clearance, post_data)
         self.remove_noncleared_process_contexts(user, clearance)
-        # for process_context in self.process_contexts:
-        #     process_context.update(
-        #         process_context["process"].get_context_for_user(user, process_context))
-        # for process_list in self.process_lists:
-        #     process_list.personalize(user, clearance, post_data)
 
     def __iter__(self):
         """Returns an iterator over all samples and processes.  It is used in
@@ -570,9 +559,6 @@ class SamplesAndProcesses:
                     instance = process.actual_instance
                 except AttributeError:
                     continue
-                # if process is None and instance is None:
-
-                #     continue
                 proc = {  "id": process.id, 
                                 "title": instance._meta.verbose_name,
                                 "timestamp": process.timestamp,
@@ -776,7 +762,6 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     sample_id = samples_and_processes.sample_context["sample"].id
-    # raise ValueError(samples_and_processes.processes)
     experiments = list(Experiment.objects.filter(samples__id=sample_id))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),

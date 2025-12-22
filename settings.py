@@ -85,13 +85,6 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static'),
 ]
-# Add paths to all your "static" subfolders
-# STATICFILES_DIRS = [
-#     # os.path.join(BASE_DIR, 'static'),  # This is the default "static" folder
-#     os.path.join(BASE_DIR, 'jb_common/static'),  # Path to "static" folder in app1
-#     os.path.join(BASE_DIR, 'samples/static'),  # Path to "static" folder in app2
-#     # Add more paths if you have additional "static" folders
-# ]
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
@@ -132,24 +125,16 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    
-    
-
     "jb_common.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-
-    # 'django.middleware.gzip.GZipMiddleware', #This one
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
     "jb_common.middleware.LoggingMiddleware",
     "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
-
     'django.middleware.gzip.GZipMiddleware', #This one
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-
     'htmlmin.middleware.HtmlMinifyMiddleware', #This one
     'htmlmin.middleware.MarkRequestMiddleware', #This one
 ]
@@ -198,7 +183,6 @@ COMPRESS_FILTERS = {
     ]
 }
 HTML_MINIFY = True
-# EXCLUDE_FROM_MINIFYING = ('../iek5/templates/samples/show_experiment.html',)
 EXCLUDE_FROM_MINIFYING = (
     r"^experiments/(?P<experiment_id>.+)",   # <-- adjust to your real URL(s)
 )
