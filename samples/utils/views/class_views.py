@@ -40,12 +40,15 @@ from . import forms as utils
 from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples, convert_id_to_int
 from samples import models
+import iek5.models as ipv_models
+from datetime import datetime
+
 
 
 __all__ = ("ProcessView", "ProcessMultipleSamplesView", "RemoveFromMySamplesMixin", "SamplePositionsMixin",
            "SubprocessForm", "SubprocessesMixin",
            "MultipleStepsMixin", "SubprocessMultipleTypesForm", "MultipleStepTypesMixin",
-           "DepositionView", "DepositionMultipleTypeView")
+           "DepositionView", "DepositionMultipleTypeView", "ProcessWithoutSamplesView")
 
 
 @method_decorator(login_required, name="dispatch")
@@ -278,6 +281,11 @@ class ProcessWithoutSamplesView(TemplateView):
         referentially_valid = self.is_referentially_valid()
         if all_valid and referentially_valid:
             self.process = self.save_to_database()
+            # FIXME: This is bad. It does work, but it is bad. Bad scalability :/
+            if "edit" in request.get_full_path():
+                self.process.last_modified_by_person = django.contrib.auth.models.User.objects.get (username=request.user.username)
+                self.process.last_modified = datetime.now()
+                self.process.save()
             return self.create_successful_response(request)
         else:
             return self.get(request, *args, **kwargs)
