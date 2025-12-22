@@ -34,7 +34,6 @@ from django.template import loader, RequestContext
 import django.forms as forms
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
-from django.core.serializers import serialize
 from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, \
     capitalize_first_letter, get_model_field_names
 from samples import permissions

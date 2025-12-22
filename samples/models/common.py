@@ -485,27 +485,6 @@ class Process(PolymorphicModel):
                                 .select_related(*related_fields)\
                                 .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
 
-        # OPTIMIZE: I managed to shrink the number of queries for MariaDeposition from 550+ to 47, but it 
-        # can still be more optimized. Look into get_newest_sample_series_for_multiple for better optimization
-        if "mariadeposition" in str(cls).lower():
-            # Lazy import to avoid circular imports
-            from iek5.templatetags import ipv_extras
-            # Precompute zipped lists for each deposition
-            for deposition in queryset:
-                protocols = list(deposition.protocols.all())  # Force DB evaluation
-                samples = list(deposition.samples.all())  # Force DB evaluation
-                zipped_data = list(itertools.zip_longest(protocols, samples, fillvalue=''))
-                # Extract samples and fetch newest sample series for all of them
-                samples = [item[1] for item in zipped_data]
-                newest_sample_series = ipv_extras.get_newest_sample_series_for_multiple(samples)
-
-                result = [
-                    (protocol, sample, newest_sample_series.get(sample, "No series"))
-                    for protocol, sample in zipped_data
-                ]
-
-                deposition.zipped_result = result
-
         return {"processes": list(queryset)}
 
     def get_cache_key(self, user_settings_hash, local_context):
