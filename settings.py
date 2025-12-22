@@ -206,11 +206,12 @@ DEBUG_TOOLBAR_PANELS = [
 ]
 
 def show_toolbar(request):
-    return DEBUG
+    from django.conf import settings
+    return settings.DEBUG
 SHOW_TOOLBAR_CALLBACK = show_toolbar
 
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda r: DEBUG,  # disables it
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
     # '...
 }
 
