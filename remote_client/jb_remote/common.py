@@ -343,6 +343,12 @@ class JuliaBaseConnection:
         if data is None:
             return None
         cleaned_data = {}
+        try:
+            data.items()
+        except AttributeError:
+            # raise ValueError(data, "....", type(data))
+            data = json.loads(data)#.dict()
+
         for key, value in data.items():
             key = clean_header(key)
             if value is not None:
