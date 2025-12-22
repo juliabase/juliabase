@@ -32,7 +32,7 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
-from jb_common.utils.base import get_really_full_name, check_markdown, int_or_zero, format_enumeration
+from jb_common.utils.base import get_really_full_name, check_markdown, format_enumeration
 from jb_common.models import Topic
 from samples import models
 from . import base as utils
@@ -168,26 +168,24 @@ class ProcessForm(ModelForm):
         self.user = user
         self.process = kwargs.get("instance")
         self.unfinished = self.process and not self.process.finished
-        if not hasattr(self, 'no_operator'):
-            if not self.process or self.unfinished:
-                kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
-            if not self.process:
-                kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
-                kwargs["initial"].setdefault("combined_operator", user.pk)
+        if not self.process or self.unfinished:
+            kwargs.setdefault("initial", {}).setdefault("timestamp", django.utils.timezone.now())
+        if not self.process:
+            kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
+            kwargs["initial"].setdefault("combined_operator", user.pk)
         super().__init__(*args, **kwargs)
-        if not hasattr(self, 'no_operator'):
-            if self.process and self.process.finished:
+        if self.process and self.process.finished:
+            try:
                 self.fields["finished"].disabled = True
-            self.fields["combined_operator"].set_choices(user, self.process)
-            if not user.is_superuser:
-                self.fields["external_operator"].choices = []
-                self.fields["operator"].choices = []
-                self.fields["operator"].required = False
-            else:
-                self.fields["combined_operator"].required = False
-        if hasattr(self, 'no_operator'):
-            t = self.fields
-            self.fields.pop("combined_operator")
+            except KeyError:
+                pass
+        self.fields["combined_operator"].set_choices(user, self.process)
+        if not user.is_superuser:
+            self.fields["external_operator"].choices = []
+            self.fields["operator"].choices = []
+            self.fields["operator"].required = False
+        else:
+            self.fields["combined_operator"].required = False
 
     def clean_comments(self):
         """Forbid image and headings syntax in Markdown markup.
@@ -379,7 +377,7 @@ class EditDescriptionForm(forms.Form):
     """Form for letting the user enter a short description of the changes they
     made.
     """
-    description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea)
+    description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea, required=False)
     important = forms.BooleanField(label=_("Important edit"), required=False)
 
     def __init__(self, *args, **kwargs):
@@ -404,57 +402,80 @@ class GeneralSampleField:
     order to have a structured list.  Some samples may occur twice in the list
     because of this; you may select both without a negative effect.
     """
-
     def set_samples(self, user, samples=None, important_samples=frozenset()):
-        """Set the sample list shown in the widget.  You *must* call this
-        method in the constructor of the form in which you use this field,
-        otherwise the selection box will remain emtpy.
+        """
+        Optimized method to set the sample list shown in the widget.
 
-        :param user: the user for which this field is generated; he may not be
-            allowed to see all topic names, therefore it is necessary to know
-            who it is
-        :param samples: Samples to be included into the list.  Typically, these
-            are the current user's “My Samples”, plus the samples that were
-            already connected with the deposition or measurement when you edit
-            it.  It defaults to the user's “My Samples”.
-        :param important_samples: These samples are also included into the
-            list, but they are never hidden due to a folded topic or sample
-            series.  These samples typically are those already connected with a
-            process that is about to be edited.
-
-        :type user: django.contrib.auth.models.User
-        :type samples: iterable of `samples.models.Sample`
-        :type important_samples: iterable of `samples.models.Sample`
+        :param user: The user for whom the field is generated.
+        :param samples: Samples to be included in the list.
+        :param important_samples: Samples to always include in the list, regardless of folding.
         """
         def get_samples_from_topic(topic, folded_topics_and_sample_series):
-            if topic.topic.id not in folded_topics_and_sample_series:
-                seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
-                self.choices.append((topic.topic_name, seriesless_samples))
-                for series in topic.sample_series:
-                    if not series.sample_series.get_hash_value() in folded_topics_and_sample_series:
-                        new_samples = [(sample.pk, 4 * " " + sample.name_with_tags(user)) for sample in series.samples]
-                        self.choices.append((4 * " " + series.name, new_samples))
-                for sub_topic in topic.sub_topics:
-                    get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+            if topic.topic.id in folded_topics_and_sample_series:
+                return
 
+            # Collect samples without series
+            seriesless_samples = [
+                (sample.pk, sample.name_with_tags(user)) for sample in topic.samples
+            ]
+            self.choices.append((topic.topic_name, seriesless_samples))
+
+            # Collect samples from series
+            for series in topic.sample_series:
+                series_hash = series.sample_series.get_hash_value()
+                if series_hash not in folded_topics_and_sample_series:
+                    new_samples = [
+                        (sample.pk, " " * 4 + sample.name_with_tags(user)) for sample in series.samples#.all()
+                    ]
+                    self.choices.append((" " * 4 + series.name, new_samples))
+
+            # Process subtopics recursively
+            for sub_topic in topic.sub_topics:
+                get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+
+        # Optimize the important_samples handling
         if important_samples:
             important_samples = set(important_samples)
             samples = set(samples or []) | important_samples
-        folded_topics_and_sample_series = set(user.samples_user_details.folded_topics) | \
-                                          set(user.samples_user_details.folded_series)
+
+        # Preload user's folded topics and series
+        user_details = user.samples_user_details
+        folded_topics_and_sample_series = set(user_details.folded_topics) | set(user_details.folded_series)
+
+        # Preload important topics and unfolded series
+        important_series = (
+            models.SampleSeries.objects.filter(samples__in=important_samples)
+            .distinct()
+            .select_related("topic")  # Fetch associated topics
+        )
+
         important_topics = set()
-        for series in models.SampleSeries.objects.filter(samples__in=important_samples).distinct():
+        for series in important_series:
             folded_topics_and_sample_series.discard(series.get_hash_value())
             important_topics.add(series.topic)
-        for topic in set(Topic.objects.filter(samples__in=important_samples).distinct()) | important_topics:
-            folded_topics_and_sample_series.discard(topic.pk)
+
+        # Preload parent topics for important topics
+        all_topics = Topic.objects.filter(
+            samples__in=important_samples
+        ).distinct().select_related("parent_topic")
+        for topic in set(all_topics) | important_topics:
             while topic.parent_topic:
-                topic = topic.parent_topic
                 folded_topics_and_sample_series.discard(topic.pk)
+                topic = topic.parent_topic
+            folded_topics_and_sample_series.discard(topic.pk)
+
+        # Build structured sample list
         topics, topicless_samples = utils.build_structured_sample_list(user, samples)
-        self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
+
+        # Collect topicless samples
+        self.choices = [
+            (sample.pk, sample.name_with_tags(user)) for sample in topicless_samples
+        ]
+
         for topic in topics:
             get_samples_from_topic(topic, folded_topics_and_sample_series)
+
+        # Add placeholder if no choices exist
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, ("", 9 * "-"))
 
@@ -518,38 +539,6 @@ class FixedOperatorField(forms.ChoiceField):
     def clean(self, value):
         value = super().clean(value)
         return django.contrib.auth.models.User.objects.get(pk=int(value))
-
-# class FixedTopicField(forms.ChoiceField):
-#     """Form field class for the *fixed* selection of a single topic.  This is
-#     intended for edit-process views when the topic must be the currently
-#     logged-in user, or the previous topic.  In other words, it must be
-#     impossible to change it.  Then, you can use this form field for the
-#     topic, and hide the field from display by ``style="display: none"`` in
-#     the HTML template.
-
-#     Important: This field must *always* be made required!
-#     """
-
-#     def set_topic(self, topic):
-#         """Set the user list shown in the widget.  You *must* call this method
-#         in the constructor of the form in which you use this field, otherwise
-#         the selection box will remain emtpy.  The selection list will consist
-#         only of the given topic, with no other choice (not even the empty
-#         field).
-
-#         :param topic: topic to be included into the list.  Typically, it
-#             is the current user.
-#         :param is_superuser: whether the currently logged-in user is an
-#             administrator
-
-#         :type topic: jb_common.models.Topic
-#         :type is_superuser: bool
-#         """
-#         self.choices = ((topic.pk, topic.name),)
-
-#     def clean(self, value):
-#         value = super().clean(value)
-#         return jb_common.models.Topic.objects.get(pk=int(value))
 
 
 time_pattern = re.compile(r"^\s*((?P<H>\d{1,3}):)?(?P<M>\d{1,2}):(?P<S>\d{1,2})\s*$")

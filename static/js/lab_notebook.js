@@ -21,7 +21,7 @@ $(document).ready(function () {
         '#experiment'
     ];
     $(manualTables.join(', ')).addClass('manual-datatable');
-    console.log("Manual datatable classes addesdddd.");
+    
     // Define langDict for DataTables (copied from juliabase)
     var langDict = {
         processing:     gettext("Processing..."),

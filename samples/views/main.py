@@ -21,9 +21,10 @@ better place to be (yet).
 
 from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
-from django.http import HttpResponsePermanentRedirect, Http404, JsonResponse, HttpResponse
+from django.http import HttpResponsePermanentRedirect, Http404, HttpResponse
 from django.views.decorators.http import require_http_methods
 import django.urls
+from django.utils.text import capfirst
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -31,13 +32,8 @@ from django.utils.translation import gettext_lazy as _, gettext
 from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
     int_or_zero
 from django.contrib.staticfiles.storage import staticfiles_storage
-
-from jb_common.models import Topic
 import samples.utils.views as utils
-from samples.models import ExternalOperator, Process
-from django.core.cache import cache
-from datetime import date, datetime, timedelta
-
+from samples.models import Process, SampleSeries
 
 class MySeries:
     """Helper class to pass sample series data to the main menu template.  It
@@ -106,16 +102,10 @@ def main_menu(request):
     :rtype: HttpResponse
     """
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user)
+    
     # OPTIMIZE: This calls way too many queries, and I couldn't identify where the SQL calls are
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
-    lab_notebooks = permissions.get_lab_notebooks(request.user)
-    # Get the current date for the screenprinter paste
-    current_date = date.today()
-    begin_date = current_date.replace(day=1)
-    next_month = current_date.replace(day=28) + timedelta(days=4)  # to get the last day of the month reliably
-    end_date = next_month - timedelta(days=next_month.day)
-    can_view_wafers = request.user.has_perm("iek5.view_every_wafer")
-    # raise ValueError(can_view_wafers)
+    lab_notebooks = permissions.get_lab_notebooks_once(request.user)
 
     return render(request, "samples/main_menu.html",
                   {"title": _("Main menu"),
@@ -124,15 +114,13 @@ def main_menu(request):
                    "add_samples_url": django.urls.reverse(settings.ADD_SAMPLES_VIEW),
                    "user_hash": permissions.get_user_hash(request.user),
                    "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
-                   "can_edit_topics": permissions.can_edit_any_topics(request.user),
+                   "can_edit_topics": permissions.can_edit_at_least_one_topic(request.user),
                    "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
                    "has_external_contacts": permissions.can_edit_any_external_contacts(request.user),
                    "can_rename_samples": request.user.has_perm("samples.rename_samples"),
                    "physical_processes": allowed_physical_processes,
                    "lab_notebooks": lab_notebooks,
-                   'begin_date': begin_date,
-                   'end_date': end_date,
-                   'can_view_wafers': can_view_wafers
+                   'group_img':staticfiles_storage.url('juliabase/icons/group.png'),
                    })
 
 
@@ -246,7 +234,36 @@ def show_process(request, process_id, process_name="Process"):
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())
-    template_context = {"title": str(process), "samples": process.samples.all(), "process": process}
+    
+    process_title = str(process)
+
+    all_samples = process.samples.all()
+
+    # I make a copy here, because I want to change it without  
+    # affecting all_samples which is used in the loop below
+    samples_without_series = list(all_samples)
+    
+    # Step 1: Filter SampleSeries with at least one sample from sample_list
+    sample_series_with_matching_samples = (
+        SampleSeries.objects
+        .filter(samples__in=all_samples)
+        .distinct()
+    )
+    # Step 2: For each SampleSeries, get the matching Sample objects
+    for series in sample_series_with_matching_samples:
+        matching_samples = series.samples.filter(id__in=all_samples)
+        for sample in matching_samples:
+            if sample in samples_without_series:
+                samples_without_series.remove(sample)
+        series.matching_samples = list(matching_samples)  # Attach matching Sample objects to each series
+
+    template_context = {"title": process_title,
+                        "samples": all_samples,
+                        "process": process,
+                        "sample_series_with_matching_samples": sample_series_with_matching_samples,
+                        "samples_without_series": samples_without_series,
+                        "process_id": process_id,
+                        }
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)
 

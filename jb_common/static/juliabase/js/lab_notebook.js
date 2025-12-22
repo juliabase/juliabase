@@ -16,7 +16,6 @@ $(document).ready( function () {
             sortDescending: gettext(": activate to sort column descending")
         }
     };
-console.log("lab_notebook.js loaded");
     
     // We use a timer here to allow everything to load before calling datatables.
     // This might not be necessary if 

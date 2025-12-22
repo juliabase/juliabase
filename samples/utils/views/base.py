@@ -19,14 +19,12 @@
 views package.
 """
 
-import copy, re, csv
-from io import StringIO
+import copy, csv
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models import Q, Prefetch
 from django.http import Http404, HttpResponse
 from django.utils.translation import gettext_lazy as _, gettext
-from django.contrib.contenttypes.models import ContentType
 import django.utils.text
 from jb_common import mimeparse
 from samples import models, permissions
@@ -35,7 +33,6 @@ from samples.views.table_export import build_column_group_list, ColumnGroupsForm
     ColumnsForm, generate_table_rows, flatten_tree, OldDataForm, SwitchRowForm
 import jb_common.utils.base
 from samples.models import Sample, SampleSeries
-import pprint
 
 
 __all__ = ("AmbiguityException", "lookup_sample", "convert_id_to_int",

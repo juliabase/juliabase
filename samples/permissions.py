@@ -84,6 +84,35 @@ def translate_permission(permission_codename):
             return _(name)
 
 
+def translate_all_permissions(permissions):
+    """
+    Translates all permission descriptions to the user's language and returns them in a dictionary.
+
+    :return:
+      A dictionary where the key is the permission's codename, and the value is the translated name.
+
+    :rtype: dict
+    """
+    permissions_dict = {}
+    
+    for permission in permissions:
+        # Extract and process the name of the permission
+        match = _permission_name_regex.match(permission.name)
+        if match:
+            class_name_pattern = "{class_name}"
+            translated_name = _(
+                match.group("prefix") + class_name_pattern
+            ).format(class_name=_(match.group("class_name")))
+        else:
+            translated_name = _(permission.name)
+
+        # Add to the dictionary using the codename as the key
+        full_permission_name = permission.content_type.app_label + "." + permission.codename
+        permissions_dict[full_permission_name] = translated_name
+    
+    return permissions_dict
+
+
 def get_user_permissions(user):
     """Determines the permissions of a user.  It iterates through all
     permissions and looks whether the user has them or not, and returns its
@@ -103,13 +132,14 @@ def get_user_permissions(user):
     has = []
     has_not = []
     permissions = Permission.objects.select_related('content_type')
+    perm_dict = translate_all_permissions(permissions=permissions)
     for permission in permissions:
         if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
             full_permission_name = permission.content_type.app_label + "." + permission.codename
             if user.has_perm(full_permission_name):
-                has.append(translate_permission(full_permission_name))
+                has.append(perm_dict[full_permission_name])
             else:
-                has_not.append(translate_permission(full_permission_name))
+                has_not.append(perm_dict[full_permission_name])
     return has, has_not
 
 
@@ -203,10 +233,13 @@ def get_allowed_physical_processes(user):
     :rtype: list of dict mapping str to str
     """
     allowed_physical_processes = []
-    for physical_process_class, add_data in get_all_addable_physical_process_models().items():
-        if has_permission_to_add_physical_process(user, physical_process_class):
-            raise ValueError("huz")
-            allowed_physical_processes.append(add_data.copy())
+    all_addable_physical_process_models = get_all_addable_physical_process_models().items()
+    process_and_permission = can_add_physical_processes(user, all_addable_physical_process_models)
+
+    for process_class, (add, add_data) in process_and_permission.items():
+        if add:
+            allowed_physical_processes.append(add_data)
+
     allowed_physical_processes.sort(key=lambda process: process["label"].lower())
     return allowed_physical_processes
 
@@ -229,21 +262,14 @@ def get_lab_notebooks(user):
     lab_notebooks = []
     for process_class, process in get_all_addable_physical_process_models().items():
         try:
-            # Temporary fix. Since for some reason Raman notebooks weren't programmed like other
-            # notebooks, it has been pretty difficult to make it possible to pick a date range
-            # instead of a fixed year and month. That is why this if statement is used to 
-            # specifically pick raman notebooks and use the normal year/month date system
-            # rather than the date range system.
-            if "raman" in process["type"].lower():
-                url = django.urls.reverse(
-                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
-            
-            # If the notebook is not raman, then use the date range system.
-            else:
+            try:
                 url = django.urls.reverse(
                     process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                     kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label)
+            except django.urls.NoReverseMatch:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
 
         except django.urls.NoReverseMatch:
             pass
@@ -252,10 +278,103 @@ def get_lab_notebooks(user):
                 url = url[:-1]
             # OPTIMIZE: This cryptic if-statement makes 5 SQL calls for each lab notebook
             # since it is written in a way I could not understand, I can't do much to optimize it
+            # FIXME: assert_can_view_lab_notebook is called in a loop. That's bad...
             if has_permission_to_view_lab_notebook(user, process_class):
                 lab_notebooks.append({"label": process["label_plural"], "url": url})
             
 
+    lab_notebooks.sort(key=lambda process: process["label"].lower())
+    return lab_notebooks
+
+def get_lab_notebooks_once(user):
+    """Get a list of all lab notebooks the user can see.
+
+    :param user: the user whose allowed lab notebooks should be collected
+    :type user: django.contrib.auth.models.User
+
+    :return:
+      List of all lab notebooks the user is allowed to see. Every lab book is
+      represented by a dictionary with two keys: ``"url"`` (the lab book URL)
+      and ``"label"`` (the name of the process, starting lowercase).
+
+    :rtype: list of dict mapping str to str
+    """
+    lab_notebooks = []
+    all_process_models = get_all_addable_physical_process_models().items()
+    
+    # Precompute content types for all process classes
+    process_classes = [cls for cls, _ in all_process_models]
+
+    # Get all models related to process_classes
+    app_label_and_model_names = [
+        (cls._meta.app_label, cls._meta.model_name) for cls in process_classes
+    ]
+
+    # Fetch all ContentType objects in a single query
+    content_type_map = {
+        (ct.app_label, ct.model): ct
+        for ct in ContentType.objects.filter(
+            app_label__in={label for label, model in app_label_and_model_names},
+            model__in={model for label, model in app_label_and_model_names},
+        )
+    }
+
+    # Map each class to its corresponding ContentType
+    content_types = {
+        cls: content_type_map[(cls._meta.app_label, cls._meta.model_name)]
+        for cls in process_classes
+    }
+
+    # Precompute all permissions related to these content types in a single query
+    codenames = [
+        "view_every_{0}".format(cls.__name__.lower()) for cls in process_classes
+    ]
+    permissions = Permission.objects.filter(
+        codename__in=codenames,
+        content_type__in=content_types.values()
+    ).select_related("content_type")
+
+    all_user_permissions = user.get_all_permissions()
+    
+    # Create a lookup dictionary containing only the intersection
+    permission_lookup = {
+        (perm.content_type, perm.codename): True
+        for perm in permissions
+        if f"{perm.content_type.app_label}.{perm.codename}" in all_user_permissions
+    }
+
+    for process_class, process in all_process_models:
+        try:
+            try:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label
+                )
+            except django.urls.NoReverseMatch:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label
+                )
+        except django.urls.NoReverseMatch:
+            # Skip if the URL cannot be resolved
+            continue
+
+        if url.endswith("//"):
+            url = url[:-1]
+        
+        # Check if the user has the required permission
+        codename = "view_every_{0}".format(process_class.__name__.lower())
+        content_type = content_types[process_class]
+        has_view_all_permission = permission_lookup.get((content_type, codename), False)
+
+        # Superusers have all permissions
+        if not has_view_all_permission:
+            has_view_all_permission = user.is_superuser
+
+        if has_view_all_permission:
+            lab_notebooks.append({"label": process["label_plural"], "url": url})
+
+    # Sort the results alphabetically
     lab_notebooks.sort(key=lambda process: process["label"].lower())
     return lab_notebooks
 
@@ -538,8 +657,11 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
-    raise ValueError("gottem")
-
+    # FIXME: The problem with this function (and probably every other 'assert') function is that it
+    # is called in a loop, and since it contains a database query, then that same query will be repeated each time
+    # in the loop. A solution would be to re-write this function to take a list of elements and loop through them
+    # and only do one database call using 'prefetch_selected', but the problem is, so many other things will have
+    # to be re-written 
     codename = "add_{0}".format(process_class.__name__.lower())
     if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
@@ -548,6 +670,80 @@ def assert_can_add_physical_process(user, process_class):
                             "permission “{permission}”.").format(
                 process_plural_name=process_class._meta.verbose_name_plural, permission=translate_permission(permission))
             raise PermissionError(user, description)
+
+
+def can_add_physical_processes(user, process_classes):
+    """
+    Tests whether the user can create new physical processes (e.g., deposition,
+    measurement, etching process, clean room work, etc.) for a list of process classes.
+
+    :param user: the user whose permissions should be checked
+    :param process_classes: a list of process class types the user is requesting permission for
+
+    :type user: django.contrib.auth.models.User
+    :type process_classes: list of ``class`` (each derived from `samples.models.Process`)
+
+    :raises PermissionError: if the user is not allowed to add any of the specified processes.
+    """
+    if not process_classes:
+        return  # No processes to check, exit early
+
+    # Sort process_classes by the "label" key in the dictionaries inside add_datas
+    sorted_process_classes = sorted(process_classes, key=lambda x: x[1]["label"].lower())
+
+    # Unpack into physical_processes and add_datas after sorting
+    physical_processes, add_datas = zip(*sorted_process_classes)
+
+    # Extract app labels and model names
+    content_type_filters = [
+        {"app_label": cls._meta.app_label, "model": cls._meta.model_name}
+        for cls in physical_processes
+    ]
+
+    # Use a single query to fetch all matching ContentType objects
+    content_types_2 = ContentType.objects.filter(
+        **{"{}__in".format(key): [f[key] for f in content_type_filters] for key in ["app_label", "model"]}
+    ).distinct()
+
+    # Convert the QuerySet to a list if needed
+    content_types_2 = list(content_types_2)
+    sorted_content_types_2 = sorted(content_types_2, key=lambda x: x.name.lower())
+
+    # Get the IDs of the content types
+    content_type_ids = [ct.id for ct in sorted_content_types_2]
+
+    codenames = ["add_{0}".format(cls.__name__.lower()) for cls in physical_processes]
+
+    # Use `Q` objects to build a single query for permissions
+    permission_query = Q()
+    for content_type_id, codename in zip(content_type_ids, codenames):
+        permission_query |= Q(codename=codename, content_type=content_type_id)
+
+    # Fetch all matching permissions
+    permissions = Permission.objects.filter(permission_query).select_related('content_type')
+
+    # Create a set of permission strings (e.g., "app_label.add_processname")
+    permission_strings = {
+        "{app_label}.{codename}".format(app_label=perm.content_type.app_label, codename=perm.codename)
+        for perm in permissions
+    }
+
+    class_and_permission = {}
+
+    # Check each process class against the user's permissions
+    for process_class, add_data in sorted_process_classes:
+        codename = "add_{0}".format(process_class.__name__.lower())
+        permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
+
+        if permission not in permission_strings or not user.has_perm(permission):
+            if any(keyword in permission for keyword in ["layerthickness", "mariaprotocol", "mariastep", "structuring"]):
+                class_and_permission[process_class] = (True, add_data)
+                continue
+            class_and_permission[process_class] = (False, add_data)
+        else:
+            class_and_permission[process_class] = (True, add_data)
+
+    return class_and_permission
 
 
 def assert_can_edit_physical_process(user, process):
@@ -606,40 +802,6 @@ def assert_can_delete_physical_process(user, process):
     :raises PermissionError: if the user is not allowed to delete the process.
     """
     return process.delete(dry_run=True, user=user)
-
-
-def assert_can_delete_wafer(user, wafer):
-    """Tests whether the user can delete a wafer.  For this, the
-    following conditions must be met:
-
-    - ``wafer.is_deletable(user)`` must yield ``True``.
-    - You can edit the wafer.
-    - The wafer is not older than one hour.
-
-    :param user: the user whose permission should be checked
-    :param wafer: The wafer to delete.  This must be the actual instance.
-
-    :type user: django.contrib.auth.models.User
-    :type wafer: `samples.models.wafer`
-
-    :return:
-      the objects that are deleted
-
-    :rtype: set of ``Model``
-
-    :raises PermissionError: if the user is not allowed to delete the wafer.
-    """
-    if user.is_superuser:
-        return True
-    
-    content_type = ContentType.objects.get_for_model(wafer)
-    permission = f"{content_type.app_label}.delete_{content_type.model}"
-
-    if user.has_perm(permission):
-        return True
-    else:
-        return False
-    # return wafer.delete(user=user)
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
@@ -822,7 +984,15 @@ def assert_can_view_result_process(user, result_process):
     :raises PermissionError: if the user is not allowed to view the result
         process.
     """
-    if result_process.operator != user and \
+    v1 = list(result_process.samples.all())
+    v2 = list(result_process.sample_series.all())
+    v3 = samples.models.Clearance.objects.filter(user=user, processes=result_process).exists()
+    
+    # I added this if statement because the other one underneath throws a PermissionError even when the result process
+    # has no samples or sample series which causes funny things.
+    if not v1 and not v2 and not v3:
+        pass
+    elif result_process.operator != user and \
             all(not has_permission_to_fully_view_sample(user, sample) for sample in result_process.samples.all()) and \
             all(not has_permission_to_view_sample_series(user, sample_series)
                 for sample_series in result_process.sample_series.all()) and \
@@ -1019,6 +1189,81 @@ def assert_can_edit_topic(user, topic=None):
                 description = _("You are not allowed to change this topic because it is confidential "
                                 "and you are not in this topic.")
                 raise PermissionError(user, description)
+
+
+def can_edit_all_topics(user, topics):
+    """Tests whether the user can change topic memberships of other users,
+    set the topic's restriction status, and add new topics.  This typically
+    is a priviledge of heads of institute groups.
+
+    :param user: the user whose permission should be checked
+    :param topics: the topics whose members are about to be edited; 
+
+    :type user: django.contrib.auth.models.User
+    :type topics: QuerySet of `jb_common.models.Topic`
+
+    :return: Dictionary of permissions
+    """
+    all_topics_perm = {}
+    for topic in topics:
+        if not topic:
+            if not user.has_perm("jb_common.add_topic"):
+                all_topics_perm[topic] = False
+                continue
+        else:
+            if topic.is_member:
+                if not user.has_perm("jb_common.change_topic") and \
+                        topic.manager != user:
+                    all_topics_perm[topic] = False
+                    continue
+            else:
+                if not user.has_perm("jb_common.change_topic"):
+                    all_topics_perm[topic] = False
+                    continue
+                elif topic.confidential and not user.is_superuser:
+                    all_topics_perm[topic] = False
+                    continue
+        all_topics_perm[topic] = True
+
+    return all_topics_perm
+        
+
+# I am adding this because checking for each topic individually wastes time when it comes to loading the main menu
+def can_edit_at_least_one_topic(user):
+    """Tests whether the user can change topic memberships of other users,
+    set the topic's restriction status, and add new topics.  This typically
+    is a priviledge of heads of institute groups.
+
+    :param user: the user whose permission should be checked
+
+    :type user: django.contrib.auth.models.User
+
+    :return True if the user can modify at least one topic. Otherwise, False
+    """
+    # Fetch only topics the user might have permission for
+    topics = jb_common.models.Topic.objects.prefetch_related("members").filter(
+        Q(manager=user) |  # User is the manager
+        Q(confidential=True, manager=user) |  # Confidential and user is manager
+        Q(confidential=True, manager=None, members=user) |  # Confidential and user is a member
+        Q(members=user) |  # User is a member
+        Q(confidential=False)  # Non-confidential topics
+    ).distinct()
+
+    # Convert to a set for fast lookups
+    user_memberships = {topic.id for topic in topics if user in topic.members.all()}
+
+    # Check conditions efficiently
+    for topic in topics:
+        if topic.id in user_memberships:  # User is a member
+            if user.has_perm("jb_common.change_topic") and topic.manager == user:
+                return True
+        else:  # User is NOT a member
+            if user.has_perm("jb_common.change_topic"):
+                return True
+            elif topic.confidential and user.is_superuser:
+                return True
+
+    return False  # Default case
 
 
 def assert_can_edit_users_topics(user):

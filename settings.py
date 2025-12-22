@@ -220,7 +220,7 @@ def show_toolbar(request):
 SHOW_TOOLBAR_CALLBACK = show_toolbar
 
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda r: False,  # disables it
+    'SHOW_TOOLBAR_CALLBACK': lambda r: True,  # Set to 'False to disable Django Debug Toolbar
     # '...
 }
 
@@ -266,3 +266,5 @@ SAMPLE_NAME_FORMATS = {
 }
 
 NAME_PREFIX_TEMPLATES = ["{short_year}-{user_initials}-", "{external_contact_initials}-"]
+
+DEFAULT_DEPARTMENT = None
