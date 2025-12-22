@@ -566,8 +566,15 @@ class SamplesAndProcesses:
                             "operator": self.processes[0].operator}
             yield True, self.sample_context, first_proc
             for process in self.processes[1:]:
+                try:
+                    instance = process.actual_instance
+                except AttributeError:
+                    continue
+                # if process is None and instance is None:
+
+                #     continue
                 proc = {  "id": process.id, 
-                                "title": process.actual_instance._meta.verbose_name,
+                                "title": instance._meta.verbose_name,
                                 "timestamp": process.timestamp,
                                 "operator": process.operator}
                 yield False, self.sample_context, proc

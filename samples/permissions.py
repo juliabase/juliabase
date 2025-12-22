@@ -747,18 +747,20 @@ def can_view_physical_processes(user, processes):
     content_types = {
         cls: ContentType.objects.get_for_model(cls)
         for cls in process_classes
+        if cls is not None
     }
     # Build all codenames we need
     needed_codenames = [
         f"view_every_{cls.__name__.lower()}"
         for cls in process_classes
+        if cls is not None
     ]
 
     # Bulk fetch matching permissions
     # This is 1 query instead of N
     permissions = Permission.objects.filter(
         codename__in=needed_codenames,
-        content_type__in=[content_types[cls] for cls in process_classes],
+        content_type__in=[content_types[cls] for cls in process_classes if cls is not None],
     ).values_list("codename", "content_type_id")
 
     # Turn into a lookup set for O(1) checks
@@ -767,26 +769,28 @@ def can_view_physical_processes(user, processes):
     # Build the lookup dict in Python
     permission_lookup = {}
     for cls in process_classes:
-        codename = f"view_every_{cls.__name__.lower()}"
-        ct = content_types[cls]
-        permission_lookup[cls] = {
-            "codename": codename,
-            "exists": (codename, ct.id) in permission_set,
-            "app_label": cls._meta.app_label,
-        }
+        if cls is not None:
+            codename = f"view_every_{cls.__name__.lower()}"
+            ct = content_types[cls]
+            permission_lookup[cls] = {
+                "codename": codename,
+                "exists": (codename, ct.id) in permission_set,
+                "app_label": cls._meta.app_label,
+            }
 
     # Check permissions
     for process in processes:
         cls = process.content_type.model_class()
-        perm_info = permission_lookup[cls]
+        if cls is not None:
+            perm_info = permission_lookup[cls]
 
-        if perm_info["exists"]:
-            perm_name = f"{perm_info['app_label']}.{perm_info['codename']}"
-            can_view = user.has_perm(perm_name)
-        else:
-            can_view = user.is_superuser
+            if perm_info["exists"]:
+                perm_name = f"{perm_info['app_label']}.{perm_info['codename']}"
+                can_view = user.has_perm(perm_name)
+            else:
+                can_view = user.is_superuser
 
-        permission_dict[process] = can_view
+            permission_dict[process] = can_view
 
     return permission_dict
 
