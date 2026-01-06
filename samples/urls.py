@@ -54,7 +54,7 @@ configuration file, though.
 
 """
 
-from django.urls import re_path, path
+from django.urls import re_path
 from samples.views import statistics, main, feed, my_samples, split_after_deposition, sample, split_and_rename, \
     sample_death, bulk_rename, sample_series, result, plots, external_operator, user_details, permissions, topic, \
     claim, json_client, status, merge_samples, log_viewer, task_lists, process_context
