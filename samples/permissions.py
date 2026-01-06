@@ -36,6 +36,7 @@ permission just means that e.g. a link is not generated (for example, in the
 """
 
 import hashlib, re
+from django.core.cache import cache
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 import django.urls
@@ -763,20 +764,41 @@ def assert_can_edit_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
+    # Cache the full permission check result
+    cache_key = f"can_edit_phys_process:{user.id}:{process.id}"
+    cached = cache.get(cache_key)
+    if cached == "allowed":
+        return
+    elif cached == "denied":
+        raise PermissionError(user, "Permission denied (cached)")
+    
+    if process_class is None:
+        return
     codename = "change_{0}".format(process_class.__name__.lower())
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     codename = "add_{0}".format(process_class.__name__.lower())
-    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
+    
+    ct = ContentType.objects.get_for_model(process_class)
+    perm_exists_key = f"perm_exists:{ct.id}:{codename}"
+    perm_exists = cache.get(perm_exists_key)
+    if perm_exists is None:
+        perm_exists = Permission.objects.filter(codename=codename, content_type=ct).exists()
+        cache.set(perm_exists_key, perm_exists, 3600)
+
+    if perm_exists:
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     else:
         has_add_permission = True
     if (not has_add_permission or process.operator != user) and not (has_add_permission and not process.finished) and \
             not has_edit_all_permission and not user.is_superuser:
-        description = _("You are not allowed to edit the process “{process}” because you are not the operator "
+        cache.set(cache_key, "denied", 60)
+        description = _("You are not allowed to edit the process \xe2\x80\x9c{process}\xe2\x80\x9d because you are not the operator "
                         "of this process.").format(process=process)
         raise PermissionError(user, description)
+
+    cache.set(cache_key, "allowed", 60)
 
 
 def assert_can_delete_physical_process(user, process):
@@ -1041,19 +1063,38 @@ def assert_can_edit_sample(user, sample):
 
     :raises PermissionError: if the user is not allowed to edit the sample
     """
+    # Check cache first to avoid redundant checks during dry_run delete
+    cache_key = f"can_edit_sample:{user.id}:{sample.id}"
+    cached_result = cache.get(cache_key)
+    if cached_result == "allowed":
+        return
+    elif cached_result == "denied":
+        raise PermissionError(user, "Cached permission denial")
+    
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
-    user_department = user.jb_user_details.department or NoDepartment()
+    # Use select_related data if available, otherwise fetch
+    try:
+        sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
+    except AttributeError:
+        sample_department = NoDepartment()
+    try:
+        user_department = user.jb_user_details.department or NoDepartment()
+    except AttributeError:
+        user_department = NoDepartment()
     if not sample.topic and sample_department != user_department and not user.is_superuser:
+        cache.set(cache_key, "denied", 60)
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
     topic_manager_permission = get_topic_manager_permission()
+    # Optimize: use exists() with filter instead of loading all members
     if sample.topic and currently_responsible_person != user and not user.is_superuser and not \
-        (user in sample.topic.members.all() and topic_manager_permission in user.user_permissions.all()):
+        (sample.topic.members.filter(id=user.id).exists() and topic_manager_permission in user.user_permissions.all()):
+        cache.set(cache_key, "denied", 60)
         description = _("You are not allowed to edit the sample “{name}” (including splitting, declaring dead, and deleting) "
                         "because you are not the currently responsible person for this sample.").format(name=sample)
         raise PermissionError(user, description)
 
+    cache.set(cache_key, "allowed", 60)
 
 def assert_can_edit_sample_series(user, sample_series):
     """Tests whether the user can edit a sample series, including adding or

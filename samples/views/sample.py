@@ -411,11 +411,9 @@ class SamplesAndProcesses:
             ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True)
             ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True)
             
-            process_ids = set(ids_from_direct) | set(ids_from_series)
-            
             process_ids = ids_from_direct.union(ids_from_series)
 
-            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').distinct()
+            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').prefetch_related('actual_instance').distinct()
 
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])

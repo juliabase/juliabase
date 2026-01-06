@@ -1141,8 +1141,38 @@ class Sample(models.Model):
         user = kwargs.pop("user", None)
 
         if dry_run:
+            # Check cache first to avoid expensive re-computation
+            cache_key = f"sample_delete_dryrun:{self.id}:{user.id if user else 'none'}"
+            cached_result = cache.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+            
             samples.permissions.assert_can_edit_sample(user, self)
             affected_objects = {self}
+
+            # Get processes with only this sample
+            processes_to_delete = (
+                self.processes
+                .annotate(sample_count=models.Count("samples"))
+                .filter(sample_count=1)  # only processes tied exclusively to this sample
+                .select_related("content_type")
+            )
+
+            processes_to_delete = list(processes_to_delete)
+            # Prefetch actual instances to avoid N+1 queries
+            self.prefetch_actual_instances(processes_to_delete)
+
+            for process in processes_to_delete:
+                actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
+                if hasattr(actual, "_cached_actual_instance"):
+                   # if process has attribute _cached_actual_instance, it means it was already prefetched, 
+                   # so we can use it to avoid further queries
+                   actual = actual._cached_actual_instance
+                result = actual.delete(*args, dry_run=True, user=user, raw=True)
+                affected_objects |= result
+
+            cache.set(cache_key, affected_objects, 60)
+            return affected_objects
 
         # Get processes with only this sample
         processes_to_delete = (
@@ -1156,16 +1186,8 @@ class Sample(models.Model):
         # Prefetch actual instances to avoid N+1 queries
         self.prefetch_actual_instances(processes_to_delete)
 
-        if dry_run:
-            for process in processes_to_delete:
-                actual = getattr(process, "_cached_actual_instance", process.actual_instance)
-                result = actual.delete(*args, dry_run=True, user=user, raw=True)
-                affected_objects |= result
-
-            return affected_objects
-
         for process in processes_to_delete:
-            actual = getattr(process, "_cached_actual_instance", process.actual_instance)
+            actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
             actual.delete(*args, user=user)
 
         # Clear m2m relations
