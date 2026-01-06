@@ -58,6 +58,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    if (window.jQuery && window.jQuery.fn.dataTable) {
+        var tables = window.jQuery.fn.dataTable.tables({ visible: true, api: true });
+        tables.rows().invalidate().columns.adjust().draw();
+    }
+
     // Add MathJax configuration to enable both inline and display math
     window.MathJax = {
         tex: {
@@ -66,6 +71,16 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         svg: {
           fontCache: 'global'
+        },
+        startup: {
+            pageReady: () => {
+                return MathJax.startup.defaultPageReady().then(() => {
+                    if (window.jQuery && window.jQuery.fn.dataTable) {
+                        window.jQuery.fn.dataTable.tables({ visible: true, api: true }).columns.adjust().draw();
+                        window.dispatchEvent(new Event('resize'));
+                    }
+                });
+            }
         }
       };
 

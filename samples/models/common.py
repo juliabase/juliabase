@@ -490,28 +490,6 @@ class Process(PolymorphicModel):
                                 .select_related(*related_fields)\
                                 .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
 
-        # OPTIMIZE: I managed to shrink the number of queries for MariaDeposition from 550+ to 47, but it 
-        # can still be more optimized. Look into get_newest_sample_series_for_multiple for better optimization
-        if "mariadeposition" in str(cls).lower():
-            # Lazy import to avoid circular imports
-            from iek5.templatetags import ipv_extras
-            # Precompute zipped lists for each deposition
-            for deposition in queryset:
-                protocols = list(deposition.protocols.all())  # Force DB evaluation
-                samples = list(deposition.samples.all())  # Force DB evaluation
-                zipped_data = list(itertools.zip_longest(protocols, samples, fillvalue=''))
-    
-                # Extract samples and fetch newest sample series for all of them
-                samples = [item[1] for item in zipped_data]
-                newest_sample_series = ipv_extras.get_newest_sample_series_for_multiple(samples)
-
-                result = [
-                    (protocol, sample, newest_sample_series.get(sample, "No series"))
-                    for protocol, sample in zipped_data
-                ]
-
-                deposition.zipped_result = result
-
         return {"processes": list(queryset)}
 
 
@@ -879,53 +857,6 @@ class Sample(models.Model):
                        ("adopt_samples", _("Can adopt samples from his/her department")),
                        ("rename_samples", _("Can rename samples from his/her department")))
 
-    # def save(self, *args, **kwargs):
-    #     """Saves the instance and clears stalled cache items.
-
-    #     It also touches all ancestors and children and the associated split
-    #     processes.
-
-    #     :param with_relations: If ``True`` (default), also touch the related
-    #         samples.  Should be set to ``False`` if called from another
-    #         ``save`` method in order to avoid endless recursion.
-    #     :param from_split: When walking through the decendents, this is set to
-    #         the originating split so that the child sample knows which of its
-    #         splits should be followed, too.  Thus, only the timestamp of
-    #         ``from_split`` is actually used.  It must be ``None`` (default)
-    #         when this method is called from outside this method, or while
-    #         walking through the ancestors.
-
-    #     :type with_relations: bool
-    #     :type from_split: `SampleSplit` or NoneType
-    #     """
-    #     keys_list_key = "sample-keys:{0}".format(self.pk)
-    #     with cache_key_locked("sample-lock:{0}".format(self.pk)):
-    #         keys = cache.get(keys_list_key)
-    #         if keys:
-    #             cache.delete_many(keys)
-    #         cache.delete(keys_list_key)
-    #     with_relations = kwargs.pop("with_relations", True)
-    #     from_split = kwargs.pop("from_split", None)
-    #     super().save(*args, **kwargs)
-    #     UserDetails.objects.select_for_update().filter(user__in=self.watchers.all()).update(
-    #         my_samples_list_timestamp=django.utils.timezone.now())
-    #     if with_relations:
-    #         for series in self.series.all():
-    #             series.save()
-    #     # Now we touch the decendents ...
-    #     if from_split:
-    #         splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
-    #     else:
-    #         splits = SampleSplit.objects.filter(parent=self)
-    #     for split in splits:
-    #         split.save(with_relations=False)
-    #         for child in split.pieces.all():
-    #             child.save(from_split=split, with_relations=False)
-    #     # ... and the ancestors
-    #     if not from_split and self.split_origin:
-    #         self.split_origin.save(with_relations=False)
-    #         self.split_origin.parent.save(with_relations=False)
-
     def save(self, *args, **kwargs):
         """
         Optimized save method for Sample instances. Supports batch_mode to avoid
@@ -1188,114 +1119,6 @@ class Sample(models.Model):
         else:
             return search.SearchTreeNode(cls, related_models, search_fields)
 
-    # def delete(self, *args, **kwargs):
-    #     """Deletes the sample and all of its processes that contain only this sample –
-    #     which includes splits, pieces, and the cascade after that.  See
-    #     :py:meth:`Process.delete` for further information.
-    #     """
-    #     dry_run = kwargs.get("dry_run", False)
-    #     if dry_run:
-    #         affected_objects = {self}
-    #         samples.permissions.assert_can_edit_sample(kwargs["user"], self)
-    #     for process in self.processes.all():
-    #         if process.samples.count() == 1:
-    #             process = process.actual_instance
-    #             result = process.delete(*args, **kwargs)
-    #             if dry_run:
-    #                 affected_objects |= result
-    #     if dry_run:
-    #         return affected_objects
-    #     else:
-    #         # FixMe: The following two lines are necessary only until
-    #         # https://code.djangoproject.com/ticket/17688 is fixed.
-    #         self.processes.clear()
-    #         self.watchers.clear()
-    #         kwargs.pop("dry_run", None)
-    #         kwargs.pop("user", None)
-    #         self.save()
-    #         return super().delete(*args, **kwargs)
-
-    # def delete(self, *args, **kwargs):
-    #     """
-    #     Deletes the sample and its related processes that involve only this sample.
-    #     If dry_run=True, it returns the affected objects without deleting.
-    #     """
-    #     dry_run = kwargs.pop("dry_run", False)
-    #     user = kwargs.pop("user", None)
-
-    #     if dry_run:
-    #         samples.permissions.assert_can_edit_sample(user, self)
-    #         affected_objects = {self}
-
-    #     # Prefetch samples for all related processes to avoid N+1 queries
-    #     processes = self.processes.prefetch_related("samples").all()
-
-    #     for process in processes:
-    #         if process.samples.count() == 1:  # Now uses prefetched data
-    #             actual = process.actual_instance
-    #             result = actual.delete(*args, dry_run=dry_run, user=user)
-    #             if dry_run:
-    #                 affected_objects |= result
-
-    #     if dry_run:
-    #         return affected_objects
-
-    #     # Clear m2m relations manually due to Django bug #17688
-    #     self.processes.clear()
-    #     self.watchers.clear()
-
-    #     self.save()
-    #     return super().delete(*args, **kwargs)
-
-    # def prefetch_actual_instances(self, processes):
-    #     grouped = defaultdict(list)
-    #     for process in processes:
-    #         grouped[process.content_type].append(process)
-
-    #     for content_type, items in grouped.items():
-    #         model_cls = content_type.model_class()
-    #         actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
-    #         for p in items:
-    #             p._cached_actual_instance = actuals.get(p.actual_object_id)
-
-    # def delete(self, *args, **kwargs):
-    #     """
-    #     Deletes the sample and its related processes that involve only this sample.
-    #     If dry_run=True, returns the affected objects without deleting.
-    #     """
-    #     dry_run = kwargs.pop("dry_run", False)
-    #     user = kwargs.pop("user", None)
-
-    #     if dry_run:
-    #         samples.permissions.assert_can_edit_sample(user, self)
-    #         affected_objects = {self}
-
-    #     # Get processes with only this sample
-    #     processes_to_delete = (
-    #         self.processes
-    #         .annotate(sample_count=models.Count("samples"))
-    #         .filter(sample_count=1)  # only processes tied exclusively to this sample
-    #         .select_related("content_type")  # if actual_instance uses polymorphic
-    #     )
-    #     self.prefetch_actual_instances(processes_to_delete)
-
-    #     if dry_run:
-    #         for process in processes:
-    #             actual = process.actual_instance
-    #             result = actual.delete(*args, dry_run=True, user=user)
-    #             affected_objects |= result
-    #         return affected_objects
-
-    #     # Delete processes in bulk if possible
-    #     for process in processes:
-    #         process.actual_instance.delete(*args, user=user)
-
-    #     # Clear m2m relations
-    #     self.processes.clear()
-    #     self.watchers.clear()
-
-    #     self.save()
-    #     return super().delete(*args, **kwargs)
     def prefetch_actual_instances(self, processes):
         grouped = defaultdict(list)
         for process in processes:
@@ -1303,9 +1126,10 @@ class Sample(models.Model):
 
         for content_type_id, items in grouped.items():
             model_cls = items[0].content_type.model_class()
-            actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
-            for p in items:
-                p._cached_actual_instance = actuals.get(p.actual_object_id)
+            if model_cls is not None:
+                actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
+                for p in items:
+                    p._cached_actual_instance = actuals.get(p.actual_object_id)
 
 
     def delete(self, *args, **kwargs):
@@ -1420,15 +1244,22 @@ class SampleSplit(Process):
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if context["sample"] != context["original_sample"]:
-            context["parent"] = context["sample"]
-        else:
-            context["parent"] = None
-        if context["sample"].last_process_if_split() == self and \
+        try:
+            if context["sample"] != context["original_sample"]:
+                context["parent"] = context["sample"]
+            else:
+                context["parent"] = None
+            if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
-            context["resplit_url"] = django.urls.reverse("samples:resplit", kwargs={"old_split_id": self.id})
-        else:
+                context["resplit_url"] = django.urls.reverse("samples:resplit", kwargs={"old_split_id": self.id})
+            else:
+                context["resplit_url"] = None
+        except KeyError:
+            context["parent"] = None
             context["resplit_url"] = None
+        context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number":self.pk})
+
+
         return super().get_context_for_user(user, context)
 
     @classmethod

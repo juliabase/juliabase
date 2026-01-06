@@ -68,6 +68,6 @@ def process_details(request, process_id, sample_id):
     process_context["operator_safe"] = get_safe_operator_name(process_context["operator"])
     process_context["operator_full_name"] = get_really_full_name(process_context["operator"])
     process_context["timestamp_display"] = timestamp(process_context["timestamp"], 0, keep_as_is=True)
-
-
+    process_context["show_process_url"] = process.get_absolute_url()
+    
     return JsonResponse(process_context, encoder=SafeJSONEncoder)

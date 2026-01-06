@@ -21,9 +21,10 @@ better place to be (yet).
 
 from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
-from django.http import HttpResponsePermanentRedirect, Http404, JsonResponse, HttpResponse
+from django.http import HttpResponsePermanentRedirect, Http404, HttpResponse
 from django.views.decorators.http import require_http_methods
 import django.urls
+from django.utils.text import capfirst
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -31,17 +32,8 @@ from django.utils.translation import gettext_lazy as _, gettext
 from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
     int_or_zero
 from django.contrib.staticfiles.storage import staticfiles_storage
-
-from jb_common.models import Topic
-# from samples.models.common import SampleSeries
 import samples.utils.views as utils
-from samples.models import ExternalOperator, Process, SampleSeries
-from django.core.cache import cache
-from datetime import date, datetime, timedelta
-from iek5.models.physical_processes import Experiment
-
-from django.contrib.postgres.aggregates import ArrayAgg
-from django.db.models import Q
+from samples.models import Process, SampleSeries
 
 class MySeries:
     """Helper class to pass sample series data to the main menu template.  It
@@ -114,9 +106,6 @@ def main_menu(request):
     # OPTIMIZE: This calls way too many queries, and I couldn't identify where the SQL calls are
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = permissions.get_lab_notebooks_once(request.user)
-    can_view_wafers = request.user.has_perm("iek5.view_every_wafer")
-    all_experiments = Experiment.objects.filter(operator=request.user)
-    my_experiments = request.user.my_experiments.all()
 
     return render(request, "samples/main_menu.html",
                   {"title": _("Main menu"),
@@ -132,9 +121,6 @@ def main_menu(request):
                    "physical_processes": allowed_physical_processes,
                    "lab_notebooks": lab_notebooks,
                    'group_img':staticfiles_storage.url('juliabase/icons/group.png'),
-                   'can_view_wafers': can_view_wafers,
-                   "experiments": all_experiments,
-                   "my_experiments": my_experiments,
                    })
 
 
@@ -243,20 +229,13 @@ def show_process(request, process_id, process_name="Process"):
         process = get_object_or_404(process_class, **{identifying_field: process_id}).actual_instance
     except ValueError:
         raise Http404("Invalid value for {} passed: {}".format(identifying_field, repr(process_id)))
-    if not isinstance(process, models.PhysicalProcess):
+    if not isinstance(process, models.PhysicalProcess) and not isinstance(process, models.Process):
         raise Http404("No physical process with that ID was found.")
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())
     
-    # FIXME: This is not a good way to deal with changing the title of a process. 
-    # Imagine having to do this for every physical process **insert skull emoji**
-    if process_name == "Experiment":
-        process_title = "Experiment of " + process.prefix + process.number
-        add_to_my_experiments_url =  django.urls.reverse("iek5:add_to_my_experiments", kwargs={"experiment_id": process_id})
-    else:
-        process_title = str(process)
-        add_to_my_experiments_url = None
+    process_title = str(process)
 
     all_samples = process.samples.all()
 
@@ -283,7 +262,6 @@ def show_process(request, process_id, process_name="Process"):
                         "process": process,
                         "sample_series_with_matching_samples": sample_series_with_matching_samples,
                         "samples_without_series": samples_without_series,
-                        "add_to_my_experiments_url": add_to_my_experiments_url,
                         "process_id": process_id,
                         }
     template_context.update(utils.digest_process(process, request.user))
@@ -389,11 +367,3 @@ def export_process(request, process_id):
                                                          "old_data": old_data_form,
                                                          "backlink": request.GET.get("next", "")})
 _ = gettext
-
-
-# FIXME: This is pretty useless. Might delete later :)
-@login_required
-@require_http_methods(["GET"])
-def clear_cache(request):
-    cache.clear()
-    return JsonResponse({'message': 'Cache cleared successfully'})

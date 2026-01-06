@@ -428,7 +428,7 @@ class SamplesAndProcesses:
                 if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
                     process.operator = nobody
 
-            self.processes += processes#list(viewable_processes)
+            self.processes += processes
 
         collect_process_contexts()
         self.process_lists = []
@@ -502,7 +502,6 @@ class SamplesAndProcesses:
                 if process.operator == user or \
                         issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
                         self.processes_with_permissions[process]:
-                        # permissions.has_permission_to_view_physical_process(user, process):
                     viewable_process_contexts.append(process_context)
                 else:
                     self.process_ids.remove(process.id)
@@ -527,11 +526,6 @@ class SamplesAndProcesses:
         """
         self.update_sample_context_for_user(user, clearance, post_data)
         self.remove_noncleared_process_contexts(user, clearance)
-        # for process_context in self.process_contexts:
-        #     process_context.update(
-        #         process_context["process"].get_context_for_user(user, process_context))
-        # for process_list in self.process_lists:
-        #     process_list.personalize(user, clearance, post_data)
 
     def __iter__(self):
         """Returns an iterator over all samples and processes.  It is used in
@@ -566,8 +560,12 @@ class SamplesAndProcesses:
                             "operator": self.processes[0].operator}
             yield True, self.sample_context, first_proc
             for process in self.processes[1:]:
+                try:
+                    instance = process.actual_instance
+                except AttributeError:
+                    continue
                 proc = {  "id": process.id, 
-                                "title": process.actual_instance._meta.verbose_name,
+                                "title": instance._meta.verbose_name,
                                 "timestamp": process.timestamp,
                                 "operator": process.operator}
                 yield False, self.sample_context, proc
@@ -759,6 +757,8 @@ def show(request, sample_name):
             elif not added:
                 success_message = _("Nothing was changed.")
             messages.success(request, success_message)
+        else:
+            raise ValueError("Form is not valid")
     else:
         if is_json_requested(request):
             sample = utils.lookup_sample(sample_name, request.user)
@@ -767,7 +767,6 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     sample_id = samples_and_processes.sample_context["sample"].id
-    # raise ValueError(samples_and_processes.processes)
     experiments = list(Experiment.objects.filter(samples__id=sample_id))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),

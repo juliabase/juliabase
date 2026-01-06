@@ -33,7 +33,7 @@
         html.push(`<p class="operator_and_timestamp" style="margin-top: 3.6ex">${operator}, ${data["timestamp_display"]}</p>`);
 
         // Icons
-        ["edit","delete","duplicate","export","resplit","zoom"].forEach(key => {
+        ["edit","delete","duplicate","export","resplit","show_process"].forEach(key => {
           const url = data[`${key}_url`];
           if(url){
             html.push(`
@@ -52,8 +52,15 @@
         // Operator + timestamp
         html.push(`<div style="clear:both"></div>`);
 
-        // Convert your HTML string to a jQuery object so you can work with it
-        const html_body = $('<div>').html(data.html_body);
+        // Force a valid root for malformed table fragments
+        let safeHtml = data.html_body.trim();
+
+        // If it starts with a table row or cell, wrap it in a table
+        if (/^<(tr|td|tbody|thead|tfoot)[\s>]/i.test(safeHtml)) {
+          safeHtml = `<table><tbody>${safeHtml}</tbody></table>`;
+        }
+
+        const html_body = $('<div>').html(safeHtml);
 
         // 1️⃣ Extract and execute <script> tags
         html_body.find('script').each(function() {

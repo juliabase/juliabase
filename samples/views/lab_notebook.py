@@ -27,7 +27,6 @@ information.
 
 import re
 from datetime import datetime, timedelta
-from dateutil import parser
 from urllib.parse import quote_plus
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
@@ -36,7 +35,6 @@ from django.template import loader, RequestContext
 import django.forms as forms
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
-from django.core.serializers import serialize
 from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, \
     capitalize_first_letter, get_model_field_names
 from samples import permissions
@@ -84,7 +82,6 @@ def parse_year_and_month(year_and_month):
         raise Http404("Invalid year and/or month")
     return year, month
 
-# ---------------------------------------------Ayob added this :)------------------
 
 class DateForm(forms.Form):
     """Form for the date fields in which the user can see which month is
@@ -180,7 +177,6 @@ def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
     begin_date = datetime.strptime(begin_date, "%Y-%m-%d")
     end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
-
     # Get the first day of the begin_date input month
     first_day_of_month_begin_date = begin_date.replace(day=1).strftime("%Y-%m-%d")
 
@@ -232,11 +228,6 @@ def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
         next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
                                             kwargs={"begin_date": "{0}".format(first_day_of_month_end_date),
                                                     "end_date": "{0}".format(last_day_of_month_end_date_str)})
-
-        
-
-    
-
     return previous_url, next_url
 
 

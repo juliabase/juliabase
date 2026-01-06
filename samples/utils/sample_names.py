@@ -23,32 +23,6 @@ from samples import models
 from .sample_name_formats import *
 
 
-# def get_sample(sample_name):
-#     """Lookup a sample by name.  You may also give an alias.  If more than one
-#     sample is found (can only happen via aliases), it returns a list.  Matching
-#     is exact.
-
-#     :param sample_name: the name or alias of the sample
-
-#     :type sample_name: str
-
-#     :return:
-#       the found sample.  If more than one sample was found, a list of them.  If
-#       none was found, ``None``.
-
-#     :rtype: `samples.models.Sample`, list of `samples.models.Sample`, or
-#       NoneType
-#     """
-#     try:
-#         sample = models.Sample.objects.get(name=sample_name)
-#     except models.Sample.DoesNotExist:
-#         aliases = [alias.sample for alias in models.SampleAlias.objects.filter(name=sample_name)]
-#         if len(aliases) == 1:
-#             return aliases[0]
-#         return aliases or None
-#     else:
-#         return sample
-
 def get_sample(sample_name):
     """
     Lookup a sample by name or alias. Supports passing a custom queryset

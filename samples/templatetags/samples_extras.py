@@ -808,21 +808,4 @@ def camel_case_to_human_text(value):
     """
     return jb_common.utils.base.camel_case_to_human_text(value)
 
-@register.simple_tag
-def static_with_hash(file_path):
-    full_path = os.path.join(settings.STATIC_ROOT, file_path)
-    if os.path.exists(full_path):
-        with open(full_path, 'rb') as f:
-            file_hash = hashlib.md5(f.read()).hexdigest()
-        url = static(file_path)
-        return f"{url}?v={file_hash}"
-    else:
-        return static(file_path)
-        
-@register.filter
-def join_with_commas(value):
-    if isinstance(value, list):
-        return ', '.join(str(v) for v in value)
-    return value
-
 _ = gettext

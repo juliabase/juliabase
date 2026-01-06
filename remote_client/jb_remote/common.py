@@ -343,6 +343,12 @@ class JuliaBaseConnection:
         if data is None:
             return None
         cleaned_data = {}
+        try:
+            data.items()
+        except AttributeError:
+            decoded = data.decode("utf-8")
+            data = urllib.parse.parse_qs(decoded)
+
         for key, value in data.items():
             key = clean_header(key)
             if value is not None:

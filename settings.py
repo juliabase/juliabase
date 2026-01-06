@@ -85,13 +85,6 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static'),
 ]
-# Add paths to all your "static" subfolders
-# STATICFILES_DIRS = [
-#     # os.path.join(BASE_DIR, 'static'),  # This is the default "static" folder
-#     os.path.join(BASE_DIR, 'jb_common/static'),  # Path to "static" folder in app1
-#     os.path.join(BASE_DIR, 'samples/static'),  # Path to "static" folder in app2
-#     # Add more paths if you have additional "static" folders
-# ]
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
@@ -132,24 +125,16 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    
-    
-
     "jb_common.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-
-    # 'django.middleware.gzip.GZipMiddleware', #This one
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
     "jb_common.middleware.LoggingMiddleware",
     "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
-
     'django.middleware.gzip.GZipMiddleware', #This one
     "debug_toolbar.middleware.DebugToolbarMiddleware",
-
     'htmlmin.middleware.HtmlMinifyMiddleware', #This one
     'htmlmin.middleware.MarkRequestMiddleware', #This one
 ]
@@ -162,8 +147,6 @@ INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
-    # 'dal',
-    # 'dal_select2',
     "django.contrib.admin",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -201,7 +184,6 @@ COMPRESS_FILTERS = {
     ]
 }
 HTML_MINIFY = True
-# EXCLUDE_FROM_MINIFYING = ('../iek5/templates/samples/show_experiment.html',)
 EXCLUDE_FROM_MINIFYING = (
     r"^experiments/(?P<experiment_id>.+)",   # <-- adjust to your real URL(s)
 )
@@ -223,20 +205,15 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.profiling.ProfilingPanel',
 ]
 
-INTERNAL_IPS = [
-    # ...
-    'chantal.fz-juelich.de:8008',
-    '10.32.0.4',
-    '10.32.0.5',
-    '127.0.0.1',
-    '172.17.0.1',
-    # ...
-]
-
 def show_toolbar(request):
-    return True
+    from django.conf import settings
+    return settings.DEBUG
 SHOW_TOOLBAR_CALLBACK = show_toolbar
 
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+    # '...
+}
 
 SITE_ID = 1
 
@@ -280,3 +257,5 @@ SAMPLE_NAME_FORMATS = {
 }
 
 NAME_PREFIX_TEMPLATES = ["{short_year}-{user_initials}-", "{external_contact_initials}-"]
+
+DEFAULT_DEPARTMENT = None

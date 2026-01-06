@@ -282,7 +282,7 @@ class ProcessWithoutSamplesView(TemplateView):
         if all_valid and referentially_valid:
             self.process = self.save_to_database()
             # FIXME: This is bad. It does work, but it is bad. Bad scalability :/
-            if "herculeses" in request.get_full_path() and "edit" in request.get_full_path():
+            if "edit" in request.get_full_path():
                 self.process.last_modified_by_person = django.contrib.auth.models.User.objects.get (username=request.user.username)
                 self.process.last_modified = datetime.now()
                 self.process.save()

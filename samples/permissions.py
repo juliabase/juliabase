@@ -95,9 +95,6 @@ def translate_all_permissions(permissions):
     """
     permissions_dict = {}
     
-    # Fetch all permissions in one query with related content types
-    # permissions = Permission.objects.select_related('content_type')
-    
     for permission in permissions:
         # Extract and process the name of the permission
         match = _permission_name_regex.match(permission.name)
@@ -137,18 +134,12 @@ def get_user_permissions(user):
     permissions = Permission.objects.select_related('content_type')
     perm_dict = translate_all_permissions(permissions=permissions)
     for permission in permissions:
-        try:
-            if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
-                full_permission_name = permission.content_type.app_label + "." + permission.codename
-                if user.has_perm(full_permission_name):
-                    has.append(perm_dict[full_permission_name])
-                else:
-                    has_not.append(perm_dict[full_permission_name])
-        except TypeError:
-            # FIXME: I temporarily added this to get rid of the "doener" permissions that did not get deleted
-            # after deleting the doener order model.
-            if "doener" in str(permission):
-                permission.delete()
+        if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
+            full_permission_name = permission.content_type.app_label + "." + permission.codename
+            if user.has_perm(full_permission_name):
+                has.append(perm_dict[full_permission_name])
+            else:
+                has_not.append(perm_dict[full_permission_name])
     return has, has_not
 
 
@@ -271,21 +262,14 @@ def get_lab_notebooks(user):
     lab_notebooks = []
     for process_class, process in get_all_addable_physical_process_models().items():
         try:
-            # Temporary fix. Since for some reason Raman notebooks weren't programmed like other
-            # notebooks, it has been pretty difficult to make it possible to pick a date range
-            # instead of a fixed year and month. That is why this if statement is used to 
-            # specifically pick raman notebooks and use the normal year/month date system
-            # rather than the date range system.
-            if "raman" in process["type"].lower():
-                url = django.urls.reverse(
-                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
-            
-            # If the notebook is not raman, then use the date range system.
-            else:
+            try:
                 url = django.urls.reverse(
                     process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                     kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label)
+            except django.urls.NoReverseMatch:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
 
         except django.urls.NoReverseMatch:
             pass
@@ -361,16 +345,15 @@ def get_lab_notebooks_once(user):
 
     for process_class, process in all_process_models:
         try:
-            # Generate the URL based on the process type
-            if "raman" in process["type"].lower():
-                url = django.urls.reverse(
-                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label
-                )
-            else:
+            try:
                 url = django.urls.reverse(
                     process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                     kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label
+                )
+            except django.urls.NoReverseMatch:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label
                 )
         except django.urls.NoReverseMatch:
             # Skip if the URL cannot be resolved
@@ -654,8 +637,6 @@ def get_sample_clearance(user, sample):
                         user,
                         sample,
                     )
-                # if has_permission_to_add_physical_process(user, process_class):
-                #     enforce_clearance(task.customer, samples.models.clearance_sets.get(process_class, ()), user, sample)
         try:
             clearance = samples.models.Clearance.objects.get(user=user, sample=sample)
         except samples.models.Clearance.DoesNotExist:
@@ -712,9 +693,6 @@ def can_add_physical_processes(user, process_classes):
 
     # Unpack into physical_processes and add_datas after sorting
     physical_processes, add_datas = zip(*sorted_process_classes)
-
-    # Build a query to fetch permissions for all process classes in a single query
-    # content_types = [ContentType.objects.get_for_model(cls) for cls in physical_processes]
 
     # Extract app labels and model names
     content_type_filters = [
@@ -826,105 +804,6 @@ def assert_can_delete_physical_process(user, process):
     return process.delete(dry_run=True, user=user)
 
 
-def assert_can_delete_wafer(user, wafer):
-    """Tests whether the user can delete a wafer.  For this, the
-    following conditions must be met:
-
-    - ``wafer.is_deletable(user)`` must yield ``True``.
-    - You can edit the wafer.
-    - The wafer is not older than one hour.
-
-    :param user: the user whose permission should be checked
-    :param wafer: The wafer to delete.  This must be the actual instance.
-
-    :type user: django.contrib.auth.models.User
-    :type wafer: `samples.models.wafer`
-
-    :return:
-      the objects that are deleted
-
-    :rtype: set of ``Model``
-
-    :raises PermissionError: if the user is not allowed to delete the wafer.
-    """
-    if user.is_superuser:
-        return True
-    
-    content_type = ContentType.objects.get_for_model(wafer)
-    permission = f"{content_type.app_label}.delete_{content_type.model}"
-
-    if user.has_perm(permission):
-        return True
-    else:
-        return False
-
-
-def assert_can_delete_screenprinterpaste(user, screenprinterpaste):
-    """Tests whether the user can delete a screenprinterpaste.  For this, the
-    following conditions must be met:
-
-    - ``screenprinterpaste.is_deletable(user)`` must yield ``True``.
-    - You can edit the screenprinterpaste.
-    - The screenprinterpaste is not older than one hour.
-
-    :param user: the user whose permission should be checked
-    :param screenprinterpaste: The screenprinterpaste to delete.  This must be the actual instance.
-
-    :type user: django.contrib.auth.models.User
-    :type screenprinterpaste: `samples.models.screenprinterpaste`
-
-    :return:
-      the objects that are deleted
-
-    :rtype: set of ``Model``
-
-    :raises PermissionError: if the user is not allowed to delete the screenprinterpaste.
-    """
-    if user.is_superuser:
-        return True
-    
-    content_type = ContentType.objects.get_for_model(screenprinterpaste)
-    permission = f"{content_type.app_label}.delete_{content_type.model}"
-
-    if user.has_perm(permission):
-        return True
-    else:
-        return False
-
-
-def assert_can_delete_screenprinterscreen(user, screenprinterscreen):
-    """Tests whether the user can delete a screenprinterscreen.  For this, the
-    following conditions must be met:
-
-    - ``screenprinterscreen.is_deletable(user)`` must yield ``True``.
-    - You can edit the screenprinterscreen.
-    - The screenprinterscreen is not older than one hour.
-
-    :param user: the user whose permission should be checked
-    :param screenprinterscreen: The screenprinterscreen to delete.  This must be the actual instance.
-
-    :type user: django.contrib.auth.models.User
-    :type screenprinterscreen: `samples.models.screenprinterscreen`
-
-    :return:
-      the objects that are deleted
-
-    :rtype: set of ``Model``
-
-    :raises PermissionError: if the user is not allowed to delete the screenprinterscreen.
-    """
-    if user.is_superuser:
-        return True
-    
-    content_type = ContentType.objects.get_for_model(screenprinterscreen)
-    permission = f"{content_type.app_label}.delete_{content_type.model}"
-
-    if user.has_perm(permission):
-        return True
-    else:
-        return False
-
-
 def assert_can_add_edit_physical_process(user, process, process_class=None):
     """Tests whether the user can create or edit a physical process
     (i.e. deposition, measurement, etching process, clean room work etc).  This
@@ -1028,18 +907,20 @@ def can_view_physical_processes(user, processes):
     content_types = {
         cls: ContentType.objects.get_for_model(cls)
         for cls in process_classes
+        if cls is not None
     }
     # Build all codenames we need
     needed_codenames = [
         f"view_every_{cls.__name__.lower()}"
         for cls in process_classes
+        if cls is not None
     ]
 
     # Bulk fetch matching permissions
     # This is 1 query instead of N
     permissions = Permission.objects.filter(
         codename__in=needed_codenames,
-        content_type__in=[content_types[cls] for cls in process_classes],
+        content_type__in=[content_types[cls] for cls in process_classes if cls is not None],
     ).values_list("codename", "content_type_id")
 
     # Turn into a lookup set for O(1) checks
@@ -1048,26 +929,28 @@ def can_view_physical_processes(user, processes):
     # Build the lookup dict in Python
     permission_lookup = {}
     for cls in process_classes:
-        codename = f"view_every_{cls.__name__.lower()}"
-        ct = content_types[cls]
-        permission_lookup[cls] = {
-            "codename": codename,
-            "exists": (codename, ct.id) in permission_set,
-            "app_label": cls._meta.app_label,
-        }
+        if cls is not None:
+            codename = f"view_every_{cls.__name__.lower()}"
+            ct = content_types[cls]
+            permission_lookup[cls] = {
+                "codename": codename,
+                "exists": (codename, ct.id) in permission_set,
+                "app_label": cls._meta.app_label,
+            }
 
     # Check permissions
     for process in processes:
         cls = process.content_type.model_class()
-        perm_info = permission_lookup[cls]
+        if cls is not None:
+            perm_info = permission_lookup[cls]
 
-        if perm_info["exists"]:
-            perm_name = f"{perm_info['app_label']}.{perm_info['codename']}"
-            can_view = user.has_perm(perm_name)
-        else:
-            can_view = user.is_superuser
+            if perm_info["exists"]:
+                perm_name = f"{perm_info['app_label']}.{perm_info['codename']}"
+                can_view = user.has_perm(perm_name)
+            else:
+                can_view = user.is_superuser
 
-        permission_dict[process] = can_view
+            permission_dict[process] = can_view
 
     return permission_dict
 

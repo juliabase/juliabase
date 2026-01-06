@@ -84,7 +84,6 @@ class UserDetails(models.Model):
         self._old = self.get_data_hash()
 
     def __str__(self):
-        # return str(self.user)
         return f"{self.user.first_name} {self.user.last_name}"
 
 
