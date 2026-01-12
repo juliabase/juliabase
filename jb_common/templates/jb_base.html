@@ -40,11 +40,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% block favicon %}
     <link rel="shortcut icon" href="{% static 'juliabase/juliabase.ico' %}" type="image/x-icon"/>
   {% endblock %}
-  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Preload critical scripts for better performance -->
+  <link rel="preload" href="https://code.jquery.com/jquery-3.6.0.min.js" as="script">
+  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}"></script>
-  <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}"></script>
+  <!-- Google JSAPI removed - deprecated and causes slow page loads -->
+  <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}" defer></script>
+  <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}" defer></script>
   <script type="text/javascript">
 
   // <![CDATA[
