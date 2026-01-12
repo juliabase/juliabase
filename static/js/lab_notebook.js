@@ -1,7 +1,42 @@
-$(document).ready(function () {
-    // Add manual-datatable class to tables that should not be auto-initialized by juliabase
-    var manualTables = [
-        '#screenprinter',
+(function() {
+    // Wait for jQuery to be available
+    function waitForJQuery(callback) {
+        if (typeof jQuery !== 'undefined') {
+            callback(jQuery);
+        } else {
+            setTimeout(function() { waitForJQuery(callback); }, 50);
+        }
+    }
+
+    waitForJQuery(function($) {
+        function waitForDataTables(callback) {
+            if (typeof $.fn.DataTable !== 'undefined') {
+                callback();
+            } else {
+                // DataTables not ready yet, wait for it
+                var attempts = 0;
+                var checkInterval = setInterval(function() {
+                    attempts++;
+                    if (typeof $.fn.DataTable !== 'undefined') {
+                        clearInterval(checkInterval);
+                        callback();
+                    } else if (attempts > 200) { // 10 seconds timeout
+                        clearInterval(checkInterval);
+                        console.error('lab_notebook.js: DataTables failed to load after 10 seconds');
+                    }
+                }, 50);
+            }
+        }
+
+        // Wait for both DOM ready AND DataTables to be available
+        $(function() {
+            waitForDataTables(initLabNotebook);
+        });
+        
+        function initLabNotebook() {
+        // Add manual-datatable class to tables that should not be auto-initialized by juliabase
+        var manualTables = [
+            '#screenprinter',
         '#five-chamber',
         '#six-chamber',
         '#cluster-tool-2',
@@ -209,4 +244,6 @@ $(document).ready(function () {
             } ]
         } ); 
 
-});
+    } // end initLabNotebook
+    }); // end waitForJQuery callback
+})();

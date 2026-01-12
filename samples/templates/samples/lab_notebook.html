@@ -29,12 +29,10 @@
           title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
   
   {% block cos %}
-<!-- jQuery is already loaded in jb_base.html - removed duplicate to prevent double loading -->
-<!-- Preload critical resources -->
+<!-- Only load CSS here - scripts moved to bottom to avoid jQuery conflicts -->
 <link rel="preload" href="https://cdn.datatables.net/v/dt/dt-2.0.3/fc-5.0.0/fh-4.0.1/r-3.0.0/rg-1.5.0/datatables.min.js" as="script">
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js" as="script">
 <link href="https://cdn.datatables.net/v/dt/dt-2.0.3/fc-5.0.0/fh-4.0.1/r-3.0.0/rg-1.5.0/datatables.min.css" rel="stylesheet">
-<script src="https://cdn.datatables.net/v/dt/dt-2.0.3/fc-5.0.0/fh-4.0.1/r-3.0.0/rg-1.5.0/datatables.min.js" defer></script>
   {% compress css %}
     <link type="text/css" rel="stylesheet" href="{% static 'juliabase/css/table.css'%}"/>
   {% endcompress %}
@@ -80,10 +78,38 @@
     {{ html_body }}
   </div>
 
+  <!-- Load DataTables AFTER the deferred jQuery from jb_base.html -->
+  <!-- This inline script waits for jQuery then loads DataTables dynamically -->
+  <script>
+  (function() {
+    function loadScript(src, callback) {
+      var script = document.createElement('script');
+      script.src = src;
+      script.onload = callback;
+      document.head.appendChild(script);
+    }
+    
+    function waitForJQuery(callback) {
+      if (typeof jQuery !== 'undefined') {
+        callback();
+      } else {
+        setTimeout(function() { waitForJQuery(callback); }, 50);
+      }
+    }
+    
+    waitForJQuery(function() {
+      // Load DataTables after jQuery is ready
+      loadScript('https://cdn.datatables.net/v/dt/dt-2.0.3/fc-5.0.0/fh-4.0.1/r-3.0.0/rg-1.5.0/datatables.min.js', function() {
+        // Dispatch event so other scripts know DataTables is ready
+        window.dispatchEvent(new Event('datatables-ready'));
+      });
+    });
+  })();
+  </script>
 
-  <script src="{% url 'iek5:javascript-catalog' %}" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js" defer></script>
+  <script src="{% url 'iek5:javascript-catalog' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js"></script>
   {% compress js %}
     {% block extra_js %}{% endblock %}
     <script src="{% static 'juliabase/js/lab_notebook.js' %}?v={% now 'U' %}"></script>
