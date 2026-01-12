@@ -30,12 +30,11 @@ import django.contrib.auth.models
 from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language
 import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
-from django.template import Context, TemplateDoesNotExist
+from django.template import TemplateDoesNotExist
 import django.utils.text
 from django.template.loader import render_to_string
 import django.urls
-from django.conf import settings
-from django.db import models, transaction
+from django.db import models
 from django.core.cache import cache
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
 from jb_common.models import Topic, PolymorphicModel, Department
@@ -43,8 +42,6 @@ import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from datetime import datetime as dt, timedelta
-import itertools
-from django.db.models import Prefetch
 from django.db.models.fields.related import ManyToManyRel
 from collections import defaultdict
 
@@ -440,7 +437,9 @@ class Process(PolymorphicModel):
 
     @classmethod
     def get_lab_notebook_context(cls, year, month):
-        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
+        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related(
+            "operator__jb_user_details__department"
+        )
         return {"processes": processes}
 
 
@@ -486,8 +485,15 @@ class Process(PolymorphicModel):
         fields_to_remove = ['informal_layers', 'task', 'feededitedphysicalprocess_set']
         reverse_related_fields_clean = [field for field in reverse_related_fields if field not in fields_to_remove]
 
+        # Add nested relations for operator's user details to avoid N+1 queries
+        # when rendering templates that access operator.jb_user_details.department
+        nested_relations = ['operator__jb_user_details__department']
+        
+        if "responsible_person" in related_fields:
+            nested_relations.append("responsible_person__user")
+
         queryset = cls.objects.filter(timestamp__range=(begin_date, end_date))\
-                                .select_related(*related_fields)\
+                                .select_related(*related_fields, *nested_relations)\
                                 .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
 
         return {"processes": list(queryset)}
