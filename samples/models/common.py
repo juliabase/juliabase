@@ -37,7 +37,7 @@ import django.urls
 from django.db import models
 from django.core.cache import cache
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
-from jb_common.models import Topic, PolymorphicModel, Department
+from jb_common.models import Topic, PolymorphicModel, Department, UserDetails
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
@@ -1157,14 +1157,16 @@ class Sample(models.Model):
             affected_objects = {self}
 
             # Get processes with only this sample
-            processes_to_delete = (
-                self.processes
-                .annotate(sample_count=models.Count("samples"))
-                .filter(sample_count=1)  # only processes tied exclusively to this sample
-                .select_related("content_type")
-            )
-
-            processes_to_delete = list(processes_to_delete)
+            if hasattr(self, "_prefetched_processes_to_delete"):
+                processes_to_delete = self._prefetched_processes_to_delete
+            else:
+                processes_to_delete = (
+                    self.processes
+                    .annotate(sample_count=models.Count("samples"))
+                    .filter(sample_count=1)  # only processes tied exclusively to this sample
+                    .select_related("content_type")
+                )
+                processes_to_delete = list(processes_to_delete)
             # Prefetch actual instances to avoid N+1 queries
             self.prefetch_actual_instances(processes_to_delete)
 
@@ -1302,13 +1304,67 @@ class SampleSplit(Process):
                             "one hour.").format(process=self)
             raise samples.permissions.PermissionError(user, description)
         affected_objects = {self}
-        for sample in self.pieces.all():
-            result = sample.delete(*args, **kwargs)
-            if dry_run:
-                affected_objects |= result
+
         if dry_run:
+            children = list(self.pieces.select_related("currently_responsible_person", "topic").all())
+            
+            # Manually populate departments to ensure no queries in loop
+            users_to_cache = [c.currently_responsible_person for c in children if c.currently_responsible_person]
+            if users_to_cache:
+                user_ids = [u.id for u in users_to_cache]
+                # Fetch UserDetails with department loaded
+                details_map = {
+                    d.user_id: d 
+                    for d in UserDetails.objects.filter(user_id__in=user_ids).select_related("department")
+                }
+                
+                no_dept = samples.permissions.NoDepartment()
+                for user in users_to_cache:
+                    if user.id in details_map:
+                        dept = details_map[user.id].department
+                        user._cached_department = dept if dept else no_dept
+                    else:
+                        user._cached_department = no_dept
+
+            # Bulk optimization to avoid N+1 queries in Sample.delete logic
+            # Find processes that are exclusively attached to any of the children.
+            # We want processes where samples__in=children AND count(samples)=1.
+            # Note: since count=1, and the process is linked to a child, it is linked ONLY to that child.
+            process_data = Process.objects.filter(samples__in=children) \
+                .annotate(sample_count=models.Count("samples")) \
+                .filter(sample_count=1) \
+                .values_list('id', 'samples__id')
+            
+            # Group process IDs by sample ID
+            proc_ids_by_sample = {}
+            all_proc_ids = []
+            for proc_id, sample_id in process_data:
+                proc_ids_by_sample.setdefault(sample_id, []).append(proc_id)
+                all_proc_ids.append(proc_id)
+                
+            # Fetch actual Process objects in one query
+            if all_proc_ids:
+                # We select_related content_type because Sample.delete accesses it
+                processes = Process.objects.filter(id__in=all_proc_ids).select_related("content_type")
+                process_map = {p.id: p for p in processes}
+            else:
+                process_map = {}
+
+            # Assign prefetched list to each child instance
+            for sample in children:
+                p_ids = proc_ids_by_sample.get(sample.id, [])
+                sample._prefetched_processes_to_delete = [
+                    process_map[pid] for pid in p_ids if pid in process_map
+                ]
+
+            for sample in children:
+                result = sample.delete(*args, **kwargs)
+                affected_objects |= result
+
             return affected_objects
         else:
+            for sample in self.pieces.all():
+                sample.delete(*args, **kwargs)
             return super().delete(*args, **kwargs)
 
 

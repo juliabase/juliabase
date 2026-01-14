@@ -508,41 +508,72 @@ class NoDepartment:
     def __bool__(self):
         return False
 
+_department_by_userid = {}
+_topic_by_id = {}
+
+
+def _get_sample_topic(sample):
+    """Return topic for a sample, caching by topic id to avoid duplicate queries."""
+    if sample is None or sample.topic_id is None:
+        return None
+    tid = sample.topic_id
+    if tid in _topic_by_id:
+        return _topic_by_id[tid]
+    topic = sample.topic  # triggers at most one DB fetch per distinct topic id
+    _topic_by_id[tid] = topic
+    return topic
+
+
+def _get_user_department(user):
+    """Get user's department with caching to prevent duplicate queries."""
+    if user is None:
+        return NoDepartment()
+
+    # Global cache keyed by user id to handle multiple instances of the same user
+    if user.id in _department_by_userid:
+        return _department_by_userid[user.id]
+
+    if hasattr(user, "_cached_department"):
+        dept = user._cached_department
+        _department_by_userid[user.id] = dept
+        return dept
+
+    try:
+        details = user.jb_user_details
+        dept = details.department or NoDepartment()
+    except AttributeError:
+        dept = NoDepartment()
+
+    user._cached_department = dept
+    _department_by_userid[user.id] = dept
+    return dept
+
 
 def assert_can_fully_view_sample(user, sample):
-    """Tests whether the user can view the sample fully, i.e. without needing
-    a clearance.
-
-    :param user: the user whose permission should be checked
-    :param sample: the sample to be shown
-
-    :type user: django.contrib.auth.models.User
-    :type sample: `samples.models.Sample`
-
-    :raises PermissionError: if the user is not allowed to fully view the
-        sample.
-    """
+    """Tests whether the user can view the sample fully, i.e. without needing a clearance."""
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
-    user_department = user.jb_user_details.department or NoDepartment()
-    if not sample.topic and sample_department != user_department and not user.is_superuser:
+    sample_department = _get_user_department(currently_responsible_person)
+    user_department = _get_user_department(user)
+    topic = _get_sample_topic(sample)
+
+    if not topic and sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
-    if sample.topic and user not in sample.topic.members.all() and currently_responsible_person != user and \
-            not user.is_superuser:
+
+    if topic and user not in topic.members.all() and currently_responsible_person != user and not user.is_superuser:
         if sample_department != user_department:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor belongs the "
                             "sample to your department.")
             raise PermissionError(user, description, new_topic_would_help=True)
-        elif sample.topic.confidential:
+        elif topic.confidential:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
-                            "its currently responsible person ({name})."). \
-                            format(name=utils.get_really_full_name(currently_responsible_person))
+                            "its currently responsible person ({name}).").format(
+                                name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
         elif not user.has_perm("samples.view_every_sample"):
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
-                            "its currently responsible person ({name}), nor can you view all samples."). \
-                            format(name=utils.get_really_full_name(currently_responsible_person))
+                            "its currently responsible person ({name}), nor can you view all samples.").format(
+                                name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
 
 
@@ -559,8 +590,8 @@ def assert_can_rename_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
-    user_department = user.jb_user_details.department or NoDepartment()
+    sample_department = _get_user_department(currently_responsible_person)
+    user_department = _get_user_department(user)
     if (not user.has_perm("samples.rename_samples") or sample_department != user_department
         or not sample_name_format(sample.name) in get_renamable_name_formats()) \
         and not user.is_superuser:
@@ -677,20 +708,20 @@ def prefetch_add_permissions(process_classes):
     to avoid N+1 queries.
     """
     global _add_permission_existence_cache
-    
+
     missing = [pc for pc in process_classes if pc not in _add_permission_existence_cache]
     if not missing:
         return
 
     ct_map = ContentType.objects.get_for_models(*missing)
     ct_ids = [ct.id for ct in ct_map.values()]
-    perms = Permission.objects.filter(content_type_id__in=ct_ids).values_list('content_type_id', 'codename')
+    perms = Permission.objects.filter(content_type_id__in=ct_ids).values_list("content_type_id", "codename")
     existing_set = set(perms)
-    
+
     for pc in missing:
-         codename = "add_{0}".format(pc.__name__.lower())
-         ct = ct_map[pc]
-         _add_permission_existence_cache[pc] = (ct.id, codename) in existing_set
+        codename = "add_{0}".format(pc.__name__.lower())
+        ct = ct_map[pc]
+        _add_permission_existence_cache[pc] = (ct.id, codename) in existing_set
 
 
 def _check_add_permission_existence(process_class):
@@ -698,7 +729,10 @@ def _check_add_permission_existence(process_class):
         return _add_permission_existence_cache[process_class]
 
     codename = "add_{0}".format(process_class.__name__.lower())
-    exists = Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists()
+    exists = Permission.objects.filter(
+        codename=codename,
+        content_type=ContentType.objects.get_for_model(process_class),
+    ).exists()
     _add_permission_existence_cache[process_class] = exists
     return exists
 
@@ -1103,22 +1137,17 @@ def assert_can_edit_sample(user, sample):
     
     currently_responsible_person = sample.currently_responsible_person
     # Use select_related data if available, otherwise fetch
-    try:
-        sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
-    except AttributeError:
-        sample_department = NoDepartment()
-    try:
-        user_department = user.jb_user_details.department or NoDepartment()
-    except AttributeError:
-        user_department = NoDepartment()
-    if not sample.topic and sample_department != user_department and not user.is_superuser:
+    sample_department = _get_user_department(currently_responsible_person)
+    user_department = _get_user_department(user)
+    topic = _get_sample_topic(sample)
+    if not topic and sample_department != user_department and not user.is_superuser:
         cache.set(cache_key, "denied", 60)
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
     topic_manager_permission = get_topic_manager_permission()
     # Optimize: use exists() with filter instead of loading all members
-    if sample.topic and currently_responsible_person != user and not user.is_superuser and not \
-        (sample.topic.members.filter(id=user.id).exists() and topic_manager_permission in user.user_permissions.all()):
+    if topic and currently_responsible_person != user and not user.is_superuser and not \
+        (topic.members.filter(id=user.id).exists() and topic_manager_permission in user.user_permissions.all()):
         cache.set(cache_key, "denied", 60)
         description = _("You are not allowed to edit the sample “{name}” (including splitting, declaring dead, and deleting) "
                         "because you are not the currently responsible person for this sample.").format(name=sample)
