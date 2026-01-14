@@ -27,13 +27,12 @@ import hashlib, datetime
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.forms.utils import ValidationError
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 import django.utils.timezone
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy as _, gettext, ngettext
 from django.utils.text import capfirst
 from django.views.decorators.http import condition
-import django.contrib.auth.models
 import jb_common.utils.base
 from jb_common.utils.base import unquote_view_parameters, int_or_zero
 from jb_common.utils.views import UserField, TopicField
@@ -116,15 +115,20 @@ def embed_timestamp(request, name):
 
     :rtype: datetime.datetime
     """
-    if not hasattr(request, "_sample_series_timestamp"):
-        try:
-            sample_series = models.SampleSeries.objects.get(name=name)
-        except models.SampleSeries.DoesNotExist:
-            request._sample_series_timestamp = None
-        else:
-            request._sample_series_timestamp = max(
-                sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp,
-                request.user.jb_user_details.layout_last_modified)
+    if getattr(request, "_sample_series_name_cache", None) == name:
+        return
+
+    try:
+        sample_series = models.SampleSeries.objects.get(name=name)
+    except models.SampleSeries.DoesNotExist:
+        request._sample_series_timestamp = None
+        request._sample_series = None
+    else:
+        request._sample_series = sample_series
+        request._sample_series_timestamp = max(
+            sample_series.last_modified, request.user.samples_user_details.display_settings_timestamp,
+            request.user.jb_user_details.layout_last_modified)
+    request._sample_series_name_cache = name
 
 
 def sample_series_timestamp(request, name):
@@ -237,7 +241,13 @@ def show(request, name):
 
     :rtype: HttpResponse
     """
-    sample_series = get_object_or_404(models.SampleSeries, name=name)
+    if getattr(request, "_sample_series_name_cache", None) != name:
+        embed_timestamp(request, name)
+    
+    if request._sample_series is None:
+        raise Http404("No SampleSeries matches the given query.")
+    sample_series = request._sample_series
+
     permissions.assert_can_view_sample_series(request.user, sample_series)
     result_processes = [utils.digest_process(result, request.user) for result in sample_series.results.all()]
     can_edit = permissions.has_permission_to_edit_sample_series(request.user, sample_series)

@@ -19,7 +19,7 @@
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-import hashlib, os.path, time, urllib, json
+import hashlib, time, urllib, json
 from io import BytesIO
 from urllib.parse import quote_plus
 from pathlib import Path
@@ -44,16 +44,12 @@ from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
+    respond_in_json, get_all_models, mkdirs, cache_key_locked, int_or_zero, help_link
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
 from samples.utils import sample_names
 import datetime
-from iek5.models.physical_processes import Experiment
-from samples.models import Sample
-from django.contrib.contenttypes.models import ContentType
-import pprint
 
 class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
@@ -765,11 +761,9 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     sample_id = samples_and_processes.sample_context["sample"].id
-    experiments = list(Experiment.objects.filter(samples__id=sample_id))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
-                   "samples_and_processes": samples_and_processes,
-                   "experiments": experiments})
+                   "samples_and_processes": samples_and_processes})
 
 
 @login_required
@@ -860,12 +854,10 @@ def cleanmysamples(request):
 
     :rtype: HttpResponse
     """
-    too_many_results = False
-    base_query = utils.restricted_samples_query(request.user)
     clean_my_samples_form = CleanMySamplesForm(request.GET)
     found_samples = [s for s in request.user.my_samples.all()]
     protected = []
-    for series in request.user.sample_series.all():
+    for series in request.user.sample_series.prefetch_related('samples'):
         for sample in series.samples.all():
             protected.append(sample)
     to_be_removed = []

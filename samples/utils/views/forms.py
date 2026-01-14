@@ -910,7 +910,8 @@ def choices_of_content_types(classes):
     """
     # FixMe: The translation functionality in this function may become
     # superfluous when Django Ticket #16803 is fixed.
-    choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name) for cls in classes]
+    cts = ContentType.objects.get_for_models(*classes)
+    choices = [(cts[cls].id, cls._meta.verbose_name) for cls in classes]
     choices.sort(key=lambda item: item[1].lower())
     return choices
 

@@ -142,18 +142,8 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
             <tr>
               {% value_field sample.current_location %}
             </tr>
-            
-            {% if experiments %}
-              <tr>
-                  <td class="align-right">This sample is part of these experiments:</td>
-                  <td>
-                      {% for experiment in experiments %}
-                          <a href="{{ experiment.get_absolute_url }}">{{ experiment.get_experiment_id }}</a>
-                          {% if not forloop.last %}, {% endif %}
-                      {% endfor %}
-                  </td>
-              </tr>
-          {% endif %}
+
+            {% block extra_sample_attributes %}{% endblock %}
 
           </table>
 

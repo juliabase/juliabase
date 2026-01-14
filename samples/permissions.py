@@ -658,19 +658,49 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
-    # FIXME: The problem with this function (and probably every other 'assert') function is that it
-    # is called in a loop, and since it contains a database query, then that same query will be repeated each time
-    # in the loop. A solution would be to re-write this function to take a list of elements and loop through them
-    # and only do one database call using 'prefetch_selected', but the problem is, so many other things will have
-    # to be re-written 
-    codename = "add_{0}".format(process_class.__name__.lower())
-    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
+    if _check_add_permission_existence(process_class):
+        codename = "add_{0}".format(process_class.__name__.lower())
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
         if not user.has_perm(permission):
             description = _("You are not allowed to add {process_plural_name} because you don't have the "
                             "permission “{permission}”.").format(
                 process_plural_name=process_class._meta.verbose_name_plural, permission=translate_permission(permission))
             raise PermissionError(user, description)
+
+
+_add_permission_existence_cache = {}
+
+
+def prefetch_add_permissions(process_classes):
+    """
+    Prefetches the existence of add permissions for the given process classes
+    to avoid N+1 queries.
+    """
+    global _add_permission_existence_cache
+    
+    missing = [pc for pc in process_classes if pc not in _add_permission_existence_cache]
+    if not missing:
+        return
+
+    ct_map = ContentType.objects.get_for_models(*missing)
+    ct_ids = [ct.id for ct in ct_map.values()]
+    perms = Permission.objects.filter(content_type_id__in=ct_ids).values_list('content_type_id', 'codename')
+    existing_set = set(perms)
+    
+    for pc in missing:
+         codename = "add_{0}".format(pc.__name__.lower())
+         ct = ct_map[pc]
+         _add_permission_existence_cache[pc] = (ct.id, codename) in existing_set
+
+
+def _check_add_permission_existence(process_class):
+    if process_class in _add_permission_existence_cache:
+        return _add_permission_existence_cache[process_class]
+
+    codename = "add_{0}".format(process_class.__name__.lower())
+    exists = Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists()
+    _add_permission_existence_cache[process_class] = exists
+    return exists
 
 
 def can_add_physical_processes(user, process_classes):
