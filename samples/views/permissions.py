@@ -32,6 +32,7 @@ from jb_common.utils.base import help_link, get_really_full_name, get_all_models
 from jb_common.utils.views import UserField
 from samples import permissions
 import samples.utils.views as utils
+import django
 
 
 class PermissionsModels:
