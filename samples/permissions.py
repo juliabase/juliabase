@@ -1280,12 +1280,12 @@ def assert_can_edit_topic(user, topic=None):
                                                            translate_permission("jb_common.edit_their_topics"))
                 raise PermissionError(user, description)
         else:
-            if not user.has_perm("jb_common.change_topic"):
+            if not user.has_perm("jb_common.change_topic") and topic.manager != user:
                 description = _("You are not allowed to change this topic because "
                                 "you don't have the permission “{name}”.").format(
                     name=translate_permission("jb_common.change_topic"))
                 raise PermissionError(user, description)
-            elif topic.confidential and not user.is_superuser:
+            elif topic.confidential and not user.is_superuser and topic.manager != user:
                 description = _("You are not allowed to change this topic because it is confidential "
                                 "and you are not in this topic.")
                 raise PermissionError(user, description)
@@ -1317,10 +1317,10 @@ def can_edit_all_topics(user, topics):
                     all_topics_perm[topic] = False
                     continue
             else:
-                if not user.has_perm("jb_common.change_topic"):
+                if not user.has_perm("jb_common.change_topic") and topic.manager != user:
                     all_topics_perm[topic] = False
                     continue
-                elif topic.confidential and not user.is_superuser:
+                elif topic.confidential and not user.is_superuser and topic.manager != user:
                     all_topics_perm[topic] = False
                     continue
         all_topics_perm[topic] = True
