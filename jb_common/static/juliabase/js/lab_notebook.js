@@ -62,11 +62,7 @@
         fixedHeader: true // Enable FixedHeader extension
     });
     
-    try{
-        if(no_bs5 == false){
-            
-        }
-    } catch(error){
+    if (typeof window.no_bs5 === 'undefined' || window.no_bs5 === false) {
         // Use jQuery to select the specific div and find its child table element
         var $table = $('.lock-header').find('table');
     
