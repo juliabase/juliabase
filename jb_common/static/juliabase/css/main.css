@@ -127,3 +127,7 @@ table.padding10 th, table.padding10 td { padding: 10px }
 
 table.lab-notebook { margin-top: 2ex; border-top: 2px solid; border-bottom: 2px solid; border-collapse: collapse }
 table.lab-notebook th, table.lab-notebook td { padding: 6px }
+
+th {
+    text-transform: none; /* Ensure text is not transformed */
+}

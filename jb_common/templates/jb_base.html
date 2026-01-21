@@ -30,11 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <!-- FIXME: compress this CSS if you manage to make "compress" work -->
     <link rel="stylesheet" type="text/css" media="screen" href="{% static 'juliabase/css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" media="print" href="{% static 'juliabase/css/print.css' %}"/>
-    <style>
-      th {
-      text-transform: none; /* Ensure text is not transformed */
-        }
-    </style>
     {% endblock %}
   {% block refresh_tag %}{% endblock %}
   {% block favicon %}
@@ -47,16 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <!-- Google JSAPI removed - deprecated and causes slow page loads -->
   <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}" defer></script>
   <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}" defer></script>
-  <script type="text/javascript">
-
-  // <![CDATA[
-  document.addEventListener("DOMContentLoaded", function() {
-        $(function() {
-          $("input:text:visible:first").focus();
-        });
-      });
-      // ]]>
-  </script>
   {% block local_scripts %}{% endblock %}
   {% block extrascripts %}{% endblock %}
 {% endblock %}
