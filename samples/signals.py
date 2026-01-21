@@ -163,6 +163,7 @@ is greater than 1:
 
 import datetime, hashlib
 from django.conf import settings
+from django.db import transaction
 from django.db.models import signals
 import django.utils.timezone
 from django.dispatch import receiver
@@ -197,11 +198,12 @@ def touch_my_samples(sender, instance, action, reverse, model, pk_set, **kwargs)
     else:
         # `instance` is ``Sample``.
         if action == "pre_clear":
-            samples_app.UserDetails.objects.filter(user__in=instance.watchers.all()).update(
-                my_samples_timestamp=now, my_samples_list_timestamp=now)
+            user_ids = list(instance.watchers.values_list('pk', flat=True))
+            transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=user_ids).update(
+                my_samples_timestamp=now, my_samples_list_timestamp=now))
         elif action in ["post_add", "post_remove"]:
-            samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(
-                my_samples_timestamp=now, my_samples_list_timestamp=now)
+            transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(
+                my_samples_timestamp=now, my_samples_list_timestamp=now))
 
 
 
@@ -383,7 +385,7 @@ def touch_my_samples_list_by_topic(sender, instance, raw, **kwargs):
     if not raw and instance.pk:
         old_instance = jb_common_app.Topic.objects.get(pk=instance.pk)
         if old_instance.name != instance.name or old_instance.confidential != instance.confidential:
-            samples_app.UserDetails.objects.update(my_samples_list_timestamp=django.utils.timezone.now())
+            transaction.on_commit(lambda: samples_app.UserDetails.objects.update(my_samples_list_timestamp=django.utils.timezone.now()))
 
 
 @receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
@@ -406,9 +408,10 @@ def touch_my_samples_list_by_topic_memberships(sender, instance, action, reverse
         # `instance` is a topic
         if instance.confidential:
             if action == "pre_clear":
-                samples_app.UserDetails.objects.filter(user__in=instance.members.all()).update(my_samples_list_timestamp=now)
+                user_ids = list(instance.members.values_list('pk', flat=True))
+                transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=user_ids).update(my_samples_list_timestamp=now))
             elif action in ["post_add", "post_remove"]:
-                samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(my_samples_list_timestamp=now)
+                transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(my_samples_list_timestamp=now))
 
 
 @receiver(signals.m2m_changed, sender=jb_common_app.Topic.members.through)
@@ -421,17 +424,17 @@ def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk
     # but who just happen to be in a topic the memberships of which has
     # changed.  Could be possibly fixed by not assigning just a list to
     # ``topic.members`` in the "edit topic" view.
+    now = django.utils.timezone.now()
     if reverse:
         # `instance` is a user
         instance.samples_user_details.touch_display_settings()
     else:
         # `instance` is a topic
         if action == "pre_clear":
-            for user in instance.members.all():
-                user.samples_user_details.touch_display_settings()
+            user_ids = list(instance.members.values_list('pk', flat=True))
+            transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=user_ids).update(display_settings_timestamp=now))
         elif action in ["post_add", "post_remove"]:
-            for user in User.objects.in_bulk(pk_set).values():
-                user.samples_user_details.touch_display_settings()
+            transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(display_settings_timestamp=now))
 
 
 @receiver(signals.m2m_changed, sender=User.groups.through)
@@ -441,14 +444,14 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
     permissions have changed because we must invalidate the browser cache for
     those users.
     """
+    now = django.utils.timezone.now()
     if reverse:
         # `instance` is a group or permission
         if action == "pre_clear":
-            for user in instance.user_set.all():
-                user.samples_user_details.touch_display_settings()
+            user_ids = list(instance.user_set.values_list('pk', flat=True))
+            transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=user_ids).update(display_settings_timestamp=now))
         elif action in ["post_add", "post_remove"]:
-            for user in User.objects.in_bulk(pk_set).values():
-                user.samples_user_details.touch_display_settings()
+            transaction.on_commit(lambda: samples_app.UserDetails.objects.filter(user__pk__in=pk_set).update(display_settings_timestamp=now))
     else:
         # `instance` is a user
         if action in ["pre_clear", "post_add", "post_remove"]:
