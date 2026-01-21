@@ -2,10 +2,8 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from samples.utils.views import digest_process
 from samples.models import Process, Sample
-from django.utils.timezone import localtime
 from django.core.serializers.json import DjangoJSONEncoder
 from samples.templatetags.samples_extras import get_safe_operator_name, timestamp, get_really_full_name
-import json
 
 class SafeJSONEncoder(DjangoJSONEncoder):
     def default(self, obj):
@@ -60,9 +58,9 @@ def process_details(request, process_id, sample_id):
                         "original_sample": sample,
                         "latest_descendant": None,
                         "cutoff_timestamp": None}
-        process_context = digest_process(process, request.user, local_context)  # however you currently build it
+        process_context = digest_process(process, request.user, local_context).copy()  # however you currently build it
     else:
-        process_context = digest_process(process, request.user)  # however you currently build it
+        process_context = digest_process(process, request.user).copy()  # however you currently build it
     
     # Add pre-rendered values
     process_context["operator_safe"] = get_safe_operator_name(process_context["operator"])
