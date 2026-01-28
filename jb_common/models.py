@@ -170,7 +170,7 @@ class Topic(models.Model):
 
         :type user: django.contrib.auth.models.User
         """
-        if self.confidential and not self.members.filter(pk=user.pk).exists():
+        if self.confidential and not self.members.filter(pk=user.pk).exists() and not user.is_superuser:
             return _("topic #{number} (confidential)").format(number=self.id)
         else:
             return self.name
