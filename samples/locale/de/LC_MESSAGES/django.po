@@ -943,7 +943,7 @@ msgid_plural "New samples in “{topic}”"
 msgstr[0] "Neue Probe in „{topic}“"
 msgstr[1] "Neue Proben in „{topic}“"
 
-#: juliabase/samples/models/feeds.py:149 juliabase/samples/models/feeds.py:410
+#: juliabase/samples/models/feeds.py:149 juliabase/samples/models/feeds.py:393
 msgid "old topic"
 msgstr "altes Thema"
 
@@ -2701,23 +2701,23 @@ msgstr "Erstellt von: "
 msgid "Last Modified by: "
 msgstr "Zuletzt geändert von: "
 
-#: juliabase/samples/templates/samples/show_sample.html:73
+#: juliabase/samples/templates/samples/show_sample.html:75
 msgid "Sample “"
 msgstr "Probe „"
 
-#: juliabase/samples/templates/samples/show_sample.html:73
+#: juliabase/samples/templates/samples/show_sample.html:75
 msgid "”"
 msgstr "“"
 
-#: juliabase/samples/templates/samples/show_sample.html:81
+#: juliabase/samples/templates/samples/show_sample.html:83
 msgid "give name"
 msgstr "gib Namen"
 
-#: juliabase/samples/templates/samples/show_sample.html:92
+#: juliabase/samples/templates/samples/show_sample.html:94
 msgid "add process"
 msgstr "Prozess hinzufügen"
 
-#: juliabase/samples/templates/samples/show_sample.html:112
+#: juliabase/samples/templates/samples/show_sample.html:114
 msgid ""
 "You can see this sample only due to a clearance.  Therefore, some fields and "
 "processes are hidden."
@@ -2725,12 +2725,12 @@ msgstr ""
 "Sie können diese Probe nur aufgrund einer Freigabe sehen.  Deshalb sind "
 "einige Angaben und Prozesse versteckt."
 
-#: juliabase/samples/templates/samples/show_sample.html:128
+#: juliabase/samples/templates/samples/show_sample.html:130
 msgid "Attention: Topicless samples may be viewed and edited by anyone."
 msgstr ""
 "Achtung: Themenlose Proben können von jedem eingesehen und geändert werden."
 
-#: juliabase/samples/templates/samples/show_sample.html:165
+#: juliabase/samples/templates/samples/show_sample.html:157
 #, python-format
 msgid ""
 "\n"
@@ -2915,11 +2915,11 @@ msgstr ""
 "(Sie müssen diesen letzten Namen ändern, um ein zusätzliches Stück "
 "anzulegen.)"
 
-#: juliabase/samples/templates/samples/statistics.html:38
+#: juliabase/samples/templates/samples/statistics.html:39
 msgid "hit rate"
 msgstr "Trefferquote"
 
-#: juliabase/samples/templates/samples/statistics.html:59
+#: juliabase/samples/templates/samples/statistics.html:60
 msgid ""
 "This page is so rudimentary because it depends heavily on\n"
 "  the particular server configuration.  You may extend this page\n"
@@ -2928,11 +2928,11 @@ msgstr ""
 "Diese Seite ist so spartanisch, weil sie stark von der jeweiligen "
 "Serverkonfiguration abhängt.  Man kann sie beliebig erweitern."
 
-#: juliabase/samples/templates/samples/statistics.html:63
+#: juliabase/samples/templates/samples/statistics.html:64
 msgid "Cache status"
 msgstr "Cache-Status"
 
-#: juliabase/samples/templates/samples/statistics.html:66
+#: juliabase/samples/templates/samples/statistics.html:67
 msgid "No caching statistics available because caching is disabled."
 msgstr "Keine Cache-Statistiken verfügbar, weil Caching abgeschaltet ist."
 
@@ -2989,7 +2989,7 @@ msgid "Go back"
 msgstr "Zurück"
 
 #: juliabase/samples/templates/samples/task_lists.html:33
-#: juliabase/samples/views/task_lists.py:313
+#: juliabase/samples/views/task_lists.py:312
 msgid "add task"
 msgstr "Auftrag hinzufügen"
 
@@ -2998,7 +2998,7 @@ msgid "No current tasks."
 msgstr "Keine aktuellen Aufträge."
 
 #: juliabase/samples/templates/samples/task_lists.html:50
-#: juliabase/samples/views/task_lists.py:313
+#: juliabase/samples/views/task_lists.py:312
 msgid "edit task"
 msgstr "Auftrag ändern"
 
@@ -4062,17 +4062,17 @@ msgstr "Dieser Probenname hat ein ungültiges Format."
 msgid "(for all samples; leave empty for no change)"
 msgstr "(für alle Proben; leerlassen um nichts zu ändern)"
 
-#: juliabase/samples/views/split_after_deposition.py:302
+#: juliabase/samples/views/split_after_deposition.py:327
 #, python-format
 msgid "Sample %(sample)s occurs multiple times."
 msgstr "Probe %(sample)s kommt mehrfach vor."
 
-#: juliabase/samples/views/split_after_deposition.py:307
+#: juliabase/samples/views/split_after_deposition.py:332
 #, python-format
 msgid "Sample %(sample)s doesn't belong to this deposition."
 msgstr "Probe %(sample)s gehört nicht zu dieser Deposition."
 
-#: juliabase/samples/views/split_after_deposition.py:318
+#: juliabase/samples/views/split_after_deposition.py:343
 msgid ""
 "Since there is more than one piece, the new name must not be exactly the "
 "deposition's name."
@@ -4080,23 +4080,23 @@ msgstr ""
 "Da es mehr als ein Probenstück gibt, darf der neue Name nicht exakt der "
 "Depositionsname sein."
 
-#: juliabase/samples/views/split_after_deposition.py:325
+#: juliabase/samples/views/split_after_deposition.py:350
 msgid "At least one sample of the original deposition is missing."
 msgstr "Wenigstens eine Probe der originalen Deposition fehlt."
 
-#: juliabase/samples/views/split_after_deposition.py:334
+#: juliabase/samples/views/split_after_deposition.py:359
 msgid ""
 "The sample can't be split, because the deposition is not the latest process."
 msgstr ""
 "Die Probe kann nicht gespalten werden, weil die Deposition nicht der letzte "
 "Prozess ist."
 
-#: juliabase/samples/views/split_after_deposition.py:343
+#: juliabase/samples/views/split_after_deposition.py:368
 msgid "If you don't split, you can't rename the single piece."
 msgstr ""
 "Wenn Sie nicht spalten, dürfen Sie das einzelne Stück nicht umbenennen."
 
-#: juliabase/samples/views/split_after_deposition.py:353
+#: juliabase/samples/views/split_after_deposition.py:378
 msgid ""
 "If you choose a deposition-style name, it must begin with the parent's new "
 "name."
@@ -4177,24 +4177,24 @@ msgstr "JuliaBase Server-Statistik"
 msgid "With kind support of …"
 msgstr "Mit freundlicher Unterstützung von …"
 
-#: juliabase/samples/views/status.py:42
+#: juliabase/samples/views/status.py:41
 msgid "status level"
 msgstr "Statuslevel"
 
-#: juliabase/samples/views/status.py:101
+#: juliabase/samples/views/status.py:100
 msgid "The begin must be before the end."
 msgstr "Der Beginn muß vor dem Ende liegen."
 
-#: juliabase/samples/views/status.py:105
+#: juliabase/samples/views/status.py:104
 msgid "A message must be given when the status level is red or yellow."
 msgstr ""
 "Wenn das Statuslevel rot oder gelb ist, muß eine Nachricht eingegeben werden."
 
-#: juliabase/samples/views/status.py:129
+#: juliabase/samples/views/status.py:128
 msgid "The status message was successfully added to the database."
 msgstr "Die Statusmeldung wurde erfolgreich zur Datenbank hinzugefügt."
 
-#: juliabase/samples/views/status.py:132
+#: juliabase/samples/views/status.py:131
 msgid "Add status message"
 msgstr "Statusmeldung hinzufügen"
 
@@ -4210,51 +4210,51 @@ msgstr "Spalten-Gruppen"
 msgid "Columns"
 msgstr "Spalten"
 
-#: juliabase/samples/views/task_lists.py:182
+#: juliabase/samples/views/task_lists.py:181
 msgid "With this status, you must set an operator."
 msgstr "Sie müssen bei diesem Status einen Operateur setzen."
 
-#: juliabase/samples/views/task_lists.py:189
+#: juliabase/samples/views/task_lists.py:188
 msgid "show task lists for"
 msgstr "zeige Auftragslisten für"
 
-#: juliabase/samples/views/task_lists.py:286
+#: juliabase/samples/views/task_lists.py:285
 #, python-brace-format
 msgid "* Status is now “{new_status}”.\n"
 msgstr "* Der Status ist nun „{new_status}“.\n"
 
-#: juliabase/samples/views/task_lists.py:289
+#: juliabase/samples/views/task_lists.py:288
 #, python-brace-format
 msgid "* Priority is now “{new_priority}̣”.\n"
 msgstr "* Die Priorität ist nun „{new_priority}“.\n"
 
-#: juliabase/samples/views/task_lists.py:291
+#: juliabase/samples/views/task_lists.py:290
 msgid "* Connected process.\n"
 msgstr "* Mit Prozess verbunden.\n"
 
-#: juliabase/samples/views/task_lists.py:294
+#: juliabase/samples/views/task_lists.py:293
 #, python-brace-format
 msgid "* Operator is now {operator}.\n"
 msgstr "* Der Operateur ist nun {operator}.\n"
 
-#: juliabase/samples/views/task_lists.py:297
+#: juliabase/samples/views/task_lists.py:296
 msgid "* No operator is set anymore.\n"
 msgstr "* Es ist kein Operateur mehr gesetzt.\n"
 
-#: juliabase/samples/views/task_lists.py:305
+#: juliabase/samples/views/task_lists.py:304
 #, python-brace-format
 msgid "Task was {verb} successfully."
 msgstr "Der Auftrag wurde erfolgreich {verb}."
 
-#: juliabase/samples/views/task_lists.py:305
+#: juliabase/samples/views/task_lists.py:304
 msgid "edited"
 msgstr "geändert"
 
-#: juliabase/samples/views/task_lists.py:411
+#: juliabase/samples/views/task_lists.py:427
 msgid "You are not the customer of this task."
 msgstr "Sie sind nicht der Auftraggeber dieses Auftrags."
 
-#: juliabase/samples/views/task_lists.py:414
+#: juliabase/samples/views/task_lists.py:430
 msgid "The task was successfully removed."
 msgstr "Der Auftrag wurde erfolgreich entfernt."
 
