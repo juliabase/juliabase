@@ -22,11 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 {% load static %}
 {% load cache %}
-{% load compress %}
 
 
 {% block local_scripts %}
-{% compress js %}
 <script type="text/javascript" defer>
 // <![CDATA[
 $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements' %}",
@@ -55,7 +53,6 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
               });
 // ]]>
 </script>
-{% endcompress %}
 
 {% endblock %}
 
@@ -67,7 +64,7 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
       <div class="my-samples">
         <h2>{% translate 'My Samples' %}<a class="edit-icon"
                                href="{% url 'samples:edit_my_samples' username=user.username %}"
-                               ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% translate 'edit' %}"
+                               ><img src="{% static 'juliabase/icons/pencil.png' %}" alt="edit icon" title="{% translate 'edit' %}"
                                      width="16" height="16"/></a></h2>
 
         {% if topicless_samples %}
