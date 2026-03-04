@@ -27,6 +27,25 @@ import django.utils.timezone
 from django.utils.translation import gettext_lazy as _, gettext
 import jb_common.search
 
+class SelfResolvingGenericForeignKey(GenericForeignKey):
+    """A GenericForeignKey which avoids a DB query if the instance is already of the target type."""
+    def __get__(self, instance, cls=None):
+        if instance is None:
+            return self
+
+        try:
+            ct = getattr(instance, self.ct_field)
+            if ct is not None:
+                model = ct.model_class()
+                if isinstance(instance, model):
+                    fk_val = getattr(instance, self.fk_field)
+                    if str(instance.pk) == str(fk_val):
+                        return instance
+        except Exception:
+            pass
+
+        return super().__get__(instance, cls)
+
 
 class Department(models.Model):
     """Model to determine which process belongs to which department.
@@ -256,7 +275,7 @@ class PolymorphicModel(models.Model):
     """
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     actual_object_id = models.PositiveIntegerField(null=True, blank=True, editable=False)
-    actual_instance = GenericForeignKey("content_type", "actual_object_id")
+    actual_instance = SelfResolvingGenericForeignKey("content_type", "actual_object_id")
 
     def save(self, *args, **kwargs):
         """Saves the instance and assures that `actual_instance` is set.

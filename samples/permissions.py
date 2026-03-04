@@ -989,10 +989,7 @@ def assert_can_view_physical_process(user, process):
     process_class = process.content_type.model_class()
     codename = "view_every_{0}".format(process_class.__name__.lower())
     permission_name_to_view_all = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
-    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
-        has_view_all_permission = user.has_perm(permission_name_to_view_all)
-    else:
-        has_view_all_permission = user.is_superuser
+    has_view_all_permission = user.has_perm(permission_name_to_view_all)
     if not has_view_all_permission and process.operator != user and \
             not any(has_permission_to_fully_view_sample(user, sample) for sample in process.samples.all()) and \
             not samples.models.Clearance.objects.filter(user=user, processes=process).exists():

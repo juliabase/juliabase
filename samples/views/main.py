@@ -245,6 +245,10 @@ def show_process(request, process_id, process_name="Process"):
         raise Http404("Invalid value for {} passed: {}".format(identifying_field, repr(process_id)))
     if not isinstance(process, models.PhysicalProcess):
         raise Http404("No physical process with that ID was found.")
+    
+    from django.db.models import prefetch_related_objects
+    prefetch_related_objects([process], "samples")
+    
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())

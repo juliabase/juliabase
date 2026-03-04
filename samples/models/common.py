@@ -227,7 +227,6 @@ class Process(PolymorphicModel):
 
     def __str__(self):
         self = self.actual_instance
-        samples = self.samples.values_list("name", flat=True)
         try:
             field_name = self.JBMeta.identifying_field
         except AttributeError:
@@ -237,7 +236,9 @@ class Process(PolymorphicModel):
             # measurement 26”.
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=getattr(self, field_name))
-        elif samples:
+        
+        samples = tuple(sample.name for sample in self.samples.all())
+        if samples:
             # Translators: Label for a process instance, e.g. a measurement,
             # e.g. “thickness measurement of 01B-410”.  Singular/plural refers
             # to {samples}.
