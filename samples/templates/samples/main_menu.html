@@ -22,11 +22,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load samples_extras %}
 {% load static %}
 {% load cache %}
-{% load compress %}
 
 
-{% block local_scripts %}
-{% compress js %}
+{% block local_scripts_dynamic %}
+  {{ block.super }}
 <script type="text/javascript" defer>
 // <![CDATA[
 $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements' %}",
@@ -55,8 +54,6 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
               });
 // ]]>
 </script>
-{% endcompress %}
-
 {% endblock %}
 
 {% block frame_content %}

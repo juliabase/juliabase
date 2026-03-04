@@ -35,7 +35,7 @@ if not os.path.exists(os.path.join(BASE_DIR, "jb_common")) and os.path.exists(os
     BASE_DIR = os.path.join(os.path.dirname(BASE_DIR), "juliabase")
 
 
-DEBUG = True
+DEBUG = False#True
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
