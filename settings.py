@@ -230,8 +230,8 @@ INTERNAL_IPS = [
 ]
 
 def show_toolbar(request):
-    return True
-SHOW_TOOLBAR_CALLBACK = show_toolbar
+    from django.conf import settings
+    return settings.DEBUG
 
 
 SITE_ID = 1
