@@ -121,7 +121,17 @@ def should_show(operator):
     not be shown if they are in no department because this is considered not an
     account of an actual person.
     """
-    return not isinstance(operator, django.contrib.auth.models.User) or operator.jb_user_details.department
+    if not isinstance(operator, django.contrib.auth.models.User):
+        return True
+    if hasattr(operator, "_cached_department"):
+        dept = operator._cached_department
+    else:
+        try:
+            dept = operator.jb_user_details.department
+        except AttributeError:
+            dept = None
+        operator._cached_department = dept
+    return bool(dept)
 
 
 class VerboseNameNode(template.Node):
