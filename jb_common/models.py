@@ -81,7 +81,24 @@ class UserDetails(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._old = self.get_data_hash()
+        # Avoid accessing field descriptors here because during
+        # construction from the DB (Model.from_db) accessing a field can
+        # trigger a refresh_from_db and recurse. Use values present in
+        # __dict__ only; if they are not available, defer computing the
+        # hash until later (e.g. on save).
+        lang = self.__dict__.get("language")
+        bs = self.__dict__.get("browser_system")
+        if lang is not None and bs is not None:
+            try:
+                h = hashlib.sha1()
+                h.update(lang.encode())
+                h.update(b"\x03")
+                h.update(bs.encode())
+                self._old = h.hexdigest()
+            except Exception:
+                self._old = None
+        else:
+            self._old = None
 
     def __str__(self):
         # return str(self.user)
