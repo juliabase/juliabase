@@ -78,7 +78,7 @@ $(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id
            href="{% url 'samples:edit_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                           ><img src="{% static 'juliabase/icons/pencil.png' %}" alt="edit icon" title="{% translate 'edit' %}"
                                 width="16" height="16"/></a>
-        {% if sample.id_for_rename %}<a class="edit-icon"
+        {% if sample.id_for_rename and not sample.sample.is_dead and not sample.can_rename_sample %}<a class="edit-icon"
            href="{% url 'samples:bulk_rename' %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
     ><img src="{% static 'juliabase/icons/tag_blue.png' %}" alt="give-name icon" title="{% translate 'give name' %}"
           width="16" height="16"/></a>
