@@ -36,6 +36,7 @@ permission just means that e.g. a link is not generated (for example, in the
 """
 
 import hashlib, re
+from django.core.cache import cache
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 import django.urls
@@ -95,9 +96,6 @@ def translate_all_permissions(permissions):
     """
     permissions_dict = {}
     
-    # Fetch all permissions in one query with related content types
-    # permissions = Permission.objects.select_related('content_type')
-    
     for permission in permissions:
         # Extract and process the name of the permission
         match = _permission_name_regex.match(permission.name)
@@ -137,18 +135,13 @@ def get_user_permissions(user):
     permissions = Permission.objects.select_related('content_type')
     perm_dict = translate_all_permissions(permissions=permissions)
     for permission in permissions:
-        try:
-            if not issubclass(permission.content_type.model_class(), samples.models.PhysicalProcess):
-                full_permission_name = permission.content_type.app_label + "." + permission.codename
-                if user.has_perm(full_permission_name):
-                    has.append(perm_dict[full_permission_name])
-                else:
-                    has_not.append(perm_dict[full_permission_name])
-        except TypeError:
-            # FIXME: I temporarily added this to get rid of the "doener" permissions that did not get deleted
-            # after deleting the doener order model.
-            if "doener" in str(permission):
-                permission.delete()
+        model_class = permission.content_type.model_class()
+        if model_class is None or not issubclass(model_class, samples.models.PhysicalProcess):
+            full_permission_name = permission.content_type.app_label + "." + permission.codename
+            if user.has_perm(full_permission_name):
+                has.append(perm_dict[full_permission_name])
+            else:
+                has_not.append(perm_dict[full_permission_name])
     return has, has_not
 
 
@@ -271,21 +264,14 @@ def get_lab_notebooks(user):
     lab_notebooks = []
     for process_class, process in get_all_addable_physical_process_models().items():
         try:
-            # Temporary fix. Since for some reason Raman notebooks weren't programmed like other
-            # notebooks, it has been pretty difficult to make it possible to pick a date range
-            # instead of a fixed year and month. That is why this if statement is used to 
-            # specifically pick raman notebooks and use the normal year/month date system
-            # rather than the date range system.
-            if "raman" in process["type"].lower():
-                url = django.urls.reverse(
-                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
-            
-            # If the notebook is not raman, then use the date range system.
-            else:
+            try:
                 url = django.urls.reverse(
                     process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                     kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label)
+            except django.urls.NoReverseMatch:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label)
 
         except django.urls.NoReverseMatch:
             pass
@@ -350,27 +336,34 @@ def get_lab_notebooks_once(user):
         content_type__in=content_types.values()
     ).select_related("content_type")
 
-    all_user_permissions = user.get_all_permissions()
-    
-    # Create a lookup dictionary containing only the intersection
-    permission_lookup = {
-        (perm.content_type, perm.codename): True
-        for perm in permissions
-        if f"{perm.content_type.app_label}.{perm.codename}" in all_user_permissions
-    }
+    # Determine which of the requested permissions the user actually has
+    if user.is_superuser:
+        # superusers have all permissions
+        permission_lookup = { (perm.content_type, perm.codename): True for perm in permissions }
+    else:
+        # Query only the relevant permissions that are assigned to the user either
+        # directly or via group membership. This avoids calling `user.get_all_permissions()`
+        # which performs a broad permissions lookup and can duplicate auth queries.
+        user_perms = Permission.objects.filter(
+            codename__in=codenames,
+            content_type__in=content_types.values()
+        ).filter(
+            Q(user=user) | Q(group__user=user)
+        ).select_related("content_type").distinct()
+
+        permission_lookup = { (perm.content_type, perm.codename): True for perm in user_perms }
 
     for process_class, process in all_process_models:
         try:
-            # Generate the URL based on the process type
-            if "raman" in process["type"].lower():
-                url = django.urls.reverse(
-                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
-                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label
-                )
-            else:
+            try:
                 url = django.urls.reverse(
                     process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
                     kwargs={"begin_date": "", "end_date": ""}, current_app=process_class._meta.app_label
+                )
+            except django.urls.NoReverseMatch:
+                url = django.urls.reverse(
+                    process_class._meta.app_label + ":lab_notebook_" + utils.camel_case_to_underscores(process["type"]),
+                    kwargs={"year_and_month": ""}, current_app=process_class._meta.app_label
                 )
         except django.urls.NoReverseMatch:
             # Skip if the URL cannot be resolved
@@ -524,41 +517,72 @@ class NoDepartment:
     def __bool__(self):
         return False
 
+_department_by_userid = {}
+_topic_by_id = {}
+
+
+def _get_sample_topic(sample):
+    """Return topic for a sample, caching by topic id to avoid duplicate queries."""
+    if sample is None or sample.topic_id is None:
+        return None
+    tid = sample.topic_id
+    if tid in _topic_by_id:
+        return _topic_by_id[tid]
+    topic = sample.topic  # triggers at most one DB fetch per distinct topic id
+    _topic_by_id[tid] = topic
+    return topic
+
+
+def _get_user_department(user):
+    """Get user's department with caching to prevent duplicate queries."""
+    if user is None:
+        return NoDepartment()
+
+    # Global cache keyed by user id to handle multiple instances of the same user
+    if user.id in _department_by_userid:
+        return _department_by_userid[user.id]
+
+    if hasattr(user, "_cached_department"):
+        dept = user._cached_department
+        _department_by_userid[user.id] = dept
+        return dept
+
+    try:
+        details = user.jb_user_details
+        dept = details.department or NoDepartment()
+    except AttributeError:
+        dept = NoDepartment()
+
+    user._cached_department = dept
+    _department_by_userid[user.id] = dept
+    return dept
+
 
 def assert_can_fully_view_sample(user, sample):
-    """Tests whether the user can view the sample fully, i.e. without needing
-    a clearance.
-
-    :param user: the user whose permission should be checked
-    :param sample: the sample to be shown
-
-    :type user: django.contrib.auth.models.User
-    :type sample: `samples.models.Sample`
-
-    :raises PermissionError: if the user is not allowed to fully view the
-        sample.
-    """
+    """Tests whether the user can view the sample fully, i.e. without needing a clearance."""
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
-    user_department = user.jb_user_details.department or NoDepartment()
-    if not sample.topic and sample_department != user_department and not user.is_superuser:
+    sample_department = _get_user_department(currently_responsible_person)
+    user_department = _get_user_department(user)
+    topic = _get_sample_topic(sample)
+
+    if not topic and sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
-    if sample.topic and user not in sample.topic.members.all() and currently_responsible_person != user and \
-            not user.is_superuser:
+
+    if topic and user not in topic.members.all() and currently_responsible_person != user and not user.is_superuser:
         if sample_department != user_department:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor belongs the "
                             "sample to your department.")
             raise PermissionError(user, description, new_topic_would_help=True)
-        elif sample.topic.confidential:
+        elif topic.confidential:
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
-                            "its currently responsible person ({name})."). \
-                            format(name=utils.get_really_full_name(currently_responsible_person))
+                            "its currently responsible person ({name}).").format(
+                                name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
         elif not user.has_perm("samples.view_every_sample"):
             description = _("You are not allowed to view the sample since you are not in the sample's topic, nor are you "
-                            "its currently responsible person ({name}), nor can you view all samples."). \
-                            format(name=utils.get_really_full_name(currently_responsible_person))
+                            "its currently responsible person ({name}), nor can you view all samples.").format(
+                                name=utils.get_really_full_name(currently_responsible_person))
             raise PermissionError(user, description, new_topic_would_help=True)
 
 
@@ -575,8 +599,8 @@ def assert_can_rename_sample(user, sample):
         sample.
     """
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
-    user_department = user.jb_user_details.department or NoDepartment()
+    sample_department = _get_user_department(currently_responsible_person)
+    user_department = _get_user_department(user)
     if (not user.has_perm("samples.rename_samples") or sample_department != user_department
         or not sample_name_format(sample.name) in get_renamable_name_formats()) \
         and not user.is_superuser:
@@ -635,14 +659,25 @@ def get_sample_clearance(user, sample):
         assert_can_fully_view_sample(user, sample)
     except PermissionError as error:
         try:
-            tasks = samples.models.Task.objects.filter(samples=sample)
+            tasks = samples.models.Task.objects.filter(samples=sample).select_related("process_class", "customer")
         except samples.models.Task.DoesNotExist:
             pass
         else:
+            process_classes = {t.process_class.model_class() for t in tasks}
+            permission_cache = {
+                cls: has_permission_to_add_physical_process(user, cls)
+                for cls in process_classes
+            }
+
             for task in tasks:
                 process_class = task.process_class.model_class()
-                if has_permission_to_add_physical_process(user, process_class):
-                    enforce_clearance(task.customer, samples.models.clearance_sets.get(process_class, ()), user, sample)
+                if permission_cache[process_class]:
+                    enforce_clearance(
+                        task.customer,
+                        samples.models.clearance_sets.get(process_class, ()),
+                        user,
+                        sample,
+                    )
         try:
             clearance = samples.models.Clearance.objects.get(user=user, sample=sample)
         except samples.models.Clearance.DoesNotExist:
@@ -663,19 +698,52 @@ def assert_can_add_physical_process(user, process_class):
 
     :raises PermissionError: if the user is not allowed to add a process.
     """
-    # FIXME: The problem with this function (and probably every other 'assert') function is that it
-    # is called in a loop, and since it contains a database query, then that same query will be repeated each time
-    # in the loop. A solution would be to re-write this function to take a list of elements and loop through them
-    # and only do one database call using 'prefetch_selected', but the problem is, so many other things will have
-    # to be re-written 
-    codename = "add_{0}".format(process_class.__name__.lower())
-    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
+    if _check_add_permission_existence(process_class):
+        codename = "add_{0}".format(process_class.__name__.lower())
         permission = "{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename)
         if not user.has_perm(permission):
             description = _("You are not allowed to add {process_plural_name} because you don't have the "
                             "permission “{permission}”.").format(
                 process_plural_name=process_class._meta.verbose_name_plural, permission=translate_permission(permission))
             raise PermissionError(user, description)
+
+
+_add_permission_existence_cache = {}
+
+
+def prefetch_add_permissions(process_classes):
+    """
+    Prefetches the existence of add permissions for the given process classes
+    to avoid N+1 queries.
+    """
+    global _add_permission_existence_cache
+
+    missing = [pc for pc in process_classes if pc not in _add_permission_existence_cache]
+    if not missing:
+        return
+
+    ct_map = ContentType.objects.get_for_models(*missing)
+    ct_ids = [ct.id for ct in ct_map.values()]
+    perms = Permission.objects.filter(content_type_id__in=ct_ids).values_list("content_type_id", "codename")
+    existing_set = set(perms)
+
+    for pc in missing:
+        codename = "add_{0}".format(pc.__name__.lower())
+        ct = ct_map[pc]
+        _add_permission_existence_cache[pc] = (ct.id, codename) in existing_set
+
+
+def _check_add_permission_existence(process_class):
+    if process_class in _add_permission_existence_cache:
+        return _add_permission_existence_cache[process_class]
+
+    codename = "add_{0}".format(process_class.__name__.lower())
+    exists = Permission.objects.filter(
+        codename=codename,
+        content_type=ContentType.objects.get_for_model(process_class),
+    ).exists()
+    _add_permission_existence_cache[process_class] = exists
+    return exists
 
 
 def can_add_physical_processes(user, process_classes):
@@ -699,9 +767,6 @@ def can_add_physical_processes(user, process_classes):
 
     # Unpack into physical_processes and add_datas after sorting
     physical_processes, add_datas = zip(*sorted_process_classes)
-
-    # Build a query to fetch permissions for all process classes in a single query
-    # content_types = [ContentType.objects.get_for_model(cls) for cls in physical_processes]
 
     # Extract app labels and model names
     content_type_filters = [
@@ -772,20 +837,41 @@ def assert_can_edit_physical_process(user, process):
         process.
     """
     process_class = process.content_type.model_class()
+    # Cache the full permission check result
+    cache_key = f"can_edit_phys_process:{user.id}:{process.id}"
+    cached = cache.get(cache_key)
+    if cached == "allowed":
+        return
+    elif cached == "denied":
+        raise PermissionError(user, "Permission denied (cached)")
+    
+    if process_class is None:
+        return
     codename = "change_{0}".format(process_class.__name__.lower())
     has_edit_all_permission = \
         user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     codename = "add_{0}".format(process_class.__name__.lower())
-    if Permission.objects.filter(codename=codename, content_type=ContentType.objects.get_for_model(process_class)).exists():
+    
+    ct = ContentType.objects.get_for_model(process_class)
+    perm_exists_key = f"perm_exists:{ct.id}:{codename}"
+    perm_exists = cache.get(perm_exists_key)
+    if perm_exists is None:
+        perm_exists = Permission.objects.filter(codename=codename, content_type=ct).exists()
+        cache.set(perm_exists_key, perm_exists, 3600)
+
+    if perm_exists:
         has_add_permission = \
             user.has_perm("{app_label}.{codename}".format(app_label=process_class._meta.app_label, codename=codename))
     else:
         has_add_permission = True
     if (not has_add_permission or process.operator != user) and not (has_add_permission and not process.finished) and \
             not has_edit_all_permission and not user.is_superuser:
-        description = _("You are not allowed to edit the process “{process}” because you are not the operator "
+        cache.set(cache_key, "denied", 60)
+        description = _("You are not allowed to edit the process \xe2\x80\x9c{process}\xe2\x80\x9d because you are not the operator "
                         "of this process.").format(process=process)
         raise PermissionError(user, description)
+
+    cache.set(cache_key, "allowed", 60)
 
 
 def assert_can_delete_physical_process(user, process):
@@ -811,105 +897,6 @@ def assert_can_delete_physical_process(user, process):
     :raises PermissionError: if the user is not allowed to delete the process.
     """
     return process.delete(dry_run=True, user=user)
-
-
-def assert_can_delete_wafer(user, wafer):
-    """Tests whether the user can delete a wafer.  For this, the
-    following conditions must be met:
-
-    - ``wafer.is_deletable(user)`` must yield ``True``.
-    - You can edit the wafer.
-    - The wafer is not older than one hour.
-
-    :param user: the user whose permission should be checked
-    :param wafer: The wafer to delete.  This must be the actual instance.
-
-    :type user: django.contrib.auth.models.User
-    :type wafer: `samples.models.wafer`
-
-    :return:
-      the objects that are deleted
-
-    :rtype: set of ``Model``
-
-    :raises PermissionError: if the user is not allowed to delete the wafer.
-    """
-    if user.is_superuser:
-        return True
-    
-    content_type = ContentType.objects.get_for_model(wafer)
-    permission = f"{content_type.app_label}.delete_{content_type.model}"
-
-    if user.has_perm(permission):
-        return True
-    else:
-        return False
-
-
-def assert_can_delete_screenprinterpaste(user, screenprinterpaste):
-    """Tests whether the user can delete a screenprinterpaste.  For this, the
-    following conditions must be met:
-
-    - ``screenprinterpaste.is_deletable(user)`` must yield ``True``.
-    - You can edit the screenprinterpaste.
-    - The screenprinterpaste is not older than one hour.
-
-    :param user: the user whose permission should be checked
-    :param screenprinterpaste: The screenprinterpaste to delete.  This must be the actual instance.
-
-    :type user: django.contrib.auth.models.User
-    :type screenprinterpaste: `samples.models.screenprinterpaste`
-
-    :return:
-      the objects that are deleted
-
-    :rtype: set of ``Model``
-
-    :raises PermissionError: if the user is not allowed to delete the screenprinterpaste.
-    """
-    if user.is_superuser:
-        return True
-    
-    content_type = ContentType.objects.get_for_model(screenprinterpaste)
-    permission = f"{content_type.app_label}.delete_{content_type.model}"
-
-    if user.has_perm(permission):
-        return True
-    else:
-        return False
-
-
-def assert_can_delete_screenprinterscreen(user, screenprinterscreen):
-    """Tests whether the user can delete a screenprinterscreen.  For this, the
-    following conditions must be met:
-
-    - ``screenprinterscreen.is_deletable(user)`` must yield ``True``.
-    - You can edit the screenprinterscreen.
-    - The screenprinterscreen is not older than one hour.
-
-    :param user: the user whose permission should be checked
-    :param screenprinterscreen: The screenprinterscreen to delete.  This must be the actual instance.
-
-    :type user: django.contrib.auth.models.User
-    :type screenprinterscreen: `samples.models.screenprinterscreen`
-
-    :return:
-      the objects that are deleted
-
-    :rtype: set of ``Model``
-
-    :raises PermissionError: if the user is not allowed to delete the screenprinterscreen.
-    """
-    if user.is_superuser:
-        return True
-    
-    content_type = ContentType.objects.get_for_model(screenprinterscreen)
-    permission = f"{content_type.app_label}.delete_{content_type.model}"
-
-    if user.has_perm(permission):
-        return True
-    else:
-        return False
 
 
 def assert_can_add_edit_physical_process(user, process, process_class=None):
@@ -1000,6 +987,65 @@ def assert_can_view_physical_process(user, process):
         raise PermissionError(user, description, new_topic_would_help=True)
 
 
+def can_view_physical_processes(user, processes):
+    """
+    Returns a dictionary mapping each process to whether the user can view it.
+    Optimized to reduce database queries.
+    """
+    permission_dict = {}
+    # Get unique process classes
+    process_classes = {p.content_type.model_class() for p in processes}
+    # Map process_class → content_type
+    content_types = {
+        cls: ContentType.objects.get_for_model(cls)
+        for cls in process_classes
+        if cls is not None
+    }
+    # Build all codenames we need
+    needed_codenames = [
+        f"view_every_{cls.__name__.lower()}"
+        for cls in process_classes
+        if cls is not None
+    ]
+
+    # Bulk fetch matching permissions
+    # This is 1 query instead of N
+    permissions = Permission.objects.filter(
+        codename__in=needed_codenames,
+        content_type__in=[content_types[cls] for cls in process_classes if cls is not None],
+    ).values_list("codename", "content_type_id")
+
+    # Turn into a lookup set for O(1) checks
+    permission_set = {(codename, ct_id) for codename, ct_id in permissions}
+
+    # Build the lookup dict in Python
+    permission_lookup = {}
+    for cls in process_classes:
+        if cls is not None:
+            codename = f"view_every_{cls.__name__.lower()}"
+            ct = content_types[cls]
+            permission_lookup[cls] = {
+                "codename": codename,
+                "exists": (codename, ct.id) in permission_set,
+                "app_label": cls._meta.app_label,
+            }
+
+    # Check permissions
+    for process in processes:
+        cls = process.content_type.model_class()
+        if cls is not None:
+            perm_info = permission_lookup[cls]
+
+            if perm_info["exists"]:
+                perm_name = f"{perm_info['app_label']}.{perm_info['codename']}"
+                can_view = user.has_perm(perm_name)
+            else:
+                can_view = user.is_superuser
+
+            permission_dict[process] = can_view
+
+    return permission_dict
+
 def assert_can_edit_result_process(user, result_process):
     """Tests whether the user can edit a result process.
 
@@ -1087,19 +1133,33 @@ def assert_can_edit_sample(user, sample):
 
     :raises PermissionError: if the user is not allowed to edit the sample
     """
+    # Check cache first to avoid redundant checks during dry_run delete
+    cache_key = f"can_edit_sample:{user.id}:{sample.id}"
+    cached_result = cache.get(cache_key)
+    if cached_result == "allowed":
+        return
+    elif cached_result == "denied":
+        raise PermissionError(user, "Cached permission denial")
+    
     currently_responsible_person = sample.currently_responsible_person
-    sample_department = currently_responsible_person.jb_user_details.department or NoDepartment()
-    user_department = user.jb_user_details.department or NoDepartment()
-    if not sample.topic and sample_department != user_department and not user.is_superuser:
+    # Use select_related data if available, otherwise fetch
+    sample_department = _get_user_department(currently_responsible_person)
+    user_department = _get_user_department(user)
+    topic = _get_sample_topic(sample)
+    if not topic and sample_department != user_department and not user.is_superuser:
+        cache.set(cache_key, "denied", 60)
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
     topic_manager_permission = get_topic_manager_permission()
-    if sample.topic and currently_responsible_person != user and not user.is_superuser and not \
-        (user in sample.topic.members.all() and topic_manager_permission in user.user_permissions.all()):
+    # Optimize: use exists() with filter instead of loading all members
+    if topic and currently_responsible_person != user and not user.is_superuser and not \
+        (topic.members.filter(id=user.id).exists() and topic_manager_permission in user.user_permissions.all()):
+        cache.set(cache_key, "denied", 60)
         description = _("You are not allowed to edit the sample “{name}” (including splitting, declaring dead, and deleting) "
                         "because you are not the currently responsible person for this sample.").format(name=sample)
         raise PermissionError(user, description)
 
+    cache.set(cache_key, "allowed", 60)
 
 def assert_can_edit_sample_series(user, sample_series):
     """Tests whether the user can edit a sample series, including adding or
@@ -1226,12 +1286,12 @@ def assert_can_edit_topic(user, topic=None):
                                                            translate_permission("jb_common.edit_their_topics"))
                 raise PermissionError(user, description)
         else:
-            if not user.has_perm("jb_common.change_topic"):
+            if not user.has_perm("jb_common.change_topic") and topic.manager != user:
                 description = _("You are not allowed to change this topic because "
                                 "you don't have the permission “{name}”.").format(
                     name=translate_permission("jb_common.change_topic"))
                 raise PermissionError(user, description)
-            elif topic.confidential and not user.is_superuser:
+            elif topic.confidential and not user.is_superuser and topic.manager != user:
                 description = _("You are not allowed to change this topic because it is confidential "
                                 "and you are not in this topic.")
                 raise PermissionError(user, description)
@@ -1263,10 +1323,10 @@ def can_edit_all_topics(user, topics):
                     all_topics_perm[topic] = False
                     continue
             else:
-                if not user.has_perm("jb_common.change_topic"):
+                if not user.has_perm("jb_common.change_topic") and topic.manager != user:
                     all_topics_perm[topic] = False
                     continue
-                elif topic.confidential and not user.is_superuser:
+                elif topic.confidential and not user.is_superuser and topic.manager != user:
                     all_topics_perm[topic] = False
                     continue
         all_topics_perm[topic] = True
