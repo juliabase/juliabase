@@ -973,6 +973,22 @@ def advanced_search(request):
             else:
                 base_query = None
             results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
+            if results:
+                from django.db.models import prefetch_related_objects
+                if issubclass(search_tree.model_class, models.Process):
+                    fields_to_prefetch = ["operator", "content_type", "samples__topic__members",
+                                          "samples__currently_responsible_person__jb_user_details__department"]
+                    if isinstance(results, list):
+                        prefetch_related_objects(results, *fields_to_prefetch)
+                    else:
+                        results = results.prefetch_related(*fields_to_prefetch)
+                elif issubclass(search_tree.model_class, models.Sample):
+                    fields_to_prefetch = ["topic__members", "currently_responsible_person__jb_user_details__department"]
+                    if isinstance(results, list):
+                        prefetch_related_objects(results, *fields_to_prefetch)
+                    else:
+                        results = results.prefetch_related(*fields_to_prefetch)
+
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = {int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()

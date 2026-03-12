@@ -581,31 +581,59 @@ def value_split_field(parser, token):
                 fields.append(token)
     return ValueSplitFieldNode(fields, unit)
 
-def sort_choices(field):
+def sort_choices(field, choices_cache=None):
     if hasattr(field, 'choices'):
+        cache_key = None
+        if choices_cache is not None and hasattr(field, 'queryset'):
+            try:
+                empty_label = getattr(field, 'empty_label', None)
+                cache_key = (str(field.queryset.query), empty_label)
+            except Exception:
+                pass
+        
+        if cache_key and cache_key in choices_cache:
+            field.choices = choices_cache[cache_key]
+            return
+
+        # Materialize choices to avoid multiple DB queries if it's a ModelChoiceIterator
+        # and to allow sorting.
+        # Note that this might be expensive for very large tables, but standard
+        # select boxes can't handle them anyway.
+        if isinstance(field.choices, (list, tuple)):
+            choices = field.choices
+        else:
+            # Use list comprehension to avoid calling __len__ on ModelChoiceIterator
+            # which would trigger an extra COUNT(*) query.
+            # See https://code.djangoproject.com/ticket/26279
+            choices = [choice for choice in field.choices]
+            field.choices = choices
+
         # Skip the placeholder choice and check the type of the subsequent choices
         try:
             first_valid_choice = next(
-                choice[1] for choice in field.choices 
-                if choice[1] and choice[1] != "---------"
+                (choice[1] for choice in choices 
+                 if choice[1] and choice[1] != "---------"),
+                None
             )
+            if first_valid_choice is None:
+                raise StopIteration
+
             # Try to convert the first valid choice to a float
             float(first_valid_choice)
             # If successful, don't do anything since the data should already be sorted numerically
         except (ValueError, StopIteration, TypeError):
             # If conversion fails, sort alphabetically
             sorted_choices = sorted(
-                field.choices, 
+                choices,
                 key=lambda choice: str(choice[1]).lower()
             )
             field.choices = sorted_choices
 
-@register.simple_tag
-def display_search_tree(tree):
-    """Tag for displaying the forms tree for the advanced search.  This tag is
-    used only in the advanced search.  It walks through the search node tree
-    and displays the seach fields.
-    """
+        if cache_key:
+            choices_cache[cache_key] = field.choices
+
+
+def _display_search_tree_recursive(tree, choices_cache):
     result = """<table style="border: 2px solid black; padding-left: 3em">"""
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _("General error"), "outest_tag": "<tr>"}
@@ -613,7 +641,7 @@ def display_search_tree(tree):
 
         # Sort every choice field in alphabetical order
         for field in search_field.form:
-            sort_choices(field.field)
+            sort_choices(field.field, choices_cache)
 
         if isinstance(search_field, jb_common.search.RangeSearchField):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
@@ -646,13 +674,21 @@ def display_search_tree(tree):
         for i, child in enumerate(tree.children):
             result += child[0].as_p()
             if child[1]:
-                result += display_search_tree(child[1])
+                result += _display_search_tree_recursive(child[1], choices_cache)
             if i < len(tree.children) - 1:
                 result += """</td></tr><tr><td colspan="2">"""
         result += "</td></tr>"
     result += "</table>"
+    return result
 
-    return mark_safe(result)
+
+@register.simple_tag
+def display_search_tree(tree):
+    """Tag for displaying the forms tree for the advanced search.  This tag is
+    used only in the advanced search.  It walks through the search node tree
+    and displays the seach fields.
+    """
+    return mark_safe(_display_search_tree_recursive(tree, {}))
 
 
 @register.filter
