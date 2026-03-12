@@ -973,21 +973,26 @@ def advanced_search(request):
             else:
                 base_query = None
             results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
-            if results:
-                from django.db.models import prefetch_related_objects
-                if issubclass(search_tree.model_class, models.Process):
-                    fields_to_prefetch = ["operator", "content_type", "samples__topic__members",
-                                          "samples__currently_responsible_person__jb_user_details__department"]
-                    if isinstance(results, list):
-                        prefetch_related_objects(results, *fields_to_prefetch)
-                    else:
-                        results = results.prefetch_related(*fields_to_prefetch)
-                elif issubclass(search_tree.model_class, models.Sample):
-                    fields_to_prefetch = ["topic__members", "currently_responsible_person__jb_user_details__department"]
-                    if isinstance(results, list):
-                        prefetch_related_objects(results, *fields_to_prefetch)
-                    else:
-                        results = results.prefetch_related(*fields_to_prefetch)
+            
+            from django.db.models import prefetch_related_objects
+            if issubclass(search_tree.model_class, models.Process):
+                prefetch_fields = ["samples__topic__members",
+                                   "samples__currently_responsible_person__jb_user_details__department"]
+                if isinstance(results, list):
+                    if results:
+                        # For list of model instances, we must use prefetch_related_objects
+                        prefetch_related_objects(results, "operator", "content_type", *prefetch_fields)
+                else:
+                    results = results.select_related("operator", "content_type")
+                    results = results.prefetch_related(*prefetch_fields)
+            elif issubclass(search_tree.model_class, models.Sample):
+                prefetch_fields = ["topic__members", "currently_responsible_person__jb_user_details__department"]
+                if isinstance(results, list):
+                    if results:
+                        prefetch_related_objects(results, *prefetch_fields)
+                else:
+                    results = results.select_related("topic", "currently_responsible_person")
+                    results = results.prefetch_related(*prefetch_fields)
 
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
