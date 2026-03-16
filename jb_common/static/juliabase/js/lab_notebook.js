@@ -84,6 +84,16 @@
                             // Show success message if present
                             if (response.message) {
                                 var $msg = $('<div class="report-success">' + response.message + '</div>').insertBefore('.main');
+                                $msg.css({
+                                    'position': 'fixed',
+                                    'top': '20px',
+                                    'left': '50%',
+                                    'transform': 'translateX(-50%)',
+                                    'z-index': '9999',
+                                    'box-shadow': '0 4px 6px rgba(0,0,0,0.1)',
+                                    'min-width': '300px',
+                                    'text-align': 'center'
+                                });
                                 setTimeout(function() {
                                     $msg.fadeOut(500, function() {
                                         $(this).remove();
@@ -152,7 +162,22 @@
                             msg = xhr.responseJSON.message;
                         }
                         
-                        $('<div class="report-error">' + msg + '</div>').insertBefore('.main');
+                        var $err = $('<div class="report-error">' + msg + '</div>').insertBefore('.main');
+                        $err.css({
+                            'position': 'fixed',
+                            'top': '20px',
+                            'left': '50%',
+                            'transform': 'translateX(-50%)',
+                            'z-index': '9999',
+                            'box-shadow': '0 4px 6px rgba(0,0,0,0.1)',
+                            'min-width': '300px',
+                            'text-align': 'center'
+                        });
+                        setTimeout(function() {
+                            $err.fadeOut(500, function() {
+                                $(this).remove();
+                            });
+                        }, 5000); // 5 seconds duration for error messages
                         console.error("AJAX Error: " + status + error);
                     }
                 });
