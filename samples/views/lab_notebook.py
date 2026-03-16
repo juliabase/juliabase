@@ -92,12 +92,14 @@ class DateForm(forms.Form):
     """
     begin_date = forms.DateField(
         label=_('Begin Date'),
-        widget=forms.SelectDateWidget(years=range(1990, 2040))
+        input_formats=['%d.%m.%Y', '%Y-%m-%d'],
+        widget=forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control date-picker', 'placeholder': 'DD.MM.YYYY'})
     )
 
     end_date = forms.DateField(
         label=_('End Date'),
-        widget=forms.SelectDateWidget(years=range(1990, 2040))
+        input_formats=['%d.%m.%Y', '%Y-%m-%d'],
+        widget=forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control date-picker', 'placeholder': 'DD.MM.YYYY'})
     )
 
     def clean(self):
@@ -354,8 +356,8 @@ def show(request, process_name, begin_date=False, end_date=False):
         date_form = DateForm(request.POST)
         if date_form.is_valid():
             if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                begin_date = str(date_form.cleaned_data['begin_date'])
-                end_date = str(date_form.cleaned_data['end_date'])
+                begin_date = date_form.cleaned_data['begin_date'].strftime('%Y-%m-%d')
+                end_date = date_form.cleaned_data['end_date'].strftime('%Y-%m-%d')
             else:
                 return HttpResponseSeeOther(django.urls.reverse(
                     "{}:lab_notebook_{}".format(namespace, process_name),

@@ -115,12 +115,25 @@
                                 }, 3000);
                             }
 
-                            // Update form dropdowns if dates are provided
+                            // Update form inputs if dates are provided via response (which means update was successful)
                             if (response.begin_date) {
-                                updateDateDropdowns('begin_date', response.begin_date);
+                                // Assume response format is YYYY-MM-DD (ISO)
+                                // Flatpickr instance, if available, can parse ISO
+                                var beginInput = document.getElementById('id_begin_date');
+                                if (beginInput && beginInput._flatpickr) {
+                                    beginInput._flatpickr.setDate(response.begin_date, true, 'Y-m-d');
+                                } else {
+                                    // Fallback if no flatpickr
+                                    $('input[name="begin_date"]').val(response.begin_date);
+                                }
                             }
                             if (response.end_date) {
-                                updateDateDropdowns('end_date', response.end_date);
+                                var endInput = document.getElementById('id_end_date');
+                                if (endInput && endInput._flatpickr) {
+                                    endInput._flatpickr.setDate(response.end_date, true, 'Y-m-d');
+                                } else {
+                                    $('input[name="end_date"]').val(response.end_date);
+                                }
                             }
 
                             // Destroy existing DataTables to prevent memory leaks or errors
@@ -197,20 +210,73 @@
                 });
             }
 
-            // Function to update Django SelectDateWidget dropdowns
-            function updateDateDropdowns(baseName, dateString) {
-                // dateString format is YYYY-MM-DD
-                var parts = dateString.split('-');
-                if (parts.length === 3) {
-                    var year = parseInt(parts[0], 10);
-                    var month = parseInt(parts[1], 10);
-                    var day = parseInt(parts[2], 10);
+            // Quick date selection handler
+            $('.quick-date').on('click', function() {
+                var range = $(this).data('range');
+                var today = new Date();
+                var start = new Date(today); // Clone today
+                var end = new Date(today);   // Clone today
 
-                    // Update dropdowns. Django names them baseName_year, baseName_month, baseName_day
-                    $('select[name="' + baseName + '_year"]').val(year);
-                    $('select[name="' + baseName + '_month"]').val(month);
-                    $('select[name="' + baseName + '_day"]').val(day);
+                function formatDate(date) {
+                     // Return date object for flatpickr or YYYY-MM-DD string
+                     var year = date.getFullYear();
+                     var month = (date.getMonth() + 1).toString().padStart(2, '0');
+                     var day = date.getDate().toString().padStart(2, '0');
+                     return year + '-' + month + '-' + day;
                 }
+
+                if (range === 'today') {
+                    // start and end are today
+                } else if (range === 'this-week') {
+                    // Calculate start of week (Monday)
+                    var day = today.getDay(); // 0 (Sun) to 6 (Sat)
+                    var diff = day === 0 ? 6 : day - 1; // Days to subtract to get Monday
+                    start.setDate(today.getDate() - diff);
+                    
+                    // Calculate end of week (Sunday)
+                    var endOfWeek = new Date(start);
+                    endOfWeek.setDate(start.getDate() + 6);
+                    end = endOfWeek;
+                } else if (range === 'this-month') {
+                    // Start of month
+                    start.setDate(1);
+                    // End of month (0th day of next month gets last day of previous month)
+                    end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                } else if (range === 'last-7') {
+                    // 7 days ago (inclusive of today means today - 6 days)
+                    start.setDate(today.getDate() - 6);
+                } else if (range === 'last-30') {
+                    // 30 days ago (inclusive of today means today - 29 days)
+                    start.setDate(today.getDate() - 29);
+                }
+
+                // Update Pickers
+                var beginInput = document.getElementById('id_begin_date');
+                var endInput = document.getElementById('id_end_date');
+                
+                if (beginInput._flatpickr) {
+                    beginInput._flatpickr.setDate(start);
+                } else {
+                     $(beginInput).val(formatDate(start));
+                }
+                if (endInput._flatpickr) {
+                    endInput._flatpickr.setDate(end);
+                } else {
+                     $(endInput).val(formatDate(end));
+                }
+                
+                // Trigger form submission
+                $('#date-form').submit();
+            });
+
+            // Initialize Flatpickr
+            if (typeof flatpickr !== 'undefined') {
+                var lang = $('#date-form').data('lang') || 'en';
+                flatpickr(".date-picker", {
+                    dateFormat: "d.m.Y",
+                    allowInput: true,
+                    locale: lang
+                });
             }
 
             // Add AJAX submit handler
