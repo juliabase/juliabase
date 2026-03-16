@@ -77,14 +77,12 @@
     <div class="row justify-content-center mt-3 screen-only">
       <div class="col-auto">
           {% block notebook_nav_icons %}
-            <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %} class="me-4 text-decoration-none">
-              <img src="{% static 'juliabase/icons/book_previous.png' %}" alt="previous month icon"
-                  title="{% translate 'previous month' %}" width="32" height="32"/>
+            <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-prev me-4">
+              {% translate 'Previous' %}
             </a>
             
-            <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %} class="text-decoration-none">
-              <img src="{% static 'juliabase/icons/book_next.png' %}" alt="next month icon" title="{% translate 'next month' %}"
-                  width="32" height="32"/>
+            <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-next">
+              {% translate 'Next' %}
             </a>
           {% endblock %}
       </div>

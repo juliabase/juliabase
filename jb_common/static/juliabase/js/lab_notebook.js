@@ -68,6 +68,64 @@
 
         $(function () {
             waitForDataTables(initLabNotebook);
+
+            var currentIntervalType = 'month'; // Default to month on load
+
+            function updateNavTooltips() {
+                 var prevText, nextText;
+                 switch (currentIntervalType) {
+                     case 'day':
+                         prevText = gettext('Previous day');
+                         nextText = gettext('Next day');
+                         break;
+                     case 'week':
+                         prevText = gettext('Previous week');
+                         nextText = gettext('Next week');
+                         break;
+                     case 'month':
+                         prevText = gettext('Previous month');
+                         nextText = gettext('Next month');
+                         break;
+                     default:
+                        var beginInput = document.getElementById('id_begin_date');
+                        var endInput = document.getElementById('id_end_date');
+                        var diffDays = 1;
+
+                        function parseMyDate(input) {
+                             if (input && input._flatpickr && input._flatpickr.selectedDates.length) return input._flatpickr.selectedDates[0];
+                             var val = $(input).val();
+                             if (val && val.split('.').length === 3) {
+                                 var p = val.split('.');
+                                 return new Date(p[2], p[1]-1, p[0]);
+                             }
+                             return null;
+                        }
+                        
+                        var s = parseMyDate(beginInput);
+                        var e = parseMyDate(endInput);
+                        
+                        if (s && e) {
+                             diffDays = Math.round((e - s) / (1000 * 60 * 60 * 24)) + 1;
+                        }
+                        if (diffDays < 1) diffDays = 1;
+
+                        if (diffDays === 1) {
+                            prevText = gettext("Previous day");
+                            nextText = gettext("Next day");
+                        } else {
+                            if (typeof interpolate !== 'undefined') {
+                                prevText = interpolate(gettext("Previous %s days"), [diffDays]);
+                                nextText = interpolate(gettext("Next %s days"), [diffDays]);
+                            } else {
+                                prevText = gettext("Previous") + " " + diffDays + " " + gettext("days");
+                                nextText = gettext("Next") + " " + diffDays + " " + gettext("days");
+                            }
+                        }
+                 }
+                 
+                 $('.nav-prev').text(prevText);
+                 $('.nav-next').text(nextText);
+            }
             
             // Shared AJAX function for notebook updates
             function performNotebookUpdate(url, method, data) {
@@ -121,7 +179,7 @@
                                 // Flatpickr instance, if available, can parse ISO
                                 var beginInput = document.getElementById('id_begin_date');
                                 if (beginInput && beginInput._flatpickr) {
-                                    beginInput._flatpickr.setDate(response.begin_date, true, 'Y-m-d');
+                                    beginInput._flatpickr.setDate(response.begin_date, false, 'Y-m-d');
                                 } else {
                                     // Fallback if no flatpickr
                                     $('input[name="begin_date"]').val(response.begin_date);
@@ -130,7 +188,7 @@
                             if (response.end_date) {
                                 var endInput = document.getElementById('id_end_date');
                                 if (endInput && endInput._flatpickr) {
-                                    endInput._flatpickr.setDate(response.end_date, true, 'Y-m-d');
+                                    endInput._flatpickr.setDate(response.end_date, false, 'Y-m-d');
                                 } else {
                                     $('input[name="end_date"]').val(response.end_date);
                                 }
@@ -148,16 +206,18 @@
                             
                             // update navigation buttons
                             if (response.previous_url) {
-                                $('img[src$="book_previous.png"]').parent('a').attr('href', response.previous_url).css('visibility', 'visible');
+                                $('.nav-prev').attr('href', response.previous_url).css('visibility', 'visible');
                             } else {
-                               $('img[src$="book_previous.png"]').parent('a').css('visibility', 'hidden');
+                               $('.nav-prev').css('visibility', 'hidden');
                             }
 
                             if (response.next_url) {
-                                $('img[src$="book_next.png"]').parent('a').attr('href', response.next_url).css('visibility', 'visible');
+                                $('.nav-next').attr('href', response.next_url).css('visibility', 'visible');
                             } else {
-                                $('img[src$="book_next.png"]').parent('a').css('visibility', 'hidden');
+                                $('.nav-next').css('visibility', 'hidden');
                             }
+
+                            updateNavTooltips();
                             
                             // Update export URL
                              if (response.export_url) {
@@ -213,6 +273,14 @@
             // Quick date selection handler
             $('.quick-date').on('click', function() {
                 var range = $(this).data('range');
+                
+                if (range === 'today') currentIntervalType = 'day';
+                else if (range === 'this-week') currentIntervalType = 'week';
+                else if (range === 'this-month') currentIntervalType = 'month';
+                else currentIntervalType = 'custom';
+
+                updateNavTooltips();
+
                 var today = new Date();
                 var start = new Date(today); // Clone today
                 var end = new Date(today);   // Clone today
@@ -275,7 +343,11 @@
                 flatpickr(".date-picker", {
                     dateFormat: "d.m.Y",
                     allowInput: true,
-                    locale: lang
+                    locale: lang,
+                    onChange: function() {
+                        currentIntervalType = 'custom';
+                        updateNavTooltips();
+                    }
                 });
             }
 
@@ -286,17 +358,78 @@
             });
 
             // Add AJAX handler for previous/next buttons
-            $(document).on('click', 'a', function(e) {
+            $(document).on('click', '.nav-prev, .nav-next', function(e) {
+                 updateNavTooltips();
+
                 var $target = $(this);
-                // Check if this anchor contains our specific navigation images
-                if ($target.find('img[src$="book_previous.png"]').length > 0 || $target.find('img[src$="book_next.png"]').length > 0) {
+                var isPrev = $target.hasClass('nav-prev');
+
+                if (true) {
                      e.preventDefault();
-                     var url = $target.attr('href');
-                     if (url) {
-                         performNotebookUpdate(url, 'GET', null);
+
+                     var beginInput = document.getElementById('id_begin_date');
+                     var endInput = document.getElementById('id_end_date');
+                     var start, end;
+                     
+                     if (beginInput._flatpickr && beginInput._flatpickr.selectedDates.length) {
+                         start = new Date(beginInput._flatpickr.selectedDates[0]);
+                     } else if ($(beginInput).val()) {
+                         // split DD.MM.YYYY
+                         var parts = $(beginInput).val().split('.');
+                         if (parts.length === 3) start = new Date(parts[2], parts[1]-1, parts[0]);
                      }
+
+                     if (endInput._flatpickr && endInput._flatpickr.selectedDates.length) {
+                         end = new Date(endInput._flatpickr.selectedDates[0]);
+                     } else if ($(endInput).val()) {
+                         var parts = $(endInput).val().split('.');
+                         if (parts.length === 3) end = new Date(parts[2], parts[1]-1, parts[0]);
+                     }
+                     
+                     if (!start || !end) {
+                         // Try link fallback if date parsing failed?
+                         var url = $target.attr('href');
+                         if (url) performNotebookUpdate(url, 'GET', null);
+                         return;
+                     }
+
+                     var dir = isPrev ? -1 : 1;
+                     
+                     if (currentIntervalType === 'day') {
+                         start.setDate(start.getDate() + dir);
+                         end.setDate(end.getDate() + dir);
+                     } else if (currentIntervalType === 'week') {
+                         start.setDate(start.getDate() + (dir * 7));
+                         end.setDate(end.getDate() + (dir * 7));
+                     } else if (currentIntervalType === 'month') {
+                         // Shift by 1 month, preserving "whole month" logic if applied
+                         var currentStartMonth = start.getMonth();
+                         // Jump to 1st of next/prev month
+                         start.setMonth(currentStartMonth + dir, 1);
+                         
+                         // End is end of that month
+                         end = new Date(start.getFullYear(), start.getMonth() + 1, 0); 
+                     } else {
+                         // Custom / default: shift by duration
+                         var duration = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+                         if (duration < 1) duration = 1;
+                         start.setDate(start.getDate() + (dir * duration));
+                         end.setDate(end.getDate() + (dir * duration));
+                     }
+                     
+                     if (beginInput._flatpickr) beginInput._flatpickr.setDate(start, false, 'Y-m-d');
+                     else $(beginInput).val(start.getDate().toString().padStart(2,'0')+'.'+(start.getMonth()+1).toString().padStart(2,'0')+'.'+start.getFullYear());
+
+                     if (endInput._flatpickr) endInput._flatpickr.setDate(end, false, 'Y-m-d');
+                     else $(endInput).val(end.getDate().toString().padStart(2,'0')+'.'+(end.getMonth()+1).toString().padStart(2,'0')+'.'+end.getFullYear());
+                     
+                     // Trigger form submission
+                     $('#date-form').submit();
                 }
             });
+
+            // Initial tooltip update
+            updateNavTooltips();
         });
 
         function initLabNotebook() {
