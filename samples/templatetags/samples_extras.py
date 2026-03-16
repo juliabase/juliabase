@@ -121,7 +121,17 @@ def should_show(operator):
     not be shown if they are in no department because this is considered not an
     account of an actual person.
     """
-    return not isinstance(operator, django.contrib.auth.models.User) or operator.jb_user_details.department
+    if not isinstance(operator, django.contrib.auth.models.User):
+        return True
+    if hasattr(operator, "_cached_department"):
+        dept = operator._cached_department
+    else:
+        try:
+            dept = operator.jb_user_details.department
+        except AttributeError:
+            dept = None
+        operator._cached_department = dept
+    return bool(dept)
 
 
 class VerboseNameNode(template.Node):
@@ -225,7 +235,7 @@ timestamp_formats = ("%Y-%m-%d %H:%M:%S",
                      _("date unknown"))
 
 @register.filter
-def timestamp(value, minimal_inaccuracy=0):
+def timestamp(value, minimal_inaccuracy=0, keep_as_is=False):
     """Filter for formatting the timestamp of a process properly to reflect the
     inaccuracy connected with this timestamp.  It works not strictly only for
     models.  In fact, any object with a ``timestamp`` field can be passed in.
@@ -247,6 +257,9 @@ def timestamp(value, minimal_inaccuracy=0):
 
     :rtype: str
     """
+    if keep_as_is:
+        timestamp = value.astimezone(django.utils.timezone.get_current_timezone())
+        return mark_safe(timestamp.strftime(str(timestamp_formats[max(int(minimal_inaccuracy), 0)])))
     try:
         timestamp_ = value.timestamp
         inaccuracy = getattr(value, "timestamp_inaccuracy", 0)
@@ -829,33 +842,11 @@ def strip_substrings(value, pattern):
         value = value.replace(substring, "")
     return value
 
-@register.filter
-def join_with_commas(value):
-    if isinstance(value, list):
-        return ', '.join(str(v) for v in value)
-    return value
 
 @register.filter
 def camel_case_to_human_text(value):
     """See `jb_common.utils.base.camel_case_to_human_text` for documentation.
     """
     return jb_common.utils.base.camel_case_to_human_text(value)
-
-@register.simple_tag
-def static_with_hash(file_path):
-    full_path = os.path.join(settings.STATIC_ROOT, file_path)
-    if os.path.exists(full_path):
-        with open(full_path, 'rb') as f:
-            file_hash = hashlib.md5(f.read()).hexdigest()
-        url = static(file_path)
-        return f"{url}?v={file_hash}"
-    else:
-        return static(file_path)
-        
-@register.filter
-def join_with_commas(value):
-    if isinstance(value, list):
-        return ', '.join(str(v) for v in value)
-    return value
 
 _ = gettext
