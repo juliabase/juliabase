@@ -29,7 +29,7 @@ import re
 from datetime import datetime, timedelta
 from dateutil import parser
 from urllib.parse import quote_plus
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 import django.urls
 from django.template import loader, RequestContext
@@ -353,12 +353,16 @@ def show(request, process_name, begin_date=False, end_date=False):
         # If yes, send a response with the chosen dates
         date_form = DateForm(request.POST)
         if date_form.is_valid():
-            begin_date = date_form.cleaned_data['begin_date']
-            end_date = date_form.cleaned_data['end_date']
-            return HttpResponseSeeOther(django.urls.reverse(
-                "{}:lab_notebook_{}".format(namespace, process_name),
-                kwargs={"begin_date": "{begin_date}".format(**date_form.cleaned_data),
-                        "end_date": "{end_date}".format(**date_form.cleaned_data)}))
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                begin_date = str(date_form.cleaned_data['begin_date'])
+                end_date = str(date_form.cleaned_data['end_date'])
+            else:
+                return HttpResponseSeeOther(django.urls.reverse(
+                    "{}:lab_notebook_{}".format(namespace, process_name),
+                    kwargs={"begin_date": "{begin_date}".format(**date_form.cleaned_data),
+                            "end_date": "{end_date}".format(**date_form.cleaned_data)}))
+        elif request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'message': (_('Invalid date selection.'))}, status=400)
     else:
         # If not, pick the current begin and end dates and create a form
         initial_data = {'begin_date': begin_date,
@@ -391,6 +395,22 @@ def show(request, process_name, begin_date=False, end_date=False):
                     'end_date': end_date}) + "?next=" + quote_plus(request.path)
     except django.urls.NoReverseMatch:
         export_url = None
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'html_body': html_body,
+            'previous_url': previous_url,
+            'next_url': next_url,
+            'export_url': export_url,
+            'begin_date': begin_date,
+            'end_date': end_date,
+            'title': capitalize_first_letter(_("lab notebook for {process_name}")
+                                                    .format(process_name=process_class._meta.verbose_name_plural)),
+            'new_url': django.urls.reverse(
+                "{}:lab_notebook_{}".format(namespace, process_name),
+                kwargs={"begin_date": begin_date, "end_date": end_date}),
+            'message': _('Lab notebook updated successfully.')
+        })
     # Render the final page using html_body from before
     return render(request, "samples/lab_notebook.html",
                   {"title": capitalize_first_letter(_("lab notebook for {process_name}")
