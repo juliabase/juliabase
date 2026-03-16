@@ -27,7 +27,6 @@ information.
 
 import re
 from datetime import datetime, timedelta
-from dateutil import parser
 from urllib.parse import quote_plus
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -36,7 +35,6 @@ from django.template import loader, RequestContext
 import django.forms as forms
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
-from django.core.serializers import serialize
 from jb_common.utils.base import help_link, HttpResponseSeeOther, get_all_models, camel_case_to_underscores, \
     capitalize_first_letter, get_model_field_names
 from samples import permissions
@@ -84,7 +82,6 @@ def parse_year_and_month(year_and_month):
         raise Http404("Invalid year and/or month")
     return year, month
 
-# ---------------------------------------------Ayob added this :)------------------
 
 class DateForm(forms.Form):
     """Form for the date fields in which the user can see which month is
@@ -182,7 +179,6 @@ def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
     begin_date = datetime.strptime(begin_date, "%Y-%m-%d")
     end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
-
     # Get the first day of the begin_date input month
     first_day_of_month_begin_date = begin_date.replace(day=1).strftime("%Y-%m-%d")
 
@@ -234,11 +230,6 @@ def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
         next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
                                             kwargs={"begin_date": "{0}".format(first_day_of_month_end_date),
                                                     "end_date": "{0}".format(last_day_of_month_end_date_str)})
-
-        
-
-    
-
     return previous_url, next_url
 
 
@@ -367,8 +358,23 @@ def show(request, process_name, begin_date=False, end_date=False):
             return JsonResponse({'message': (_('Invalid date selection.'))}, status=400)
     else:
         # If not, pick the current begin and end dates and create a form
-        initial_data = {'begin_date': begin_date,
-                        'end_date': end_date}
+        try:
+            if isinstance(begin_date, str):
+                begin_date_obj = datetime.strptime(begin_date, "%Y-%m-%d")
+            else:
+                begin_date_obj = begin_date
+            
+            if isinstance(end_date, str):
+                end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+            else:
+                end_date_obj = end_date
+        except ValueError:
+            # Fallback if dates are not YYYY-MM-DD
+            begin_date_obj = begin_date
+            end_date_obj = end_date
+
+        initial_data = {'begin_date': begin_date_obj,
+                        'end_date': end_date_obj}
         date_form = DateForm(initial=initial_data)
     
     # Fetch the template to be used
@@ -377,12 +383,10 @@ def show(request, process_name, begin_date=False, end_date=False):
 
     # Fetch all the rows from the table of the chosen process 
     # whose begin and end dates are between the specified range 
-    # OPTIMIZE: This runs 70 similar database queries for Maria Deposition
     template_context = RequestContext(request, process_class.get_lab_notebook_context_range(begin_date, end_date))
-    
+
     # Render the template
     template_context["request"] = request
-    # OPTIMIZE: This runs an additional 40 queries for Maria Deposition
     html_body = template.render(template_context.flatten())
     # Get the previous months
     previous_url, next_url = get_previous_next_month_urls(process_name, namespace, begin_date, end_date)
@@ -491,23 +495,7 @@ def export_range(request, process_name, begin_date, end_date):
     """
     process_class = get_all_models()[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
-    # year, month = parse_year_and_month(year_and_month)
-    # begin_date = datetime.strptime(begin_date, '%Y-%m-%d')
-    # end_date = datetime.strptime(end_date, '%Y-%m-%d')
-    
-    # FIXME: This is a quite terrible way to deal with another problem that is
-    # ScreenprinterPaste/Screen using physical processes lab notebooks although they are not
-    # physical processes. 
-    # This causes an error to be thrown when using the date range function. 
-    # A possible fix would be simply creating separate pages for displaying 
-    # ScreenprinterPaste/Screen to be 
-    # normal models instead of physical processes.
-    try:
-        data = process_class.get_lab_notebook_data_range(begin_date, end_date)
-    except:
-        data = process_class.get_lab_notebook_data(begin_date, end_date)
-
-    # raise ValueError("data:", data)
+    data = process_class.get_lab_notebook_data_range(begin_date, end_date)
     result = utils.table_export(request, data, _("process"))
     if isinstance(result, tuple):
         column_groups_form, columns_form, table, switch_row_forms, old_data_form = result

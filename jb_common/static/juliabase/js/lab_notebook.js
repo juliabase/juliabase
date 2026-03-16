@@ -204,6 +204,9 @@
                             // update content
                             $('.lock-header').html(response.html_body);
                             
+                            // Trigger event so other scripts can modify the content before DataTables init
+                            $(document).trigger('lab_notebook:content_updated');
+                            
                             // update navigation buttons
                             if (response.previous_url) {
                                 $('.nav-prev').attr('href', response.previous_url).css('visibility', 'visible');
@@ -490,7 +493,7 @@
     
         if ($table.length) {
             // Add new classes to the table element
-            $table.addClass('lab-notebook table table table-hover table-bordered table-striped-columns');
+            $table.addClass('table table-hover table-bordered table-striped-columns');
 
             // Preserve existing classes by ensuring they are not already present
             var existingClasses = $table.attr('class').split(' ');
