@@ -1,21 +1,16 @@
 {# -*- indent-tabs-mode: nil -*- #}
 {% extends "samples/base.html" %}
 {% comment %}
-This file is part of JuliaBase, see http://www.juliabase.org.
-Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+This file is part of Chantal, the samples database.
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License as published by the Free
-Software Foundation, either version 3 of the License, or (at your option) any
-later version.
+Copyright (C) 2010 Forschungszentrum Jülich, Germany,
+                   Marvin Goblet <m.goblet@fz-juelich.de>,
+                   Torsten Bronger <t.bronger@fz-juelich.de>
 
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You must not use, install, pass on, offer, sell, analyse, modify, or distribute
+this software without explicit permission of the copyright holder.  If you have
+received a copy of this software without the explicit permission of the
+copyright holder, you must destroy it immediately and completely.
 {% endcomment %}
 
 {% load i18n %}
@@ -24,231 +19,110 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load static %}
 {% load compress %}
 
-{% block css_inclusions %}
-  {{ block.super }}
-  <link rel="stylesheet" type="text/css" href="{% static 'samples/css/show_sample.css' %}"/>
-{% endblock %}
 
-{% block local_scripts %}
-{{ block.super }}
-
-{% comment %}
-<script type="text/javascript">
-// <![CDATA[
-$(function() {juliabase.request("{% url 'samples:get_folded_processes' sample_id=samples_and_processes.sample_context.sample.id %}?process_ids={{ samples_and_processes.get_all_process_ids|join:"," }}",
-                               function(data) { for (var i=0; i < data.length; i++)
-                                                { $("#process-body-" + data[i]).hide(); $("#process-short-body-" + data[i]).show(); }
-                               });
-              $("span.process-heading").click(function(event){var process_id = event.target.id.split('-')[2];
-                                                    juliabase.request("{% url 'samples:fold_process' sample_id=samples_and_processes.sample_context.sample.id %}",
-                                                    function(data) {if (data) {
-                                                             var shown_element = $("#process-short-body-" + process_id);
-                                                             $("#process-body-" + process_id).hide("fast");
-                                                         } else {
-                                                             var shown_element = $("#process-body-" + process_id);
-                                                             $("#process-short-body-" + process_id).hide("fast");
-                                                         };
-                                                         shown_element.show("fast", function() {
-                                                           parent_div = shown_element.parent();
-                                                           if (parent_div.outerHeight() > $(window).height())
-                                                               $(document).scrollTop(parent_div.parent().offset().top)
-                                                           else {
-                                                               var new_top = parent_div.offset().top +
-                                                                             parent_div.outerHeight() - $(window).height();
-                                                               if (new_top - $(document).scrollTop() > 0)
-                                                                   $(document).scrollTop(new_top)
-                                                           }
-                                                         })
-                                                     }, {process_id: process_id}, "POST");
-                                                   })
-              });
-// ]]>
-</script>
-{% endcomment %}
-{% endblock %}
-
-{% block content_title %}{% endblock %}
 
 {% block frame_content %}
-  {% for sample_start, sample, process in samples_and_processes %}
-    {% if sample_start %}
-      {% spaceless %}<div class="page-header"><h1>{% translate 'Sample “' %}{{ sample.sample }}{% translate '”' %}<span class="aliases">
-      {% for alias in sample.sample.aliases.all %}
-        alias <strong>{{ alias }}</strong> {% endfor %}</span>{% block sample_icons %}{% if sample.can_edit %}<a class="edit-icon"
-           href="{% url 'samples:edit_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-                          ><img src="{% static 'juliabase/icons/pencil.png' %}" alt="edit icon" title="{% translate 'edit' %}"
-                                width="16" height="16"/></a>
-        {% if sample.id_for_rename and not sample.sample.is_dead and not sample.can_rename_sample %}<a class="edit-icon"
-           href="{% url 'samples:bulk_rename' %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-    ><img src="{% static 'juliabase/icons/tag_blue.png' %}" alt="give-name icon" title="{% translate 'give name' %}"
-          width="16" height="16"/></a>
+<form method="post">{% csrf_token %}
+  {% error_list process _("archiving process error") %}
+  {% error_list samples _("Sample list error") %}
+  <table>
+    <tbody>
+
+
+    <tr>
+      <td style="text-align: right"><label for="id_{{ process.number.html_name }}"
+           >{{ process.number.label }}:</label></td>
+      <td><input type="text" name="number" maxlength="15" required="" id="id_number" readonly value="{{process_number}}"></td>
+     
+    <td></td>
+    <td style="text-align: right" colspan="3">
+        <label for="id_sample">
+            {% translate 'Sample to add (press Enter to add):' %}
+        </label>
+    </td>
+    <td colspan="3">
+        <input type="text" name="sample" maxlength="50"  id="id_sample">
+    </td>
+    </tr>
+
+    <tr>
+      
+
+    </tr>
+    <tr>
+      {% input_field process.timestamp %}
+   
+    <td>
+    </td>
+        <td rowspan="5" colspan="2" style="vertical-align: top">
+          <label for="id_{{ samples.sample_list.html_name }}" style="margin-right: 0.5em"
+                               >{{ samples.sample_list.label }}:</label>{{ samples.sample_list }}</td>
+        <td rowspan="5">
+        <img id="add_arrow" class="arrow_right" src="/static/ipv/arrow_right.png" alt="arrow_right" width="16" height="16">
+        </td>
+         <td rowspan="5" colspan="2" style="vertical-align: top;"> 
+        <select id="id_pre_selection" name="pre_selection" style="width: 245px" size="17" multiple="">
+        {% if selected_samples %}
+            {% for s in selected_samples %}
+                <option value="{{ s }}">{{ s }}</option>
+            {% endfor %}
         {% endif %}
-      {% endif %}
-      {% if sample.can_delete %}<a class="edit-icon"
-                                   href="{% url 'samples:delete_sample_confirmation' sample_name=sample.sample.name %}"
-                                   ><img src="{% static 'juliabase/icons/delete.png' %}" alt="delete icon"
-                                       title="{% translate 'delete' %}" width="16" height="16"/></a>
-      {% endif %}
-      {% if sample.can_add_process %}<a class="edit-icon" href="{% url 'samples:add_process' sample_name=sample.sample.name %}"
-                                 ><img src="{% static 'juliabase/icons/cog_add.png' %}" alt="add-process icon"
-                                       title="{% translate 'add process' %}" width="16" height="16"/></a>{% endif %}
-      {% if not sample.clearance %}<a class="edit-icon"
-         href="{% url 'samples:export_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-         ><img src="{% static 'juliabase/icons/table.png' %}" alt="export icon" width="16" height="16"
-               title="{% translate 'export as table' %}"/></a>{% endif %}
-     {% if sample.can_rename_sample %}
-      <a class="edit-icon"
-           href="{% url 'samples:rename_sample' %}?sample_id={{ sample.id_for_rename }}&amp;next={% url 'samples:show_sample_by_id' sample_id=sample.sample.id path_suffix='' %}"
-    ><img src="{% static 'juliabase/icons/tag_red.png' %}" alt="rename icon" title="{% translate 'rename sample' %}"
-          width="16" height="16"/></a>{% endif %}{% endblock sample_icons %}</h1></div>{% endspaceless %}
-
-      {% block extra_sample_header %}
-        {# This block may be overridden or expanded in derived templates #}
-        <div class="screen-only" style="float: right"><a
-                href="{% url 'samples:qr_code' %}?data={{ sample.sample.id|urlquote_plus }}"
-                                                         ><img width="40" height="40" style="display: block"
-                alt="{% translate 'Data Matrix code' %}" src="{% static 'samples/qrcode.png' %}"/></a></div>
-      {% endblock %}
-      {% if sample.clearance %}
-        <p style="color: red">
-          {% translate "You can see this sample only due to a clearance.  Therefore, some fields and processes are hidden." %}
-        </p>
-      {% endif %}
-      {% with sample.clearance as clearance %}
-        {% with sample.sample as sample %}
-          <table>
-            <tr>
-              {% value_field sample.currently_responsible_person "user" %}
-            </tr>
-            {% if not clearance %}
-              <tr>
-              {% if sample.topic %}
-                {% value_field sample.topic %}
-              {% else %}
-                <td class="field-label">{% verbose_name Sample.topic %}:</td>
-                <td class="field-value">— <span style="color: red; font-weight: normal; margin-left: 1em"
-                                          >({% translate 'Attention: Topicless samples may be viewed and edited by anyone.' %})</span></td>
-              {% endif %}
-              </tr>
-            {% endif %}
-            {% if sample.tags and not clearance %}
-              <tr>
-                {% value_field sample.tags %}
-              </tr>
-            {% endif %}
-            {% if sample.purpose and not clearance %}
-              <tr>
-                {% value_field sample.purpose %}
-              </tr>
-            {% endif %}
-            <tr>
-              {% value_field sample.current_location %}
-            </tr>
-
-            {% block extra_sample_attributes %}{% endblock %}
-
-          </table>
-
-          {% if not clearance %}
-            {% with sample.series.count as number_of_sample_series %}
-              {% with sample.series.all as sample_serieses %}
-                {% if number_of_sample_series %}
-                  <p>
-                    {% blocktranslate count number_of_sample_series as counter with sample_serieses.0 as first_series and sample_serieses.0.get_absolute_url as first_url %}
-                      This sample is part of the sample series “<a href="{{ first_url }}">{{ first_series }}</a>”.
-                    {% plural %}
-                      This sample is part of the following sample series:  <!-- {{ first_url }}  {{ first_series }} -->
-                    {% endblocktranslate %}
-                  </p>
-
-                  {% if number_of_sample_series != 1 %}
-                    <ul class="sample-series-list">
-                      {% for sample_series in sample_serieses %}
-                        <li><a href="{{ sample_series.get_absolute_url }}">{{ sample_series }}</a></li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                {% endif %}
-              {% endwith %}
-            {% endwith %}
-          {% endif %}
-        {% endwith %}
-      {% endwith %}
-      <form method="post">{% csrf_token %}
-        <table>
-          <tr style="vertical-align: top">
-            <td>{{ sample.is_my_sample_form.as_p }}</td>
-            <td style="padding-left: 1em">
-              <p class="submit-button"><input type="submit"/></p>
-            </td>
-          </tr>
-        </table>
-      </form>
-      <p><small><em>{% translate 'Click on each header to expand the process. You can also click on <b>Expand All</b> to expand all the processes.' %}</em></small></p>
-      <button type="button" id="expand_all">{% translate 'Expand All' %}</button>
-    <script type="text/javascript" src="{% static 'samples/js/expand_sample_processes.js' %}" defer></script>
+        </select>
+    </td> 
+        
+    </tr>
+    {% if process.user.is_superuser %}
+      <tr>
+        {% input_field process.operator %}
+      </tr>
+    {% else %}
+      <tr>
+        {% input_field process.combined_operator %}
+      </tr>
     {% endif %}
+    <tr>
+      {% input_field process.former_user %}
+    </tr>
+    <tr>
+      {% input_field process.location %}
+    </tr>
 
-    {% block process %}
-    {% if process %}
-      <div class="process">
-        {% spaceless %}
-          <h2 style="float: left">
-            <span id="process-heading-{{ process.process.id }}" class="process-heading"
-                  >{{ process.name }}</span>{% block process_icons %}{% if process.edit_url %}<a class="edit-icon"
-                       href="{{ process.edit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static 'juliabase/icons/cog_edit.png' %}" alt="edit icon" title="{% translate 'edit' %}"
-                     width="16" height="16"/></a>
-            {% endif %}{% if process.delete_url %}<a class="edit-icon"
-                       href="{{ process.delete_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static 'juliabase/icons/cog_delete.png' %}" alt="delete icon" title="{% translate 'delete' %}"
-                     width="16" height="16"/></a>
-            {% endif %}{% if process.duplicate_url %}<a class="edit-icon" href="{{ process.duplicate_url }}"
-               ><img src="{% static 'juliabase/icons/cog_add.png' %}" alt="add icon" title="{% translate 'duplicate' %}"
-                     width="16" height="16"/></a>
-            {% endif %}{% if process.export_url %}<a class="edit-icon"
-                    href="{{ process.export_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static 'juliabase/icons/table.png' %}" alt="export icon" title="{% translate 'export as table' %}"
-                     width="16" height="16"/></a>
-            {% endif %}{% if process.resplit_url %}<a class="edit-icon"
-                     href="{{ process.resplit_url }}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
-               ><img src="{% static 'juliabase/icons/arrow_branch.png' %}" alt="resplit icon" title="{% translate 'resplit' %}"
-                     width="16" height="16"/></a>
-            {% endif %}
-            <a class="edit-icon" href="{{ process.process.get_absolute_url|urlquote_plus }}"
-            ><img src="{% static 'juliabase/icons/zoom.png' %}" alt="show icon" title="{% translate 'show process' %}"
-                width="16" height="16"/></a>{% endblock process_icons %}
-            {% if not process.process.finished %}<span style="margin-left: 2em; color: red; font-size: small"
-                                                        >{% translate "(not finished)" %}</span>{% endif %}
-          </h2>
-        {% endspaceless %}
-        <p class="operator_and_timestamp" style="margin-top: 3.6ex">
-          {% if process.operator|should_show %}
-            {% spaceless %}
-              {% if sample.clearance %}
-                {{ process.operator|get_safe_operator_name }}
-              {% else %}
-                {{ process.operator|get_really_full_name }}
-              {% endif %}
-            {% endspaceless %},
-          {% endif %}
-          {{ process|timestamp }}
-        </p>
-        <div style="clear: both{% if not process.process.finished %}; color: gray{% endif %}">
-          <div id="process-body-{{ process.process.id }}" class="process-body">
-            {{ process.html_body }}
-          </div>
-          {% if process.short_html_body %}
-            <div id="process-short-body-{{ process.process.id }}" style="display: none" class="process-body">
-              {{ process.short_html_body }}
-            </div>
-          {% endif %}
-          {# For getting the full height of the enclosing <div> in JavaScript #}
-          <div style="clear: both"></div>
-        </div>
-      </div>
-    {% endif %}
-    {% endblock %}
+     <tr>
+      <td style="text-align: right">
+        <label class=label for="id_{{ process.comments.html_name }}">{{ process.comments.label }}:<br/>
+          {% markdown_hint %}</label></td>
+      <td>{{ process.comments }}</td>
+    </tr>
 
-  {% endfor %}
+    <tr>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    </td>
+    <td>
+    {% translate '(Doubleclick to remove)' %}
+    </td>
+    </tr>
+    </tbody>
+  </table>
+  <div style="display: none">
+    {{ process.timestamp_inaccuracy }}
+  </div>
+
+  <p class="submit-button" style="clear: both"><input type="submit" onclick="selectAll();"/></p>
+</form>
+
+
+{% endblock %}
+{% block extrascripts %}
+<!-- COMPRESSED FOR TESTING, MIGHT BREAK -->
+<script type="text/javascript" src="{%  static 'js/sample_picker.js' %}" defer></script>
 {% endblock %}
