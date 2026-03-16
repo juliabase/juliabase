@@ -277,7 +277,7 @@
                 if (range === 'today') currentIntervalType = 'day';
                 else if (range === 'this-week') currentIntervalType = 'week';
                 else if (range === 'this-month') currentIntervalType = 'month';
-                else currentIntervalType = 'custom';
+                else currentIntervalType = 'month';
 
                 updateNavTooltips();
 
@@ -310,12 +310,6 @@
                     start.setDate(1);
                     // End of month (0th day of next month gets last day of previous month)
                     end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-                } else if (range === 'last-7') {
-                    // 7 days ago (inclusive of today means today - 6 days)
-                    start.setDate(today.getDate() - 6);
-                } else if (range === 'last-30') {
-                    // 30 days ago (inclusive of today means today - 29 days)
-                    start.setDate(today.getDate() - 29);
                 }
 
                 // Update Pickers
@@ -345,7 +339,7 @@
                     allowInput: true,
                     locale: lang,
                     onChange: function() {
-                        currentIntervalType = 'custom';
+                        currentIntervalType = 'month';
                         updateNavTooltips();
                     }
                 });

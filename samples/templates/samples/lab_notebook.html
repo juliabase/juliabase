@@ -73,34 +73,32 @@
       </div>
     </div> <!-- End of Date/Submit Row -->
       
-    <!-- Navigation Icons Row -->
-    <div class="row justify-content-center mt-3 screen-only">
+    <!-- Navigation Row -->
+    <div class="row justify-content-center align-items-center mt-3 screen-only">
       <div class="col-auto">
           {% block notebook_nav_icons %}
-            <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-prev me-4">
+            <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-prev text-nowrap">
               {% translate 'Previous' %}
-            </a>
-            
-            <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-next">
-              {% translate 'Next' %}
             </a>
           {% endblock %}
       </div>
-    </div>
-
+      
       {% if date_form.begin_date.label %}
-      <div class="row justify-content-center mt-3 screen-only">
-          <div class="col-auto">
-              <div class="btn-group btn-group-sm" role="group" aria-label="Quick date selection">
-                  <button type="button" class="btn btn-outline-secondary quick-date" data-range="today">{% translate 'Today' %}</button>
-                  <button type="button" class="btn btn-outline-secondary quick-date" data-range="this-week">{% translate 'This Week' %}</button>
-                  <button type="button" class="btn btn-outline-secondary quick-date" data-range="this-month">{% translate 'This Month' %}</button>
-                  <button type="button" class="btn btn-outline-secondary quick-date" data-range="last-7">{% translate 'Last 7 Days' %}</button>
-                  <button type="button" class="btn btn-outline-secondary quick-date" data-range="last-30">{% translate 'Last 30 Days' %}</button>
-              </div>
+      <div class="col-auto">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Quick date selection">
+              <button type="button" class="btn btn-outline-secondary quick-date" data-range="today">{% translate 'Today' %}</button>
+              <button type="button" class="btn btn-outline-secondary quick-date" data-range="this-week">{% translate 'This Week' %}</button>
+              <button type="button" class="btn btn-outline-secondary quick-date" data-range="this-month">{% translate 'This Month' %}</button>
           </div>
       </div>
       {% endif %}
+
+      <div class="col-auto">
+        <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-next text-nowrap">
+            {% translate 'Next' %}
+        </a>
+      </div>
+    </div>
     </div>
   </form>
   
