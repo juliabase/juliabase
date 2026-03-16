@@ -71,6 +71,20 @@
             
             // Shared AJAX function for notebook updates
             function performNotebookUpdate(url, method, data) {
+                // Show loading message
+                $('.report-success, .report-error, .report-info, .report-warning').remove();
+                var $loading = $('<div class="report-info">' + gettext('Updating lab notebook...') + '</div>').insertBefore('.main');
+                $loading.css({
+                    'position': 'fixed',
+                    'top': '20px',
+                    'left': '50%',
+                    'transform': 'translateX(-50%)',
+                    'z-index': '9999',
+                    'box-shadow': '0 4px 6px rgba(0,0,0,0.1)',
+                    'min-width': '300px',
+                    'text-align': 'center'
+                });
+
                 $.ajax({
                     type: method,
                     url: url, 
@@ -157,7 +171,7 @@
                         // Clear existing messages
                         $('.report-success, .report-error, .report-info, .report-warning').remove();
                         
-                        var msg = "An error occurred during update.";
+                        var msg = gettext("An error occurred during update.");
                         if (xhr.responseJSON && xhr.responseJSON.message) {
                             msg = xhr.responseJSON.message;
                         }
