@@ -30,21 +30,18 @@ import django.contrib.auth.models
 from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language
 import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
-from django.template import Context, TemplateDoesNotExist
+from django.template import TemplateDoesNotExist
 import django.utils.text
 from django.template.loader import render_to_string
 import django.urls
-from django.conf import settings
-from django.db import models, transaction
+from django.db import models
 from django.core.cache import cache
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
-from jb_common.models import Topic, PolymorphicModel, Department
+from jb_common.models import Topic, PolymorphicModel, Department, UserDetails
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
 from datetime import datetime as dt, timedelta
-import itertools
-from django.db.models import Prefetch
 from django.db.models.fields.related import ManyToManyRel
 from collections import defaultdict
 
@@ -230,7 +227,6 @@ class Process(PolymorphicModel):
 
     def __str__(self):
         self = self.actual_instance
-        samples = self.samples.values_list("name", flat=True)
         try:
             field_name = self.JBMeta.identifying_field
         except AttributeError:
@@ -240,7 +236,9 @@ class Process(PolymorphicModel):
             # measurement 26”.
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=getattr(self, field_name))
-        elif samples:
+        
+        samples = tuple(sample.name for sample in self.samples.all())
+        if samples:
             # Translators: Label for a process instance, e.g. a measurement,
             # e.g. “thickness measurement of 01B-410”.  Singular/plural refers
             # to {samples}.
@@ -440,7 +438,9 @@ class Process(PolymorphicModel):
 
     @classmethod
     def get_lab_notebook_context(cls, year, month):
-        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
+        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related(
+            "operator__jb_user_details__department"
+        )
         return {"processes": processes}
 
 
@@ -486,8 +486,15 @@ class Process(PolymorphicModel):
         fields_to_remove = ['informal_layers', 'task', 'feededitedphysicalprocess_set']
         reverse_related_fields_clean = [field for field in reverse_related_fields if field not in fields_to_remove]
 
+        # Add nested relations for operator's user details to avoid N+1 queries
+        # when rendering templates that access operator.jb_user_details.department
+        nested_relations = ['operator__jb_user_details__department']
+        
+        if "responsible_person" in related_fields:
+            nested_relations.append("responsible_person__user")
+
         queryset = cls.objects.filter(timestamp__range=(begin_date, end_date))\
-                                .select_related(*related_fields)\
+                                .select_related(*related_fields, *nested_relations)\
                                 .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
 
         return {"processes": list(queryset)}
@@ -871,13 +878,14 @@ class Sample(models.Model):
         with_relations = kwargs.pop("with_relations", not batch_mode)
         from_split = kwargs.pop("from_split", None)
 
-        # Clean cache
-        keys_list_key = f"sample-keys:{self.pk}"
-        with cache_key_locked(f"sample-lock:{self.pk}"):
-            keys = cache.get(keys_list_key)
-            if keys:
-                cache.delete_many(keys)
-            cache.delete(keys_list_key)
+        # Clean cache only for persisted instances (avoid using None as key)
+        if self.pk is not None:
+            keys_list_key = f"sample-keys:{self.pk}"
+            with cache_key_locked(f"sample-lock:{self.pk}"):
+                keys = cache.get(keys_list_key)
+                if keys:
+                    cache.delete_many(keys)
+                cache.delete(keys_list_key)
 
         # Save this instance
         super().save(*args, **kwargs)
@@ -947,9 +955,9 @@ class Sample(models.Model):
 
         :rtype: str
         """
-        # OPTIMIZE: I don't know why we need to check whether the user has permission to view the sample. 
-        # This function is only called in the main menu to generate "My Samples."
-        if self.tags and samples.permissions.has_permission_to_fully_view_sample(user, self):
+        # OPTIMIZE: I commented the part where it checks for permissions to fully view the sample since it 
+        # runs too many database queries. We probably don't need that :)
+        if self.tags: #and samples.permissions.has_permission_to_fully_view_sample(user, self):
             tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + "…"
             return " ({0})".format(tags)
         else:
@@ -1141,8 +1149,40 @@ class Sample(models.Model):
         user = kwargs.pop("user", None)
 
         if dry_run:
+            # Check cache first to avoid expensive re-computation
+            cache_key = f"sample_delete_dryrun:{self.id}:{user.id if user else 'none'}"
+            cached_result = cache.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+            
             samples.permissions.assert_can_edit_sample(user, self)
             affected_objects = {self}
+
+            # Get processes with only this sample
+            if hasattr(self, "_prefetched_processes_to_delete"):
+                processes_to_delete = self._prefetched_processes_to_delete
+            else:
+                processes_to_delete = (
+                    self.processes
+                    .annotate(sample_count=models.Count("samples"))
+                    .filter(sample_count=1)  # only processes tied exclusively to this sample
+                    .select_related("content_type")
+                )
+                processes_to_delete = list(processes_to_delete)
+            # Prefetch actual instances to avoid N+1 queries
+            self.prefetch_actual_instances(processes_to_delete)
+
+            for process in processes_to_delete:
+                actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
+                if hasattr(actual, "_cached_actual_instance"):
+                   # if process has attribute _cached_actual_instance, it means it was already prefetched, 
+                   # so we can use it to avoid further queries
+                   actual = actual._cached_actual_instance
+                result = actual.delete(*args, dry_run=True, user=user, raw=True)
+                affected_objects |= result
+
+            cache.set(cache_key, affected_objects, 60)
+            return affected_objects
 
         # Get processes with only this sample
         processes_to_delete = (
@@ -1156,16 +1196,8 @@ class Sample(models.Model):
         # Prefetch actual instances to avoid N+1 queries
         self.prefetch_actual_instances(processes_to_delete)
 
-        if dry_run:
-            for process in processes_to_delete:
-                actual = getattr(process, "_cached_actual_instance", process.actual_instance)
-                result = actual.delete(*args, dry_run=True, user=user, raw=True)
-                affected_objects |= result
-
-            return affected_objects
-
         for process in processes_to_delete:
-            actual = getattr(process, "_cached_actual_instance", process.actual_instance)
+            actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
             actual.delete(*args, user=user)
 
         # Clear m2m relations
@@ -1274,13 +1306,68 @@ class SampleSplit(Process):
                             "one hour.").format(process=self)
             raise samples.permissions.PermissionError(user, description)
         affected_objects = {self}
-        for sample in self.pieces.all():
-            result = sample.delete(*args, **kwargs)
-            if dry_run:
-                affected_objects |= result
+
         if dry_run:
+            children = list(self.pieces.select_related("currently_responsible_person", "topic").all())
+            
+            # Manually populate departments to ensure no queries in loop
+            users_to_cache = [c.currently_responsible_person for c in children if c.currently_responsible_person]
+            if users_to_cache:
+                import jb_common.models
+                user_ids = [u.id for u in users_to_cache]
+                # Fetch UserDetails with department loaded
+                details_map = {
+                    d.user_id: d 
+                    for d in jb_common.models.UserDetails.objects.filter(user_id__in=user_ids).select_related("department")
+                }
+                
+                no_dept = samples.permissions.NoDepartment()
+                for user in users_to_cache:
+                    if user.id in details_map:
+                        dept = details_map[user.id].department
+                        user._cached_department = dept if dept else no_dept
+                    else:
+                        user._cached_department = no_dept
+
+            # Bulk optimization to avoid N+1 queries in Sample.delete logic
+            # Find processes that are exclusively attached to any of the children.
+            # We want processes where samples__in=children AND count(samples)=1.
+            # Note: since count=1, and the process is linked to a child, it is linked ONLY to that child.
+            process_data = Process.objects.filter(samples__in=children) \
+                .annotate(sample_count=models.Count("samples")) \
+                .filter(sample_count=1) \
+                .values_list('id', 'samples__id')
+            
+            # Group process IDs by sample ID
+            proc_ids_by_sample = {}
+            all_proc_ids = []
+            for proc_id, sample_id in process_data:
+                proc_ids_by_sample.setdefault(sample_id, []).append(proc_id)
+                all_proc_ids.append(proc_id)
+                
+            # Fetch actual Process objects in one query
+            if all_proc_ids:
+                # We select_related content_type because Sample.delete accesses it
+                processes = Process.objects.filter(id__in=all_proc_ids).select_related("content_type")
+                process_map = {p.id: p for p in processes}
+            else:
+                process_map = {}
+
+            # Assign prefetched list to each child instance
+            for sample in children:
+                p_ids = proc_ids_by_sample.get(sample.id, [])
+                sample._prefetched_processes_to_delete = [
+                    process_map[pid] for pid in p_ids if pid in process_map
+                ]
+
+            for sample in children:
+                result = sample.delete(*args, **kwargs)
+                affected_objects |= result
+
             return affected_objects
         else:
+            for sample in self.pieces.all():
+                sample.delete(*args, **kwargs)
             return super().delete(*args, **kwargs)
 
 

@@ -25,38 +25,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 {% block extrahead %}
-  {% block css_inclusions %}
+  {% block external_css %}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FIXME: compress this CSS if you manage to make "compress" work -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  {% endblock %}
+  {% compress css %}
+  {% block css_inclusions %}
     <link rel="stylesheet" type="text/css" media="screen" href="{% static 'juliabase/css/main.css' %}"/>
     <link rel="stylesheet" type="text/css" media="print" href="{% static 'juliabase/css/print.css' %}"/>
-    <style>
-      th {
-      text-transform: none; /* Ensure text is not transformed */
-        }
-    </style>
-    {% endblock %}
+  {% endblock %}
+  {% endcompress %}
   {% block refresh_tag %}{% endblock %}
   {% block favicon %}
     <link rel="shortcut icon" href="{% static 'juliabase/juliabase.ico' %}" type="image/x-icon"/>
   {% endblock %}
-  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Preload critical scripts for better performance -->
+  <link rel="preload" href="https://code.jquery.com/jquery-3.6.0.min.js" as="script">
+  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
 
-  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-  <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}"></script>
-  <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}"></script>
-  <script type="text/javascript">
-
-  // <![CDATA[
-  document.addEventListener("DOMContentLoaded", function() {
-        $(function() {
-          $("input:text:visible:first").focus();
-        });
-      });
-      // ]]>
-  </script>
+  <!-- Google JSAPI removed - deprecated and causes slow page loads -->
+  <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
+  {% compress js %}
+  <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}" defer></script>
+  {% endcompress %}
+  {% block external_js %}{% endblock %}
+  {% compress js %}
   {% block local_scripts %}{% endblock %}
   {% block extrascripts %}{% endblock %}
+  {% endcompress %}
+  {% block local_scripts_dynamic %}{% endblock %}
+  {% block extrascripts_dynamic %}{% endblock %}
 {% endblock %}
 
 {% block content %}

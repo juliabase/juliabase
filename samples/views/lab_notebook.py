@@ -28,7 +28,7 @@ information.
 import re
 from datetime import datetime, timedelta
 from urllib.parse import quote_plus
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 import django.urls
 from django.template import loader, RequestContext
@@ -42,17 +42,6 @@ import samples.utils.views as utils
 import calendar
 
 
-class YearMonthForm(forms.Form):
-    """Form for the year/month fields in which the user can see which month is
-    currently selected, and also change it.
-    """
-    year = forms.IntegerField(label=_("year"), min_value=1990, max_value=9999)
-    month = forms.IntegerField(label=_("month"), min_value=1, max_value=12)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["year"].widget.attrs["style"] = "width: 4em"
-        self.fields["month"].widget.attrs["style"] = "width: 4em"
 
 
 year_and_month_pattern = re.compile(r"(?P<year>\d{4})/(?P<month>\d{1,2})$")
@@ -89,12 +78,14 @@ class DateForm(forms.Form):
     """
     begin_date = forms.DateField(
         label=_('Begin Date'),
-        widget=forms.SelectDateWidget(years=range(1990, 2040))
+        input_formats=['%d.%m.%Y', '%Y-%m-%d'],
+        widget=forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control date-picker', 'placeholder': 'DD.MM.YYYY'})
     )
 
     end_date = forms.DateField(
         label=_('End Date'),
-        widget=forms.SelectDateWidget(years=range(1990, 2040))
+        input_formats=['%d.%m.%Y', '%Y-%m-%d'],
+        widget=forms.DateInput(format='%d.%m.%Y', attrs={'class': 'form-control date-picker', 'placeholder': 'DD.MM.YYYY'})
     )
 
     def clean(self):
@@ -108,78 +99,6 @@ class DateForm(forms.Form):
 
         return cleaned_data
 
-
-
-
-# date_pattern = re.compile(r"(?P<from_year>\d{4})/(?P<from_month>\d{1,2})/(?P<from_day>\d{1,2})/(?P<to_year>\d{4})/(?P<to_month>\d{1,2})/(?P<to_day>\d{1,2})$")
-# def parse_dates(dates):
-#     """Parse the URL suffix in the lab notebook URL which is supposed to
-#     contain year and month.
-
-#     :param year_and_month: the year-and-month part of the URL given in the
-#         request, i.e. of the form ``"YYYY/MM"`` (the month may be single-digit)
-
-#     :type year_and_month: str
-
-#     :return:
-#       year found in the URL, month found in the URL
-
-#     :rtype: int, int
-
-#     :raises Http404: if the year-and-month string has an invalid format or was
-#         empty, or month and year refer to an invalid date, or the year precedes
-#         1990.
-#     """
-#     match = date_pattern.match(dates)
-#     if not match:
-#         raise Http404("Invalid dates")
-#     from_year, from_month, from_day = int(match.group("from_year")), int(match.group("from_month")), int(match.group("from_day"))
-#     to_year, to_month, to_day = int(match.group("to_year")), int(match.group("to_month")), int(match.group("to_day"))
-    
-#     # if not 1990 <= from_year or not 1 <= from_month <= 12:
-#     #     raise Http404("Invalid year and/or month")
-#     return from_year, from_month, from_day, to_year, to_month, to_day
-
-
-# def get_previous_next_urls(process_name, namespace, year, month):
-#     """Determine the full relative URLs (i.e., only the domain is missing) of
-#     the previous and next month in the lab notebook, taking the current lab
-#     notebook view as the starting point.
-
-#     :param process_name: the class name of the model of the physical process in
-#         camel case, e.g. ``"large_area_deposition"``
-#     :param namespace: namespace the lab notebook URL resides in
-#     :param year: year of the current view
-#     :param month: month of the current view
-
-#     :type process_name: str
-#     :type namespace: str
-#     :type year: int
-#     :type month: int
-
-#     :return:
-#       the full relative URL to the previous month, the full relative URL to the
-#       next month
-
-#     :rtype: str, str
-#     """
-#     previous_year = next_year = year
-#     previous_month = next_month = month
-#     previous_url = next_url = None
-#     previous_month -= 1
-#     if previous_month == 0:
-#         previous_month = 12
-#         previous_year -= 1
-#     if previous_year >= 1990:
-#         previous_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
-#                                            kwargs={"year_and_month": "{0}/{1}".format(previous_year, previous_month)})
-#     next_month += 1
-#     if next_month == 13:
-#         next_month = 1
-#         next_year += 1
-#     next_url = django.urls.reverse("{}:lab_notebook_{}".format(namespace, process_name),
-#                                    kwargs={"year_and_month": "{0}/{1}".format(next_year, next_month)})
-#     return previous_url, next_url
 
 def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
     """Determine the full relative URLs (i.e., only the domain is missing) of
@@ -263,68 +182,31 @@ def get_previous_next_month_urls(process_name, namespace, begin_date, end_date):
     return previous_url, next_url
 
 
-# @help_link("demo.html#lab-notebooks")
-# @login_required
-# def show(request, process_name, year_and_month):
-#     """View for showing one month of the lab notebook for a particular
-#     physical process.  In ``urls.py``, you must give the entry for this view
-#     the name ``"lab_notebook_<camel_case_process_name>"``.
-
-#     :param request: the current HTTP Request object
-#     :param process_name: the class name of the model of the physical process,
-#         e.g. ``"LargeAreaDeposition"``
-#     :param year_and_month: the year and month to be displayed in the format
-#         ``YYYY/MM`` (the month may be single-digit)
-
-#     :type request: HttpRequest
-#     :type process_name: str
-#     :type year_and_month: str
-
-#     :return:
-#       the HTTP response object
-
-#     :rtype: HttpResponse
-#     """
-#     process_class = get_all_models()[process_name]
-#     process_name = camel_case_to_underscores(process_name)
-#     namespace = process_class._meta.app_label
-#     permissions.assert_can_view_lab_notebook(request.user, process_class)
-#     if not year_and_month:
-#         try:
-#             timestamp = process_class.objects.latest().timestamp
-#         except process_class.DoesNotExist:
-#             timestamp = datetime.datetime.today()
-#         return HttpResponseSeeOther("{0}/{1}".format(timestamp.year, timestamp.month))
-#     year, month = parse_year_and_month(year_and_month)
-#     if request.method == "POST":
-#         year_month_form = YearMonthForm(request.POST)
-#         if year_month_form.is_valid():
-#             return HttpResponseSeeOther(django.urls.reverse(
-#                 "{}:lab_notebook_{}".format(namespace, process_name),
-#                 kwargs={"year_and_month": "{year}/{month}".format(**year_month_form.cleaned_data)}))
-#     else:
-#         year_month_form = YearMonthForm(initial={"year": year, "month": month})
-#     template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
-#     template_context = RequestContext(request, process_class.get_lab_notebook_context(year, month))
-#     template_context["request"] = request
-#     html_body = template.render(template_context.flatten())
-#     previous_url, next_url = get_previous_next_urls(process_name, namespace, year, month)
-#     try:
-#         export_url = django.urls.reverse(
-#             "{}:export_lab_notebook_{}".format(namespace, process_name),
-#             kwargs={"year_and_month": year_and_month}) + "?next=" + quote_plus(request.path)
-#     except django.urls.NoReverseMatch:
-#         export_url = None
-#     return render(request, "samples/lab_notebook.html",
-#                   {"title": capitalize_first_letter(_("lab notebook for {process_name}")
-#                                                     .format(process_name=process_class._meta.verbose_name_plural)),
-#                    "year": year, "month": month, "year_month": year_month_form,
-#                    "html_body": html_body, "previous_url": previous_url, "next_url": next_url,
-#                    "export_url": export_url})
-
 
 def format_date(year, month, day):
     return f'{year}-{month:02d}-{day:02d}'
+
+def redirect_year_month_to_range(request, process_name, year_and_month):
+    """View to redirect old YYYY/MM lab notebook URLs to the new date range format YYYY-MM-DD/YYYY-MM-DD.
+    """
+    process_class = get_all_models()[process_name]
+    namespace = process_class._meta.app_label
+    process_name_underscores = camel_case_to_underscores(process_name)
+    
+    try:
+        year, month = parse_year_and_month(year_and_month)
+        last_day = calendar.monthrange(year, month)[1]
+        begin_date = format_date(year, month, 1)
+        end_date = format_date(year, month, last_day)
+        
+        url_name = f"{namespace}:lab_notebook_{process_name_underscores}"
+        return HttpResponseSeeOther(django.urls.reverse(
+            url_name,
+            kwargs={'begin_date': begin_date, 'end_date': end_date}
+        ))
+    except (ValueError, Http404, django.urls.NoReverseMatch):
+         # If parsing fails or reverse match fails (e.g. if new views not registered correctly), fall back or raise 404
+         raise Http404("Invalid date or configuration for redirection.")
 
 @login_required
 def show(request, process_name, begin_date=False, end_date=False):
@@ -376,39 +258,51 @@ def show(request, process_name, begin_date=False, end_date=False):
         # If yes, send a response with the chosen dates
         date_form = DateForm(request.POST)
         if date_form.is_valid():
-            begin_date = date_form.cleaned_data['begin_date']
-            end_date = date_form.cleaned_data['end_date']
-            return HttpResponseSeeOther(django.urls.reverse(
-                "{}:lab_notebook_{}".format(namespace, process_name),
-                kwargs={"begin_date": "{begin_date}".format(**date_form.cleaned_data),
-                        "end_date": "{end_date}".format(**date_form.cleaned_data)}))
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                begin_date = date_form.cleaned_data['begin_date'].strftime('%Y-%m-%d')
+                end_date = date_form.cleaned_data['end_date'].strftime('%Y-%m-%d')
+            else:
+                return HttpResponseSeeOther(django.urls.reverse(
+                    "{}:lab_notebook_{}".format(namespace, process_name),
+                    kwargs={"begin_date": "{begin_date}".format(**date_form.cleaned_data),
+                            "end_date": "{end_date}".format(**date_form.cleaned_data)}))
+        elif request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'message': (_('Invalid date selection.'))}, status=400)
     else:
         # If not, pick the current begin and end dates and create a form
-        initial_data = {'begin_date': begin_date,
-                        'end_date': end_date}
+        try:
+            if isinstance(begin_date, str):
+                begin_date_obj = datetime.strptime(begin_date, "%Y-%m-%d")
+            else:
+                begin_date_obj = begin_date
+            
+            if isinstance(end_date, str):
+                end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+            else:
+                end_date_obj = end_date
+        except ValueError:
+            # Fallback if dates are not YYYY-MM-DD
+            begin_date_obj = begin_date
+            end_date_obj = end_date
+
+        initial_data = {'begin_date': begin_date_obj,
+                        'end_date': end_date_obj}
         date_form = DateForm(initial=initial_data)
     
     # Fetch the template to be used
     template = loader.get_template("samples/lab_notebook_" + process_name + ".html")
-    # serialized_data = 0
-    # raise ValueError("proc", dir(process_class))
     cols = get_model_field_names(process_class)
-    
-    if "screenprinter_paste" in process_name or "screenprinter_screen" in process_name or "project" in process_name:
-        # If the notebook does not support range search, fetch everything
-        # serialized_data = serialize('json', process_class.get_lab_notebook_context_all())
-        template_context = RequestContext(request, process_class.get_lab_notebook_context_all())
 
-    else:
-        # Fetch all the rows from the table of the chosen process 
-        # whose begin and end dates are between the specified range 
-        template_context = RequestContext(request, process_class.get_lab_notebook_context_range(begin_date, end_date))
-    
+    # Fetch all the rows from the table of the chosen process 
+    # whose begin and end dates are between the specified range 
+    template_context = RequestContext(request, process_class.get_lab_notebook_context_range(begin_date, end_date))
+
     # Render the template
     template_context["request"] = request
     html_body = template.render(template_context.flatten())
     # Get the previous months
     previous_url, next_url = get_previous_next_month_urls(process_name, namespace, begin_date, end_date)
+    
     try:
         # FIXME: I commented the next line since the form is never valid because it might be filled
         # but it might not be bound :/
@@ -419,20 +313,41 @@ def show(request, process_name, begin_date=False, end_date=False):
                     'end_date': end_date}) + "?next=" + quote_plus(request.path)
     except django.urls.NoReverseMatch:
         export_url = None
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'html_body': html_body,
+            'previous_url': previous_url,
+            'next_url': next_url,
+            'export_url': export_url,
+            'begin_date': begin_date,
+            'end_date': end_date,
+            'title': capitalize_first_letter(_("lab notebook for {process_name}")
+                                                    .format(process_name=process_class._meta.verbose_name_plural)),
+            'new_url': django.urls.reverse(
+                "{}:lab_notebook_{}".format(namespace, process_name),
+                kwargs={"begin_date": begin_date, "end_date": end_date}),
+            'message': _('Lab notebook updated successfully.')
+        })
     # Render the final page using html_body from before
     return render(request, "samples/lab_notebook.html",
                   {"title": capitalize_first_letter(_("lab notebook for {process_name}")
                                                     .format(process_name=process_class._meta.verbose_name_plural)),
-                        "date_form": date_form,
-                   "html_body": html_body,"previous_url": previous_url, "next_url": next_url,
-                   "export_url": export_url, "cols": cols})
+                    "date_form": date_form,
+                    "html_body": html_body,
+                    "previous_url": previous_url, 
+                    "next_url": next_url,
+                    "export_url": export_url, 
+                    "cols": cols,
+                })
+
 
 
 
 
 @login_required
-def export(request, process_name, year_and_month):
-    """View for exporting the data of a month of a lab notebook.  Thus, the
+def export(request, process_name, begin_date, end_date):
+    """View for exporting the data of a month of a lab notebook that uses a range date system.  Thus, the
     return value is not an HTML response but a CSV or JSON response.  In
     ``urls.py``, you must give the entry for this view the name
     ``"export_lab_notebook_<process_name>"``.
@@ -440,12 +355,15 @@ def export(request, process_name, year_and_month):
     :param request: the current HTTP Request object
     :param process_name: the class name of the model of the physical process,
         e.g. ``"LargeAreaDeposition"``
-    :param year_and_month: the year and month to be displayed in the format
-        ``YYYY/MM`` (the month may be single-digit)
+    :param begin_date: the beginning date to be displayed in the format
+        ``YYYY-MM-DD``
+    :param end_date: the end date to be displayed in the format
+        ``YYYY-MM-DD``
 
     :type request: HttpRequest
     :type process_name: str
-    :type year_and_month: str
+    :type begin_date: str
+    :type end_date: str
 
     :return:
       the HTTP response object
@@ -454,51 +372,7 @@ def export(request, process_name, year_and_month):
     """
     process_class = get_all_models()[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
-    year, month = parse_year_and_month(year_and_month)
-    data = process_class.get_lab_notebook_data(year, month)
-    result = utils.table_export(request, data, _("process"))
-    if isinstance(result, tuple):
-        column_groups_form, columns_form, table, switch_row_forms, old_data_form = result
-    elif isinstance(result, HttpResponse):
-        return result
-    title = _("Table export for “{name}”").format(name=data.descriptive_name)
-    return render(request, "samples/table_export.html", {"title": title, "column_groups": column_groups_form,
-                                                         "columns": columns_form,
-                                                         "rows": list(zip(table, switch_row_forms)) if table else None,
-                                                         "old_data": old_data_form,
-                                                         "backlink": request.GET.get("next", "")})
-
-
-@login_required
-def export_range(request, process_name, begin_date, end_date):
-    """View for exporting the data of a month of a lab notebook.  Thus, the
-    return value is not an HTML response but a CSV or JSON response.  In
-    ``urls.py``, you must give the entry for this view the name
-    ``"export_lab_notebook_<process_name>"``.
-
-    :param request: the current HTTP Request object
-    :param process_name: the class name of the model of the physical process,
-        e.g. ``"LargeAreaDeposition"``
-    :param year_and_month: the year and month to be displayed in the format
-        ``YYYY/MM`` (the month may be single-digit)
-
-    :type request: HttpRequest
-    :type process_name: str
-    :type year_and_month: str
-
-    :return:
-      the HTTP response object
-
-    :rtype: HttpResponse
-    """
-    process_class = get_all_models()[process_name]
-    permissions.assert_can_view_lab_notebook(request.user, process_class)
-    # year, month = parse_year_and_month(year_and_month)
-    # begin_date = datetime.strptime(begin_date, '%Y-%m-%d')
-    # end_date = datetime.strptime(end_date, '%Y-%m-%d')
-    
     data = process_class.get_lab_notebook_data_range(begin_date, end_date)
-    # raise ValueError("data:", data)
     result = utils.table_export(request, data, _("process"))
     if isinstance(result, tuple):
         column_groups_form, columns_form, table, switch_row_forms, old_data_form = result

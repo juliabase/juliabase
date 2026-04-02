@@ -40,45 +40,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </p>
 </form>
 
-<!-- <div id="error-messages"></div>
-<script>
-  var error_msg = "<p>{% translate 'Your username and password didn\'t match. Please try again.' %}</p>";
-  var next = "{{ next }}";
-</script>
-<script>
-  $(document).ready(function() {
-      $('#login-form').on('submit', function(event) {
-          event.preventDefault();
-          var $form = $(this);
-          console.log($form.serialize());
-          $.ajax({
-              type: $form.attr('method'),
-              url: $form.attr('action'),
-              data: $form.serialize(),
-              dataType: 'json',
-              success: function(response) {
-                  if (response.redirect_url) {
-                      window.location.href = response.redirect_url;
-                  }
-              },
-              error: function(xhr) {
-                  $('#error-messages').empty();
-                  try {
-                      var errors = xhr.responseJSON.errors;
-                      for (var field in errors) {
-                          if (errors.hasOwnProperty(field)) {
-                              errors[field].forEach(function(error) {
-                                  $('#error-messages').append('<p>' + error + '</p>');
-                              });
-                          }
-                      }
-                  } catch (e) {
-                      $('#error-messages').append('<p>An unexpected error occurred.</p>');
-                  }
-              }
-          });
-      });
-  });
-</script> -->
-
 {% endblock %}
