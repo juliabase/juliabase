@@ -230,42 +230,67 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
     """
     global_new_location = global_new_data_form.cleaned_data["new_location"]
     sample_splits = []
+
+    # Collect aliases to bulk-create at the end
+    aliases_to_create = []
+
     for original_data_form, new_name_forms in zip(original_data_forms, new_name_form_lists):
         sample = original_data_form.cleaned_data["sample"]
         new_name = original_data_form.cleaned_data["new_name"]
         if new_name != sample.name:
-            # FixMe: Once we have assured that split-after-deposition is only
-            # called once per deposition, the second condition (after the
-            # "and") is superfluous.
             if not sample.name.startswith("*") and \
                     not models.SampleAlias.objects.filter(name=sample.name, sample=sample).exists():
-                models.SampleAlias(name=sample.name, sample=sample).save()
+                aliases_to_create.append(models.SampleAlias(name=sample.name, sample=sample))
             sample.name = new_name
-            sample.save()
+            sample.save(batch_mode=True)
         if original_data_form.cleaned_data["number_of_pieces"] > 1:
             sample_split = models.SampleSplit(timestamp=deposition.timestamp + datetime.timedelta(seconds=5),
                                               operator=deposition.operator, parent=sample)
-            sample_split.save()
+            sample_split.save(with_relations=False)
             sample.processes.add(sample_split)
             sample_splits.append(sample_split)
+
+            # Pre-fetch watchers once for this sample
+            watchers = list(sample.watchers.all())
+
+            # Build child sample objects
+            children_to_create = []
             for new_name_form in new_name_forms:
                 child_sample = sample.duplicate()
                 child_sample.name = new_name_form.cleaned_data["new_name"]
                 child_sample.split_origin = sample_split
                 if global_new_location:
                     child_sample.current_location = global_new_location
-                child_sample.save()
-                for watcher in sample.watchers.all():
-                    watcher.my_samples.add(child_sample)
+                children_to_create.append(child_sample)
+
+            # Bulk-create all child samples in one query
+            created_children = models.Sample.objects.bulk_create(children_to_create)
+
+            # Bulk-add watchers to all children via the through table
+            if watchers:
+                MysamThrough = models.Sample.watchers.through
+                through_objects = [
+                    MysamThrough(sample_id=child.pk, user_id=watcher.pk)
+                    for child in created_children
+                    for watcher in watchers
+                ]
+                MysamThrough.objects.bulk_create(through_objects, ignore_conflicts=True)
+
             sample.watchers.clear()
+
             death = models.SampleDeath(timestamp=deposition.timestamp + datetime.timedelta(seconds=10),
                                        operator=deposition.operator, reason="split")
-            death.save()
+            death.save(with_relations=False)
             sample.processes.add(death)
         else:
             if global_new_location:
                 sample.current_location = global_new_location
-            sample.save()
+            sample.save(batch_mode=True)
+
+    # Bulk-create all aliases
+    if aliases_to_create:
+        models.SampleAlias.objects.bulk_create(aliases_to_create, ignore_conflicts=True)
+
     deposition.split_done = True
     deposition.save()
     return sample_splits

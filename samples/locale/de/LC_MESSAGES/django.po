@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-02 11:13+0200\n"
+"POT-Creation-Date: 2026-02-26 13:01+0100\n"
 "PO-Revision-Date: 2018-05-17 23:23+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -302,6 +302,10 @@ msgstr "Kommentare"
 #: juliabase/samples/models/common.py:1694
 msgid "last modified"
 msgstr "zuletzt geändert"
+
+#: juliabase/samples/models/common.py:189
+msgid "last modifier"
+msgstr "letzter Änderer"
 
 #: juliabase/samples/models/common.py:186
 #: juliabase/samples/models/common.py:1679
@@ -2331,7 +2335,7 @@ msgstr "Fehler im Datum"
 
 #: juliabase/samples/templates/samples/lab_notebook.html:112
 msgid "Submit"
-msgstr ""
+msgstr "Absenden"
 
 #: juliabase/samples/templates/samples/lab_notebook.html:47
 msgid "previous month"
@@ -2447,10 +2451,6 @@ msgstr "Verwalten meiner Probenserien"
 #: juliabase/samples/templates/samples/main_menu.html:190
 msgid "about JuliaBase"
 msgstr "über JuliaBase"
-
-#: juliabase/samples/templates/samples/main_menu.html:192
-msgid "server statistics"
-msgstr "Server-Statistik"
 
 #: juliabase/samples/templates/samples/merge_samples.html:28
 msgid ""
@@ -2613,6 +2613,10 @@ msgstr "duplizieren"
 msgid "resplit"
 msgstr "weiterspalten"
 
+#: juliabase/samples/templates/samples/show_process.html:52
+msgid "Add to my experiments"
+msgstr "Zu meinen Experimenten hinzufügen"
+
 #: juliabase/samples/templates/samples/show_process.html:51
 #: juliabase/samples/templates/samples/show_sample.html:206
 msgid "(not finished)"
@@ -2639,6 +2643,14 @@ msgstr[1] ""
 "Dieser Prozess wurde auf die folgenden Proben angewandt: <!-- "
 "%(link)s%(name)s -->"
 
+#: juliabase/samples/templates/samples/show_process.html:98
+msgid "Others"
+msgstr "Andere"
+
+#: juliabase/samples/templates/samples/show_process.html:109
+msgid "Add to my samples"
+msgstr "Zu meinen Proben hinzufügen"
+
 #: juliabase/samples/templates/samples/show_process.html:72
 #, python-format
 msgid ""
@@ -2659,6 +2671,14 @@ msgstr[1] ""
 "\n"
 "Dieser Prozess wurde auf die folgenden Probenserien angewandt: <!-- "
 "%(link)s%(name)s -->"
+
+#: juliabase/samples/templates/samples/show_process.html:132
+msgid "Created by: "
+msgstr "Erstellt von: "
+
+#: juliabase/samples/templates/samples/show_process.html:135
+msgid "Last Modified by: "
+msgstr "Zuletzt geändert von: "
 
 #: juliabase/samples/templates/samples/show_sample.html:66
 msgid "Sample “"
@@ -2710,6 +2730,18 @@ msgstr[1] ""
 "Diese Probe gehört zu folgenden Probenserien: <!-- %(first_url)s  "
 "%(first_series)s -->"
 
+#: juliabase/samples/templates/samples/show_sample.html:187
+msgid ""
+"Click on each header to expand the process. You can also click on <b>Expand "
+"All</b> to expand all the processes."
+msgstr ""
+"Klicke auf jede Überschrift, um den Prozess zu erweitern. Du kannst auch auf "
+"<b>Alle erweitern</b> klicken, um alle Prozesse zu erweitern."
+
+#: juliabase/samples/templates/samples/show_sample.html:188
+msgid "Expand All"
+msgstr "Alle erweitern"
+
 #: juliabase/samples/templates/samples/show_sample.html:203
 msgid "show process"
 msgstr "Prozess anzeigen"
@@ -2734,7 +2766,7 @@ msgstr "Ergebnis hinzufügen"
 
 #: juliabase/samples/templates/samples/show_sample_series.html:43
 msgid "show runsheet"
-msgstr ""
+msgstr "Laufzettel anzeigen"
 
 #: juliabase/samples/templates/samples/show_sample_series.html:49
 msgid "This sample series contains the following samples:"
@@ -3497,11 +3529,11 @@ msgstr "Monat"
 
 #: juliabase/samples/views/lab_notebook.py:93
 msgid "Begin Date"
-msgstr ""
+msgstr "Anfangsdatum"
 
 #: juliabase/samples/views/lab_notebook.py:98
 msgid "End Date"
-msgstr ""
+msgstr "Enddatum"
 
 #: juliabase/samples/views/lab_notebook.py:215
 #: juliabase/samples/views/main.py:329 juliabase/samples/views/result.py:653
@@ -3890,10 +3922,8 @@ msgid "This sample does not exist."
 msgstr "Diese Probe existiert nicht."
 
 #: juliabase/samples/views/sample.py:1134
-#, fuzzy
-#| msgid "This sample name exists already."
 msgid "This sample name is not valid."
-msgstr "Dieser Probenname ist schon vergeben."
+msgstr "Dieser Probenname ist ungültig."
 
 #: juliabase/samples/views/sample.py:1146
 msgid "The new name must be different from the old name."
@@ -4305,6 +4335,12 @@ msgstr ""
 #, python-brace-format
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
+
+#~ msgid "My Experiments"
+#~ msgstr "Meine Experimente"
+
+#~ msgid "Added Experiments"
+#~ msgstr "Hinzugefügte Experimente."
 
 #~ msgid "server statistics"
 #~ msgstr "Server-Statistik"

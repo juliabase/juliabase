@@ -19,7 +19,7 @@ import copy, datetime
 from django import forms
 from django.contrib.auth.models import User
 from django.forms.utils import ValidationError
-from django.db.models import Q
+from django.db.models import Q, prefetch_related_objects
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy as _, gettext
 from django.contrib.auth.decorators import login_required
@@ -28,7 +28,6 @@ from django.views.decorators.http import require_http_methods
 import django.utils.timezone
 from django.utils.text import capfirst
 from django.utils.encoding import force_str
-from django.apps import apps
 import jb_common.utils.base as common_utils
 from jb_common.utils.base import help_link
 from jb_common.models import Department
@@ -201,7 +200,7 @@ class ChooseTaskListsForm(forms.Form):
             choices = (("", 9 * "-"),)
         self.fields["visible_task_lists"].choices = choices
         self.fields["visible_task_lists"].initial = [content_type.id for content_type
-                                                     in user.samples_user_details.visible_task_lists.iterator()]
+                                                     in user.samples_user_details.visible_task_lists.all()]
         self.fields["visible_task_lists"].widget.attrs["size"] = "15"
 
 
@@ -340,10 +339,24 @@ def create_task_lists(user):
     task_lists = []
     seen_process_names = set()
     ambiguous_process_names = set()
-    for process_content_type in user.samples_user_details.visible_task_lists.all():
+    visible_content_types = list(user.samples_user_details.visible_task_lists.all())
+    all_active_tasks = Task.objects.filter(process_class__in=visible_content_types). \
+        order_by("-status", "priority", "last_modified"). \
+        exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago)). \
+        select_related("customer__jb_user_details__department",
+                       "operator__jb_user_details__department",
+                       "finished_process", "process_class"). \
+        prefetch_related("samples__topic", "samples__topic__members",
+                         "samples__currently_responsible_person__jb_user_details__department")
+    permissions.prefetch_add_permissions([ct.model_class() for ct in visible_content_types])
+
+    tasks_by_process = {}
+    for task in all_active_tasks:
+        tasks_by_process.setdefault(task.process_class_id, []).append(task)
+
+    for process_content_type in visible_content_types:
         process_name = capfirst(force_str(process_content_type.model_class()._meta.verbose_name))
-        active_tasks = process_content_type.tasks.order_by("-status", "priority", "last_modified"). \
-            exclude(Q(status="0 finished") & Q(last_modified__lt=one_week_ago))
+        active_tasks = tasks_by_process.get(process_content_type.id, [])
         task_lists.append((process_name, process_content_type, [TaskForTemplate(task, user) for task in active_tasks]))
         if process_name in seen_process_names:
             ambiguous_process_names.add(process_name)
@@ -373,6 +386,9 @@ def show(request):
 
     :rtype: HttpResponse
     """
+    if hasattr(request.user, "samples_user_details"):
+        prefetch_related_objects([request.user.samples_user_details], "visible_task_lists")
+
     if request.method == "POST":
         choose_task_lists_form = ChooseTaskListsForm(request.user, request.POST)
         if choose_task_lists_form.is_valid():

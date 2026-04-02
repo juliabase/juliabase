@@ -68,3 +68,5 @@ $.ajaxSetup({
         }
     }
 });
+
+document.addEventListener("DOMContentLoaded", function() { if (window.jQuery) { $(function() { $("input:text:visible:first").focus(); }); } });

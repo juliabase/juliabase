@@ -1,3 +1,42 @@
 table {
     width: 100% !important;
 }
+
+/* Fix DataTables scroll/header gap when used inside responsive wrappers */
+/* Covers both DataTables 1.x (.dataTables_*) and 2.x (.dt-scroll-*) class names */
+.dataTables_scrollHead,
+.dataTables_scrollHeadInner,
+.dt-scroll-head,
+.dt-scroll-headInner {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
+.dataTables_scrollBody,
+.dt-scroll-body {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+.dataTables_scrollHeadInner table,
+.dt-scroll-headInner table,
+.dataTables_scrollHead table,
+.dt-scroll-head table {
+    margin-bottom: 0 !important;
+    border-bottom: none !important;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* Fix gap caused by Bootstrap table margin when using scrollY */
+.dataTables_wrapper table.dataTable,
+div.dt-container table.dataTable {
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* FixedColumns specific fixes */
+.dtfc-fixed-left,
+.dtfc-fixed-right,
+.dt-fixedColumns-left,
+.dt-fixedColumns-right {
+    margin-top: 0 !important;
+}

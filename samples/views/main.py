@@ -102,8 +102,6 @@ def main_menu(request):
     :rtype: HttpResponse
     """
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user)
-
-    # OPTIMIZE: This calls way too many queries, and I couldn't identify where the SQL calls are
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
     lab_notebooks = permissions.get_lab_notebooks_once(request.user)
 
@@ -231,6 +229,10 @@ def show_process(request, process_id, process_name="Process"):
         raise Http404("Invalid value for {} passed: {}".format(identifying_field, repr(process_id)))
     if not isinstance(process, models.PhysicalProcess) and not isinstance(process, models.Process):
         raise Http404("No physical process with that ID was found.")
+
+    from django.db.models import prefetch_related_objects
+    prefetch_related_objects([process], "samples")
+
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())
@@ -332,7 +334,7 @@ def delete_process_confirmation(request, process_id):
 @unquote_view_parameters
 def export_process(request, process_id):
     """View for exporting process data in CSV or JSON format.  Thus, the
-    return value is not an HTML response.  Note that you must also be allowed 
+    return value is not an HTML response.  Note that you must also be allowed
     to see all *samples* in this process for the export.
 
     :param request: the current HTTP Request object
