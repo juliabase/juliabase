@@ -19,7 +19,7 @@
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-import hashlib, os.path, time, urllib, json
+import hashlib, time, urllib, json
 from io import BytesIO
 from urllib.parse import quote_plus
 from pathlib import Path
@@ -44,16 +44,12 @@ from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked, get_from_cache, int_or_zero, help_link
+    respond_in_json, get_all_models, mkdirs, cache_key_locked, int_or_zero, help_link
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree
 import samples.utils.views as utils
 from samples.utils import sample_names
 import datetime
-from iek5.models.physical_processes import Experiment
-from samples.models import Sample
-from django.contrib.contenttypes.models import ContentType
-import pprint
 
 class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
@@ -406,11 +402,9 @@ class SamplesAndProcesses:
             ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True)
             ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True)
             
-            process_ids = set(ids_from_direct) | set(ids_from_series)
-            
             process_ids = ids_from_direct.union(ids_from_series)
 
-            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').distinct()
+            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').prefetch_related('actual_instance').distinct()
 
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
@@ -467,6 +461,7 @@ class SamplesAndProcesses:
         self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
         self.sample_context["can_delete"] = permissions.has_permission_to_delete_sample(self.user, sample)
         if self.sample_context["can_edit"] and \
+           not sample.is_dead() and \
            sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
@@ -762,11 +757,9 @@ def show(request, sample_name):
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     sample_id = samples_and_processes.sample_context["sample"].id
-    experiments = list(Experiment.objects.filter(samples__id=sample_id))
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
-                   "samples_and_processes": samples_and_processes,
-                   "experiments": experiments})
+                   "samples_and_processes": samples_and_processes})
 
 
 @login_required
@@ -857,12 +850,10 @@ def cleanmysamples(request):
 
     :rtype: HttpResponse
     """
-    too_many_results = False
-    base_query = utils.restricted_samples_query(request.user)
     clean_my_samples_form = CleanMySamplesForm(request.GET)
     found_samples = [s for s in request.user.my_samples.all()]
     protected = []
-    for series in request.user.sample_series.all():
+    for series in request.user.sample_series.prefetch_related('samples'):
         for sample in series.samples.all():
             protected.append(sample)
     to_be_removed = []
@@ -993,6 +984,27 @@ def advanced_search(request):
             else:
                 base_query = None
             results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
+            
+            from django.db.models import prefetch_related_objects
+            if issubclass(search_tree.model_class, models.Process):
+                prefetch_fields = ["samples__topic__members",
+                                   "samples__currently_responsible_person__jb_user_details__department"]
+                if isinstance(results, list):
+                    if results:
+                        # For list of model instances, we must use prefetch_related_objects
+                        prefetch_related_objects(results, "operator", "content_type", *prefetch_fields)
+                else:
+                    results = results.select_related("operator", "content_type")
+                    results = results.prefetch_related(*prefetch_fields)
+            elif issubclass(search_tree.model_class, models.Sample):
+                prefetch_fields = ["topic__members", "currently_responsible_person__jb_user_details__department"]
+                if isinstance(results, list):
+                    if results:
+                        prefetch_related_objects(results, *prefetch_fields)
+                else:
+                    results = results.select_related("topic", "currently_responsible_person")
+                    results = results.prefetch_related(*prefetch_fields)
+
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = {int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()

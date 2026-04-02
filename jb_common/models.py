@@ -27,6 +27,25 @@ import django.utils.timezone
 from django.utils.translation import gettext_lazy as _, gettext
 import jb_common.search
 
+class SelfResolvingGenericForeignKey(GenericForeignKey):
+    """A GenericForeignKey which avoids a DB query if the instance is already of the target type."""
+    def __get__(self, instance, cls=None):
+        if instance is None:
+            return self
+
+        try:
+            ct = getattr(instance, self.ct_field)
+            if ct is not None:
+                model = ct.model_class()
+                if isinstance(instance, model):
+                    fk_val = getattr(instance, self.fk_field)
+                    if str(instance.pk) == str(fk_val):
+                        return instance
+        except Exception:
+            pass
+
+        return super().__get__(instance, cls)
+
 
 class Department(models.Model):
     """Model to determine which process belongs to which department.
@@ -81,7 +100,24 @@ class UserDetails(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._old = self.get_data_hash()
+        # Avoid accessing field descriptors here because during
+        # construction from the DB (Model.from_db) accessing a field can
+        # trigger a refresh_from_db and recurse. Use values present in
+        # __dict__ only; if they are not available, defer computing the
+        # hash until later (e.g. on save).
+        lang = self.__dict__.get("language")
+        bs = self.__dict__.get("browser_system")
+        if lang is not None and bs is not None:
+            try:
+                h = hashlib.sha1()
+                h.update(lang.encode())
+                h.update(b"\x03")
+                h.update(bs.encode())
+                self._old = h.hexdigest()
+            except Exception:
+                self._old = None
+        else:
+            self._old = None
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"
@@ -170,8 +206,15 @@ class Topic(models.Model):
 
         :type user: django.contrib.auth.models.User
         """
-        if self.confidential and not self.members.filter(pk=user.pk).exists():
-            return _("topic #{number} (confidential)").format(number=self.id)
+        if self.confidential:
+            # If members were prefetched by the caller, use the prefetched cache
+            prefetched = getattr(self, "_prefetched_objects_cache", None)
+            if prefetched and "members" in prefetched:
+                is_member = any(m.pk == user.pk for m in prefetched["members"])
+            else:
+                is_member = self.members.filter(pk=user.pk).exists()
+            if not is_member and not user.is_superuser:
+                return _("topic #{number} (confidential)").format(number=self.id)
         else:
             return self.name
 
@@ -238,7 +281,7 @@ class PolymorphicModel(models.Model):
     """
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True, editable=False)
     actual_object_id = models.PositiveIntegerField(null=True, blank=True, editable=False)
-    actual_instance = GenericForeignKey("content_type", "actual_object_id")
+    actual_instance = SelfResolvingGenericForeignKey("content_type", "actual_object_id")
 
     def save(self, *args, **kwargs):
         """Saves the instance and assures that `actual_instance` is set.

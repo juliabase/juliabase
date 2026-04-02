@@ -312,10 +312,30 @@ def build_structured_sample_list(user, samples=None):
         """Appends the given topic to its parent’s subtopics list, and does this
         recursively with all ancestors.
         """
+        parent_id = structured_topic.topic.parent_topic.id
+        parent_structured_topic = None
+        # Prefer final_structured_topics if it exists (constructed later),
+        # otherwise fall back to `structured_topics` which may contain dicts.
         try:
-            parent_structured_topic = structured_topics[structured_topic.topic.parent_topic.id]
-        except KeyError:
-            parent_structured_topic = StructuredTopic(structured_topic.topic.parent_topic, user)
+            parent_structured_topic = final_structured_topics.get(parent_id)  # type: ignore[name-defined]
+        except Exception:
+            parent_structured_topic = None
+
+        if parent_structured_topic is None:
+            parent_data = structured_topics.get(parent_id)
+            if isinstance(parent_data, StructuredTopic):
+                parent_structured_topic = parent_data
+            elif isinstance(parent_data, dict):
+                # Build a StructuredTopic from the collected dict data
+                parent_topic_obj = structured_topic.topic.parent_topic
+                parent_structured_topic = StructuredTopic(parent_topic_obj, user)
+                parent_structured_topic.samples.extend(parent_data.get("samples", []))
+                for series_name in parent_data.get("series_names", []):
+                    if series_name in structured_series:
+                        parent_structured_topic.sample_series.append(structured_series[series_name])
+            else:
+                parent_structured_topic = StructuredTopic(structured_topic.topic.parent_topic, user)
+
         parent_structured_topic.sub_topics.append(structured_topic)
         parent_structured_topic.sort_sub_topics()
         structured_topic.sort_sample_series()
@@ -339,44 +359,102 @@ def build_structured_sample_list(user, samples=None):
     # Assume `samples` is a QuerySet or similar iterable
     samples = sorted(set(samples), key=lambda sample: (sample.tags, sample.name))
 
-    # Prefetch 'series' for all samples
-    # samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).prefetch_related('series')
-    samples = Sample.objects.filter(id__in=[sample.id for sample in samples]).\
-                                    select_related('topic').\
-                                    prefetch_related(
-                                                    
-                                                    Prefetch(
-                                                        "series",  # Related name for ManyToMany field in `SampleSerie`
-                                                        queryset=SampleSeries.objects.prefetch_related("samples", "topic"),
-                                                    ),)
+    # Prefetch 'series' and topic parents for all samples. We avoid
+    # prefetching `topic__members` here because that issues separate member
+    # queries per topic; instead we'll fetch all involved Topic objects with
+    # their members later and construct StructuredTopic instances from those.
+    samples = (
+        Sample.objects.filter(id__in=[sample.id for sample in samples])
+        .select_related("topic__parent_topic__parent_topic")
+        .prefetch_related(
+            Prefetch(
+                "series",
+                queryset=SampleSeries.objects.select_related(
+                    "topic__parent_topic__parent_topic",
+                ).prefetch_related(
+                    "samples",
+                ),
+            ),
+        )
+    )
 
+    # temporary structures: `structured_series` remains a mapping from
+    # series.name -> StructuredSeries, while `structured_topics` is a mapping
+    # topic_id -> {samples: [], series_names: []} that we'll convert once we
+    # fetched Topic objects (with members) in a single query.
+    topic_ids = set()
     for sample in samples:
-        # Now, `sample.series.all()` will not hit the database again for each sample
+        # `sample.series.all()` is prefetched
         containing_series = sample.series.all()
         if containing_series:
             for series in containing_series:
                 if series.name not in structured_series:
                     structured_series[series.name] = StructuredSeries(series)
-                    topic_id = series.topic.id
-                    if topic_id not in structured_topics:
-                        structured_topics[topic_id] = StructuredTopic(series.topic, user)
-                    structured_topics[topic_id].sample_series.append(structured_series[series.name])
                 structured_series[series.name].append(sample)
+                topic_id = series.topic.id
+                topic_ids.add(topic_id)
+                # collect ancestors up to two levels (if present)
+                parent = series.topic.parent_topic
+                if parent:
+                    topic_ids.add(parent.id)
+                    if parent.parent_topic:
+                        topic_ids.add(parent.parent_topic.id)
+                if topic_id not in structured_topics:
+                    structured_topics[topic_id] = {"samples": [], "series_names": []}
+                if series.name not in structured_topics[topic_id]["series_names"]:
+                    structured_topics[topic_id]["series_names"].append(series.name)
         elif sample.topic:
             topic_id = sample.topic.id
+            topic_ids.add(topic_id)
+            parent = sample.topic.parent_topic
+            if parent:
+                topic_ids.add(parent.id)
+                if parent.parent_topic:
+                    topic_ids.add(parent.parent_topic.id)
             if topic_id not in structured_topics:
-                structured_topics[topic_id] = StructuredTopic(sample.topic, user)
-            structured_topics[topic_id].samples.append(sample)
+                structured_topics[topic_id] = {"samples": [], "series_names": []}
+            structured_topics[topic_id]["samples"].append(sample)
         else:
             topicless_samples.append(sample)
-    _structured_topics = structured_topics.copy()
-    for topic_id, structured_topic in _structured_topics.items():
-        if structured_topic.topic.has_parent():
-            parent_structured_topic = append_topic_to_ancestors(structured_topic)
-            structured_topics[parent_structured_topic.topic.id] = parent_structured_topic
-            del structured_topics[topic_id]
-    structured_topics = sorted(structured_topics.values(),
-                               key=lambda structured_topic: structured_topic.topic.name)
+
+    # If we found topics, fetch them (including ancestors) with members in a
+    # single batched query and build `StructuredTopic` objects from the cached
+    # Topic instances to avoid per-topic member queries.
+    if topic_ids:
+        from jb_common.models import Topic
+        topics_qs = Topic.objects.filter(id__in=topic_ids).select_related(
+            "parent_topic", "parent_topic__parent_topic"
+        ).prefetch_related(
+            "members",
+            "parent_topic__members",
+            "parent_topic__parent_topic__members",
+        )
+        topics_map = {t.id: t for t in topics_qs}
+
+        final_structured_topics = {}
+        for topic_id, data in structured_topics.items():
+            topic_obj = topics_map.get(topic_id)
+            if not topic_obj:
+                continue
+            st = StructuredTopic(topic_obj, user)
+            st.samples.extend(data.get("samples", []))
+            for series_name in data.get("series_names", []):
+                if series_name in structured_series:
+                    st.sample_series.append(structured_series[series_name])
+            final_structured_topics[topic_id] = st
+
+        # attach ancestors using the in-memory topic objects
+        _final = final_structured_topics.copy()
+        for topic_id, structured_topic in _final.items():
+            if structured_topic.topic.has_parent():
+                parent_structured_topic = append_topic_to_ancestors(structured_topic)
+                final_structured_topics[parent_structured_topic.topic.id] = parent_structured_topic
+                del final_structured_topics[topic_id]
+
+        structured_topics = sorted(final_structured_topics.values(), key=lambda structured_topic: structured_topic.topic.name)
+    else:
+        structured_topics = []
+
     if cache_key:
         cache.set(cache_key, (structured_topics, topicless_samples))
     return structured_topics, topicless_samples

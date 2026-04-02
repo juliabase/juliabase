@@ -65,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   </ul>
 
   {% compress js %}
-  <script type="text/javascript" src="{% static 'samples/js/checkboxes.js' %}"></script>
+  <script type="text/javascript" src="{% static 'samples/js/checkboxes.js' %}" defer></script>
   {% endcompress %}
   
   <button type="button" id="toggleButton" onclick="toggleCheckboxes()">Select all</button>

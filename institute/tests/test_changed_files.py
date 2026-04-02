@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import tempfile, os, time
+import tempfile, os
 from django.test import TestCase, override_settings
 from remote_client.jb_remote.crawler_tools import changed_files, find_changed_files, defer_files, Path
 from .tools import log
@@ -83,7 +83,6 @@ class Common:
 class FindChangedFilesTest(Common, TestCase):
 
     def find_changed_files(self, *args, **kwargs):
-        time.sleep(0.01)
         changed, removed = find_changed_files(self.tempdir.name, self.diff_file, *args, **kwargs)
         return self.relative(changed), self.relative(removed)
 
@@ -103,7 +102,6 @@ class FindChangedFilesTest(Common, TestCase):
 class ChangedFilesTest(Common, TestCase):
 
     def find_changed_files(self, *args, **kwargs):
-        time.sleep(0.01)
         with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as paths:
             changed_, removed_ = [], []
             for path in paths:

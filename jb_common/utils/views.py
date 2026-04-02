@@ -15,12 +15,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import django.forms as forms
-import django.contrib.auth.models
-from jb_common.models import Topic, Department
-from jb_common.utils.base import get_really_full_name, sorted_users_by_first_name
-from collections import defaultdict
-
+import      django.forms                    as forms
+import      django.contrib.auth.models
+from        jb_common.models                import Topic, Department
+from        jb_common.utils.base            import get_really_full_name, sorted_users_by_first_name
+from        collections                     import defaultdict
 
 def _user_choices_by_department(user, include=(), exclude=()):
     """Returns a choices list ready-to-be-used in multiple- and single-selection
@@ -45,9 +44,10 @@ def _user_choices_by_department(user, include=(), exclude=()):
     :rtype: list of (int, str) or list of (str, list of (int, str))
     """
     choices = []
+    visible_departments = set(user.samples_user_details.show_users_from_departments.all())
     for department in Department.objects.all():
         users_from_department = {user for user in include if user.jb_user_details.department == department}
-        if department in user.samples_user_details.show_users_from_departments.all():
+        if department in visible_departments:
             users_from_department |= set(django.contrib.auth.models.User.objects.
                                          filter(is_active=True, jb_user_details__department=department))
         users_from_department -= {user for user in exclude if user.jb_user_details.department == department}
@@ -165,44 +165,61 @@ class TopicField(forms.ChoiceField):
         :type user: django.contrib.auth.models.User
         :type additional_topic: `jb_common.models.Topic`
         """
-        def topics_and_sub_topics(parent_topics, child_topic_dict, depth=0):
-            for topic in parent_topics:
-                name = (6 * depth * "\u00A0") + topic.name if topic.parent_topic else topic.name
-                self.choices.append((topic.pk, name))
-                child_topics = child_topic_dict.get(topic, [])
-                if child_topics:
-                    topics_and_sub_topics(sorted(child_topics, key=lambda t: t.name.lower()), child_topic_dict, depth+1)
-
         self.choices = [("", 9 * "-")]
-        if not user.is_superuser:
-            all_topics = Topic.objects.filter(
-                members__is_active=True,
-                department=user.jb_user_details.department
-            ).distinct().prefetch_related("parent_topic")  # If "parent_topic" is used in `has_parent()`, prefetch it
 
-            user_topics = set(user.topics.all())
-
-            top_level_topics = \
-                {topic for topic in all_topics if (not topic.confidential or topic in user_topics) }
-            if additional_topic:
-                top_level_topics.add(additional_topic.get_top_level_topic())
+        # --- Step 1: Fetch all topics efficiently ---
+        if user.is_superuser:
+            all_topics = (
+                Topic.objects
+                .select_related("parent_topic")
+                .prefetch_related("child_topics")
+                .all()
+            )
         else:
-            # OPTIMIZE: This generates 115 queries
-            top_level_topics = Topic.objects.prefetch_related('child_topics', "parent_topic")#.filter(parent_topic__isnull=True)
+            all_topics = (
+                Topic.objects
+                .filter(members__is_active=True, department=user.jb_user_details.department)
+                .distinct()
+                .select_related("parent_topic")
+                .prefetch_related("child_topics")
+            )
 
-        topics = sorted(top_level_topics, key=lambda topic: topic.name.lower())
+        # --- Step 2: Compute user permissions ---
+        user_topics = set(user.topics.all()) if not user.is_superuser else set()
 
-        # Create a dictionary to store child topics by their parent topic ID
-        child_topic_dict = defaultdict(list)
-        for topic in topics:
-            if topic.parent_topic is not None:
-                child_topic_dict[topic.parent_topic].append(topic)
+        # --- Step 3: Filter top-level topics ---
+        top_level_topics = {
+            topic
+            for topic in all_topics
+            if (user.is_superuser or not topic.confidential or topic in user_topics)
+            and not topic.has_parent()
+        }
+        
+        # --- Step 4: Ensure additional topic’s root is included ---
+        if additional_topic:
+            top_level_topics.add(additional_topic.get_top_level_topic())
 
-        # Get all parent topics (those without a parent)
-        parent_topics = [topic for topic in topics if topic.parent_topic is None]
-        parent_topics = sorted(parent_topics, key=lambda t: t.name.lower())
-        # OPTIMIZE: This generates 218 queries
-        topics_and_sub_topics(parent_topics, child_topic_dict)
+        # --- Step 5: Build parent→children mapping ---
+        topics_by_parent = defaultdict(list)
+        for topic in all_topics:
+            if topic.parent_topic_id:
+                topics_by_parent[topic.parent_topic_id].append(topic)
+
+        # --- Step 6: Sort children lists once globally ---
+        for parent_id in topics_by_parent:
+            topics_by_parent[parent_id].sort(key=lambda t: t.name.lower())
+
+        # --- Step 7: Recursive traversal (with indentation) ---
+        def add_topic_and_children(topic, depth=0):
+            indent = (6 * depth * "\u00A0")
+            name = f"{indent}{topic.name}"
+            self.choices.append((topic.pk, name))
+            for child in topics_by_parent.get(topic.pk, []):
+                add_topic_and_children(child, depth + 1)
+
+        # --- Step 8: Sort and traverse top-level topics ---
+        for top in sorted(top_level_topics, key=lambda t: t.name.lower()):
+            add_topic_and_children(top)
 
     def clean(self, value):
         value = super().clean(value)

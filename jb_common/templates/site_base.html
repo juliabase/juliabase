@@ -17,6 +17,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
+{% load compress %}
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang='{{ LANGUAGE_CODE|default:"en" }}' 
   xml:lang='{{ LANGUAGE_CODE|default:"en" }}' {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
@@ -25,8 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <title>{% block title %}{{ title }}{% endblock %}</title>
 <meta charset="UTF-8"/>
 {% block extrahead %}{% endblock %}
+{% compress css %}
 {% block css %}{% endblock %}
 {% block cos %}{% endblock %}
+{% endcompress %}
 </head>
 <body>
   {% block content %}{% endblock %}

@@ -25,15 +25,14 @@ from django.contrib.auth.models import User, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django import forms
+from django.apps import apps
 from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import capfirst
-import django.core
-from django.conf import settings
 from jb_common.utils.base import help_link, get_really_full_name, get_all_models, HttpResponseSeeOther, sorted_users
 from jb_common.utils.views import UserField
-from samples import models, permissions
+from samples import permissions
 import samples.utils.views as utils
-import jb_common.utils.base as jb_common_utils
+import django
 
 
 class PermissionsModels:
@@ -85,7 +84,7 @@ class PermissionsModels:
     :type all_users: QuerySet
     """
 
-    def __init__(self, addable_model_class):
+    def __init__(self, addable_model_class, content_type=None, perm_cache=None, user_perm_cache=None):
         """
         :param addable_model_class: the addable model class to which this
             instance belongs
@@ -95,43 +94,41 @@ class PermissionsModels:
         """
         self.name = addable_model_class._meta.verbose_name_plural
         self.codename = addable_model_class.__name__.lower()
-        content_type = ContentType.objects.get_for_model(addable_model_class)
-        try:
-            self.edit_permissions_permission = Permission.objects.get(
-                codename="edit_permissions_for_{}".format(self.codename), content_type=content_type)
-        except Permission.DoesNotExist:
-            self.edit_permissions_permission = None
-        try:
-            self.add_permission = Permission.objects.get(codename="add_{}".format(self.codename),
-                                                         content_type=content_type)
-        except Permission.DoesNotExist:
-            self.add_permission = None
-        try:
-            self.view_all_permission = Permission.objects.get(codename="view_every_{}".format(self.codename),
-                                                              content_type=content_type)
-        except Permission.DoesNotExist:
-            self.view_all_permission = None
-        try:
-            self.edit_all_permission = Permission.objects.get(codename="change_{}".format(self.codename),
-                                                              content_type=content_type)
-        except Permission.DoesNotExist:
-            self.edit_all_permission = None
-        base_query = User.objects.filter(is_active=True, is_superuser=False)
-        permission_editors = base_query.filter(Q(groups__permissions=self.edit_permissions_permission) |
-                                               Q(user_permissions=self.edit_permissions_permission)).distinct() \
-                                               if self.edit_permissions_permission else []
-        adders = permissions.get_all_adders(addable_model_class)
-        full_viewers = base_query.filter(Q(groups__permissions=self.view_all_permission) |
-                                         Q(user_permissions=self.view_all_permission)).distinct() \
-                                   if self.view_all_permission else []
-        full_editors = base_query.filter(Q(groups__permissions=self.edit_all_permission) |
-                                         Q(user_permissions=self.edit_all_permission)).distinct() \
-                                   if self.edit_all_permission else []
+        if content_type is None:
+            content_type = ContentType.objects.get_for_model(addable_model_class)
+
+        def get_perm(codename):
+            if perm_cache is not None:
+                return perm_cache.get((content_type.id, codename))
+            try:
+                return Permission.objects.get(codename=codename, content_type=content_type)
+            except Permission.DoesNotExist:
+                return None
+
+        self.edit_permissions_permission = get_perm("edit_permissions_for_{}".format(self.codename))
+        self.add_permission = get_perm("add_{}".format(self.codename))
+        self.view_all_permission = get_perm("view_every_{}".format(self.codename))
+        self.edit_all_permission = get_perm("change_{}".format(self.codename))
+
+        def get_users_with_perm(perm):
+            if not perm:
+                return set()
+            if user_perm_cache is not None:
+                return user_perm_cache.get(perm.id, set())
+            base_query = User.objects.filter(is_active=True, is_superuser=False)
+            return set(base_query.filter(Q(groups__permissions=perm) |
+                                         Q(user_permissions=perm)).distinct())
+        
+        permission_editors = get_users_with_perm(self.edit_permissions_permission)
+        adders = get_users_with_perm(self.add_permission)
+        full_viewers = get_users_with_perm(self.view_all_permission)
+        full_editors = get_users_with_perm(self.edit_all_permission)
+
         self.permission_editors = sorted_users(permission_editors)
         self.adders = sorted_users(adders)
         self.full_viewers = sorted_users(full_viewers)
         self.full_editors = sorted_users(full_editors)
-        self.all_users = sorted_users(set(adders) | set(permission_editors))
+        self.all_users = sorted_users(adders | permission_editors)
 
 
 class UserListForm(forms.Form):
@@ -167,17 +164,29 @@ def get_addable_models(user):
 
     :rtype: list of `django.db.models.Model`
     """
-    all_addable_models = []
+    candidates = []
     for model in get_all_models().values():
-        if model._meta.app_label not in ["samples", "jb_common"]:
-            permission_codename = "edit_permissions_for_{0}".format(model.__name__.lower())
-            content_type = ContentType.objects.get_for_model(model)
-            try:
-                Permission.objects.get(codename=permission_codename, content_type=content_type)
-            except Permission.DoesNotExist:
-                continue
-            else:
-                all_addable_models.append(model)
+        if model._meta.app_label in ["samples", "jb_common"]:
+            continue
+        try:
+            apps.get_model(model._meta.app_label, model._meta.model_name)
+        except LookupError:
+            continue
+        candidates.append(model)
+
+    cts = ContentType.objects.get_for_models(*candidates)
+    
+    perms = Permission.objects.filter(
+        content_type__in=cts.values(),
+        codename__startswith='edit_permissions_for_'
+    ).values_list('content_type_id', 'codename')
+    existing_perms = set(perms)
+
+    all_addable_models = []
+    for model in candidates:
+        permission_codename = "edit_permissions_for_{0}".format(model.__name__.lower())
+        if (cts[model].id, permission_codename) in existing_perms:
+            all_addable_models.append(model)
 
     if not user.is_superuser:
         user_department = user.jb_user_details.department
@@ -186,8 +195,31 @@ def get_addable_models(user):
                                       if model._meta.app_label == user_department.app_label]
         else:
             all_addable_models = []
+
+    relevant_content_types = [cts[model] for model in all_addable_models]
+    all_relevant_perms = Permission.objects.filter(content_type__in=relevant_content_types)
+    perm_cache = {(p.content_type_id, p.codename): p for p in all_relevant_perms}
+    relevant_perm_ids = [p.id for p in all_relevant_perms]
+
+    # Pre-fetch users having ANY of the relevant permissions
+    from collections import defaultdict
+    user_perm_cache = defaultdict(set)
+    users_with_perms = User.objects.filter(is_active=True, is_superuser=False).filter(
+        Q(user_permissions__in=relevant_perm_ids) |
+        Q(groups__permissions__in=relevant_perm_ids)
+    ).distinct().prefetch_related('user_permissions', 'groups__permissions')
+
+    for u in users_with_perms:
+        for p in u.user_permissions.all():
+            if p.id in relevant_perm_ids:
+                user_perm_cache[p.id].add(u)
+        for g in u.groups.all():
+            for p in g.permissions.all():
+                if p.id in relevant_perm_ids:
+                    user_perm_cache[p.id].add(u)
+
     all_addable_models.sort(key=lambda model: model._meta.verbose_name_plural.lower())
-    all_addable_models = [PermissionsModels(model) for model in all_addable_models]
+    all_addable_models = [PermissionsModels(model, cts[model], perm_cache, user_perm_cache) for model in all_addable_models]
     return all_addable_models
 
 

@@ -167,7 +167,7 @@ STATICFILES_FINDERS = [
     'compressor.finders.CompressorFinder',
 ]
 
-COMPRESS_ENABLED = False
+COMPRESS_ENABLED = True
 COMPRESS_URL = STATIC_URL
 COMPRESS_ROOT = STATIC_ROOT
 COMPRESS_STORAGE = 'compressor.storage.CompressorFileStorage'
@@ -212,7 +212,7 @@ SHOW_TOOLBAR_CALLBACK = show_toolbar
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
-    # '...
+    'IS_RUNNING_TESTS': False,
 }
 
 SITE_ID = 1

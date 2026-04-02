@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-institute\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-26 10:09+0100\n"
+"POT-Creation-Date: 2026-02-26 13:01+0100\n"
 "PO-Revision-Date: 2018-05-17 23:22+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -588,19 +588,19 @@ msgstr ""
 "Bitte überprüfen Sie, ob die URL korrekt ist und/oder die angegebene Probe, "
 "der angegebene Prozess etc. schon in der Datenbank existiert.\n"
 
-#: juliabase/institute/templates/500.html:33
+#: juliabase/institute/templates/500.html:34
 msgid "Internal JuliaBase error"
 msgstr "Interner JuliaBase-Fehler"
 
-#: juliabase/institute/templates/500.html:41
+#: juliabase/institute/templates/500.html:42
 msgid "Main menu"
 msgstr "Hauptmenü"
 
-#: juliabase/institute/templates/500.html:54
+#: juliabase/institute/templates/500.html:55
 msgid "Internal server error"
 msgstr "Interner Server-Fehler"
 
-#: juliabase/institute/templates/500.html:55
+#: juliabase/institute/templates/500.html:56
 msgid ""
 "\n"
 "<p>You experienced an internal error in the JuliaBase server software.  The\n"
