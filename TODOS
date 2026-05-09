@@ -1,2 +1,7 @@
 - https://code.djangoproject.com/ticket/11385 has been fixed.  This makes some
   locations in the code simpler.
+
+- Reusable field group temples, as introduced in Django 5.0, might make
+  templates simpler.
+
+- The new HttpRequest.get_preferred_type could make is_json_requested easier.

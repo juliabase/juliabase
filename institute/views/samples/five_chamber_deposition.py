@@ -18,9 +18,13 @@
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import urllib.parse
 from django import forms
 from django.utils.translation import gettext_lazy as _, gettext
 from django.forms.utils import ValidationError
+from django.utils.encoding import iri_to_uri
+import django.urls
+from jb_common.utils.base import successful_response, HttpResponseSeeOther
 import samples.utils.views as utils
 import institute.utils.views as form_utils
 import institute.utils.base
@@ -64,6 +68,19 @@ class EditView(utils.RemoveFromMySamplesMixin, utils.DepositionView):
 
     def get_next_id(self):
         return institute.utils.base.get_next_deposition_number("S")
+
+    def create_successful_response(self, request):
+        response = super().create_successful_response(request)
+        if not isinstance(response, HttpResponseSeeOther):
+            return response
+        next_view = "samples:split_and_rename_after_deposition"
+        next_view_kwargs = {"deposition_number": self.process.number}
+        new_names = {}
+        for i, sample in enumerate(self.process.samples.all()):
+            new_names[sample.id] = self.process.number + f"-{i + 1}"
+        query_string = urllib.parse.urlencode([("new-name-{0}".format(id_), new_name) for id_, new_name in new_names.items()])
+        response["Location"] = iri_to_uri(django.urls.reverse(next_view, kwargs=next_view_kwargs) + "?" + query_string)
+        return response
 
 
 _ = gettext

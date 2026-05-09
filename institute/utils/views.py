@@ -28,7 +28,7 @@ from django.utils.translation import gettext as _
 from django.forms.utils import ValidationError
 
 
-deposition_number_pattern = re.compile("\d\d[A-Z]-\d{3,4}$")
+deposition_number_pattern = re.compile(r"\d\d[A-Z]-\d{3,4}$")
 def clean_deposition_number_field(value, letter):
     """Checks wheter a deposition number given by the user in a form is a
     valid one.  Note that it does not check whether a deposition with this

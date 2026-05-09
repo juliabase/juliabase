@@ -310,7 +310,8 @@ class PostgreSQL(BlobStorage):
             cursor.execute("INSERT INTO blobs VALUES (%s, %s, now());", (path, large_object.oid))
         else:
             large_object = connection.lobject(oid, mode, lobject_factory=self.BlobFile)
-            large_object.truncate()
+            if mode == "wb":
+                large_object.truncate()
         large_object.init_additional_attributes(path, connection, cursor)
         return large_object
 

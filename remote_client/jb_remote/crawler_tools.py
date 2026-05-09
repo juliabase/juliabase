@@ -338,7 +338,7 @@ def _enrich_new_statuses(new_statuses, root, statuses, touched):
 @contextlib.contextmanager
 def changed_files(root, diff_file, pattern=""):
     """Returns the files changed since the last run of this function.  The files
-    are given as an iterator over `Path` obejcts.  Changed files are files
+    are given as an iterator over `Path` objects.  Changed files are files
     which have been added, modified or removed.  If a file was moved, the new
     path is returned as “created”, and the old one as “removed”.  The returned
     files are sorted by timestamp; first the removed, then from oldest to
@@ -414,7 +414,8 @@ def changed_files(root, diff_file, pattern=""):
             statuses[relative_path] = new_statuses[relative_path]
 
     if statuses_changed or last_pattern != pattern:
-        pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
+        with open(diff_file, "wb") as outfile:
+            pickle.dump((statuses, pattern), outfile, pickle.HIGHEST_PROTOCOL)
 
 
 @deprecation.deprecated()
@@ -488,7 +489,8 @@ def find_changed_files(root, diff_file, pattern=""):
                 timestamps[filepath] = status[0]
     changed.sort(key=lambda filepath: timestamps[filepath])
     if touched or removed or last_pattern != pattern:
-        pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
+        with open(diff_file, "wb") as outfile:
+            pickle.dump((statuses, pattern), outfile, pickle.HIGHEST_PROTOCOL)
     return changed, removed
 
 
@@ -520,7 +522,8 @@ def defer_files(diff_file, filepaths):
     for filepath in filepaths:
         if filepath in statuses and statuses[filepath][0] > twelve_weeks_ago:
             del statuses[filepath]
-    pickle.dump((statuses, pattern), open(diff_file, "wb"), pickle.HIGHEST_PROTOCOL)
+    with open(diff_file, "wb") as outfile:
+        pickle.dump((statuses, pattern), outfile, pickle.HIGHEST_PROTOCOL)
 
 
 def send_error_mail(from_, subject, text, html=None):
