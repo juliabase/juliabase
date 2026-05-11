@@ -1,4 +1,4 @@
-* Knowledge-graph-reated todos
+* Knowledge-graph-related todos
 
 ** DONE Find a way to get the sample ID in the process URI
 
