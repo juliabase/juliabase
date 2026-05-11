@@ -16,5 +16,5 @@ docker exec postgresql createdb -U juliabase juliabase || exit 3
 export JULIABASE_SERVER_URL=http://127.0.0.1:8000/
 ./manage.py runserver &
 until wget -O - http://127.0.0.1:8000/ > /dev/null; do sleep 1; done
-remote_client/examples/run-crawlers.sh || exit 6
+remote_client/examples/run-crawlers.sh synchronous || exit 6
 kill `netstat -ntlp 2> /dev/null | grep 127.0.0.1:8000 | awk '{print $7}' | cut -d / -f 1` || exit 7
