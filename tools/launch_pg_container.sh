@@ -7,7 +7,7 @@ cd $SCRIPTPATH/..
 docker stop postgresql
 sudo rm -Rf /tmp/postgresql
 mkdir /tmp/postgresql || exit 1
-until docker run -d --name postgresql --rm -p 5432:5432 -v /tmp/postgresql:/var/lib/postgresql postgres; do sleep 1; done
+until docker run -d --env POSTGRES_HOST_AUTH_METHOD=trust --name postgresql --rm -p 5432:5432 -v /tmp/postgresql:/var/lib/postgresql postgres; do sleep 1; done
 until docker exec postgresql pg_isready; do sleep 1; done
 echo "CREATE USER juliabase WITH PASSWORD '12345' CREATEDB;" | docker exec -i postgresql psql -U postgres || exit 2
 docker exec postgresql createdb -U juliabase juliabase || exit 3
