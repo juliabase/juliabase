@@ -5,7 +5,7 @@ SCRIPTPATH=`dirname "$SCRIPT"`
 cd $SCRIPTPATH/..
 
 docker stop postgresql
-rm -Rf /tmp/postgresql
+sudo rm -Rf /tmp/postgresql
 mkdir /tmp/postgresql || exit 1
 until docker run -d --name postgresql --rm -p 5432:5432 -v /tmp/postgresql:/var/lib/postgresql postgres; do sleep 1; done
 until docker exec postgresql pg_isready; do sleep 1; done
