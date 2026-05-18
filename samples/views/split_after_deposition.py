@@ -86,25 +86,6 @@ class OriginalDataForm(Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        if "new_name" in cleaned_data:
-            new_name = cleaned_data["new_name"]
-            sample = cleaned_data.get("sample")
-            if sample and sample_names.sample_name_format(sample.name) is not None and \
-               not sample_names.valid_new_sample_name(sample.name, new_name) and \
-               not new_name.startswith(sample.name):
-                error_message = _("The new name must begin with the old name.")
-                params = {}
-                old_sample_name_format = sample_names.sample_name_format(sample.name)
-                possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_sample_name_format].get("possible_renames", set())
-                if possible_new_name_formats:
-                    error_message += ngettext("  Alternatively, it must be a valid “%(sample_formats)s” name.",
-                                               "  Alternatively, it must be a valid name of one of these types: "
-                                               "%(sample_formats)s.", len(possible_new_name_formats))
-                    params.update({"sample_formats": format_enumeration(
-                        sample_names.verbose_sample_name_format(name_format) for name_format in possible_new_name_formats)})
-                if sample_names.valid_new_sample_name(sample.name, self.deposition_number):
-                    error_message += _("  Or, the new name must be or begin with the deposition number.")
-                self.add_error("new_name", ValidationError(error_message, params=params, code="invalid"))
         return cleaned_data
 
 

@@ -57,25 +57,8 @@ class NewNameForm(forms.Form):
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        sample_name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
-        if not sample_name_format:
-            raise ValidationError(_("The sample name has an invalid format."), code="invalid")
-        elif not new_name.startswith(self.parent_name):
-            if sample_name_format not in self.possible_new_name_formats:
-                error_message = _("The new sample name must start with the parent sample's name.")
-                params = {}
-                if self.possible_new_name_formats:
-                    further_error_message = ngettext("  Alternatively, it must be a valid “%(sample_formats)s” name.",
-                                                      "  Alternatively, it must be a valid name of one of these types: "
-                                                      "%(sample_formats)s", len(self.possible_new_name_formats))
-                    error_message += further_error_message
-                    params.update({"sample_formats": format_enumeration(
-                        sample_names.verbose_sample_name_format(name_format)
-                        for name_format in self.possible_new_name_formats)})
-                raise ValidationError(error_message, params=params, code="invalid")
-            utils.check_sample_name(match, self.user)
-
-        if new_name in self.existing_sample_names:
+        
+        if sample_names.does_sample_exist(new_name):
             raise ValidationError(_("Name does already exist in database."), code="duplicate")
         return new_name
 

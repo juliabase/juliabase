@@ -24,7 +24,7 @@ import datetime, string, itertools
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.http import Http404
-import urllib.parse
+from urllib.parse import quote, quote_plus
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _, gettext, ngettext
@@ -79,17 +79,9 @@ class NewNameForm(forms.Form):
         self.user = user
 
     def clean_name(self):
-        new_name = self.prefix_ + self.cleaned_data["name"]
-        name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
-        if name_format not in self.possible_new_name_formats:
-            error_message = ngettext("New name must be a valid “%(sample_formats)s” name.",
-                                      "New name must be a valid name of one of these types: %(sample_formats)s.",
-                                      len(self.possible_new_name_formats))
-            raise ValidationError(error_message,
-                params={"sample_formats": format_enumeration(
-                    sample_names.verbose_sample_name_format(name_format) for name_format in self.possible_new_name_formats)},
-                code="invalid")
-        utils.check_sample_name(match, self.user)
+        new_name = self.cleaned_data["name"]
+        if self.prefix_ and not new_name.startswith(self.prefix_):
+            new_name = self.prefix_ + new_name
         if sample_names.does_sample_exist(new_name):
             raise ValidationError(_("This sample name exists already."), code="duplicate")
         return new_name
@@ -206,7 +198,7 @@ def bulk_rename(request):
     available_prefixes = find_prefixes(request.user)
     if not available_prefixes and any("{user_initials}" in format_ for format_ in settings.NAME_PREFIX_TEMPLATES) \
        and not models.Initials.objects.filter(user=request.user).exists():
-        query_string = "initials_mandatory=True&next=" + urllib.parse.quote_plus(
+        query_string = "initials_mandatory=True&next=" + quote_plus(
             request.path + "?" + request.META["QUERY_STRING"], safe="/")
         messages.info(request, _("You may change the sample names, but you must choose initials first."))
         return utils.successful_response(request, view="samples:edit_preferences",
@@ -231,11 +223,20 @@ def bulk_rename(request):
         all_valid = all([new_name_form.is_valid() for new_name_form in new_name_forms]) and all_valid
         referentially_valid = is_referentially_valid(samples, new_name_forms)
         if all_valid and referentially_valid:
+            old_names = [sample.name for sample in samples]
             for sample, new_name_form in zip(samples, new_name_forms):
                 if not sample.name.startswith("*") and new_name_form.cleaned_data["save_alias"]:
                     models.SampleAlias(name=sample.name, sample=sample).save()
                 sample.name = new_name_form.cleaned_data["name"]
                 sample.save()
+            
+            next_url = request.GET.get("next")
+            if next_url and len(samples) == 1:
+                old_url_name = quote(old_names[0], safe="")
+                if old_url_name in next_url or old_names[0] in next_url:
+                    return utils.successful_response(request, _("Successfully renamed the samples."),
+                        view="samples:show_sample_by_name", kwargs={"sample_name": samples[0].name}, forced=True)
+
             return utils.successful_response(request, _("Successfully renamed the samples."))
     else:
         prefixes_form = PrefixesForm(available_prefixes, initial={"prefix": available_prefixes[0][0]}) \
