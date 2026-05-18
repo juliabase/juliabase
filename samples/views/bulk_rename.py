@@ -24,7 +24,7 @@ import datetime, string, itertools
 from django.shortcuts import render, get_object_or_404
 from django.conf import settings
 from django.http import Http404
-import urllib.parse
+from urllib.parse import quote, quote_plus
 from django import forms
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _, gettext, ngettext
@@ -198,7 +198,7 @@ def bulk_rename(request):
     available_prefixes = find_prefixes(request.user)
     if not available_prefixes and any("{user_initials}" in format_ for format_ in settings.NAME_PREFIX_TEMPLATES) \
        and not models.Initials.objects.filter(user=request.user).exists():
-        query_string = "initials_mandatory=True&next=" + urllib.parse.quote_plus(
+        query_string = "initials_mandatory=True&next=" + quote_plus(
             request.path + "?" + request.META["QUERY_STRING"], safe="/")
         messages.info(request, _("You may change the sample names, but you must choose initials first."))
         return utils.successful_response(request, view="samples:edit_preferences",
@@ -232,7 +232,7 @@ def bulk_rename(request):
             
             next_url = request.GET.get("next")
             if next_url and len(samples) == 1:
-                old_url_name = urllib.parse.quote(old_names[0], safe="")
+                old_url_name = quote(old_names[0], safe="")
                 if old_url_name in next_url or old_names[0] in next_url:
                     return utils.successful_response(request, _("Successfully renamed the samples."),
                         view="samples:show_sample_by_name", kwargs={"sample_name": samples[0].name}, forced=True)
