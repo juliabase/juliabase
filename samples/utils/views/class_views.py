@@ -40,7 +40,6 @@ from . import forms as utils
 from .feed import Reporter
 from .base import successful_response, extract_preset_sample, remove_samples_from_my_samples, convert_id_to_int
 from samples import models
-import iek5.models as ipv_models
 from datetime import datetime
 
 
