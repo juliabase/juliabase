@@ -34,7 +34,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
 import django.forms as forms
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy as _, gettext, ngettext
@@ -186,13 +186,17 @@ def delete(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request.user)
     affected_objects = permissions.assert_can_delete_sample(request.user, sample)
+    process_ids = []
     for instance in affected_objects:
         if isinstance(instance, models.Sample):
             utils.Reporter(request.user).report_deleted_sample(instance)
         elif isinstance(instance, models.Process):
             utils.Reporter(request.user).report_deleted_process(instance)
+            process_ids.append(instance.pk)
     success_message = _("Sample {sample} was successfully deleted in the database.").format(sample=sample)
-    sample.delete()
+    sample.delete(user=request.user)
+    # Ensure no orphan process base rows survive after sample-tree deletion.
+    models.Process.objects.filter(pk__in=process_ids).annotate(sample_count=Count("samples")).filter(sample_count=0).delete()
     return utils.successful_response(request, success_message)
 
 
