@@ -42,7 +42,7 @@ __all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_steps", "In
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
            "time_pattern", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
-           "choices_of_content_types", "check_sample_name", "SampleSelectForm", "MultipleSamplesSelectForm")
+           "choices_of_content_types", "SampleSelectForm", "MultipleSamplesSelectForm")
 
 
 class OperatorField(forms.ChoiceField):
@@ -807,48 +807,6 @@ def choices_of_content_types(classes):
     choices = [(cts[cls].id, cls._meta.verbose_name) for cls in classes]
     choices.sort(key=lambda item: item[1].lower())
     return choices
-
-
-def check_sample_name(match, user):
-    """Check whether the sample name match contains valid data.  This enforces
-    additional constraints to sample names.  With `utils.sample_name_format`,
-    you check whether the sample names matches a pattern, given as a regular
-    expression.  However, if the pattern contains e.g. user initials, it is not
-    checked whether the user initials actually belong to the current user.
-    This is done here.  If anything fails, a `ValidationError` is raised.  This
-    way, it can be called conveniently from ``Form`` methods.
-
-    :param match: the match object as returned by `utils.sample_name_format`.
-    :param user: the currently logged-in user
-
-    :type match: re.MatchObject
-    :type user: django.contrib.auth.models.User
-
-    :raises ValidationError: if the sample name (represented by the match object)
-        contained invalid fields.
-    """
-    groups = {key: value for key, value in match.groupdict().items() if value is not None}
-    if "year" in groups:
-        if int(groups["year"]) != datetime.datetime.now().year:
-            raise ValidationError(_("The year must be the current year."), code="invalid")
-    if "short_year" in groups:
-        if 2000 + int(groups["short_year"]) != datetime.datetime.now().year:
-            raise ValidationError(_("The year must be the current year."), code="invalid")
-    if "user_initials" in groups:
-        try:
-            error = groups["user_initials"] != user.initials.initials
-        except models.Initials.DoesNotExist:
-            error = True
-        if error:
-            raise ValidationError(_("The initials do not match yours."), code="invalid")
-    if "external_contact_initials" in groups:
-        if not models.Initials.objects.filter(initials=groups["external_contact_initials"],
-                                              external_operator__contact_persons=user).exists():
-            raise ValidationError(_("The initials do not match any of your external contacts."), code="invalid")
-    if "combined_initials" in groups:
-        if not models.Initials.objects.filter(initials=groups["combined_initials"]). \
-           filter(Q(external_operator__contact_persons=user) | Q(user=user)).exists():
-            raise ValidationError(_("The initials do not match yours, nor any of your external contacts."), code="invalid")
 
 
 class SampleSelectForm(forms.Form):
