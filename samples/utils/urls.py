@@ -110,13 +110,13 @@ class PatternGenerator:
         if "lab_notebook" in views:
             self.url_patterns.extend([
                                     re_path(r"^{}/lab_notebook/(?P<begin_date>.*)/(?P<end_date>.*)/export/".format(url_name),
-                                            lab_notebook.export, {"process_name": class_name},
+                                            lab_notebook.export, {"process_name": class_name, "app_label": self.app_label},
                                             "export_lab_notebook_" + class_name_with_underscores),
                                     re_path(r"^{}/lab_notebook/(?P<begin_date>.*)/(?P<end_date>.*)$".format(url_name),
-                                            lab_notebook.show, {"process_name": class_name},
+                                            lab_notebook.show, {"process_name": class_name, "app_label": self.app_label},
                                             "lab_notebook_" + class_name_with_underscores),
                                     re_path(r"^{}/lab_notebook/(?P<begin_date>.*)$".format(url_name),
-                                            lab_notebook.show, {"process_name": class_name},
+                                            lab_notebook.show, {"process_name": class_name, "app_label": self.app_label},
                                             "lab_notebook_" + class_name_with_underscores)
                                             ])
         if "add" in views or "edit" in views or "custom_view" in views:
@@ -136,8 +136,8 @@ class PatternGenerator:
             self.url_patterns.append(re_path(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field), module.show,
                                              name="show_" + class_name_with_underscores))
         else:
-            self.url_patterns.append(re_path(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
-                                             samples.views.main.show_process, {"process_name": class_name},
+            self.url_patterns.append(re_path(r"^{}/(?P<process_id>.+)".format(url_name),
+                                             samples.views.main.show_process, {"process_name": class_name, "app_label": self.app_label},
                                              name="show_" + class_name_with_underscores))
                                              
 

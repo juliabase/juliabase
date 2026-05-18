@@ -20,7 +20,6 @@
 import tempfile, os
 from django.test import TestCase, override_settings
 from remote_client.jb_remote.crawler_tools import changed_files, find_changed_files, defer_files, Path
-from .tools import log
 
 
 class Common:
@@ -114,15 +113,14 @@ class ChangedFilesTest(Common, TestCase):
         return self.relative(changed_), self.relative(removed_)
 
     def test_fail_during_iteration(self):
-        position = log.tell()
-        with changed_files(self.tempdir.name, self.diff_file) as paths:
-            for path in paths:
-                self.assertTrue(path.was_changed)
-                failed_path = self.relative(path)
-                path.check_off()
-                raise Exception("Bad")
-        log.seek(position)
-        self.assertEqual(log.read().strip(), 'CRITICAL:root:Crawler error at "{}" (aborting): Bad'.format(failed_path))
+        with self.assertLogs(level="CRITICAL") as captured_logs:
+            with changed_files(self.tempdir.name, self.diff_file) as paths:
+                for path in paths:
+                    self.assertTrue(path.was_changed)
+                    failed_path = self.relative(path)
+                    path.check_off()
+                    raise Exception("Bad")
+        self.assertEqual(captured_logs.output, ['CRITICAL:root:Crawler error at "{}" (aborting): Bad'.format(failed_path)])
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"} - {failed_path}, set()))
 
     def test_dont_call_check_off(self):

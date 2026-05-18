@@ -231,9 +231,13 @@ def get_identifying_data_hash(user):
 
 
 @receiver(signals.post_save, sender=User)
-def add_user_details(sender, instance, created=True, **kwargs):
+def add_user_details(sender, instance, created=True, raw=False, **kwargs):
     """Create ``UserDetails`` for every newly created user.
     """
+    if raw:
+        # Fixture loading uses raw saves; related objects/settings may not be ready yet.
+        return
+
     # This routine is slightly problematic because we depend on fully ready
     # contenttypes and existing jb_common.UserDetails.  Since we cannot rely on
     # the calling order, and have to trigger the respective initialisers
@@ -247,8 +251,9 @@ def add_user_details(sender, instance, created=True, **kwargs):
         # We do so in order to set it as the default department of 
         # any user that just signed up to Chantal
         if getattr(settings, "DEFAULT_DEPARTMENT", None):
-            dep = jb_common_app.Department.objects.filter(app_label=settings.DEFAULT_DEPARTMENT)[0]
-            instance.jb_user_details.department = dep
+            dep = jb_common_app.Department.objects.filter(app_label=settings.DEFAULT_DEPARTMENT).first()
+            if dep is not None:
+                instance.jb_user_details.department = dep
         
         # Afterwards we create the user with the default Department
         user_details = samples_app.UserDetails.objects.create(
@@ -283,15 +288,23 @@ def add_all_user_details(sender, **kwargs):
 
 
 @receiver(signals.post_save, sender=User)
-def touch_user_samples_and_processes(sender, instance, created, **kwargs):
+def touch_user_samples_and_processes(sender, instance, created, raw=False, **kwargs):
     """Removes all cached items of samples, sample series, and processes which
     are connected with a user.  This is done because the user's name may have
     changed.
     """
+    if raw:
+        return
+
     former_identifying_data_hash = get_identifying_data_hash(instance)
-    if former_identifying_data_hash != instance.samples_user_details.identifying_data_hash:
-        instance.samples_user_details.identifying_data_hash = former_identifying_data_hash
-        instance.samples_user_details.save()
+    try:
+        user_details = instance.samples_user_details
+    except samples_app.UserDetails.DoesNotExist:
+        return
+
+    if former_identifying_data_hash != user_details.identifying_data_hash:
+        user_details.identifying_data_hash = former_identifying_data_hash
+        user_details.save()
         for sample in instance.samples.all():
             sample.save(with_relations=False)
         for process in instance.processes.all():
@@ -427,7 +440,10 @@ def touch_display_settings_by_topic(sender, instance, action, reverse, model, pk
     now = django.utils.timezone.now()
     if reverse:
         # `instance` is a user
-        instance.samples_user_details.touch_display_settings()
+        try:
+            instance.samples_user_details.touch_display_settings()
+        except samples_app.UserDetails.DoesNotExist:
+            return
     else:
         # `instance` is a topic
         if action == "pre_clear":
@@ -455,7 +471,10 @@ def touch_display_settings_by_group_or_permission(sender, instance, action, reve
     else:
         # `instance` is a user
         if action in ["pre_clear", "post_add", "post_remove"]:
-            instance.samples_user_details.touch_display_settings()
+            try:
+                instance.samples_user_details.touch_display_settings()
+            except samples_app.UserDetails.DoesNotExist:
+                return
 
 
 @receiver(jb_common.signals.maintain)

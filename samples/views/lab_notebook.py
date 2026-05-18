@@ -209,7 +209,7 @@ def redirect_year_month_to_range(request, process_name, year_and_month):
          raise Http404("Invalid date or configuration for redirection.")
 
 @login_required
-def show(request, process_name, begin_date=False, end_date=False):
+def show(request, process_name, begin_date=False, end_date=False, app_label=None):
     """View for showing a lab notebook in a specified range for a particular
     physical process.  In ``urls.py``, you must give the entry for this view
     the name ``"lab_notebook_<camel_case_process_name>"``.
@@ -219,11 +219,14 @@ def show(request, process_name, begin_date=False, end_date=False):
         e.g. ``"LargeAreaDeposition"``
     :param begin_date: the beginning date to be displayed in the format
         ``YYYY/MM/DD`` 
+    :param app_label: the app label to look for the model in; if ``None``,
+        searches all apps
 
     :type request: HttpRequest
     :type process_name: str
     :type begin_date: str
     :type end_date: str
+    :type app_label: str
     
 
     :return:
@@ -232,7 +235,7 @@ def show(request, process_name, begin_date=False, end_date=False):
     :rtype: HttpResponse
     """
     # Here we get the current process, namespace and set the permissions
-    process_class = get_all_models()[process_name]
+    process_class = get_all_models(app_label)[process_name]
     process_name = camel_case_to_underscores(process_name)
     namespace = process_class._meta.app_label
     permissions.assert_can_view_lab_notebook(request.user, process_class)
@@ -346,7 +349,7 @@ def show(request, process_name, begin_date=False, end_date=False):
 
 
 @login_required
-def export(request, process_name, begin_date, end_date):
+def export(request, process_name, begin_date, end_date, app_label=None):
     """View for exporting the data of a month of a lab notebook that uses a range date system.  Thus, the
     return value is not an HTML response but a CSV or JSON response.  In
     ``urls.py``, you must give the entry for this view the name
@@ -359,18 +362,21 @@ def export(request, process_name, begin_date, end_date):
         ``YYYY-MM-DD``
     :param end_date: the end date to be displayed in the format
         ``YYYY-MM-DD``
+    :param app_label: the app label to look for the model in; if ``None``,
+        searches all apps
 
     :type request: HttpRequest
     :type process_name: str
     :type begin_date: str
     :type end_date: str
+    :type app_label: str
 
     :return:
       the HTTP response object
 
     :rtype: HttpResponse
     """
-    process_class = get_all_models()[process_name]
+    process_class = get_all_models(app_label)[process_name]
     permissions.assert_can_view_lab_notebook(request.user, process_class)
     data = process_class.get_lab_notebook_data_range(begin_date, end_date)
     result = utils.table_export(request, data, _("process"))

@@ -196,7 +196,7 @@ def show_deposition(request, deposition_number):
 
 @login_required
 @unquote_view_parameters
-def show_process(request, process_id, process_name="Process"):
+def show_process(request, process_id, process_name="Process", app_label=None):
     """Show an existing physical process.  This is some sort of fallback view in
     case a process doesn't provide its own show view (which is mostly the
     case).
@@ -209,17 +209,20 @@ def show_process(request, process_id, process_name="Process"):
     :param process_id: the ID or the process's identifying field value
     :param process_name: the class name of the process; if ``None``, ``Process``
         is assumed
+    :param app_label: the app label to look for the model in; if ``None``,
+        searches all apps
 
     :type request: HttpRequest
     :type process_id: str
     :type process_name: str
+    :type app_label: str
 
     :return:
       the HTTP response object
 
     :rtype: HttpResponse
     """
-    process_class = get_all_models()[process_name]
+    process_class = get_all_models(app_label)[process_name]
     try:
         identifying_field = process_class.JBMeta.identifying_field
     except AttributeError:
@@ -296,7 +299,7 @@ def delete_process(request, process_id):
         elif isinstance(instance, models.Process):
             utils.Reporter(request.user).report_deleted_process(instance)
     success_message = _("Process {process} was successfully deleted in the database.").format(process=process)
-    process.delete()
+    process.delete(user=request.user)
     return utils.successful_response(request, success_message)
 
 

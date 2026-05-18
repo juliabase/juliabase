@@ -1140,67 +1140,81 @@ class Sample(models.Model):
                     p._cached_actual_instance = actuals.get(p.actual_object_id)
 
 
+    def _collect_deletion_sample_ids(self):
+        """Collect IDs of this sample and all descendants created via sample splits."""
+        sample_ids = {self.id}
+        frontier = {self.id}
+        while frontier:
+            child_ids = set(Sample.objects.filter(split_origin__parent_id__in=frontier).values_list("id", flat=True))
+            child_ids -= sample_ids
+            if not child_ids:
+                break
+            sample_ids.update(child_ids)
+            frontier = child_ids
+        return sample_ids
+
+    def _get_processes_to_delete(self, sample_ids):
+        """Return processes that would be left without any sample outside ``sample_ids``."""
+        candidates = list(
+            Process.objects
+            .filter(samples__id__in=sample_ids)
+            .select_related("content_type")
+            .distinct()
+        )
+        return [
+            process for process in candidates
+            if not process.samples.exclude(id__in=sample_ids).exists()
+        ]
+
     def delete(self, *args, **kwargs):
         """
-        Deletes the sample and its related processes that involve only this sample.
-        If dry_run=True, returns the affected objects without deleting.
+        Deletes the sample and all deletable processes that only relate to the
+        sample tree removed by this deletion.
         """
         dry_run = kwargs.pop("dry_run", False)
         user = kwargs.pop("user", None)
 
+        sample_ids_to_delete = self._collect_deletion_sample_ids()
+
         if dry_run:
-            # Check cache first to avoid expensive re-computation
             cache_key = f"sample_delete_dryrun:{self.id}:{user.id if user else 'none'}"
             cached_result = cache.get(cache_key)
             if cached_result is not None:
                 return cached_result
-            
+
             samples.permissions.assert_can_edit_sample(user, self)
             affected_objects = {self}
-
-            # Get processes with only this sample
-            if hasattr(self, "_prefetched_processes_to_delete"):
-                processes_to_delete = self._prefetched_processes_to_delete
-            else:
-                processes_to_delete = (
-                    self.processes
-                    .annotate(sample_count=models.Count("samples"))
-                    .filter(sample_count=1)  # only processes tied exclusively to this sample
-                    .select_related("content_type")
-                )
-                processes_to_delete = list(processes_to_delete)
-            # Prefetch actual instances to avoid N+1 queries
+            processes_to_delete = self._get_processes_to_delete(sample_ids_to_delete)
             self.prefetch_actual_instances(processes_to_delete)
 
             for process in processes_to_delete:
                 actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
-                if hasattr(actual, "_cached_actual_instance"):
-                   # if process has attribute _cached_actual_instance, it means it was already prefetched, 
-                   # so we can use it to avoid further queries
-                   actual = actual._cached_actual_instance
-                result = actual.delete(*args, dry_run=True, user=user, raw=True)
+                try:
+                    result = actual.delete(*args, dry_run=True, user=user, raw=True)
+                except samples.permissions.PermissionError as err:
+                    # If a raw permission error was raised without a description
+                    # (used to avoid extra queries), provide a meaningful
+                    # message for the common "older than one hour" case so
+                    # the UI/tests can display it.
+                    desc = getattr(err, 'description', '')
+                    if not desc and getattr(actual, 'timestamp', None) and \
+                       actual.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
+                        description = _("You are not allowed to delete the process “{process}” because it is older than "
+                                        "one hour.").format(process=actual)
+                        raise samples.permissions.PermissionError(user, description)
+                    raise
                 affected_objects |= result
 
             cache.set(cache_key, affected_objects, 60)
             return affected_objects
 
-        # Get processes with only this sample
-        processes_to_delete = (
-            self.processes
-            .annotate(sample_count=models.Count("samples"))
-            .filter(sample_count=1)  # only processes tied exclusively to this sample
-            .select_related("content_type")
-        )
-
-        processes_to_delete = list(processes_to_delete)
-        # Prefetch actual instances to avoid N+1 queries
+        processes_to_delete = self._get_processes_to_delete(sample_ids_to_delete)
         self.prefetch_actual_instances(processes_to_delete)
 
         for process in processes_to_delete:
             actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
             actual.delete(*args, user=user)
 
-        # Clear m2m relations
         self.processes.clear()
         self.watchers.clear()
 
