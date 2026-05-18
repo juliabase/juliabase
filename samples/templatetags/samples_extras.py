@@ -38,6 +38,10 @@ import jb_common.search
 import samples.utils.views
 import samples.utils.sample_names
 
+import hashlib
+from django.templatetags.static import static
+import os
+
 
 register = template.Library()
 
@@ -117,7 +121,17 @@ def should_show(operator):
     not be shown if they are in no department because this is considered not an
     account of an actual person.
     """
-    return not isinstance(operator, django.contrib.auth.models.User) or operator.jb_user_details.department
+    if not isinstance(operator, django.contrib.auth.models.User):
+        return True
+    if hasattr(operator, "_cached_department"):
+        dept = operator._cached_department
+    else:
+        try:
+            dept = operator.jb_user_details.department
+        except AttributeError:
+            dept = None
+        operator._cached_department = dept
+    return bool(dept)
 
 
 class VerboseNameNode(template.Node):
@@ -221,7 +235,7 @@ timestamp_formats = ("%Y-%m-%d %H:%M:%S",
                      _("date unknown"))
 
 @register.filter
-def timestamp(value, minimal_inaccuracy=0):
+def timestamp(value, minimal_inaccuracy=0, keep_as_is=False):
     """Filter for formatting the timestamp of a process properly to reflect the
     inaccuracy connected with this timestamp.  It works not strictly only for
     models.  In fact, any object with a ``timestamp`` field can be passed in.
@@ -243,6 +257,9 @@ def timestamp(value, minimal_inaccuracy=0):
 
     :rtype: str
     """
+    if keep_as_is:
+        timestamp = value.astimezone(django.utils.timezone.get_current_timezone())
+        return mark_safe(timestamp.strftime(str(timestamp_formats[max(int(minimal_inaccuracy), 0)])))
     try:
         timestamp_ = value.timestamp
         inaccuracy = getattr(value, "timestamp_inaccuracy", 0)
@@ -577,17 +594,68 @@ def value_split_field(parser, token):
                 fields.append(token)
     return ValueSplitFieldNode(fields, unit)
 
+def sort_choices(field, choices_cache=None):
+    if hasattr(field, 'choices'):
+        cache_key = None
+        if choices_cache is not None and hasattr(field, 'queryset'):
+            try:
+                empty_label = getattr(field, 'empty_label', None)
+                cache_key = (str(field.queryset.query), empty_label)
+            except Exception:
+                pass
+        
+        if cache_key and cache_key in choices_cache:
+            field.choices = choices_cache[cache_key]
+            return
 
-@register.simple_tag
-def display_search_tree(tree):
-    """Tag for displaying the forms tree for the advanced search.  This tag is
-    used only in the advanced search.  It walks through the search node tree
-    and displays the seach fields.
-    """
+        # Materialize choices to avoid multiple DB queries if it's a ModelChoiceIterator
+        # and to allow sorting.
+        # Note that this might be expensive for very large tables, but standard
+        # select boxes can't handle them anyway.
+        if isinstance(field.choices, (list, tuple)):
+            choices = field.choices
+        else:
+            # Use list comprehension to avoid calling __len__ on ModelChoiceIterator
+            # which would trigger an extra COUNT(*) query.
+            # See https://code.djangoproject.com/ticket/26279
+            choices = [choice for choice in field.choices]
+            field.choices = choices
+
+        # Skip the placeholder choice and check the type of the subsequent choices
+        try:
+            first_valid_choice = next(
+                (choice[1] for choice in choices 
+                 if choice[1] and choice[1] != "---------"),
+                None
+            )
+            if first_valid_choice is None:
+                raise StopIteration
+
+            # Try to convert the first valid choice to a float
+            float(first_valid_choice)
+            # If successful, don't do anything since the data should already be sorted numerically
+        except (ValueError, StopIteration, TypeError):
+            # If conversion fails, sort alphabetically
+            sorted_choices = sorted(
+                choices,
+                key=lambda choice: str(choice[1]).lower()
+            )
+            field.choices = sorted_choices
+
+        if cache_key:
+            choices_cache[cache_key] = field.choices
+
+
+def _display_search_tree_recursive(tree, choices_cache):
     result = """<table style="border: 2px solid black; padding-left: 3em">"""
     for search_field in tree.search_fields:
         error_context = {"form": search_field.form, "form_error_title": _("General error"), "outest_tag": "<tr>"}
         result += render_to_string("error_list.html", error_context)
+
+        # Sort every choice field in alphabetical order
+        for field in search_field.form:
+            sort_choices(field.field, choices_cache)
+
         if isinstance(search_field, jb_common.search.RangeSearchField):
             field_min = [field for field in search_field.form if field.name.endswith("_min")][0]
             field_max = [field for field in search_field.form if field.name.endswith("_max")][0]
@@ -598,6 +666,7 @@ def display_search_tree(tree):
                 """<td class="field-input">{field_min} – {field_max}{unit}{help_text}</td></tr>""".format(
                 label=field_min.label, id_for_label=field_min.id_for_label, field_min=field_min, field_max=field_max,
                 unit=unit, help_text=help_text)
+
         elif isinstance(search_field, jb_common.search.TextNullSearchField):
             field_main = [field for field in search_field.form if field.name.endswith("_main")][0]
             field_null = [field for field in search_field.form if field.name.endswith("_null")][0]
@@ -618,12 +687,21 @@ def display_search_tree(tree):
         for i, child in enumerate(tree.children):
             result += child[0].as_p()
             if child[1]:
-                result += display_search_tree(child[1])
+                result += _display_search_tree_recursive(child[1], choices_cache)
             if i < len(tree.children) - 1:
                 result += """</td></tr><tr><td colspan="2">"""
         result += "</td></tr>"
     result += "</table>"
-    return mark_safe(result)
+    return result
+
+
+@register.simple_tag
+def display_search_tree(tree):
+    """Tag for displaying the forms tree for the advanced search.  This tag is
+    used only in the advanced search.  It walks through the search node tree
+    and displays the seach fields.
+    """
+    return mark_safe(_display_search_tree_recursive(tree, {}))
 
 
 @register.filter
@@ -692,7 +770,9 @@ def task_color(task):
 def get_hash_value(instance):
     return instance.get_hash_value()
 
-
+# FIXME: Instead of letting this show all the samples at once, make it show them collapsed,
+# then allow the user to click to see only what is necessary. This can improve loading
+# speed.
 @register.simple_tag
 def expand_topic(topic, user):
     topic_id = topic.topic.id
@@ -768,6 +848,5 @@ def camel_case_to_human_text(value):
     """See `jb_common.utils.base.camel_case_to_human_text` for documentation.
     """
     return jb_common.utils.base.camel_case_to_human_text(value)
-
 
 _ = gettext

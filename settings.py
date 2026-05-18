@@ -64,6 +64,7 @@ EMAIL_USE_LOCALTIME = True
 LANGUAGE_CODE = "en-us"
 
 USE_I18N = True
+USE_L10N = False
 DATETIME_FORMAT = "D, j. N Y, H:i:s"
 DATE_FORMAT = "D, j. N Y"
 
@@ -73,13 +74,17 @@ LOGGING["handlers"]["mail_admins"]["class"] = "log.AdminEmailHandler"
 
 
 STATIC_ROOT = "/var/www/juliabase/static/"
-MEDIA_ROOT = "/var/www/juliabase/uploads"
+MEDIA_ROOT = "/var/www/juliabase/uploads/"
 
-
+MEDIA_URL = "/media/"
 # Make sure to use a trailing slash if there is a path component (optional in
 # other cases).  Examples: "http://media.lawrence.com",
 # "http://example.com/static/"
 STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static'),
+]
 
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
@@ -91,6 +96,7 @@ SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        # "APP_DIRS": True,
         "DIRS": [BASE_DIR/"templates_root", django.__path__[0] + "/forms/templates"],
         "OPTIONS": {
             "context_processors": ["django.contrib.auth.context_processors.auth",
@@ -127,6 +133,10 @@ MIDDLEWARE = [
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
+    'django.middleware.gzip.GZipMiddleware', #This one
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    'htmlmin.middleware.HtmlMinifyMiddleware', #This one
+    'htmlmin.middleware.MarkRequestMiddleware', #This one
 ]
 
 APPEND_SLASH = False
@@ -144,8 +154,66 @@ INSTALLED_APPS = [
     "oai_pmh",
     "institute",
     "samples",
-    "jb_common"
+    "jb_common",
+    "compressor",
+    "debug_toolbar",
+    "django_select2",
 ]
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+]
+
+COMPRESS_ENABLED = True
+COMPRESS_URL = STATIC_URL
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_STORAGE = 'compressor.storage.CompressorFileStorage'
+# COMPRESS_OFFLINE = True
+
+COMPRESS_CSS_HASHING_METHOD = 'content'
+COMPRESS_FILTERS = {
+    'css':[
+        'compressor.filters.css_default.CssAbsoluteFilter',
+        'compressor.filters.cssmin.rCSSMinFilter',
+    ],
+    'js':[
+        'compressor.filters.jsmin.JSMinFilter',
+    ]
+}
+HTML_MINIFY = True
+EXCLUDE_FROM_MINIFYING = (
+    r"^experiments/(?P<experiment_id>.+)",   # <-- adjust to your real URL(s)
+)
+KEEP_COMMENTS_ON_MINIFYING = True
+
+DEBUG_TOOLBAR_PANELS = [
+    'debug_toolbar.panels.history.HistoryPanel',
+    'debug_toolbar.panels.versions.VersionsPanel',
+    'debug_toolbar.panels.timer.TimerPanel',
+    'debug_toolbar.panels.settings.SettingsPanel',
+    'debug_toolbar.panels.headers.HeadersPanel',
+    'debug_toolbar.panels.request.RequestPanel',
+    'debug_toolbar.panels.sql.SQLPanel',
+    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+    'debug_toolbar.panels.templates.TemplatesPanel',
+    'debug_toolbar.panels.cache.CachePanel',
+    'debug_toolbar.panels.signals.SignalsPanel',
+    'debug_toolbar.panels.redirects.RedirectsPanel',
+    'debug_toolbar.panels.profiling.ProfilingPanel',
+]
+
+def show_toolbar(request):
+    from django.conf import settings
+    return settings.DEBUG
+SHOW_TOOLBAR_CALLBACK = show_toolbar
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+    'IS_RUNNING_TESTS': False,
+}
 
 SITE_ID = 1
 
@@ -189,3 +257,5 @@ SAMPLE_NAME_FORMATS = {
 }
 
 NAME_PREFIX_TEMPLATES = ["{short_year}-{user_initials}-", "{external_contact_initials}-"]
+
+DEFAULT_DEPARTMENT = None

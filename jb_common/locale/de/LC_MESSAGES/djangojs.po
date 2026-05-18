@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-13 14:09+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:4
+msgid "Processing..."
+msgstr "Verarbeitung läuft..."
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:5
+msgid "Search&nbsp;:"
+msgstr "Suchen&nbsp;:"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:6
+msgid "Show _MENU_ entries"
+msgstr "Zeige _MENU_ Einträge"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:7
+msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
+msgstr "Anzeige von _START_ bis _END_ von insgesamt _TOTAL_ Einträgen"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:8
+msgid "Showing 0 to 0 of total 0 entries"
+msgstr "Anzeige von 0 bis 0 von insgesamt 0 Einträgen"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:9
+msgid "(filtered from total _MAX_ entries)"
+msgstr "(gefiltert von _MAX_ Einträgen insgesamt)"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:11
+msgid "Loading records..."
+msgstr "Datensätze werden geladen..."
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:12
+msgid "No entries found"
+msgstr "Keine Einträge gefunden"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:13
+msgid "No data available"
+msgstr "Keine Daten verfügbar"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:15
+msgid ": activate to sort column ascending"
+msgstr ": aktivieren, um die Spalte aufsteigend zu sortieren"
+
+#: juliabase/jb_common/static/juliabase/js/lab_notebook.js:16
+msgid ": activate to sort column descending"
+msgstr ": aktivieren, um die Spalte absteigend zu sortieren"
+
+#~ msgid "Comments"
+#~ msgstr "Kommentare"

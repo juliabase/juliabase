@@ -11,16 +11,24 @@ later version.
 
 This program is distributed in the hope that it will be useful, but WITHOUT
 ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
 details.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program. If not, see
+<http://www.gnu.org/licenses />.
 {% endcomment %}
 
 {% load i18n %}
 {% load juliabase %}
 {% load samples_extras %}
+{% load compress %}
+{% load static %}
+
+{% block local_scripts %}
+  {{ block.super }}
+  <script src="{% static 'samples/js/edit_sample_series.js' %}" defer></script>
+{% endblock %}
 
 {% block frame_content %}
 <form method="post">{% csrf_token %}
@@ -29,33 +37,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   <table class="padding5" style="float: left; margin-bottom: 3ex; width: 45%">
     {% if is_new %}
-      <tr>
-        <td class="field-label">{{ sample_series.short_name.label_tag }}</td>
+    <tr>
+      <td class="field-label">{{ sample_series.short_name.label_tag }}</td>
 
-        {% comment %}
-          The input for the ss name now has javascript & input for the prefix so that the user can edit the full name
-        {% endcomment %}
-        <td class="field-input"><span id="name_prefix" name="name_prefix" contenteditable="">{{ name_prefix }}-</span><input type="hidden" name="name_prefix_data" id="name_prefix_data">
-          {{ sample_series.short_name }}</td>
-        <script>
-          var prefixSpan = document.getElementById("name_prefix");
-          var prefixInput = document.getElementById("name_prefix_data");
-
-          prefixSpan.addEventListener("input", function() {
-            prefixInput.value = prefixSpan.innerHTML;
-          });
-        </script>
-        
-      </tr>
+      {% comment %}
+      The input for the ss name now has javascript & input for the prefix so that the user can edit the full name
+      {% endcomment %}
+      <td class="field-input"><span id="name_prefix" name="name_prefix" contenteditable="">{{ name_prefix }}-</span><input type="hidden" name="name_prefix_data" id="name_prefix_data">
+        {{ sample_series.short_name }}</td>
+    </tr>
     {% endif %}
-    <tr {% if is_new %}style="display: none"{% endif %}>
+    <tr {% if is_new %}style="display: none" {% endif %}>
       {% input_field sample_series.currently_responsible_person %}
     </tr>
     <tr>
       {% input_field sample_series.topic %}
     </tr>
     <tr>
-      <td class="field-label">{{ sample_series.description.label_tag }}<br/>{% markdown_hint %}</td>
+      <td class="field-label">{{ sample_series.description.label_tag }}<br />{% markdown_hint %}</td>
       <td class="field-input">{{ sample_series.description }}</td>
     </tr>
   </table>
@@ -66,7 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
   {% include "samples/edit_description.html" %}
 
-  <p class="submit-button" style="clear: both"><input type="submit"/></p>
+  <p class="submit-button" style="clear: both"><input type="submit" /></p>
 </form>
 
 

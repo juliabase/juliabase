@@ -200,7 +200,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         default_root = os.path.normpath(default_root)
         allowed_roots = {os.path.normpath(path) for path in allowed_roots}
         allowed_roots.add(default_root)
-        assert all(os.path.isdir(path) for path in allowed_roots)
+        assert all(os.path.isdir(path) for path in allowed_roots), f"Invalid directories found: {[path for path in allowed_roots if not os.path.isdir(path)]}"
         absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
         if os.path.isdir(absolute_filepath):
             if not may_be_directory:
@@ -482,6 +482,19 @@ def get_all_models(app_label=None):
     return all_models.copy()
 
 
+def get_model_field_names(model):
+    """
+    Get the names of all fields of a model.
+    
+    Args:
+        model: The Django model class.
+        
+    Returns:
+        List of field names.
+    """
+    return [field.name for field in model._meta.get_fields()]
+
+
 abstract_models = set()
 def register_abstract_model(abstract_model):
     """Register an abstract model class.  This way, it is returned by
@@ -507,7 +520,7 @@ def getmtime_utc(path):
 
     :rtype: datetime.datetime
     """
-    return datetime.datetime.fromtimestamp(path.stat().st_mtime, datetime.timezone.utc)
+    return datetime.datetime.fromtimestamp(path.stat().st_mtime, django.utils.timezone.utc)
 
 
 def get_file_timestamps(paths):

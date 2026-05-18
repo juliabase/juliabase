@@ -139,7 +139,7 @@ def edit_preferences(request, login_name):
         user_details_form = UserDetailsForm(user, instance=user_details)
         initials_form = utils.InitialsForm(user, initials_mandatory)
     return render(request, "samples/edit_preferences.html",
-                  {"title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(request.user)),
+                  {"title": _("Change preferences for {user_name}").format(user_name=get_really_full_name(user)),
                    "user_details": user_details_form, "initials": initials_form,
                    "has_topics": user.topics.exists()})
 
@@ -156,10 +156,10 @@ def topics_and_permissions(request, login_name):
                                                 list(user.managed_topics.values_list("pk", flat=True)),
                                                 user.get_all_permissions()))
     return render(request, "samples/topics_and_permissions.html",
-                  {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(request.user)),
+                  {"title": _("Topics and permissions for {user_name}").format(user_name=get_really_full_name(user)),
                    "topics": user.topics.all(), "managed_topics": user.managed_topics.all(),
                    "permissions": permissions.get_user_permissions(user),
-                   "full_user_name": get_really_full_name(request.user),
+                   "full_user_name": get_really_full_name(user),
                    "permissions_url": django.urls.reverse("samples:list_permissions")})
 
 

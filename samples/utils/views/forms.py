@@ -32,7 +32,7 @@ import django.forms as forms
 import django.contrib.auth.models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.text import capfirst
-from jb_common.utils.base import get_really_full_name, check_markdown, int_or_zero, format_enumeration
+from jb_common.utils.base import get_really_full_name, check_markdown, format_enumeration
 from jb_common.models import Topic
 from samples import models
 from . import base as utils
@@ -42,7 +42,7 @@ __all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_steps", "In
            "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
            "time_pattern", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
-           "choices_of_content_types", "check_sample_name", "SampleSelectForm", "MultipleSamplesSelectForm")
+           "choices_of_content_types", "SampleSelectForm", "MultipleSamplesSelectForm")
 
 
 class OperatorField(forms.ChoiceField):
@@ -60,7 +60,7 @@ class OperatorField(forms.ChoiceField):
     both is ``None`` if the respective type of operator was not given.
 
     It is senseful to show this field only to non-staff, and staff gets the
-    usual operator/external operator fields.  In the IEK-5/FZJ implementation,
+    usual operator/external operator fields.  In the IMD-3/FZJ implementation,
     we even allow all three fields for staff users as long as there no
     contradicting values are given.
 
@@ -175,7 +175,10 @@ class ProcessForm(ModelForm):
             kwargs["initial"].setdefault("combined_operator", user.pk)
         super().__init__(*args, **kwargs)
         if self.process and self.process.finished:
-            self.fields["finished"].disabled = True
+            try:
+                self.fields["finished"].disabled = True
+            except KeyError:
+                pass
         self.fields["combined_operator"].set_choices(user, self.process)
         if not user.is_superuser:
             self.fields["external_operator"].choices = []
@@ -374,7 +377,7 @@ class EditDescriptionForm(forms.Form):
     """Form for letting the user enter a short description of the changes they
     made.
     """
-    description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea)
+    description = forms.CharField(label=_("Description of edit"), widget=forms.Textarea, required=False)
     important = forms.BooleanField(label=_("Important edit"), required=False)
 
     def __init__(self, *args, **kwargs):
@@ -399,57 +402,80 @@ class GeneralSampleField:
     order to have a structured list.  Some samples may occur twice in the list
     because of this; you may select both without a negative effect.
     """
-
     def set_samples(self, user, samples=None, important_samples=frozenset()):
-        """Set the sample list shown in the widget.  You *must* call this
-        method in the constructor of the form in which you use this field,
-        otherwise the selection box will remain emtpy.
+        """
+        Optimized method to set the sample list shown in the widget.
 
-        :param user: the user for which this field is generated; he may not be
-            allowed to see all topic names, therefore it is necessary to know
-            who it is
-        :param samples: Samples to be included into the list.  Typically, these
-            are the current user's “My Samples”, plus the samples that were
-            already connected with the deposition or measurement when you edit
-            it.  It defaults to the user's “My Samples”.
-        :param important_samples: These samples are also included into the
-            list, but they are never hidden due to a folded topic or sample
-            series.  These samples typically are those already connected with a
-            process that is about to be edited.
-
-        :type user: django.contrib.auth.models.User
-        :type samples: iterable of `samples.models.Sample`
-        :type important_samples: iterable of `samples.models.Sample`
+        :param user: The user for whom the field is generated.
+        :param samples: Samples to be included in the list.
+        :param important_samples: Samples to always include in the list, regardless of folding.
         """
         def get_samples_from_topic(topic, folded_topics_and_sample_series):
-            if topic.topic.id not in folded_topics_and_sample_series:
-                seriesless_samples = [(sample.pk, sample.name_with_tags(user)) for sample in topic.samples]
-                self.choices.append((topic.topic_name, seriesless_samples))
-                for series in topic.sample_series:
-                    if not series.sample_series.get_hash_value() in folded_topics_and_sample_series:
-                        new_samples = [(sample.pk, 4 * " " + sample.name_with_tags(user)) for sample in series.samples]
-                        self.choices.append((4 * " " + series.name, new_samples))
-                for sub_topic in topic.sub_topics:
-                    get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+            if topic.topic.id in folded_topics_and_sample_series:
+                return
 
+            # Collect samples without series
+            seriesless_samples = [
+                (sample.pk, sample.name_with_tags(user)) for sample in topic.samples
+            ]
+            self.choices.append((topic.topic_name, seriesless_samples))
+
+            # Collect samples from series
+            for series in topic.sample_series:
+                series_hash = series.sample_series.get_hash_value()
+                if series_hash not in folded_topics_and_sample_series:
+                    new_samples = [
+                        (sample.pk, " " * 4 + sample.name_with_tags(user)) for sample in series.samples#.all()
+                    ]
+                    self.choices.append((" " * 4 + series.name, new_samples))
+
+            # Process subtopics recursively
+            for sub_topic in topic.sub_topics:
+                get_samples_from_topic(sub_topic, folded_topics_and_sample_series)
+
+        # Optimize the important_samples handling
         if important_samples:
             important_samples = set(important_samples)
             samples = set(samples or []) | important_samples
-        folded_topics_and_sample_series = set(user.samples_user_details.folded_topics) | \
-                                          set(user.samples_user_details.folded_series)
+
+        # Preload user's folded topics and series
+        user_details = user.samples_user_details
+        folded_topics_and_sample_series = set(user_details.folded_topics) | set(user_details.folded_series)
+
+        # Preload important topics and unfolded series
+        important_series = (
+            models.SampleSeries.objects.filter(samples__in=important_samples)
+            .distinct()
+            .select_related("topic")  # Fetch associated topics
+        )
+
         important_topics = set()
-        for series in models.SampleSeries.objects.filter(samples__in=important_samples).distinct():
+        for series in important_series:
             folded_topics_and_sample_series.discard(series.get_hash_value())
             important_topics.add(series.topic)
-        for topic in set(Topic.objects.filter(samples__in=important_samples).distinct()) | important_topics:
-            folded_topics_and_sample_series.discard(topic.pk)
+
+        # Preload parent topics for important topics
+        all_topics = Topic.objects.filter(
+            samples__in=important_samples
+        ).distinct().select_related("parent_topic")
+        for topic in set(all_topics) | important_topics:
             while topic.parent_topic:
-                topic = topic.parent_topic
                 folded_topics_and_sample_series.discard(topic.pk)
+                topic = topic.parent_topic
+            folded_topics_and_sample_series.discard(topic.pk)
+
+        # Build structured sample list
         topics, topicless_samples = utils.build_structured_sample_list(user, samples)
-        self.choices = [(sample.pk, sample.name_with_tags(user)) for sample in topicless_samples]
+
+        # Collect topicless samples
+        self.choices = [
+            (sample.pk, sample.name_with_tags(user)) for sample in topicless_samples
+        ]
+
         for topic in topics:
             get_samples_from_topic(topic, folded_topics_and_sample_series)
+
+        # Add placeholder if no choices exist
         if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
             self.choices.insert(0, ("", 9 * "-"))
 
@@ -777,51 +803,10 @@ def choices_of_content_types(classes):
     """
     # FixMe: The translation functionality in this function may become
     # superfluous when Django Ticket #16803 is fixed.
-    choices = [(ContentType.objects.get_for_model(cls).id, cls._meta.verbose_name) for cls in classes]
+    cts = ContentType.objects.get_for_models(*classes)
+    choices = [(cts[cls].id, cls._meta.verbose_name) for cls in classes]
     choices.sort(key=lambda item: item[1].lower())
     return choices
-
-
-def check_sample_name(match, user):
-    """Check whether the sample name match contains valid data.  This enforces
-    additional constraints to sample names.  With `utils.sample_name_format`,
-    you check whether the sample names matches a pattern, given as a regular
-    expression.  However, if the pattern contains e.g. user initials, it is not
-    checked whether the user initials actually belong to the current user.
-    This is done here.  If anything fails, a `ValidationError` is raised.  This
-    way, it can be called conveniently from ``Form`` methods.
-
-    :param match: the match object as returned by `utils.sample_name_format`.
-    :param user: the currently logged-in user
-
-    :type match: re.MatchObject
-    :type user: django.contrib.auth.models.User
-
-    :raises ValidationError: if the sample name (represented by the match object)
-        contained invalid fields.
-    """
-    groups = {key: value for key, value in match.groupdict().items() if value is not None}
-    if "year" in groups:
-        if int(groups["year"]) != datetime.datetime.now().year:
-            raise ValidationError(_("The year must be the current year."), code="invalid")
-    if "short_year" in groups:
-        if 2000 + int(groups["short_year"]) != datetime.datetime.now().year:
-            raise ValidationError(_("The year must be the current year."), code="invalid")
-    if "user_initials" in groups:
-        try:
-            error = groups["user_initials"] != user.initials.initials
-        except models.Initials.DoesNotExist:
-            error = True
-        if error:
-            raise ValidationError(_("The initials do not match yours."), code="invalid")
-    if "external_contact_initials" in groups:
-        if not models.Initials.objects.filter(initials=groups["external_contact_initials"],
-                                              external_operator__contact_persons=user).exists():
-            raise ValidationError(_("The initials do not match any of your external contacts."), code="invalid")
-    if "combined_initials" in groups:
-        if not models.Initials.objects.filter(initials=groups["combined_initials"]). \
-           filter(Q(external_operator__contact_persons=user) | Q(user=user)).exists():
-            raise ValidationError(_("The initials do not match yours, nor any of your external contacts."), code="invalid")
 
 
 class SampleSelectForm(forms.Form):

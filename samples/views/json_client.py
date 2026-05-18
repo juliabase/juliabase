@@ -162,6 +162,16 @@ def primary_keys(request):
                values_list("name", "sample"):
                 result_dict["samples"].setdefault(alias, set()).add(sample_id)
             result_dict["samples"].update(restricted_samples.filter(name__in=sample_names).values_list("name", "id"))
+    if "sample_ids" in request.GET:
+        if request.GET["sample_ids"] == "*":
+            result_dict["sample_ids"] = dict(request.user.my_samples.values_list("id", "name"))
+        else:
+            restricted_samples= utils.restricted_samples_query(request.user)
+            sample_ids = [id for id in request.GET["sample_ids"].split(",") if id.strip().isnumeric()]
+            result_dict["sample_ids"] = {}
+            for name, sample_id in models.Sample.objects.filter(id__in=sample_ids).\
+                filter(id__in=restricted_samples).values_list("name", "id"):
+                result_dict["sample_ids"][sample_id] = name
     if "depositions" in request.GET:
         deposition_numbers = request.GET["depositions"].split(",")
         result_dict["depositions"] = dict(models.Deposition.objects.

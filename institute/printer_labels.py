@@ -31,6 +31,9 @@ import re
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import cm
 from reportlab.lib.utils import ImageReader
+from reportlab.graphics.barcode import qr
+from reportlab.graphics import renderPDF
+from reportlab.graphics.shapes import Drawing
 import institute.reportlab_config
 
 
@@ -140,9 +143,14 @@ def printer_label(sample):
         first, second = best_split(text)
         print_line(c, height / 2, fontsize_half, first, force=True)
         print_line(c, 0, fontsize_half, second, force=True)
-    c.drawImage(ImageReader("http://chart.googleapis.com/chart?chs=116x116&amp;cht=qr&amp;chl={0}&amp;chld=H|1".
-                            format(sample.id)),
-                width - height, 0, height, height)
+    qr_code = qr.QrCodeWidget(str(sample.id))
+    qr_code.barLevel = 'H'
+    bounds = qr_code.getBounds()
+    qr_width = bounds[2] - bounds[0]
+    qr_height = bounds[3] - bounds[1]
+    d = Drawing(height, height, transform=[height/qr_width,0,0,height/qr_height,0,0])
+    d.add(qr_code)
+    renderPDF.draw(d, c, width - height, 0)
     c.showPage()
     c.save()
     return output.getvalue()

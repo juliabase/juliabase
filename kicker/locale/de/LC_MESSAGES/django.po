@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-kicker\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-05-17 23:20+0200\n"
+"POT-Creation-Date: 2024-03-26 10:09+0100\n"
 "PO-Revision-Date: 2015-03-11 10:01+0100\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -29,180 +29,181 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: kicker/apps.py:27
+#: juliabase/kicker/apps.py:24
 msgid "Kicker"
 msgstr "Kicker"
 
-#: kicker/models.py:27
+#: juliabase/kicker/models.py:24
 msgid "player 1 of team A"
 msgstr "Spieler 1 von Team A"
 
-#: kicker/models.py:29
+#: juliabase/kicker/models.py:26
 msgid "player 2 of team A"
 msgstr "Spieler 2 von Team A"
 
-#: kicker/models.py:31
+#: juliabase/kicker/models.py:28
 msgid "player 1 of team B"
 msgstr "Spieler 1 von Team B"
 
-#: kicker/models.py:33
+#: juliabase/kicker/models.py:30
 msgid "player 2 of team B"
 msgstr "Spieler 2 von Team B"
 
-#: kicker/models.py:35
+#: juliabase/kicker/models.py:32
 msgid "goals of team A"
 msgstr "Tore von Team A"
 
-#: kicker/models.py:36
+#: juliabase/kicker/models.py:33
 msgid "goals of team B"
 msgstr "Tore von Team B"
 
-#: kicker/models.py:37
+#: juliabase/kicker/models.py:34
 msgid "seconds"
 msgstr "Sekunden"
 
-#: kicker/models.py:37
+#: juliabase/kicker/models.py:34
 msgid "duration of the match"
 msgstr "Dauer des Matches"
 
-#: kicker/models.py:38 kicker/models.py:56 kicker/models.py:69
-#: kicker/models.py:82
+#: juliabase/kicker/models.py:35 juliabase/kicker/models.py:53
+#: juliabase/kicker/models.py:66 juliabase/kicker/models.py:79
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: kicker/models.py:39
+#: juliabase/kicker/models.py:36
 msgid "finished"
 msgstr "beendet"
 
-#: kicker/models.py:40
+#: juliabase/kicker/models.py:37
 msgid "reporter"
 msgstr "Berichter"
 
-#: kicker/models.py:46
+#: juliabase/kicker/models.py:43
 msgid "match"
 msgstr "Match"
 
-#: kicker/models.py:47
+#: juliabase/kicker/models.py:44
 msgid "matches"
 msgstr "Matches"
 
-#: kicker/models.py:51
+#: juliabase/kicker/models.py:48
 msgid "owner"
 msgstr "Besitzer"
 
-#: kicker/models.py:53
+#: juliabase/kicker/models.py:50
 msgid "bought person"
 msgstr "Gekaufte Person"
 
-#: kicker/models.py:55
+#: juliabase/kicker/models.py:52
 msgid "number of shares"
 msgstr "Aktienanzahl"
 
-#: kicker/models.py:61
+#: juliabase/kicker/models.py:58
 msgid "shares"
 msgstr "Aktie"
 
-#: kicker/models.py:62
+#: juliabase/kicker/models.py:59
 msgid "shareses"
 msgstr "Aktien"
 
-#: kicker/models.py:66
+#: juliabase/kicker/models.py:63
 msgid "player"
 msgstr "Spieler"
 
-#: kicker/models.py:68 kicker/models.py:74
+#: juliabase/kicker/models.py:65 juliabase/kicker/models.py:71
 msgid "kicker number"
 msgstr "Kickerzahl"
 
-#: kicker/models.py:75 kicker/templates/kicker/summary.html:31
+#: juliabase/kicker/models.py:72
+#: juliabase/kicker/templates/kicker/summary.html:31
 msgid "kicker numbers"
 msgstr "Kickerzahlen"
 
-#: kicker/models.py:79
+#: juliabase/kicker/models.py:76
 msgid "gambler"
 msgstr "Spieler"
 
-#: kicker/models.py:81 kicker/models.py:87
+#: juliabase/kicker/models.py:78 juliabase/kicker/models.py:84
 msgid "stock value"
 msgstr "Aktienkurs"
 
-#: kicker/models.py:88
+#: juliabase/kicker/models.py:85
 msgid "stock values"
 msgstr "Aktienkurse"
 
-#: kicker/models.py:96
+#: juliabase/kicker/models.py:93
 msgid "user"
 msgstr "Benutzer"
 
-#: kicker/models.py:98
+#: juliabase/kicker/models.py:95
 msgid "nickname"
 msgstr "Spitzname"
 
-#: kicker/models.py:99
+#: juliabase/kicker/models.py:96
 msgid "shortkey"
 msgstr "Tastenkürzel"
 
-#: kicker/models.py:102 kicker/models.py:103
+#: juliabase/kicker/models.py:99 juliabase/kicker/models.py:100
 msgid "user details"
 msgstr "Benutzerdetails"
 
-#: kicker/templates/kicker/summary.html:56
+#: juliabase/kicker/templates/kicker/summary.html:56
 msgid "Edit your Kicker user details"
 msgstr "Ihre Kicker-Benutzerdetails ändern"
 
-#: kicker/templates/kicker/user_details.html:27
+#: juliabase/kicker/templates/kicker/user_details.html:27
 msgid "Already taken shortkeys:"
 msgstr "Bereits vergebene Tastenkürzel:"
 
-#: kicker/views.py:194 kicker/views.py:262
+#: juliabase/kicker/views.py:191 juliabase/kicker/views.py:259
 msgid "You must be the original reporter of this match."
 msgstr "Sie müssen der ursprüngliche Berichter des Matches sein."
 
-#: kicker/views.py:213
+#: juliabase/kicker/views.py:210
 msgid "Matches with three players can't be processed."
 msgstr "Matches mit drei Spielern können nicht verarbeitet werden."
 
-#: kicker/views.py:215
+#: juliabase/kicker/views.py:212
 msgid "All players are the same person."
 msgstr "Alle Spieler sind dieselbe Person."
 
-#: kicker/views.py:219
+#: juliabase/kicker/views.py:216
 msgid "A finished match can't be edited anymore."
 msgstr "Ein beendetes Match kann nicht mehr geändert werden."
 
-#: kicker/views.py:226
+#: juliabase/kicker/views.py:223
 msgid "This match is older than the most recent kicker numbers."
 msgstr "Dieses Match ist älter als die letzten Kickerzahlen."
 
-#: kicker/views.py:247
+#: juliabase/kicker/views.py:244
 msgid "Seconds must be positive."
 msgstr "Sekunden müssen eine positive Zahl sein."
 
-#: kicker/views.py:264
+#: juliabase/kicker/views.py:261
 msgid "A finished match can't be canceled."
 msgstr "Ein beendetes Match kann nicht abgebrochen werden."
 
-#: kicker/views.py:357
+#: juliabase/kicker/views.py:355
 msgid "Kicker summary"
 msgstr "Kicker-Zusammenfassung"
 
-#: kicker/views.py:376
+#: juliabase/kicker/views.py:374
 msgid "This nickname is already given."
 msgstr "Dieser Spitzname ist bereits vergeben."
 
-#: kicker/views.py:383
+#: juliabase/kicker/views.py:381
 msgid "This shortkey is already given."
 msgstr "Dieses Tastenkürzel ist bereits vergeben."
 
-#: kicker/views.py:385
+#: juliabase/kicker/views.py:383
 msgid "This shortkey is invalid."
 msgstr "Dieses Tastenkürzel ist ungültig."
 
-#: kicker/views.py:399
+#: juliabase/kicker/views.py:397
 msgid "The preferences were successfully updated."
 msgstr "Die Einstellungen wurden erfolgreich geändert."
 
-#: kicker/views.py:403
+#: juliabase/kicker/views.py:401
 #, python-brace-format
 msgid "Change preferences for {user_name}"
 msgstr "Einstellung für {user_name} ändern"

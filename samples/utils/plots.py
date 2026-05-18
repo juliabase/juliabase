@@ -40,7 +40,7 @@ def read_plot_file_beginning_at_line_number(filename, columns, start_line_number
     :param separator: the separator which separates the values from each other.
         Default is ``None``
 
-    :type filename: str
+    :type filename: pathlib.Path
     :type columns: list of int
     :type start_line_number: int
     :type end_line_number: int or None
@@ -96,7 +96,7 @@ def read_plot_file_beginning_after_start_value(filename, columns, start_value, e
     :param separator: the separator which separates the values from each
         other.  Default is ``None``
 
-    :type filename: str
+    :type filename: pathlib.Path
     :type columns: list of int
     :type start_value: str
     :type end_value: str

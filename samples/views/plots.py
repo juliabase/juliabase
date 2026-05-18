@@ -18,7 +18,8 @@
 """View for showing a plot as a PDF file.
 """
 
-import os.path, mimetypes
+import mimetypes
+import threading
 from io import BytesIO
 from functools import partial
 from matplotlib.backends.backend_agg import FigureCanvasAgg
@@ -26,41 +27,43 @@ from matplotlib.figure import Figure
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.contrib.auth.decorators import login_required
-from django.conf import settings
 from jb_common.utils.base import get_cached_bytes_stream, static_response
 from samples import models, permissions
 import samples.utils.views as utils
 from samples.utils.plots import PlotError
 
+plot_lock = threading.Lock()
+
 
 def generate_plot(process, plot_id, thumbnail, datafile_name):
-    try:
-        output = BytesIO()
-        if thumbnail:
-            figure = Figure(frameon=False, figsize=(4.2, 3.15))
-            canvas = FigureCanvasAgg(figure)
-            axes = figure.add_subplot(111)
-            axes.set_position((0.17, 0.16, 0.78, 0.78))
-            axes.grid(True)
-            process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=True)
-            canvas.print_figure(output, format="svg")
+    with plot_lock:
+        try:
+            output = BytesIO()
+            if thumbnail:
+                figure = Figure(frameon=False, figsize=(4.2, 3.15))
+                canvas = FigureCanvasAgg(figure)
+                axes = figure.add_subplot(111)
+                axes.set_position((0.17, 0.16, 0.78, 0.78))
+                axes.grid(True)
+                process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=True)
+                canvas.print_figure(output, format="svg")
+            else:
+                figure = Figure()
+                canvas = FigureCanvasAgg(figure)
+                axes = figure.add_subplot(111)
+                axes.grid(True)
+                axes.set_title(str(process))
+                process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=False)
+                # FixMe: Activate this line with Matplotlib 1.1.0.
+    #                figure.tight_layout()
+                canvas.print_figure(output, format="pdf")
+        except PlotError as e:
+            raise Http404(str(e) or "Plot could not be generated.")
+        except ValueError as e:
+            raise Http404("Plot could not be generated: " + e.args[0])
         else:
-            figure = Figure()
-            canvas = FigureCanvasAgg(figure)
-            axes = figure.add_subplot(111)
-            axes.grid(True)
-            axes.set_title(str(process))
-            process.draw_plot(axes, plot_id, datafile_name, for_thumbnail=False)
-            # FixMe: Activate this line with Matplotlib 1.1.0.
-#                figure.tight_layout()
-            canvas.print_figure(output, format="pdf")
-    except PlotError as e:
-        raise Http404(str(e) or "Plot could not be generated.")
-    except ValueError as e:
-        raise Http404("Plot could not be generated: " + e.args[0])
-    else:
-        output.seek(0)
-        return output
+            output.seek(0)
+            return output
 
 
 @login_required
