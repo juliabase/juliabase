@@ -21,7 +21,6 @@
 import datetime
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from django.conf import settings
 from django.forms.utils import ValidationError
 from django.shortcuts import render, get_object_or_404
 import django.utils.timezone
@@ -148,19 +147,20 @@ def show(request):
     :rtype: HttpResponse
     """
     now = django.utils.timezone.now()
-    eligible_status_messages = models.StatusMessage.objects.filter(withdrawn=False, begin__lt=now, end__gt=now)
-    process_classes = set()
+    eligible_status_messages = models.StatusMessage.objects.filter(withdrawn=False, begin__lt=now, end__gt=now).select_related("operator__jb_user_details__department").prefetch_related("process_classes")
+    process_class_statuses = {}
     for status_message in eligible_status_messages:
-        process_classes |= set(status_message.process_classes.all())
+        for process_class in status_message.process_classes.all():
+            process_class_statuses.setdefault(process_class, []).append(status_message)
     status_messages = []
-    for process_class in process_classes:
-        current_status = eligible_status_messages.filter(process_classes=process_class).order_by("-begin", "-timestamp")[0]
+    for process_class, messages in process_class_statuses.items():
+        current_status = max(messages, key=lambda m: (m.begin, m.timestamp))
         status_messages.append((current_status, process_class.model_class()._meta.verbose_name))
     consumed_status_message_ids = {item[0].id for item in status_messages}
     status_messages.sort(key=lambda item: item[1].lower())
     further_status_messages = {}
     for status_message in models.StatusMessage.objects.filter(withdrawn=False, end__gt=now).exclude(
-        id__in=consumed_status_message_ids).order_by("end"):
+        id__in=consumed_status_message_ids).order_by("end").select_related("operator__jb_user_details__department").prefetch_related("process_classes"):
         for process_class in status_message.process_classes.all():
             further_status_messages.setdefault(process_class.model_class()._meta.verbose_name, []).append(status_message)
     further_status_messages = sorted(further_status_messages.items(), key=lambda item: item[0].lower())

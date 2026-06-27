@@ -19,7 +19,7 @@
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-import hashlib, os.path, time, urllib, json
+import hashlib, time, urllib, json
 from io import BytesIO
 from urllib.parse import quote_plus
 from pathlib import Path
@@ -31,11 +31,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
 import django.forms as forms
 from django.core.cache import cache
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy as _, gettext, ngettext
@@ -45,7 +46,7 @@ from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_rdf_requested, \
-    is_json_requested, respond_in_json, is_ro_crate_requested, get_all_models, mkdirs, cache_key_locked, get_from_cache, \
+    is_json_requested, respond_in_json, is_ro_crate_requested, get_all_models, mkdirs, cache_key_locked, \
     int_or_zero, help_link, camel_case_to_human_text
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree, ontology_symbols
@@ -54,7 +55,6 @@ from samples.utils import sample_names
 from samples.graphs import respond_as_rdf
 from samples.ro_crate import respond_as_ro_crate
 import datetime
-
 
 class IsMySampleForm(forms.Form):
     """Form class just for the checkbox marking that the current sample is
@@ -191,13 +191,17 @@ def delete(request, sample_name):
     """
     sample = utils.lookup_sample(sample_name, request.user)
     affected_objects = permissions.assert_can_delete_sample(request.user, sample)
+    process_ids = []
     for instance in affected_objects:
         if isinstance(instance, models.Sample):
             utils.Reporter(request.user).report_deleted_sample(instance)
         elif isinstance(instance, models.Process):
             utils.Reporter(request.user).report_deleted_process(instance)
+            process_ids.append(instance.pk)
     success_message = _("Sample {sample} was successfully deleted in the database.").format(sample=sample)
-    sample.delete()
+    sample.delete(user=request.user)
+    # Ensure no orphan process base rows survive after sample-tree deletion.
+    models.Process.objects.filter(pk__in=process_ids).annotate(sample_count=Count("samples")).filter(sample_count=0).delete()
     return utils.successful_response(request, success_message)
 
 
@@ -342,8 +346,8 @@ class SamplesAndProcesses:
         # processes.  To get accurate results, use
         # ``samples.processes.count()`` instead.  However, this would slow down
         # JuliaBase.
-        samples_and_processes = get_from_cache(cache_key, hits=10)
-        if samples_and_processes is None:
+        samples_and_processes = None 
+        if samples_and_processes is None or not hasattr(samples_and_processes, "processes") or not samples_and_processes.is_my_sample_form.is_valid():
             samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
             keys_list_key = "sample-keys:{0}".format(sample.pk)
             with cache_key_locked("sample-lock:{0}".format(sample.pk)):
@@ -351,9 +355,6 @@ class SamplesAndProcesses:
                 keys.append(cache_key)
                 cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
                 cache.set(cache_key, samples_and_processes)
-            samples_and_processes.remove_noncleared_process_contexts(user, clearance)
-        else:
-            samples_and_processes.personalize(user, clearance, post_data)
         return samples_and_processes
 
     def __init__(self, sample, clearance, user, post_data):
@@ -376,6 +377,8 @@ class SamplesAndProcesses:
         self.update_sample_context_for_user(user, clearance, post_data)
         self.process_contexts = []
         self.process_ids = set()
+        self.processes = []
+        self.processes_with_permissions = {}
         def collect_process_contexts(local_context=None):
             """Constructs the list of process context dictionaries.  This
             internal helper function directly populates
@@ -406,9 +409,13 @@ class SamplesAndProcesses:
                 new_local_context["latest_descendant"] = local_context["sample"]
                 new_local_context["cutoff_timestamp"] = split.timestamp
                 collect_process_contexts(new_local_context)
-            processes = models.Process.objects. \
-                filter(Q(samples=local_context["sample"]) | Q(result__sample_series__samples=local_context["sample"])). \
-                distinct()
+            ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True)
+            ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True)
+
+            process_ids = ids_from_direct.union(ids_from_series)
+
+            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').prefetch_related('actual_instance').distinct()
+
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
             all_processes = []
@@ -455,10 +462,15 @@ class SamplesAndProcesses:
                     all_processes.append(process)
             all_processes.extend(processes)
             all_processes.sort(key=lambda process: process.timestamp)
+            nobody = django.contrib.auth.models.User.objects.get(username='nobody')
+            self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
             for process in all_processes:
-                process_context = utils.digest_process(process, user, local_context)
-                self.process_contexts.append(process_context)
                 self.process_ids.add(process.id)
+                if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
+                    process.operator = nobody
+
+            self.processes += processes
+
         collect_process_contexts()
         self.process_lists = []
 
@@ -487,6 +499,7 @@ class SamplesAndProcesses:
         self.user_details = user.samples_user_details
         sample = self.sample_context["sample"]
         self.is_my_sample = self.user.my_samples.filter(id__exact=sample.id).exists()
+
         self.is_my_sample_form = IsMySampleForm(
             prefix=str(sample.pk), initial={"is_my_sample": self.is_my_sample}) if post_data is None \
             else IsMySampleForm(post_data, prefix=str(sample.pk))
@@ -500,6 +513,7 @@ class SamplesAndProcesses:
         self.sample_context["can_edit"] = permissions.has_permission_to_edit_sample(self.user, sample)
         self.sample_context["can_delete"] = permissions.has_permission_to_delete_sample(self.user, sample)
         if self.sample_context["can_edit"] and \
+           not sample.is_dead() and \
            sample_names.sample_name_format(sample.name) in sample_names.get_renamable_name_formats():
             self.sample_context["id_for_rename"] = str(sample.pk)
         else:
@@ -529,7 +543,7 @@ class SamplesAndProcesses:
                 process = process_context["process"]
                 if process.operator == user or \
                         issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
-                        permissions.has_permission_to_view_physical_process(user, process):
+                        self.processes_with_permissions[process]:
                     viewable_process_contexts.append(process_context)
                 else:
                     self.process_ids.remove(process.id)
@@ -554,11 +568,6 @@ class SamplesAndProcesses:
         """
         self.update_sample_context_for_user(user, clearance, post_data)
         self.remove_noncleared_process_contexts(user, clearance)
-        for process_context in self.process_contexts:
-            process_context.update(
-                process_context["process"].get_context_for_user(user, process_context))
-        for process_list in self.process_lists:
-            process_list.personalize(user, clearance, post_data)
 
     def __iter__(self):
         """Returns an iterator over all samples and processes.  It is used in
@@ -586,7 +595,23 @@ class SamplesAndProcesses:
 
         :rtype: ``generator``
         """
-        if self.process_contexts:
+        if self.processes:
+            first_proc = {  "id": self.processes[0].id, 
+                            "title": self.processes[0].actual_instance._meta.verbose_name,
+                            "timestamp": self.processes[0].timestamp,
+                            "operator": self.processes[0].operator}
+            yield True, self.sample_context, first_proc
+            for process in self.processes[1:]:
+                try:
+                    instance = process.actual_instance
+                except AttributeError:
+                    continue
+                proc = {  "id": process.id, 
+                                "title": instance._meta.verbose_name,
+                                "timestamp": process.timestamp,
+                                "operator": process.operator}
+                yield False, self.sample_context, proc
+        elif self.process_contexts:
             yield True, self.sample_context, self.process_contexts[0]
             for process_context in self.process_contexts[1:]:
                 yield False, self.sample_context, process_context
@@ -799,6 +824,8 @@ def show(request, sample_name):
             elif not added:
                 success_message = _("Nothing was changed.")
             messages.success(request, success_message)
+        else:
+            raise ValueError("Form is not valid")
     else:
         sample, clearance = utils.lookup_sample(sample_name, request.user, with_clearance=True)
         if is_json_requested(request):
@@ -815,6 +842,7 @@ def show(request, sample_name):
             return respond_as_ro_crate(graph, collect_raw_files(sample))
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
+    sample_id = samples_and_processes.sample_context["sample"].id
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
                    "samples_and_processes": samples_and_processes})
@@ -908,12 +936,10 @@ def cleanmysamples(request):
 
     :rtype: HttpResponse
     """
-    too_many_results = False
-    base_query = utils.restricted_samples_query(request.user)
     clean_my_samples_form = CleanMySamplesForm(request.GET)
     found_samples = [s for s in request.user.my_samples.all()]
     protected = []
-    for series in request.user.sample_series.all():
+    for series in request.user.sample_series.prefetch_related('samples'):
         for sample in series.samples.all():
             protected.append(sample)
     to_be_removed = []
@@ -1044,6 +1070,27 @@ def advanced_search(request):
             else:
                 base_query = None
             results, too_many_results = jb_common.search.get_search_results(search_tree, max_results, base_query)
+            
+            from django.db.models import prefetch_related_objects
+            if issubclass(search_tree.model_class, models.Process):
+                prefetch_fields = ["samples__topic__members",
+                                   "samples__currently_responsible_person__jb_user_details__department"]
+                if isinstance(results, list):
+                    if results:
+                        # For list of model instances, we must use prefetch_related_objects
+                        prefetch_related_objects(results, "operator", "content_type", *prefetch_fields)
+                else:
+                    results = results.select_related("operator", "content_type")
+                    results = results.prefetch_related(*prefetch_fields)
+            elif issubclass(search_tree.model_class, models.Sample):
+                prefetch_fields = ["topic__members", "currently_responsible_person__jb_user_details__department"]
+                if isinstance(results, list):
+                    if results:
+                        prefetch_related_objects(results, *prefetch_fields)
+                else:
+                    results = results.select_related("topic", "currently_responsible_person")
+                    results = results.prefetch_related(*prefetch_fields)
+
             if search_tree.model_class == models.Sample:
                 if request.method == "POST":
                     sample_ids = {int_or_zero(key[2:].partition("-")[0]) for key, value in request.POST.items()
@@ -1215,10 +1262,6 @@ class SampleRenameForm(forms.Form):
 
     def clean_new_name(self):
         new_name = self.cleaned_data["new_name"]
-        name_format, match = sample_names.sample_name_format(new_name, with_match_object=True)
-        if name_format is None:
-            raise ValidationError(_("This sample name is not valid."), code="invalid")
-        utils.check_sample_name(match, self.user)
         if sample_names.does_sample_exist(new_name):
             raise ValidationError(_("This sample name exists already."), code="duplicate")
         return new_name
@@ -1231,19 +1274,6 @@ class SampleRenameForm(forms.Form):
             if new_name == old_name:
                 self.add_error("new_name", ValidationError(_("The new name must be different from the old name."),
                                                            code="invalid"))
-            old_name_format = sample_names.sample_name_format(old_name)
-            possible_new_name_formats = settings.SAMPLE_NAME_FORMATS[old_name_format].get("possible_renames", set()) \
-                if old_name_format else set()
-            name_format = sample_names.sample_name_format(new_name)
-            if name_format not in possible_new_name_formats:
-                error_message = ngettext("New name must be a valid “%(sample_formats)s” name.",
-                                          "New name must be a valid name of one of these types: %(sample_formats)s.",
-                                          len(possible_new_name_formats))
-                self.add_error("new_name", ValidationError(
-                    error_message,
-                    params={"sample_formats": format_enumeration(
-                        sample_names.verbose_sample_name_format(name_format) for name_format in possible_new_name_formats)},
-                    code="invalid"))
 
         return cleaned_data
 
@@ -1288,4 +1318,18 @@ def rename_sample(request):
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
 
 
+@login_required
+@never_cache
+@require_http_methods(["GET"])
+def get_folded_processes(request, sample_id):
+    """
+    Function that gets the folded processes for the current user.
+    There is a similar function in json_client.py but I do not use it since 
+    I do not have the process ids in the request.
+    """
+    user_detail = models.UserDetails.objects.get(user=request.user)
+    cts = user_detail.default_folded_process_classes.all()
+    process_names = [str(process.name).lower() for process in cts]
+    return respond_in_json(process_names)
+    
 _ = gettext

@@ -17,10 +17,9 @@
 # You should have received a copy of the GNU General Public License along with
 # this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import tempfile, os, time
+import tempfile, os
 from django.test import TestCase, override_settings
 from remote_client.jb_remote.crawler_tools import changed_files, find_changed_files, defer_files, Path
-from .tools import log
 
 
 class Common:
@@ -83,7 +82,6 @@ class Common:
 class FindChangedFilesTest(Common, TestCase):
 
     def find_changed_files(self, *args, **kwargs):
-        time.sleep(0.01)
         changed, removed = find_changed_files(self.tempdir.name, self.diff_file, *args, **kwargs)
         return self.relative(changed), self.relative(removed)
 
@@ -103,7 +101,6 @@ class FindChangedFilesTest(Common, TestCase):
 class ChangedFilesTest(Common, TestCase):
 
     def find_changed_files(self, *args, **kwargs):
-        time.sleep(0.01)
         with changed_files(self.tempdir.name, self.diff_file, *args, **kwargs) as paths:
             changed_, removed_ = [], []
             for path in paths:
@@ -116,15 +113,14 @@ class ChangedFilesTest(Common, TestCase):
         return self.relative(changed_), self.relative(removed_)
 
     def test_fail_during_iteration(self):
-        position = log.tell()
-        with changed_files(self.tempdir.name, self.diff_file) as paths:
-            for path in paths:
-                self.assertTrue(path.was_changed)
-                failed_path = self.relative(path)
-                path.check_off()
-                raise Exception("Bad")
-        log.seek(position)
-        self.assertEqual(log.read().strip(), 'CRITICAL:root:Crawler error at "{}" (aborting): Bad'.format(failed_path))
+        with self.assertLogs(level="CRITICAL") as captured_logs:
+            with changed_files(self.tempdir.name, self.diff_file) as paths:
+                for path in paths:
+                    self.assertTrue(path.was_changed)
+                    failed_path = self.relative(path)
+                    path.check_off()
+                    raise Exception("Bad")
+        self.assertEqual(captured_logs.output, ['CRITICAL:root:Crawler error at "{}" (aborting): Bad'.format(failed_path)])
         self.assertEqual(self.find_changed_files(), ({"1.dat", "a.dat"} - {failed_path}, set()))
 
     def test_dont_call_check_off(self):

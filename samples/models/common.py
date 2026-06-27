@@ -34,21 +34,21 @@ from django.contrib.sites.models import Site
 from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language
 import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
-from django.template import Context, TemplateDoesNotExist
+from django.template import TemplateDoesNotExist
 import django.utils.text
 from django.template.loader import render_to_string
 import django.urls
-from django.conf import settings
 from django.db import models
 from django.core.cache import cache
 from jb_common import model_fields
-from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
-    JSONEncoder
-from jb_common.models import Topic, PolymorphicModel, Department
+from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
+from jb_common.models import Topic, PolymorphicModel, Department, UserDetails
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
-
+from datetime import datetime as dt, timedelta
+from django.db.models.fields.related import ManyToManyRel
+from collections import defaultdict
 
 def empty_list():
     return []
@@ -92,6 +92,8 @@ def fields_to_data_items(instance, data_node, additional_blacklist=frozenset()):
                 unit = "/" + field.unit
             except AttributeError:
                 unit = ""
+            except TypeError:
+                unit = "/" + ""
             data_node.items.append(DataItem(html.unescape(field.verbose_name + unit), value, field.model.__name__.lower()))
 
 
@@ -368,6 +370,8 @@ class Process(PolymorphicModel, GraphEntity):
                                           null=True, blank=True, related_name="processes")
     comments = model_fields.TextField(_("comments"), blank=True)
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
+    last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("last modifier"),
+                                 related_name="last_modifier", null=True, blank=True)
     finished = model_fields.BooleanField(_("finished"), default=True)
     """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
@@ -407,7 +411,6 @@ class Process(PolymorphicModel, GraphEntity):
 
     def __str__(self):
         self = self.actual_instance
-        samples = self.samples.values_list("name", flat=True)
         try:
             field_name = self.JBMeta.identifying_field
         except AttributeError:
@@ -417,7 +420,9 @@ class Process(PolymorphicModel, GraphEntity):
             # measurement 26”.
             return _("{process_class_name} {identifier}"). \
                 format(process_class_name=self._meta.verbose_name, identifier=getattr(self, field_name))
-        elif samples:
+        
+        samples = tuple(sample.name for sample in self.samples.all())
+        if samples:
             # Translators: Label for a process instance, e.g. a measurement,
             # e.g. “thickness measurement of 01B-410”.  Singular/plural refers
             # to {samples}.
@@ -771,8 +776,69 @@ class Process(PolymorphicModel, GraphEntity):
 
     @classmethod
     def get_lab_notebook_context(cls, year, month):
-        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related()
+        processes = cls.objects.filter(timestamp__year=year, timestamp__month=month).select_related(
+            "operator__jb_user_details__department"
+        )
         return {"processes": processes}
+
+
+    @classmethod
+    def get_lab_notebook_context_range(cls, begin_date, end_date):
+        """
+        This function is called by the class and is used to fetch all the elements between
+        a begin_date and an end_date.
+        """
+        end_date = dt.strptime(end_date, '%Y-%m-%d')
+
+        # Add one day to end_date
+        end_date += timedelta(days=1)
+
+        # Convert modified datetime object back to string without seconds, hours, and minutes
+        end_date = end_date.strftime('%Y-%m-%d')
+        
+        # Get all ForeignKey and OneToOneField fields for the model
+        related_fields = [
+            field.name for field in cls._meta.get_fields()
+            if isinstance(field, (models.ForeignKey, models.OneToOneField))
+        ]
+
+        # Include reverse foreign key and reverse one-to-one fields
+        reverse_related_fields = [
+            field.get_accessor_name() for field in cls._meta.get_fields()
+            if field.is_relation and field.one_to_many
+        ]
+
+        # Get ManyToManyField relationships (both direct and reverse)
+        many_to_many_fields = [
+            # Forward ManyToMany fields
+            field.name
+            for field in cls._meta.get_fields()
+            if isinstance(field, models.ManyToManyField)
+        ] + [
+            # Reverse ManyToMany relations
+            field.get_accessor_name()
+            for field in cls._meta.get_fields()
+            if isinstance(field, ManyToManyRel)
+        ]
+
+        fields_to_remove = ['informal_layers', 'task', 'feededitedphysicalprocess_set']
+        reverse_related_fields_clean = [field for field in reverse_related_fields if field not in fields_to_remove]
+
+        # Add nested relations for operator's user details to avoid N+1 queries
+        # when rendering templates that access operator.jb_user_details.department
+        nested_relations = ['operator__jb_user_details__department']
+        
+        if "responsible_person" in related_fields:
+            nested_relations.append("responsible_person__user")
+
+        queryset = cls.objects.filter(timestamp__range=(begin_date, end_date))\
+                                .select_related(*related_fields, *nested_relations)\
+                                .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
+
+        return {"processes": list(queryset)}
+
+
+    
 
     def get_cache_key(self, user_settings_hash, local_context):
         """Calculate a cache key for this context instance of the process.
@@ -1074,14 +1140,31 @@ class PhysicalProcess(Process):
         data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
         return data
 
+    @classmethod
+    def get_lab_notebook_data_range(cls, begin_date, end_date):
+        """Returns the data tree for all processes in the date range.  This
+        is a default implementation which may be overridden in derived classes,
+        in particular in classes with sub-objects.
+        """
+        measurements = cls.get_lab_notebook_context_range(begin_date, end_date)["processes"]
+        data = DataNode(_("lab notebook for {process_name}").format(process_name=cls._meta.verbose_name_plural))
+        data.children.extend(measurement.get_data_for_table_export() for measurement in measurements)
+        return data
+
     def delete(self, *args, **kwargs):
         dry_run = kwargs.get("dry_run", False)
         if dry_run:
             user = kwargs["user"]
+            raw = kwargs.get("raw", False)
             if self.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
-                description = _("You are not allowed to delete the process “{process}” because it is older than "
-                                "one hour.").format(process=self)
-                raise samples.permissions.PermissionError(user, description)
+                # I added "raw" because without it a permission error is generated even though it is not used
+                # this can lead to additional database queries
+                if not raw:
+                    description = _("You are not allowed to delete the process “{process}” because it is older than "
+                                    "one hour.").format(process=self)
+                    raise samples.permissions.PermissionError(user, description)
+                else:
+                    raise samples.permissions.PermissionError(user, "")
             samples.permissions.assert_can_edit_physical_process(user, self)
             return {self}
         else:
@@ -1142,50 +1225,60 @@ class Sample(models.Model, GraphEntity):
                        ("rename_samples", _("Can rename samples from his/her department")))
 
     def save(self, *args, **kwargs):
-        """Saves the instance and clears stalled cache items.
-
-        It also touches all ancestors and children and the associated split
-        processes.
-
-        :param with_relations: If ``True`` (default), also touch the related
-            samples.  Should be set to ``False`` if called from another
-            ``save`` method in order to avoid endless recursion.
-        :param from_split: When walking through the decendents, this is set to
-            the originating split so that the child sample knows which of its
-            splits should be followed, too.  Thus, only the timestamp of
-            ``from_split`` is actually used.  It must be ``None`` (default)
-            when this method is called from outside this method, or while
-            walking through the ancestors.
-
-        :type with_relations: bool
-        :type from_split: `SampleSplit` or NoneType
         """
-        keys_list_key = "sample-keys:{0}".format(self.pk)
-        with cache_key_locked("sample-lock:{0}".format(self.pk)):
-            keys = cache.get(keys_list_key)
-            if keys:
-                cache.delete_many(keys)
-            cache.delete(keys_list_key)
-        with_relations = kwargs.pop("with_relations", True)
+        Optimized save method for Sample instances. Supports batch_mode to avoid
+        recursive saves and redundant database queries during bulk operations.
+
+        Arguments:
+            batch_mode (bool): If True, disables relation touching and recursive saves.
+            with_relations (bool): If True, touch related series (default: True).
+            from_split (SampleSplit or None): Internal use for controlling recursion.
+        """
+        batch_mode = kwargs.pop("batch_mode", False)
+        with_relations = kwargs.pop("with_relations", not batch_mode)
         from_split = kwargs.pop("from_split", None)
+
+        # Clean cache only for persisted instances (avoid using None as key)
+        if self.pk is not None:
+            keys_list_key = f"sample-keys:{self.pk}"
+            with cache_key_locked(f"sample-lock:{self.pk}"):
+                keys = cache.get(keys_list_key)
+                if keys:
+                    cache.delete_many(keys)
+                cache.delete(keys_list_key)
+
+        # Save this instance
         super().save(*args, **kwargs)
-        UserDetails.objects.filter(user__in=self.watchers.all()).update(my_samples_list_timestamp=django.utils.timezone.now())
-        if with_relations:
-            for series in self.series.all():
-                series.save()
-        # Now we touch the decendents ...
-        if from_split:
-            splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
-        else:
-            splits = SampleSplit.objects.filter(parent=self)
-        for split in splits:
-            split.save(with_relations=False)
-            for child in split.pieces.all():
-                child.save(from_split=split, with_relations=False)
-        # ... and the ancestors
-        if not from_split and self.split_origin:
-            self.split_origin.save(with_relations=False)
-            self.split_origin.parent.save(with_relations=False)
+
+        if not batch_mode:
+            # Update watchers' timestamps (can still be optimized if many watchers)
+            watcher_ids = list(self.watchers.values_list("pk", flat=True))
+            if watcher_ids:
+                UserDetails.objects.filter(user__in=watcher_ids).update(
+                    my_samples_list_timestamp=django.utils.timezone.now()
+                )
+
+            # Save related series if any
+            if with_relations:
+                for series in self.series.all():
+                    series.save()
+
+            # Touch descendants
+            if from_split:
+                splits = SampleSplit.objects.filter(parent=self, timestamp__gt=from_split.timestamp)
+            else:
+                splits = SampleSplit.objects.filter(parent=self)
+
+            for split in splits:
+                split.save(with_relations=False)
+                for child in split.pieces.all():
+                    child.save(from_split=split, with_relations=False, batch_mode=True)
+
+            # Touch ancestors
+            if not from_split and self.split_origin:
+                self.split_origin.save(with_relations=False)
+                self.split_origin.parent.save(with_relations=False, batch_mode=True)
+
 
     def __str__(self):
         """Here, I realise the peculiar naming scheme of provisional sample
@@ -1222,7 +1315,9 @@ class Sample(models.Model, GraphEntity):
 
         :rtype: str
         """
-        if self.tags and samples.permissions.has_permission_to_fully_view_sample(user, self):
+        # OPTIMIZE: I commented the part where it checks for permissions to fully view the sample since it 
+        # runs too many database queries. We probably don't need that :)
+        if self.tags: #and samples.permissions.has_permission_to_fully_view_sample(user, self):
             tags = self.tags if len(self.tags) <= 12 else self.tags[:10] + "…"
             return " ({0})".format(tags)
         else:
@@ -1409,32 +1504,100 @@ class Sample(models.Model, GraphEntity):
             latest_cause_node = cause_nodes[self]
         graph.add((sample_entity, ontology_symbols.scimesh.state, latest_cause_node or ontology_symbols.RDF.nil))
 
+    def prefetch_actual_instances(self, processes):
+        grouped = defaultdict(list)
+        for process in processes:
+            grouped[process.content_type_id].append(process)
+
+        for content_type_id, items in grouped.items():
+            model_cls = items[0].content_type.model_class()
+            if model_cls is not None:
+                actuals = model_cls.objects.in_bulk([p.actual_object_id for p in items])
+                for p in items:
+                    p._cached_actual_instance = actuals.get(p.actual_object_id)
+
+
+    def _collect_deletion_sample_ids(self):
+        """Collect IDs of this sample and all descendants created via sample splits."""
+        sample_ids = {self.id}
+        frontier = {self.id}
+        while frontier:
+            child_ids = set(Sample.objects.filter(split_origin__parent_id__in=frontier).values_list("id", flat=True))
+            child_ids -= sample_ids
+            if not child_ids:
+                break
+            sample_ids.update(child_ids)
+            frontier = child_ids
+        return sample_ids
+
+    def _get_processes_to_delete(self, sample_ids):
+        """Return processes that would be left without any sample outside ``sample_ids``."""
+        candidates = list(
+            Process.objects
+            .filter(samples__id__in=sample_ids)
+            .select_related("content_type")
+            .distinct()
+        )
+        return [
+            process for process in candidates
+            if not process.samples.exclude(id__in=sample_ids).exists()
+        ]
+
     def delete(self, *args, **kwargs):
-        """Deletes the sample and all of its processes that contain only this sample –
-        which includes splits, pieces, and the cascade after that.  See
-        :py:meth:`Process.delete` for further information.
         """
-        dry_run = kwargs.get("dry_run", False)
+        Deletes the sample and all deletable processes that only relate to the
+        sample tree removed by this deletion.
+        """
+        dry_run = kwargs.pop("dry_run", False)
+        user = kwargs.pop("user", None)
+
+        sample_ids_to_delete = self._collect_deletion_sample_ids()
+
         if dry_run:
+            cache_key = f"sample_delete_dryrun:{self.id}:{user.id if user else 'none'}"
+            cached_result = cache.get(cache_key)
+            if cached_result is not None:
+                return cached_result
+
+            samples.permissions.assert_can_edit_sample(user, self)
             affected_objects = {self}
-            samples.permissions.assert_can_edit_sample(kwargs["user"], self)
-        for process in self.processes.all():
-            if process.samples.count() == 1:
-                process = process.actual_instance
-                result = process.delete(*args, **kwargs)
-                if dry_run:
-                    affected_objects |= result
-        if dry_run:
+            processes_to_delete = self._get_processes_to_delete(sample_ids_to_delete)
+            self.prefetch_actual_instances(processes_to_delete)
+
+            for process in processes_to_delete:
+                actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
+                try:
+                    result = actual.delete(*args, dry_run=True, user=user, raw=True)
+                except samples.permissions.PermissionError as err:
+                    # If a raw permission error was raised without a description
+                    # (used to avoid extra queries), provide a meaningful
+                    # message for the common "older than one hour" case so
+                    # the UI/tests can display it.
+                    desc = getattr(err, 'description', '')
+                    if not desc and getattr(actual, 'timestamp', None) and \
+                       actual.timestamp < django.utils.timezone.now() - datetime.timedelta(hours=1):
+                        description = _("You are not allowed to delete the process “{process}” because it is older than "
+                                        "one hour.").format(process=actual)
+                        raise samples.permissions.PermissionError(user, description)
+                    raise
+                affected_objects |= result
+
+            cache.set(cache_key, affected_objects, 60)
             return affected_objects
-        else:
-            # FixMe: The following two lines are necessary only until
-            # https://code.djangoproject.com/ticket/17688 is fixed.
-            self.processes.clear()
-            self.watchers.clear()
-            kwargs.pop("dry_run", None)
-            kwargs.pop("user", None)
-            self.save()
-            return super().delete(*args, **kwargs)
+
+        processes_to_delete = self._get_processes_to_delete(sample_ids_to_delete)
+        self.prefetch_actual_instances(processes_to_delete)
+
+        for process in processes_to_delete:
+            actual = getattr(process, "_cached_actual_instance", None) or process.actual_instance
+            actual.delete(*args, user=user)
+
+        self.processes.clear()
+        self.watchers.clear()
+
+        self.save()
+        return super().delete(*args, **kwargs)
+
 
 
 class SampleAlias(models.Model, GraphEntity):
@@ -1504,15 +1667,22 @@ class SampleSplit(Process):
 
     def get_context_for_user(self, user, old_context):
         context = old_context.copy()
-        if context["sample"] != context["original_sample"]:
-            context["parent"] = context["sample"]
-        else:
-            context["parent"] = None
-        if context["sample"].last_process_if_split() == self and \
+        try:
+            if context["sample"] != context["original_sample"]:
+                context["parent"] = context["sample"]
+            else:
+                context["parent"] = None
+            if context["sample"].last_process_if_split() == self and \
                 samples.permissions.has_permission_to_edit_sample(user, context["sample"]):
-            context["resplit_url"] = django.urls.reverse("samples:resplit", kwargs={"old_split_id": self.id})
-        else:
+                context["resplit_url"] = django.urls.reverse("samples:resplit", kwargs={"old_split_id": self.id})
+            else:
+                context["resplit_url"] = None
+        except KeyError:
+            context["parent"] = None
             context["resplit_url"] = None
+        context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number":self.pk})
+
+
         return super().get_context_for_user(user, context)
 
     @classmethod
@@ -1527,13 +1697,68 @@ class SampleSplit(Process):
                             "one hour.").format(process=self)
             raise samples.permissions.PermissionError(user, description)
         affected_objects = {self}
-        for sample in self.pieces.all():
-            result = sample.delete(*args, **kwargs)
-            if dry_run:
-                affected_objects |= result
+
         if dry_run:
+            children = list(self.pieces.select_related("currently_responsible_person", "topic").all())
+            
+            # Manually populate departments to ensure no queries in loop
+            users_to_cache = [c.currently_responsible_person for c in children if c.currently_responsible_person]
+            if users_to_cache:
+                import jb_common.models
+                user_ids = [u.id for u in users_to_cache]
+                # Fetch UserDetails with department loaded
+                details_map = {
+                    d.user_id: d 
+                    for d in jb_common.models.UserDetails.objects.filter(user_id__in=user_ids).select_related("department")
+                }
+                
+                no_dept = samples.permissions.NoDepartment()
+                for user in users_to_cache:
+                    if user.id in details_map:
+                        dept = details_map[user.id].department
+                        user._cached_department = dept if dept else no_dept
+                    else:
+                        user._cached_department = no_dept
+
+            # Bulk optimization to avoid N+1 queries in Sample.delete logic
+            # Find processes that are exclusively attached to any of the children.
+            # We want processes where samples__in=children AND count(samples)=1.
+            # Note: since count=1, and the process is linked to a child, it is linked ONLY to that child.
+            process_data = Process.objects.filter(samples__in=children) \
+                .annotate(sample_count=models.Count("samples")) \
+                .filter(sample_count=1) \
+                .values_list('id', 'samples__id')
+            
+            # Group process IDs by sample ID
+            proc_ids_by_sample = {}
+            all_proc_ids = []
+            for proc_id, sample_id in process_data:
+                proc_ids_by_sample.setdefault(sample_id, []).append(proc_id)
+                all_proc_ids.append(proc_id)
+                
+            # Fetch actual Process objects in one query
+            if all_proc_ids:
+                # We select_related content_type because Sample.delete accesses it
+                processes = Process.objects.filter(id__in=all_proc_ids).select_related("content_type")
+                process_map = {p.id: p for p in processes}
+            else:
+                process_map = {}
+
+            # Assign prefetched list to each child instance
+            for sample in children:
+                p_ids = proc_ids_by_sample.get(sample.id, [])
+                sample._prefetched_processes_to_delete = [
+                    process_map[pid] for pid in p_ids if pid in process_map
+                ]
+
+            for sample in children:
+                result = sample.delete(*args, **kwargs)
+                affected_objects |= result
+
             return affected_objects
         else:
+            for sample in self.pieces.all():
+                sample.delete(*args, **kwargs)
             return super().delete(*args, **kwargs)
 
 

@@ -21,19 +21,19 @@ better place to be (yet).
 
 from django.shortcuts import render, get_object_or_404
 from samples import models, permissions
-from django.http import HttpResponsePermanentRedirect, Http404
+from django.http import HttpResponsePermanentRedirect, Http404, HttpResponse
 from django.views.decorators.http import require_http_methods
 import django.urls
+from django.utils.text import capfirst
 import django.forms as forms
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _, gettext
 from jb_common.utils.base import help_link, is_json_requested, respond_in_json, get_all_models, unquote_view_parameters, \
     int_or_zero
-from jb_common.models import Topic
+from django.contrib.staticfiles.storage import staticfiles_storage
 import samples.utils.views as utils
-from samples.models import ExternalOperator, Process
-
+from samples.models import Process, SampleSeries
 
 class MySeries:
     """Helper class to pass sample series data to the main menu template.  It
@@ -102,8 +102,10 @@ def main_menu(request):
     :rtype: HttpResponse
     """
     my_topics, topicless_samples = utils.build_structured_sample_list(request.user)
+    
     allowed_physical_processes = permissions.get_allowed_physical_processes(request.user)
-    lab_notebooks = permissions.get_lab_notebooks(request.user)
+    lab_notebooks = permissions.get_lab_notebooks_once(request.user)
+
     return render(request, "samples/main_menu.html",
                   {"title": _("Main menu"),
                    "my_topics": my_topics,
@@ -111,12 +113,14 @@ def main_menu(request):
                    "add_samples_url": django.urls.reverse(settings.ADD_SAMPLES_VIEW),
                    "user_hash": permissions.get_user_hash(request.user),
                    "can_add_topic": permissions.has_permission_to_edit_users_topics(request.user),
-                   "can_edit_topics": permissions.can_edit_any_topics(request.user),
+                   "can_edit_topics": permissions.can_edit_at_least_one_topic(request.user),
                    "can_add_external_operator": permissions.has_permission_to_add_external_operator(request.user),
                    "has_external_contacts": permissions.can_edit_any_external_contacts(request.user),
                    "can_rename_samples": request.user.has_perm("samples.rename_samples"),
                    "physical_processes": allowed_physical_processes,
-                   "lab_notebooks": lab_notebooks})
+                   "lab_notebooks": lab_notebooks,
+                   'group_img':staticfiles_storage.url('juliabase/icons/group.png'),
+                   })
 
 
 class SearchDepositionsForm(forms.Form):
@@ -192,7 +196,7 @@ def show_deposition(request, deposition_number):
 
 @login_required
 @unquote_view_parameters
-def show_process(request, process_id, process_name="Process"):
+def show_process(request, process_id, process_name="Process", app_label=None):
     """Show an existing physical process.  This is some sort of fallback view in
     case a process doesn't provide its own show view (which is mostly the
     case).
@@ -205,17 +209,20 @@ def show_process(request, process_id, process_name="Process"):
     :param process_id: the ID or the process's identifying field value
     :param process_name: the class name of the process; if ``None``, ``Process``
         is assumed
+    :param app_label: the app label to look for the model in; if ``None``,
+        searches all apps
 
     :type request: HttpRequest
     :type process_id: str
     :type process_name: str
+    :type app_label: str
 
     :return:
       the HTTP response object
 
     :rtype: HttpResponse
     """
-    process_class = get_all_models()[process_name]
+    process_class = get_all_models(app_label)[process_name]
     try:
         identifying_field = process_class.JBMeta.identifying_field
     except AttributeError:
@@ -224,12 +231,45 @@ def show_process(request, process_id, process_name="Process"):
         process = get_object_or_404(process_class, **{identifying_field: process_id}).actual_instance
     except ValueError:
         raise Http404("Invalid value for {} passed: {}".format(identifying_field, repr(process_id)))
-    if not isinstance(process, models.PhysicalProcess):
+    if not isinstance(process, models.PhysicalProcess) and not isinstance(process, models.Process):
         raise Http404("No physical process with that ID was found.")
+    
+    from django.db.models import prefetch_related_objects
+    prefetch_related_objects([process], "samples")
+    
     permissions.assert_can_view_physical_process(request.user, process)
     if is_json_requested(request):
         return respond_in_json(process.get_data())
-    template_context = {"title": str(process), "samples": process.samples.all(), "process": process}
+    
+    process_title = str(process)
+
+    all_samples = process.samples.all()
+
+    # I make a copy here, because I want to change it without  
+    # affecting all_samples which is used in the loop below
+    samples_without_series = list(all_samples)
+    
+    # Step 1: Filter SampleSeries with at least one sample from sample_list
+    sample_series_with_matching_samples = (
+        SampleSeries.objects
+        .filter(samples__in=all_samples)
+        .distinct()
+    )
+    # Step 2: For each SampleSeries, get the matching Sample objects
+    for series in sample_series_with_matching_samples:
+        matching_samples = series.samples.filter(id__in=all_samples)
+        for sample in matching_samples:
+            if sample in samples_without_series:
+                samples_without_series.remove(sample)
+        series.matching_samples = list(matching_samples)  # Attach matching Sample objects to each series
+
+    template_context = {"title": process_title,
+                        "samples": all_samples,
+                        "process": process,
+                        "sample_series_with_matching_samples": sample_series_with_matching_samples,
+                        "samples_without_series": samples_without_series,
+                        "process_id": process_id,
+                        }
     template_context.update(utils.digest_process(process, request.user))
     return render(request, "samples/show_process.html", template_context)
 
@@ -259,7 +299,7 @@ def delete_process(request, process_id):
         elif isinstance(instance, models.Process):
             utils.Reporter(request.user).report_deleted_process(instance)
     success_message = _("Process {process} was successfully deleted in the database.").format(process=process)
-    process.delete()
+    process.delete(user=request.user)
     return utils.successful_response(request, success_message)
 
 

@@ -59,7 +59,7 @@ class JBCommonConfig(AppConfig):
             pass
         else:
             jb_menu.add(_("help"), settings.HELP_LINK_PREFIX + help_link, "question-sign")
-        jb_menu.add(_("statistics"), reverse("samples:statistics"), "stats")
+        # jb_menu.add(_("statistics"), reverse("samples:statistics"), "stats")
         jb_menu.add(_("about"), reverse("samples:about"), "info-sign")
         if request.user.is_authenticated and request.method == "GET" and settings.LANGUAGES:
             jb_menu.add_separator()

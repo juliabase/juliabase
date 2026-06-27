@@ -1,59 +1,127 @@
-{# -*- indent-tabs-mode: nil -*- #}
-{% extends "samples/base.html" %}
-{% comment %}
-This file is part of JuliaBase, see http://www.juliabase.org.
-Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+  {# -*- indent-tabs-mode: nil -*- #}
+  {% extends "samples/base.html" %}
+  {% comment %}
+  This file is part of JuliaBase, see http://www.juliabase.org.
+  Copyright © 2008–2015 Forschungszentrum Jülich GmbH, Jülich, Germany
+  
+  This program is free software: you can redistribute it and/or modify it under
+  the terms of the GNU Affero General Public License as published by the Free
+  Software Foundation, either version 3 of the License, or (at your option) any
+  later version.
+  
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+  details.
+  
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  {% endcomment %}
+  
+  {% load i18n %}
+  {% load juliabase %}
+  {% load samples_extras %}
+  {% load static %}
+  {% load compress %}
+  
+  {% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon" 
+       href="{{ export_url }}"><img src="{% static 'juliabase/icons/table.png' %}" alt="export icon"
+          title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
+  
+        {% block external_css %}
+          {{ block.super }}
+            <link rel="preload" href="https://cdn.datatables.net/v/dt/dt-2.0.3/fc-5.0.0/fh-4.0.1/r-3.0.0/rg-1.5.0/datatables.min.js" as="script">
+            <link rel="preload" href="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js" as="script">
+            <link href="https://cdn.datatables.net/v/dt/dt-2.0.3/fc-5.0.0/fh-4.0.1/r-3.0.0/rg-1.5.0/datatables.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        {% endblock %}
 
-This program is free software: you can redistribute it and/or modify it under
-the terms of the GNU Affero General Public License as published by the Free
-Software Foundation, either version 3 of the License, or (at your option) any
-later version.
+  {% block cos %}
+    <link type="text/css" rel="stylesheet" href="{% static 'juliabase/css/table.css'%}"/>
+  {% endblock %}
+  
+  
+  {% block frame_content %}
+  
+  <form method="post" id="date-form" class="mb-3" data-lang="{{ LANGUAGE_CODE|slice:':2' }}">{% csrf_token %}
+    {% error_list date_form _("Error in date") %}
+    <div class="container-fluid">
+      <div class="row justify-content-center align-items-end g-2">
+      {% if date_form.begin_date.label %}
+        <div class="col-auto text-center">
+            <label class="form-label fw-bold d-block">{{ date_form.begin_date.label }}</label>
+            {{ date_form.begin_date }}
+        </div>
+        <div class="col-auto pb-1 fw-bold">-</div>
+        <div class="col-auto text-center">
+            <label class="form-label fw-bold d-block">{{ date_form.end_date.label }}</label>
+            {{ date_form.end_date }}
+        </div>
+      {% else %}
+          <!-- Use a fallback value if date_form.begin_date.label is not defined -->
+          <div class="col-auto">
+             {{ year_month.year.label }} {{ year_month.year }}
+          </div>
+          <div class="col-auto">
+             {{ year_month.month.label }} {{ year_month.month }}
+          </div>
+      {% endif %}
+      
+      <div class="col-auto screen-only">
+        <label class="form-label d-block text-white" style="visibility: hidden;">_</label> {# Spacer for alignment #}
+        <button type="submit" class="btn btn-primary" style="min-width: 120px;" value="{% translate 'Submit' %}">{% translate 'Submit' %}</button>
+      </div>
+    </div> <!-- End of Date/Submit Row -->
+      
+    <!-- Navigation Row -->
+    <div class="row justify-content-center align-items-center mt-3 screen-only">
+      <div class="col-auto">
+          {% block notebook_nav_icons %}
+            <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-prev text-nowrap">
+              {% translate 'Previous' %}
+            </a>
+          {% endblock %}
+      </div>
+      
+      {% if date_form.begin_date.label %}
+      <div class="col-auto">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Quick date selection">
+              <button type="button" class="btn btn-outline-secondary quick-date" data-range="today">{% translate 'Today' %}</button>
+              <button type="button" class="btn btn-outline-secondary quick-date" data-range="this-week">{% translate 'This Week' %}</button>
+              <button type="button" class="btn btn-outline-secondary quick-date" data-range="this-month">{% translate 'This Month' %}</button>
+          </div>
+      </div>
+      {% endif %}
 
-This program is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
-details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-{% endcomment %}
-
-{% load i18n %}
-{% load juliabase %}
-{% load samples_extras %}
-{% load static %}
-
-{% block css %}
-<style type="text/css">
-  tr.topline { border-top: 1px solid black }
-</style>
-{% endblock %}
-
-{% block content_title %}<div class="page-header"><h1>{{ title }}{% if export_url %}<a class="edit-icon" 
-     href="{{ export_url }}"><img src="{% static "juliabase/icons/table.png" %}" alt="export icon"
-        title="{% translate 'export as table' %}" width="16" height="16"/></a>{% endif %}</h1></div>{% endblock %}
-
-{% block frame_content %}
-<form method="post">{% csrf_token %}
-  {% error_list year_month _("Error in date") %}
-  <div style="text-align: center">
-    {{ year_month.year.label }}/{{ year_month.month.label }}<br/>
-    {{ year_month.year }}/{{ year_month.month }}<br/>
-    <div class="screen-only" style="margin-top: 1ex">
-      <input type="submit"/><br/>
-      {% block notebook_nav_icons %}
-        <a href="{{ previous_url }}" {% if not previous_url %}style="visibility: hidden"{% endif %}>
-          <img src="{% static "juliabase/icons/book_previous.png" %}" alt="previous month icon"
-               title="{% translate 'previous month' %}" width="16" height="16"/></a>
-              
-        <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %}>
-          <img src="{% static "juliabase/icons/book_next.png" %}" alt="next month icon" title="{% translate 'next month' %}"
-               width="16" height="16"/>
+      <div class="col-auto">
+        <a href="{{ next_url }}" {% if not next_url %}style="visibility: hidden"{% endif %} class="btn btn-outline-primary nav-next text-nowrap">
+            {% translate 'Next' %}
         </a>
-      {% endblock %}
+      </div>
     </div>
-  </div>
-</form>
+    </div>
+  </form>
+  
 
-{{ html_body }}
-{% endblock %}
+  <div class="lock-header table-responsive-md">
+    {{ html_body }}
+  </div>
+
+  <!-- Load DataTables AFTER the deferred jQuery from jb_base.html -->
+   {% compress js %}
+  <script src="{% static 'samples/js/lab_notebook_loader.js' %}" defer></script>
+{% endcompress %}
+  
+  <script src="{% url 'iek5:javascript-catalog' %}" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  {% if LANGUAGE_CODE|slice:":2" != 'en' %}
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/{{ LANGUAGE_CODE|slice:':2' }}.js"></script>
+  {% endif %}
+  {% compress js %}
+    {% block extra_js %}{% endblock %}
+    <script src="{% static 'juliabase/js/lab_notebook.js' %}" defer></script>
+    <script type="text/javascript" src="{% static 'juliabase/js/md_latex_renderer.js' %}" defer></script>
+  {% endcompress %}
+  {% endblock %}

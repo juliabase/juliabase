@@ -1,0 +1,62 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-04-24 10:50+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+#: iek5/static/js/wafer.js:5
+msgid "Processing..."
+msgstr ""
+
+#: iek5/static/js/wafer.js:6
+msgid "Search&nbsp;:"
+msgstr ""
+
+#: iek5/static/js/wafer.js:7
+msgid "Show _MENU_ entries"
+msgstr ""
+
+#: iek5/static/js/wafer.js:8
+msgid "Showing _START_ to _END_ of total _TOTAL_ entries"
+msgstr ""
+
+#: iek5/static/js/wafer.js:9
+msgid "Showing 0 to 0 of total 0 entries"
+msgstr ""
+
+#: iek5/static/js/wafer.js:10
+msgid "(filtered from total _MAX_ entries)"
+msgstr ""
+
+#: iek5/static/js/wafer.js:12
+msgid "Loading records..."
+msgstr ""
+
+#: iek5/static/js/wafer.js:13
+msgid "No entries found"
+msgstr ""
+
+#: iek5/static/js/wafer.js:14
+msgid "No data available"
+msgstr ""
+
+#: iek5/static/js/wafer.js:16
+msgid ": activate to sort column ascending"
+msgstr ""
+
+#: iek5/static/js/wafer.js:17
+msgid ": activate to sort column descending"
+msgstr ""

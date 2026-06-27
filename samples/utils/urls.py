@@ -91,13 +91,16 @@ class PatternGenerator:
         :type views: set of str
         """
         class_name_with_underscores = camel_case_to_underscores(class_name)
+        
         if not url_name:
+            
             if class_name_with_underscores.endswith(("s", "x", "z")):
                 url_name = class_name_with_underscores + "es"
             else:
                 url_name = class_name_with_underscores + "s"
         assert not views - {"add", "edit", "custom_show", "lab_notebook"}
         normalized_id_field = identifying_field
+        
         if not normalized_id_field:
             model = apps.get_model(self.app_label, class_name)
             try:
@@ -105,12 +108,17 @@ class PatternGenerator:
             except AttributeError:
                 normalized_id_field = class_name_with_underscores + "_id"
         if "lab_notebook" in views:
-            self.url_patterns.extend([re_path(r"^{}/lab_notebook/(?P<year_and_month>.*)/export/".format(url_name),
-                                              lab_notebook.export, {"process_name": class_name},
-                                              "export_lab_notebook_" + class_name_with_underscores),
-                                      re_path(r"^{}/lab_notebook/(?P<year_and_month>.*)".format(url_name),
-                                              lab_notebook.show, {"process_name": class_name},
-                                              "lab_notebook_" + class_name_with_underscores)])
+            self.url_patterns.extend([
+                                    re_path(r"^{}/lab_notebook/(?P<begin_date>.*)/(?P<end_date>.*)/export/".format(url_name),
+                                            lab_notebook.export, {"process_name": class_name, "app_label": self.app_label},
+                                            "export_lab_notebook_" + class_name_with_underscores),
+                                    re_path(r"^{}/lab_notebook/(?P<begin_date>.*)/(?P<end_date>.*)$".format(url_name),
+                                            lab_notebook.show, {"process_name": class_name, "app_label": self.app_label},
+                                            "lab_notebook_" + class_name_with_underscores),
+                                    re_path(r"^{}/lab_notebook/(?P<begin_date>.*)$".format(url_name),
+                                            lab_notebook.show, {"process_name": class_name, "app_label": self.app_label},
+                                            "lab_notebook_" + class_name_with_underscores)
+                                            ])
         if "add" in views or "edit" in views or "custom_view" in views:
             module = importlib.import_module(self.views_prefix + class_name_with_underscores)
             if "add" in views or "edit" in views:
@@ -128,9 +136,10 @@ class PatternGenerator:
             self.url_patterns.append(re_path(r"^{}/(?P<{}>.+)".format(url_name, normalized_id_field), module.show,
                                              name="show_" + class_name_with_underscores))
         else:
-            self.url_patterns.append(re_path(r"^{}/(?P<process_id>.+)".format(url_name, normalized_id_field),
-                                             samples.views.main.show_process, {"process_name": class_name},
+            self.url_patterns.append(re_path(r"^{}/(?P<process_id>.+)".format(url_name),
+                                             samples.views.main.show_process, {"process_name": class_name, "app_label": self.app_label},
                                              name="show_" + class_name_with_underscores))
+                                             
 
     def deposition(self, class_name, url_name=None, views={"add", "edit", "lab_notebook"}):
         """Add URLs for the views of the deposition process `class_name`.  This is a

@@ -33,7 +33,10 @@ urlpatterns = [
     re_path(r"", include(jb_common.urls)),
     re_path(r"", include(samples.urls)),
 ]
-
+if "iek5" in settings.INSTALLED_APPS:
+    urlpatterns += [
+        re_path(r"", include("iek5.urls")),
+    ]
 urlpatterns += [
     re_path(r"^admin/", admin.site.urls),
 ]
