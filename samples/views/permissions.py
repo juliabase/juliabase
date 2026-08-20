@@ -152,7 +152,8 @@ def get_addable_models(user):
     can see all classes.
 
     The result is used to build the list of apparatuses for which one can set
-    permissions.
+    permissions.  Models marked with ``is_retired = True`` are deliberately
+    omitted without removing their historical permission records.
 
     :param user:  The user for which the classes are returned that he is allowed
         to see.
@@ -166,6 +167,8 @@ def get_addable_models(user):
     """
     candidates = []
     for model in get_all_models().values():
+        if getattr(model, "is_retired", False):
+            continue
         if model._meta.app_label in ["samples", "jb_common"]:
             continue
         try:
