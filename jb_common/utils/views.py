@@ -165,7 +165,7 @@ class TopicField(forms.ChoiceField):
         :type user: django.contrib.auth.models.User
         :type additional_topic: `jb_common.models.Topic`
         """
-        self.choices = [("", 9 * "-")]
+        choices = [("", 9 * "-")]
 
         # --- Step 1: Fetch all topics efficiently ---
         if user.is_superuser:
@@ -213,13 +213,18 @@ class TopicField(forms.ChoiceField):
         def add_topic_and_children(topic, depth=0):
             indent = (6 * depth * "\u00A0")
             name = f"{indent}{topic.name}"
-            self.choices.append((topic.pk, name))
+            choices.append((topic.pk, name))
             for child in topics_by_parent.get(topic.pk, []):
                 add_topic_and_children(child, depth + 1)
 
         # --- Step 8: Sort and traverse top-level topics ---
         for top in sorted(top_level_topics, key=lambda t: t.name.lower()):
             add_topic_and_children(top)
+
+        # Django copies normalized field choices to the widget on assignment.
+        # Assign only after the complete topic tree has been built so rendered
+        # and validated choices stay synchronized.
+        self.choices = choices
 
     def clean(self, value):
         value = super().clean(value)
