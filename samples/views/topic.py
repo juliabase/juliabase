@@ -51,14 +51,19 @@ class NewTopicForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["new_topic_name"].widget.attrs["size"] = 40
         self.user = user
+        parent_topic_choices = [("", 9 * "-")]
         if user.is_superuser:
-            self.fields["parent_topic"].choices = [(topic.pk, topic) for topic in
-                                                   Topic.objects.iterator()]
+            parent_topic_choices.extend((topic.pk, topic) for topic in Topic.objects.iterator())
         else:
-            self.fields["parent_topic"].choices = [(topic.pk, topic.get_name_for_user(user)) for topic in
-                Topic.objects.filter(department=user.jb_user_details.department).iterator()
-                if permissions.has_permission_to_edit_topic(user, topic)]
-        self.fields["parent_topic"].choices.insert(0, ("", 9 * "-"))
+            parent_topic_choices.extend(
+                (topic.pk, topic.get_name_for_user(user))
+                for topic in Topic.objects.filter(department=user.jb_user_details.department).iterator()
+                if permissions.has_permission_to_edit_topic(user, topic)
+            )
+        # Django copies normalized field choices to the widget on assignment.
+        # Assign only after the complete list has been built so the blank choice
+        # is rendered and accepted during validation as well.
+        self.fields["parent_topic"].choices = parent_topic_choices
         self.fields["topic_manager"].set_users(user, user)
         self.fields["topic_manager"].initial = user.pk
 
