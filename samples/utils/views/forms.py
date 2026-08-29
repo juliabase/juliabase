@@ -415,6 +415,8 @@ class GeneralSampleField:
         :param samples: Samples to be included in the list.
         :param important_samples: Samples to always include in the list, regardless of folding.
         """
+        choices = []
+
         def get_samples_from_topic(topic, folded_topics_and_sample_series):
             if topic.topic.id in folded_topics_and_sample_series:
                 return
@@ -423,7 +425,7 @@ class GeneralSampleField:
             seriesless_samples = [
                 (sample.pk, sample.name_with_tags(user)) for sample in topic.samples
             ]
-            self.choices.append((topic.topic_name, seriesless_samples))
+            choices.append((topic.topic_name, seriesless_samples))
 
             # Collect samples from series
             for series in topic.sample_series:
@@ -432,7 +434,7 @@ class GeneralSampleField:
                     new_samples = [
                         (sample.pk, " " * 4 + sample.name_with_tags(user)) for sample in series.samples#.all()
                     ]
-                    self.choices.append((" " * 4 + series.name, new_samples))
+                    choices.append((" " * 4 + series.name, new_samples))
 
             # Process subtopics recursively
             for sub_topic in topic.sub_topics:
@@ -473,16 +475,21 @@ class GeneralSampleField:
         topics, topicless_samples = utils.build_structured_sample_list(user, samples)
 
         # Collect topicless samples
-        self.choices = [
+        choices.extend(
             (sample.pk, sample.name_with_tags(user)) for sample in topicless_samples
-        ]
+        )
 
         for topic in topics:
             get_samples_from_topic(topic, folded_topics_and_sample_series)
 
         # Add placeholder if no choices exist
-        if not isinstance(self, forms.MultipleChoiceField) or not self.choices:
-            self.choices.insert(0, ("", 9 * "-"))
+        if not isinstance(self, forms.MultipleChoiceField) or not choices:
+            choices.insert(0, ("", 9 * "-"))
+
+        # Django copies normalized field choices to the widget on assignment.
+        # Build the complete nested list first so both copies include every
+        # topic and sample-series optgroup.
+        self.choices = choices
 
 
 class SampleField(GeneralSampleField, forms.ChoiceField):
