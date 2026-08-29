@@ -157,4 +157,26 @@ class CustomLoginView(auth_views.LoginView):
         return context
 
 
+class CustomLogoutView(auth_views.LogoutView):
+    http_method_names = ["get", "post", "options"]
+    template_name = "jb_common/logout.html"
+
+    def get(self, request, *args, **kwargs):
+        """Preserve the logout-link behavior removed by Django 5."""
+        return self.post(request, *args, **kwargs)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 _ = gettext
