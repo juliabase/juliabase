@@ -105,17 +105,17 @@ class OperatorField(forms.ChoiceField):
         """
         self.user = user
         if user.is_superuser:
-            self.choices = django.contrib.auth.models.User.objects.values_list("pk", "username")
+            choices = list(django.contrib.auth.models.User.objects.values_list("pk", "username"))
             external_operators = set(models.ExternalOperator.objects.all())
         else:
-            self.choices = []
+            choices = []
             if old_process:
                 if old_process.operator != user:
-                    self.choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
+                    choices.append((old_process.operator.pk, get_really_full_name(old_process.operator)))
                 external_operators = {old_process.external_operator} if old_process.external_operator else set()
             else:
                 external_operators = set()
-            self.choices.append((user.pk, get_really_full_name(user)))
+            choices.append((user.pk, get_really_full_name(user)))
             external_operators |= set(user.external_contacts.all())
         if old_process:
             self.initial = "extern-{0}".format(old_process.external_operator.pk) if old_process.external_operator else \
@@ -123,7 +123,12 @@ class OperatorField(forms.ChoiceField):
         else:
             self.initial = user.pk
         for external_operator in sorted(external_operators, key=lambda external_operator: external_operator.name):
-            self.choices.append(("extern-{0}".format(external_operator.pk), external_operator.name))
+            choices.append((f"extern-{external_operator.pk}", external_operator.name))
+        # Django 5 normalizes choices when assigning them to a field and its
+        # widget.  Mutating the field's list afterwards no longer updates the
+        # widget's copy, which left non-superusers with an empty rendered
+        # selector.  Build the complete list before assigning it.
+        self.choices = choices
 
     def clean(self, value):
         """Return the selected operator.  Additionally, it sets the attribute
