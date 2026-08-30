@@ -59,27 +59,27 @@ class OperatorField(forms.ChoiceField):
     two values, namely the operator and the external operator.  Exactly one of
     both is ``None`` if the respective type of operator was not given.
 
-    It is senseful to show this field only to non-staff, and staff gets the
-    usual operator/external operator fields.  In the IMD-3/FZJ implementation,
-    we even allow all three fields for staff users as long as there no
+    It is senseful to show this field only to non-superusers, while superusers
+    get the usual operator/external operator fields.  In the IMD-3/FZJ implementation,
+    we even allow all three fields for superusers as long as there no
     contradicting values are given.
 
-    If you want to use this field for *non-staff*, do the following things:
+    If you want to use this field for *non-superusers*, do the following things:
 
     1. This field must be made required
 
     2. Make the possible choices of the operator and the external operator
        fields empty.  Exclude those fields from the HTML.
 
-    3. Check in your ``clean()`` method whether non-staff submits an operator.
+    3. Check in your ``clean()`` method whether a non-superuser submits an operator.
        Since the operator is required in ``samples.models.Process``, you must
        provide a senseful default for the operator if none was returned
        (because an external operator was selected).  I recommend to use the
        currently logged-in user in this case.
 
     A good example is in :py:mod:`institute.views.samples.substrate` of the INM
-    adaption of JuliaBase.  There, you can also see how one can deal with staff
-    users (especially interesting for the remote client).
+    adaption of JuliaBase.  There, you can also see how one can deal with
+    superusers (especially interesting for the remote client).
     """
 
     def set_choices(self, user, old_process):
@@ -93,7 +93,7 @@ class OperatorField(forms.ChoiceField):
         - the former external operator (if any)
         - all external operators for which the current user is the contact person.
 
-        It works also for staff users, which can choose from *all* users and
+        It works also for superusers, who can choose from *all* users and
         external operators (including inactive users such as “nobody”).
 
         :param user: the currently logged-in user.
@@ -160,7 +160,8 @@ class ProcessForm(ModelForm):
 
     Moreover, it defines a field “combined_operator” of the type
     :py:class:`OperatorField`.  In the HTML template, you should offer this
-    field to non-staff, and the usual operator/external operator to staff.
+    field to non-superusers, and the usual operator/external operator fields to
+    superusers.
     """
     combined_operator = OperatorField(label=capfirst(_("operator")))
 
@@ -232,7 +233,7 @@ class ProcessForm(ModelForm):
                 else:
                     final_external_operator = external_operator
         if not final_operator:
-            # Can only happen for non-staff.  I deliberately overwrite a
+            # Can only happen for non-superusers.  I deliberately overwrite a
             # previous operator because this way, we can log who changed it.
             final_operator = self.user
         cleaned_data["operator"], cleaned_data["external_operator"] = final_operator, final_external_operator
