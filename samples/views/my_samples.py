@@ -64,11 +64,7 @@ class ActionForm(forms.Form):
         """
         super().__init__(*args, **kwargs)
         self.fields["new_currently_responsible_person"].set_users(user, user)
-        self.fields["copy_to_user"].set_users(user)
-        try:
-            self.fields["copy_to_user"].choices.remove((user.id, get_really_full_name(user)))
-        except ValueError:
-            pass
+        self.fields["copy_to_user"].set_users(user, excluded_users=(user,))
         self.fields["new_topic"].set_topics(user)
         self.fields["clearance"].choices = [("", "---------"), ("0", _("sample only")),
                                             ("1", _("all processes up to now"))]
