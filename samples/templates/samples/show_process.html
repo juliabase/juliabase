@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% plural %}
             This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktranslate %}
-          {% if not samples|length_is:"1" %}
+          {% if not samples|length == "1" %}
             <form method="post" action="{% url 'iek5:add_to_my_samples' %}?next={{ request.get_full_path }}">
               {% csrf_token %}
               <ul>
@@ -82,10 +82,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
                   {% for sample in series.matching_samples %}
+
                       <div>
                         <input type="checkbox" id="sample_{{ sample.id }}" name="selected_samples" value="{{ sample.id }}" class="sample-checkbox">
                         <label for="sample_{{ sample.id }}"><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></label>
                       </div>
+
                   {% endfor %}
                   <br>
 
@@ -114,7 +116,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             This process was applied to the following sample_series:
             <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktranslate %}
-          {% if not sample_series|length_is:"1" %}
+          {% if not sample_series|length == "1" %}
             <ul>
               {% for single_sample_series in sample_series %}
                 <li><a href="{{ single_sample_series.get_absolute_url }}">{{ single_sample_series.name }}</a></li>
@@ -130,6 +132,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% if process.last_modified_by_person %}
 
         {% translate "Last Modified by: " %}{{ process.last_modified_by_person|get_really_full_name }}, {{ process.last_modified|date:"Y-m-d H:i:s" }}
+
       {% endif %}
 
     </p>
