@@ -299,9 +299,10 @@ def markdown_samples(value, margins="default"):
 
     FixMe: Before Markdown sees the text, all named entities are replaced, see
     `samples.utils.views.substitute_html_entities`.  This creates a mild
-    escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.
-    It can only be solved by getting python-markdown to replace the entities,
-    however, I can't easily do that without allowing HTML tags, too.
+    escaping problem.  ``\\&amp;`` becomes ``&amp;amp;`` instead of
+    ``\\&amp;``.  It can only be solved by getting python-markdown to replace
+    the entities, however, I can't easily do that without allowing HTML tags,
+    too.
     """
     value = jb_common.templatetags.juliabase.substitute_formulae(
         jb_common.utils.base.substitute_html_entities(str(value)))
