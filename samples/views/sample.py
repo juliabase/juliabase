@@ -403,8 +403,8 @@ class SamplesAndProcesses:
                 new_local_context["latest_descendant"] = local_context["sample"]
                 new_local_context["cutoff_timestamp"] = split.timestamp
                 collect_process_contexts(new_local_context)
-            ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True)
-            ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True)
+            ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True).order_by()
+            ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True).order_by()
             process_ids = ids_from_direct.union(ids_from_series)
             processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').prefetch_related('actual_instance').distinct()
 
