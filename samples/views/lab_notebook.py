@@ -265,12 +265,12 @@ def show(request, process_name, begin_date=False, end_date=False, app_label=None
         # If not, pick the current begin and end dates and create a form
         try:
             if isinstance(begin_date, str):
-                begin_date_obj = datetime.strptime(begin_date, "%Y-%m-%d")
+                begin_date_obj = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
             else:
                 begin_date_obj = begin_date
 
             if isinstance(end_date, str):
-                end_date_obj = datetime.strptime(end_date, "%Y-%m-%d")
+                end_date_obj = datetime.datetime.strptime(end_date, "%Y-%m-%d")
             else:
                 end_date_obj = end_date
         except ValueError:
