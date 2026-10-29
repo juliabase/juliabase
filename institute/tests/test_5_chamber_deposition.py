@@ -28,6 +28,7 @@ from .tools import TestCase
 @override_settings(ROOT_URLCONF="institute.tests.urls")
 class FiveChamberDepositionTest(TestCase):
     fixtures = ["test_main"]
+    maxDiff = None
 
     def setUp(self):
         self.client = Client()

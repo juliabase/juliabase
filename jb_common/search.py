@@ -501,6 +501,8 @@ def get_search_results(search_tree, max_results, base_query=None):
         results = results[:max_results]
     results = search_tree.model_class.objects.filter(pk__in=results)
     if isinstance(search_tree, AbstractSearchTreeNode):
+        if hasattr(search_tree.model_class, "actual_instance"):
+            results = results.prefetch_related("actual_instance")
         results = [result.actual_instance for result in results]
     return results, too_many_results
 
@@ -678,7 +680,7 @@ class AbstractSearchTreeNode(SearchTreeNode):
     it *any* of the derivatives returns a match, it is included into the search
     results (which may be filtered further, of course).
 
-    For example, we have three Raman apparatuses in our institute IEK-5/FZJ.
+    For example, we have three Raman apparatuses in our institute IMD-3/FZJ.
     All three share exactly the same model fields.  Therefore, there is an
     abstract model class that all three concrete models are derived from.
     However, if you look for a certain Raman measurement, you don't know a

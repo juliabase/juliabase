@@ -104,7 +104,9 @@ def list(request):
     except AttributeError:
         logs_whitelist = set()
     crawlers = []
-    for process_class in permissions.get_all_addable_physical_process_models().keys():
+    process_classes = [k for k in permissions.get_all_addable_physical_process_models().keys()]
+    permissions.prefetch_add_permissions(process_classes)
+    for process_class in process_classes:
         if process_class.__name__ in logs_whitelist or \
                 permissions.has_permission_to_add_physical_process(request.user, process_class):
             process_class_name = camel_case_to_underscores(process_class.__name__)

@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: JuliaBase-samples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-18 11:42+0100\n"
+"POT-Creation-Date: 2026-02-26 13:01+0100\n"
 "PO-Revision-Date: 2018-05-17 23:23+0200\n"
 "Last-Translator: Torsten Bronger <bronger@physik.rwth-aachen.de>\n"
 "Language: de\n"
@@ -302,6 +302,10 @@ msgstr "Kommentare"
 #: juliabase/samples/models/common.py:1694
 msgid "last modified"
 msgstr "zuletzt geändert"
+
+#: juliabase/samples/models/common.py:189
+msgid "last modifier"
+msgstr "letzter Änderer"
 
 #: juliabase/samples/models/common.py:186
 #: juliabase/samples/models/common.py:1679
@@ -1936,13 +1940,13 @@ msgstr "Beschreibung der Änderung:"
 #, python-format
 msgid ""
 "\n"
-"      %(originator)s has edited the sample series “<a href=\"%(url)s\">"
-"%(sample_series)s</a>”.\n"
+"      %(originator)s has edited the sample series “<a "
+"href=\"%(url)s\">%(sample_series)s</a>”.\n"
 "    "
 msgstr ""
 "\n"
-"    %(originator)s änderte die Probenserie „<a href=\"%(url)s\">"
-"%(sample_series)s</a>“.\n"
+"    %(originator)s änderte die Probenserie „<a "
+"href=\"%(url)s\">%(sample_series)s</a>“.\n"
 "  "
 
 #: juliabase/samples/templates/samples/feed_edited_sample_series.html:31
@@ -1965,8 +1969,8 @@ msgstr[1] ""
 #, python-format
 msgid ""
 "\n"
-"      %(originator)s has edited the sample <a href=\"%(first_url)s\">"
-"%(first_sample)s</a>.\n"
+"      %(originator)s has edited the sample <a "
+"href=\"%(first_url)s\">%(first_sample)s</a>.\n"
 "    "
 msgid_plural ""
 "\n"
@@ -1975,8 +1979,8 @@ msgid_plural ""
 "    "
 msgstr[0] ""
 "\n"
-"    %(originator)s änderte die Probe „<a href=\"%(first_url)s\">"
-"%(first_sample)s</a>“.\n"
+"    %(originator)s änderte die Probe „<a "
+"href=\"%(first_url)s\">%(first_sample)s</a>“.\n"
 "  "
 msgstr[1] ""
 "\n"
@@ -2016,8 +2020,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"    %(originator)s has moved the sample series “<a href=\"%(url)s\">"
-"%(sample_series)s</a>” from topic \n"
+"    %(originator)s has moved the sample series “<a "
+"href=\"%(url)s\">%(sample_series)s</a>” from topic \n"
 "    “%(old_topic)s” to the topic “%(topic)s”.\n"
 "  "
 msgstr ""
@@ -2143,8 +2147,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"    %(originator)s has added the sample series “<a href=\"%(url)s\">"
-"%(sample_series)s</a>” to the topic \n"
+"    %(originator)s has added the sample series “<a "
+"href=\"%(url)s\">%(sample_series)s</a>” to the topic \n"
 "    “%(topic)s”.\n"
 "  "
 msgstr ""
@@ -2309,8 +2313,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"  %(originator)s has <em>withdrawn</em> the following <a href=\"%(link)s"
-"\">status message</a>:\n"
+"  %(originator)s has <em>withdrawn</em> the following <a "
+"href=\"%(link)s\">status message</a>:\n"
 "  "
 msgstr ""
 "\n"
@@ -2328,6 +2332,10 @@ msgstr "als Tabelle exportieren"
 #: juliabase/samples/templates/samples/lab_notebook.html:38
 msgid "Error in date"
 msgstr "Fehler im Datum"
+
+#: juliabase/samples/templates/samples/lab_notebook.html:112
+msgid "Submit"
+msgstr "Absenden"
 
 #: juliabase/samples/templates/samples/lab_notebook.html:47
 msgid "previous month"
@@ -2443,10 +2451,6 @@ msgstr "Verwalten meiner Probenserien"
 #: juliabase/samples/templates/samples/main_menu.html:190
 msgid "about JuliaBase"
 msgstr "über JuliaBase"
-
-#: juliabase/samples/templates/samples/main_menu.html:192
-msgid "server statistics"
-msgstr "Server-Statistik"
 
 #: juliabase/samples/templates/samples/merge_samples.html:28
 msgid ""
@@ -2609,6 +2613,10 @@ msgstr "duplizieren"
 msgid "resplit"
 msgstr "weiterspalten"
 
+#: juliabase/samples/templates/samples/show_process.html:52
+msgid "Add to my experiments"
+msgstr "Zu meinen Experimenten hinzufügen"
+
 #: juliabase/samples/templates/samples/show_process.html:51
 #: juliabase/samples/templates/samples/show_sample.html:206
 msgid "(not finished)"
@@ -2618,8 +2626,8 @@ msgstr "(nicht abgeschlossen)"
 #, python-format
 msgid ""
 "\n"
-"            This process was applied to the sample <a href=\"%(link)s\">"
-"%(name)s</a>.\n"
+"            This process was applied to the sample <a "
+"href=\"%(link)s\">%(name)s</a>.\n"
 "          "
 msgid_plural ""
 "\n"
@@ -2632,15 +2640,23 @@ msgstr[0] ""
 "angewandt."
 msgstr[1] ""
 "\n"
-"Dieser Prozess wurde auf die folgenden Proben angewandt: <!-- %(link)s"
-"%(name)s -->"
+"Dieser Prozess wurde auf die folgenden Proben angewandt: <!-- "
+"%(link)s%(name)s -->"
+
+#: juliabase/samples/templates/samples/show_process.html:98
+msgid "Others"
+msgstr "Andere"
+
+#: juliabase/samples/templates/samples/show_process.html:109
+msgid "Add to my samples"
+msgstr "Zu meinen Proben hinzufügen"
 
 #: juliabase/samples/templates/samples/show_process.html:72
 #, python-format
 msgid ""
 "\n"
-"            This process was applied to the sample series <a href=\"%(link)s"
-"\">%(name)s</a>.\n"
+"            This process was applied to the sample series <a "
+"href=\"%(link)s\">%(name)s</a>.\n"
 "          "
 msgid_plural ""
 "\n"
@@ -2653,8 +2669,16 @@ msgstr[0] ""
 "angewandt."
 msgstr[1] ""
 "\n"
-"Dieser Prozess wurde auf die folgenden Probenserien angewandt: <!-- %(link)s"
-"%(name)s -->"
+"Dieser Prozess wurde auf die folgenden Probenserien angewandt: <!-- "
+"%(link)s%(name)s -->"
+
+#: juliabase/samples/templates/samples/show_process.html:132
+msgid "Created by: "
+msgstr "Erstellt von: "
+
+#: juliabase/samples/templates/samples/show_process.html:135
+msgid "Last Modified by: "
+msgstr "Zuletzt geändert von: "
 
 #: juliabase/samples/templates/samples/show_sample.html:66
 msgid "Sample “"
@@ -2689,8 +2713,8 @@ msgstr ""
 #, python-format
 msgid ""
 "\n"
-"                      This sample is part of the sample series “<a href="
-"\"%(first_url)s\">%(first_series)s</a>”.\n"
+"                      This sample is part of the sample series “<a "
+"href=\"%(first_url)s\">%(first_series)s</a>”.\n"
 "                    "
 msgid_plural ""
 "\n"
@@ -2699,12 +2723,24 @@ msgid_plural ""
 "                    "
 msgstr[0] ""
 "\n"
-"Diese Probe gehört zur Probenserie „<a href=\"%(first_url)s\">"
-"%(first_series)s</a>“."
+"Diese Probe gehört zur Probenserie „<a "
+"href=\"%(first_url)s\">%(first_series)s</a>“."
 msgstr[1] ""
 "\n"
 "Diese Probe gehört zu folgenden Probenserien: <!-- %(first_url)s  "
 "%(first_series)s -->"
+
+#: juliabase/samples/templates/samples/show_sample.html:187
+msgid ""
+"Click on each header to expand the process. You can also click on <b>Expand "
+"All</b> to expand all the processes."
+msgstr ""
+"Klicke auf jede Überschrift, um den Prozess zu erweitern. Du kannst auch auf "
+"<b>Alle erweitern</b> klicken, um alle Prozesse zu erweitern."
+
+#: juliabase/samples/templates/samples/show_sample.html:188
+msgid "Expand All"
+msgstr "Alle erweitern"
 
 #: juliabase/samples/templates/samples/show_sample.html:203
 msgid "show process"
@@ -2727,6 +2763,10 @@ msgstr "Substrat-Position"
 #: juliabase/samples/templates/samples/show_sample_series.html:34
 msgid "add result"
 msgstr "Ergebnis hinzufügen"
+
+#: juliabase/samples/templates/samples/show_sample_series.html:43
+msgid "show runsheet"
+msgstr "Laufzettel anzeigen"
 
 #: juliabase/samples/templates/samples/show_sample_series.html:49
 msgid "This sample series contains the following samples:"
@@ -2796,8 +2836,8 @@ msgstr[1] ""
 #, python-format
 msgid ""
 "\n"
-"            This result belongs to the sample series <a href=\"%(link)s\">"
-"%(name)s</a>.\n"
+"            This result belongs to the sample series <a "
+"href=\"%(link)s\">%(name)s</a>.\n"
 "          "
 msgid_plural ""
 "\n"
@@ -3062,9 +3102,9 @@ msgid ""
 "  "
 msgstr ""
 "\n"
-"    Werfen Sie außerdem einen Blick auf die <a href=\"%(url)s"
-"\">Berechtigungen für Prozesse</a>, um weitere Informationen über Ihre "
-"Berechtigungen zu erhalten.\n"
+"    Werfen Sie außerdem einen Blick auf die <a "
+"href=\"%(url)s\">Berechtigungen für Prozesse</a>, um weitere Informationen "
+"über Ihre Berechtigungen zu erhalten.\n"
 "  "
 
 #: juliabase/samples/templates/samples/topics_and_permissions.html:86
@@ -3487,6 +3527,14 @@ msgstr "Jahr"
 msgid "month"
 msgstr "Monat"
 
+#: juliabase/samples/views/lab_notebook.py:93
+msgid "Begin Date"
+msgstr "Anfangsdatum"
+
+#: juliabase/samples/views/lab_notebook.py:98
+msgid "End Date"
+msgstr "Enddatum"
+
 #: juliabase/samples/views/lab_notebook.py:215
 #: juliabase/samples/views/main.py:329 juliabase/samples/views/result.py:653
 #: juliabase/samples/views/sample.py:1038
@@ -3874,10 +3922,8 @@ msgid "This sample does not exist."
 msgstr "Diese Probe existiert nicht."
 
 #: juliabase/samples/views/sample.py:1134
-#, fuzzy
-#| msgid "This sample name exists already."
 msgid "This sample name is not valid."
-msgstr "Dieser Probenname ist schon vergeben."
+msgstr "Dieser Probenname ist ungültig."
 
 #: juliabase/samples/views/sample.py:1146
 msgid "The new name must be different from the old name."
@@ -4289,6 +4335,15 @@ msgstr ""
 #, python-brace-format
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
+
+#~ msgid "My Experiments"
+#~ msgstr "Meine Experimente"
+
+#~ msgid "Added Experiments"
+#~ msgstr "Hinzugefügte Experimente."
+
+#~ msgid "server statistics"
+#~ msgstr "Server-Statistik"
 
 #~ msgid "in JSON format"
 #~ msgstr "im JSON-Format"
