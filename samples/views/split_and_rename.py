@@ -30,7 +30,10 @@ from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 from jb_common.utils.base import respond_in_json, format_enumeration, unquote_view_parameters, help_link
 from samples import models, permissions
-from iek5 import models as iek5_app
+try:
+    from iek5 import models as iek5_app
+except ImportError:
+    iek5_app = None
 import samples.utils.views as utils
 from samples.utils import sample_names
 from django.utils.timezone import now as timezone_now
@@ -269,11 +272,12 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         models.Sample.objects.bulk_create(created_samples)
 
         # Create SampleDetails for any that don't have it yet
-        sample_details = [
-            iek5_app.SampleDetails(sample=sample)
-            for sample in created_samples
-        ]
-        iek5_app.SampleDetails.objects.bulk_create(sample_details)
+        if iek5_app is not None:
+            sample_details = [
+                iek5_app.SampleDetails(sample=sample)
+                for sample in created_samples
+            ]
+            iek5_app.SampleDetails.objects.bulk_create(sample_details)
 
         # Prepare mapping name -> ID
         new_pieces = {child.name: child.pk for child in created_samples}

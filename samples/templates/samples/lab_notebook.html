@@ -111,7 +111,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="{% static 'samples/js/lab_notebook_loader.js' %}" defer></script>
 {% endcompress %}
 
+  {% if iek5_installed %}
   <script src="{% url 'iek5:javascript-catalog' %}" defer></script>
+  {% endif %}
   <script src="https://cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.3/purify.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

@@ -27,6 +27,7 @@ information.
 
 import datetime, re
 from urllib.parse import quote_plus
+from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import render
 import django.urls
@@ -320,6 +321,7 @@ def show(request, process_name, begin_date=False, end_date=False, app_label=None
                     "next_url": next_url,
                     "export_url": export_url,
                     "cols": cols,
+                    "iek5_installed": "iek5" in settings.INSTALLED_APPS,
                 })
 
 
