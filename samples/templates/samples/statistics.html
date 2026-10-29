@@ -25,7 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <meta http-equiv="refresh" content="600"/>
 {% endblock %}
 
-{% block local_scripts %}
+{% block local_scripts_dynamic %}
+  {{ block.super }}
   <script type="text/javascript">
     // <![CDATA[
     google.load("visualization", "1", {packages: ["gauge"]});

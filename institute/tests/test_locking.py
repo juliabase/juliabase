@@ -31,10 +31,9 @@ class LockingTest(TestCase):
             pass
 
     def test_double_locking(self):
-        position = log.tell()
-        with self.assertRaises(Locked):
-            with PIDLock("test_program"), PIDLock("test_program", 0):
-                pass
-        log.seek(position)
-        self.assertEqual(log.read().strip(),
-                         f"WARNING:root:Lock {settings.CRAWLERS_DATA_DIR}/test_program.pid of other process active")
+        with self.assertLogs(level="WARNING") as cm:
+            with self.assertRaises(Locked):
+                with PIDLock("test_program"), PIDLock("test_program", 0):
+                    pass
+        self.assertEqual(cm.output,
+                         [f"WARNING:root:Lock {settings.CRAWLERS_DATA_DIR}/test_program.pid of other process active"])

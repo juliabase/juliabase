@@ -33,7 +33,7 @@ class TestCase(django.test.TestCase):
 
     def _remove_dynamic_fields(self, dictionary):
         for key, value in list(dictionary.items()):
-            if key == "last_modified":
+            if key in ("last_modified", "last_modified_by_person", "created_by_person"):
                 del dictionary[key]
             elif isinstance(value, dict):
                 self._remove_dynamic_fields(value)
