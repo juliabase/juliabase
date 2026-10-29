@@ -450,9 +450,9 @@ class Process(PolymorphicModel):
         This function is called by the class and is used to fetch all the elements between
         a begin_date and an end_date.
         """
-        end_date = dt.strptime(end_date, "%Y-%m-%d")
+        begin_date = django.utils.timezone.make_aware(dt.strptime(begin_date, "%Y-%m-%d"))
+        end_date = django.utils.timezone.make_aware(dt.strptime(end_date, "%Y-%m-%d"))
         end_date += timedelta(days=1)
-        end_date = end_date.strftime('%Y-%m-%d')
         # Get all ForeignKey and OneToOneField fields for the model
         related_fields = [
             field.name for field in cls._meta.get_fields()
