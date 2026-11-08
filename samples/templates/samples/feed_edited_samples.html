@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% endblocktranslate %}
   </p>
 
-  {% if not samples|length_is:"1" %}
+  {% if not samples|length == 1 %}
     <ul>
       {% for sample in samples %}
 	<li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>

@@ -36,7 +36,6 @@ from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _, gettext_lazy, gettext
 from django.utils.functional import keep_lazy_text
-import django.utils.timezone
 from jb_common import mimeparse
 from jb_common.utils import blobs
 
@@ -200,7 +199,7 @@ def check_filepath(filepath, default_root, allowed_roots=frozenset(), may_be_dir
         default_root = os.path.normpath(default_root)
         allowed_roots = {os.path.normpath(path) for path in allowed_roots}
         allowed_roots.add(default_root)
-        assert all(os.path.isdir(path) for path in allowed_roots)
+        assert all(os.path.isdir(path) for path in allowed_roots), f"Invalid directories found: {[path for path in allowed_roots if not os.path.isdir(path)]}"
         absolute_filepath = filepath if os.path.isabs(filepath) else os.path.abspath(os.path.join(default_root, filepath))
         if os.path.isdir(absolute_filepath):
             if not may_be_directory:
@@ -518,6 +517,18 @@ def get_all_models(app_label=None):
         all_models = {model.__name__: model for model in apps.get_models()}
         all_models.update((model.__name__, model) for model in abstract_models)
     return all_models.copy()
+
+
+def get_model_field_names(model):
+    """Get the names of all fields of a model.
+
+    Args:
+        model: The Django model class.
+
+    Returns:
+        List of field names.
+    """
+    return [field.name for field in model._meta.get_fields()]
 
 
 abstract_models = set()

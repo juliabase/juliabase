@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% plural %}
             This result belongs to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktranslate %}
-          {% if not samples|length_is:"1" %}
+          {% if not samples|length == 1 %}
             <ul>
               {% for sample in samples %}
                 <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
@@ -46,10 +46,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           {% blocktranslate count sample_series|length as counter with sample_series.0.get_absolute_url as link and sample_series.0.name as name %}
             This result belongs to the sample series <a href="{{ link }}">{{ name }}</a>.
           {% plural %}
-            This result belongs to the following sample_series:  
+            This result belongs to the following sample_series:
             <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktranslate %}
-          {% if not sample_series|length_is:"1" %}
+          {% if not sample_series|length == 1 %}
             <ul>
               {% for single_sample_series in sample_series %}
                 <li><a href="{{ single_sample_series.get_absolute_url }}">{{ single_sample_series.name }}</a></li>
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {% endif %}
       </p>
     {% endif %}
-              
+
     {{ html_body }}
 
     {% if edit_url %}<p><a class="edit-button" href="{{ edit_url }}">{% translate 'Edit this result' %}</a></p>{% endif %}

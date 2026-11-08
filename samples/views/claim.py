@@ -90,6 +90,7 @@ def add(request, username):
     user = get_object_or_404(django.contrib.auth.models.User, username=username)
     if user != request.user:
         raise permissions.PermissionError(request.user, _("You are not allowed to add a claim in another user's name."))
+    permissions.assert_user_has_department(user)
     if request.method == "POST":
         samples_form = SamplesForm(user, request.POST)
         reviewer_form = ReviewerForm(request.POST)
@@ -218,6 +219,7 @@ def show(request, claim_id):
             closed = approved or (withdraw_form and withdraw_form.cleaned_data["close"])
             response = None
             if approved:
+                permissions.assert_user_has_department(claim.requester)
                 sample_list = list(claim.samples.all())
                 for sample in sample_list:
                     sample.currently_responsible_person = claim.requester

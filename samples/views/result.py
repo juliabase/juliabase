@@ -23,6 +23,8 @@
 # modification purposes.
 
 import os, datetime, subprocess
+import threading
+import logging
 from io import BytesIO
 from functools import partial
 from django.conf import settings
@@ -40,6 +42,8 @@ import jb_common.utils.base
 import jb_common.utils.blobs
 from samples import models, permissions
 import samples.utils.views as utils
+
+logger = logging.getLogger(__name__)
 
 
 def save_image_file(image_data, result, related_data_form):
@@ -145,6 +149,7 @@ class RelatedDataForm(forms.Form):
             if "sample_series" in query_string_dict:
                 self.fields["sample_series"].initial = \
                     [get_object_or_404(models.SampleSeries, name=query_string_dict["sample_series"])]
+        # OPTIMIZE: This makes 79 similar database queries
         self.fields["samples"].set_samples(user, samples, important_samples)
         self.fields["samples"].widget.attrs.update({"size": "17", "style": "vertical-align: top"})
 
@@ -589,12 +594,30 @@ def show_image(request, process_id):
                            image_locations["sluggified_filename"])
 
 
+thumbnail_lock = threading.Lock()
+
+
 def generate_thumbnail(result, image_filename):
-    image_file = jb_common.utils.blobs.storage.export(image_filename)
-    content = subprocess.check_output(["convert", str(image_file) + ("[0]" if result.image_type == "pdf" else ""),
-                                       "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), "png:-"])
-    os.unlink(image_file)
-    return BytesIO(content)
+    with thumbnail_lock:
+        image_file = jb_common.utils.blobs.storage.export(image_filename)
+        try:
+            if result.image_type == "pdf":
+                # Use pdftoppm for PDF files to avoid ImageMagick security policy issues
+                command = ["pdftoppm", "-png", "-f", "1", "-l", "1",
+                           "-scale-to", str(settings.THUMBNAIL_WIDTH), str(image_file)]
+            else:
+                command = ["convert", str(image_file),
+                           "-resize", "{0}x{0}".format(settings.THUMBNAIL_WIDTH), "png:-"]
+
+            process = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            return BytesIO(process.stdout)
+        except subprocess.CalledProcessError as e:
+            logger.error("Thumbnail generation failed for result %s (file: %s): %s",
+                         result.pk, image_filename, e.stderr.decode('utf-8', errors='replace'))
+            raise
+        finally:
+            if os.path.exists(image_file):
+                os.unlink(image_file)
 
 
 @login_required

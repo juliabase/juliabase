@@ -127,9 +127,10 @@ def markdown(value, margins="default"):
 
     FixMe: Before Markdown sees the text, all named entities are replaced, see
     :py:func:`jb_common.utils.substitute_html_entities`.  This creates a mild
-    escaping problem.  ``\&amp;`` becomes ``&amp;amp;`` instead of ``\&amp;``.
-    It can only be solved by getting python-markdown to replace the entities,
-    however, I can't easily do that without allowing HTML tags, too.
+    escaping problem.  ``\\&amp;`` becomes ``&amp;amp;`` instead of
+    ``\\&amp;``.  It can only be solved by getting python-markdown to replace
+    the entities, however, I can't easily do that without allowing HTML tags,
+    too.
     """
     result = markup.markdown(substitute_formulae(utils.substitute_html_entities(str(value))))
     if result.startswith("<p>"):

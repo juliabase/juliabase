@@ -4,3 +4,4 @@ doc/.build
 mysite/
 /TAGS
 /Graph export.pdf
+*.rej

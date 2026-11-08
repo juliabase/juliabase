@@ -23,10 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% load static %}
 {% load cache %}
 
-{% block local_scripts %}
-<script type="text/javascript">
+
+{% block local_scripts_dynamic %}
+  {{ block.super }}
+<script type="text/javascript" defer>
 // <![CDATA[
-$(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements' %}",
+document.addEventListener("DOMContentLoaded", function() {
+    juliabase.request("{% url 'samples:get_folded_main_menu_elements' %}",
                                function(data) { for (var i=0; i < data[0].length; i++)
                                                     $("#topic-" + data[0][i]).hide();
                                                 for (var i=0; i < data[1].length; i++)
@@ -55,12 +58,14 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
 {% endblock %}
 
 {% block frame_content %}
-  {% cache 9999999 mysamples user.username user.jb_user_details.layout_last_modified user.samples_user_details.my_samples_list_timestamp %}
+<!-- FIXME: This cached block is causing the home page to load slower than without it.
+    The samples should preferably be paginated to avoid DOM overload. -->
+    {% cache 9999999 mysamples user.username user.jb_user_details.layout_last_modified user.samples_user_details.my_samples_list_timestamp %}
     {% if topicless_samples or my_topics %}
       <div class="my-samples">
         <h2>{% translate 'My Samples' %}<a class="edit-icon"
                                href="{% url 'samples:edit_my_samples' username=user.username %}"
-                               ><img src="{% static "juliabase/icons/pencil.png" %}" alt="edit icon" title="{% translate 'edit' %}"
+                               ><img src="{% static 'juliabase/icons/pencil.png' %}" alt="edit icon" title="{% translate 'edit' %}"
                                      width="16" height="16"/></a></h2>
 
         {% if topicless_samples %}
@@ -75,6 +80,9 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
             {% expand_topic topic user %}
           {% endfor %}
         </div>
+
+          {% block extra_sample_content %}{% endblock %}
+        
       </div>
     {% endif %}
   {% endcache %}
@@ -141,10 +149,6 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
     {% if user.is_superuser %}
       <li style='list-style-image: url("{% static "juliabase/icons/user_suit.png" %}")'><a href="admin/">{% translate 'administration'|capfirst %}</a></li>
     {% endif %}
-    {% if can_rename_samples %}
-      <li style='list-style-image: url("{% static "juliabase/icons/tag_red.png" %}")'>
-        <a href="{% url 'samples:rename_sample' %}">{% translate 'rename sample'|capfirst %}</a></li>
-    {% endif %}
     <li style='list-style-image: url("{% static "juliabase/icons/user_edit.png" %}")'>
       <a href="{% url 'samples:edit_preferences' login_name=user.username %}"
          >{% translate 'edit preferences'|capfirst %}</a></li>
@@ -188,8 +192,10 @@ $(function() { juliabase.request("{% url 'samples:get_folded_main_menu_elements'
       <!-- FixMe: These menu items must not be links from here but from another menu page. -->
       <li style='list-style-image: url("{% static "juliabase/icons/server_lightning.png" %}")'>
         <a href="{% url 'samples:about' %}">{% translate 'about JuliaBase'|capfirst %}</a></li>
-      <li style='list-style-image: url("{% static "juliabase/icons/server_chart.png" %}")'>
-        <a href="{% url 'samples:statistics' %}">{% translate 'server statistics'|capfirst %}</a></li>
     {% endblock %}
   </ul>
+{% endblock %}
+
+{% block render_blockers %}
+  {{ block.super }}
 {% endblock %}
