@@ -1133,7 +1133,8 @@ class Sample(models.Model):
 
 
     def _collect_deletion_sample_ids(self):
-        """Collect IDs of this sample and all descendants created via sample splits."""
+        """Collect IDs of this sample and all descendants created via sample splits.
+        """
         sample_ids = {self.id}
         frontier = {self.id}
         while frontier:
@@ -1146,7 +1147,8 @@ class Sample(models.Model):
         return sample_ids
 
     def _get_processes_to_delete(self, sample_ids):
-        """Return processes that would be left without any sample outside ``sample_ids``."""
+        """Return processes that would be left without any sample outside ``sample_ids``.
+        """
         candidates = list(
             Process.objects
             .filter(samples__id__in=sample_ids)
