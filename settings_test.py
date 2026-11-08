@@ -31,3 +31,5 @@ DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3",
                         "NAME": "/tmp/" + db_filename}
 
 GRAPH_NAMESPACE_PREFIX = "http://inm.example.com/"
+
+STATICFILES_DIRS = []
