@@ -14,11 +14,17 @@ Do we really need that?  Instead, caching fetching of external graphs may be suf
 
 ** TODO enrich the external process with as much original data as possible
 
-** DONE Replace ExternalData with URI list
+** TODO Replace ExternalData with URI list
+
+*** DONE
 
 I don’t need the ExternalData process anymore.  Instead, a list of URIs is maintained in a new JSON field in Sample itself.
 
 This URI list must be minimised to minimise redundancy.  And, it must be returned in the “sm:state” properties of the sample, see https://scimesh.org/about/Implementation.html#requirements-for-elns.
+
+*** TODO
+
+Really get rid of ExternalData.
 
 ** DONE namespaces of process and sample fields must be as generic as possible
 

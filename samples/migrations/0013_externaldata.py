@@ -25,7 +25,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'external data',
                 'verbose_name_plural': 'external data',
                 'abstract': False,
-                'managed': False,
             },
             bases=('samples.process',),
         ),

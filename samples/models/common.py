@@ -2029,7 +2029,6 @@ class ExternalData(Process):
     """
 
     class Meta(PolymorphicModel.Meta):
-        managed = False
         verbose_name = _("external data")
         verbose_name_plural = _("external data")
 
