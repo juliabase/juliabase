@@ -56,7 +56,7 @@ class ExportTest(TestCase):
         self.assertJsonDictEqual(response,
             {"split_origin": None, "name": "14-JS-1", "tags": "", "currently_responsible_person": "j.silverton",
              "topic": "Juliette's PhD thesis", "purpose": "",
-             "current_location": "Juliette's office", "id": 7,
+             "current_location": "Juliette's office", "id": 7, "external_graph_urls": [],
              "process #13": {"content_type": "Institute | substrate", "timestamp": "2014-10-01T10:29:00Z",
                              "material": "corning", "timestamp_inaccuracy": 3, "comments": "", "finished": True,
                              "samples": [7], "external_operator": None,
