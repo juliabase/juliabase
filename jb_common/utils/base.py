@@ -36,7 +36,6 @@ from django.core.mail import send_mail
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _, gettext_lazy, gettext
 from django.utils.functional import keep_lazy_text
-import django.utils.timezone
 from jb_common import mimeparse
 from jb_common.utils import blobs
 

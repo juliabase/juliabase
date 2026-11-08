@@ -112,23 +112,25 @@ class TaskForm(forms.ModelForm):
                 data.update(initial)
         super().__init__(data, **kwargs)
         self.fields["customer"].required = False
-        self.fields["operator"].choices = [("", "---------")]
+        operator_choices = [("", "---------")]
         if self.task:
-            self.fields["operator"].choices.extend((user.pk, common_utils.get_really_full_name(user))
-                                                   for user in common_utils.sorted_users_by_first_name(eligible_operators))
+            operator_choices.extend((user.pk, common_utils.get_really_full_name(user))
+                                    for user in common_utils.sorted_users_by_first_name(eligible_operators))
+        self.fields["operator"].choices = operator_choices
         self.fields["process_class"].choices = utils.choices_of_content_types(
             permissions.get_all_addable_physical_process_models())
-        self.fields["finished_process"].choices = [("", "---------")]
+        finished_process_choices = [("", "---------")]
         if self.task:
             old_finished_process_id = self.task.finished_process.id if self.task.finished_process else None
             if self.user == self.task.operator:
-                self.fields["finished_process"].choices.extend(
+                finished_process_choices.extend(
                     [(process.id, process.actual_instance)
                      for process in Process.objects.filter(
                             Q(operator=self.user, content_type=self.task.process_class) |
                             Q(id=old_finished_process_id)).filter(finished=True).order_by("-timestamp")[:10]])
             elif old_finished_process_id:
-                self.fields["finished_process"].choices.append((old_finished_process_id, self.task.finished_process))
+                finished_process_choices.append((old_finished_process_id, self.task.finished_process))
+        self.fields["finished_process"].choices = finished_process_choices
         self.fields["comments"].widget.attrs["cols"] = 30
         self.fields["comments"].widget.attrs["rows"] = 5
         for field_name in self.fixed_fields:

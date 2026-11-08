@@ -64,8 +64,11 @@ EMAIL_USE_LOCALTIME = True
 LANGUAGE_CODE = "en-us"
 
 USE_I18N = True
-DATETIME_FORMAT = "D, j. N Y, H:i:s"
-DATE_FORMAT = "D, j. N Y"
+
+# Keep machine-style dates and decimal points independent of the active UI
+# language.  Since Django 5 always enables localized formatting, these values
+# live in per-language format modules rather than in the global settings.
+FORMAT_MODULE_PATH = ["formats"]
 
 
 LOGGING = copy.deepcopy(django.utils.log.DEFAULT_LOGGING)

@@ -501,13 +501,22 @@ class PermissionError(Exception):
         self.user, self.description, self.new_topic_would_help = user, description, new_topic_would_help
 
 
+def assert_user_has_department(user):
+    """Reject actions that would assign normal samples to a departmentless user."""
+    if user.jb_user_details.department_id is None:
+        raise PermissionError(
+            user,
+            _("No department is assigned to your account."),
+        )
+
+
 class NoDepartment:
     """Singleton class used to define an unset department attribute, so that an
     unset department is never equal to another unset department.
     """
     _instance = None
     def __new__(cls, *args, **kwargs):
-        if cls._instance is not None:
+        if cls._instance is None:
             cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
     def __eq__(self, other):
@@ -565,7 +574,8 @@ def assert_can_fully_view_sample(user, sample):
     user_department = _get_user_department(user)
     topic = _get_sample_topic(sample)
 
-    if not topic and sample_department != user_department and not user.is_superuser:
+    if not topic and currently_responsible_person != user and \
+            sample_department != user_department and not user.is_superuser:
         description = _("You are not allowed to view the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)
 
@@ -1146,7 +1156,8 @@ def assert_can_edit_sample(user, sample):
     sample_department = _get_user_department(currently_responsible_person)
     user_department = _get_user_department(user)
     topic = _get_sample_topic(sample)
-    if not topic and sample_department != user_department and not user.is_superuser:
+    if not topic and currently_responsible_person != user and \
+            sample_department != user_department and not user.is_superuser:
         cache.set(cache_key, "denied", 60)
         description = _("You are not allowed to edit the sample since the sample doesn't belong to your department.")
         raise PermissionError(user, description, new_topic_would_help=True)

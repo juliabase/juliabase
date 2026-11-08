@@ -120,20 +120,27 @@ class MultipleUsersField(forms.MultipleChoiceField):
         super().__init__(*args, **kwargs)
         self.widget.attrs["size"] = 15
 
-    def set_users(self, user, additional_users=[]):
+    def set_users(self, user, additional_users=(), excluded_users=()):
         """Set the user list shown in the widget.  You *must* call this method
         in the constructor of the form in which you use this field, otherwise
         the selection box will remain emtpy.  The selection list will consist
-        of all currently active users, plus the given additional users if any.
+        of all currently active users, plus the given additional users and
+        minus the given excluded users, if any.
 
         :param user: Thr user who wants to see the user list
         :param additional_users: Optional additional users to be included into
             the list.  Typically, it is the current users for the topic whose
             memberships are to be changed.
+        :param excluded_users: Optional users to be excluded from the list.
 
         :type additional_users: iterable of django.contrib.auth.models.User
+        :type excluded_users: iterable of django.contrib.auth.models.User
         """
-        self.choices = _user_choices_by_department(user, include=additional_users)
+        self.choices = _user_choices_by_department(
+            user,
+            include=additional_users,
+            exclude=excluded_users,
+        )
         if not self.choices:
             self.choices = (("", 9 * "-"),)
 
@@ -165,7 +172,7 @@ class TopicField(forms.ChoiceField):
         :type user: django.contrib.auth.models.User
         :type additional_topic: `jb_common.models.Topic`
         """
-        self.choices = [("", 9 * "-")]
+        choices = [("", 9 * "-")]
 
         # --- Step 1: Fetch all topics efficiently ---
         if user.is_superuser:
@@ -213,13 +220,18 @@ class TopicField(forms.ChoiceField):
         def add_topic_and_children(topic, depth=0):
             indent = (6 * depth * "\u00A0")
             name = f"{indent}{topic.name}"
-            self.choices.append((topic.pk, name))
+            choices.append((topic.pk, name))
             for child in topics_by_parent.get(topic.pk, []):
                 add_topic_and_children(child, depth + 1)
 
         # --- Step 8: Sort and traverse top-level topics ---
         for top in sorted(top_level_topics, key=lambda t: t.name.lower()):
             add_topic_and_children(top)
+
+        # Django copies normalized field choices to the widget on assignment.
+        # Assign only after the complete topic tree has been built so rendered
+        # and validated choices stay synchronized.
+        self.choices = choices
 
     def clean(self, value):
         value = super().clean(value)
