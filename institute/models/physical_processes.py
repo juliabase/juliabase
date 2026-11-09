@@ -26,13 +26,14 @@ processes, clean room work etc. will go here, too.
 import os.path
 from pathlib import Path
 import numpy
+import rdflib
 from django.utils.translation import gettext_lazy as _, gettext
 from django.utils.text import format_lazy
 from django.db import models
 import django.urls
 from django.conf import settings
-from samples import permissions
-from samples.models import Process, Sample, PhysicalProcess
+from samples import permissions, ontology_symbols
+from samples.models import Process, Sample, PhysicalProcess, GraphEntity, RawFile, RawDirectory
 from samples.data_tree import DataItem
 from jb_common import search, model_fields
 from jb_common.utils.base import generate_permissions
@@ -67,7 +68,7 @@ class Substrate(PhysicalProcess):
     Note that it doesn't define permissions because everyone can create
     substrates.
     """
-    material = models.CharField(_("substrate material"), max_length=30, choices=substrate_materials)
+    material = model_fields.CharField(_("substrate material"), max_length=30, choices=substrate_materials)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("substrate")
@@ -88,10 +89,10 @@ class PDSMeasurement(PhysicalProcess):
         PDS1 = "pds1", _("PDS #1")
         PDS2 = "pds2", _("PDS #2")
 
-    number = models.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
-    raw_datafile = models.CharField(_("raw data file"), max_length=200,
+    number = model_fields.PositiveIntegerField(_("PDS number"), unique=True, db_index=True)
+    raw_datafile = model_fields.CharField(_("raw data file"), max_length=200,
                                     help_text=format_lazy(_('only the relative path below "{path}"'), path="pds_raw_data/"))
-    apparatus = models.CharField(_("apparatus"), max_length=15, choices=Apparatus.choices, default=Apparatus.PDS1)
+    apparatus = model_fields.CharField(_("apparatus"), max_length=15, choices=Apparatus.choices, default=Apparatus.PDS1)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("PDS measurement")
@@ -120,6 +121,14 @@ class PDSMeasurement(PhysicalProcess):
         context["thumbnail"], context["figure"] = plot_locations["thumbnail_url"], plot_locations["plot_url"]
         return super().get_context_for_user(user, context)
 
+    def get_raw_files(self):
+        so = ontology_symbols.schema_org
+        safe_name = str(self).replace("/", "--")
+        root = RawDirectory(Path(safe_name), {so.description: "PDS measurement raw data"})
+        root.entries.add(RawFile(root.destination_path/self.raw_datafile, self.get_datafile_name(""),
+                                 {so.description: "Single PDS measurement raw data file", so.encodingFormat: "text/plain"}))
+        return root
+
 
 class SolarsimulatorMeasurement(PhysicalProcess):
 
@@ -128,7 +137,7 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         OG590 = "OG590", "OG590"
         BG7 = "BG7", "BG7"
 
-    irradiation = models.CharField(_("irradiation"), max_length=10, choices=Irradiation.choices)
+    irradiation = model_fields.CharField(_("irradiation"), max_length=10, choices=Irradiation.choices)
     temperature = model_fields.DecimalQuantityField(_("temperature"), max_digits=3, decimal_places=1, unit="℃", default=25.0)
 
     class Meta(PhysicalProcess.Meta):
@@ -225,11 +234,11 @@ class SolarsimulatorMeasurement(PhysicalProcess):
         return model_field
 
 
-class SolarsimulatorCellMeasurement(models.Model):
+class SolarsimulatorCellMeasurement(models.Model, GraphEntity):
     measurement = models.ForeignKey(SolarsimulatorMeasurement, on_delete=models.CASCADE, related_name="cells",
                                     verbose_name=_("solarsimulator measurement"))
-    position = models.CharField(_("cell position"), max_length=5)
-    data_file = models.CharField(_("data file"), max_length=200, db_index=True,
+    position = model_fields.CharField(_("cell position"), max_length=5)
+    data_file = model_fields.CharField(_("data file"), max_length=200, db_index=True,
                                  help_text=format_lazy(_('only the relative path below "{path}"'),
                                                        path="solarsimulator_raw_data/"))
     area = model_fields.FloatQuantityField(_("area"), unit="cm²", null=True, blank=True)
@@ -299,10 +308,10 @@ class Structuring(PhysicalProcess):
         ACME1 = "acme1", "ACME 1"
         CUSTOM = "custom", _("custom")
 
-    layout = models.CharField(_("layout"), max_length=30, choices=Layout.choices)
+    layout = model_fields.CharField(_("layout"), max_length=30, choices=Layout.choices)
     length = model_fields.FloatQuantityField(_("length"), unit="mm", blank=True, null=True)
     width = model_fields.FloatQuantityField(_("width"), unit="mm", blank=True, null=True)
-    parameters = models.TextField(_("parameters"), blank=True)
+    parameters = model_fields.TextField(_("parameters"), blank=True)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("structuring")
@@ -323,7 +332,8 @@ class LayerThicknessMeasurement(PhysicalProcess):
         OTHER = "other", _("other")
 
     thickness = model_fields.FloatQuantityField(_("layer thickness"), unit="nm")
-    method = models.CharField(_("measurement method"), max_length=30, choices=Method.choices, default=Method.PROFILERS_EDGE)
+    method = model_fields.CharField(_("measurement method"), max_length=30, choices=Method.choices,
+                                    default=Method.PROFILERS_EDGE)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("layer thickness measurement")

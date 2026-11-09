@@ -76,6 +76,8 @@ operating system by default anyway, you must install:
 - tzlocal
 - Python modules for YAML and markdown
 - Python module “deprecation”
+- frozendict
+- rdflib
 
 
 .. _PostgreSQL:

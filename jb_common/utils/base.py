@@ -399,6 +399,44 @@ def send_email(subject, content, recipients, format_dict=None):
     translation.activate(current_language)
 
 
+def is_rdf_requested(request):
+    """Tests whether the current request should be answered in RDF format instead
+    of HTML.  Typically this means that the request was made by other JuliaBase
+    or ELN instances.  Currently, only the serialisation formats “turtle” and
+    “xml” are recognised.
+
+    :param request: the current HTTP Request object
+
+    :type request: HttpRequest
+
+    :return:
+      whether the request should be answered in RDF
+
+    :rtype: bool
+    """
+    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/rdf+xml", "text/turtle"},
+                                               request.META.get("HTTP_ACCEPT", "text/html"))
+    return requested_mime_type in {"application/rdf+xml", "text/turtle"}
+
+
+def is_ro_crate_requested(request):
+    """Tests whether the current request should be answered in RO-Crate format
+    instead of HTML.
+
+    :param request: the current HTTP Request object
+
+    :type request: HttpRequest
+
+    :return:
+      whether the request should be answered in RO-Crate
+
+    :rtype: bool
+    """
+    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/vnd.eln+zip"},
+                                               request.META.get("HTTP_ACCEPT", "text/html"))
+    return requested_mime_type == "application/vnd.eln+zip"
+
+
 def is_json_requested(request):
     """Tests whether the current request should be answered in JSON format
     instead of HTML.  Typically this means that the request was made by the
@@ -889,6 +927,32 @@ def camel_case_to_underscores(name):
             result.append("_")
         result.append(character.lower())
     return "".join(result)
+
+
+def underscores_to_camel_case(name, force_lower=False):
+    """Converts a underscore_style identifier to one using camelCase.  For
+    example, ``"my_samples"`` is converted to ``"mySamples"``, and
+    ``"PDS_measurement"`` to ``"PDSMeasurement"``.
+
+    :param str name: the identifier in underscore notation
+    :param bool force_lower: if ``True``, the result is guaranteed to start
+      with a lowercase letter
+
+    :return:
+      the camel-cased identifier
+
+    :rtype: str
+    """
+    result_components = []
+    first = True
+    for word in name.split("_"):
+        if word:
+            if first:
+                result_components.append(word.lower() if force_lower else word)
+                first = False
+            else:
+                result_components.append(word[0].upper() + word[1:])
+    return "".join(result_components)
 
 
 def camel_case_to_human_text(name):

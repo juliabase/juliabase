@@ -24,8 +24,11 @@ well as models for layers.
 
 from django.utils.translation import gettext_lazy as _, gettext
 from django.db import models
-from jb_common import search
+from django.core.exceptions import ObjectDoesNotExist
+from jb_common import search, model_fields
+from samples import ontology_symbols
 from samples.models import PhysicalProcess, fields_to_data_items, remove_data_item
+from samples.models.common import GraphEntity
 from samples.data_tree import DataNode, DataItem
 
 
@@ -53,8 +56,8 @@ class Deposition(PhysicalProcess):
     words, ``instance.layers.all()`` must work if ``instance`` is an instance
     of your deposition class.
     """
-    number = models.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
-    split_done = models.BooleanField(_("split after deposition done"), default=False)
+    number = model_fields.CharField(_("deposition number"), max_length=15, unique=True, db_index=True)
+    split_done = model_fields.BooleanField(_("split after deposition done"), default=False)
 
     class Meta(PhysicalProcess.Meta):
         verbose_name = _("deposition")
@@ -123,6 +126,38 @@ class Deposition(PhysicalProcess):
             data["layer {}".format(layer.number)] = layer_data
         return data
 
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        """Additionally to what is done in the parent method, we add the layers
+        to the graph.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+        :param set[str] excluded_fields: Names of fields that should not be
+          added to the graph.  Typically, the more specialised caller has
+          already dealt with them.
+
+        :returns:
+           The URIs of all leaf nodes in chronological ordering, i.e. all nodes
+           which do not have further subprocesses.  In the simplest case, this
+           is only the process itself.
+
+        :rtype: list[rdflib.term.URIRef]
+        """
+        super().add_to_graph(graph, excluded_fields)
+        process_uri = self.uri()
+        graph.add((process_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
+        leaf_nodes = []
+        for layer in self._get_layers():
+            layer_uri = layer.uri()
+            layer.add_to_graph(graph)
+            graph.add((layer_uri, ontology_symbols.scimesh.cause, process_uri))
+            try:
+                graph.add((layer_uri, ontology_symbols.scimesh.cause, leaf_nodes[-1]))
+            except IndexError:
+                pass
+            leaf_nodes.append(layer_uri)
+        return leaf_nodes
+
     def get_data_for_table_export(self):
         # See `Process.get_data_for_table_export` for the documentation.
         data_node = super().get_data_for_table_export()
@@ -149,7 +184,7 @@ class Deposition(PhysicalProcess):
         return model_field
 
 
-class Layer(models.Model):
+class Layer(models.Model, GraphEntity):
     """This is an abstract base model for deposition layers.  Now, this is the
     first *real* abstract model here.  It is abstract because it can never
     occur in a model relationship.  It just ensures that every layer has a
@@ -169,7 +204,7 @@ class Layer(models.Model):
         class Meta(Layer.Meta):
             unique_together = ("deposition", "number")
     """
-    number = models.PositiveIntegerField(_("layer number"))
+    number = model_fields.PositiveIntegerField(_("layer number"))
 
     class Meta:
         abstract = True
@@ -215,6 +250,10 @@ class Layer(models.Model):
         """
         search_fields = search.convert_fields_to_search_fields(cls)
         return search.SearchTreeNode(cls, {}, search_fields)
+
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        super().add_to_graph(graph, excluded_fields)
+        graph.add((self.uri(), ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
 
 
 _ = gettext

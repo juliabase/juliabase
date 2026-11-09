@@ -38,6 +38,7 @@ NAME_PREFIX_TEMPLATES = []
 SAMPLE_NAME_FORMATS = {"provisional": {"possible_renames": {"default"}},
                        "default":     {"pattern": r"[-A-Za-z_/0-9#()]*"}}
 THUMBNAIL_WIDTH = 400
+GRAPH_NAMESPACE_PREFIX = None
 
 # Django settings which are used in samples
 

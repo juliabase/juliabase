@@ -25,9 +25,11 @@ from urllib.parse import quote_plus
 from pathlib import Path
 import PIL
 import PIL.ImageOps
+import rdflib
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -43,12 +45,15 @@ from django.utils.text import capfirst
 from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
-from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_json_requested, \
-    respond_in_json, get_all_models, mkdirs, cache_key_locked, int_or_zero, help_link
+from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_rdf_requested, \
+    is_json_requested, respond_in_json, is_ro_crate_requested, get_all_models, mkdirs, cache_key_locked, \
+    int_or_zero, help_link, camel_case_to_human_text
 from jb_common.utils.views import UserField, TopicField
-from samples import models, permissions, data_tree
+from samples import models, permissions, data_tree, ontology_symbols
 import samples.utils.views as utils
 from samples.utils import sample_names
+from samples.graphs import respond_as_rdf
+from samples.ro_crate import respond_as_ro_crate
 import datetime
 
 class IsMySampleForm(forms.Form):
@@ -315,16 +320,18 @@ class SamplesAndProcesses:
     """
 
     @staticmethod
-    def samples_and_processes(sample_name, user, post_data=None):
+    def samples_and_processes(sample, clearance, user, post_data=None):
         """Returns the data structure used in the template to display the
         sample with all its processes.
 
-        :param sample_name: the sample or alias of the sample to display
+        :param sample: the sample for which the processes should be compiled
+        :param clearance: clearance for the `sample` and the `user`
         :param user: the currently logged-in user
         :param post_data: the POST dictionary if it was an HTTP POST request, or
             ``None`` otherwise
 
-        :type sample_name: str
+        :type sample: `samples.models.Sample`
+        :type clearance: `samples.models.Clearance` or NoneType
         :type user: django.contrib.auth.models.User
         :type post_data: QueryDict
 
@@ -334,7 +341,6 @@ class SamplesAndProcesses:
 
         :rtype: `SamplesAndProcesses`
         """
-        sample, clearance = utils.lookup_sample(sample_name, user, with_clearance=True)
         cache_key = "sample:{0}-{1}".format(sample.pk, user.jb_user_details.get_data_hash())
         # The following ``10`` is the expectation value of the number of
         # processes.  To get accurate results, use
@@ -410,6 +416,50 @@ class SamplesAndProcesses:
 
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
+            all_processes = []
+            for external_graph_url in sample.external_graph_urls:
+                url_request = urllib.request.urlopen(
+                    urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
+                external_data = rdflib.Graph()
+                external_data.parse(data=url_request.read().decode(), format="n3")
+                for title, timestamp, uri in external_data.query("""
+                    SELECT ?title ?timestamp ?uri
+                    {
+                     ?uri a <http://scimesh.org/SciMesh/Process> .
+                     ?uri rdfs:label ?title .
+                     ?uri <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
+                    }
+                """):
+                    process = models.ExternalData(pk=0, title=str(title).rpartition("/")[2], uri=uri,
+                                                  operator=django.contrib.auth.models.User.objects.get(username="nobody"),
+                                                  timestamp=timestamp.toPython())
+                    already_seen_uris = set()
+                    def collect_properties(subject):
+                        if subject in already_seen_uris:
+                            return {"ERROR", "loop in graph"}
+                        already_seen_uris.add(subject)
+                        result = {}
+                        for key, value in external_data.query(f"""
+                        SELECT ?key ?value
+                        {{
+                         <{subject}> ?key ?value .
+                        }}
+                        """):
+                            key = str(key)
+                            if key not in {"http://scimesh.org/SciMesh/cause", "http://scimesh.org/SciMesh/timestamp",
+                                           "http://www.w3.org/2000/01/rdf-schema#label"}:
+                                key = key.rpartition("/")[2].rpartition("#")[2]
+                                key = camel_case_to_human_text(key).replace("_", " ")
+                                if isinstance(value, rdflib.term.URIRef):
+                                    subproperties = collect_properties(value)
+                                else:
+                                    subproperties = {}
+                                result[key] = subproperties or value
+                        return result
+                    process.keys_and_values = collect_properties(uri)
+                    all_processes.append(process)
+            all_processes.extend(processes)
+            all_processes.sort(key=lambda process: process.timestamp)
             nobody = django.contrib.auth.models.User.objects.get(username='nobody')
             self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
 
@@ -624,6 +674,30 @@ class SamplesAndProcesses:
         return all_process_ids
 
 
+def collect_raw_files(sample):
+    """Returns the raw files of the given sample by collecting the root raw
+    file directories of all of its processes.
+
+    :param models.Sample sample: the sample the raw files of which should be
+       returned
+
+    :returns:
+       all raw files of the given sample, as a set of their root directories
+
+    :rtype: set[RawDictionaries]
+    """
+    roots = set()
+    for process in sample.processes.all():
+        process = process.actual_instance
+        root = process.get_raw_files()
+        if root:
+            roots.add(root)
+        if sample.split_origin:
+            parent_roots = collect_raw_files(process.split_origin.parent)
+            roots |= parent_roots
+    return roots
+
+
 def embed_timestamp(request, sample_name):
     """Put a timestamp field in the request object that is used by both
     `sample_timestamp` and `sample_etag`.  It's really a pity that you can't
@@ -727,7 +801,8 @@ def show(request, sample_name):
     """
     start = time.time()
     if request.method == "POST":
-        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user, request.POST)
+        sample, clearance = utils.lookup_sample(sample_name, request.user, with_clearance=True)
+        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user, request.POST)
         if samples_and_processes.is_valid():
             added, removed = samples_and_processes.save_to_database()
             if is_json_requested(request):
@@ -750,10 +825,20 @@ def show(request, sample_name):
         else:
             raise ValueError("Form is not valid")
     else:
+        sample, clearance = utils.lookup_sample(sample_name, request.user, with_clearance=True)
         if is_json_requested(request):
-            sample = utils.lookup_sample(sample_name, request.user)
             return respond_in_json(sample.get_data())
-        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample_name, request.user)
+        elif is_rdf_requested(request):
+            graph = rdflib.Graph()
+            ontology_symbols.bind_namespaces(graph)
+            sample.add_to_graph(graph)
+            return respond_as_rdf(request, graph)
+        elif is_ro_crate_requested(request):
+            graph = rdflib.Graph()
+            ontology_symbols.bind_namespaces(graph)
+            sample.add_to_graph(graph)
+            return respond_as_ro_crate(graph, collect_raw_files(sample))
+        samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
     sample_id = samples_and_processes.sample_context["sample"].id
     return render(request, "samples/show_sample.html",

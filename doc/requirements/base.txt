@@ -28,3 +28,5 @@ nose
 django-redis
 tzlocal>=4.0
 deprecation
+rdflib
+frozendict

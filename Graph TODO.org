@@ -1,0 +1,57 @@
+* Knowledge-graph-related todos
+
+** DONE Find a way to get the sample ID in the process URI
+
+This is necessary to clone the process for each sample it has worked on.
+
+** DONE Create a clean connection between deposition and layer
+
+And, for that matter, for sunsimulator measurement and submeasurement.
+
+** TODO introduce a dedicated process class for external processes
+
+Do we really need that?  Instead, caching fetching of external graphs may be sufficient.
+
+** TODO enrich the external process with as much original data as possible
+
+** TODO Replace ExternalData with URI list
+
+*** DONE
+
+I don’t need the ExternalData process anymore.  Instead, a list of URIs is maintained in a new JSON field in Sample itself.
+
+This URI list must be minimised to minimise redundancy.  And, it must be returned in the “sm:state” properties of the sample, see https://scimesh.org/about/Implementation.html#requirements-for-elns.
+
+*** TODO
+
+Really get rid of ExternalData.
+
+** DONE namespaces of process and sample fields must be as generic as possible
+
+Most urgent is currently the ~timestamp~ field, which comes from the 5-chamber namespace, which is perfectly potty.
+
+** DONE adapt export of sample graph to new internal API
+
+** DONE adapt export of sample graph to new SciMesh specification
+
+** TODO Implement POST request against sample URIs
+
+See https://scimesh.org/about/Implementation.html#requirements-for-elns.
+
+** TODO Implement GET requests against process URIs
+
+See https://scimesh.org/about/Implementation.html#requirements-for-elns.
+
+** TODO Implement ~add_to_graph~ for all processes
+
+The parent class’es method may already work in some cases but at least for Cluster Tool and Solarsimulator I suspect that I have to write a custom routine.
+
+This may lead to further abstraction in the parent classes.
+
+** DONE Move RO-Crate support from the stand-alone script into the web server
+
+For ZIP’ing things, https://stackoverflow.com/a/44946732/188108 might come in handy.
+
+** DONE Add bulk data to RO-Crate, at least in a simple case
+
+Possibly I have to do that in Chantal rather than in JuliaBase.

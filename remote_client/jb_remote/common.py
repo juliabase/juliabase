@@ -35,7 +35,7 @@
             mapping topic names to topic IDs.
 """
 
-import mimetypes, json, logging, os, datetime, time, random, re, decimal, urllib, _thread, io
+import mimetypes, json, logging, os, datetime, time, random, re, decimal, urllib, _thread, io, shutil
 from http import cookiejar
 from . import settings
 
@@ -302,23 +302,30 @@ class JuliaBaseConnection:
     """
     cookie_jar = cookiejar.CookieJar()
     opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie_jar))
-    http_headers = [("User-agent", "JuliaBase-Remote/1.0"),
-                    ("X-requested-with", "XMLHttpRequest"),
-                    ("Accept", "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7")]
-    opener.addheaders = http_headers
 
     def __init__(self):
         self.username = None
         self.root_url = None
+        self.common_headers = {"User-agent": "JuliaBase-Remote/1.0", "X-requested-with": "XMLHttpRequest"}
 
-    def _do_http_request(self, url, data=None):
+    def _do_http_request(self, url, data=None, response_type="json"):
         logging.debug("{0} {1!r}".format(url, data))
         if data is None:
             request = urllib.request.Request(url)
         else:
             content_type, body = encode_multipart_formdata(data)
             headers = {"Content-Type": content_type, "Referer": url}
+            headers.update(self.common_headers)
             request = urllib.request.Request(url, body, headers)
+        if response_type == "json":
+            accept = "application/json,text/html;q=0.9,application/xhtml+xml;q=0.9,text/*;q=0.8,*/*;q=0.7"
+        elif response_type == "turtle":
+            accept = "text/turtle"
+        elif response_type == "ro-crate":
+            accept = "application/vnd.eln+zip"
+        else:
+            assert False, response_type
+        request.add_header("Accept", accept)
         max_cycles = 10
         while max_cycles > 0:
             max_cycles -= 1
@@ -413,11 +420,64 @@ class JuliaBaseConnection:
         else:
             return response.read()
 
+    def open_graph(self, relative_url):
+        """Do an HTTP GET request with the JuliaBase server, expecting a turtle
+        (RDF) response.
+
+        :param relative_url: the non-domain part of the URL, for example
+            ``"/samples/10-TB-1"``.  “Relative” may be misguiding here: only
+            the domain is omitted.
+
+        :type relative_url: str
+
+        :return:
+          the response to the request
+
+        :rtype: ``rdflib.graph.Graph``
+
+        :raises JuliaBaseError: if JuliaBase couldn't fulfill the request
+            because it contained errors.  For example, you requested a sample
+            that doesn't exist, or the transmitted measurement data was
+            incomplete.
+        :raises urllib.error.URLError: if a lower-level error occured, e.g. the
+            HTTP connection couldn't be established.
+        """
+        if self.root_url is None:
+            raise Exception("No root URL defined.  Maybe not logged-in?")
+        response = self._do_http_request(self.root_url + relative_url, response_type="turtle")
+        assert response.info()["Content-Type"].startswith("text/turtle")
+        import rdflib
+        graph = rdflib.Graph()
+        return graph.parse(response)
+
+    def write_ro_crate(self, relative_url, file):
+        """Do an HTTP GET request with the JuliaBase server, expecting an
+        RO-Crate (actually SM4RO-C) response.
+
+        :param str relative_url: the non-domain part of the URL, for example
+            ``"/samples/10-TB-1"``.  “Relative” may be misguiding here: only
+            the domain is omitted.
+        :param stream file: The file-like object the RO-Crate should be written
+            to.  It can be a binary file, e.g. `open("mycrate.eln", "wb")`.
+
+        :raises JuliaBaseError: if JuliaBase couldn't fulfill the request
+            because it contained errors.  For example, you requested a sample
+            that doesn't exist, or the transmitted measurement data was
+            incomplete.
+        :raises urllib.error.URLError: if a lower-level error occured, e.g. the
+            HTTP connection couldn't be established.
+        """
+        if self.root_url is None:
+            raise Exception("No root URL defined.  Maybe not logged-in?")
+        response = self._do_http_request(self.root_url + relative_url, response_type="ro-crate")
+        assert response.info()["Content-Type"].startswith("application/vnd.eln+zip"), response.info()["Content-Type"]
+        shutil.copyfileobj(response, file)
+
     def set_csrf_header(self):
         csrf_cookies = {cookie for cookie in self.cookie_jar if cookie.name == "csrftoken"}
         if csrf_cookies:
             assert len(csrf_cookies) == 1
-            self.opener.addheaders = self.http_headers + [("X-CSRFToken", csrf_cookies.pop().value)]
+            self.common_headers["X-CSRFToken"] = csrf_cookies.pop().value
 
     def login(self, root_url, username, password):
         self.root_url = root_url

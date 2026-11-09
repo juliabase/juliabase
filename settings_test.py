@@ -26,7 +26,10 @@ from settings import *
 
 os.environ["CRAWLERS_DATA_DIR"] = "/tmp"
 
-DATABASES["default"]["ENGINE"] = "django.db.backends.sqlite3"
-DATABASES["default"]["TEST"] = {"NAME": "/tmp/juliabase-test-db"}
+db_filename = os.environ.get("JULIABASE_DB_FILENAME", "juliabase-test-db")
+DATABASES["default"] = {"ENGINE": "django.db.backends.sqlite3",
+                        "NAME": "/tmp/" + db_filename}
+
+GRAPH_NAMESPACE_PREFIX = "http://inm.example.com/"
 
 STATICFILES_DIRS = []

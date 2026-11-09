@@ -24,10 +24,14 @@ import, it is sometimes (e.g. for ``samples.permissions``) necessary to avoid
 the ``from`` keyword.
 """
 
-import hashlib, os.path, collections, datetime, html
+import hashlib, os, os.path, collections, datetime, html, urllib.parse, collections.abc, json
 from urllib.parse import quote
+import rdflib
+from frozendict import frozendict
+from samples import ontology_symbols
 from collections import defaultdict
 import django.contrib.auth.models
+from django.contrib.sites.models import Site
 from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language
 import django.utils.timezone
 from django.contrib.contenttypes.models import ContentType
@@ -37,7 +41,9 @@ from django.template.loader import render_to_string
 import django.urls
 from django.db import models
 from django.core.cache import cache
-from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores
+from jb_common import model_fields
+from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
+    JSONEncoder
 from jb_common.models import Topic, PolymorphicModel, Department, UserDetails
 import samples.permissions
 from jb_common import search
@@ -114,6 +120,68 @@ def remove_data_item(instance, data_node, field_name):
     data_node.items = [item for item in data_node.items if item.key != key]
 
 
+class GraphEntity:
+    """Mix-in class for model classes which may form entities in a knowledge
+    graph, or its instances may do so.  If the latter is possible, the derived
+    class must override the `uri` method.
+    """
+
+    @classmethod
+    def uri_namespace(cls):
+        """Returns the namespace prefix for this class.  It should be called
+        only from other methods in this class, or derivatives of them.  The
+        reason why this is separated is that it may make sense to change the
+        namespace while keeping the logic that the class URI is the namespace
+        plus the class name.
+        """
+        assert settings.GRAPH_NAMESPACE_PREFIX
+        return rdflib.Namespace(settings.GRAPH_NAMESPACE_PREFIX)
+
+    @classmethod
+    def class_uri(cls):
+        """Returns the URI of the class.
+        """
+        return cls.uri_namespace()[cls.__name__]
+
+    def uri(self):
+        """Returns the URI of this instance.  It is important to check whether
+        this implementation, which uses the `pk` field as the entity is
+        suitable for any derived model.  In particular, the URI must be stable
+        forever, which may not be the case for internal numbering in a
+        PostgreSQL database.  In case of doubt, override this method and choose
+        a better field.
+
+        :returns:
+           the URI of this instance
+
+        :rtype: rdflib.term.URIRef
+        """
+        try:
+            absolute_url = self.get_absolute_url()
+        except AttributeError:
+            return self.uri_namespace()[self.__class__.__name__ + "/" + str(self.pk)]
+        else:
+            domain_namespace = rdflib.Namespace(f"http://{Site.objects.get_current()}")
+            return domain_namespace[absolute_url]
+
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        """Adds the graphs representing this model instance to the given graph.
+        This encompasses the connection of the instance URI with the model
+        class URI using an rdf:type relation, and the connection of all field
+        values with the instance URI.  Note that only direct fields are
+        included, no foreign key related data.
+
+        :param rdflib.Graph graph: graph to which the mode data should be added
+        :param set[str] excluded_fields: Names of fields that should not be
+          added to the graph.  Typically, the more specialised caller has
+          already dealt with them.
+        """
+        graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
+        for field in self._meta.get_fields():
+            if field.name not in excluded_fields and hasattr(field, "add_to_graph"):
+                field.add_to_graph(graph, self)
+
+
 class ExternalOperator(models.Model):
     """Some samples and processes are not made in our institute but in external
     institutions.  This is realised by setting the `Process.external_operator`
@@ -149,7 +217,124 @@ class ExternalOperator(models.Model):
         return django.urls.reverse("samples:show_external_operator", args=(self.pk,))
 
 
-class Process(PolymorphicModel):
+class RawFile:
+    """Represents one raw (blob) data file of a process.  Instances of this
+    class create a virtual file system.  It is hashable so that it can be used
+    in a set.  Both raw files are considered equal if their destination paths
+    are equal.
+
+    :ivar destination_path: Relative path of the file in the virtual file
+       system structure of the respective process.  It must be unique and
+       expressive, e.g. it should start with the process name and ID.  Do not
+       hesitate to use special characters, spaces, and upper-/lowercase.
+
+    :ivar origin_path: Absolute path in the local file system of the original
+       raw data file.  Either this or `content` must be given.
+
+    :ivar content: Content of the file.  Either this or `origin_path` must be
+       given.
+
+    :ivar metadata: Additional metadata mapping URIs to values,
+       e.g. http://schema.org/contentSize to 32715.
+
+    :ivar relation: URI used for the “verb” in the RDF triple that connects the
+       process with this raw file.  If not given, a default is used.
+
+    :type destination_path: Path
+    :type origin_path: Path or NoneType
+    :type content: bytes or NoneType
+    :type metadata: dict mapping str to object
+    :type relation: rdflib.term.URIRef or NoneType
+    """
+
+    def __init__(self, destination_path, origin_path, metadata=frozendict(), content=None, relation=None):
+        """Class constructor.
+
+        :param str destination_path: the value of the instance variable
+           ``destination_path``.
+        :param Path origin_path: the value of the instance variable
+           ``origin_path``.
+        :param metadata: the value of the instance variable ``metadata``.
+        :param bytes content: the value of the instance variable ``content``.
+        :param rdflib.term.URIRef relation: the value of the instance variable
+           ``relation``.
+
+        :type metadata: dict mapping str to object
+        """
+        assert bool(origin_path) ^ bool(content)
+        self.destination_path, self.origin_path, self.metadata, self.content, self.relation = \
+            destination_path, origin_path, metadata, content, relation
+
+    @property
+    def uri(self):
+        return rdflib.term.URIRef(str(self.destination_path))
+
+    def prepare_destination(self, root):
+        """Creates the raw file at the destination.  The destination directory
+        structure is then zipped and shipped to the HTTP client.
+
+        :param Path root: absolute path to the root where the directory
+           structure of the raw files is supposed to be created.
+        """
+        absolute_destination_path = root/self.destination_path
+        if self.origin_path:
+            os.makedirs(absolute_destination_path.parent, exist_ok=True)
+            os.symlink(self.origin_path, absolute_destination_path)
+        else:
+            with open(absolute_destination_path, "wb") as outfile:
+                outfile.write(self.content)
+
+    def _add_metadata_to_graph(self, graph):
+        for key, value in self.metadata.items():
+            graph.add((self.uri, rdflib.term.URIRef(key), rdflib.Literal(value)))
+
+    def add_to_graph(self, graph):
+        graph.add((self.uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.MediaObject))
+        self._add_metadata_to_graph(graph)
+
+    def __hash__(self):
+        return hash(self.destination_path)
+
+    def __eq__(self, other):
+        return self.destination_path == other.destination_path
+
+
+class RawDirectory(RawFile):
+    """Represents one data directory of raw (blob) files a process.  Instances
+    of this class create a virtual file system.
+
+    :ivar set[RawFile] entries: entries (files and subdirectories) of this
+      directory
+    """
+
+    def __init__(self, destination_path, metadata=frozendict(), relation=None):
+        """Class constructor.
+
+        :param str destination_path: the value of the instance variable
+           ``destination_path``.
+        :param metadata: the value of the instance variable ``metadata``.
+        :param rdflib.term.URIRef relation: the value of the instance variable
+           ``relation``.
+
+        :type metadata: dict mapping str to object
+        """
+        self.destination_path, self.origin_path, self.metadata, self.content, self.relation = \
+            destination_path, None, metadata, None, relation
+        self.entries = set()
+
+    def prepare_destination(self, root):
+        for entry in self.entries:
+            entry.prepare_destination(root)
+
+    def add_to_graph(self, graph):
+        graph.add((self.uri, ontology_symbols.RDF.type, ontology_symbols.schema_org.Dataset))
+        self._add_metadata_to_graph(graph)
+        for entry in self.entries:
+            graph.add((self.uri, ontology_symbols.schema_org.hasPart, entry.uri))
+            entry.add_to_graph(graph)
+
+
+class Process(PolymorphicModel, GraphEntity):
     """This is the parent class of all processes and measurements.  Actually,
     it is an *abstract* base class, i.e. there are no processes in the database
     that are *just* processes.  However, it is not marked as ``abstract=True``
@@ -178,18 +363,18 @@ class Process(PolymorphicModel):
         YEAR = 5, _("accurate to the year")
         NOT_EVEN_YEAR = 6, _("not even accurate to the year")
 
-    timestamp = models.DateTimeField(_("timestamp"))
-    timestamp_inaccuracy = models.PositiveSmallIntegerField(_("timestamp inaccuracy"), choices=TimestampInaccuracy.choices,
-                                                            default=TimestampInaccuracy.TOTAL)
+    timestamp = model_fields.DateTimeField(_("timestamp"))
+    timestamp_inaccuracy = model_fields.PositiveSmallIntegerField(
+        _("timestamp inaccuracy"), choices=TimestampInaccuracy.choices, default=TimestampInaccuracy.TOTAL)
     operator = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("operator"),
                                  related_name="processes")
     external_operator = models.ForeignKey(ExternalOperator, on_delete=models.CASCADE, verbose_name=_("external operator"),
                                           null=True, blank=True, related_name="processes")
-    comments = models.TextField(_("comments"), blank=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    comments = model_fields.TextField(_("comments"), blank=True)
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
     last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("last modifier"),
                                  related_name="last_modifier", null=True, blank=True)
-    finished = models.BooleanField(_("finished"), default=True)
+    finished = model_fields.BooleanField(_("finished"), default=True)
     """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
     ``True``.  However, depositions that are a work-in-progress, possibly by
@@ -415,6 +600,160 @@ class Process(PolymorphicModel):
             data["sample_positions"] = data["sample_positions"]
         return data
 
+    def add_to_graph(self, graph, excluded_fields=frozenset()):
+        """Add all direct fields of this process to the given graph.  See the
+        parent method for further information.  Note that this method does not
+        include related data (e.g. subprocesses).  This must be dealt with in
+        derived methods.  For adding related sample data, see the sibling
+        method `add_to_graph_with_hookups`.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+        :param set[str] excluded_fields: Names of fields that should not be
+          added to the graph.  Typically, the more specialised caller has
+          already dealt with them.
+
+        :returns:
+           The URIs of all leaf nodes in chronological ordering, i.e. all nodes
+           which do not have further subprocesses.  In the simplest case, this
+           is only the process itself.
+
+        :rtype: list[rdflib.term.URIRef]
+        """
+        super().add_to_graph(graph, {"comments", "finished", "last_modified", "timestamp", "operator",
+                                     "timestamp_inaccuracy", "sample_positions"})
+        graph.add((self.uri(), ontology_symbols.RDF.type, self.class_uri()))
+        graph.add((self.uri(), ontology_symbols.RDFS.label, rdflib.term.Literal(self)))
+        process_entity = self.uri()
+        graph.add((process_entity, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+        graph.add((process_entity, ontology_symbols.JB_process.comments, rdflib.term.Literal(self.comments)))
+        graph.add((process_entity, ontology_symbols.JB_process.finished, rdflib.term.Literal(self.finished)))
+        graph.add((process_entity, ontology_symbols.JB_process.last_modified, rdflib.term.Literal(self.last_modified)))
+        instant = rdflib.BNode()
+        graph.add((process_entity, ontology_symbols.scimesh.timestamp, instant))
+        graph.add((instant, ontology_symbols.time.inXSDDateTimeStamp, rdflib.term.Literal(self.timestamp)))
+        graph.add((process_entity, ontology_symbols.scimesh.operator, self.operator.samples_user_details.uri()))
+        graph.add((process_entity, ontology_symbols.JB_process.timestamp_inaccuracy,
+                   rdflib.term.Literal(self.timestamp_inaccuracy)))
+        return [process_entity]
+
+    @property
+    def is_multisample_process(self):
+        """Returns whether the current process is a multi-sample process.
+        Currently, this is defined by the existence of a field
+        “``sample_positions``”.  Note that being connected with only one sample
+        is not sufficient for not being a multi-sample process.  The real
+        question is whether there *could* be more than one sample.
+
+        :returns:
+          whether the current process is a multi-sample process
+
+        :rtype: bool
+        """
+        return hasattr(self, "sample_positions")
+
+    def create_sample_specific_processes(self, graph, parent_uri):
+        """Create graph nodes with so-called sample-specific processes (see
+        SciMesh documentation).  This method must be called only for
+        multi-sample processes.
+
+        It is called in a situation where the process nodes are already added
+        to the graph, and the leaf nodes (i.e. the subprocesses without further
+        subprocesses) are properly connected with their parents and the only
+        ones that are *not* concurrents.  This is valid for single-sample
+        processes but that’s not the case here.  (Even if the process has only
+        one sample, it *could* be more, and this makes it a multi-sample
+        process.  Currently, it is distinguished whether it has a
+        “sample_positions” field or not.)
+
+        This method creates the sample-specific processes for one of the
+        subprocesses with the given `parent_uri`.  This subprocess is tagged as
+        a concurrent.  If a sample position is found for a sample, it is
+        connected with the respective sample-specific process.
+
+        If there is more than one leaf node, the caller must then connect the
+        sample-specific process from different calls to this method with
+        “cause” relations.
+
+        And, a function up in the call stack must connect the outmost
+        sample-specific processes (i.e. the first and the last,
+        chronologically) with the neighbouring processes of the respective
+        sample.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+           added
+        :param rdflib.term.URIRef parent_uri: the URI of the (sub-)process that
+           should become the cause of the sample-specific processes
+
+        :returns:
+           dict mapping a sample to the URI of its sample-specific process
+
+        :rtype: dict[Sample, rdflib.term.URIRef]
+        """
+        processes = {}
+        sample_positions = self.sample_positions
+        for sample in self.samples.all():
+            graph.add((parent_uri, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
+            sample_specific_process = parent_uri + f"#sample-{sample.id}"
+            graph.add((sample_specific_process, ontology_symbols.RDF.type, ontology_symbols.scimesh.Process))
+            graph.add((sample_specific_process, ontology_symbols.scimesh.cause, parent_uri))
+            try:
+                sample_position = sample_positions[str(sample.pk)]
+            except KeyError:
+                pass
+            else:
+                graph.add((sample_specific_process, ontology_symbols.JB_process.samplePosition,
+                           rdflib.term.Literal(sample_position)))
+            processes[sample] = sample_specific_process
+        return processes
+
+    def add_to_graph_with_hookups(self, graph):
+        """This does the same as `add_to_graph`, but additionally connect the
+        process cleanly with its samples.  Moreover, if there is more than one
+        sample, a state process for each sample is created.
+
+        Moreover, the hook-up URIs are returned that are needed to connect the
+        process to its neighbours.  “Effect nodes” connect the process to its
+        predecessor, and “cause nodes” to its successor.  The caller must take
+        care of adding the necessary relations to the graph.
+
+        :param rdflib.Graph graph: graph to which the process data should be
+          added
+
+        :return:
+          mapping of samples to their effect nodes, mapping of samples to their
+          cause nodes
+
+        :rtype: dict[Sample, rdflib.term.URIRef], dict[Sample,
+          rdflib.term.URIRef]
+        """
+        leaf_nodes = self.add_to_graph(graph)
+        effect_nodes = {}
+        cause_nodes = {}
+        if self.is_multisample_process:
+            latest_sample_specific_processes = {}
+            for i, leaf_node in enumerate(leaf_nodes):
+                graph.add((leaf_node, ontology_symbols.RDF.type, ontology_symbols.scimesh.Concurrent))
+                for sample, sample_specific_process in self.create_sample_specific_processes(graph, leaf_node).items():
+                    try:
+                        graph.add((sample_specific_process, ontology_symbols.scimesh.cause,
+                                   latest_sample_specific_processes[sample]))
+                    except KeyError:
+                        pass
+                    latest_sample_specific_processes[sample] = sample_specific_process
+                    if i == 0:
+                        effect_nodes[sample] = sample_specific_process
+                    elif i == len(leaf_nodes) - 1:
+                        cause_nodes[sample] = sample_specific_process
+        else:
+            # This may throw ``Sample.DoesNotExist`` or
+            # ``Sample.MultipleObjectsReturned``, both of which must never
+            # happen here.
+            sample = self.samples.get()
+            effect_nodes[sample] = leaf_nodes[0]
+            cause_nodes[sample] = leaf_nodes[-1]
+        return effect_nodes, cause_nodes
+
     def get_data_for_table_export(self):
         """Extract the data of this process as a tree of nodes (or a single
         node) with lists of key–value pairs, ready to be used for the table
@@ -567,7 +906,10 @@ class Process(PolymorphicModel):
         if "process" not in context:
             context["process"] = self
         if "name" not in context:
-            name = str(self._meta.verbose_name) if not isinstance(self, Result) else self.title
+            try:
+                name = self.title
+            except AttributeError:
+                name = str(self._meta.verbose_name)
             context["name"] = name[:1].upper() + name[1:]
         if hasattr(self, "get_sample_position_context"):
             context = self.get_sample_position_context(user, context)
@@ -680,6 +1022,18 @@ class Process(PolymorphicModel):
             # https://code.djangoproject.com/ticket/17688 is fixed.
             self.samples.clear()
             return super().delete(*args, **kwargs)
+
+    def get_raw_files(self):
+        """Returns the blob (raw) data of this process.  See the class
+        :py:class:`RawFile` for further information.
+
+        :returns:
+          root directory of the raw files of this process; ``None`` if this
+          process does not expose any raw files
+
+        :rtype: `RawDirectory` or NoneType
+        """
+        return None
 
 
 class PhysicalProcess(Process):
@@ -827,25 +1181,32 @@ def get_all_searchable_physical_processes():
     return all_searchable_physical_processes
 
 
-class Sample(models.Model):
+class Sample(models.Model, GraphEntity):
     """The model for samples.
     """
-    name = models.CharField(_("name"), max_length=30, unique=True, db_index=True)
+    name = model_fields.CharField(_("name"), max_length=30, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_("watchers"))
         # Translators: location of a sample
-    current_location = models.CharField(_("current location"), max_length=50)
+    current_location = model_fields.CharField(_("current location"), max_length=50)
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, related_name="samples",
                                                      verbose_name=_("currently responsible person"))
-    purpose = models.CharField(_("purpose"), max_length=80, blank=True)
+    purpose = model_fields.CharField(_("purpose"), max_length=80, blank=True)
         # Translators: keywords for samples
-    tags = models.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
+    tags = model_fields.CharField(_("tags"), max_length=255, blank=True, help_text=_("separated with commas, no whitespace"))
     split_origin = models.ForeignKey("SampleSplit", on_delete=models.CASCADE, null=True, blank=True, related_name="pieces",
                                      # Translators: ID of mother sample
                                      verbose_name=_("split origin"))
     processes = models.ManyToManyField(Process, blank=True, related_name="samples", verbose_name=_("processes"))
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, null=True, blank=True, related_name="samples", verbose_name=_("topic"))
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    external_graph_urls = model_fields.JSONField(_("external graph URLs"), blank=True, default=empty_list)
+    """This is a list of strings that represent URLs.  At these URLs, the
+    JuliaBase instance can fetch RDF graphs that also contain data of this
+    sample.  The requests have to be done with a client certificate that the
+    receiver accepts.  Furthermore, the requested MIME type must be Turtle.
+    Other RDF serialisations may be added in the future.
+    """
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _("sample")
@@ -1119,6 +1480,23 @@ class Sample(models.Model):
         else:
             return search.SearchTreeNode(cls, related_models, search_fields)
 
+    def add_to_graph(self, graph):
+        super().add_to_graph(graph, {"currently_responsible_person", "name"})
+        graph.add((self.uri(), ontology_symbols.RDF.type, ontology_symbols.scimesh.Sample))
+        sample_entity = self.uri()
+        graph.add((sample_entity,
+                   ontology_symbols.JB_sample.currentlyResponsiblePerson,
+                   self.currently_responsible_person.samples_user_details.uri()))
+        graph.add((sample_entity, ontology_symbols.JB_sample.topic, rdflib.term.Literal(self.topic)))
+        graph.add((sample_entity, ontology_symbols.RDFS.label, rdflib.term.Literal(self.name)))
+        latest_cause_node = None
+        for process in self.processes.order_by("timestamp"):
+            process = process.actual_instance
+            effect_nodes, cause_nodes = process.add_to_graph_with_hookups(graph)
+            graph.add((effect_nodes[self], ontology_symbols.scimesh.cause, latest_cause_node or ontology_symbols.RDF.nil))
+            latest_cause_node = cause_nodes[self]
+        graph.add((sample_entity, ontology_symbols.scimesh.state, latest_cause_node or ontology_symbols.RDF.nil))
+
     def prefetch_actual_instances(self, processes):
         grouped = defaultdict(list)
         for process in processes:
@@ -1217,7 +1595,7 @@ class Sample(models.Model):
 
 
 
-class SampleAlias(models.Model):
+class SampleAlias(models.Model, GraphEntity):
     """Model for former names of samples.  If a sample gets renamed (for
     example, because it was deposited), its old name is moved here.  Note that
     aliases needn't be unique.  Two old names may be the same.
@@ -1227,7 +1605,7 @@ class SampleAlias(models.Model):
     name.  Only if you look for the name by the search function, you also find
     aliases of the same name.
     """
-    name = models.CharField(_("name"), max_length=255)
+    name = model_fields.CharField(_("name"), max_length=255)
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE, verbose_name=_("sample"), related_name="aliases")
 
     class Meta:
@@ -1379,7 +1757,7 @@ class SampleSplit(Process):
             return super().delete(*args, **kwargs)
 
 
-class Clearance(models.Model):
+class Clearance(models.Model, GraphEntity):
     """Model for clearances for specific samples to specific users.  Apart
     from unblocking the sample itself (at least, some fields), particular
     processes can be unblocked, too.
@@ -1391,7 +1769,7 @@ class Clearance(models.Model):
                              related_name="clearances")
     sample = models.ForeignKey(Sample, on_delete=models.CASCADE, verbose_name=_("sample"), related_name="clearances")
     processes = models.ManyToManyField(Process, verbose_name=_("processes"), related_name="clearances", blank=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         unique_together = ("user", "sample")
@@ -1402,7 +1780,7 @@ class Clearance(models.Model):
         return _("clearance of {sample} for {user}").format(sample=self.sample, user=self.user)
 
 
-class SampleClaim(models.Model):
+class SampleClaim(models.Model, GraphEntity):
         # Translators: someone who assert a claim to samples
     requester = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("requester"),
                                   related_name="claims")
@@ -1410,7 +1788,7 @@ class SampleClaim(models.Model):
                                  related_name="claims_as_reviewer")
     samples = models.ManyToManyField(Sample, related_name="claims", verbose_name=_("samples"))
         # Translators: "closed" claim to samples
-    closed = models.BooleanField(_("closed"), default=False)
+    closed = model_fields.BooleanField(_("closed"), default=False)
 
     class Meta:
         verbose_name = _("sample claim")
@@ -1438,7 +1816,7 @@ class SampleDeath(Process):
         DESTROYED = "destroyed", _("completely destroyed")
 
         # Translators: Of a sample
-    reason = models.CharField(_("cause of death"), max_length=50, choices=Reason.choices)
+    reason = model_fields.CharField(_("cause of death"), max_length=50, choices=Reason.choices)
 
     class Meta(PolymorphicModel.Meta):
             # Translators: Of a sample
@@ -1463,10 +1841,10 @@ class Result(Process):
         JPEG = "jpeg", "JPEG"
 
         # Translators: Of a result
-    title = models.CharField(_("title"), max_length=50)
-    image_type = models.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
+    title = model_fields.CharField(_("title"), max_length=50)
+    image_type = model_fields.CharField(_("image file type"), max_length=4, choices=ImageType.choices, default=ImageType.NONE)
         # Translators: Physical quantities are meant
-    quantities_and_values = models.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
+    quantities_and_values = model_fields.JSONField(_("quantities and values"), blank=True, default=empty_double_list)
     """This is a data structure, serialised in JSON.  If you de-serialise it, it is
     a tuple with two items.  The first is a list of unicodes with all
     quantities (the table headings).  The second is a list of lists with
@@ -1505,7 +1883,7 @@ class Result(Process):
                 return _("result #{number}").format(number=self.pk)
 
     def get_absolute_url(self):
-        return django.urls.reverse("samples:show_result", args=(self.pk,))
+        return django.urls.reverse("samples:show_result", args=(self.pk,)) if self.pk is not None else None
 
     def get_image_locations(self):
         """Get the location of the image in the local filesystem as well
@@ -1566,7 +1944,10 @@ class Result(Process):
         if self.quantities_and_values:
             if "quantities" not in context or "value_lists" not in context:
                 context["quantities"], context["value_lists"] = self.quantities_and_values
-            context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
+            if self.pk is not None:
+                context["export_url"] = django.urls.reverse("samples:export_result", kwargs={"process_id": self.pk})
+            else:
+                context["export_url"] = None
         if "thumbnail_url" not in context or "image_url" not in context:
             if self.image_type != "none":
                 image_locations = self.get_image_locations()
@@ -1574,7 +1955,7 @@ class Result(Process):
                                 "image_url": image_locations["image_url"]})
             else:
                 context["thumbnail_url"] = context["image_url"] = None
-        if samples.permissions.has_permission_to_edit_result_process(user, self):
+        if samples.permissions.has_permission_to_edit_result_process(user, self) and self.pk is not None:
             context["edit_url"] = django.urls.reverse("samples:edit_result", kwargs={"process_id": self.pk})
         else:
             context["edit_url"] = None
@@ -1635,24 +2016,79 @@ class Result(Process):
         return super().delete(*args, **kwargs)
 
 
-class SampleSeries(models.Model):
+class ExternalData(Process):
+    """Represents a process taken from an external RDF source.  Typeically,
+    this is data generated by external scientists for a local sample.
+    """
+
+    title = model_fields.CharField(_("title"), max_length=50)
+    uri = model_fields.URLField("URI")
+    keys_and_values = model_fields.JSONField(_("keys and values"), blank=True, default=empty_dict)
+    """This is a nested dictionary that contains all the data found in the
+    external source.  It is displayed in a best-effort manner.
+    """
+
+    class Meta(PolymorphicModel.Meta):
+        verbose_name = _("external data")
+        verbose_name_plural = _("external data")
+
+    def __str__(self):
+        return _("external data {uri}").format(uri=self.uri)
+
+    def get_absolute_url(self):
+        return self.uri
+
+    def get_context_for_user(self, user, old_context):
+        context = old_context.copy()
+        context["export_url"] = None
+        context["edit_url"] = None
+        return super().get_context_for_user(user, context)
+
+    def get_data_for_table_export(self):
+        """Extract the data of this result process as a tree of nodes (or a single
+        node) with lists of key–value pairs, ready to be used for the table
+        data export.  See the :py:mod:`samples.views.table_export` module for
+        all the glory details.
+
+        However, I should point out the peculiarities of result processes in
+        this respect.  Result comments are exported by the parent class, here
+        just the table is exported.  If the table contains only one row (which
+        should be the case almost always), only one data tree node is returned,
+        with this row as the key–value list.
+
+        If the result table has more than one row, for each row, a sub-node is
+        generated, which contains the row columns in its key–value list.
+
+        :return:
+          a node for building a data tree
+
+        :rtype: `samples.data_tree.DataNode`
+        """
+        data_node = super().get_data_for_table_export()
+        data_node.name = data_node.descriptive_name = self.title
+        # FixMe: To be done
+        assert False
+        return data_node
+
+
+class SampleSeries(models.Model, GraphEntity):
     """A sample series groups together zero or more `Sample`.  It must belong
     to a topic, and it may contain processes, however, only *result processes*.
     The ``name`` and the ``timestamp`` of a sample series can never change
     after it has been created.
     """
-    name = models.CharField(_("name"), max_length=50, primary_key=True,
+    name = model_fields.CharField(_("name"), max_length=50, primary_key=True,
                             # Translators: The “Y” stands for “year”
                             help_text=_("must be of the form “originator-YY-name”"))
-    timestamp = models.DateTimeField(_("timestamp"))
+    timestamp = model_fields.DateTimeField(_("timestamp"))
     currently_responsible_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE,
                                                      related_name="sample_series",
                                                      verbose_name=_("currently responsible person"))
-    description = models.TextField(_("description"))
+    description = model_fields.TextField(_("description"))
     samples = models.ManyToManyField(Sample, blank=True, verbose_name=_("samples"), related_name="series")
     results = models.ManyToManyField(Result, blank=True, related_name="sample_series", verbose_name=_("results"))
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="sample_series", verbose_name=_("topic"))
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
 
     class Meta:
         verbose_name = _("sample series")
@@ -1778,7 +2214,7 @@ class Initials(models.Model):
         return self.initials
 
 
-class UserDetails(models.Model):
+class UserDetails(models.Model, GraphEntity):
     """Model for further details about a user, beyond
     django.contrib.auth.models.User.  Here, you have all data about a
     registered user that is not stored by Django's user model itself.
@@ -1863,6 +2299,8 @@ class UserDetails(models.Model):
         self.display_settings_timestamp = django.utils.timezone.now()
         self.save()
 
+    def uri(self):
+        return self.uri_namespace()[self.user.__class__.__name__ + "/" + str(self.pk)]
 
 class StatusMessage(models.Model):
     """This class is for the current status of the processes.  The class
@@ -1899,7 +2337,7 @@ class StatusMessage(models.Model):
         return _("status message #{number}").format(number=self.pk)
 
 
-class Task(models.Model):
+class Task(models.Model, GraphEntity):
     """
     """
 
@@ -1974,7 +2412,7 @@ class Task(models.Model):
         return data
 
 
-class ProcessWithSamplePositions(models.Model):
+class ProcessWithSamplePositions(models.Model, GraphEntity):
     """An abstract mixin class for saving the positions of the samples in an
     apparatus.
 
@@ -1986,7 +2424,7 @@ class ProcessWithSamplePositions(models.Model):
     applicable.  (For example, this can be given in the query string.)
     """
 
-    sample_positions = models.JSONField(_("sample positions"), default=empty_dict)
+    sample_positions = model_fields.JSONField(_("sample positions"), default=empty_dict)
     """In JSON format, mapping sample IDs to positions.  Positions can be numbers
     or strings.  Note that due to JSON constraints, the sample IDs are
     strings.
