@@ -43,7 +43,7 @@ from django.db import transaction
 class NewNameForm(forms.Form):
     """Form for data of one new sample piece.
     """
-    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=models.Sample._meta.get_field("name").max_length)
     new_purpose = forms.CharField(label=_("New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_("Delete"), required=False)
 

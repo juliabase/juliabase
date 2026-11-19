@@ -42,9 +42,9 @@ class OriginalDataForm(Form):
     """Form holding the old sample, the new name for the unsplit sample, and
     the number of pieces it is about to be split into.
     """
-    sample = forms.CharField(label=capfirst(_("old sample name")), max_length=30,
+    sample = forms.CharField(label=capfirst(_("old sample name")), max_length=models.Sample._meta.get_field("name").max_length,
                              widget=forms.TextInput(attrs={"readonly": "readonly", "style": "text-align: center"}))
-    new_name = forms.CharField(label=_("New name"), max_length=30)
+    new_name = forms.CharField(label=_("New name"), max_length=models.Sample._meta.get_field("name").max_length)
     number_of_pieces = forms.IntegerField(label=_("Pieces"), initial="1",
                                           widget=forms.TextInput(attrs={"size": "3", "style": "text-align: center"}))
 
@@ -92,7 +92,7 @@ class OriginalDataForm(Form):
 class NewNameForm(Form):
     """Form holding the newly given name of a sample.
     """
-    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=models.Sample._meta.get_field("name").max_length)
 
     def __init__(self, user, readonly, data=None, **kwargs):
         super().__init__(data, **kwargs)
