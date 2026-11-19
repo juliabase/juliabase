@@ -80,3 +80,42 @@ class ProcessTrackingTest(TestCase):
         fields = response.context["process"].fields
         self.assertNotIn("created_by_person", fields)
         self.assertNotIn("last_modified_by_person", fields)
+
+    # The views set the tracking fields
+
+    def post_deposition(self, client, url, **extra_data):
+        data = {"number": self.number, "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+                "operator": str(self.operator.pk), "combined_operator": str(self.operator.pk),
+                "sample_list": ["1", "3"],
+                "0-number": "1", "0-chamber": "i1", "0-sih4": "2.000"}
+        data.update(extra_data)
+        response = client.post(url, data)
+        self.assertEqual(response.status_code, 303, response.content.decode()[:3000])
+        return institute_models.FiveChamberDeposition.objects.get(number=self.number)
+
+    def test_add_sets_creator(self):
+        deposition = self.post_deposition(self.client, "/5-chamber_depositions/add/")
+        self.assertEqual(deposition.created_by_person, self.operator)
+        self.assertIsNone(deposition.last_modified_by_person)
+        self.assertIsNotNone(deposition.created)
+
+    def test_forged_tracking_fields_are_ignored(self):
+        other_user = User.objects.exclude(pk=self.operator.pk).first()
+        deposition = self.post_deposition(self.client, "/5-chamber_depositions/add/",
+                                          created_by_person=str(other_user.pk),
+                                          last_modified_by_person=str(other_user.pk))
+        self.assertEqual(deposition.created_by_person, self.operator)
+        self.assertIsNone(deposition.last_modified_by_person)
+
+    def test_edit_by_other_user_keeps_creator(self):
+        deposition = self.post_deposition(self.client, "/5-chamber_depositions/add/")
+        created = deposition.created
+        editor = User.objects.create_superuser("editor", "editor@example.com", "12345")
+        editor_client = Client()
+        assert editor_client.login(username="editor", password="12345")
+        deposition = self.post_deposition(editor_client, "/5-chamber_depositions/{}/edit/".format(self.number),
+                                          created_by_person=str(editor.pk), description="tracking test")
+        self.assertEqual(deposition.created_by_person, self.operator)
+        self.assertEqual(deposition.created, created)
+        self.assertEqual(deposition.last_modified_by_person, editor)
+        self.assertGreaterEqual(deposition.last_modified, created)
