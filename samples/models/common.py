@@ -371,6 +371,18 @@ class Process(PolymorphicModel, GraphEntity):
     external_operator = models.ForeignKey(ExternalOperator, on_delete=models.CASCADE, verbose_name=_("external operator"),
                                           null=True, blank=True, related_name="processes")
     comments = model_fields.TextField(_("comments"), blank=True)
+    created = model_fields.DateTimeField(_("created"), auto_now_add=True, null=True)
+    """When this process was entered into the database.  In contrast to
+    `timestamp`, this is set automatically and cannot be edited.  It is
+    ``None`` for processes created before this field was introduced.
+    """
+    created_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.SET_NULL,
+                                          verbose_name=_("creator"), related_name="created_processes",
+                                          null=True, blank=True)
+    """The logged-in user who entered this process into the database (e.g. the
+    account of a crawler).  In contrast to `operator`, this is set
+    automatically and cannot be edited.
+    """
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
     last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.SET_NULL,
                                                 verbose_name=_("last modifier"), related_name="last_modifier",

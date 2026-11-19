@@ -53,3 +53,21 @@ class ProcessTrackingTest(TestCase):
         modifier.delete()
         process.refresh_from_db()
         self.assertIsNone(process.last_modified_by_person)
+
+    # created and created_by_person
+
+    def test_created_is_set_automatically(self):
+        before = django.utils.timezone.now()
+        deposition = institute_models.FiveChamberDeposition.objects.create(
+            number=self.number, timestamp=before - datetime.timedelta(days=100), operator=self.operator)
+        self.assertGreaterEqual(deposition.created, before)
+        self.assertIsNone(deposition.created_by_person)
+
+    def test_deleting_creator_keeps_process(self):
+        creator = User.objects.create_user("creator", password="12345")
+        deposition = institute_models.FiveChamberDeposition.objects.create(
+            number=self.number, timestamp=django.utils.timezone.now(), operator=self.operator,
+            created_by_person=creator)
+        creator.delete()
+        deposition.refresh_from_db()
+        self.assertIsNone(deposition.created_by_person)
