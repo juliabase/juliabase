@@ -372,8 +372,9 @@ class Process(PolymorphicModel, GraphEntity):
                                           null=True, blank=True, related_name="processes")
     comments = model_fields.TextField(_("comments"), blank=True)
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
-    last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("last modifier"),
-                                 related_name="last_modifier", null=True, blank=True)
+    last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.SET_NULL,
+                                                verbose_name=_("last modifier"), related_name="last_modifier",
+                                                null=True, blank=True)
     finished = model_fields.BooleanField(_("finished"), default=True)
     """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
