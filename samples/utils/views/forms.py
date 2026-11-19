@@ -164,6 +164,7 @@ class ProcessForm(ModelForm):
     superusers.
     """
     combined_operator = OperatorField(label=capfirst(_("operator")))
+    tracking_field_names = ("created_by_person", "last_modified_by_person")
 
     def __init__(self, user, *args, **kwargs):
         """
@@ -180,6 +181,12 @@ class ProcessForm(ModelForm):
             kwargs.setdefault("initial", {}).setdefault("operator", user.pk)
             kwargs["initial"].setdefault("combined_operator", user.pk)
         super().__init__(*args, **kwargs)
+        # Who created and who last modified the process is set by the view, never
+        # by the user.  Without removing them here, forms with ``fields =
+        # "__all__"`` would reset them to ``None`` on every edit (they are not
+        # rendered), and could be forged by a crafted POST request.
+        for field_name in self.tracking_field_names:
+            self.fields.pop(field_name, None)
         if self.process and self.process.finished:
             try:
                 self.fields["finished"].disabled = True

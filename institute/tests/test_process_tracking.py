@@ -71,3 +71,12 @@ class ProcessTrackingTest(TestCase):
         creator.delete()
         deposition.refresh_from_db()
         self.assertIsNone(deposition.created_by_person)
+
+    # Tracking fields are not part of process forms
+
+    def test_tracking_fields_are_not_in_process_form(self):
+        response = self.client.get("/5-chamber_depositions/add/")
+        self.assertEqual(response.status_code, 200)
+        fields = response.context["process"].fields
+        self.assertNotIn("created_by_person", fields)
+        self.assertNotIn("last_modified_by_person", fields)
