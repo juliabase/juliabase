@@ -469,8 +469,10 @@ class FormSet:
             # FixMe: Maybe upload file first, and make a successful upload the
             # forth precondition for this branch?
             if self.result:
+                self.result_form.instance.last_modified_by_person = self.user
                 result = self.result_form.save()
             else:
+                self.result_form.instance.created_by_person = self.user
                 result = self.result_form.save(commit=False)
             result.quantities_and_values = self.compose_quantities_and_values()
             result.save()

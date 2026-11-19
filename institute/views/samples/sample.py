@@ -135,7 +135,8 @@ def add_samples_to_database(add_samples_form, user):
     substrate = institute_models.Substrate.objects.create(operator=user, timestamp=cleaned_data["timestamp"],
                                                     material=cleaned_data["substrate"],
                                                     comments=cleaned_data["substrate_comments"],
-                                                    external_operator=cleaned_data["substrate_originator"])
+                                                    external_operator=cleaned_data["substrate_originator"],
+                                                    created_by_person=user)
     inaccuracy = cleaned_data["timestamp_inaccuracy"]
     if inaccuracy:
         substrate.timestamp_inaccuracy = inaccuracy

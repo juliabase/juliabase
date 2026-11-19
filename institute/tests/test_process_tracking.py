@@ -23,6 +23,7 @@ created and who last modified a process, and when.
 """
 
 import datetime
+import django.forms
 import django.utils.timezone
 from django.contrib.auth.models import User
 from django.test import override_settings
@@ -119,3 +120,87 @@ class ProcessTrackingTest(TestCase):
         self.assertEqual(deposition.created, created)
         self.assertEqual(deposition.last_modified_by_person, editor)
         self.assertGreaterEqual(deposition.last_modified, created)
+
+    # Processes created outside of the generic process views
+
+    def assert_successful(self, response):
+        """Asserts that a POST request was successful, i.e. redirected.  Otherwise,
+        the errors of all forms in the response are shown.
+        """
+        if response.status_code != 303:
+            def form_errors(value):
+                if isinstance(value, django.forms.BaseForm):
+                    return [value.errors.as_data()] if value.errors else []
+                if isinstance(value, (list, tuple)):
+                    return [error for item in value for error in form_errors(item)]
+                return []
+            errors = {key: form_errors(response.context[key]) for key in response.context.keys()} \
+                if response.context else {}
+            self.fail("{}: {}".format(response.status_code, {key: value for key, value in errors.items() if value}))
+
+    def create_editor_client(self):
+        editor = User.objects.create_superuser("editor", "editor@example.com", "12345")
+        editor_client = Client()
+        assert editor_client.login(username="editor", password="12345")
+        return editor, editor_client
+
+    def test_sample_death_sets_creator(self):
+        sample = models.Sample.objects.get(pk=2)
+        self.assert_successful(self.client.post("/samples/{}/kill/".format(sample.name), {"reason": "lost"}))
+        self.assertEqual(models.SampleDeath.objects.get(samples=sample).created_by_person, self.operator)
+
+    def test_split_and_resplit_set_creator_and_last_modifier(self):
+        sample = models.Sample.objects.get(pk=2)
+        self.assert_successful(self.client.post("/samples/{}/split/".format(sample.name),
+                                                {"0-new_name": sample.name + "a", "1-new_name": sample.name,
+                                                 "finished": "on"}))
+        split = models.SampleSplit.objects.get(parent=sample)
+        self.assertEqual(split.created_by_person, self.operator)
+        self.assertIsNone(split.last_modified_by_person)
+        editor, editor_client = self.create_editor_client()
+        self.assert_successful(editor_client.post("/resplit/{}".format(split.pk),
+                                                  {"0-new_name": sample.name + "b", "1-new_name": sample.name,
+                                                   "sample_completely_split": "on", "finished": "on"}))
+        split.refresh_from_db()
+        self.assertEqual(split.created_by_person, self.operator)
+        self.assertEqual(split.last_modified_by_person, editor)
+        self.assertEqual(models.SampleDeath.objects.get(samples=sample).created_by_person, editor)
+
+    def test_split_after_deposition_sets_creator(self):
+        self.post_deposition(self.client, "/5-chamber_depositions/add/")
+        sample = models.Sample.objects.get(pk=1)
+        self.assert_successful(self.client.post(
+            "/depositions/split_and_rename_samples/" + self.number,
+            {"0-sample": sample.name, "0-new_name": self.number + "-1", "0-number_of_pieces": "2",
+             "0_0-new_name": self.number + "-1a", "0_1-new_name": self.number + "-1b",
+             "1-sample": models.Sample.objects.get(pk=3).name, "1-new_name": self.number + "-2", "1-number_of_pieces": "1",
+             "1_0-new_name": self.number + "-2"}))
+        self.assertEqual(models.SampleSplit.objects.get(parent=sample).created_by_person, self.operator)
+        self.assertEqual(models.SampleDeath.objects.get(samples=sample).created_by_person, self.operator)
+
+    def post_result(self, client, url):
+        self.assert_successful(client.post(url, {"title": "Tracking test", "comments": "tracking test",
+                                                 "timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+                                                 "operator": str(self.operator.pk),
+                                                 "combined_operator": str(self.operator.pk), "samples": ["1"],
+                                                 "number_of_quantities": "0", "number_of_values": "0",
+                                                 "previous-number_of_quantities": "0",
+                                                 "previous-number_of_values": "0"}))
+
+    def test_result_sets_creator_and_last_modifier(self):
+        self.post_result(self.client, "/results/add/")
+        result = models.Result.objects.get(title="Tracking test")
+        self.assertEqual(result.created_by_person, self.operator)
+        self.assertIsNone(result.last_modified_by_person)
+        editor, editor_client = self.create_editor_client()
+        self.post_result(editor_client, "/results/{}/edit/".format(result.pk))
+        result.refresh_from_db()
+        self.assertEqual(result.created_by_person, self.operator)
+        self.assertEqual(result.last_modified_by_person, editor)
+
+    def test_add_samples_sets_creator_of_substrate(self):
+        self.assert_successful(self.client.post("/samples/add/", {"number_of_samples": "1", "substrate": "asahi-u",
+                                                                  "timestamp": self.timestamp, "current_location": "lab",
+                                                                  "rename": ""}))
+        substrate = institute_models.Substrate.objects.latest("pk")
+        self.assertEqual(substrate.created_by_person, self.operator)

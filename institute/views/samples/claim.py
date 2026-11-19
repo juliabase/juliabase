@@ -182,7 +182,8 @@ JuliaBase.
             now = django.utils.timezone.now()
             material, substrate_comments = substrate_form.cleaned_data["material"], substrate_form.cleaned_data["comments"]
             for name in samples_form.cleaned_data["samples"]:
-                substrate = models.Substrate(operator=nobody, timestamp=now, material=material, comments=substrate_comments)
+                substrate = models.Substrate(operator=nobody, timestamp=now, material=material, comments=substrate_comments,
+                                             created_by_person=user)
                 substrate.save()
                 sample = Sample(name=name, current_location="unknown", currently_responsible_person=nobody, topic=legacy)
                 sample.save()
