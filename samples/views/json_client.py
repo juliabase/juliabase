@@ -68,7 +68,7 @@ def add_sample(request):
         topic = request.POST.get("topic")
     except KeyError as error:
         raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
-    if len(name) > 30:
+    if len(name) > models.Sample._meta.get_field("name").max_length:
         raise JSONRequestException(5, "The sample name is too long.")
     name_format = sample_names.sample_name_format(name)
     if name_format is None or \

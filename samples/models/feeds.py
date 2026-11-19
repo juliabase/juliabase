@@ -305,7 +305,7 @@ class FeedDeletedSample(FeedEntry):
     """Model for feed entries for a deleted sample.  Note that in contrast to
     edited samples, this is only one per feed entry.
     """
-    sample_name = models.CharField(_("sample name"), max_length=30)
+    sample_name = models.CharField(_("sample name"), max_length=255)
 
     class Meta(PolymorphicModel.Meta):
         verbose_name = _("deleted sample feed entry")

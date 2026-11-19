@@ -964,7 +964,8 @@ class SearchSamplesForm(forms.Form):
     """Form for searching for samples.  So far, you can only enter a name
     substring for looking for samples.
     """
-    name_pattern = forms.CharField(label=_("Name pattern"), max_length=30, required=False)
+    name_pattern = forms.CharField(label=_("Name pattern"), max_length=models.Sample._meta.get_field("name").max_length,
+                                   required=False)
     aliases = forms.BooleanField(label=_("Include alias names"), required=False)
 
 
@@ -1239,8 +1240,10 @@ def data_matrix_code(request):
 class SampleRenameForm(forms.Form):
     """Form for rename a sample.
     """
-    old_name = forms.CharField(label=capfirst(_("old sample name")), max_length=30, required=True)
-    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30, required=True)
+    old_name = forms.CharField(label=capfirst(_("old sample name")), max_length=models.Sample._meta.get_field("name").max_length,
+                               required=True)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=models.Sample._meta.get_field("name").max_length,
+                               required=True)
     create_alias = forms.BooleanField(label=capfirst(_("keep old name as sample alias name")),
                                       required=False)
 
