@@ -25,7 +25,7 @@ created and who last modified a process, and when.
 import datetime
 import django.forms
 import django.utils.timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.test import override_settings
 from django.test.client import Client
 from samples import models
@@ -203,4 +203,15 @@ class ProcessTrackingTest(TestCase):
                                                                   "timestamp": self.timestamp, "current_location": "lab",
                                                                   "rename": ""}))
         substrate = institute_models.Substrate.objects.latest("pk")
+        self.assertEqual(substrate.created_by_person, self.operator)
+
+    def test_claim_sets_creator_of_substrates(self):
+        reviewer = User.objects.create_user("reviewer", password="12345")
+        reviewer.user_permissions.add(Permission.objects.get(codename="adopt_samples"))
+        self.assert_successful(self.client.post("/claims/r.calvert/add_oldstyle/",
+                                                {"samples": "10Z-001", "material": "asahi-u",
+                                                 "reviewer": str(reviewer.pk)}))
+        claim = models.SampleClaim.objects.latest("pk")
+        self.assertEqual([sample.name for sample in claim.samples.all()], ["10Z-001"])
+        substrate = institute_models.Substrate.objects.get(samples__name="10Z-001")
         self.assertEqual(substrate.created_by_person, self.operator)
