@@ -88,6 +88,7 @@ def new(request, sample_name):
             sample_death = sample_death_form.save(commit=False)
             sample_death.timestamp = django.utils.timezone.now()
             sample_death.operator = request.user
+            sample_death.created_by_person = request.user
             sample_death.save()
             sample_death_form.save_m2m()
             sample_death.samples.set([sample])

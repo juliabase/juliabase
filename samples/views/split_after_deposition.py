@@ -189,7 +189,7 @@ def change_structure(user, original_data_forms, new_name_form_lists):
     return structure_changed
 
 
-def save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition):
+def save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition, user):
     """Performs all splits – if any – and renames the samples according to
     what was input by the user.
 
@@ -197,11 +197,13 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
     :param new_name_form_lists: new names for all pieces
     :param global_new_data_form: the global, overriding settings
     :param deposition: the deposition after which the splits took place
+    :param user: the currently logged-in user
 
     :type original_data_forms: list of `OriginalDataForm`
     :type new_name_form_lists: list of list of `NewNameForm`
     :type global_new_data_form: `GlobalNewDataForm`
     :type deposition: `samples.models.Deposition`
+    :type user: django.contrib.auth.models.User
 
     :return:
       all sample splits that were performed; note that they are always
@@ -226,7 +228,7 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
             sample.save(batch_mode=True)
         if original_data_form.cleaned_data["number_of_pieces"] > 1:
             sample_split = models.SampleSplit(timestamp=deposition.timestamp + datetime.timedelta(seconds=5),
-                                              operator=deposition.operator, parent=sample)
+                                              operator=deposition.operator, parent=sample, created_by_person=user)
             sample_split.save(with_relations=False)
             sample.processes.add(sample_split)
             sample_splits.append(sample_split)
@@ -260,7 +262,7 @@ def save_to_database(original_data_forms, new_name_form_lists, global_new_data_f
             sample.watchers.clear()
 
             death = models.SampleDeath(timestamp=deposition.timestamp + datetime.timedelta(seconds=10),
-                                       operator=deposition.operator, reason="split")
+                                       operator=deposition.operator, reason="split", created_by_person=user)
             death.save(with_relations=False)
             sample.processes.add(death)
         else:
@@ -502,7 +504,8 @@ def split_and_rename_after_deposition(request, deposition_number):
         structure_changed = change_structure(request.user, original_data_forms, new_name_form_lists)
         referentially_valid = is_referentially_valid(original_data_forms, new_name_form_lists, deposition)
         if all_valid and referentially_valid and not structure_changed:
-            sample_splits = save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition)
+            sample_splits = save_to_database(original_data_forms, new_name_form_lists, global_new_data_form, deposition,
+                                             request.user)
             for sample_split in sample_splits:
                 utils.Reporter(request.user).report_sample_split(sample_split, sample_completely_split=True)
             return utils.successful_response(request, _("Samples were successfully split and/or renamed."),
