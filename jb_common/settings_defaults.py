@@ -69,7 +69,8 @@ def get_secret_key_from_file(filepath):
     """
     filepath = os.path.abspath(os.path.expanduser(filepath))
     try:
-        secret_key = open(filepath).read().strip()
+        with open(filepath) as secret_key_file:
+            secret_key = secret_key_file.read().strip()
     except IOError:
         chars = "abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)"
         secret_key = get_random_string(50, chars)
