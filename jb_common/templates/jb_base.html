@@ -48,6 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
   {% compress js %}
   <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}" defer></script>
+  {# htmx 2.0.10, https://htmx.org #}
+  <script type="text/javascript" src="{% static 'vendor/htmx/htmx.min.js' %}" defer></script>
   {% endcompress %}
   {% block external_js %}{% endblock %}
   {% compress js %}
