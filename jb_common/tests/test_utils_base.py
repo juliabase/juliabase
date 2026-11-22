@@ -1,5 +1,8 @@
-from django.test import SimpleTestCase
-from juliabase.jb_common.utils.base import HttpResponseUnauthorized, HttpResponseSeeOther, JSONRequestException, round as jb_round
+import datetime
+from zoneinfo import ZoneInfo
+from django.test import SimpleTestCase, override_settings
+from juliabase.jb_common.utils.base import HttpResponseUnauthorized, HttpResponseSeeOther, JSONRequestException, round as jb_round, \
+    get_local_day_bounds
 
 class UtilsBaseTest(SimpleTestCase):
 
@@ -38,3 +41,15 @@ class UtilsBaseTest(SimpleTestCase):
 
         # Test invalid inputs handled gracefully (implicit None return)
         self.assertIsNone(jb_round("invalid", 2))
+
+    @override_settings(TIME_ZONE="Europe/Berlin")
+    def test_get_local_day_bounds(self):
+        begin, end = get_local_day_bounds("2024-03-30", "2024-03-31")
+        berlin = ZoneInfo("Europe/Berlin")
+        self.assertEqual(begin, datetime.datetime(2024, 3, 30, tzinfo=berlin))
+        self.assertEqual(end, datetime.datetime(2024, 4, 1, tzinfo=berlin))
+        # The switch to summer time on 2024-03-31 is taken into account.
+        self.assertEqual(end.astimezone(datetime.timezone.utc) - begin.astimezone(datetime.timezone.utc),
+                         datetime.timedelta(hours=47))
+        with self.assertRaises(ValueError):
+            get_local_day_bounds("2024-03-30", "31.03.2024")

@@ -43,12 +43,11 @@ from django.db import models
 from django.core.cache import cache
 from jb_common import model_fields
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
-    JSONEncoder
+    JSONEncoder, get_local_day_bounds
 from jb_common.models import Topic, PolymorphicModel, Department, UserDetails
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
-from datetime import datetime as dt, timedelta
 from django.db.models.fields.related import ManyToManyRel
 
 
@@ -802,9 +801,7 @@ class Process(PolymorphicModel, GraphEntity):
         This function is called by the class and is used to fetch all the elements between
         a begin_date and an end_date.
         """
-        begin_date = django.utils.timezone.make_aware(dt.strptime(begin_date, "%Y-%m-%d"))
-        end_date = django.utils.timezone.make_aware(dt.strptime(end_date, "%Y-%m-%d"))
-        end_date += timedelta(days=1)
+        begin, end = get_local_day_bounds(begin_date, end_date)
         # Get all ForeignKey and OneToOneField fields for the model
         related_fields = [
             field.name for field in cls._meta.get_fields()
@@ -840,7 +837,7 @@ class Process(PolymorphicModel, GraphEntity):
         if "responsible_person" in related_fields:
             nested_relations.append("responsible_person__user")
 
-        queryset = cls.objects.filter(timestamp__range=(begin_date, end_date))\
+        queryset = cls.objects.filter(timestamp__gte=begin, timestamp__lt=end)\
                                 .select_related(*related_fields, *nested_relations)\
                                 .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
 
