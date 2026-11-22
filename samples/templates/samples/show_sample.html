@@ -41,10 +41,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     {% if sample_start %}
       {% spaceless %}<div class="page-header"><h1>{% translate 'Sample “' %}{{ sample.sample }}{% translate '”' %}<span class="aliases">
       {% for alias in sample.sample.aliases.all %}
-        alias <strong>{{ alias }}</strong> {% endfor %}</span>{% block sample_icons %}{% if sample.can_edit %}<a class="edit-icon"
+        alias <strong>{{ alias }}</strong> {% endfor %}</span>{% block sample_icons %}{% if sample.can_edit %}{% block sample_edit_icon %}<a class="edit-icon"
            href="{% url 'samples:edit_sample' sample_name=sample.sample.name %}?next={{ sample.sample.get_absolute_url|urlquote_plus }}"
                           ><img src="{% static 'juliabase/icons/pencil.png' %}" alt="edit icon" title="{% translate 'edit' %}"
-                                width="16" height="16"/></a>
+                                width="16" height="16"/></a>{% endblock sample_edit_icon %}
         {% if sample.id_for_rename and not sample.sample.is_dead and not sample.can_rename_sample %}<a class="edit-icon"
            href="{% url 'samples:bulk_rename' %}?ids={{ sample.id_for_rename }}&amp;next={{ sample.sample.get_absolute_url|urlquote_plus }}"
     ><img src="{% static 'juliabase/icons/tag_blue.png' %}" alt="give-name icon" title="{% translate 'give name' %}"
