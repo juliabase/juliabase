@@ -67,7 +67,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             This process was applied to the following samples:  <!-- To please compilemessages: {{ link }} {{ name }} -->
           {% endblocktranslate %}
           {% if not samples|length == 1 %}
-            <form method="post" action="{% url 'iek5:add_to_my_samples' %}?next={{ request.get_full_path }}">
+            {# Only institutes with this view, e.g. Chantal's “iek5”, offer adding the samples to “My Samples”. #}
+            {% url 'iek5:add_to_my_samples' as add_to_my_samples_url %}
+            {% if add_to_my_samples_url %}
+            <form method="post" action="{{ add_to_my_samples_url }}?next={{ request.get_full_path }}">
               {% csrf_token %}
               <ul>
 
@@ -107,6 +110,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
               </ul>
               <button type="submit"> {% translate 'Add to my samples' %} </button>
             </form>
+            {% else %}
+              <ul>
+                {% for sample in samples %}
+                  <li><a href="{{ sample.get_absolute_url }}">{{ sample }}</a></li>
+                {% endfor %}
+              </ul>
+            {% endif %}
           {% endif %}
         {% endif %}
         {% if sample_series %}
