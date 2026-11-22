@@ -1,0 +1,36 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of JuliaBase, see http://www.juliabase.org.
+Copyright © 2008–2026 Forschungszentrum Jülich GmbH, Jülich, Germany
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% comment %}
+Heading of a process on the sample data sheet.  `process` is the heading
+context of `samples.views.sample.SamplesAndProcesses`; `sample` is the sample
+context of the data sheet.  The edit icons are filled in when the process body
+is loaded, see `samples/process_details.html`.
+{% endcomment %}
+{% load i18n samples_extras %}
+<h2 class="process-heading">{% spaceless %}
+  <span class="process-name">{{ process.name }}</span>
+  {% include "samples/process_icons.html" %}
+  {% if not process.process.finished %}<span class="process-not-finished">{% translate "(not finished)" %}</span>{% endif %}
+{% endspaceless %}</h2>
+<p class="operator_and_timestamp">
+  {% if process.operator|should_show %}
+    {% if sample.clearance %}{{ process.operator|get_safe_operator_name }}{% else %}{{ process.operator|get_really_full_name }}{% endif %},
+  {% endif %}
+  {{ process|timestamp }}
+</p>
