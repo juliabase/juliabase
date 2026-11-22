@@ -130,6 +130,8 @@ MIDDLEWARE = [
     "jb_common.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Every view requires a login unless it is marked with `login_not_required`.
+    "jb_common.middleware.LoginRequiredMiddleware",
     "jb_common.middleware.LoggingMiddleware",
     "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",

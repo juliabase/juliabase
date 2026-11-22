@@ -33,8 +33,7 @@ import jb_common.utils.base as utils
 
 
 def statistics(request):
-    """View for various internal server statistics and plots.  Note that you
-    needn't be logged in for accessing this.
+    """View for various internal server statistics and plots.
 
     :param request: the current HTTP Request object
 
@@ -58,8 +57,6 @@ def about(request):
     """The “about” view.  It displays general superficial information about
     JuliaBase.  This view is more or less static – it shows only the components
     of JuliaBase and versioning information.
-
-    Note that you needn't be logged in for accessing this.
 
     :param request: the current HTTP Request object
 
