@@ -5,6 +5,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('samples', '0012_alter_feeddeletedsample_sample_name_and_more'),
         ('samples', '0014_merge_20261108_1825'),
     ]
 
