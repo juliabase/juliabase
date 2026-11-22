@@ -30,6 +30,7 @@ import rdflib
 from frozendict import frozendict
 from samples import ontology_symbols
 from collections import defaultdict
+from django.conf import settings
 import django.contrib.auth.models
 from django.contrib.sites.models import Site
 from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language

@@ -401,11 +401,32 @@ def send_email(subject, content, recipients, format_dict=None):
     translation.activate(current_language)
 
 
+def _is_preferred_to_html(request, media_types):
+    """Tests whether the client prefers one of the given media types to HTML.
+    If they are equally acceptable, e.g. for “*/*”, HTML wins.
+
+    :param request: the current HTTP Request object
+    :param media_types: the media types that are compared with HTML
+
+    :type request: HttpRequest
+    :type media_types: iterable of str
+
+    :return:
+      whether one of the media types is preferred to HTML
+
+    :rtype: bool
+    """
+    accept = request.META.get("HTTP_ACCEPT", "text/html")
+    html_quality = max(mimeparse.quality(media_type, accept) for media_type in ("text/html", "application/xhtml+xml"))
+    return max(mimeparse.quality(media_type, accept) for media_type in media_types) > html_quality
+
+
 def is_rdf_requested(request):
     """Tests whether the current request should be answered in RDF format instead
     of HTML.  Typically this means that the request was made by other JuliaBase
     or ELN instances.  Currently, only the serialisation formats “turtle” and
-    “xml” are recognised.
+    “xml” are recognised.  RDF is only available if the setting
+    ``GRAPH_NAMESPACE_PREFIX`` is set.
 
     :param request: the current HTTP Request object
 
@@ -416,14 +437,14 @@ def is_rdf_requested(request):
 
     :rtype: bool
     """
-    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/rdf+xml", "text/turtle"},
-                                               request.META.get("HTTP_ACCEPT", "text/html"))
-    return requested_mime_type in {"application/rdf+xml", "text/turtle"}
+    return bool(getattr(settings, "GRAPH_NAMESPACE_PREFIX", None)) and \
+        _is_preferred_to_html(request, ("application/rdf+xml", "text/turtle"))
 
 
 def is_ro_crate_requested(request):
     """Tests whether the current request should be answered in RO-Crate format
-    instead of HTML.
+    instead of HTML.  Like RDF, RO-Crate is only available if the setting
+    ``GRAPH_NAMESPACE_PREFIX`` is set.
 
     :param request: the current HTTP Request object
 
@@ -434,9 +455,8 @@ def is_ro_crate_requested(request):
 
     :rtype: bool
     """
-    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/vnd.eln+zip"},
-                                               request.META.get("HTTP_ACCEPT", "text/html"))
-    return requested_mime_type == "application/vnd.eln+zip"
+    return bool(getattr(settings, "GRAPH_NAMESPACE_PREFIX", None)) and \
+        _is_preferred_to_html(request, ("application/vnd.eln+zip",))
 
 
 def is_json_requested(request):
