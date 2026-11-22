@@ -4336,6 +4336,18 @@ msgstr ""
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
 
+#: samples/templates/samples/operator_and_timestamp.html
+msgid "Operator:"
+msgstr "Operateur:"
+
+#: samples/templates/samples/operator_and_timestamp.html
+msgid "Created by:"
+msgstr "Erstellt von:"
+
+#: samples/templates/samples/operator_and_timestamp.html
+msgid "Edited by:"
+msgstr "Bearbeitet von:"
+
 #: samples/templates/samples/show_sample.html
 msgid "Collapse All"
 msgstr "Alle ausblenden"

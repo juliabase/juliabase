@@ -1,0 +1,49 @@
+{# -*- indent-tabs-mode: nil -*- #}
+{% comment %}
+This file is part of JuliaBase, see http://www.juliabase.org.
+Copyright © 2008–2026 Forschungszentrum Jülich GmbH, Jülich, Germany
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% comment %}
+Who operated a process and when, and below, if known, who entered it into the
+database and who edited it last.  `process` is the process instance
+(`samples.models.Process`); `clearance` is the clearance that was used to show
+the sample, if any.  With a clearance, confidential external operators are
+hidden.
+{% endcomment %}
+{% load i18n samples_extras %}
+<p class="operator_and_timestamp">
+  {% with operator=process.external_operator|default:process.operator %}
+    {% if operator|should_show %}
+      {% translate "Operator:" %}
+      {% if clearance %}{{ operator|get_safe_operator_name }}{% else %}{{ operator|get_really_full_name }}{% endif %},
+    {% endif %}
+  {% endwith %}
+  {{ process|timestamp }}
+  {% if process.created_by_person %}
+    <br><small class="process-creator">
+      {% translate "Created by:" %}
+      {{ process.created_by_person|get_really_full_name }}{% if process.created %},
+      {{ process.created|date:"Y-m-d H:i:s" }}{% endif %}
+    </small>
+  {% endif %}
+  {% if process.last_modified_by_person %}
+    <br><small class="process-last-modifier">
+      {% translate "Edited by:" %}
+      {{ process.last_modified_by_person|get_really_full_name }},
+      {{ process.last_modified|date:"Y-m-d H:i:s" }}
+    </small>
+  {% endif %}
+</p>

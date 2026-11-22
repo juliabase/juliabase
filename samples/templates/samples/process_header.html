@@ -28,9 +28,4 @@ is loaded, see `samples/process_details.html`.
   {% include "samples/process_icons.html" %}
   {% if not process.process.finished %}<span class="process-not-finished">{% translate "(not finished)" %}</span>{% endif %}
 {% endspaceless %}</h2>
-<p class="operator_and_timestamp">
-  {% if process.operator|should_show %}
-    {% if sample.clearance %}{{ process.operator|get_safe_operator_name }}{% else %}{{ process.operator|get_really_full_name }}{% endif %},
-  {% endif %}
-  {{ process|timestamp }}
-</p>
+{% include "samples/operator_and_timestamp.html" with process=process.process clearance=sample.clearance %}
