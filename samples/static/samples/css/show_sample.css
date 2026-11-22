@@ -1,3 +1,52 @@
 .align-right {
     text-align: right;
 }
+
+.toggle-all-processes {
+    margin-bottom: 1ex;
+}
+
+details.process {
+    clear: both;
+}
+
+details.process > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+details.process > summary::-webkit-details-marker {
+    display: none;
+}
+
+details.process > summary::after {
+    clear: both;
+    content: "";
+    display: block;
+}
+
+details.process > summary .process-heading {
+    float: left;
+}
+
+details.process > summary .process-name::before {
+    content: "▸ ";
+}
+
+details.process[open] > summary .process-name::before {
+    content: "▾ ";
+}
+
+details.process > summary .operator_and_timestamp {
+    margin-top: 3.6ex;
+}
+
+.process-not-finished {
+    color: red;
+    font-size: small;
+    margin-left: 2em;
+}
+
+.process-body.process-unfinished {
+    color: gray;
+}

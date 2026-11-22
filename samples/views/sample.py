@@ -31,7 +31,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
 import django.forms as forms
@@ -579,6 +578,7 @@ class SamplesAndProcesses:
         """
         self.user = user
         self.user_details = user.samples_user_details
+        self.folded_process_class_ids = set(self.user_details.default_folded_process_classes.values_list("id", flat=True))
         sample = self.sample_context["sample"]
         self.is_my_sample = self.user.my_samples.filter(id__exact=sample.id).exists()
         self.is_my_sample_form = IsMySampleForm(
@@ -605,6 +605,33 @@ class SamplesAndProcesses:
         if permissions.has_permission_to_rename_sample(self.user, sample):
             self.sample_context["id_for_rename"] = str(sample.pk)
             self.sample_context["can_rename_sample"] = True
+
+    def get_process_heading_context(self, process):
+        """Returns the context of a process heading on the data sheet.  Its
+        keys are a subset of those of a full process context (see
+        `samples.models.Process.get_context_for_user`), so that templates can
+        use both.  The process body is not part of it; it is loaded separately,
+        see `samples.views.process_context.process_details`.
+
+        :param process: a process of `processes`
+
+        :type process: `samples.models.Process`
+
+        :return:
+          the heading context with the keys ``process``, ``name``,
+          ``operator``, ``timestamp``, ``timestamp_inaccuracy``, and
+          ``is_folded`` (whether the process is collapsed initially)
+
+        :rtype: dict mapping str to ``object``
+        """
+        instance = process.actual_instance
+        name = instance.title if isinstance(instance, models.Result) else str(instance._meta.verbose_name)
+        return {"process": process,
+                "name": capfirst(name),
+                "operator": process.operator,
+                "timestamp": process.timestamp,
+                "timestamp_inaccuracy": process.timestamp_inaccuracy,
+                "is_folded": process.content_type_id in self.folded_process_class_ids}
 
     def __iter__(self):
         """Returns an iterator over all samples and processes.  It is used in
@@ -634,12 +661,7 @@ class SamplesAndProcesses:
         """
         if self.processes:
             for i, entry in enumerate(self.processes):
-                process = entry.process
-                process_context = {"id": process.id,
-                                   "title": process.actual_instance._meta.verbose_name,
-                                   "timestamp": process.timestamp,
-                                   "operator": process.operator}
-                yield i == 0, self.sample_context, process_context
+                yield i == 0, self.sample_context, self.get_process_heading_context(entry.process)
         else:
             yield True, self.sample_context, None
         for process_list in self.process_lists:
@@ -684,21 +706,6 @@ class SamplesAndProcesses:
             added.update(added_)
             removed.update(removed_)
         return added, removed
-
-    def get_all_process_ids(self):
-        """Returns all process IDs of this sample.  When child samples are
-        shown on the sample's data sheet, too, also their process IDs are
-        included.
-
-        :return:
-          all process ids of the sample data sheet
-
-        :rtype: set of int
-        """
-        all_process_ids = {entry.process.id for entry in self.processes}
-        for process_list in self.process_lists:
-            all_process_ids.update(process_list.get_all_process_ids())
-        return all_process_ids
 
 
 def collect_raw_files(sample):
@@ -867,7 +874,6 @@ def show(request, sample_name):
             return respond_as_ro_crate(graph, collect_raw_files(sample))
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
-    sample_id = samples_and_processes.sample_context["sample"].id
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
                    "samples_and_processes": samples_and_processes})
@@ -1344,21 +1350,6 @@ def rename_sample(request):
         sample_rename_form = SampleRenameForm(request.user, initial={"old_name": sample.name if sample else ""})
     title = capfirst(_("rename sample")) + " “{sample}”".format(sample=sample) if sample else ""
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
-
-
-@login_required
-@never_cache
-@require_http_methods(["GET"])
-def get_folded_processes(request, sample_id):
-    """
-    Function that gets the folded processes for the current user.
-    There is a similar function in json_client.py but I do not use it since
-    I do not have the process ids in the request.
-    """
-    user_detail = models.UserDetails.objects.get(user=request.user)
-    cts = user_detail.default_folded_process_classes.all()
-    process_names = [str(process.name).lower() for process in cts]
-    return respond_in_json(process_names)
 
 
 _ = gettext

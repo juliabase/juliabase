@@ -25,9 +25,10 @@ The rule under test: a user may load a process body exactly if this process is
 shown to them on the data sheet of the given sample.
 """
 
-import datetime
+import datetime, re
 import django.utils.timezone
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.test import override_settings
 from django.test.client import Client
 from django.urls import reverse
@@ -77,6 +78,15 @@ def visible_process_ids(response):
     return [entry.process.id for entry in response.context["samples_and_processes"].processes]
 
 
+def process_element(content, process, sample):
+    """Returns the opening tag of the ``<details>`` element of a process on a
+    sample data sheet.
+    """
+    match = re.search(r'<details class="process"[^>]*' + re.escape(details_url(process, sample)) + r'[^>]*>', content)
+    assert match, "process not found on the data sheet"
+    return match.group(0)
+
+
 @override_settings(ROOT_URLCONF="institute.tests.urls")
 class ProcessDetailsTest(TestCase):
     fixtures = ["test_main"]
@@ -121,7 +131,36 @@ class ProcessDetailsTest(TestCase):
         self.client.force_login(self.owner)
         response = self.client.get(details_url(self.substrate, self.sample))
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"secret substrate comment", response.content)
+        self.assertIn("no-cache", response["Cache-Control"])
+        content = response.content.decode()
+        self.assertIn("secret substrate comment", content)
+        self.assertNotIn("<html", content)
+        # The edit icons replace the placeholder icons in the process heading.
+        self.assertIn(f'id="process-icons-{self.substrate.pk}" hx-swap-oob="true"', content)
+
+    def test_sample_page_lists_process_headings(self):
+        """The data sheet lists the process headings, but not the separately
+        loaded bodies.
+        """
+        self.client.force_login(self.owner)
+        response = self.client.get(sample_url(self.sample))
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+        self.assertIn('<span class="process-name">Substrate</span>', content)
+        self.assertNotIn("(not finished)", content)
+        self.assertNotIn("secret substrate comment", content)
+        self.assertNotIn(details_url(self.other_substrate, self.sample), content)
+        element = process_element(content, self.substrate, self.sample)
+        self.assertIn(" open", element)
+        self.assertIn('hx-trigger="load"', element)
+
+    def test_folded_process_is_loaded_on_first_expansion(self):
+        self.owner.samples_user_details.default_folded_process_classes.add(ContentType.objects.get_for_model(Substrate))
+        self.client.force_login(self.owner)
+        content = self.client.get(sample_url(self.sample)).content.decode()
+        element = process_element(content, self.substrate, self.sample)
+        self.assertNotIn(" open", element)
+        self.assertIn('hx-trigger="toggle once"', element)
 
     def test_clearance_user_sees_only_cleared_processes(self):
         cleared_substrate = create_substrate(self.sample, self.owner, 2, comments="cleared")
@@ -132,6 +171,9 @@ class ProcessDetailsTest(TestCase):
         page_response = self.client.get(sample_url(self.sample))
         self.assertEqual(page_response.status_code, 200)
         self.assertEqual(visible_process_ids(page_response), [cleared_substrate.id])
+        page_content = page_response.content.decode()
+        self.assertIn(details_url(cleared_substrate, self.sample), page_content)
+        self.assertNotIn(details_url(self.substrate, self.sample), page_content)
 
         cleared_response = self.client.get(details_url(cleared_substrate, self.sample))
         self.assertEqual(cleared_response.status_code, 200)
