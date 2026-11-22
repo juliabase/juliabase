@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import codecs, re, os, os.path, time, datetime, copy, mimetypes, string, hashlib, urllib
+import re, os, os.path, time, datetime, copy, mimetypes, string, hashlib, urllib
 from io import BytesIO
 from contextlib import contextmanager
 from functools import wraps
@@ -101,9 +101,10 @@ class JSONRequestException(Exception):
 
 
 entities = {}
-for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
-    if line.strip() and not line.startswith("#"):
-        entities[line[:12].rstrip()] = line[12]
+with open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8") as entity_file:
+    for line in entity_file:
+        if line.strip() and not line.startswith("#"):
+            entities[line[:12].rstrip()] = line[12]
 entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
 
 def substitute_html_entities(text):
