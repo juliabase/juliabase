@@ -285,6 +285,74 @@ def get_allowed_processes(user, sample):
     return sample_processes, general_processes
 
 
+def collect_external_processes(sample):
+    """Fetches the processes of a sample from its external graphs, see
+    `samples.models.Sample.external_graph_urls`.
+
+    FixMe: This function is currently not called.  Its processes have not been
+    shown on the data sheet of the sample since the process bodies are loaded
+    separately by the browser, see
+    `samples.views.process_context.process_details`: such a process is not in
+    the database, so it cannot be loaded separately.  Besides, every call
+    fetches all external graphs synchronously, without timeout.  The plan is to
+    get rid of `samples.models.ExternalData` anyway, see “Graph TODO.org”.
+
+    :param sample: the sample whose external processes should be fetched
+
+    :type sample: `samples.models.Sample`
+
+    :return:
+      the external processes of the sample, sorted by timestamp; they are not
+      saved to the database
+
+    :rtype: list of `samples.models.ExternalData`
+    """
+    all_processes = []
+    for external_graph_url in sample.external_graph_urls:
+        url_request = urllib.request.urlopen(
+            urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
+        external_data = rdflib.Graph()
+        external_data.parse(data=url_request.read().decode(), format="n3")
+        for title, timestamp, uri in external_data.query("""
+            SELECT ?title ?timestamp ?uri
+            {
+             ?uri a <http://scimesh.org/SciMesh/Process> .
+             ?uri rdfs:label ?title .
+             ?uri <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
+            }
+        """):
+            process = models.ExternalData(pk=0, title=str(title).rpartition("/")[2], uri=uri,
+                                          operator=django.contrib.auth.models.User.objects.get(username="nobody"),
+                                          timestamp=timestamp.toPython())
+            already_seen_uris = set()
+            def collect_properties(subject):
+                if subject in already_seen_uris:
+                    return {"ERROR", "loop in graph"}
+                already_seen_uris.add(subject)
+                result = {}
+                for key, value in external_data.query(f"""
+                SELECT ?key ?value
+                {{
+                 <{subject}> ?key ?value .
+                }}
+                """):
+                    key = str(key)
+                    if key not in {"http://scimesh.org/SciMesh/cause", "http://scimesh.org/SciMesh/timestamp",
+                                   "http://www.w3.org/2000/01/rdf-schema#label"}:
+                        key = key.rpartition("/")[2].rpartition("#")[2]
+                        key = camel_case_to_human_text(key).replace("_", " ")
+                        if isinstance(value, rdflib.term.URIRef):
+                            subproperties = collect_properties(value)
+                        else:
+                            subproperties = {}
+                        result[key] = subproperties or value
+                return result
+            process.keys_and_values = collect_properties(uri)
+            all_processes.append(process)
+    all_processes.sort(key=lambda process: process.timestamp)
+    return all_processes
+
+
 class SamplesAndProcesses:
     """This is a container data structure for holding (almost) all data for
     the “show sample” template.  It represents one sample.  By nesting it,
@@ -416,50 +484,6 @@ class SamplesAndProcesses:
 
             if local_context["cutoff_timestamp"]:
                 processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
-            all_processes = []
-            for external_graph_url in sample.external_graph_urls:
-                url_request = urllib.request.urlopen(
-                    urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
-                external_data = rdflib.Graph()
-                external_data.parse(data=url_request.read().decode(), format="n3")
-                for title, timestamp, uri in external_data.query("""
-                    SELECT ?title ?timestamp ?uri
-                    {
-                     ?uri a <http://scimesh.org/SciMesh/Process> .
-                     ?uri rdfs:label ?title .
-                     ?uri <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
-                    }
-                """):
-                    process = models.ExternalData(pk=0, title=str(title).rpartition("/")[2], uri=uri,
-                                                  operator=django.contrib.auth.models.User.objects.get(username="nobody"),
-                                                  timestamp=timestamp.toPython())
-                    already_seen_uris = set()
-                    def collect_properties(subject):
-                        if subject in already_seen_uris:
-                            return {"ERROR", "loop in graph"}
-                        already_seen_uris.add(subject)
-                        result = {}
-                        for key, value in external_data.query(f"""
-                        SELECT ?key ?value
-                        {{
-                         <{subject}> ?key ?value .
-                        }}
-                        """):
-                            key = str(key)
-                            if key not in {"http://scimesh.org/SciMesh/cause", "http://scimesh.org/SciMesh/timestamp",
-                                           "http://www.w3.org/2000/01/rdf-schema#label"}:
-                                key = key.rpartition("/")[2].rpartition("#")[2]
-                                key = camel_case_to_human_text(key).replace("_", " ")
-                                if isinstance(value, rdflib.term.URIRef):
-                                    subproperties = collect_properties(value)
-                                else:
-                                    subproperties = {}
-                                result[key] = subproperties or value
-                        return result
-                    process.keys_and_values = collect_properties(uri)
-                    all_processes.append(process)
-            all_processes.extend(processes)
-            all_processes.sort(key=lambda process: process.timestamp)
             nobody = django.contrib.auth.models.User.objects.get(username='nobody')
             self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
 
