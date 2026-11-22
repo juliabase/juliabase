@@ -23,6 +23,7 @@ from smtplib import SMTPException
 from functools import update_wrapper
 from pathlib import Path
 import django.http
+import django.utils.timezone
 import django.contrib.auth.models
 import django.urls
 from django.core.cache import cache
@@ -557,6 +558,27 @@ def getmtime_utc(path):
     :rtype: datetime.datetime
     """
     return datetime.datetime.fromtimestamp(path.stat().st_mtime, datetime.timezone.utc)
+
+
+def get_local_day_bounds(begin_date, end_date):
+    """Returns the timezone-aware bounds of the days from ``begin_date`` to
+    ``end_date`` (both included) in the current time zone.  Filter with
+    ``timestamp__gte=begin`` and ``timestamp__lt=end``, because the upper
+    bound is midnight after ``end_date`` and therefore exclusive.
+
+    :param str begin_date: first day in the format ``YYYY-MM-DD``
+    :param str end_date: last day in the format ``YYYY-MM-DD``
+
+    :return:
+      midnight at the start of ``begin_date``, midnight after ``end_date``
+
+    :rtype: tuple[datetime.datetime, datetime.datetime]
+
+    :raises ValueError: if a date is not in the format ``YYYY-MM-DD``
+    """
+    begin = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
+    end = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+    return django.utils.timezone.make_aware(begin), django.utils.timezone.make_aware(end)
 
 
 def get_file_timestamps(paths):
