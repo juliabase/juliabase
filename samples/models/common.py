@@ -1688,8 +1688,11 @@ class SampleSplit(Process):
         except KeyError:
             context["parent"] = None
             context["resplit_url"] = None
-        context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number":self.pk})
-
+        try:
+            # Only institutes with a run sheet export, e.g. Chantal's “iek5”, have this URL.
+            context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number": self.pk})
+        except django.urls.NoReverseMatch:
+            context["export_url"] = None
 
         return super().get_context_for_user(user, context)
 
