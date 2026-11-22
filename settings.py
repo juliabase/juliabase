@@ -84,10 +84,6 @@ MEDIA_URL = "/media/"
 # "http://example.com/static/"
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static'),
-]
-
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
