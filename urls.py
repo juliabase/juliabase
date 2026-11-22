@@ -33,8 +33,21 @@ apps.
 from django.urls import include, re_path
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.decorators import login_not_required
 from django.conf.urls.static import static
+from django.views.static import serve
 import oai_pmh.urls, institute.urls, jb_common.urls, samples.urls
+
+
+@login_not_required
+def serve_static_file(request, path, document_root=None):
+    """Serves a static file with ``DEBUG``; the login page needs them.
+
+    This wrapper carries the ``login_not_required`` flag.  Putting it on
+    ``serve`` itself would make every other view using ``serve`` public, too,
+    e.g. for uploaded media files.
+    """
+    return serve(request, path, document_root)
 
 
 urlpatterns = [
@@ -46,4 +59,5 @@ urlpatterns = [
     re_path(r"^admin/", admin.site.urls),
 ]
 
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# Only active with DEBUG.
+urlpatterns += static(settings.STATIC_URL, view=serve_static_file, document_root=settings.STATIC_ROOT)

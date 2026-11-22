@@ -32,6 +32,7 @@ from django.conf import settings
 from django.views.decorators.cache import cache_page
 from django.views.i18n import JavaScriptCatalog
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.decorators import login_not_required
 from jb_common.views import (
     CustomLoginView,
     CustomLogoutView,
@@ -48,7 +49,9 @@ jb_common_patterns = ([
     re_path(r"^switch_language$", switch_language, name="switch_language"),
     re_path(r"^error_pages/(?P<hash_value>.+)", show_error_page, name="show_error_page"),
 
-    re_path(r"^jsi18n/$", cache_page(3600)(JavaScriptCatalog.as_view(packages=settings.JAVASCRIPT_I18N_APPS)), name="jsi18n"),
+    # The login page needs the JavaScript catalog, too.
+    re_path(r"^jsi18n/$", login_not_required(cache_page(3600)(JavaScriptCatalog.as_view(packages=settings.JAVASCRIPT_I18N_APPS))),
+            name="jsi18n"),
 ], "jb_common")
 
 # Unfortunately, the ``PasswordChangeView`` view expects the
