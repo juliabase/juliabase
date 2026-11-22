@@ -1,7 +1,11 @@
-from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
+from django.views.decorators.http import require_http_methods
+from samples import permissions
 from samples.utils.views import digest_process
-from samples.models import Process, Sample
+from samples.models import Sample
+from samples.views.sample import find_sample_process, is_process_cleared
 from django.core.serializers.json import DjangoJSONEncoder
 from samples.templatetags.samples_extras import get_safe_operator_name, timestamp, get_really_full_name
 
@@ -50,17 +54,38 @@ class SafeJSONEncoder(DjangoJSONEncoder):
 
 
 
+@login_required
+@require_http_methods(["GET"])
 def process_details(request, process_id, sample_id):
-    process = get_object_or_404(Process, pk=process_id)
-    if process.actual_instance._meta.verbose_name == "sample split":
-        sample = get_object_or_404(Sample, pk=sample_id)
-        local_context = {"sample": sample,
-                        "original_sample": sample,
-                        "latest_descendant": None,
-                        "cutoff_timestamp": None}
-        process_context = digest_process(process, request.user, local_context).copy()  # however you currently build it
-    else:
-        process_context = digest_process(process, request.user).copy()  # however you currently build it
+    """Returns the body of a process as shown on the data sheet of a sample.
+    The user may load it exactly if the process is shown to them on the data
+    sheet of this sample.
+
+    :param request: the current HTTP Request object
+    :param process_id: the ID of the process
+    :param sample_id: the ID of the sample whose data sheet shows the process
+
+    :type request: HttpRequest
+    :type process_id: str
+    :type sample_id: str
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+
+    :raises Http404: if the sample does not exist or if the process is not
+        shown on its data sheet
+    :raises samples.permissions.PermissionError: if the user is not allowed to
+        view the sample
+    """
+    sample = get_object_or_404(Sample, pk=int(sample_id))
+    clearance = permissions.get_sample_clearance(request.user, sample)
+    entry = find_sample_process(sample, int(process_id))
+    if entry is None or not is_process_cleared(request.user, clearance, entry.process):
+        raise Http404("The process is not shown on the data sheet of this sample.")
+    process = entry.process
+    process_context = digest_process(process, request.user, entry.local_context).copy()
     # Add pre-rendered values
     process_context["operator_safe"] = get_safe_operator_name(process_context["operator"])
     process_context["operator_full_name"] = get_really_full_name(process_context["operator"])

@@ -19,7 +19,7 @@
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-import hashlib, time, urllib, json
+import dataclasses, hashlib, time, urllib, json
 from io import BytesIO
 from urllib.parse import quote_plus
 from pathlib import Path
@@ -35,8 +35,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
 import django.forms as forms
-from django.core.cache import cache
-from django.db.models import Q, Count
+from django.db.models import Q, Count, QuerySet
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy as _, gettext, ngettext
@@ -46,7 +45,7 @@ from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_rdf_requested, \
-    is_json_requested, respond_in_json, is_ro_crate_requested, get_all_models, mkdirs, cache_key_locked, \
+    is_json_requested, respond_in_json, is_ro_crate_requested, get_all_models, mkdirs, \
     int_or_zero, help_link, camel_case_to_human_text
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree, ontology_symbols
@@ -353,6 +352,144 @@ def collect_external_processes(sample):
     return all_processes
 
 
+@dataclasses.dataclass(frozen=True)
+class SampleProcessEntry:
+    """A process on the data sheet of a sample, together with its position in
+    the sample's ancestry.
+
+    Attributes:
+        process: the process (a `samples.models.Process`, not necessarily the
+            actual instance)
+        local_context: the keys ``sample`` (the sample the process belongs to,
+            i.e. the shown sample or one of its ancestors), ``original_sample``
+            (the shown sample), ``latest_descendant`` (the child of ``sample``
+            on the way down to ``original_sample``, or ``None``), and
+            ``cutoff_timestamp`` (the timestamp of that split, or ``None``).
+            Sample splits are rendered depending on it, see
+            `samples.models.SampleSplit.get_cache_key`.
+    """
+    process: models.Process
+    local_context: dict
+
+
+def _get_sample_ancestry_contexts(sample: models.Sample) -> list[dict]:
+    """Returns the local contexts of a sample and its ancestors, see
+    `SampleProcessEntry`, the oldest ancestor first.
+    """
+    local_context = {"sample": sample, "original_sample": sample, "latest_descendant": None, "cutoff_timestamp": None}
+    local_contexts = [local_context]
+    while split := local_context["sample"].split_origin:
+        local_context = {**local_context, "sample": split.parent, "latest_descendant": local_context["sample"],
+                         "cutoff_timestamp": split.timestamp}
+        local_contexts.append(local_context)
+    return local_contexts[::-1]
+
+
+def _get_processes_of_ancestry_level(local_context: dict) -> QuerySet:
+    """Returns the processes shown on a data sheet for one sample of the
+    ancestry: its own processes and its sample series results, up to the
+    cutoff timestamp.
+    """
+    current_sample = local_context["sample"]
+    # SQLite does not accept the implicit ordering of Process in the
+    # subqueries of the “union”.
+    ids_from_direct = models.Process.objects.filter(samples=current_sample).values_list("id", flat=True).order_by()
+    ids_from_series = models.Process.objects.filter(result__sample_series__samples=current_sample). \
+        values_list("id", flat=True).order_by()
+    processes = models.Process.objects.filter(id__in=ids_from_direct.union(ids_from_series))
+    if local_context["cutoff_timestamp"]:
+        processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
+    return processes
+
+
+def collect_sample_processes(sample: models.Sample) -> list[SampleProcessEntry]:
+    """Collects all processes shown on the data sheet of a sample, in the order
+    in which they are shown.  These are the processes of the sample itself, of
+    its sample series results, and of its ancestors up to the respective split.
+
+    The result does not depend on the user.  Apply `is_process_cleared` to
+    every entry for a user who can see the sample only due to a clearance.
+
+    Args:
+        sample: the sample whose data sheet is shown
+
+    Returns:
+        The processes of the oldest ancestor first, each with its local
+        context.
+    """
+    entries = []
+    for local_context in _get_sample_ancestry_contexts(sample):
+        processes = _get_processes_of_ancestry_level(local_context). \
+            select_related("content_type", "operator__jb_user_details__department", "created_by_person",
+                           "last_modified_by_person").prefetch_related("actual_instance")
+        entries.extend(SampleProcessEntry(process, local_context) for process in processes)
+    return entries
+
+
+def find_sample_process(sample: models.Sample, process_id: int) -> SampleProcessEntry | None:
+    """Finds a process on the data sheet of a sample.  This is equivalent to
+    searching the result of `collect_sample_processes`, but needs only one
+    query per ancestor.
+
+    Args:
+        sample: the sample whose data sheet is shown
+        process_id: the ID of the process
+
+    Returns:
+        the process with its local context, or ``None`` if the process is not
+        shown on the data sheet of the sample
+    """
+    for local_context in _get_sample_ancestry_contexts(sample):
+        process = _get_processes_of_ancestry_level(local_context).filter(id=process_id). \
+            select_related("content_type", "operator").first()
+        if process:
+            return SampleProcessEntry(process, local_context)
+    return None
+
+
+def is_process_cleared(user: django.contrib.auth.models.User, clearance: models.Clearance | None,
+                       process: models.Process) -> bool:
+    """Returns whether the user may see a process on a sample data sheet.  If
+    the user sees the sample only due to a clearance, they see only those
+    processes which they operated or which they are allowed to view anyway
+    (e.g. because the clearance contains them).
+
+    Args:
+        user: the currently logged-in user
+        clearance: the clearance that was used to show the sample, or ``None``
+            if no clearance was necessary
+        process: a process from `collect_sample_processes`
+
+    Returns:
+        whether the process is shown to the user
+    """
+    if not clearance:
+        return True
+    return process.operator == user or \
+        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
+        permissions.has_permission_to_view_physical_process(user, process)
+
+
+def collect_visible_sample_processes(sample: models.Sample, user: django.contrib.auth.models.User,
+                                     clearance: models.Clearance | None) -> list[SampleProcessEntry]:
+    """Collects all processes shown to the user on the data sheet of a sample.
+    This is the single source for both the data sheet and the process
+    fragments loaded from it (via `find_sample_process` and
+    `is_process_cleared`), see `samples.views.process_context.process_details`.
+    Do not cache the result together with user-independent data.
+
+    Args:
+        sample: the sample whose data sheet is shown
+        user: the currently logged-in user
+        clearance: the clearance that was used to show the sample, or ``None``
+            if no clearance was necessary
+
+    Returns:
+        the processes visible to the user, see `collect_sample_processes`
+    """
+    return [entry for entry in collect_sample_processes(sample) if is_process_cleared(user, clearance, entry.process)]
+
+
 class SamplesAndProcesses:
     """This is a container data structure for holding (almost) all data for
     the “show sample” template.  It represents one sample.  By nesting it,
@@ -362,29 +499,22 @@ class SamplesAndProcesses:
     and all processes associated with it.  And secondly, it contains further
     instances of `SamplesAndProcesses` of child samples.
 
-    Objects of this class are cached so that they can be re-used for another
-    user.  Therefore, it is necessary to have methods that adaps the object to
-    the current user.
+    The processes are only listed with their headers here.  Their bodies are
+    loaded separately by the browser, see
+    `samples.views.process_context.process_details`.
 
     We make extensive use of dictionaries mapping strings to arbitrary objects
     here.  This is because such a data structure can be passed as a context to
     templates very easily.
 
-    :ivar process_contexts: List of processes associated with the sample.  This
-      is a list of dictionaries rather than a list of model instances.  The
-      dictionaries can be used as contexts for both the “inner” templates
-      (the ``show_….html`` templates for single processes) as well as the
-      “outer” template ``show_sample.html``.
-
-    :ivar process_ids: Set of all process IDs of the sample
+    :ivar processes: the processes visible to the user on this data sheet, see
+      `collect_visible_sample_processes`
 
     :ivar process_lists: Data of child samples
 
+    :type processes: list of `SampleProcessEntry`
+
     :type process_lists: list of `SamplesAndProcesses`
-
-    :type process_contexts: list of dict mapping str to ``object``
-
-    :type process_ids: set of int
     """
 
     @staticmethod
@@ -409,21 +539,7 @@ class SamplesAndProcesses:
 
         :rtype: `SamplesAndProcesses`
         """
-        cache_key = "sample:{0}-{1}".format(sample.pk, user.jb_user_details.get_data_hash())
-        # The following ``10`` is the expectation value of the number of
-        # processes.  To get accurate results, use
-        # ``samples.processes.count()`` instead.  However, this would slow down
-        # JuliaBase.
-        samples_and_processes = None
-        if samples_and_processes is None or not hasattr(samples_and_processes, "processes") or not samples_and_processes.is_my_sample_form.is_valid():
-            samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
-            keys_list_key = "sample-keys:{0}".format(sample.pk)
-            with cache_key_locked("sample-lock:{0}".format(sample.pk)):
-                keys = cache.get(keys_list_key, [])
-                keys.append(cache_key)
-                cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
-                cache.set(cache_key, samples_and_processes)
-        return samples_and_processes
+        return SamplesAndProcesses(sample, clearance, user, post_data)
 
     def __init__(self, sample, clearance, user, post_data):
         """Class constructor.
@@ -443,70 +559,13 @@ class SamplesAndProcesses:
         # This will be filled with more, once child samples are displayed, too.
         self.sample_context = {"sample": sample}
         self.update_sample_context_for_user(user, clearance, post_data)
-        self.process_contexts = []
-        self.process_ids = set()
-        self.processes = []
-        self.processes_with_permissions = {}
-        def collect_process_contexts(local_context=None):
-            """Constructs the list of process context dictionaries.  This
-            internal helper function directly populates
-            ``self.process_contexts``.  It consists of three parts: First, we
-            ascend through the ancestors of the sample to the first parent.
-            Then, for every ancestor and for the sample itself, the relevant
-            processes are found in form of a QuerySet, paying attention to
-            a possible clearance and to the so-called “cutoff timestamps”.  And
-            finally, we iterate over the QuerySet and get the process
-            context dictionary, possibly from the cache.
-
-            :param local_context: Information about the current sample to
-                process.  This is important when we walk through the ancestors
-                and need to keep track of where we are currently.  In
-                particular, this is used for sample splits because they must
-                know which is the current sample, which is the main sample
-                which will be actually displayed etc.
-
-            :type local_context: dict mapping str to ``object``
-            """
-            if local_context is None:
-                local_context = self.sample_context.copy()
-                local_context.update({"original_sample": sample, "latest_descendant": None, "cutoff_timestamp": None})
-            split = local_context["sample"].split_origin
-            if split:
-                new_local_context = local_context.copy()
-                new_local_context["sample"] = split.parent
-                new_local_context["latest_descendant"] = local_context["sample"]
-                new_local_context["cutoff_timestamp"] = split.timestamp
-                collect_process_contexts(new_local_context)
-            ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True).order_by()
-            ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True).order_by()
-            process_ids = ids_from_direct.union(ids_from_series)
-            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').prefetch_related('actual_instance').distinct()
-
-            if local_context["cutoff_timestamp"]:
-                processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
-            nobody = django.contrib.auth.models.User.objects.get(username='nobody')
-            self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
-
-            for process in processes:
-                self.process_ids.add(process.id)
-                if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
-                    process.operator = nobody
-
-            self.processes += processes
-
-        collect_process_contexts()
+        self.processes = collect_visible_sample_processes(sample, user, clearance)
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
-        """Updates the sample data in this data structure according to the
-        current user.  If the ``SamplesAndProcesses`` object was taken from the
-        cache, it was probably for another user, so I must modify the
-        user-dependent fields.  In particular, the “is-my-sample” checkboxes
-        are generated here, as well as the icons to edit the sample or to add
-        processes.
-
-        This method is also called if the `SamplesAndProcesses` object is
-        constructed from scratch.
+        """Sets the user-dependent sample data in this data structure.  In
+        particular, the “is-my-sample” checkboxes are generated here, as well
+        as the icons to edit the sample or to add processes.
 
         :param user: the currently logged-in user
         :param clearance: the clearance object that was used to show the sample,
@@ -547,50 +606,6 @@ class SamplesAndProcesses:
             self.sample_context["id_for_rename"] = str(sample.pk)
             self.sample_context["can_rename_sample"] = True
 
-    def remove_noncleared_process_contexts(self, user, clearance):
-        """Removes all items from ``self.process_contexts`` which the `user`
-        is not allowed to see due to the `clearance`.  Obviously, this routine
-        is a no-op if `clearance` is ``None``.
-
-        :param user: the currently logged-in user
-        :param clearance: the clearance object that was used to show the sample,
-            or ``None`` if no clearance was necessary (though maybe existing)
-
-        :type user: django.contrib.auth.models.User
-        :type clearance: `samples.models.Clearance`
-        """
-        if clearance:
-            viewable_process_contexts = []
-            for process_context in self.process_contexts:
-                process = process_context["process"]
-                if process.operator == user or \
-                        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
-                        self.processes_with_permissions[process]:
-                    viewable_process_contexts.append(process_context)
-                else:
-                    self.process_ids.remove(process.id)
-            self.process_contexts = viewable_process_contexts
-
-    def personalize(self, user, clearance, post_data):
-        """Change the ``SamplesAndProcesses`` object so that it is suitable
-        for the current user.  If the object was taken from the cache, it was
-        probably for another user, so many things need to be adapted.  Here, I
-        walk through all processes to change them.  In particular, the
-        edit/duplicate/resplit icons are corrected.
-
-        :param user: the currently logged-in user
-        :param clearance: the clearance object that was used to show the sample,
-            or ``None`` if no clearance was necessary (though maybe existing)
-        :param post_data: the POST data if it was an HTTP POST request, and
-            ``None`` otherwise
-
-        :type user: django.contrib.auth.models.User
-        :type clearance: `samples.models.Clearance`
-        :type post_data: QueryDict or NoneType
-        """
-        self.update_sample_context_for_user(user, clearance, post_data)
-        self.remove_noncleared_process_contexts(user, clearance)
-
     def __iter__(self):
         """Returns an iterator over all samples and processes.  It is used in
         the template to generate the whole page.  Note that because no
@@ -618,25 +633,13 @@ class SamplesAndProcesses:
         :rtype: ``generator``
         """
         if self.processes:
-            first_proc = {  "id": self.processes[0].id,
-                            "title": self.processes[0].actual_instance._meta.verbose_name,
-                            "timestamp": self.processes[0].timestamp,
-                            "operator": self.processes[0].operator}
-            yield True, self.sample_context, first_proc
-            for process in self.processes[1:]:
-                try:
-                    instance = process.actual_instance
-                except AttributeError:
-                    continue
-                proc = {  "id": process.id,
-                                "title": instance._meta.verbose_name,
-                                "timestamp": process.timestamp,
-                                "operator": process.operator}
-                yield False, self.sample_context, proc
-        elif self.process_contexts:
-            yield True, self.sample_context, self.process_contexts[0]
-            for process_context in self.process_contexts[1:]:
-                yield False, self.sample_context, process_context
+            for i, entry in enumerate(self.processes):
+                process = entry.process
+                process_context = {"id": process.id,
+                                   "title": process.actual_instance._meta.verbose_name,
+                                   "timestamp": process.timestamp,
+                                   "operator": process.operator}
+                yield i == 0, self.sample_context, process_context
         else:
             yield True, self.sample_context, None
         for process_list in self.process_lists:
@@ -692,7 +695,7 @@ class SamplesAndProcesses:
 
         :rtype: set of int
         """
-        all_process_ids = self.process_ids
+        all_process_ids = {entry.process.id for entry in self.processes}
         for process_list in self.process_lists:
             all_process_ids.update(process_list.get_all_process_ids())
         return all_process_ids
