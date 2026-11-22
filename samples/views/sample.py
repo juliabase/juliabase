@@ -419,8 +419,8 @@ def collect_sample_processes(sample: models.Sample) -> list[SampleProcessEntry]:
     entries = []
     for local_context in _get_sample_ancestry_contexts(sample):
         processes = _get_processes_of_ancestry_level(local_context). \
-            select_related("content_type", "operator__jb_user_details__department", "created_by_person",
-                           "last_modified_by_person").prefetch_related("actual_instance")
+            select_related("content_type", "operator__jb_user_details__department", "external_operator",
+                           "created_by_person", "last_modified_by_person").prefetch_related("actual_instance")
         entries.extend(SampleProcessEntry(process, local_context) for process in processes)
     return entries
 
@@ -628,7 +628,7 @@ class SamplesAndProcesses:
         name = instance.title if isinstance(instance, models.Result) else str(instance._meta.verbose_name)
         return {"process": process,
                 "name": capfirst(name),
-                "operator": process.operator,
+                "operator": process.external_operator or process.operator,
                 "timestamp": process.timestamp,
                 "timestamp_inaccuracy": process.timestamp_inaccuracy,
                 "is_folded": process.content_type_id in self.folded_process_class_ids}

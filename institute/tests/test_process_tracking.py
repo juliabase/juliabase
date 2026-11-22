@@ -22,10 +22,11 @@
 created and who last modified a process, and when.
 """
 
-import datetime
+import datetime, re
 import django.forms
 import django.utils.timezone
 from django.contrib.auth.models import User, Permission
+from django.template.loader import render_to_string
 from django.test import override_settings
 from django.test.client import Client
 from samples import models
@@ -215,3 +216,71 @@ class ProcessTrackingTest(TestCase):
         self.assertEqual([sample.name for sample in claim.samples.all()], ["10Z-001"])
         substrate = institute_models.Substrate.objects.get(samples__name="10Z-001")
         self.assertEqual(substrate.created_by_person, self.operator)
+
+
+def plain_text(html):
+    """Returns the text of an HTML snippet with normalised whitespace."""
+    return " ".join(re.sub(r"<[^>]+>", " ", html).split()).replace(" ,", ",")
+
+
+@override_settings(ROOT_URLCONF="institute.tests.urls")
+class ProcessTrackingDisplayTest(TestCase):
+    """The operator and timestamp of a process, and below, if known, who
+    entered it into the database and who edited it last.
+    """
+    fixtures = ["test_main"]
+    timestamp_pattern = r"\d{4}-\d\d-\d\d \d\d:\d\d:\d\d"
+
+    def setUp(self):
+        self.operator = User.objects.get(username="e.monroe")
+        self.creator = User.objects.get(username="r.calvert")
+        self.editor = User.objects.get(username="n.burkhardt")
+        self.sample = models.Sample.objects.get(name="14-JS-1")
+        self.substrate = institute_models.Substrate.objects.create(
+            operator=self.operator, timestamp=django.utils.timezone.make_aware(datetime.datetime(2024, 5, 2, 10, 0)),
+            material="custom", created_by_person=self.creator)
+        self.substrate.samples.add(self.sample)
+
+    def render(self, process, clearance=None):
+        return plain_text(render_to_string("samples/operator_and_timestamp.html",
+                                           {"process": process, "clearance": clearance}))
+
+    def test_legacy_process_shows_only_operator(self):
+        process = models.Process.objects.filter(created_by_person__isnull=True, last_modified_by_person__isnull=True,
+                                                external_operator__isnull=True).first()
+        text = self.render(process)
+        self.assertTrue(text.startswith("Operator: "), text)
+        self.assertNotIn("Created by:", text)
+        self.assertNotIn("Edited by:", text)
+
+    def test_creator_and_editor_are_shown_below_operator(self):
+        self.assertRegex(self.render(self.substrate),
+                         r"^Operator: Eddie Monroe, 2024-05-02 10:00:00 Created by: Rosalee Calvert, " +
+                         self.timestamp_pattern + "$")
+        self.substrate.last_modified_by_person = self.editor
+        self.substrate.save()
+        self.assertRegex(self.render(self.substrate),
+                         r"^Operator: Eddie Monroe, 2024-05-02 10:00:00 Created by: Rosalee Calvert, " +
+                         self.timestamp_pattern + " Edited by: Nick Burkhardt, " + self.timestamp_pattern + "$")
+
+    def test_external_operator_is_shown_instead_of_operator(self):
+        external_operator = models.ExternalOperator.objects.create(
+            name="Ext Operator", institution="Elsewhere", email="ext@example.com", confidential=True)
+        self.substrate.external_operator = external_operator
+        self.substrate.save()
+        self.assertIn("Operator: Ext Operator,", self.render(self.substrate))
+        self.assertIn(f"Operator: Confidential operator #{external_operator.pk},",
+                      self.render(self.substrate, clearance=True))
+
+    def test_pages_show_creator(self):
+        client = Client()
+        client.force_login(User.objects.get(username="juliabase"))
+        sample_page = plain_text(client.get(self.sample.get_absolute_url()).content.decode())
+        self.assertIn("Operator: Eddie Monroe, 2024-05-02 10:00:00 Created by: Rosalee Calvert,", sample_page)
+        process_page = plain_text(client.get(self.substrate.get_absolute_url()).content.decode())
+        self.assertIn("Operator: Eddie Monroe, 2024-05-02 10:00:00 Created by: Rosalee Calvert,", process_page)
+        result = models.Result.objects.create(operator=self.operator, title="Display test", created_by_person=self.creator,
+                                              timestamp=django.utils.timezone.make_aware(datetime.datetime(2024, 5, 3, 9, 0)))
+        result.samples.add(self.sample)
+        result_page = plain_text(client.get(result.get_absolute_url()).content.decode())
+        self.assertIn("Operator: Eddie Monroe, 2024-05-03 09:00:00 Created by: Rosalee Calvert,", result_page)
