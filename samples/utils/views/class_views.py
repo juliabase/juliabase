@@ -278,24 +278,10 @@ class ProcessWithoutSamplesView(TemplateView):
         all_valid = self.is_all_valid()
         referentially_valid = self.is_referentially_valid()
         if all_valid and referentially_valid:
-            self.set_tracking_fields()
             self.process = self.save_to_database()
             return self.create_successful_response(request)
         else:
             return self.get(request, *args, **kwargs)
-
-    def set_tracking_fields(self):
-        """Records the currently logged-in user as the creator of a new process,
-        or as the last modifier of an edited process.  It is called right before
-        `save_to_database`, so that no additional database write is necessary.
-        The timestamps ``created`` and ``last_modified`` are set by the model
-        fields themselves.
-        """
-        process = self.forms["process"].instance
-        if self.id:
-            process.last_modified_by_person = self.request.user
-        else:
-            process.created_by_person = self.request.user
 
     def create_successful_response(self, request):
         """Creates a `success` response and triggers a HTTP redirect.
