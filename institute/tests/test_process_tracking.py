@@ -74,6 +74,35 @@ class ProcessTrackingTest(TestCase):
         deposition.refresh_from_db()
         self.assertIsNone(deposition.created_by_person)
 
+    # The process form records the tracking fields, also for views that are not
+    # class-based
+
+    def substrate_form(self, user, instance=None):
+        from institute.views.samples.substrate import SubstrateForm
+        form = SubstrateForm(user, {"timestamp": self.timestamp, "timestamp_inaccuracy": "0",
+                                    "combined_operator": str(self.operator.pk), "material": "custom",
+                                    "comments": "form test"}, instance=instance)
+        self.assertTrue(form.is_valid(), form.errors)
+        return form
+
+    def test_process_form_records_creator_and_last_modifier(self):
+        substrate = self.substrate_form(self.operator).save()
+        substrate.refresh_from_db()
+        self.assertEqual(substrate.created_by_person, self.operator)
+        self.assertIsNone(substrate.last_modified_by_person)
+        editor = User.objects.create_user("form-editor", password="12345")
+        self.substrate_form(editor, substrate).save()
+        substrate.refresh_from_db()
+        self.assertEqual(substrate.created_by_person, self.operator)
+        self.assertEqual(substrate.last_modified_by_person, editor)
+
+    def test_process_form_records_creator_without_commit(self):
+        substrate = self.substrate_form(self.operator).save(commit=False)
+        self.assertEqual(substrate.created_by_person, self.operator)
+        substrate.save()
+        substrate.refresh_from_db()
+        self.assertEqual(substrate.created_by_person, self.operator)
+
     # Tracking fields are not part of process forms
 
     def test_tracking_fields_are_not_in_process_form(self):
