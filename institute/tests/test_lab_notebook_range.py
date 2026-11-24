@@ -19,14 +19,15 @@
 
 
 """Tests for the processes of a lab notebook, which shows all processes of a
-class between two days, both days included.
+class between two days, both days included, and for its table.
 """
 
-import datetime
+import datetime, re
 import django.utils.timezone
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
 from django.test import override_settings
-from institute.models import Substrate
+from institute.models import FiveChamberDeposition, Substrate
 from .tools import TestCase
 
 
@@ -48,3 +49,20 @@ class LabNotebookRangeTest(TestCase):
         self.assertEqual({process.pk for process in processes}, {first.pk, last.pk})
         self.assertNotIn(before.pk, {process.pk for process in processes})
         self.assertNotIn(after.pk, {process.pk for process in processes})
+
+
+class LabNotebookTableTest(TestCase):
+    fixtures = ["test_main"]
+
+    def test_tables_with_merged_cells_are_not_datatables(self):
+        """DataTables, which turns every table of the class “lab-notebook” into
+        an interactive table, cannot handle cells spanning several rows or
+        columns.  It shows the warning “Requested unknown parameter” then.
+        """
+        processes = FiveChamberDeposition.objects.all()
+        self.assertTrue(any(deposition.layers.count() > 1 for deposition in processes))
+        html = render_to_string("samples/lab_notebook_five_chamber_deposition.html", {"processes": processes})
+        table_tag, body = re.search(r"(<table[^>]*>)(.*)</table>", html, re.S).groups()
+        self.assertIn("lab-notebook", table_tag)
+        self.assertRegex(body, r"<td[^>]* rowspan=")
+        self.assertIn("manual-datatable", table_tag)
