@@ -29,6 +29,7 @@ from django.contrib.auth.models import User, Permission
 from django.template.loader import render_to_string
 from django.test import override_settings
 from django.test.client import Client
+from django.urls import reverse
 from samples import models
 import institute.models as institute_models
 from .tools import TestCase
@@ -255,7 +256,8 @@ def plain_text(html):
 @override_settings(ROOT_URLCONF="institute.tests.urls")
 class ProcessTrackingDisplayTest(TestCase):
     """The operator and timestamp of a process, and below, if known, who
-    entered it into the database and who edited it last.
+    entered it into the database and who edited it last.  The latter is shown
+    only on the page of the process itself, not on the sample data sheet.
     """
     fixtures = ["test_main"]
     timestamp_pattern = r"\d{4}-\d\d-\d\d \d\d:\d\d:\d\d"
@@ -270,9 +272,10 @@ class ProcessTrackingDisplayTest(TestCase):
             material="custom", created_by_person=self.creator)
         self.substrate.samples.add(self.sample)
 
-    def render(self, process, clearance=None):
+    def render(self, process, clearance=None, with_tracking=True):
         return plain_text(render_to_string("samples/operator_and_timestamp.html",
-                                           {"process": process, "clearance": clearance}))
+                                           {"process": process, "clearance": clearance,
+                                            "with_tracking": with_tracking}))
 
     def test_legacy_process_shows_only_operator(self):
         process = models.Process.objects.filter(created_by_person__isnull=True, last_modified_by_person__isnull=True,
@@ -292,6 +295,11 @@ class ProcessTrackingDisplayTest(TestCase):
                          r"^Operator: Eddie Monroe, 2024-05-02 10:00:00 Created by: Rosalee Calvert, " +
                          self.timestamp_pattern + " Edited by: Nick Burkhardt, " + self.timestamp_pattern + "$")
 
+    def test_creator_and_editor_are_hidden_without_tracking(self):
+        self.substrate.last_modified_by_person = self.editor
+        self.substrate.save()
+        self.assertEqual(self.render(self.substrate, with_tracking=False), "Operator: Eddie Monroe, 2024-05-02 10:00:00")
+
     def test_external_operator_is_shown_instead_of_operator(self):
         external_operator = models.ExternalOperator.objects.create(
             name="Ext Operator", institution="Elsewhere", email="ext@example.com", confidential=True)
@@ -301,11 +309,16 @@ class ProcessTrackingDisplayTest(TestCase):
         self.assertIn(f"Operator: Confidential operator #{external_operator.pk},",
                       self.render(self.substrate, clearance=True))
 
-    def test_pages_show_creator(self):
+    def test_process_pages_show_creator_but_sample_data_sheet_does_not(self):
         client = Client()
         client.force_login(User.objects.get(username="juliabase"))
-        sample_page = plain_text(client.get(self.sample.get_absolute_url()).content.decode())
-        self.assertIn("Operator: Eddie Monroe, 2024-05-02 10:00:00 Created by: Rosalee Calvert,", sample_page)
+        process_body = client.get(reverse("samples:process_details", kwargs={"process_id": self.substrate.pk,
+                                                                              "sample_id": self.sample.pk}))
+        self.assertEqual(process_body.status_code, 200)
+        sample_page = plain_text(client.get(self.sample.get_absolute_url()).content.decode() +
+                                 process_body.content.decode())
+        self.assertIn("Operator: Eddie Monroe, 2024-05-02 10:00:00", sample_page)
+        self.assertNotIn("Created by:", sample_page)
         process_page = plain_text(client.get(self.substrate.get_absolute_url()).content.decode())
         self.assertIn("Operator: Eddie Monroe, 2024-05-02 10:00:00 Created by: Rosalee Calvert,", process_page)
         result = models.Result.objects.create(operator=self.operator, title="Display test", created_by_person=self.creator,

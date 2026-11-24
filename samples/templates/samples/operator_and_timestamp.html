@@ -17,11 +17,12 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 {% comment %}
-Who operated a process and when, and below, if known, who entered it into the
-database and who edited it last.  `process` is the process instance
+Who operated a process and when.  `process` is the process instance
 (`samples.models.Process`); `clearance` is the clearance that was used to show
 the sample, if any.  With a clearance, confidential external operators are
-hidden.
+hidden.  If `with_tracking` is true, the lines below show, if known, who entered
+the process into the database and who edited it last.  Pages showing many
+processes, like the sample data sheet, leave it out.
 {% endcomment %}
 {% load i18n samples_extras %}
 <p class="operator_and_timestamp">
@@ -32,18 +33,20 @@ hidden.
     {% endif %}
   {% endwith %}
   {{ process|timestamp }}
-  {% if process.created_by_person %}
-    <br><small class="process-creator">
-      {% translate "Created by:" %}
-      {{ process.created_by_person|get_really_full_name }}{% if process.created %},
-      {{ process.created|date:"Y-m-d H:i:s" }}{% endif %}
-    </small>
-  {% endif %}
-  {% if process.last_modified_by_person %}
-    <br><small class="process-last-modifier">
-      {% translate "Edited by:" %}
-      {{ process.last_modified_by_person|get_really_full_name }},
-      {{ process.last_modified|date:"Y-m-d H:i:s" }}
-    </small>
+  {% if with_tracking %}
+    {% if process.created_by_person %}
+      <br><small class="process-creator">
+        {% translate "Created by:" %}
+        {{ process.created_by_person|get_really_full_name }}{% if process.created %},
+        {{ process.created|date:"Y-m-d H:i:s" }}{% endif %}
+      </small>
+    {% endif %}
+    {% if process.last_modified_by_person %}
+      <br><small class="process-last-modifier">
+        {% translate "Edited by:" %}
+        {{ process.last_modified_by_person|get_really_full_name }},
+        {{ process.last_modified|date:"Y-m-d H:i:s" }}
+      </small>
+    {% endif %}
   {% endif %}
 </p>

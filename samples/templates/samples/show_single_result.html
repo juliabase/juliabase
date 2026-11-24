@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block frame_content %}
   <div class="process">
-    {% include "samples/operator_and_timestamp.html" with process=result %}
+    {% include "samples/operator_and_timestamp.html" with process=result with_tracking=True %}
     {% if samples or sample_series %}
       <p>
         {% if samples %}
