@@ -25,6 +25,7 @@ from django.template import loader
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext_lazy as _, gettext
+from django.contrib.auth.decorators import login_not_required
 from django.views.decorators.cache import cache_page
 from django.conf import settings
 import django.urls
@@ -118,6 +119,7 @@ def format_timestamp(timestamp):
     return timestamp.strftime("%Y-%m-%dT%H:%M:%S") + get_timezone_string(timestamp)
 
 
+@login_not_required
 @cache_page(600)
 def show(request, username, user_hash):
     """View which doesn't generate an HTML page but an Atom 1.0 feed with

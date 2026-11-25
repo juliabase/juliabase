@@ -159,7 +159,6 @@ urlpatterns = [
 
     re_path(r"^fold_process/(?P<sample_id>\d+)$", json_client.fold_process, name="fold_process"),
     re_path(r"^folded_processes/(?P<sample_id>\d+)$", json_client.get_folded_processes, name="get_folded_processes"),
-    re_path(r"^folded_processes_from_sample/(?P<sample_id>\d+)$", sample.get_folded_processes, name="get_folded_processes_from_sample"),
 
     re_path(r"^merge_samples$", merge_samples.merge, name="merge_samples"),
 

@@ -84,11 +84,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='sample',
-            name='name',
-            field=jb_common.model_fields.CharField(db_index=True, max_length=30, unique=True, verbose_name='name'),
-        ),
-        migrations.AlterField(
-            model_name='sample',
             name='purpose',
             field=jb_common.model_fields.CharField(blank=True, max_length=80, verbose_name='purpose'),
         ),

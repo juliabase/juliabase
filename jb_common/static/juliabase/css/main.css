@@ -38,25 +38,18 @@ div.main {
 div.outer-frame {
     clear: both;
     margin-top: 15px;
-    border-color: #b2b2b2;
-    border-width: thin;
-    border-radius: 12px;
-    -moz-border-radius: 12px;
-    -webkit-border-radius: 12px;
-    border-style: solid;
+    border: none;
 }
 
 div.inner-frame {
     margin: 1px;
-    padding: 10px;
-    border-color: black;
-    border-width: thin;
-    border-style: solid;
+    padding: 30px 10px;
+    border: none;
     border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
-    background-color: #e6e6e6;
-    background-image: url("../checked.png");
+    /* background-color: #fbfbfb; */
+    background-color: #f4f4f4;
     min-height: 0px;   /* IE7 quirk */
 }
 

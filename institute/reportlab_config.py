@@ -25,14 +25,33 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 
 dejavu_root = "/usr/share/fonts/truetype/dejavu"
-if os.path.exists(os.path.join(dejavu_root, "DejaVuSans.ttf")):
-    pdfmetrics.registerFont(TTFont("DejaVu", os.path.join(dejavu_root, "DejaVuSans.ttf")))
-    pdfmetrics.registerFont(TTFont("DejaVuOb", os.path.join(dejavu_root, "DejaVuSans-Oblique.ttf")))
-    pdfmetrics.registerFont(TTFont("DejaVuBd", os.path.join(dejavu_root, "DejaVuSans-Bold.ttf")))
-    pdfmetrics.registerFont(TTFont("DejaVuBdOb", os.path.join(dejavu_root, "DejaVuSans-BoldOblique.ttf")))
-    default_fontname = "DejaVu"
-    pdfmetrics.registerFontFamily(default_fontname, normal="DejaVu", bold="DejaVuBd", italic="DejaVuOb",
+dejavu_fonts = {"DejaVu": "DejaVuSans.ttf", "DejaVuOb": "DejaVuSans-Oblique.ttf", "DejaVuBd": "DejaVuSans-Bold.ttf",
+                "DejaVuBdOb": "DejaVuSans-BoldOblique.ttf"}
+
+
+def register_fonts(root=dejavu_root):
+    """Registers DejaVu Sans with ReportLab if all four of its styles are
+    installed.  On Debian, only “fonts-dejavu-core” and “fonts-dejavu-extra”
+    together provide them.  Otherwise, Helvetica is used.
+
+    :param root: the directory of the DejaVu TrueType fonts
+
+    :type root: str
+
+    :returns:
+      the name of the font to be used for text in drawings
+
+    :rtype: str
+    """
+    paths = {name: os.path.join(root, filename) for name, filename in dejavu_fonts.items()}
+    if not all(os.path.exists(path) for path in paths.values()):
+        return "Helvetica"
+    for name, path in paths.items():
+        pdfmetrics.registerFont(TTFont(name, path))
+    pdfmetrics.registerFontFamily("DejaVu", normal="DejaVu", bold="DejaVuBd", italic="DejaVuOb",
                                   boldItalic="DejaVuBdOb")
-    reportlab.rl_config.canvas_basefontname = default_fontname
-else:
-    default_fontname = "Helvetica"
+    reportlab.rl_config.canvas_basefontname = "DejaVu"
+    return "DejaVu"
+
+
+default_fontname = register_fonts()

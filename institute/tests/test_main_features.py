@@ -79,6 +79,14 @@ class MainFeaturesTest(TestCase):
         response = self.client.get("/5-chamber_depositions/lab_notebook/", follow=True)
         self.assertEqual(response.status_code, 200)
 
+    def test_stack_diagram(self):
+        """The labels of the layers are drawn with the font of
+        `institute.reportlab_config`, Helvetica if DejaVu is not installed.
+        """
+        response = self.client.get("/stacks/1")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/pdf")
+
     def test_add_topic(self):
         response = self.client.get("/topics/add/")
         self.assertEqual(response.status_code, 303)

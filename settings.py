@@ -84,10 +84,6 @@ MEDIA_URL = "/media/"
 # "http://example.com/static/"
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = [
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static'),
-]
-
 ADMIN_MEDIA_PREFIX = STATIC_URL + "admin/"
 
 SECRET_KEY = get_secret_key_from_file("~/.juliabase_secret_key")
@@ -130,13 +126,14 @@ MIDDLEWARE = [
     "jb_common.middleware.MessageMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Every view requires a login unless it is marked with `login_not_required`.
+    "jb_common.middleware.LoginRequiredMiddleware",
     "jb_common.middleware.LoggingMiddleware",
     "jb_common.middleware.LocaleMiddleware",
     "samples.middleware.juliabase.ExceptionsMiddleware",
     "jb_common.middleware.JSONClientMiddleware",
     "jb_common.middleware.UserTracebackMiddleware",
     'django.middleware.gzip.GZipMiddleware', #This one
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'htmlmin.middleware.HtmlMinifyMiddleware', #This one
     'htmlmin.middleware.MarkRequestMiddleware', #This one
 ]
@@ -158,7 +155,6 @@ INSTALLED_APPS = [
     "samples",
     "jb_common",
     "compressor",
-    "debug_toolbar",
     "django_select2",
 ]
 
@@ -190,32 +186,6 @@ EXCLUDE_FROM_MINIFYING = (
     r"^experiments/(?P<experiment_id>.+)",   # <-- adjust to your real URL(s)
 )
 KEEP_COMMENTS_ON_MINIFYING = True
-
-DEBUG_TOOLBAR_PANELS = [
-    'debug_toolbar.panels.history.HistoryPanel',
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel',
-    'debug_toolbar.panels.profiling.ProfilingPanel',
-]
-
-def show_toolbar(request):
-    from django.conf import settings
-    return settings.DEBUG
-SHOW_TOOLBAR_CALLBACK = show_toolbar
-
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
-    'IS_RUNNING_TESTS': False,
-}
 
 SITE_ID = 1
 

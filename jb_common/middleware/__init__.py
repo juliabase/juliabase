@@ -15,12 +15,14 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import re, json, hashlib, random, time, logging
+import re, json, hashlib, random, time, logging, urllib.parse
 from django.contrib.messages.storage import default_storage
 from django.utils.cache import patch_vary_headers, add_never_cache_headers
 from django.utils import translation
 from django.template import loader, RequestContext
 from django.contrib.auth import logout
+import django.contrib.auth.middleware
+from django.contrib.auth.views import redirect_to_login
 import django.urls
 from jb_common.models import UserDetails, ErrorPage
 from jb_common.utils.base import is_json_requested, JSONRequestException
@@ -141,6 +143,37 @@ class HttpResponseUnauthorised(django.http.HttpResponse):
 
 class HttpResponseUnprocessableEntity(django.http.HttpResponse):
     status_code = 422
+
+
+class LoginRequiredMiddleware(django.contrib.auth.middleware.LoginRequiredMiddleware):
+    """Requires a login for every view that is not marked with
+    `django.contrib.auth.decorators.login_not_required`.  It only enforces a
+    login, not permissions; it is the safety net for a forgotten
+    ``login_required``.
+
+    In contrast to Django's middleware, a request that cannot follow a redirect
+    to the login page gets a 401 response: a JSON client (e.g. the remote
+    client), because it has to log in via ``login_remote_client``; an htmx
+    request, because htmx would put the login page into the page fragment.
+    For htmx, the ``HX-Redirect`` header sends the browser to the login page
+    and back to the current page afterwards.
+
+    Put it right after ``django.contrib.auth.middleware.AuthenticationMiddleware``.
+    """
+
+    def handle_no_permission(self, request, view_func):
+        if request.headers.get("HX-Request") == "true":
+            current_url = urllib.parse.urlsplit(request.headers.get("HX-Current-URL", ""))
+            current_url = urllib.parse.urlunsplit(("", "", current_url.path, current_url.query, "")) or \
+                request.get_full_path()
+            login_redirect = redirect_to_login(current_url, self.get_login_url(view_func),
+                                               self.get_redirect_field_name(view_func))
+            response = HttpResponseUnauthorised()
+            response["HX-Redirect"] = login_redirect["Location"]
+            return response
+        if is_json_requested(request):
+            return HttpResponseUnauthorised()
+        return super().handle_no_permission(request, view_func)
 
 
 class JSONClientMiddleware:

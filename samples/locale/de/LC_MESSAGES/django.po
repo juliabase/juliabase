@@ -4336,6 +4336,30 @@ msgstr ""
 msgid "Topics and permissions for {user_name}"
 msgstr "Themen und Berechtigungen von {user_name}"
 
+#: samples/templates/samples/operator_and_timestamp.html
+msgid "Operator:"
+msgstr "Operateur:"
+
+#: samples/templates/samples/operator_and_timestamp.html
+msgid "Created by:"
+msgstr "Erstellt von:"
+
+#: samples/templates/samples/operator_and_timestamp.html
+msgid "Edited by:"
+msgstr "Bearbeitet von:"
+
+#: samples/templates/samples/show_sample.html
+msgid "Collapse All"
+msgstr "Alle ausblenden"
+
+#: samples/templates/samples/show_sample.html
+msgid "Loading..."
+msgstr "Laden..."
+
+#: samples/templates/samples/show_sample.html
+msgid "The process could not be loaded."
+msgstr "Der Prozess konnte nicht geladen werden."
+
 #~ msgid "My Experiments"
 #~ msgstr "Meine Experimente"
 

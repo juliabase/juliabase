@@ -30,6 +30,7 @@ import rdflib
 from frozendict import frozendict
 from samples import ontology_symbols
 from collections import defaultdict
+from django.conf import settings
 import django.contrib.auth.models
 from django.contrib.sites.models import Site
 from django.utils.translation import gettext_lazy as _, gettext, ngettext, pgettext_lazy, get_language
@@ -43,12 +44,11 @@ from django.db import models
 from django.core.cache import cache
 from jb_common import model_fields
 from jb_common.utils.base import get_really_full_name, cache_key_locked, format_enumeration, camel_case_to_underscores, \
-    JSONEncoder
+    JSONEncoder, get_local_day_bounds
 from jb_common.models import Topic, PolymorphicModel, Department, UserDetails
 import samples.permissions
 from jb_common import search
 from samples.data_tree import DataNode, DataItem
-from datetime import datetime as dt, timedelta
 from django.db.models.fields.related import ManyToManyRel
 
 
@@ -371,9 +371,22 @@ class Process(PolymorphicModel, GraphEntity):
     external_operator = models.ForeignKey(ExternalOperator, on_delete=models.CASCADE, verbose_name=_("external operator"),
                                           null=True, blank=True, related_name="processes")
     comments = model_fields.TextField(_("comments"), blank=True)
+    created = model_fields.DateTimeField(_("created"), auto_now_add=True, null=True)
+    """When this process was entered into the database.  In contrast to
+    `timestamp`, this is set automatically and cannot be edited.  It is
+    ``None`` for processes created before this field was introduced.
+    """
+    created_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.SET_NULL,
+                                          verbose_name=_("creator"), related_name="created_processes",
+                                          null=True, blank=True)
+    """The logged-in user who entered this process into the database (e.g. the
+    account of a crawler).  In contrast to `operator`, this is set
+    automatically and cannot be edited.
+    """
     last_modified = model_fields.DateTimeField(_("last modified"), auto_now=True)
-    last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.CASCADE, verbose_name=_("last modifier"),
-                                 related_name="last_modifier", null=True, blank=True)
+    last_modified_by_person = models.ForeignKey(django.contrib.auth.models.User, on_delete=models.SET_NULL,
+                                                verbose_name=_("last modifier"), related_name="last_modifier",
+                                                null=True, blank=True)
     finished = model_fields.BooleanField(_("finished"), default=True)
     """Whether the process is complete and can be displayed in sample data
     sheets.  Not every process needs to implement it; you can as well leave it
@@ -789,9 +802,7 @@ class Process(PolymorphicModel, GraphEntity):
         This function is called by the class and is used to fetch all the elements between
         a begin_date and an end_date.
         """
-        begin_date = django.utils.timezone.make_aware(dt.strptime(begin_date, "%Y-%m-%d"))
-        end_date = django.utils.timezone.make_aware(dt.strptime(end_date, "%Y-%m-%d"))
-        end_date += timedelta(days=1)
+        begin, end = get_local_day_bounds(begin_date, end_date)
         # Get all ForeignKey and OneToOneField fields for the model
         related_fields = [
             field.name for field in cls._meta.get_fields()
@@ -827,7 +838,7 @@ class Process(PolymorphicModel, GraphEntity):
         if "responsible_person" in related_fields:
             nested_relations.append("responsible_person__user")
 
-        queryset = cls.objects.filter(timestamp__range=(begin_date, end_date))\
+        queryset = cls.objects.filter(timestamp__gte=begin, timestamp__lt=end)\
                                 .select_related(*related_fields, *nested_relations)\
                                 .prefetch_related(*many_to_many_fields, *reverse_related_fields_clean)
 
@@ -1184,7 +1195,7 @@ def get_all_searchable_physical_processes():
 class Sample(models.Model, GraphEntity):
     """The model for samples.
     """
-    name = model_fields.CharField(_("name"), max_length=30, unique=True, db_index=True)
+    name = model_fields.CharField(_("name"), max_length=63, unique=True, db_index=True)
     watchers = models.ManyToManyField(django.contrib.auth.models.User, blank=True, related_name="my_samples",
                                       verbose_name=_("watchers"))
         # Translators: location of a sample
@@ -1675,8 +1686,11 @@ class SampleSplit(Process):
         except KeyError:
             context["parent"] = None
             context["resplit_url"] = None
-        context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number":self.pk})
-
+        try:
+            # Only institutes with a run sheet export, e.g. Chantal's “iek5”, have this URL.
+            context["export_url"] = django.urls.reverse("iek5:runsheet_process", kwargs={"number": self.pk})
+        except django.urls.NoReverseMatch:
+            context["export_url"] = None
 
         return super().get_context_for_user(user, context)
 

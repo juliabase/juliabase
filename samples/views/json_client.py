@@ -27,7 +27,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.http import Http404
 from django.utils.translation import gettext as _
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_not_required, login_required
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -68,7 +68,7 @@ def add_sample(request):
         topic = request.POST.get("topic")
     except KeyError as error:
         raise JSONRequestException(3, "'{}' parameter missing.".format(error.args[0]))
-    if len(name) > 30:
+    if len(name) > models.Sample._meta.get_field("name").max_length:
         raise JSONRequestException(5, "The sample name is too long.")
     name_format = sample_names.sample_name_format(name)
     if name_format is None or \
@@ -242,6 +242,7 @@ def available_items(request, model_name):
 
 # FixMe: The following two functions must go to jb_common.
 
+@login_not_required
 @never_cache
 @ensure_csrf_cookie
 def login_remote_client(request):
@@ -275,6 +276,7 @@ def login_remote_client(request):
         return respond_in_json(None)
 
 
+@login_not_required
 @never_cache
 @require_http_methods(["GET"])
 def logout_remote_client(request):

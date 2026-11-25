@@ -1,70 +1,71 @@
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
+# This file is part of JuliaBase, see http://www.juliabase.org.
+# Copyright © 2008–2026 Forschungszentrum Jülich GmbH, Jülich, Germany
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option) any
+# later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+"""The process bodies of the sample data sheet, which the browser loads
+separately from the data sheet itself.
+"""
+
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_http_methods
+from samples import permissions
+from samples.models import Sample
 from samples.utils.views import digest_process
-from samples.models import Process, Sample
-from django.core.serializers.json import DjangoJSONEncoder
-from samples.templatetags.samples_extras import get_safe_operator_name, timestamp, get_really_full_name
-
-class SafeJSONEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        # Django model instance
-        if hasattr(obj, "_meta"):
-            try:
-                get_absolute_url = obj.get_absolute_url()
-            except AttributeError:
-                get_absolute_url = None
-
-            return {
-                "id": getattr(obj, "id", None),
-                "label": str(obj),
-                "get_absolute_url": get_absolute_url,
-                "finished": getattr(obj, "finished", None),
-            }
-
-        # datetime → ISO string
-        if hasattr(obj, "isoformat"):
-            return obj.isoformat()
-
-        # Fallback: let DjangoJSONEncoder try
-        try:
-            return super().default(obj)
-        except TypeError:
-            return str(obj)  # last resort
-
-    def iterencode(self, value, **kwargs):
-        # Recursively coerce bad dict keys
-        def normalize_keys(obj):
-            if isinstance(obj, dict):
-                new_dict = {}
-                for k, v in obj.items():
-                    if not isinstance(k, (str, int, float, bool, type(None))):
-                        k = str(k)  # ← coerce key
-                    new_dict[k] = normalize_keys(v)
-                return new_dict
-            elif isinstance(obj, list):
-                return [normalize_keys(i) for i in obj]
-            return obj
-
-        normalized = normalize_keys(value)
-        return super().iterencode(normalized, **kwargs)
+from samples.views.sample import find_sample_process, is_process_cleared
 
 
-
+@login_required
+@never_cache
+@require_http_methods(["GET"])
 def process_details(request, process_id, sample_id):
-    process = get_object_or_404(Process, pk=process_id)
-    if process.actual_instance._meta.verbose_name == "sample split":
-        sample = get_object_or_404(Sample, pk=sample_id)
-        local_context = {"sample": sample,
-                        "original_sample": sample,
-                        "latest_descendant": None,
-                        "cutoff_timestamp": None}
-        process_context = digest_process(process, request.user, local_context).copy()  # however you currently build it
-    else:
-        process_context = digest_process(process, request.user).copy()  # however you currently build it
-    # Add pre-rendered values
-    process_context["operator_safe"] = get_safe_operator_name(process_context["operator"])
-    process_context["operator_full_name"] = get_really_full_name(process_context["operator"])
-    process_context["timestamp_display"] = timestamp(process_context["timestamp"], 0, keep_as_is=True)
-    process_context["show_process_url"] = process.get_absolute_url()
-    
-    return JsonResponse(process_context, encoder=SafeJSONEncoder)
+    """Returns the body of a process as shown on the data sheet of a sample, as
+    an HTML fragment for htmx.  The user may load it exactly if the process is
+    shown to them on the data sheet of this sample.  The response must not be
+    cached by the browser because it depends on the user.
+
+    :param request: the current HTTP Request object
+    :param process_id: the ID of the process
+    :param sample_id: the ID of the sample whose data sheet shows the process
+
+    :type request: HttpRequest
+    :type process_id: str
+    :type sample_id: str
+
+    :return:
+      the HTTP response object
+
+    :rtype: HttpResponse
+
+    :raises Http404: if the sample does not exist or if the process is not
+        shown on its data sheet
+    :raises samples.permissions.PermissionError: if the user is not allowed to
+        view the sample
+    """
+    sample = get_object_or_404(Sample, pk=int(sample_id))
+    clearance = permissions.get_sample_clearance(request.user, sample)
+    entry = find_sample_process(sample, int(process_id))
+    if entry is None or not is_process_cleared(request.user, clearance, entry.process):
+        raise Http404("The process is not shown on the data sheet of this sample.")
+    process_context = digest_process(entry.process, request.user, entry.local_context)
+    response = render(request, "samples/process_details.html",
+                      {"process": process_context, "sample": {"sample": sample, "clearance": clearance}})
+    # The HTML minifier (django-htmlmin) would turn the fragment into a
+    # complete HTML document.
+    response.minify_response = False
+    return response

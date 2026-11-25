@@ -37,17 +37,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   {% endcompress %}
   {% block refresh_tag %}{% endblock %}
   {% block favicon %}
-    <link rel="shortcut icon" href="{% static "juliabase/juliabase.ico" %}" type="image/x-icon"/>
+    <link rel="shortcut icon" href="{% static 'juliabase/juliabase.ico' %}" type="image/x-icon"/>
   {% endblock %}
   <!-- Preload critical scripts for better performance -->
   <link rel="preload" href="https://code.jquery.com/jquery-3.6.0.min.js" as="script">
-  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Google JSAPI removed - deprecated and causes slow page loads -->
   <script type="text/javascript" src="{% url 'jb_common:jsi18n' %}" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
   {% compress js %}
   <script type="text/javascript" src="{% static 'juliabase/js/juliabase.js' %}" defer></script>
+  {# htmx 2.0.10, https://htmx.org #}
+  <script type="text/javascript" src="{% static 'vendor/htmx/htmx.min.js' %}" defer></script>
   {% endcompress %}
   {% block external_js %}{% endblock %}
   {% compress js %}
@@ -113,11 +115,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <div class="outer-frame">
       <div class="inner-frame">
-        {% block float_image %}{% endblock %}
-        {% block content_title %}<div class="page-header"><h1>{{ title }}</h1></div>{% endblock %}
-        {% block frame_content %}{% endblock %}
-        {% block render_blockers %}{% endblock %}
-        <div style="clear: both"></div>
+        <div class="container">
+          {% block float_image %}{% endblock %}
+          {% block content_title %}<div class="page-header"><h1>{{ title }}</h1></div>{% endblock %}
+          {% block frame_content %}{% endblock %}
+          {% block render_blockers %}{% endblock %}
+          <div style="clear: both"></div>
+        </div>
       </div>
     </div>
   </div>

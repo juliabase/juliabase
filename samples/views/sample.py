@@ -19,7 +19,7 @@
 (no processes!).  This includes adding, editing, and viewing samples.
 """
 
-import hashlib, time, urllib, json
+import dataclasses, hashlib, time, urllib, json
 from io import BytesIO
 from urllib.parse import quote_plus
 from pathlib import Path
@@ -31,12 +31,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 import django.contrib.auth.models
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.cache import never_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
 import django.urls
 import django.forms as forms
-from django.core.cache import cache
-from django.db.models import Q, Count
+from django.db.models import Q, Count, QuerySet
 from django.http import Http404, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.utils.translation import gettext_lazy as _, gettext, ngettext
@@ -46,7 +44,7 @@ from django.forms.utils import ValidationError
 import jb_common.search
 from jb_common.signals import storage_changed
 from jb_common.utils.base import format_enumeration, unquote_view_parameters, HttpResponseSeeOther, is_rdf_requested, \
-    is_json_requested, respond_in_json, is_ro_crate_requested, get_all_models, mkdirs, cache_key_locked, \
+    is_json_requested, respond_in_json, is_ro_crate_requested, get_all_models, mkdirs, \
     int_or_zero, help_link, camel_case_to_human_text
 from jb_common.utils.views import UserField, TopicField
 from samples import models, permissions, data_tree, ontology_symbols
@@ -285,6 +283,212 @@ def get_allowed_processes(user, sample):
     return sample_processes, general_processes
 
 
+def collect_external_processes(sample):
+    """Fetches the processes of a sample from its external graphs, see
+    `samples.models.Sample.external_graph_urls`.
+
+    FixMe: This function is currently not called.  Its processes have not been
+    shown on the data sheet of the sample since the process bodies are loaded
+    separately by the browser, see
+    `samples.views.process_context.process_details`: such a process is not in
+    the database, so it cannot be loaded separately.  Besides, every call
+    fetches all external graphs synchronously, without timeout.  The plan is to
+    get rid of `samples.models.ExternalData` anyway, see “Graph TODO.org”.
+
+    :param sample: the sample whose external processes should be fetched
+
+    :type sample: `samples.models.Sample`
+
+    :return:
+      the external processes of the sample, sorted by timestamp; they are not
+      saved to the database
+
+    :rtype: list of `samples.models.ExternalData`
+    """
+    all_processes = []
+    for external_graph_url in sample.external_graph_urls:
+        url_request = urllib.request.urlopen(
+            urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
+        external_data = rdflib.Graph()
+        external_data.parse(data=url_request.read().decode(), format="n3")
+        for title, timestamp, uri in external_data.query("""
+            SELECT ?title ?timestamp ?uri
+            {
+             ?uri a <http://scimesh.org/SciMesh/Process> .
+             ?uri rdfs:label ?title .
+             ?uri <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
+            }
+        """):
+            process = models.ExternalData(pk=0, title=str(title).rpartition("/")[2], uri=uri,
+                                          operator=django.contrib.auth.models.User.objects.get(username="nobody"),
+                                          timestamp=timestamp.toPython())
+            already_seen_uris = set()
+            def collect_properties(subject):
+                if subject in already_seen_uris:
+                    return {"ERROR", "loop in graph"}
+                already_seen_uris.add(subject)
+                result = {}
+                for key, value in external_data.query(f"""
+                SELECT ?key ?value
+                {{
+                 <{subject}> ?key ?value .
+                }}
+                """):
+                    key = str(key)
+                    if key not in {"http://scimesh.org/SciMesh/cause", "http://scimesh.org/SciMesh/timestamp",
+                                   "http://www.w3.org/2000/01/rdf-schema#label"}:
+                        key = key.rpartition("/")[2].rpartition("#")[2]
+                        key = camel_case_to_human_text(key).replace("_", " ")
+                        if isinstance(value, rdflib.term.URIRef):
+                            subproperties = collect_properties(value)
+                        else:
+                            subproperties = {}
+                        result[key] = subproperties or value
+                return result
+            process.keys_and_values = collect_properties(uri)
+            all_processes.append(process)
+    all_processes.sort(key=lambda process: process.timestamp)
+    return all_processes
+
+
+@dataclasses.dataclass(frozen=True)
+class SampleProcessEntry:
+    """A process on the data sheet of a sample, together with its position in
+    the sample's ancestry.
+
+    Attributes:
+        process: the process (a `samples.models.Process`, not necessarily the
+            actual instance)
+        local_context: the keys ``sample`` (the sample the process belongs to,
+            i.e. the shown sample or one of its ancestors), ``original_sample``
+            (the shown sample), ``latest_descendant`` (the child of ``sample``
+            on the way down to ``original_sample``, or ``None``), and
+            ``cutoff_timestamp`` (the timestamp of that split, or ``None``).
+            Sample splits are rendered depending on it, see
+            `samples.models.SampleSplit.get_cache_key`.
+    """
+    process: models.Process
+    local_context: dict
+
+
+def _get_sample_ancestry_contexts(sample: models.Sample) -> list[dict]:
+    """Returns the local contexts of a sample and its ancestors, see
+    `SampleProcessEntry`, the oldest ancestor first.
+    """
+    local_context = {"sample": sample, "original_sample": sample, "latest_descendant": None, "cutoff_timestamp": None}
+    local_contexts = [local_context]
+    while split := local_context["sample"].split_origin:
+        local_context = {**local_context, "sample": split.parent, "latest_descendant": local_context["sample"],
+                         "cutoff_timestamp": split.timestamp}
+        local_contexts.append(local_context)
+    return local_contexts[::-1]
+
+
+def _get_processes_of_ancestry_level(local_context: dict) -> QuerySet:
+    """Returns the processes shown on a data sheet for one sample of the
+    ancestry: its own processes and its sample series results, up to the
+    cutoff timestamp.
+    """
+    current_sample = local_context["sample"]
+    # SQLite does not accept the implicit ordering of Process in the
+    # subqueries of the “union”.
+    ids_from_direct = models.Process.objects.filter(samples=current_sample).values_list("id", flat=True).order_by()
+    ids_from_series = models.Process.objects.filter(result__sample_series__samples=current_sample). \
+        values_list("id", flat=True).order_by()
+    processes = models.Process.objects.filter(id__in=ids_from_direct.union(ids_from_series))
+    if local_context["cutoff_timestamp"]:
+        processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
+    return processes
+
+
+def collect_sample_processes(sample: models.Sample) -> list[SampleProcessEntry]:
+    """Collects all processes shown on the data sheet of a sample, in the order
+    in which they are shown.  These are the processes of the sample itself, of
+    its sample series results, and of its ancestors up to the respective split.
+
+    The result does not depend on the user.  Apply `is_process_cleared` to
+    every entry for a user who can see the sample only due to a clearance.
+
+    Args:
+        sample: the sample whose data sheet is shown
+
+    Returns:
+        The processes of the oldest ancestor first, each with its local
+        context.
+    """
+    entries = []
+    for local_context in _get_sample_ancestry_contexts(sample):
+        processes = _get_processes_of_ancestry_level(local_context). \
+            select_related("content_type", "operator__jb_user_details__department", "external_operator",
+                           "created_by_person", "last_modified_by_person").prefetch_related("actual_instance")
+        entries.extend(SampleProcessEntry(process, local_context) for process in processes)
+    return entries
+
+
+def find_sample_process(sample: models.Sample, process_id: int) -> SampleProcessEntry | None:
+    """Finds a process on the data sheet of a sample.  This is equivalent to
+    searching the result of `collect_sample_processes`, but needs only one
+    query per ancestor.
+
+    Args:
+        sample: the sample whose data sheet is shown
+        process_id: the ID of the process
+
+    Returns:
+        the process with its local context, or ``None`` if the process is not
+        shown on the data sheet of the sample
+    """
+    for local_context in _get_sample_ancestry_contexts(sample):
+        process = _get_processes_of_ancestry_level(local_context).filter(id=process_id). \
+            select_related("content_type", "operator").first()
+        if process:
+            return SampleProcessEntry(process, local_context)
+    return None
+
+
+def is_process_cleared(user: django.contrib.auth.models.User, clearance: models.Clearance | None,
+                       process: models.Process) -> bool:
+    """Returns whether the user may see a process on a sample data sheet.  If
+    the user sees the sample only due to a clearance, they see only those
+    processes which they operated or which they are allowed to view anyway
+    (e.g. because the clearance contains them).
+
+    Args:
+        user: the currently logged-in user
+        clearance: the clearance that was used to show the sample, or ``None``
+            if no clearance was necessary
+        process: a process from `collect_sample_processes`
+
+    Returns:
+        whether the process is shown to the user
+    """
+    if not clearance:
+        return True
+    return process.operator == user or \
+        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
+        permissions.has_permission_to_view_physical_process(user, process)
+
+
+def collect_visible_sample_processes(sample: models.Sample, user: django.contrib.auth.models.User,
+                                     clearance: models.Clearance | None) -> list[SampleProcessEntry]:
+    """Collects all processes shown to the user on the data sheet of a sample.
+    This is the single source for both the data sheet and the process
+    fragments loaded from it (via `find_sample_process` and
+    `is_process_cleared`), see `samples.views.process_context.process_details`.
+    Do not cache the result together with user-independent data.
+
+    Args:
+        sample: the sample whose data sheet is shown
+        user: the currently logged-in user
+        clearance: the clearance that was used to show the sample, or ``None``
+            if no clearance was necessary
+
+    Returns:
+        the processes visible to the user, see `collect_sample_processes`
+    """
+    return [entry for entry in collect_sample_processes(sample) if is_process_cleared(user, clearance, entry.process)]
+
+
 class SamplesAndProcesses:
     """This is a container data structure for holding (almost) all data for
     the “show sample” template.  It represents one sample.  By nesting it,
@@ -294,29 +498,22 @@ class SamplesAndProcesses:
     and all processes associated with it.  And secondly, it contains further
     instances of `SamplesAndProcesses` of child samples.
 
-    Objects of this class are cached so that they can be re-used for another
-    user.  Therefore, it is necessary to have methods that adaps the object to
-    the current user.
+    The processes are only listed with their headers here.  Their bodies are
+    loaded separately by the browser, see
+    `samples.views.process_context.process_details`.
 
     We make extensive use of dictionaries mapping strings to arbitrary objects
     here.  This is because such a data structure can be passed as a context to
     templates very easily.
 
-    :ivar process_contexts: List of processes associated with the sample.  This
-      is a list of dictionaries rather than a list of model instances.  The
-      dictionaries can be used as contexts for both the “inner” templates
-      (the ``show_….html`` templates for single processes) as well as the
-      “outer” template ``show_sample.html``.
-
-    :ivar process_ids: Set of all process IDs of the sample
+    :ivar processes: the processes visible to the user on this data sheet, see
+      `collect_visible_sample_processes`
 
     :ivar process_lists: Data of child samples
 
+    :type processes: list of `SampleProcessEntry`
+
     :type process_lists: list of `SamplesAndProcesses`
-
-    :type process_contexts: list of dict mapping str to ``object``
-
-    :type process_ids: set of int
     """
 
     @staticmethod
@@ -341,21 +538,7 @@ class SamplesAndProcesses:
 
         :rtype: `SamplesAndProcesses`
         """
-        cache_key = "sample:{0}-{1}".format(sample.pk, user.jb_user_details.get_data_hash())
-        # The following ``10`` is the expectation value of the number of
-        # processes.  To get accurate results, use
-        # ``samples.processes.count()`` instead.  However, this would slow down
-        # JuliaBase.
-        samples_and_processes = None
-        if samples_and_processes is None or not hasattr(samples_and_processes, "processes") or not samples_and_processes.is_my_sample_form.is_valid():
-            samples_and_processes = SamplesAndProcesses(sample, clearance, user, post_data)
-            keys_list_key = "sample-keys:{0}".format(sample.pk)
-            with cache_key_locked("sample-lock:{0}".format(sample.pk)):
-                keys = cache.get(keys_list_key, [])
-                keys.append(cache_key)
-                cache.set(keys_list_key, keys, settings.CACHES["default"].get("TIMEOUT", 300) + 10)
-                cache.set(cache_key, samples_and_processes)
-        return samples_and_processes
+        return SamplesAndProcesses(sample, clearance, user, post_data)
 
     def __init__(self, sample, clearance, user, post_data):
         """Class constructor.
@@ -375,114 +558,13 @@ class SamplesAndProcesses:
         # This will be filled with more, once child samples are displayed, too.
         self.sample_context = {"sample": sample}
         self.update_sample_context_for_user(user, clearance, post_data)
-        self.process_contexts = []
-        self.process_ids = set()
-        self.processes = []
-        self.processes_with_permissions = {}
-        def collect_process_contexts(local_context=None):
-            """Constructs the list of process context dictionaries.  This
-            internal helper function directly populates
-            ``self.process_contexts``.  It consists of three parts: First, we
-            ascend through the ancestors of the sample to the first parent.
-            Then, for every ancestor and for the sample itself, the relevant
-            processes are found in form of a QuerySet, paying attention to
-            a possible clearance and to the so-called “cutoff timestamps”.  And
-            finally, we iterate over the QuerySet and get the process
-            context dictionary, possibly from the cache.
-
-            :param local_context: Information about the current sample to
-                process.  This is important when we walk through the ancestors
-                and need to keep track of where we are currently.  In
-                particular, this is used for sample splits because they must
-                know which is the current sample, which is the main sample
-                which will be actually displayed etc.
-
-            :type local_context: dict mapping str to ``object``
-            """
-            if local_context is None:
-                local_context = self.sample_context.copy()
-                local_context.update({"original_sample": sample, "latest_descendant": None, "cutoff_timestamp": None})
-            split = local_context["sample"].split_origin
-            if split:
-                new_local_context = local_context.copy()
-                new_local_context["sample"] = split.parent
-                new_local_context["latest_descendant"] = local_context["sample"]
-                new_local_context["cutoff_timestamp"] = split.timestamp
-                collect_process_contexts(new_local_context)
-            ids_from_direct = models.Process.objects.filter(samples=local_context["sample"]).values_list("id", flat=True).order_by()
-            ids_from_series = models.Process.objects.filter(result__sample_series__samples=local_context["sample"]).values_list("id", flat=True).order_by()
-            process_ids = ids_from_direct.union(ids_from_series)
-            processes = models.Process.objects.filter(id__in=process_ids).select_related('content_type', 'operator', 'operator__jb_user_details').prefetch_related('actual_instance').distinct()
-
-            if local_context["cutoff_timestamp"]:
-                processes = processes.filter(timestamp__lte=local_context["cutoff_timestamp"])
-            all_processes = []
-            for external_graph_url in sample.external_graph_urls:
-                url_request = urllib.request.urlopen(
-                    urllib.request.Request(external_graph_url, headers={"Accept": "text/turtle"}))
-                external_data = rdflib.Graph()
-                external_data.parse(data=url_request.read().decode(), format="n3")
-                for title, timestamp, uri in external_data.query("""
-                    SELECT ?title ?timestamp ?uri
-                    {
-                     ?uri a <http://scimesh.org/SciMesh/Process> .
-                     ?uri rdfs:label ?title .
-                     ?uri <http://scimesh.org/SciMesh/timestamp> [ time:inXSDDateTimeStamp ?timestamp ]
-                    }
-                """):
-                    process = models.ExternalData(pk=0, title=str(title).rpartition("/")[2], uri=uri,
-                                                  operator=django.contrib.auth.models.User.objects.get(username="nobody"),
-                                                  timestamp=timestamp.toPython())
-                    already_seen_uris = set()
-                    def collect_properties(subject):
-                        if subject in already_seen_uris:
-                            return {"ERROR", "loop in graph"}
-                        already_seen_uris.add(subject)
-                        result = {}
-                        for key, value in external_data.query(f"""
-                        SELECT ?key ?value
-                        {{
-                         <{subject}> ?key ?value .
-                        }}
-                        """):
-                            key = str(key)
-                            if key not in {"http://scimesh.org/SciMesh/cause", "http://scimesh.org/SciMesh/timestamp",
-                                           "http://www.w3.org/2000/01/rdf-schema#label"}:
-                                key = key.rpartition("/")[2].rpartition("#")[2]
-                                key = camel_case_to_human_text(key).replace("_", " ")
-                                if isinstance(value, rdflib.term.URIRef):
-                                    subproperties = collect_properties(value)
-                                else:
-                                    subproperties = {}
-                                result[key] = subproperties or value
-                        return result
-                    process.keys_and_values = collect_properties(uri)
-                    all_processes.append(process)
-            all_processes.extend(processes)
-            all_processes.sort(key=lambda process: process.timestamp)
-            nobody = django.contrib.auth.models.User.objects.get(username='nobody')
-            self.processes_with_permissions = permissions.can_view_physical_processes(user, processes)
-
-            for process in processes:
-                self.process_ids.add(process.id)
-                if not(not isinstance(process.operator, django.contrib.auth.models.User) or process.operator.jb_user_details.department):
-                    process.operator = nobody
-
-            self.processes += processes
-
-        collect_process_contexts()
+        self.processes = collect_visible_sample_processes(sample, user, clearance)
         self.process_lists = []
 
     def update_sample_context_for_user(self, user, clearance, post_data):
-        """Updates the sample data in this data structure according to the
-        current user.  If the ``SamplesAndProcesses`` object was taken from the
-        cache, it was probably for another user, so I must modify the
-        user-dependent fields.  In particular, the “is-my-sample” checkboxes
-        are generated here, as well as the icons to edit the sample or to add
-        processes.
-
-        This method is also called if the `SamplesAndProcesses` object is
-        constructed from scratch.
+        """Sets the user-dependent sample data in this data structure.  In
+        particular, the “is-my-sample” checkboxes are generated here, as well
+        as the icons to edit the sample or to add processes.
 
         :param user: the currently logged-in user
         :param clearance: the clearance object that was used to show the sample,
@@ -496,6 +578,7 @@ class SamplesAndProcesses:
         """
         self.user = user
         self.user_details = user.samples_user_details
+        self.folded_process_class_ids = set(self.user_details.default_folded_process_classes.values_list("id", flat=True))
         sample = self.sample_context["sample"]
         self.is_my_sample = self.user.my_samples.filter(id__exact=sample.id).exists()
         self.is_my_sample_form = IsMySampleForm(
@@ -523,49 +606,32 @@ class SamplesAndProcesses:
             self.sample_context["id_for_rename"] = str(sample.pk)
             self.sample_context["can_rename_sample"] = True
 
-    def remove_noncleared_process_contexts(self, user, clearance):
-        """Removes all items from ``self.process_contexts`` which the `user`
-        is not allowed to see due to the `clearance`.  Obviously, this routine
-        is a no-op if `clearance` is ``None``.
+    def get_process_heading_context(self, process):
+        """Returns the context of a process heading on the data sheet.  Its
+        keys are a subset of those of a full process context (see
+        `samples.models.Process.get_context_for_user`), so that templates can
+        use both.  The process body is not part of it; it is loaded separately,
+        see `samples.views.process_context.process_details`.
 
-        :param user: the currently logged-in user
-        :param clearance: the clearance object that was used to show the sample,
-            or ``None`` if no clearance was necessary (though maybe existing)
+        :param process: a process of `processes`
 
-        :type user: django.contrib.auth.models.User
-        :type clearance: `samples.models.Clearance`
+        :type process: `samples.models.Process`
+
+        :return:
+          the heading context with the keys ``process``, ``name``,
+          ``operator``, ``timestamp``, ``timestamp_inaccuracy``, and
+          ``is_folded`` (whether the process is collapsed initially)
+
+        :rtype: dict mapping str to ``object``
         """
-        if clearance:
-            viewable_process_contexts = []
-            for process_context in self.process_contexts:
-                process = process_context["process"]
-                if process.operator == user or \
-                        issubclass(process.content_type.model_class(), models.PhysicalProcess) and \
-                        self.processes_with_permissions[process]:
-                    viewable_process_contexts.append(process_context)
-                else:
-                    self.process_ids.remove(process.id)
-            self.process_contexts = viewable_process_contexts
-
-    def personalize(self, user, clearance, post_data):
-        """Change the ``SamplesAndProcesses`` object so that it is suitable
-        for the current user.  If the object was taken from the cache, it was
-        probably for another user, so many things need to be adapted.  Here, I
-        walk through all processes to change them.  In particular, the
-        edit/duplicate/resplit icons are corrected.
-
-        :param user: the currently logged-in user
-        :param clearance: the clearance object that was used to show the sample,
-            or ``None`` if no clearance was necessary (though maybe existing)
-        :param post_data: the POST data if it was an HTTP POST request, and
-            ``None`` otherwise
-
-        :type user: django.contrib.auth.models.User
-        :type clearance: `samples.models.Clearance`
-        :type post_data: QueryDict or NoneType
-        """
-        self.update_sample_context_for_user(user, clearance, post_data)
-        self.remove_noncleared_process_contexts(user, clearance)
+        instance = process.actual_instance
+        name = instance.title if isinstance(instance, models.Result) else str(instance._meta.verbose_name)
+        return {"process": process,
+                "name": capfirst(name),
+                "operator": process.external_operator or process.operator,
+                "timestamp": process.timestamp,
+                "timestamp_inaccuracy": process.timestamp_inaccuracy,
+                "is_folded": process.content_type_id in self.folded_process_class_ids}
 
     def __iter__(self):
         """Returns an iterator over all samples and processes.  It is used in
@@ -594,25 +660,8 @@ class SamplesAndProcesses:
         :rtype: ``generator``
         """
         if self.processes:
-            first_proc = {  "id": self.processes[0].id,
-                            "title": self.processes[0].actual_instance._meta.verbose_name,
-                            "timestamp": self.processes[0].timestamp,
-                            "operator": self.processes[0].operator}
-            yield True, self.sample_context, first_proc
-            for process in self.processes[1:]:
-                try:
-                    instance = process.actual_instance
-                except AttributeError:
-                    continue
-                proc = {  "id": process.id,
-                                "title": instance._meta.verbose_name,
-                                "timestamp": process.timestamp,
-                                "operator": process.operator}
-                yield False, self.sample_context, proc
-        elif self.process_contexts:
-            yield True, self.sample_context, self.process_contexts[0]
-            for process_context in self.process_contexts[1:]:
-                yield False, self.sample_context, process_context
+            for i, entry in enumerate(self.processes):
+                yield i == 0, self.sample_context, self.get_process_heading_context(entry.process)
         else:
             yield True, self.sample_context, None
         for process_list in self.process_lists:
@@ -657,21 +706,6 @@ class SamplesAndProcesses:
             added.update(added_)
             removed.update(removed_)
         return added, removed
-
-    def get_all_process_ids(self):
-        """Returns all process IDs of this sample.  When child samples are
-        shown on the sample's data sheet, too, also their process IDs are
-        included.
-
-        :return:
-          all process ids of the sample data sheet
-
-        :rtype: set of int
-        """
-        all_process_ids = self.process_ids
-        for process_list in self.process_lists:
-            all_process_ids.update(process_list.get_all_process_ids())
-        return all_process_ids
 
 
 def collect_raw_files(sample):
@@ -840,7 +874,6 @@ def show(request, sample_name):
             return respond_as_ro_crate(graph, collect_raw_files(sample))
         samples_and_processes = SamplesAndProcesses.samples_and_processes(sample, clearance, request.user)
     messages.debug(request, "DB-Zugriffszeit: {0:.1f} ms".format((time.time() - start) * 1000))
-    sample_id = samples_and_processes.sample_context["sample"].id
     return render(request, "samples/show_sample.html",
                   {"title": _("Sample “{sample}”").format(sample=samples_and_processes.sample_context["sample"]),
                    "samples_and_processes": samples_and_processes})
@@ -964,7 +997,8 @@ class SearchSamplesForm(forms.Form):
     """Form for searching for samples.  So far, you can only enter a name
     substring for looking for samples.
     """
-    name_pattern = forms.CharField(label=_("Name pattern"), max_length=30, required=False)
+    name_pattern = forms.CharField(label=_("Name pattern"), max_length=models.Sample._meta.get_field("name").max_length,
+                                   required=False)
     aliases = forms.BooleanField(label=_("Include alias names"), required=False)
 
 
@@ -1239,8 +1273,10 @@ def data_matrix_code(request):
 class SampleRenameForm(forms.Form):
     """Form for rename a sample.
     """
-    old_name = forms.CharField(label=capfirst(_("old sample name")), max_length=30, required=True)
-    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30, required=True)
+    old_name = forms.CharField(label=capfirst(_("old sample name")), max_length=models.Sample._meta.get_field("name").max_length,
+                               required=True)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=models.Sample._meta.get_field("name").max_length,
+                               required=True)
     create_alias = forms.BooleanField(label=capfirst(_("keep old name as sample alias name")),
                                       required=False)
 
@@ -1314,21 +1350,6 @@ def rename_sample(request):
         sample_rename_form = SampleRenameForm(request.user, initial={"old_name": sample.name if sample else ""})
     title = capfirst(_("rename sample")) + " “{sample}”".format(sample=sample) if sample else ""
     return render(request, "samples/rename_sample.html", {"title": title, "sample_rename": sample_rename_form})
-
-
-@login_required
-@never_cache
-@require_http_methods(["GET"])
-def get_folded_processes(request, sample_id):
-    """
-    Function that gets the folded processes for the current user.
-    There is a similar function in json_client.py but I do not use it since
-    I do not have the process ids in the request.
-    """
-    user_detail = models.UserDetails.objects.get(user=request.user)
-    cts = user_detail.default_folded_process_classes.all()
-    process_names = [str(process.name).lower() for process in cts]
-    return respond_in_json(process_names)
 
 
 _ = gettext

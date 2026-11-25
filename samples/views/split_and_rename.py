@@ -43,7 +43,7 @@ from django.db import transaction
 class NewNameForm(forms.Form):
     """Form for data of one new sample piece.
     """
-    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=30)
+    new_name = forms.CharField(label=capfirst(_("new sample name")), max_length=models.Sample._meta.get_field("name").max_length)
     new_purpose = forms.CharField(label=_("New sample purpose"), max_length=80, required=False)
     delete = forms.BooleanField(label=_("Delete"), required=False)
 
@@ -242,12 +242,13 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
     now = timezone_now()
     with transaction.atomic():  # wrap everything in a single transaction
         if not sample_split:
-            sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent)
+            sample_split = models.SampleSplit(timestamp=now, operator=user, parent=parent, created_by_person=user)
             sample_split.save()
             parent.processes.add(sample_split)
         else:
             sample_split.timestamp = now
             sample_split.operator = user
+            sample_split.last_modified_by_person = user
             sample_split.save()
 
         sample_series = global_data_form.cleaned_data["sample_series"]
@@ -302,7 +303,8 @@ def save_to_database(new_name_forms, global_data_form, parent, sample_split, use
         if global_data_form.cleaned_data["sample_completely_split"]:
             parent.watchers.clear()
 
-            death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split")
+            death = models.SampleDeath(timestamp=now + datetime.timedelta(seconds=5), operator=user, reason="split",
+                                       created_by_person=user)
             death.save()
 
             Sample_processes = parent.processes.through

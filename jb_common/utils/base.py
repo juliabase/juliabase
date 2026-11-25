@@ -15,7 +15,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import codecs, re, os, os.path, time, datetime, copy, mimetypes, string, hashlib, urllib
+import re, os, os.path, time, datetime, copy, mimetypes, string, hashlib, urllib
 from io import BytesIO
 from contextlib import contextmanager
 from functools import wraps
@@ -23,6 +23,7 @@ from smtplib import SMTPException
 from functools import update_wrapper
 from pathlib import Path
 import django.http
+import django.utils.timezone
 import django.contrib.auth.models
 import django.urls
 from django.core.cache import cache
@@ -100,9 +101,10 @@ class JSONRequestException(Exception):
 
 
 entities = {}
-for line in codecs.open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8"):
-    if line.strip() and not line.startswith("#"):
-        entities[line[:12].rstrip()] = line[12]
+with open(os.path.join(os.path.dirname(__file__), "entities.txt"), encoding="utf-8") as entity_file:
+    for line in entity_file:
+        if line.strip() and not line.startswith("#"):
+            entities[line[:12].rstrip()] = line[12]
 entity_pattern = re.compile(r"&[A-Za-z0-9]{2,8};")
 
 def substitute_html_entities(text):
@@ -399,11 +401,32 @@ def send_email(subject, content, recipients, format_dict=None):
     translation.activate(current_language)
 
 
+def _is_preferred_to_html(request, media_types):
+    """Tests whether the client prefers one of the given media types to HTML.
+    If they are equally acceptable, e.g. for “*/*”, HTML wins.
+
+    :param request: the current HTTP Request object
+    :param media_types: the media types that are compared with HTML
+
+    :type request: HttpRequest
+    :type media_types: iterable of str
+
+    :return:
+      whether one of the media types is preferred to HTML
+
+    :rtype: bool
+    """
+    accept = request.META.get("HTTP_ACCEPT", "text/html")
+    html_quality = max(mimeparse.quality(media_type, accept) for media_type in ("text/html", "application/xhtml+xml"))
+    return max(mimeparse.quality(media_type, accept) for media_type in media_types) > html_quality
+
+
 def is_rdf_requested(request):
     """Tests whether the current request should be answered in RDF format instead
     of HTML.  Typically this means that the request was made by other JuliaBase
     or ELN instances.  Currently, only the serialisation formats “turtle” and
-    “xml” are recognised.
+    “xml” are recognised.  RDF is only available if the setting
+    ``GRAPH_NAMESPACE_PREFIX`` is set.
 
     :param request: the current HTTP Request object
 
@@ -414,14 +437,14 @@ def is_rdf_requested(request):
 
     :rtype: bool
     """
-    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/rdf+xml", "text/turtle"},
-                                               request.META.get("HTTP_ACCEPT", "text/html"))
-    return requested_mime_type in {"application/rdf+xml", "text/turtle"}
+    return bool(getattr(settings, "GRAPH_NAMESPACE_PREFIX", None)) and \
+        _is_preferred_to_html(request, ("application/rdf+xml", "text/turtle"))
 
 
 def is_ro_crate_requested(request):
     """Tests whether the current request should be answered in RO-Crate format
-    instead of HTML.
+    instead of HTML.  Like RDF, RO-Crate is only available if the setting
+    ``GRAPH_NAMESPACE_PREFIX`` is set.
 
     :param request: the current HTTP Request object
 
@@ -432,9 +455,8 @@ def is_ro_crate_requested(request):
 
     :rtype: bool
     """
-    requested_mime_type = mimeparse.best_match({"text/html", "application/xhtml+xml", "application/vnd.eln+zip"},
-                                               request.META.get("HTTP_ACCEPT", "text/html"))
-    return requested_mime_type == "application/vnd.eln+zip"
+    return bool(getattr(settings, "GRAPH_NAMESPACE_PREFIX", None)) and \
+        _is_preferred_to_html(request, ("application/vnd.eln+zip",))
 
 
 def is_json_requested(request):
@@ -557,6 +579,27 @@ def getmtime_utc(path):
     :rtype: datetime.datetime
     """
     return datetime.datetime.fromtimestamp(path.stat().st_mtime, datetime.timezone.utc)
+
+
+def get_local_day_bounds(begin_date, end_date):
+    """Returns the timezone-aware bounds of the days from ``begin_date`` to
+    ``end_date`` (both included) in the current time zone.  Filter with
+    ``timestamp__gte=begin`` and ``timestamp__lt=end``, because the upper
+    bound is midnight after ``end_date`` and therefore exclusive.
+
+    :param str begin_date: first day in the format ``YYYY-MM-DD``
+    :param str end_date: last day in the format ``YYYY-MM-DD``
+
+    :return:
+      midnight at the start of ``begin_date``, midnight after ``end_date``
+
+    :rtype: tuple[datetime.datetime, datetime.datetime]
+
+    :raises ValueError: if a date is not in the format ``YYYY-MM-DD``
+    """
+    begin = datetime.datetime.strptime(begin_date, "%Y-%m-%d")
+    end = datetime.datetime.strptime(end_date, "%Y-%m-%d") + datetime.timedelta(days=1)
+    return django.utils.timezone.make_aware(begin), django.utils.timezone.make_aware(end)
 
 
 def get_file_timestamps(paths):

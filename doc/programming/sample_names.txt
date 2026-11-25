@@ -43,8 +43,8 @@ and “new”.  They are mapped to dictionaries which contain their properties.
 
 .. note::
 
-   There is a length limit of 30 characters for sample names.  This is
-   hard-wired in JuliaBase.
+   There is a length limit of 63 characters for sample names
+   (``Sample.name``).  This is hard-wired in JuliaBase.
 
 
 Name format properties

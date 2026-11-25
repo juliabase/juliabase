@@ -38,9 +38,9 @@ from samples import models
 from . import base as utils
 
 
-__all__ = ("OperatorField", "ProcessForm", "DepositionForm", "get_my_steps", "InitialsForm",
-           "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField", "DepositionSamplesForm",
-           "time_pattern", "clean_time_field", "clean_timestamp_field",
+__all__ = ("OperatorField", "ProcessTrackingMixin", "ProcessForm", "DepositionForm", "get_my_steps",
+           "InitialsForm", "EditDescriptionForm", "SampleField", "MultipleSamplesField", "FixedOperatorField",
+           "DepositionSamplesForm", "time_pattern", "clean_time_field", "clean_timestamp_field",
            "clean_quantity_field", "collect_subform_indices", "normalize_prefixes", "dead_samples",
            "choices_of_content_types", "SampleSelectForm", "MultipleSamplesSelectForm")
 
@@ -154,7 +154,36 @@ class OperatorField(forms.ChoiceField):
             return value and django.contrib.auth.models.User.objects.get(pk=int(value)), None
 
 
-class ProcessForm(ModelForm):
+class ProcessTrackingMixin:
+    """Mixin for model forms of processes.  When the form is saved, it records
+    the currently logged-in user as the creator of a new process, or as the last
+    modifier of an edited process.  This way, every view that saves a process
+    through its form records it, no matter whether the view is class-based or
+    not.  The timestamps ``created`` and ``last_modified`` are set by the model
+    fields themselves.
+
+    The form must set ``self.user`` to the currently logged-in user.
+    """
+    tracking_field_names = ("created_by_person", "last_modified_by_person")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Who created and who last modified the process is set by `save`, never
+        # by the user.  Without removing them here, forms with ``fields =
+        # "__all__"`` would reset them to ``None`` on every edit (they are not
+        # rendered), and could be forged by a crafted POST request.
+        for field_name in self.tracking_field_names:
+            self.fields.pop(field_name, None)
+
+    def save(self, commit=True):
+        if self.instance._state.adding:
+            self.instance.created_by_person = self.user
+        else:
+            self.instance.last_modified_by_person = self.user
+        return super().save(commit)
+
+
+class ProcessForm(ProcessTrackingMixin, ModelForm):
     """Abstract model form class for processes.  It ensures that timestamps are not
     in the future, and that comments contain only allowed Markdown syntax.
 

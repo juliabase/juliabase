@@ -43,6 +43,7 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.colors import black, getAllNamedColors
 from reportlab.lib.enums import TA_LEFT
 from reportlab.platypus import Paragraph
+from institute.reportlab_config import default_fontname
 
 
 dimensions = {"stack_width": 3.15 * cm, "label_width": 3.15 * cm, "margin": 0.21 * cm, "red_line_width": 0.1575 * cm,
@@ -68,8 +69,8 @@ parameters = {"roughness": 3.15, "grid_points": 24}
     - ``grid_points``: number of grid points used for the textured line
 """
 
-single_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu", fontSize=10.5)
-legend_label_style = ParagraphStyle("label", fontName="DejaVu", bulletFontName="DejaVu",
+single_label_style = ParagraphStyle("label", fontName=default_fontname, bulletFontName=default_fontname, fontSize=10.5)
+legend_label_style = ParagraphStyle("label", fontName=default_fontname, bulletFontName=default_fontname,
                                     leftIndent=15.3, firstLineIndent=-15.3, spaceAfter=10.5, fontSize=10.5)
 
 
